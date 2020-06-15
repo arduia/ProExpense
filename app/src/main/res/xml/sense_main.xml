@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto"
+    >
+    <Transition
+        motion:constraintSetStart="@+id/collapse_entry_constraint_set"
+        motion:constraintSetEnd="@+id/expended_entry_constraint_set"
+        motion:duration="500"
+        android:id="@+id/expend_entry_transition" >
+
+        <KeyFrameSet>
+            <KeyPosition
+                motion:motionTarget="@+id/fb_add"
+                motion:percentX="0.9"
+                motion:percentY="0.1"
+                motion:framePosition="50"
+                />
+
+            <KeyPosition
+                motion:motionTarget="@+id/sheet_entry"
+                motion:percentY="-0.5"
+                motion:framePosition="50"
+                />
+
+        </KeyFrameSet>
+
+        <OnClick motion:targetId="@+id/fb_add"
+            motion:clickAction="transitionToEnd"/>
+
+    </Transition>
+
+    <Transition
+        motion:constraintSetStart="@+id/collapse_entry_constraint_set"
+        motion:constraintSetEnd="@+id/expended_entry_constraint_set"
+        motion:duration="500"
+        android:id="@+id/collapse_entry_transition" >
+
+        <KeyFrameSet>
+            <KeyPosition
+                motion:motionTarget="@+id/fb_add"
+                motion:percentX="0.9"
+                motion:percentY="0.1"
+                motion:framePosition="50"
+                />
+
+            <KeyPosition
+                motion:motionTarget="@+id/sheet_entry"
+                motion:percentY="-0.5"
+                motion:framePosition="50"
+                />
+
+        </KeyFrameSet>
+        <OnClick motion:targetId="@+id/btn_close"
+            motion:clickAction="transitionToStart"/>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/collapse_entry_constraint_set">
+        <Constraint
+            android:id="@+id/sheet_entry"
+            motion:layout_constraintBottom_toTopOf="@id/sheet_entry"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="parent"
+            motion:layout_constraintVertical_bias="0.0"
+            />
+        <Constraint
+            android:id="@+id/fb_add"
+            android:alpha="1"
+            android:scaleX="1"
+            android:scaleY="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="32dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintHorizontal_bias="1.0"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/tb_main"
+            motion:layout_constraintVertical_bias="1.0"/>
+        <Constraint
+            android:id="@+id/lnl_transactions"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/img_graph"/>
+
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/expended_entry_constraint_set">
+        <Constraint
+            android:id="@+id/sheet_entry"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/tb_main"
+            motion:layout_constraintVertical_bias="0.0"
+            />
+        <Constraint
+            android:id="@+id/fb_add"
+            android:alpha="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:backgroundTint="@android:color/white"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintHorizontal_bias="0.5"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/tb_main"
+            motion:layout_constraintVertical_bias="0.7">
+        </Constraint>
+        <Constraint
+            android:id="@+id/lnl_transactions"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleX="0.2"
+            android:scaleY="0.2"
+            android:orientation="vertical"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/img_graph"/>
+    </ConstraintSet>
+
+</MotionScene>

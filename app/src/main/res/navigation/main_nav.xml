@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/dest_home"
+    android:id="@+id/main_nav">
+    <fragment
+        android:id="@+id/dest_home"
+        android:name="com.arduia.myacc.ui.home.HomeFragment"
+        android:label="@string/label_home"
+        tools:layout = "@layout/frag_home"/>
+    <fragment
+        android:id="@+id/dest_owe"
+        android:name="com.arduia.myacc.ui.owe.OweFragment"
+        android:label="@string/label_borrows"
+        tools:layout="@layout/frag_owe"/>
+    <fragment
+        android:id="@+id/dest_log"
+        android:label="@string/label_log"
+        android:name="com.arduia.myacc.ui.log.LogFragment"
+        tools:layout="@layout/frag_log"/>
+    <fragment
+        android:id="@+id/dest_feedback"
+        android:label="@string/label_feedback"
+        android:name="com.arduia.myacc.ui.feedback.FeedbackFragment"
+        tools:layout="@layout/frag_feedback"/>
+    <fragment
+        android:id="@+id/dest_settings"
+        android:label="@string/label_settings"
+        android:name="com.arduia.myacc.ui.settings.SettingsFragment"/>
+</navigation>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ui.MainActivity">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/material_base"
+        android:layout_marginTop="@dimen/material_base"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_close"
+        android:tint="@android:color/darker_gray" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_taylor"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/btn_back"
+        android:layout_marginTop="@dimen/large_margin"
+        android:layout_marginStart="@dimen/large_margin"
+        android:layout_marginBottom="@dimen/material_base"
+        android:src="@drawable/img_taylor" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignTop="@id/img_taylor"
+        android:layout_toEndOf="@id/img_taylor"
+        android:layout_alignBottom="@id/img_taylor"
+        android:gravity="center_vertical"
+        android:layout_marginStart="@dimen/material_base">
+
+    <TextView
+        android:id="@+id/tv_taylor"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Taylor Swift"
+        android:textColor="@color/colorOnSurface" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_email"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_below="@id/tv_taylor"
+        android:text="jhoa@gmail.com"
+        android:layout_alignStart="@id/tv_taylor"/>
+    </LinearLayout>
+</RelativeLayout>

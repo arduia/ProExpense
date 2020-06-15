@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.MainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ln_title"
+        android:layout_marginTop="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_base"
+        android:layout_marginEnd="@dimen/material_base"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/btn_close"
+        android:src="@drawable/ic_menu"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="@color/colorOnSurface"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/label_log"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:id="@+id/tv_log"/>
+    </FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rv_log"
+        tools:listitem="@layout/item_cost"
+        android:layout_marginStart="@dimen/material_base"
+        android:layout_marginEnd="@dimen/material_base"
+        android:layout_below="@id/ln_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/material_base"/>
+</RelativeLayout>

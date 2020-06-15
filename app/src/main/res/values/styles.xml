@@ -1,0 +1,41 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="rippleColor">@android:color/darker_gray</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="RoundedShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">@dimen/corner_radius</item>
+    </style>
+
+    <style name="ImageCard" parent="Widget.MaterialComponents.CardView">
+        <item name="android:bottomLeftRadius">60dp</item>
+    </style>
+
+    <style name="NavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle2</item>
+        <item name="itemTextColor">@color/nav_text</item>
+        <item name="itemIconSize">20dp</item>
+        <item name="itemHorizontalPadding">@dimen/large_margin</item>
+    </style>
+
+    <style name="MaterialTab" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+        <item name="tabIndicatorFullWidth">false</item>
+        <item name="tabMaxWidth">100dp</item>
+        <item name="tabGravity">center</item>
+        <item name="tabUnboundedRipple">false</item>
+    </style>
+</resources>
