@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.arduia.graph.SpendPoint
 import com.arduia.myacc.NavigationDrawer
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.adapter.CostAdapter
@@ -41,6 +42,17 @@ class HomeFragment : Fragment(){
         viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext(),RecyclerView.VERTICAL,false)
         viewBinding.rvRecent.adapter = costAdapter
         costAdapter.listItem = costList()
+        viewBinding.imgGraph.spendPoints = getSamplePoints()
+    }
+
+    private fun getSamplePoints() = mutableListOf<SpendPoint>().apply {
+        add(SpendPoint(1,0.1f))
+        add(SpendPoint(2,0.5f))
+        add(SpendPoint(3, 0.1f))
+        add(SpendPoint(4,0.7f))
+        add(SpendPoint(5,0.4f))
+        add(SpendPoint(6,0.1f))
+        add(SpendPoint(7,0.1f))
     }
 
 }

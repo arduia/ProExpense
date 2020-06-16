@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import com.arduia.annotation.DateInt
+import androidx.core.view.marginBottom
 import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
 
@@ -36,12 +36,46 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     private val dayPaint by lazy { Paint().apply {
         color = Color.WHITE
         textSize = pxS(12f)
+        textAlign = Paint.Align.CENTER
     }}
 
-    @DateInt
+    private val linePointPaint by lazy {
+        Paint().apply {
+            color = Color.WHITE
+            style = Paint.Style.FILL_AND_STROKE
+            strokeWidth = px(1f)
+        }
+    }
+
+    private val linePaint by lazy {
+        Paint().apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            strokeWidth = px(1f)
+        }
+    }
+
+    private val labelText by lazy {
+        Paint().apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            textSize = pxS(15f)
+            textAlign = Paint.Align.LEFT
+        }
+    }
     private val date:Int = 9
 
     private val dayNameProvider:DayNameProvider by lazy { DayNameProviderImpl(context) }
+
+    /**
+     * Interface Fields
+     */
+
+    var spendPoints:List<SpendPoint> = emptyList()
+    set(value) {
+        field = value
+        refreshView()
+    }
 
     /**
      * Framework Callback Methods
@@ -73,6 +107,8 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
             it.drawDayNames()
 
+            it.drawPointLines(spendPoints)
+
         }
     }
 
@@ -85,25 +121,75 @@ class SpendGraph @JvmOverloads constructor(context:Context,
      * Draw Methods
      */
 
+    private fun Canvas.drawPointLines(list:List<SpendPoint>){
+        val linePath = Path()
+        val heightF = lineCanvasF.height()
+        val bottomF = lineCanvasF.bottom
+
+        list.forEachIndexed { i, point ->
+
+            val xPosition = getDayX(point.day)
+            val yPosition = bottomF - (point.rate * heightF)
+
+            drawLinePoint(xPosition,yPosition)
+
+            if(i == 0){
+                linePath.moveTo(xPosition,yPosition)
+            }else{
+                linePath.lineTo(xPosition,yPosition)
+            }
+
+        }
+        drawPath(linePath,linePaint)
+        val highestPoint  = list.maxBy { it.rate }
+        highestPoint?.let {
+            drawHighestVertical(it)
+        }
+    }
+
+    private fun Canvas.drawHighestVertical(point:SpendPoint){
+        val commonX = getDayX(point.day)
+        val startY = lineCanvasF.bottom
+        val endY = lineCanvasF.bottom - (point.rate * lineCanvasF.height())
+        val path = Path()
+        path.moveTo(commonX,startY)
+        for(position in startY.toInt() downTo endY.toInt() step 5){
+            when(position%3) {
+                1 -> path.moveTo(commonX, position.toFloat())
+                2 -> path.lineTo(commonX, position.toFloat())
+            }
+        }
+        drawPath(path,linePointPaint)
+        drawText("${(point.rate * 100).toInt()} %",commonX + (linePaint.textSize * 2), endY -  (linePaint.textSize * 2),labelText)
+    }
+
+
+    private fun Canvas.drawLinePoint(x:Float, y:Float){
+        drawCircle(x,y,px(2.5f),linePointPaint)
+    }
+
     private fun Canvas.drawDayNames(){
 
         val totalDays = 7
-        val segmentWidth = dayNameCanvasF.width()/totalDays
-        val segmentHalf = segmentWidth/2
-        val frameLeft = dayNameCanvasF.left
         val dayPositionY = dayNameCanvasF.centerY() + (dayPaint.textSize/2)
 
         for(day in 1..totalDays){
-            val dayPositionX = frameLeft + ((day * segmentWidth) - segmentHalf)
+            val dayPositionX = getDayX(day)
             drawDayName(dayNameProvider.getName(day), dayPositionX, dayPositionY)
         }
 
-        val test = SpendPoint(9,10f)
-        println("date int -> $date $test")
     }
 
     private fun Canvas.drawDayName(name:String,x:Float,y:Float){
         drawText(name, x, y, dayPaint)
+    }
+
+    private fun getDayX(day:Int, totalDay:Int=7):Float{
+        val frameLeft = dayNameCanvasF.left
+        val segmentWidth = dayNameCanvasF.width()/totalDay
+        val segmentHalf = segmentWidth/2
+
+        return frameLeft + ((day * segmentWidth) - segmentHalf)
     }
 
     /**

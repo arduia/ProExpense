@@ -1,5 +1,3 @@
-include ':GraphAnnotation'
-include ':GraphAnnotationProcessor'
 include ':core'
 include ':WeeklyCostGraph'
 include ':app'
