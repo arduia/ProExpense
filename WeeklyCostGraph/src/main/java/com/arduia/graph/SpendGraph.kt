@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.view.marginBottom
 import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
 
@@ -83,32 +82,8 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.let {
-
-            //test frame
-//            it.drawRect(canvasF, Paint().apply {
-//                color = Color.BLACK
-//                style = Paint.Style.STROKE
-//                strokeWidth =  px(1f)
-//            })
-//
-//            //test graph line frame
-//            it.drawRect(lineCanvasF,Paint().apply {
-//                color = Color.GREEN
-//                style = Paint.Style.STROKE
-//                strokeWidth = px(1f)
-//            })
-//
-//            //test day name frame
-//            it.drawRect(dayNameCanvasF,Paint().apply {
-//                color = Color.GREEN
-//                style = Paint.Style.STROKE
-//                strokeWidth = px(1f)
-//            })
-
             it.drawDayNames()
-
             it.drawPointLines(spendPoints)
-
         }
     }
 
@@ -123,51 +98,79 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
     private fun Canvas.drawPointLines(list:List<SpendPoint>){
         val linePath = Path()
+
+        // high of line graph
         val heightF = lineCanvasF.height()
+
+        //bottom point of graph
         val bottomF = lineCanvasF.bottom
 
         list.forEachIndexed { i, point ->
 
             val xPosition = getDayX(point.day)
+            //ratio of height for rate
             val yPosition = bottomF - (point.rate * heightF)
 
+            //draw the point
             drawLinePoint(xPosition,yPosition)
 
             if(i == 0){
+                //move to first position
                 linePath.moveTo(xPosition,yPosition)
             }else{
+                //line to each position
                 linePath.lineTo(xPosition,yPosition)
             }
 
         }
+        //draw graph line on line Path
         drawPath(linePath,linePaint)
+
+        //get highest Point
         val highestPoint  = list.maxBy { it.rate }
+
+        //if has draw vertical
         highestPoint?.let {
             drawHighestVertical(it)
         }
     }
 
     private fun Canvas.drawHighestVertical(point:SpendPoint){
+
+        //common X for  position X
         val commonX = getDayX(point.day)
+
+        //start from the canvas bottom
         val startY = lineCanvasF.bottom
+
+        //ent to canvas height rate of point
         val endY = lineCanvasF.bottom - (point.rate * lineCanvasF.height())
-        val path = Path()
-        path.moveTo(commonX,startY)
+
+        val dotedPath = Path()
+
+        //move to bottom
+        dotedPath.moveTo(commonX,startY)
+
+        //place doted points on path
         for(position in startY.toInt() downTo endY.toInt() step 5){
             when(position%3) {
-                1 -> path.moveTo(commonX, position.toFloat())
-                2 -> path.lineTo(commonX, position.toFloat())
+                1 -> dotedPath.moveTo(commonX, position.toFloat())
+                2 -> dotedPath.lineTo(commonX, position.toFloat())
             }
         }
-        drawPath(path,linePointPaint)
+        //draw doted points
+        drawPath(dotedPath,linePointPaint)
+        //draw label at right corner
         drawText("${(point.rate * 100).toInt()} %",commonX + (linePaint.textSize * 2), endY -  (linePaint.textSize * 2),labelText)
     }
 
 
+    //draw point
     private fun Canvas.drawLinePoint(x:Float, y:Float){
         drawCircle(x,y,px(2.5f),linePointPaint)
     }
 
+    //draw day names on each pattern
     private fun Canvas.drawDayNames(){
 
         val totalDays = 7
@@ -180,6 +183,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
     }
 
+    //draw a day name
     private fun Canvas.drawDayName(name:String,x:Float,y:Float){
         drawText(name, x, y, dayPaint)
     }
