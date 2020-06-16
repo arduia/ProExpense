@@ -32,37 +32,13 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     //Drawable Canvas Frame for Day Name
     private val dayNameCanvasF by lazy { createDayNameFrame() }
 
-    private val dayPaint by lazy { Paint().apply {
-        color = Color.WHITE
-        textSize = pxS(12f)
-        textAlign = Paint.Align.CENTER
-    }}
+    private val dayPaint by lazy { createDayPaint() }
 
-    private val linePointPaint by lazy {
-        Paint().apply {
-            color = Color.WHITE
-            style = Paint.Style.FILL_AND_STROKE
-            strokeWidth = px(1f)
-        }
-    }
+    private val linePointPaint by lazy { createLinePointPaint()}
 
-    private val linePaint by lazy {
-        Paint().apply {
-            color = Color.WHITE
-            style = Paint.Style.STROKE
-            strokeWidth = px(1f)
-        }
-    }
+    private val linePaint by lazy { createLinePaint() }
 
-    private val labelText by lazy {
-        Paint().apply {
-            color = Color.WHITE
-            style = Paint.Style.STROKE
-            textSize = pxS(15f)
-            textAlign = Paint.Align.LEFT
-        }
-    }
-    private val date:Int = 9
+    private val labelPaint by lazy { createLabelPaint() }
 
     private val dayNameProvider:DayNameProvider by lazy { DayNameProviderImpl(context) }
 
@@ -83,7 +59,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         super.onDraw(canvas)
         canvas?.let {
             it.drawDayNames()
-            it.drawPointLines(spendPoints)
+            it.drawPointLines()
         }
     }
 
@@ -96,8 +72,12 @@ class SpendGraph @JvmOverloads constructor(context:Context,
      * Draw Methods
      */
 
-    private fun Canvas.drawPointLines(list:List<SpendPoint>){
+    private fun Canvas.drawPointLines( ){
+
         val linePath = Path()
+
+        //just store in method reference
+        val list = spendPoints
 
         // high of line graph
         val heightF = lineCanvasF.height()
@@ -161,7 +141,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         //draw doted points
         drawPath(dotedPath,linePointPaint)
         //draw label at right corner
-        drawText("${(point.rate * 100).toInt()} %",commonX + (linePaint.textSize * 2), endY -  (linePaint.textSize * 2),labelText)
+        drawText("${(point.rate * 100).toInt()} %",commonX + (linePaint.textSize * 2), endY -  (linePaint.textSize * 2),labelPaint)
     }
 
 
@@ -199,7 +179,6 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     /**
      * Initialization Methods
      */
-
     private fun initConfig(){
 
         dayNameHeight = px(30f)
@@ -215,9 +194,40 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         invalidate()
     }
 
+
     /**
      * Creation Methods
      */
+
+    private fun createDayPaint() =
+        Paint().apply {
+        color = Color.WHITE
+        textSize = pxS(12f)
+        textAlign = Paint.Align.CENTER
+    }
+
+    private fun createLinePointPaint() =
+        Paint().apply {
+        color = Color.WHITE
+        style = Paint.Style.FILL_AND_STROKE
+        strokeWidth = px(1f)
+    }
+
+    private fun createLinePaint() =
+        Paint().apply {
+        color = Color.WHITE
+        style = Paint.Style.STROKE
+        strokeWidth = px(1f)
+    }
+
+    private fun createLabelPaint() =
+        Paint().apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            textSize = pxS(15f)
+            textAlign = Paint.Align.LEFT
+        }
+
 
     private fun createDayNameFrame() =
         RectF(
@@ -244,6 +254,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
             viewF.bottom - paddingBottom
         )
 
+    //Whole view Frame
     private fun createViewFrame() =
         RectF(0f,0f,width.toFloat(),height.toFloat())
 
