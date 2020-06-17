@@ -3,7 +3,7 @@ package com.arduia.graph
 import java.lang.IllegalArgumentException
 
 
-data class SpendPoint(  var day:Int, var rate:Float){
+data class SpendPoint(var day:Int, var rate:Float){
     init {
         if(day !in 1..7) throw IllegalArgumentException(" inserted Date is not Between 1 to 7")
 

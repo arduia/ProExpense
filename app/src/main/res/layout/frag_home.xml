@@ -70,7 +70,7 @@
             android:id="@+id/fb_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="@dimen/large_margin"
             android:layout_marginBottom="32dp"
             android:clickable="true"
             android:tint="@android:color/white"

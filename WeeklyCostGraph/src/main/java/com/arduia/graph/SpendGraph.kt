@@ -16,11 +16,8 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
     //Internal Graph Padding between Whole view and Graph Canvas Frame
     private var graphPaddingLeft = 0f
-
     private var graphPaddingTop = 0f
-
     private var graphPaddingRight = 0f
-
     private var graphPaddingBottom= 0f
 
     //Week Name Height of the graph
@@ -36,11 +33,8 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     private val dayNameCanvasF by lazy { createDayNameFrame() }
 
     private val dayPaint by lazy { createDayPaint() }
-
     private val linePointPaint by lazy { createLinePointPaint()}
-
     private val linePaint by lazy { createLinePaint() }
-
     private val labelPaint by lazy { createLabelPaint() }
 
     private val dayNameProvider:DayNameProvider by lazy { DayNameProviderImpl(context) }
@@ -48,11 +42,8 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     /**
      * Interface Fields
      */
-    var spendPoints:List<SpendPoint> = emptyList()
-    set(value) {
-        field = value
-        refreshView()
-    }
+    var spendPoints = emptyList<SpendPoint>()
+    set(value) { field = value; refreshView() }
 
     /**
      * Framework Callback Methods
@@ -88,7 +79,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
         list.forEachIndexed { i, point ->
 
-            val xPosition = getDayX(point.day)
+            val xPosition = getDayPositionX(point.day)
 
             //ratio of height for rate
             val yPosition = bottomF - (point.rate * heightF)
@@ -120,13 +111,15 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     private fun Canvas.drawHighestVertical(point:SpendPoint){
 
         //common X for  position X
-        val commonX = getDayX(point.day)
+        val commonX = getDayPositionX(point.day)
 
         //start from the canvas bottom
         val startY = lineCanvasF.bottom
 
         //ent to canvas height rate of point
         val endY = lineCanvasF.bottom - (point.rate * lineCanvasF.height())
+
+        val labelTextSize = labelPaint.textSize
 
         val dotedPath = Path()
 
@@ -144,9 +137,19 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         //draw doted points
         drawPath(dotedPath,linePointPaint)
 
-        //draw label at right corner
-        val labelPositionX = commonX + (linePaint.textSize * 2)
-        val labelPositionY = endY - (linePaint.textSize * 2)
+        //position of label
+        val labelPositionX = commonX + (labelTextSize * 2)
+        val labelPositionY = endY - (labelTextSize * 2)
+
+        //space between sides
+        val betweenTopY = labelPositionY - lineCanvasF.top
+        val betweenRightX = labelPositionX - lineCanvasF.right
+
+        //no space between label base and canvas top, finish
+        if(betweenTopY < labelTextSize) return
+
+        //no space between label and canvas right, finish
+        if(betweenRightX < (labelTextSize * 3)) return
 
         drawText("${(point.rate * 100).toInt()} %", labelPositionX, labelPositionY, labelPaint)
     }
@@ -154,8 +157,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
     //draw point
     private fun Canvas.drawLinePoint(x:Float, y:Float){
-
-        drawCircle(x,y,px(2.5f),linePointPaint)
+        drawCircle(x, y, px(2.5f), linePointPaint)
     }
 
     //draw day names on each pattern
@@ -165,7 +167,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         val dayPositionY = dayNameCanvasF.centerY() + (dayPaint.textSize/2)
 
         for(day in 1..totalDays){
-            val dayPositionX = getDayX(day)
+            val dayPositionX = getDayPositionX(day)
             drawDayName(dayNameProvider.getName(day), dayPositionX, dayPositionY)
         }
 
@@ -177,13 +179,13 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         drawText(name, x, y, dayPaint)
     }
 
-    private fun getDayX(day:Int, totalDay:Int = 7):Float{
+    private fun getDayPositionX(day:Int, totalDay:Int = 7):Float{
 
-        val frameLeft = dayNameCanvasF.left
+        val canvasLeft = dayNameCanvasF.left
         val segmentWidth = dayNameCanvasF.width() / totalDay
         val segmentHalf = segmentWidth / 2
 
-        return frameLeft + ( (day * segmentWidth) - segmentHalf )
+        return canvasLeft + ( (day * segmentWidth) - segmentHalf )
     }
 
     /**
@@ -192,6 +194,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     private fun initConfig(){
 
         dayNameHeight = px(30f)
+
         val graphPadding = px(16f)
         graphPaddingLeft = graphPadding
         graphPaddingTop = 0f
@@ -200,7 +203,6 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     }
 
     private fun refreshView(){
-
         invalidate()
     }
 
@@ -246,16 +248,16 @@ class SpendGraph @JvmOverloads constructor(context:Context,
             canvasF.bottom
         )
 
+    //Above the Day Name Text
     private fun createLineCanvasFrame() =
-        //Above the Day Name Text
         RectF(
             canvasF.left + graphPaddingLeft,
             canvasF.top + graphPaddingTop,
             canvasF.right - graphPaddingRight,
              canvasF.bottom - graphPaddingBottom  )
 
+    //Trim the padding between Graph Canvas and Whole View
     private fun createCanvasFrame() =
-        //Trim the padding between Graph Canvas and Whole View
         RectF(
             viewF.left + paddingLeft,
             viewF.top + paddingTop,

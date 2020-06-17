@@ -52,7 +52,8 @@ class HomeFragment : BaseFragment(){
         viewBinding.imgGraph.spendPoints = getSamplePoints()
     }
 
-    private fun getSamplePoints() = mutableListOf<SpendPoint>().apply {
+    private fun getSamplePoints() =
+        mutableListOf<SpendPoint>().apply {
         add(SpendPoint(1, randomRate()))
         add(SpendPoint(2, randomRate()))
         add(SpendPoint(3, randomRate()))

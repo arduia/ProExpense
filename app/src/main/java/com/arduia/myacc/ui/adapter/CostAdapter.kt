@@ -15,7 +15,9 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
     var listItem = listOf<CostVto>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CostViewHolder {
+
         val itemView = layoutInflater.inflate(R.layout.item_cost,parent,false)
+
         return CostViewHolder(ItemCostBinding.bind(itemView))
     }
 
@@ -48,6 +50,7 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
            }
 
            tvValue.text = item.cost
+
            imgType.setImageResource(imgRes)
        }
 

@@ -10,7 +10,7 @@ import com.arduia.myacc.ui.BaseFragment
 
 class FeedbackFragment :BaseFragment(){
 
-    private val viewBinding by lazy { FragFeedbackBinding.inflate(layoutInflater)}
+    private val viewBinding by lazy { FragFeedbackBinding.inflate(layoutInflater) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
