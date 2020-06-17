@@ -5,26 +5,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.arduia.core.performance.printDurationMilli
+import com.arduia.core.performance.printDurationNano
 import com.arduia.graph.SpendPoint
-import com.arduia.myacc.NavigationDrawer
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
 import com.arduia.myacc.ui.adapter.CostAdapter
 import com.arduia.myacc.ui.mock.costList
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.random.nextInt
 
 
 class HomeFragment : BaseFragment(){
 
-    private val viewBinding by lazy { FragHomeBinding.inflate(layoutInflater) }
+    private val viewBinding by lazy {
+        printDurationMilli("HomeFragment", "Home Binding"){
+            FragHomeBinding.inflate(layoutInflater).apply {
+                rvRecent.adapter = costAdapter
+                rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL,false)
+            }
+        }
+    }
 
-    private val costAdapter: CostAdapter by lazy { CostAdapter(layoutInflater) }
+    private val costAdapter: CostAdapter by lazy {
+        CostAdapter(layoutInflater)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,14 +51,12 @@ class HomeFragment : BaseFragment(){
     private fun setupView(){
 
         viewBinding.fbAdd.setColorFilter(Color.WHITE)
-
         viewBinding.btnClose.setOnClickListener {  openDrawer()  }
+    }
 
-        viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL,false)
-        viewBinding.rvRecent.adapter = costAdapter
-
+    override fun onResume() {
+        super.onResume()
         costAdapter.listItem = costList()
-
         viewBinding.imgGraph.spendPoints = getSamplePoints()
     }
 

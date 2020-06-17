@@ -2,13 +2,12 @@ package com.arduia.myacc.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.*
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
+import com.arduia.core.performance.printDurationMilli
+import com.arduia.core.performance.printDurationNano
 import com.arduia.myacc.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ActivMainBinding
@@ -21,7 +20,11 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationDrawer{
 
-    private val viewBinding by lazy { ActivMainBinding.inflate(layoutInflater) }
+    private val viewBinding by lazy {
+        printDurationMilli("MainActivity", "Activity Binding"){
+            ActivMainBinding.inflate(layoutInflater)
+        }
+    }
     private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
     private val navController by lazy { findNavController(R.id.fc_main) }
     private val navOption by lazy { createNavOption() }

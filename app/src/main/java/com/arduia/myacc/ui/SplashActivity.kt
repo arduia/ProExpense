@@ -22,7 +22,7 @@ class SplashActivity :AppCompatActivity(){
         setContentView(contentView)
 
         MainScope().launch(Dispatchers.Main){
-            delay(600)
+            delay(100)
             val intent = Intent(this@SplashActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
@@ -58,7 +58,6 @@ class SplashActivity :AppCompatActivity(){
                 bottomMargin = resources.getDimension(R.dimen.material_base).toInt()
             }
             id = View.generateViewId()
-//            visibility = View.INVISIBLE
         }
 
         //add to Desire Views
