@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.arduia.myacc.databinding.FragLogBinding
 import com.arduia.myacc.databinding.SheetEntryBinding
+import com.arduia.myacc.ui.BaseFragment
 
-class LogFragment : Fragment(){
+class LogFragment : BaseFragment(){
 
     private val viewBinding by lazy { SheetEntryBinding.inflate(layoutInflater)  }
 

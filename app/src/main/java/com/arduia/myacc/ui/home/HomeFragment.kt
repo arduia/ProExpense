@@ -11,16 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.arduia.graph.SpendPoint
 import com.arduia.myacc.NavigationDrawer
 import com.arduia.myacc.databinding.FragHomeBinding
+import com.arduia.myacc.ui.BaseFragment
 import com.arduia.myacc.ui.adapter.CostAdapter
 import com.arduia.myacc.ui.mock.costList
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 
-class HomeFragment : Fragment(){
+class HomeFragment : BaseFragment(){
 
     private val viewBinding by lazy { FragHomeBinding.inflate(layoutInflater) }
-    private val navDrawer:NavigationDrawer? by lazy { requireActivity() as? NavigationDrawer  }
 
     private val costAdapter: CostAdapter by lazy { CostAdapter(layoutInflater) }
 
@@ -32,27 +34,34 @@ class HomeFragment : Fragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         setupView()
     }
 
     private fun setupView(){
 
         viewBinding.fbAdd.setColorFilter(Color.WHITE)
-        viewBinding.btnClose.setOnClickListener { navDrawer?.openDrawer()  }
-        viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext(),RecyclerView.VERTICAL,false)
+
+        viewBinding.btnClose.setOnClickListener {  openDrawer()  }
+
+        viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL,false)
         viewBinding.rvRecent.adapter = costAdapter
+
         costAdapter.listItem = costList()
+
         viewBinding.imgGraph.spendPoints = getSamplePoints()
     }
 
     private fun getSamplePoints() = mutableListOf<SpendPoint>().apply {
-        add(SpendPoint(1,0.1f))
-        add(SpendPoint(2,0.5f))
-        add(SpendPoint(3, 0.1f))
-        add(SpendPoint(4,0.7f))
-        add(SpendPoint(5,0.4f))
-        add(SpendPoint(6,0.1f))
-        add(SpendPoint(7,0.1f))
+        add(SpendPoint(1, randomRate()))
+        add(SpendPoint(2, randomRate()))
+        add(SpendPoint(3, randomRate()))
+        add(SpendPoint(4, randomRate()))
+        add(SpendPoint(5, randomRate()))
+        add(SpendPoint(6, randomRate()))
+        add(SpendPoint(7, randomRate()))
     }
+
+    private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
 
 }

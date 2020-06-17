@@ -11,13 +11,16 @@ class SpendGraph @JvmOverloads constructor(context:Context,
                                            attrs:AttributeSet?=null,
                                            defStyleAttrs:Int=0):View(context,attrs,defStyleAttrs){
 
-    //whole Custom View
+    //Whole Custom View
     private val viewF by lazy { createViewFrame() }
 
     //Internal Graph Padding between Whole view and Graph Canvas Frame
     private var graphPaddingLeft = 0f
+
     private var graphPaddingTop = 0f
+
     private var graphPaddingRight = 0f
+
     private var graphPaddingBottom= 0f
 
     //Week Name Height of the graph
@@ -45,7 +48,6 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     /**
      * Interface Fields
      */
-
     var spendPoints:List<SpendPoint> = emptyList()
     set(value) {
         field = value
@@ -71,7 +73,6 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     /**
      * Draw Methods
      */
-
     private fun Canvas.drawPointLines( ){
 
         val linePath = Path()
@@ -88,6 +89,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         list.forEachIndexed { i, point ->
 
             val xPosition = getDayX(point.day)
+
             //ratio of height for rate
             val yPosition = bottomF - (point.rate * heightF)
 
@@ -96,13 +98,13 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
             if(i == 0){
                 //move to first position
-                linePath.moveTo(xPosition,yPosition)
+                linePath.moveTo(xPosition, yPosition)
             }else{
                 //line to each position
-                linePath.lineTo(xPosition,yPosition)
+                linePath.lineTo(xPosition, yPosition)
             }
-
         }
+
         //draw graph line on line Path
         drawPath(linePath,linePaint)
 
@@ -133,20 +135,26 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
         //place doted points on path
         for(position in startY.toInt() downTo endY.toInt() step 5){
-            when(position%3) {
+            when(position % 3) {
                 1 -> dotedPath.moveTo(commonX, position.toFloat())
                 2 -> dotedPath.lineTo(commonX, position.toFloat())
             }
         }
+
         //draw doted points
         drawPath(dotedPath,linePointPaint)
+
         //draw label at right corner
-        drawText("${(point.rate * 100).toInt()} %",commonX + (linePaint.textSize * 2), endY -  (linePaint.textSize * 2),labelPaint)
+        val labelPositionX = commonX + (linePaint.textSize * 2)
+        val labelPositionY = endY - (linePaint.textSize * 2)
+
+        drawText("${(point.rate * 100).toInt()} %", labelPositionX, labelPositionY, labelPaint)
     }
 
 
     //draw point
     private fun Canvas.drawLinePoint(x:Float, y:Float){
+
         drawCircle(x,y,px(2.5f),linePointPaint)
     }
 
@@ -164,16 +172,18 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     }
 
     //draw a day name
-    private fun Canvas.drawDayName(name:String,x:Float,y:Float){
+    private fun Canvas.drawDayName(name:String, x:Float, y:Float){
+
         drawText(name, x, y, dayPaint)
     }
 
-    private fun getDayX(day:Int, totalDay:Int=7):Float{
-        val frameLeft = dayNameCanvasF.left
-        val segmentWidth = dayNameCanvasF.width()/totalDay
-        val segmentHalf = segmentWidth/2
+    private fun getDayX(day:Int, totalDay:Int = 7):Float{
 
-        return frameLeft + ((day * segmentWidth) - segmentHalf)
+        val frameLeft = dayNameCanvasF.left
+        val segmentWidth = dayNameCanvasF.width() / totalDay
+        val segmentHalf = segmentWidth / 2
+
+        return frameLeft + ( (day * segmentWidth) - segmentHalf )
     }
 
     /**
@@ -187,10 +197,10 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         graphPaddingTop = 0f
         graphPaddingRight = graphPadding
         graphPaddingBottom = dayNameHeight
-
     }
 
     private fun refreshView(){
+
         invalidate()
     }
 
@@ -198,7 +208,6 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     /**
      * Creation Methods
      */
-
     private fun createDayPaint() =
         Paint().apply {
         color = Color.WHITE

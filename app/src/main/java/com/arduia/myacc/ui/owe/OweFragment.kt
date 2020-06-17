@@ -23,14 +23,18 @@ class OweFragment: BaseFragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         setupView()
     }
 
     private fun setupView(){
+
         viewBinding.fabAdd.setColorFilter(Color.WHITE)
+
         viewBinding.btnOpen.setOnClickListener {
             openDrawer()
         }
+
     }
 
 }

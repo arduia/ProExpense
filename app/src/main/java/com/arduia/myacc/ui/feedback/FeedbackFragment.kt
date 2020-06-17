@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.arduia.myacc.databinding.FragFeedbackBinding
+import com.arduia.myacc.ui.BaseFragment
 
-class FeedbackFragment :Fragment(){
+class FeedbackFragment :BaseFragment(){
 
     private val viewBinding by lazy { FragFeedbackBinding.inflate(layoutInflater)}
 

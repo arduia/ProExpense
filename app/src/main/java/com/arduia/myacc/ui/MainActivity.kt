@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
     private val viewBinding by lazy { ActivMainBinding.inflate(layoutInflater) }
     private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
     private val navController by lazy { findNavController(R.id.fc_main) }
-    private val navOption by lazy {  createNavOption() }
+    private val navOption by lazy { createNavOption() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
     }
 
     private fun setupNavigation(){
+
         viewBinding.nvMain.setupWithNavController(navController)
 
         viewBinding.nvMain.setNavigationItemSelectedListener listener@{
@@ -49,14 +50,17 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
                 if(it.itemId == R.id.dest_home ){
                     navController.popBackStack(R.id.dest_home,false)
                 }
+
                 navController.navigate(it.itemId,null,navOption)
             }
+
             return@listener true
         }
 
         headerBinding.btnBack.setOnClickListener {
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
         }
+
     }
 
     override fun openDrawer() {

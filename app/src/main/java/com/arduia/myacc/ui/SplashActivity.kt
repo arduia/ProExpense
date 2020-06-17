@@ -20,13 +20,15 @@ class SplashActivity :AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(contentView)
+
         MainScope().launch(Dispatchers.Main){
             delay(600)
-            val intent = Intent(this@SplashActivity,MainActivity::class.java)
-            startActivity(intent )
+            val intent = Intent(this@SplashActivity, MainActivity::class.java)
+            startActivity(intent)
             finish()
-            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
+
     }
 
     private fun createView():View{
@@ -36,17 +38,14 @@ class SplashActivity :AppCompatActivity(){
         val imageView = ImageView(this)
         val progressBar = ProgressBar(this)
 
-
         //Configure
         with(frameLayout){
-            background = ContextCompat.getDrawable(this@SplashActivity,R.color.colorPrimary)
-            val param = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT)
-//            param.gravity = Gravity.CENTER
-            layoutParams = param
+            background = ContextCompat.getDrawable(this@SplashActivity, R.color.colorPrimary)
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         }
 
         with(imageView){
-            layoutParams = FrameLayout.LayoutParams(px(80),px(80) ).apply {
+            layoutParams = FrameLayout.LayoutParams(px(80), px(80)).apply {
                 gravity = Gravity.CENTER
             }
             setImageResource(R.drawable.ic_borrow)
@@ -54,9 +53,9 @@ class SplashActivity :AppCompatActivity(){
         }
 
         with(progressBar){
-            layoutParams = FrameLayout.LayoutParams(px(30),px(30)).apply {
+            layoutParams = FrameLayout.LayoutParams(px(30), px(30)).apply {
                 gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                bottomMargin  = resources.getDimension(R.dimen.material_base).toInt()
+                bottomMargin = resources.getDimension(R.dimen.material_base).toInt()
             }
             id = View.generateViewId()
 //            visibility = View.INVISIBLE
@@ -68,7 +67,5 @@ class SplashActivity :AppCompatActivity(){
 
         return frameLayout
     }
-
-
 
 }

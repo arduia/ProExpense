@@ -22,6 +22,7 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
     override fun getItemCount() = listItem.size
 
     override fun onBindViewHolder(holder: CostViewHolder, position: Int) {
+
         val item = listItem[position]
 
         with(holder.binding){
@@ -31,31 +32,27 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
            tvFiance.text = item.finance
 
            val imgRes = when(item.cateogry){
-               CostCategory.CLOTHES -> R.drawable.ic_clothes
-               CostCategory.HOUSEHOLD -> R.drawable.ic_household
-               CostCategory.TRANSPORTATION -> R.drawable.ic_transportation
-               CostCategory.FOOD -> R.drawable.ic_food
-               CostCategory.UTILITIES -> R.drawable.ic_utities
-               CostCategory.HEARTHCARE -> R.drawable.ic_healthcare
-               CostCategory.SOCIAL -> R.drawable.ic_social
-               CostCategory.EDUCATION -> R.drawable.ic_education
-               CostCategory.DONATIONS -> R.drawable.ic_donations
-               CostCategory.ENTERTAINMENT -> R.drawable.ic_entertainment
-               CostCategory.INCOME ->{
-                   R.drawable.ic_borrow
-               }
-           }
 
-//           if(item.cateogry != CostCategory.INCOME){
-//               tvValue.setTextColor(Color.RED)
-//           }
+               CostCategory.CLOTHES         -> R.drawable.ic_clothes
+               CostCategory.HOUSEHOLD       -> R.drawable.ic_household
+               CostCategory.TRANSPORTATION  -> R.drawable.ic_transportation
+               CostCategory.FOOD            -> R.drawable.ic_food
+               CostCategory.UTILITIES       -> R.drawable.ic_utities
+               CostCategory.HEARTHCARE      -> R.drawable.ic_healthcare
+               CostCategory.SOCIAL          -> R.drawable.ic_social
+               CostCategory.EDUCATION       -> R.drawable.ic_education
+               CostCategory.DONATIONS       -> R.drawable.ic_donations
+               CostCategory.ENTERTAINMENT   -> R.drawable.ic_entertainment
+               CostCategory.INCOME          -> R.drawable.ic_borrow
+
+           }
 
            tvValue.text = item.cost
            imgType.setImageResource(imgRes)
-
        }
+
     }
 
-    class CostViewHolder(val binding:ItemCostBinding):RecyclerView.ViewHolder(binding.root)
+    class CostViewHolder(val binding:ItemCostBinding): RecyclerView.ViewHolder(binding.root)
 
 }
