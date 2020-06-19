@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
     private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
     private val navController by lazy { findNavController(R.id.fc_main) }
     private val navOption by lazy { createNavOption() }
-    private var itemSelectionTask: (()->Unit) = {}
+    private var itemSelectionTask: (()->Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,9 +71,9 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
 
             override fun onDrawerClosed(drawerView: View) {
                 //execute selected item
-                itemSelectionTask()
+                itemSelectionTask?.invoke()
                 //remove old task
-                itemSelectionTask = {}
+                itemSelectionTask = null
             }
 
             override fun onDrawerOpened(drawerView: View) {

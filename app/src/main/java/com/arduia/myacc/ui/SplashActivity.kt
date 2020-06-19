@@ -21,8 +21,9 @@ class SplashActivity :AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(contentView)
 
+        //This execution can be in App Alive.
         MainScope().launch(Dispatchers.Main){
-            delay(200)
+            delay(300)
             val intent = Intent(this@SplashActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
@@ -62,7 +63,6 @@ class SplashActivity :AppCompatActivity(){
 
         //add to Desire Views
         frameLayout.addView(imageView)
-        frameLayout.addView(progressBar)
 
         return frameLayout
     }

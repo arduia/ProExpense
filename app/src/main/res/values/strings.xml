@@ -26,5 +26,7 @@
     <string name="label_total">Total Balance</string>
 
     <string name="label_owe_total">Total Owe</string>
+    <string name="label_owe_log">Log</string>
+    <string name="label_owe_people">People</string>
 </resources>
 
