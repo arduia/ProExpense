@@ -2,8 +2,12 @@ package com.arduia.myacc.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log.d
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.*
 import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.performance.printDurationMilli
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
     private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
     private val navController by lazy { findNavController(R.id.fc_main) }
     private val navOption by lazy { createNavOption() }
+    private var itemSelectionTask: (()->Unit) = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,26 +49,50 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
         viewBinding.nvMain.setupWithNavController(navController)
 
         viewBinding.nvMain.setNavigationItemSelectedListener listener@{
-            //for smooth drawer motions
-            MainScope().launch {
-                viewBinding.dlMain.closeDrawer(GravityCompat.START)
-                //wait for drawer closure
-                delay(300)
-                //popBack last
-                if(it.itemId == R.id.dest_home ){
-                    navController.popBackStack(R.id.dest_home,false)
-                }
 
-                navController.navigate(it.itemId,null,navOption)
-            }
+            //for smooth drawer motions
+            //register new task
+            itemSelectionTask = { selectItem(it) }
+
+            //close drawer first
+            viewBinding.dlMain.closeDrawer(GravityCompat.START)
 
             return@listener true
         }
+
+        viewBinding.dlMain.addDrawerListener(object:DrawerLayout.DrawerListener{
+            override fun onDrawerStateChanged(newState: Int) {
+
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                //execute selected item
+                itemSelectionTask()
+                //remove old task
+                itemSelectionTask = {}
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+
+            }
+
+        })
 
         headerBinding.btnBack.setOnClickListener {
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
         }
 
+    }
+
+    private fun selectItem(item:MenuItem){
+        if(item.itemId == R.id.dest_home ){
+            navController.popBackStack(R.id.dest_home,false)
+        }
+        navController.navigate(item.itemId,null,navOption)
     }
 
     override fun openDrawer() {
@@ -79,5 +108,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
         NavOptions.Builder()
             .setLaunchSingleTop(true)
             .build()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        itemSelectionTask = {}
+    }
 
 }

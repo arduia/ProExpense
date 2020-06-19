@@ -22,7 +22,7 @@ class SplashActivity :AppCompatActivity(){
         setContentView(contentView)
 
         MainScope().launch(Dispatchers.Main){
-            delay(100)
+            delay(200)
             val intent = Intent(this@SplashActivity, MainActivity::class.java)
             startActivity(intent)
             finish()

@@ -2,6 +2,7 @@ package com.arduia.myacc.ui.home
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,13 +29,12 @@ class HomeFragment : BaseFragment(){
             FragHomeBinding.inflate(layoutInflater).apply {
                 rvRecent.adapter = costAdapter
                 rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL,false)
+                d("HomeFragment","Home instance is ${this.root.toString()}")
             }
         }
     }
 
-    private val costAdapter: CostAdapter by lazy {
-        CostAdapter(layoutInflater)
-    }
+    private val costAdapter by lazy { CostAdapter(layoutInflater) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,16 +48,15 @@ class HomeFragment : BaseFragment(){
         setupView()
     }
 
-    private fun setupView(){
-
-        viewBinding.fbAdd.setColorFilter(Color.WHITE)
-        viewBinding.btnClose.setOnClickListener {  openDrawer()  }
-    }
-
     override fun onResume() {
         super.onResume()
         costAdapter.listItem = costList()
         viewBinding.imgGraph.spendPoints = getSamplePoints()
+    }
+
+    private fun setupView(){
+        viewBinding.fbAdd.setColorFilter(Color.WHITE)
+        viewBinding.btnClose.setOnClickListener { openDrawer() }
     }
 
     private fun getSamplePoints() =
