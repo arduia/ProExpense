@@ -21,7 +21,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
+
 class MainActivity : AppCompatActivity(), NavigationDrawer{
 
     private val viewBinding by lazy {
