@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/rv_log"
-        tools:listitem="@layout/item_cost"
+        tools:listitem="@layout/item_owe"
         android:layout_marginStart="@dimen/material_base"
         android:layout_marginEnd="@dimen/material_base"
         android:layout_below="@id/ln_title"

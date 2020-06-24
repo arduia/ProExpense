@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
         }
 
         viewBinding.dlMain.addDrawerListener(object:DrawerLayout.DrawerListener{
+
             override fun onDrawerStateChanged(newState: Int) {
 
             }
@@ -89,30 +90,35 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
     }
 
     private fun selectItem(item:MenuItem){
-        if(item.itemId == R.id.dest_home ){
+
+        // select Item
+        if( item.itemId == R.id.dest_home ){
             navController.popBackStack(R.id.dest_home,false)
         }
+        // navigate Item
         navController.navigate(item.itemId,null,navOption)
+
     }
 
     override fun openDrawer() {
+        // Open Drawer
         viewBinding.dlMain.openDrawer(GravityCompat.START)
     }
 
+    //Lock Drawer for Some Fragment which doesn't require Drawer
     override fun lockDrawer(isLocked: Boolean) {
 
         when(isLocked){
-            true    -> {
+            true -> {
                 with(viewBinding.dlMain){
-
-                    //Firstly close the drawer
+                    // Firstly close the drawer
                     closeDrawer(GravityCompat.START)
-                    //Lock the Drawer
+                    // Lock the Drawer
                     setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
             }
-
-            false   -> {
+            false -> {
+                // Unlock the drawer
                 viewBinding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             }
         }
@@ -120,15 +126,17 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
     }
 
     override fun navigateUpTo(upIntent: Intent?): Boolean {
+        // Check navigation has back stack
         return super.navigateUpTo(upIntent) or navController.navigateUp()
     }
 
-    //separated function to improve readability
+    // Separated function to improve readability
     private fun createNavOption() =
         NavOptions.Builder()
             .setLaunchSingleTop(true)
             .build()
 
+    //
     override fun onDestroy() {
         super.onDestroy()
         itemSelectionTask = {}

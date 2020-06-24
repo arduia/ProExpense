@@ -19,4 +19,5 @@ class LogFragment : BaseFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?  = viewBinding.root
+
 }

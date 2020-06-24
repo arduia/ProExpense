@@ -58,7 +58,6 @@ class HomeFragment : BaseFragment(){
         viewBinding.btnClose.setOnClickListener { openDrawer() }
 
         viewBinding.btnRecentMore.setOnClickListener {
-
             findNavController().navigate(R.id.dest_transaction)
         }
 

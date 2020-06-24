@@ -14,7 +14,6 @@ import javax.inject.Inject
 class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater):
     ListAdapter<CostVto, CostAdapter.VH>(DIFF_CALLBACK){
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
         val itemView = layoutInflater.inflate(R.layout.item_cost,parent,false)
