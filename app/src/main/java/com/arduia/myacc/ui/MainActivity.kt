@@ -99,6 +99,26 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
         viewBinding.dlMain.openDrawer(GravityCompat.START)
     }
 
+    override fun lockDrawer(isLocked: Boolean) {
+
+        when(isLocked){
+            true    -> {
+                with(viewBinding.dlMain){
+
+                    //Firstly close the drawer
+                    closeDrawer(GravityCompat.START)
+                    //Lock the Drawer
+                    setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+            }
+
+            false   -> {
+                viewBinding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            }
+        }
+
+    }
+
     override fun navigateUpTo(upIntent: Intent?): Boolean {
         return super.navigateUpTo(upIntent) or navController.navigateUp()
     }

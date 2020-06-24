@@ -28,5 +28,14 @@
     <string name="label_owe_total">Total Owe</string>
     <string name="label_owe_log">Log</string>
     <string name="label_owe_people">People</string>
+
+<!--    Transaction-->
+    <string name="label_transition">Transactions</string>
+    <string name="label_recent">Recents</string>
+
+<!--    Settings-->
+    <string name="label_font">Font</string>
+    <string name="label_mm">MM</string>
+    <string name="label_eng">EN</string>
 </resources>
 

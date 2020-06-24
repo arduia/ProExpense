@@ -8,7 +8,11 @@
         android:id="@+id/dest_home"
         android:name="com.arduia.myacc.ui.home.HomeFragment"
         android:label="@string/label_home"
-        tools:layout = "@layout/frag_home"/>
+        tools:layout = "@layout/frag_home">
+        <action
+            android:id="@+id/action_dest_home_to_transactionFragment"
+            app:destination="@id/dest_transaction" />
+    </fragment>
     <fragment
         android:id="@+id/dest_owe"
         android:name="com.arduia.myacc.ui.owe.OweFragment"
@@ -28,4 +32,8 @@
         android:id="@+id/dest_settings"
         android:label="@string/label_settings"
         android:name="com.arduia.myacc.ui.settings.SettingsFragment"/>
+    <fragment
+        android:id="@+id/dest_transaction"
+        android:name="com.arduia.myacc.ui.transaction.TransactionFragment"
+        android:label="TransactionFragment" />
 </navigation>

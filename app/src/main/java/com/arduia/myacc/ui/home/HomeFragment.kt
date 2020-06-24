@@ -6,13 +6,17 @@ import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.core.performance.printDurationMilli
 import com.arduia.core.performance.printDurationNano
 import com.arduia.graph.SpendPoint
+import com.arduia.myacc.NavigationDrawer
+import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
+import com.arduia.myacc.ui.MainActivity
 import com.arduia.myacc.ui.adapter.CostAdapter
 import com.arduia.myacc.ui.mock.costList
 import kotlinx.coroutines.Dispatchers
@@ -44,19 +48,27 @@ class HomeFragment : BaseFragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         setupView()
+    }
+
+    private fun setupView(){
+
+        viewBinding.fbAdd.setColorFilter(Color.WHITE)
+
+        viewBinding.btnClose.setOnClickListener { openDrawer() }
+
+        viewBinding.btnRecentMore.setOnClickListener {
+
+            findNavController().navigate(R.id.dest_transaction)
+        }
+
     }
 
     override fun onResume() {
         super.onResume()
-        costAdapter.listItem = costList()
-        viewBinding.imgGraph.spendPoints = getSamplePoints()
-    }
 
-    private fun setupView(){
-        viewBinding.fbAdd.setColorFilter(Color.WHITE)
-        viewBinding.btnClose.setOnClickListener { openDrawer() }
+        costAdapter.submitList(costList())
+        viewBinding.imgGraph.spendPoints = getSamplePoints()
     }
 
     private fun getSamplePoints() =

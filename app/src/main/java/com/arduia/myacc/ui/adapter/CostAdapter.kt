@@ -2,6 +2,8 @@ package com.arduia.myacc.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ItemCostBinding
@@ -10,22 +12,19 @@ import com.arduia.myacc.ui.vto.CostVto
 import javax.inject.Inject
 
 class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater):
-    RecyclerView.Adapter<CostAdapter.CostViewHolder>(){
+    ListAdapter<CostVto, CostAdapter.VH>(DIFF_CALLBACK){
 
-    var listItem = listOf<CostVto>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CostViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
         val itemView = layoutInflater.inflate(R.layout.item_cost,parent,false)
 
-        return CostViewHolder(ItemCostBinding.bind(itemView))
+        return VH(ItemCostBinding.bind(itemView))
     }
 
-    override fun getItemCount() = listItem.size
+    override fun onBindViewHolder(holder: VH, position: Int) {
 
-    override fun onBindViewHolder(holder: CostViewHolder, position: Int) {
-
-        val item = listItem[position]
+        val item = getItem(position)
 
         with(holder.binding){
 
@@ -56,6 +55,20 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
 
     }
 
-    class CostViewHolder(val binding:ItemCostBinding): RecyclerView.ViewHolder(binding.root)
+    class VH(val binding:ItemCostBinding): RecyclerView.ViewHolder(binding.root)
 
+}
+
+private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<CostVto>(){
+    override fun areItemsTheSame(oldItem: CostVto, newItem: CostVto): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: CostVto, newItem: CostVto): Boolean {
+        return oldItem.name == newItem.name &&
+                oldItem.cateogry == newItem.cateogry &&
+                oldItem.cost == newItem.cost &&
+                oldItem.date == newItem.date &&
+                oldItem.finance == newItem.finance
+    }
 }

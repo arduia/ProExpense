@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="check_box_preference_1"
-        android:title="Check box preference" />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="switch_preference_1"
-        android:title="Switch preference" />
+    <SwitchPreferenceCompat
+
+        app:key="font"
+        app:title="@string/label_font"/>
+
 </androidx.preference.PreferenceScreen>

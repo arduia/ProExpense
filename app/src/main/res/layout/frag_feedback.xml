@@ -98,13 +98,15 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/btn_send"
         android:text="@string/label_send_feedback"
         android:layout_marginTop="@dimen/material_base"
         android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"/>
+        android:layout_marginEnd="@dimen/material_base"
+        android:layout_marginBottom="@dimen/material_base"
+        />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
 </LinearLayout>
