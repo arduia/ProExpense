@@ -56,17 +56,32 @@ class HomeFragment : BaseFragment(){
         rvRecent.addOnScrollListener(object: RecyclerView.OnScrollListener(){
 
             private var totalScrollTop = 0
+            private var currentScrollShift = 0
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
                 totalScrollTop += dy
+                currentScrollShift += dy
 
                 when(totalScrollTop > 0){
                     //It is scrolling...
                     true -> dvRecent.visibility = View.VISIBLE
                     //If it is on start point hide it
                     false -> dvRecent.visibility = View.INVISIBLE
+                }
+
+                when(currentScrollShift > 10){
+                    true -> fbAdd.hide()
+                    false -> fbAdd.show()
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                    //Scrolling is over
+                    currentScrollShift = 0
                 }
             }
         })

@@ -2,6 +2,7 @@ package com.arduia.myacc.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
@@ -26,6 +27,14 @@ class OwePagerAdapter(private val layoutInflater: LayoutInflater):
             layoutManager = LinearLayoutManager(parent.context, RecyclerView.VERTICAL, false)
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
+//            Top Padding between List View top and first item
+            clipToPadding = false
+            setPadding(
+                paddingLeft,
+                resources.getDimension(R.dimen.material_margin).toInt(),
+                paddingRight,
+                paddingBottom)
+            overScrollMode = ScrollView.OVER_SCROLL_NEVER
         }
 
         return VH(recyclerView)
@@ -58,15 +67,6 @@ class OwePagerAdapter(private val layoutInflater: LayoutInflater):
                 //No more type so return
                 else -> return
             }
-
-            //Top Padding between List View top and first item
-            clipToPadding = false
-            setPadding(
-                paddingLeft,
-                resources.getDimension(R.dimen.material_margin).toInt(),
-                paddingRight,
-                paddingBottom)
-
         }
 
     }
