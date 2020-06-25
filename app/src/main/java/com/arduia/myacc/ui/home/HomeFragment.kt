@@ -6,28 +6,16 @@ import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
-import androidx.core.view.children
-import androidx.core.view.get
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.core.extension.px
-import com.arduia.core.performance.printDurationMilli
-import com.arduia.core.performance.printDurationNano
 import com.arduia.graph.SpendPoint
-import com.arduia.myacc.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
-import com.arduia.myacc.ui.MainActivity
 import com.arduia.myacc.ui.adapter.CostAdapter
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import com.arduia.myacc.ui.mock.costList
-import kotlinx.android.synthetic.main.activ_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -65,6 +53,24 @@ class HomeFragment : BaseFragment(){
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             ))
 
+        rvRecent.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+            private var totalScrollTop = 0
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                totalScrollTop += dy
+
+                when(totalScrollTop > 0){
+                    //It is scrolling...
+                    true -> dvRecent.visibility = View.VISIBLE
+                    //If it is on start point hide it
+                    false -> dvRecent.visibility = View.INVISIBLE
+                }
+            }
+        })
+
         d("Home Fragment", "setupView")
 
     }
@@ -88,5 +94,7 @@ class HomeFragment : BaseFragment(){
     }
 
     private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
+
+
 
 }

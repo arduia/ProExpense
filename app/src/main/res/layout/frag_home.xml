@@ -44,8 +44,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"/>
+        app:layout_constraintBaseline_toBaselineOf="@id/btn_recent_more"
+        android:layout_marginStart="@dimen/material_margin" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_recent_more"
@@ -59,7 +59,8 @@
         android:textColor="@android:color/darker_gray"
         app:icon="@drawable/ic_navigate_next"
         app:iconGravity="end"
-        app:iconPadding="0dp"
+        android:paddingRight="0dp"
+        android:paddingBottom="0dp"
         app:iconSize="24dp"
         app:iconTint="@color/iconColorTint"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,6 +79,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_recent_more"
         app:layout_constraintVertical_bias="0"
+        android:visibility="invisible"
         />
 
     <androidx.recyclerview.widget.RecyclerView

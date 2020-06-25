@@ -21,10 +21,10 @@ class OwePagerAdapter(private val layoutInflater: LayoutInflater):
     set(value) { peopleAdapter.submitList(value) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+
         val recyclerView = RecyclerView(parent.context).apply {
             layoutManager = LinearLayoutManager(parent.context, RecyclerView.VERTICAL, false)
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            //Spacing Item
 
         }
 
@@ -58,6 +58,14 @@ class OwePagerAdapter(private val layoutInflater: LayoutInflater):
                 //No more type so return
                 else -> return
             }
+
+            //Top Padding between List View top and first item
+            clipToPadding = false
+            setPadding(
+                paddingLeft,
+                resources.getDimension(R.dimen.material_margin).toInt(),
+                paddingRight,
+                paddingBottom)
 
         }
 
