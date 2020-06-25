@@ -6,4 +6,5 @@
     <color name="onPrimaryColor">#ffffff</color>
     <color name="onSurfaceColor">#000000</color>
     <color name="materialCardColor">#f5f5f5</color>
+    <color name="iconColorTint">@android:color/darker_gray</color>
 </resources>

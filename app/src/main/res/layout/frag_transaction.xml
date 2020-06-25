@@ -52,8 +52,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_cost"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginEnd="@dimen/material_margin"
         android:layout_marginTop="@dimen/material_margin"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

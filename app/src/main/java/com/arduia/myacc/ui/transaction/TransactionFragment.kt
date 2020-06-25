@@ -8,8 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.myacc.NavigationDrawer
+import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
 import com.arduia.myacc.ui.adapter.CostAdapter
+import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import com.arduia.myacc.ui.mock.costList
 import com.arduia.myacc.ui.vto.CostVto
 
@@ -38,6 +40,10 @@ class TransactionFragment : Fragment(){
         //Setup Transaction Recycler View
         binding.rvTransactions.adapter = costAdapter
         binding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTransactions.addItemDecoration(MarginItemDecoration(
+            resources.getDimension(R.dimen.spacing_list_item).toInt(),
+            resources.getDimension(R.dimen.margin_list_item).toInt()
+        ))
 
         //Initialize list
         costAdapter.submitList(costList())

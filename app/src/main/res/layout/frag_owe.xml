@@ -13,7 +13,8 @@
         android:id="@+id/btn_open"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_menu"
-        android:tint="@color/onSurfaceColor"
+
+        android:tint="@android:color/darker_gray"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -104,16 +105,31 @@
             android:text="People" />
     </com.google.android.material.tabs.TabLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/dv_log"
+        android:background="@android:drawable/divider_horizontal_bright"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tab_layout"
+        app:layout_constraintVertical_bias="0"
+        />
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_owe"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/material_margin"
         android:overScrollMode="never"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tab_layout"/>
+        app:layout_constraintTop_toBottomOf="@id/tab_layout"
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fb_add"

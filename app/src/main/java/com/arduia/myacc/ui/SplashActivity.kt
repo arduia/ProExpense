@@ -23,7 +23,7 @@ class SplashActivity :AppCompatActivity(){
 
         //This execution can be in App Alive.
         MainScope().launch(Dispatchers.Main){
-            delay(300)
+            delay(200)
             val intent = Intent(this@SplashActivity, MainActivity::class.java)
             startActivity(intent)
             finish()

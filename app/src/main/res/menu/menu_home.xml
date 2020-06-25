@@ -12,10 +12,6 @@
         android:title="@string/label_borrows"
         android:icon="@drawable/ic_borrow"/>
     <item
-        android:id="@+id/dest_log"
-        android:icon="@drawable/ic_report"
-        android:title="@string/label_log" />
-    <item
         android:id="@+id/dest_feedback"
         android:icon="@drawable/ic_feedback"
         android:title="@string/label_feedback" />

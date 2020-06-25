@@ -12,6 +12,7 @@ import androidx.core.view.get
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.arduia.core.extension.px
 import com.arduia.core.performance.printDurationMilli
 import com.arduia.core.performance.printDurationNano
 import com.arduia.graph.SpendPoint
@@ -21,6 +22,7 @@ import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
 import com.arduia.myacc.ui.MainActivity
 import com.arduia.myacc.ui.adapter.CostAdapter
+import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import com.arduia.myacc.ui.mock.costList
 import kotlinx.android.synthetic.main.activ_main.*
 import kotlinx.coroutines.Dispatchers
@@ -33,13 +35,7 @@ import kotlin.random.nextInt
 class HomeFragment : BaseFragment(){
 
     private val viewBinding by lazy {
-        printDurationMilli("HomeFragment", "Home Binding"){
-            FragHomeBinding.inflate(layoutInflater).apply {
-                rvRecent.adapter = costAdapter
-                rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL,false)
-                d("HomeFragment","Home instance is ${this.root.toString()}")
-            }
-        }
+            FragHomeBinding.inflate(layoutInflater).apply { setupView() }
     }
 
     private val costAdapter by lazy { CostAdapter(layoutInflater) }
@@ -50,20 +46,26 @@ class HomeFragment : BaseFragment(){
         savedInstanceState: Bundle?
     ): View? = viewBinding.root
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setupView()
-    }
+    //Setup View
+    private fun FragHomeBinding.setupView(){
 
-    private fun setupView(){
+        fbAdd.setColorFilter(Color.WHITE)
 
-        viewBinding.fbAdd.setColorFilter(Color.WHITE)
+        btnClose.setOnClickListener { openDrawer() }
 
-        viewBinding.btnClose.setOnClickListener { openDrawer() }
-
-        viewBinding.btnRecentMore.setOnClickListener {
+        btnRecentMore.setOnClickListener {
             findNavController().navigate(R.id.dest_transaction)
         }
+
+        rvRecent.adapter = costAdapter
+        rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL,false)
+
+        rvRecent.addItemDecoration(
+            MarginItemDecoration( resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            ))
+
+        d("Home Fragment", "setupView")
 
     }
 

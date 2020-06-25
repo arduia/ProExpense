@@ -4,4 +4,6 @@
     <dimen name="material_margin_large">32dp</dimen>
     <dimen name="corner_radius">5dp</dimen>
     <dimen name="material_small_margin">10dp</dimen>
+    <dimen name="spacing_list_item">4dp</dimen>
+    <dimen name="margin_list_item">@dimen/material_margin</dimen>
 </resources>

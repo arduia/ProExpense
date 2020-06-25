@@ -5,4 +5,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 class AccountingApp: Application(){
 
+    override fun onCreate() {
+        super.onCreate()
+    }
 }

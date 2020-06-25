@@ -54,6 +54,12 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
             //register new task
             itemSelectionTask = { selectItem(it) }
 
+            //If Drawer is in Tablet Mode
+            if(!viewBinding.dlMain.isDrawerOpen(GravityCompat.START)){
+                itemSelectionTask?.invoke()
+                itemSelectionTask = {}
+            }
+
             //close drawer first
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
 
