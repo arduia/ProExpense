@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="material_base">16dp</dimen>
-    <dimen name="large_margin">32dp</dimen>
+    <dimen name="material_margin">16dp</dimen>
+    <dimen name="material_margin_large">32dp</dimen>
     <dimen name="corner_radius">5dp</dimen>
-    <dimen name="small_margin">10dp</dimen>
+    <dimen name="material_small_margin">10dp</dimen>
 </resources>

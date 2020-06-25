@@ -2,18 +2,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/accentColor</item>
+        <item name="colorOnPrimary">@color/onPrimaryColor</item>
         <item name="rippleColor">@android:color/darker_gray</item>
-        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <item name="colorOnSurface">@color/onSurfaceColor</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/primaryColor</item>
     </style>
 
     <style name="RoundedShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
@@ -28,11 +28,11 @@
         <item name="itemTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle2</item>
         <item name="itemTextColor">@color/nav_text</item>
         <item name="itemIconSize">20dp</item>
-        <item name="itemHorizontalPadding">@dimen/large_margin</item>
+        <item name="itemHorizontalPadding">@dimen/material_margin_large</item>
     </style>
 
     <style name="MaterialTab" parent="Widget.MaterialComponents.TabLayout">
-        <item name="tabIndicatorColor">@color/colorPrimary</item>
+        <item name="tabIndicatorColor">@color/primaryColor</item>
         <item name="tabIndicatorFullWidth">false</item>
         <item name="tabMaxWidth">100dp</item>
         <item name="tabGravity">center</item>

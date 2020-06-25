@@ -40,7 +40,7 @@
             app:layout_constraintStart_toEndOf="@id/img_type"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="@dimen/material_base"
+            android:layout_marginStart="@dimen/material_margin"
             android:text="Sugar" />
         <TextView
             android:id="@+id/tv_date"
@@ -59,9 +59,9 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/material_base"
+            android:layout_marginEnd="@dimen/material_margin"
             android:text="-30,000"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/primaryColor"
             app:layout_constraintBaseline_toBaselineOf="@+id/tv_name"
             app:layout_constraintEnd_toEndOf="parent" />
 

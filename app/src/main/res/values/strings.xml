@@ -1,10 +1,23 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+<!--    Base-->
     <string name="app_name">MyAccounting</string>
     <string name="label_resent">Recent</string>
     <string name="label_borrows">Owe</string>
     <string name="label_settings">Settings</string>
     <string name="tmp_title">Mi Khin Lay</string>
     <string name="label_transaction">Transactions</string>
+
+<!--    Home-->
+    <string name="label_log">Activity Log</string>
+    <string name="label_home">Home</string>
+    <string name="label_dashboard">Dashboard</string>
+    <string name="label_total">Total Balance</string>
+
+
+<!--    Owe-->
+    <string name="label_owe_total">Total Owe</string>
+    <string name="label_owe_log">Log</string>
+    <string name="label_owe_people">People</string>
 
 <!--    Entry Sheet-->
     <string name="label_spend">Spend</string>
@@ -16,18 +29,13 @@
 <!--    Feedback-->
     <string name="label_feedback">Feedback</string>
     <string name="label_feedback_description">We went to know what you thought of your experience at Accounting app so we\'d love to hear you feedback.</string>
+
     <string name="label_email">Email</string>
     <string name="label_comment">Your Comments</string>
     <string name="label_send_feedback">Send Feedback</string>
 
-    <string name="label_log">Activity Log</string>
-    <string name="label_home">Home</string>
-    <string name="label_dashboard">Dashboard</string>
-    <string name="label_total">Total Balance</string>
-
-    <string name="label_owe_total">Total Owe</string>
-    <string name="label_owe_log">Log</string>
-    <string name="label_owe_people">People</string>
+    <string name="label_sending" tools:ignore="TypographyEllipsis">Sending...</string>
+    <string name="label_thanks">Thanks Your Feedback!</string>
 
 <!--    Transaction-->
     <string name="label_transition">Transactions</string>
@@ -37,5 +45,7 @@
     <string name="label_font">Font</string>
     <string name="label_mm">MM</string>
     <string name="label_eng">EN</string>
+
+
 </resources>
 

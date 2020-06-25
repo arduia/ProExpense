@@ -13,10 +13,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/large_margin"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
-        android:layout_marginBottom="@dimen/large_margin"
+        android:layout_marginTop="@dimen/material_margin_large"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
+        android:layout_marginBottom="@dimen/material_margin_large"
         >
 
         <TextView
@@ -52,8 +52,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/material_base"
-                android:layout_marginEnd="@dimen/material_base">
+                android:layout_marginStart="@dimen/material_margin"
+                android:layout_marginEnd="@dimen/material_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tv_name"
@@ -73,8 +73,8 @@
                 app:singleLine="true"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_below="@id/tvl_name"
-                android:layout_marginTop="@dimen/material_base"
-                android:paddingStart="@dimen/material_base"  >
+                android:layout_marginTop="@dimen/material_margin"
+                android:paddingStart="@dimen/material_margin"  >
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -108,9 +108,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@id/chip_category"
-                android:layout_marginStart="@dimen/material_base"
-                android:layout_marginTop="@dimen/material_base"
-                android:layout_marginEnd="@dimen/material_base">
+                android:layout_marginStart="@dimen/material_margin"
+                android:layout_marginTop="@dimen/material_margin"
+                android:layout_marginEnd="@dimen/material_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tv_amount"
@@ -129,17 +129,17 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvl_amount"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="@dimen/material_base"
-                android:layout_marginTop="@dimen/material_base"
-                android:layout_marginEnd="@dimen/material_base"
+                android:layout_marginStart="@dimen/material_margin"
+                android:layout_marginTop="@dimen/material_margin"
+                android:layout_marginEnd="@dimen/material_margin"
                 android:text="Pictures" />
             <HorizontalScrollView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_picture"
                 android:layout_alignParentStart="true"
-                android:paddingStart="@dimen/material_base"
-                android:paddingEnd="@dimen/material_base"
+                android:paddingStart="@dimen/material_margin"
+                android:paddingEnd="@dimen/material_margin"
                 android:clipToPadding="true"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/hsv_add_pic"
@@ -157,8 +157,8 @@
                         android:layout_height="60dp"
                         android:layout_below="@id/tv_picture"
                         android:layout_alignStart="@id/tv_picture"
-                        android:layout_marginTop="@dimen/material_base"
-                        android:layout_marginBottom="@dimen/material_base"
+                        android:layout_marginTop="@dimen/material_margin"
+                        android:layout_marginBottom="@dimen/material_margin"
                         tools:ignore="ExtraText">
 
                         <ImageView
@@ -172,9 +172,9 @@
                         android:id="@+id/rv_picture"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/material_base"
-                        android:layout_marginTop="@dimen/material_base"
-                        android:layout_marginBottom="@dimen/material_base"
+                        android:layout_marginStart="@dimen/material_margin"
+                        android:layout_marginTop="@dimen/material_margin"
+                        android:layout_marginBottom="@dimen/material_margin"
                         android:orientation="horizontal"
                         tools:itemCount="1"
                         tools:listitem="@layout/item_add_picture"
@@ -190,9 +190,9 @@
                 android:layout_below="@id/hsv_add_pic"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="@dimen/material_base"
-                android:layout_marginTop="@dimen/material_base"
-                android:layout_marginEnd="@dimen/material_base">
+                android:layout_marginStart="@dimen/material_margin"
+                android:layout_marginTop="@dimen/material_margin"
+                android:layout_marginEnd="@dimen/material_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tv_description"
@@ -210,8 +210,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvl_description"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/material_base"
-                android:layout_marginBottom="@dimen/material_base"
+                android:layout_marginTop="@dimen/material_margin"
+                android:layout_marginBottom="@dimen/material_margin"
                 android:text="@string/label_save" />
         </RelativeLayout>
     </ScrollView>

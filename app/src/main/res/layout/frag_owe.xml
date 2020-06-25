@@ -13,13 +13,13 @@
         android:id="@+id/btn_open"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_menu"
-        android:tint="@color/colorOnSurface"
+        android:tint="@color/onSurfaceColor"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"/>
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -31,15 +31,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btn_open"
         app:layout_constraintBottom_toBottomOf="@id/btn_open"
-        android:layout_marginStart="@dimen/material_base" />
+        android:layout_marginStart="@dimen/material_margin" />
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cd_total_owe"
-        app:cardBackgroundColor="@color/colorPrimary"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
+        app:cardBackgroundColor="@color/primaryColor"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
         app:layout_constraintTop_toBottomOf="@id/btn_open"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -54,25 +54,25 @@
                 android:layout_alignParentTop="true"
                 android:text="@string/label_owe_total"
                 style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:textColor="@color/colorOnPrimary"
-                android:layout_marginTop="@dimen/material_base"
-                android:layout_marginStart="@dimen/material_base"/>
+                android:textColor="@color/onPrimaryColor"
+                android:layout_marginTop="@dimen/material_margin"
+                android:layout_marginStart="@dimen/material_margin"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_owe_total"
                 android:layout_below="@id/tv_total_title"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/material_base"
+                android:layout_marginBottom="@dimen/material_margin"
                 android:text="300,000"
-                android:textColor="@color/colorOnPrimary"
+                android:textColor="@color/onPrimaryColor"
                 style="@style/TextAppearance.MaterialComponents.Headline4"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_currency"
                 android:text="MMK"
-                android:textColor="@color/colorOnPrimary"
+                android:textColor="@color/onPrimaryColor"
                 style="@style/TextAppearance.MaterialComponents.Overline"
                 android:layout_toEndOf="@id/tv_owe_total"
                 android:layout_alignBaseline="@id/tv_owe_total"/>
@@ -85,8 +85,8 @@
         style="@style/MaterialTab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginStart="@dimen/material_base"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginStart="@dimen/material_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,7 +108,7 @@
         android:id="@+id/vp_owe"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/material_base"
+        android:layout_marginTop="@dimen/material_margin"
         android:overScrollMode="never"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,11 +119,11 @@
         android:id="@+id/fb_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/large_margin"
+        android:layout_marginEnd="@dimen/material_margin_large"
         android:layout_marginBottom="32dp"
         android:clickable="true"
         android:tint="@android:color/white"
-        app:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/primaryColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

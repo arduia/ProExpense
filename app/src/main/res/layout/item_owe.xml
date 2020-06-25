@@ -2,8 +2,8 @@
 <com.google.android.material.card.MaterialCardView android:layout_height="wrap_content"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="@dimen/material_base"
-    android:layout_marginEnd="@dimen/material_base"
+    android:layout_marginStart="@dimen/material_margin"
+    android:layout_marginEnd="@dimen/material_margin"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
     app:cardCornerRadius="@dimen/corner_radius"
@@ -21,9 +21,9 @@
         android:gravity="center_vertical"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginBottom="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginBottom="@dimen/material_margin"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -46,8 +46,8 @@
         android:layout_alignBaseline="@id/tv_owe_value"
         android:layout_toStartOf="@id/tv_owe_value"
         android:textAlignment="center"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
         android:layout_toEndOf="@id/lnl_name"/>
     <TextView
         android:layout_width="wrap_content"
@@ -57,8 +57,8 @@
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_alignBottom="@id/lnl_name"
         android:layout_alignParentEnd="true"
-        android:textColor="@color/colorPrimary"
-        android:layout_marginEnd="@dimen/material_base"/>
+        android:textColor="@color/primaryColor"
+        android:layout_marginEnd="@dimen/material_margin"/>
 
 
 </RelativeLayout>

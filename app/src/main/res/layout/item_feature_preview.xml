@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="@dimen/material_margin"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_title"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
+            android:text="Group Sharing"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="@dimen/material_margin"
+            android:layout_marginTop="@dimen/material_margin"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_detail"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            android:text="Sharing between the members"
+            android:layout_below="@id/tv_title"
+            android:layout_alignStart="@id/tv_title"
+            android:layout_marginTop="@dimen/material_margin"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/dv_detail"
+            android:layout_below="@id/tv_detail"
+            android:layout_marginTop="@dimen/material_margin"
+            android:background="@android:drawable/divider_horizontal_bright"/>
+        <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/btn_like"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_like"
+                android:scaleType="center"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/dv_detail"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/btn_unlike"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_unlike"
+            android:scaleType="center"
+            android:layout_below="@id/dv_detail"
+            android:layout_toStartOf="@id/btn_like"
+            android:layout_marginEnd="@dimen/material_margin"/>
+        <androidx.appcompat.widget.AppCompatRatingBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dv_detail"
+            android:layout_toStartOf="@id/btn_unlike"
+            android:layout_alignBottom="@id/btn_unlike"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_marginStart="@dimen/material_margin"
+            android:layout_marginEnd="@dimen/material_margin"/>
+    </RelativeLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

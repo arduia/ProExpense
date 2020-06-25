@@ -41,7 +41,7 @@ class SplashActivity :AppCompatActivity(){
 
         //Configure
         with(frameLayout){
-            background = ContextCompat.getDrawable(this@SplashActivity, R.color.colorPrimary)
+            background = ContextCompat.getDrawable(this@SplashActivity, R.color.primaryColor)
             layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         }
 
@@ -56,7 +56,7 @@ class SplashActivity :AppCompatActivity(){
         with(progressBar){
             layoutParams = FrameLayout.LayoutParams(px(30), px(30)).apply {
                 gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                bottomMargin = resources.getDimension(R.dimen.material_base).toInt()
+                bottomMargin = resources.getDimension(R.dimen.material_margin).toInt()
             }
             id = View.generateViewId()
         }

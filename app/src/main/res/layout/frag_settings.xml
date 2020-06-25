@@ -12,8 +12,8 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="center"
         android:tint="@android:color/darker_gray"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -43,9 +43,9 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:id="@+id/tv_font_level"
-               android:layout_marginTop="@dimen/large_margin"
-               android:layout_marginBottom="@dimen/material_base"
-               android:layout_marginStart="@dimen/large_margin"
+               android:layout_marginTop="@dimen/material_margin_large"
+               android:layout_marginBottom="@dimen/material_margin"
+               android:layout_marginStart="@dimen/material_margin_large"
                android:layout_alignParentStart="true"
                android:layout_alignParentTop="true"
                style="@style/TextAppearance.MaterialComponents.Body1"
@@ -59,12 +59,12 @@
                android:layout_toStartOf="@id/sw_font"
                style="@style/TextAppearance.MaterialComponents.Subtitle2"
                android:text="@string/label_eng"
-               android:layout_marginEnd="@dimen/material_base"/>
+               android:layout_marginEnd="@dimen/material_margin"/>
            <com.google.android.material.switchmaterial.SwitchMaterial
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:id="@+id/sw_font"
-               android:layout_marginEnd="@dimen/large_margin"
+               android:layout_marginEnd="@dimen/material_margin_large"
                android:layout_alignEnd="@id/tv_mm"
                android:layout_alignBaseline="@id/tv_font_level"/>
            <TextView
@@ -76,14 +76,14 @@
                style="@style/TextAppearance.MaterialComponents.Subtitle2"
                android:layout_alignParentEnd="true"
                android:layout_alignBaseline="@id/tv_font_level"
-               android:layout_marginEnd="@dimen/material_base"/>
+               android:layout_marginEnd="@dimen/material_margin"/>
            <View
                android:layout_width="match_parent"
                android:layout_height="1dp"
                android:id="@+id/dv"
                android:layout_centerHorizontal="true"
-               android:layout_marginStart="@dimen/material_base"
-               android:layout_marginEnd="@dimen/material_base"
+               android:layout_marginStart="@dimen/material_margin"
+               android:layout_marginEnd="@dimen/material_margin"
                android:background="@android:drawable/divider_horizontal_bright"
                android:layout_below="@id/tv_font_level"/>
        </RelativeLayout>

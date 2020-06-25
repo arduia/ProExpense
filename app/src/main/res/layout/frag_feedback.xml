@@ -11,16 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ln_title"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base">
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin">
 
         <ImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/btn_close"
             android:src="@drawable/ic_menu"
-            android:tint="@color/colorOnSurface"
+            android:tint="@color/onSurfaceColor"
             android:background="?attr/selectableItemBackgroundBorderless" />
         <TextView
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             style="@style/TextAppearance.MaterialComponents.Headline6" />
     </FrameLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -46,22 +46,24 @@
         android:text="@string/label_feedback_description"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:textAlignment="viewStart"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"/>
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"/>
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edl_name"
         android:hint="@string/label_name"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/large_margin"
-        android:layout_marginEnd="@dimen/material_base">
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin_large"
+        android:layout_marginEnd="@dimen/material_margin">
+
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edt_name"/>
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -69,15 +71,16 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
         android:hint="@string/label_email">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edt_email"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -85,9 +88,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/edl_comment"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base">
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,11 +105,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/btn_send"
         android:text="@string/label_send_feedback"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
-        android:layout_marginBottom="@dimen/material_base"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
+        android:layout_marginBottom="@dimen/material_margin"
         />
         </androidx.appcompat.widget.LinearLayoutCompat>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

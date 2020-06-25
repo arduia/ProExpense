@@ -13,8 +13,8 @@
         android:src="@drawable/ic_back"
         android:scaleType="center"
         android:tint="@android:color/darker_gray"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginStart="@dimen/material_base"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginStart="@dimen/material_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_transactions"
         app:layout_constraintHorizontal_bias="1"
-        android:layout_marginEnd="@dimen/material_base"/>
+        android:layout_marginEnd="@dimen/material_margin"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -52,8 +52,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_cost"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"/>
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

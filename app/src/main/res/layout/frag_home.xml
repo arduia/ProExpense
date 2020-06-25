@@ -17,8 +17,8 @@
         android:id="@+id/btn_close"
         android:src="@drawable/ic_menu"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,15 +44,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"/>
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_recent_more"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/material_base"
+        android:layout_marginEnd="@dimen/material_margin"
         android:background="?attr/selectableItemBackground"
         android:text="More"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -72,9 +72,9 @@
         android:id="@+id/rv_recent"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginTop="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
         android:clipToPadding="false"
         android:fadeScrollbars="true"
         android:overScrollMode="never"
@@ -91,11 +91,11 @@
             android:id="@+id/fb_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/large_margin"
+            android:layout_marginEnd="@dimen/material_margin_large"
             android:layout_marginBottom="32dp"
             android:clickable="true"
             android:tint="@android:color/white"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/primaryColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -108,12 +108,12 @@
         android:id="@+id/cd_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/material_base"
-        android:layout_marginEnd="@dimen/material_base"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginEnd="@dimen/material_margin"
         android:elevation="3dp"
-        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardBackgroundColor="@color/primaryColor"
         app:cardCornerRadius="@dimen/corner_radius"
-        android:layout_marginTop="@dimen/material_base"
+        android:layout_marginTop="@dimen/material_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_close" >
@@ -129,9 +129,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/material_base"
+                android:layout_marginTop="@dimen/material_margin"
                 android:text="30,00.00 "
-                android:textColor="@color/colorOnPrimary" />
+                android:textColor="@color/onPrimaryColor" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -141,7 +141,7 @@
                 android:layout_alignBaseline="@id/tv_value"
                 android:layout_toEndOf="@id/tv_value"
                 android:text="mmk"
-                android:textColor="@color/colorOnPrimary" />
+                android:textColor="@color/onPrimaryColor" />
 
             <com.arduia.graph.SpendGraph
                 android:id="@+id/img_graph"
