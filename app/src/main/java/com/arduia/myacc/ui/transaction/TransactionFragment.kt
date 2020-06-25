@@ -7,17 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arduia.myacc.NavigationDrawer
+import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
 import com.arduia.myacc.ui.adapter.CostAdapter
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import com.arduia.myacc.ui.mock.costList
-import com.arduia.myacc.ui.vto.CostVto
 
 class TransactionFragment : Fragment(){
 
     private val binding by lazy { FragTransactionBinding.inflate(layoutInflater) }
+
     private val costAdapter by lazy { CostAdapter(layoutInflater) }
 
     override fun onCreateView(

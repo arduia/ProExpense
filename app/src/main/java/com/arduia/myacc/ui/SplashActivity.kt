@@ -13,7 +13,7 @@ import com.arduia.core.extension.px
 import com.arduia.myacc.R
 import kotlinx.coroutines.*
 
-class SplashActivity :AppCompatActivity(){
+class SplashActivity : AppCompatActivity(){
 
     private val contentView by lazy {  createView() }
 

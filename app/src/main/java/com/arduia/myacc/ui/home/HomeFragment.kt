@@ -46,7 +46,7 @@ class HomeFragment : BaseFragment(){
         }
 
         rvRecent.adapter = costAdapter
-        rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL,false)
+        rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
 
         rvRecent.addItemDecoration(
             MarginItemDecoration( resources.getDimension(R.dimen.spacing_list_item).toInt(),

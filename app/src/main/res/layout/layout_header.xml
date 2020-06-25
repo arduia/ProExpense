@@ -56,4 +56,5 @@
         android:text="some@gmail.com"
         android:layout_alignStart="@id/tv_taylor"/>
     </LinearLayout>
+
 </RelativeLayout>

@@ -12,6 +12,7 @@
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 
+<!--    Splash Screen-->
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/primaryColor</item>
     </style>
@@ -31,6 +32,7 @@
         <item name="itemHorizontalPadding">@dimen/material_margin_large</item>
     </style>
 
+<!--    Material Tab-->
     <style name="MaterialTab" parent="Widget.MaterialComponents.TabLayout">
         <item name="tabIndicatorColor">@color/primaryColor</item>
         <item name="tabIndicatorFullWidth">false</item>

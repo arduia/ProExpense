@@ -7,9 +7,9 @@ import android.view.View
 import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
 
-class SpendGraph @JvmOverloads constructor(context:Context,
-                                           attrs:AttributeSet?=null,
-                                           defStyleAttrs:Int=0):View(context,attrs,defStyleAttrs){
+class SpendGraph @JvmOverloads constructor(context: Context,
+                                           attrs: AttributeSet? = null,
+                                           defStyleAttrs: Int = 0): View(context, attrs, defStyleAttrs){
 
     //Whole Custom View
     private val viewF by lazy { createViewFrame() }
@@ -64,7 +64,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
     /**
      * Draw Methods
      */
-    private fun Canvas.drawPointLines( ){
+    private fun Canvas.drawPointLines(){
 
         val linePath = Path()
 
@@ -85,7 +85,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
             val yPosition = bottomF - (point.rate * heightF)
 
             //draw the point
-            drawLinePoint(xPosition,yPosition)
+            drawLinePoint(xPosition, yPosition)
 
             if(i == 0){
                 //move to first position
@@ -97,7 +97,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         }
 
         //draw graph line on line Path
-        drawPath(linePath,linePaint)
+        drawPath(linePath, linePaint)
 
         //get highest Point
         val highestPoint  = list.maxBy { it.rate }
@@ -108,7 +108,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         }
     }
 
-    private fun Canvas.drawHighestVertical(point:SpendPoint){
+    private fun Canvas.drawHighestVertical(point: SpendPoint){
 
         //common X for  position X
         val commonX = getDayPositionX(point.day)
@@ -124,7 +124,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         val dotedPath = Path()
 
         //move to bottom
-        dotedPath.moveTo(commonX,startY)
+        dotedPath.moveTo(commonX, startY)
 
         //place doted points on path
         for(position in startY.toInt() downTo endY.toInt() step 5){
@@ -135,7 +135,7 @@ class SpendGraph @JvmOverloads constructor(context:Context,
         }
 
         //draw doted points
-        drawPath(dotedPath,linePointPaint)
+        drawPath(dotedPath, linePointPaint)
 
         //position of label
         val labelPositionX = commonX + (labelTextSize * 2)
@@ -267,6 +267,6 @@ class SpendGraph @JvmOverloads constructor(context:Context,
 
     //Whole view Frame
     private fun createViewFrame() =
-        RectF(0f,0f,width.toFloat(),height.toFloat())
+        RectF(0f, 0f, width.toFloat(), height.toFloat())
 
 }

@@ -2,7 +2,6 @@ package com.arduia.myacc.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log.d
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -10,33 +9,27 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.*
 import androidx.navigation.ui.setupWithNavController
-import com.arduia.core.performance.printDurationMilli
-import com.arduia.core.performance.printDurationNano
-import com.arduia.myacc.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ActivMainBinding
 import com.arduia.myacc.databinding.LayoutHeaderBinding
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity(), NavigationDrawer{
+class MainActivity : AppCompatActivity(), NavigationDrawer {
 
-    private val viewBinding by lazy {
-        printDurationMilli("MainActivity", "Activity Binding"){
-            ActivMainBinding.inflate(layoutInflater)
-        }
-    }
+    private val viewBinding by lazy { ActivMainBinding.inflate(layoutInflater) }
+
     private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
+
     private val navController by lazy { findNavController(R.id.fc_main) }
+
     private val navOption by lazy { createNavOption() }
-    private var itemSelectionTask: (()->Unit)? = null
+
+    private var itemSelectionTask: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
+
         setupView()
     }
 
@@ -56,8 +49,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
 
             //If Drawer is in Tablet Mode
             if(!viewBinding.dlMain.isDrawerOpen(GravityCompat.START)){
+
                 itemSelectionTask?.invoke()
+
                 itemSelectionTask = {}
+
             }
 
             //close drawer first
@@ -66,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
             return@listener true
         }
 
-        viewBinding.dlMain.addDrawerListener(object:DrawerLayout.DrawerListener{
+        viewBinding.dlMain.addDrawerListener(object: DrawerLayout.DrawerListener{
 
             override fun onDrawerStateChanged(newState: Int) {
 
@@ -95,14 +91,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer{
 
     }
 
-    private fun selectItem(item:MenuItem){
+    private fun selectItem(item: MenuItem){
 
         // select Item
         if( item.itemId == R.id.dest_home ){
-            navController.popBackStack(R.id.dest_home,false)
+            navController.popBackStack(R.id.dest_home, false)
         }
         // navigate Item
-        navController.navigate(item.itemId,null,navOption)
+        navController.navigate(item.itemId, null, navOption)
 
     }
 

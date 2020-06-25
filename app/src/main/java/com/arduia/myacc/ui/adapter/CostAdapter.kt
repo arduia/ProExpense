@@ -16,7 +16,7 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
-        val itemView = layoutInflater.inflate(R.layout.item_cost,parent,false)
+        val itemView = layoutInflater.inflate(R.layout.item_cost, parent, false)
 
         return VH(ItemCostBinding.bind(itemView))
     }
@@ -54,7 +54,7 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
 
     }
 
-    class VH(val binding:ItemCostBinding): RecyclerView.ViewHolder(binding.root)
+    class VH(val binding: ItemCostBinding): RecyclerView.ViewHolder(binding.root)
 
 }
 
@@ -64,7 +64,7 @@ private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<CostVto>(){
     }
 
     override fun areContentsTheSame(oldItem: CostVto, newItem: CostVto): Boolean {
-        return oldItem.name == newItem.name &&
+        return  oldItem.name == newItem.name &&
                 oldItem.cateogry == newItem.cateogry &&
                 oldItem.cost == newItem.cost &&
                 oldItem.date == newItem.date &&

@@ -14,16 +14,21 @@ class OwePeopleAdapter(private val layoutInflater: LayoutInflater):
     ListAdapter<OwePeopleVto, OwePeopleAdapter.VH>( DIFF_CALLBACK){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+
         val view = layoutInflater.inflate(R.layout.item_people,parent,false)
+
         return VH(ItemPeopleBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
+
         val item = getItem(position)
+
         with(holder.binding){
             tvName.text = item.name
             tvPeopleValue.text = item.owe_value
         }
+
     }
 
     class VH(val binding:ItemPeopleBinding): RecyclerView.ViewHolder(binding.root)

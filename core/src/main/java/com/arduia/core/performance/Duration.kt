@@ -4,7 +4,11 @@ import android.util.Log.d
 import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
-fun <R> printDurationNano(tag:String, suffix:String = "", execution:() -> R):R{
+/**
+ * To Measure Duration of A function or statements
+ */
+
+fun <R> printDurationNano(tag:String, suffix:String = "", execution:() -> R): R{
 
     var result:R? = null
 

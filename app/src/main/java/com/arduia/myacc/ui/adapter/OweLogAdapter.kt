@@ -13,17 +13,22 @@ class OweLogAdapter(private val layoutInflater: LayoutInflater):
     ListAdapter<OweLogVto,OweLogAdapter.VH>(DIFF_CALLBACK){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val view = layoutInflater.inflate(R.layout.item_owe,parent,false)
+
+        val view = layoutInflater.inflate(R.layout.item_owe, parent, false)
+
         return VH(ItemOweBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: VH, position: Int){
+
         val item = getItem(position)
+
         with(holder.binding){
             tvOweDate.text = item.date
             tvOweName.text = item.name
             tvOweValue.text = item.value
         }
+
     }
 
     class VH(val binding:ItemOweBinding): RecyclerView.ViewHolder(binding.root)

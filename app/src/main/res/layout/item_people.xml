@@ -51,7 +51,4 @@
         android:layout_marginEnd="@dimen/material_margin"
         android:scaleType="centerInside"/>
 
-
-
-
 </RelativeLayout>

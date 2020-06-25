@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class SettingsFragment : Fragment(){
+class SettingsFragment: Fragment(){
 
     private val binding by lazy { FragSettingsBinding.inflate(layoutInflater) }
 

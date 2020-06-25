@@ -24,4 +24,5 @@
         app:menu="@menu/menu_home"
         app:headerLayout="@layout/layout_header"
         android:layout_gravity="start"/>
+
 </androidx.drawerlayout.widget.DrawerLayout>

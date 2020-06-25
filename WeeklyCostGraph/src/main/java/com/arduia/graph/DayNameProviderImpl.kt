@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.ColorInt
 import java.lang.IllegalArgumentException
 
-class DayNameProviderImpl(private val context: Context):DayNameProvider{
+class DayNameProviderImpl(private val context: Context): DayNameProvider {
 
     override fun getName( day: Int) =
         when(day){

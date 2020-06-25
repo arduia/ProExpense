@@ -159,6 +159,7 @@
                 android:layout_below="@id/tv_value"
                 android:layout_centerHorizontal="true"  />
         </RelativeLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

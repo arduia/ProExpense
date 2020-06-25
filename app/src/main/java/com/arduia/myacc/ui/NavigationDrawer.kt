@@ -1,4 +1,4 @@
-package com.arduia.myacc
+package com.arduia.myacc.ui
 
 interface NavigationDrawer {
 

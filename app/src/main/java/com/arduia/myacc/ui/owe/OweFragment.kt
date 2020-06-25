@@ -47,7 +47,7 @@ class OweFragment: BaseFragment(){
         owePagerAdapter.oweLogs = getSampleOweLog()
         owePagerAdapter.peopleList = getSampleOwePeople()
 
-        TabLayoutMediator(viewBinding.tabLayout,viewBinding.vpOwe){tab, position ->
+        TabLayoutMediator(viewBinding.tabLayout,viewBinding.vpOwe){ tab, position ->
             tab.text = getString(
                 when(position){
                 0       -> R.string.label_owe_log
@@ -58,13 +58,13 @@ class OweFragment: BaseFragment(){
     }
 
     private fun getSampleOweLog() = mutableListOf<OweLogVto>().apply {
-        add(OweLogVto("1","Kyaw Win Htun","20/2/2020","-60,000"))
-        add(OweLogVto("2","Win Naing Soe","11/2/2020","+5,000"))
+        add(OweLogVto("1", "Kyaw Win Htun", "20/2/2020", "-60,000"))
+        add(OweLogVto("2", "Win Naing Soe", "11/2/2020", "+5,000"))
     }
 
     private fun getSampleOwePeople() = mutableListOf<OwePeopleVto>().apply {
-        add(OwePeopleVto("1","Win Naing Soe","Win Naing Soe","-5000"))
-        add(OwePeopleVto("2","Kyaw Win Htun","Kyaw Win Htun","+60000"))
+        add(OwePeopleVto("1", "Win Naing Soe", "Win Naing Soe", "-5000"))
+        add(OwePeopleVto("2", "Kyaw Win Htun", "Kyaw Win Htun", "+60000"))
     }
 
 }

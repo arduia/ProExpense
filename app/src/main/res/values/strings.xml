@@ -13,7 +13,6 @@
     <string name="label_dashboard">Dashboard</string>
     <string name="label_total">Total Balance</string>
 
-
 <!--    Owe-->
     <string name="label_owe_total">Total Owe</string>
     <string name="label_owe_log">Log</string>
