@@ -43,33 +43,41 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_transition"
+        android:id="@+id/tv_recents"
         android:text="@string/label_recent"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        style="@style/TextAppearance.MaterialComponents.Body1"
         app:layout_constraintTop_toBottomOf="@id/cd_value"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintBaseline_toBaselineOf="@id/btn_recent_more"
+        android:layout_marginTop="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_recent_more"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/material_margin"
-        android:background="?attr/selectableItemBackground"
+        android:id="@+id/tv_more"
         android:text="More"
-        android:textColor="@android:color/darker_gray"
-        app:icon="@drawable/ic_navigate_next"
-        app:iconGravity="end"
-        app:iconSize="24dp"
-        app:iconTint="@color/iconColorTint"
+        android:layout_marginEnd="@dimen/material_small_margin"
+        app:layout_constraintEnd_toStartOf="@id/btn_more"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cd_value"
+        app:layout_constraintBottom_toBottomOf="@id/tv_recents"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintHorizontal_bias="1"/>
+
+    <ImageButton
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:scaleType="center"
+        style="@style/IconImageButton"
+        android:src="@drawable/ic_choose_more"
+        android:id="@+id/btn_more"
+        app:layout_constraintTop_toTopOf="@id/tv_more"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tv_recents"
         app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toStartOf="@id/tv_transition"
-        app:layout_constraintTop_toBottomOf="@+id/cd_value" />
+        android:layout_marginEnd="@dimen/material_margin"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -80,7 +88,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_recent_more"
+        android:layout_marginTop="@dimen/material_small_margin"
+        app:layout_constraintTop_toBottomOf="@id/tv_recents"
         app:layout_constraintVertical_bias="0"
         android:visibility="invisible"
         />
@@ -93,8 +102,6 @@
         android:fadeScrollbars="true"
         android:overScrollMode="never"
         android:paddingBottom="50dp"
-        android:scrollbarStyle="outsideInset"
-        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

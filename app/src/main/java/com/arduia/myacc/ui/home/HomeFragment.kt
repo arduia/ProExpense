@@ -41,7 +41,7 @@ class HomeFragment : BaseFragment(){
 
         btnClose.setOnClickListener { openDrawer() }
 
-        btnRecentMore.setOnClickListener {
+        tvMore.setOnClickListener {
             findNavController().navigate(R.id.dest_transaction)
         }
 

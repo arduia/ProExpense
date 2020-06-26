@@ -164,7 +164,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     private fun Canvas.drawDayNames(){
 
         val totalDays = 7
-        val dayPositionY = dayNameCanvasF.centerY() + (dayPaint.textSize/2)
+        val dayPositionY = dayNameCanvasF.centerY() + (dayPaint.textSize / 2)
 
         for(day in 1..totalDays){
             val dayPositionX = getDayPositionX(day)

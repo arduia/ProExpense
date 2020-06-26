@@ -70,6 +70,8 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:id="@+id/sw_font"
+               app:trackTint="@color/primaryColor"
+               app:thumbTint="@android:color/white"
                android:layout_marginEnd="@dimen/material_margin_large"
                android:layout_alignEnd="@id/tv_mm"
                android:layout_alignBaseline="@id/tv_font_level"/>
