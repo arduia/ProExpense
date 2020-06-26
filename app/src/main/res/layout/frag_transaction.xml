@@ -5,20 +5,25 @@
     tools:context=".ui.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <androidx.appcompat.widget.AppCompatImageButton
+    <include
+        layout="@layout/layout_toolbar"
+        android:id="@+id/tb_transaction"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/btn_close"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        style="@style/IconImageButton"
         android:src="@drawable/ic_back"
-        android:scaleType="center"
         android:tint="@android:color/darker_gray"
-        android:layout_marginTop="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintBottom_toBottomOf="@id/tb_transaction"
+        />
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,14 +34,12 @@
         app:layout_constraintBottom_toBottomOf="@id/btn_close"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-    <androidx.appcompat.widget.AppCompatImageButton
+    <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/delete"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_delete"
-        android:tint="@android:color/darker_gray"
-        android:scaleType="center"
+        style="@style/IconImageButton"
         app:layout_constraintTop_toTopOf="@id/btn_close"
         app:layout_constraintBottom_toBottomOf="@id/btn_close"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,12 +49,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/btn_close"
+        app:layout_constraintTop_toBottomOf="@id/tb_transaction"
         android:id="@+id/rv_transactions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_cost"
-        android:layout_marginTop="@dimen/material_margin"/>
+        tools:listitem="@layout/item_cost" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

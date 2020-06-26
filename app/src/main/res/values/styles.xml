@@ -9,7 +9,7 @@
         <item name="rippleColor">@android:color/darker_gray</item>
         <item name="colorOnSurface">@color/onSurfaceColor</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@color/backgroundColor</item>
     </style>
 
 <!--    Splash Screen-->
@@ -23,6 +23,14 @@
 
     <style name="ImageCard" parent="Widget.MaterialComponents.CardView">
         <item name="android:bottomLeftRadius">60dp</item>
+    </style>
+
+<!--    IconButton-->
+
+    <style name="IconImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="tint">@color/iconColorTint</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>
 
     <style name="NavTheme" parent="Widget.MaterialComponents.BottomNavigationView">

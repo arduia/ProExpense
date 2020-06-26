@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,33 +8,43 @@
     tools:context=".ui.MainActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ln_title"
-        android:layout_marginTop="@dimen/material_margin"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginEnd="@dimen/material_margin">
+    <include
+        layout="@layout/layout_toolbar"
+        android:id="@+id/tb_feedback"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/btn_close"
-            android:src="@drawable/ic_menu"
-            android:tint="@color/iconColorTint"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_feedback"
-            android:text="@string/label_feedback"
-            android:layout_gravity="center"
-            style="@style/TextAppearance.MaterialComponents.Headline6" />
-    </FrameLayout>
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/btn_close"
+        android:src="@drawable/ic_menu"
+        style="@style/IconImageButton"
+        android:layout_marginStart="@dimen/material_margin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_feedback"
+        android:text="@string/label_feedback"
+        app:layout_constraintTop_toTopOf="@id/tb_feedback"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
+        style="@style/TextAppearance.MaterialComponents.Headline6" />
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_feedback"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:orientation="vertical"
@@ -113,4 +124,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

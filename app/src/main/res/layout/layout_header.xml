@@ -14,10 +14,9 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/material_margin"
         android:layout_marginTop="@dimen/material_margin"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
         android:src="@drawable/ic_close"
-        android:tint="@color/iconColorTint" />
+        style="@style/IconImageButton"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/img_taylor"

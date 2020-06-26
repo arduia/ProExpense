@@ -35,6 +35,14 @@ class OwePagerAdapter(private val layoutInflater: LayoutInflater):
                 paddingRight,
                 paddingBottom)
             overScrollMode = ScrollView.OVER_SCROLL_NEVER
+
+            //First Adapter Use Item Decoration
+            val marginDecorator = MarginItemDecoration(
+                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt())
+
+            //Add Decorator to view
+            addItemDecoration(marginDecorator)
         }
 
         return VH(recyclerView)
@@ -50,14 +58,6 @@ class OwePagerAdapter(private val layoutInflater: LayoutInflater):
             adapter = when(position){
 
                 0 -> {
-                    //First Adapter Use Item Decoration
-                    val marginDecorator = MarginItemDecoration(
-                        resources.getDimension(R.dimen.spacing_list_item).toInt(),
-                        resources.getDimension(R.dimen.margin_list_item).toInt())
-
-                    //Add Decorator to view
-                    addItemDecoration(marginDecorator)
-
                     //Assign Adapter Class
                     oweLogAdapter
                 }

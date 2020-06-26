@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <include
+        layout="@layout/layout_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/tb_settings"/>
+
     <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -13,9 +20,9 @@
         android:scaleType="center"
         android:tint="@android:color/darker_gray"
         android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="@id/tb_settings"
+        app:layout_constraintStart_toStartOf="@id/tb_settings"
+        app:layout_constraintTop_toTopOf="@id/tb_settings"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/nv_settings"
-        app:layout_constraintTop_toBottomOf="@+id/btn_menu"
+        app:layout_constraintTop_toBottomOf="@+id/tb_settings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

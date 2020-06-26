@@ -10,19 +10,25 @@
         android:layout_height="match_parent"
         tools:context=".ui.MainActivity">
 
-    <ImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:tint="@android:color/darker_gray"
-        android:id="@+id/btn_close"
-        android:src="@drawable/ic_menu"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"
+    <include layout="@layout/layout_toolbar"
+        android:id="@+id/tb_home"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <ImageButton
+        android:id="@+id/btn_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="@dimen/material_margin"
+        android:src="@drawable/ic_menu"
+        style="@style/IconImageButton"
+        app:layout_constraintBottom_toBottomOf="@id/tb_home"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -124,7 +130,7 @@
         android:layout_marginTop="@dimen/material_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_close" >
+        app:layout_constraintTop_toBottomOf="@id/tb_home">
 
         <RelativeLayout
             android:layout_width="match_parent"
