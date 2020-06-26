@@ -18,7 +18,7 @@
     <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/btn_close"
+        android:id="@+id/btn_menu"
         android:src="@drawable/ic_menu"
         style="@style/IconImageButton"
         android:layout_marginStart="@dimen/material_margin"

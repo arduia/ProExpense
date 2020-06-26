@@ -15,6 +15,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragSettingsBinding
+import com.arduia.myacc.ui.NavigationDrawer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -40,8 +41,9 @@ class SettingsFragment: Fragment(){
     private fun setupView(){
 
         binding.btnMenu.setOnClickListener{
-            findNavController().popBackStack()
+            (requireActivity() as? NavigationDrawer)?.openDrawer()
         }
+
     }
 
 }

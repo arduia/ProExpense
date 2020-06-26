@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
         })
 
         headerBinding.btnBack.setOnClickListener {
-            viewBinding.dlMain.closeDrawer(GravityCompat.START)
+           closeDrawer()
         }
 
     }
@@ -105,6 +105,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
     override fun openDrawer() {
         // Open Drawer
         viewBinding.dlMain.openDrawer(GravityCompat.START)
+    }
+
+    override fun closeDrawer() {
+        //Close Drawer
+        viewBinding.dlMain.closeDrawer(GravityCompat.START)
     }
 
     //Lock Drawer for Some Fragment which doesn't require Drawer
@@ -129,7 +134,31 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
 
     override fun navigateUpTo(upIntent: Intent?): Boolean {
         // Check navigation has back stack
-        return super.navigateUpTo(upIntent) or navController.navigateUp()
+        return super.navigateUpTo(upIntent)  or navController.navigateUp()
+    }
+
+    override fun onBackPressed() {
+
+        //If drawer is Opening, close the drawer
+        if(drawerClosure()){
+            //true -> drawer is already closed, back press move on
+            //false -> drawer is opening, doesn't deliver back press
+            super.onBackPressed()
+        }
+
+    }
+
+    private fun drawerClosure():Boolean{
+
+        val isDrawerOpen = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
+
+        if(isDrawerOpen){
+            viewBinding.dlMain.closeDrawer(GravityCompat.START)
+            //Should Open
+            return false
+        }
+        //Should Close
+        return true
     }
 
     // Separated function to improve readability
