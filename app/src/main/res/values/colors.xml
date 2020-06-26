@@ -5,8 +5,9 @@
     <color name="accentColor">#ffcc80</color>
     <color name="onPrimaryColor">#ffffff</color>
     <color name="onSurfaceColor">#000000</color>
-    <color name="materialCardColor">#eeeeee</color>
+    <color name="materialCardColor">#eceff1</color>
     <color name="backgroundColor">@android:color/white</color>
-
+    <color name="surfaceColor">#eceff1</color>
+    <color name="innerSurfaceColor">#eceff1</color>
     <color name="iconColorTint">@android:color/darker_gray</color>
 </resources>

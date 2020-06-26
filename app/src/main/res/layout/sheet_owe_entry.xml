@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:elevation="3dp"
-    android:background="?attr/colorSurface"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include
@@ -48,7 +47,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0"
-        android:background="@color/materialCardColor"
+        android:background="@color/innerSurfaceColor"
         >
         <LinearLayout
             android:layout_width="match_parent"

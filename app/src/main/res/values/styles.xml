@@ -9,6 +9,7 @@
         <item name="colorOnSurface">@color/onSurfaceColor</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="colorSurface">@color/surfaceColor</item>
     </style>
 
 <!--    Splash Screen-->
@@ -46,5 +47,6 @@
         <item name="tabMaxWidth">100dp</item>
         <item name="tabGravity">center</item>
         <item name="tabUnboundedRipple">false</item>
+        <item name="android:background">@color/backgroundColor</item>
     </style>
 </resources>

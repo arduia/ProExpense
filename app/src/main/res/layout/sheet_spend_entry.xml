@@ -6,13 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/materialCardColor"
     android:elevation="3dp"
     android:orientation="vertical">
 
     <FrameLayout
-        android:background="?attr/colorSurface"
         android:layout_width="match_parent"
+        android:background="@android:color/white"
         android:layout_height="?attr/actionBarSize">
 
         <TextView
@@ -23,7 +22,6 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/material_margin"
             android:text="@string/label_spend" />
-
         <ImageButton
             android:id="@+id/btn_entry_close"
             style="@style/IconImageButton"
@@ -33,14 +31,15 @@
             android:layout_marginEnd="@dimen/material_margin"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_close" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@android:drawable/divider_horizontal_bright"/>
     </FrameLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:drawable/divider_horizontal_bright"/>
-
     <ScrollView
+        android:background="@color/innerSurfaceColor"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -45,6 +45,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/cd_total_owe"
         app:cardBackgroundColor="@color/primaryColor"
+        app:cardCornerRadius="@dimen/corner_radius"
         android:layout_marginTop="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginEnd="@dimen/material_margin"
