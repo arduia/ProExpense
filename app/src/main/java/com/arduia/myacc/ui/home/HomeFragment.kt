@@ -6,6 +6,7 @@ import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,7 +40,7 @@ class HomeFragment : BaseFragment(){
 
         fbAdd.setColorFilter(Color.WHITE)
 
-        btnClose.setOnClickListener { openDrawer() }
+        btnMenuOpen.setOnClickListener { openDrawer() }
 
         tvMore.setOnClickListener {
             findNavController().navigate(R.id.dest_transaction)
@@ -85,6 +86,14 @@ class HomeFragment : BaseFragment(){
                 }
             }
         })
+
+        with(sheetEntry){
+            btnEntryClose.setOnClickListener {
+
+                mlHome.transitionToEnd()
+            }
+
+        }
 
         d("Home Fragment", "setupView")
 

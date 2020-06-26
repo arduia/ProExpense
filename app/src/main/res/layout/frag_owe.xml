@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.constraintlayout.motion.widget.MotionLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity"
+    app:layoutDescription="@xml/sense_home"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -12,7 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/tb_owe"/>
+        android:id="@+id/toolbar"/>
 
     <ImageButton
         android:layout_width="30dp"
@@ -23,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tb_owe"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
         app:layout_constraintHorizontal_bias="0"
         android:layout_marginStart="@dimen/material_margin"/>
 
@@ -46,7 +47,7 @@
         android:layout_marginTop="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginEnd="@dimen/material_margin"
-        app:layout_constraintTop_toBottomOf="@id/tb_owe"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -152,5 +153,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/ic_add" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        layout="@layout/sheet_owe_entry"
+        android:id="@+id/sheet_entry"/>
+</androidx.constraintlayout.motion.widget.MotionLayout>

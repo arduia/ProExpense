@@ -49,7 +49,7 @@ class TransactionFragment : Fragment(){
         costAdapter.submitList(costList())
 
         //Close the page
-        binding.btnClose.setOnClickListener {
+        binding.btnPopBack.setOnClickListener {
             findNavController().popBackStack()
         }
 

@@ -15,7 +15,7 @@
     <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/btn_close"
+        android:id="@+id/btn_pop_back"
         style="@style/IconImageButton"
         android:src="@drawable/ic_back"
         android:tint="@android:color/darker_gray"
@@ -30,8 +30,8 @@
         android:id="@+id/tv_transactions"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:text="@string/label_transaction"
-        app:layout_constraintTop_toTopOf="@id/btn_close"
-        app:layout_constraintBottom_toBottomOf="@id/btn_close"
+        app:layout_constraintTop_toTopOf="@id/btn_pop_back"
+        app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
     <ImageButton
@@ -40,8 +40,8 @@
         android:id="@+id/delete"
         android:src="@drawable/ic_delete"
         style="@style/IconImageButton"
-        app:layout_constraintTop_toTopOf="@id/btn_close"
-        app:layout_constraintBottom_toBottomOf="@id/btn_close"
+        app:layout_constraintTop_toTopOf="@id/btn_pop_back"
+        app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_transactions"
         app:layout_constraintHorizontal_bias="1"

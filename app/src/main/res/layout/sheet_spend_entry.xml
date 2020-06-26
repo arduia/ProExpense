@@ -6,37 +6,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/bg_rounded_corner"
+    android:background="@color/materialCardColor"
     android:elevation="3dp"
     android:orientation="vertical">
 
     <FrameLayout
+        android:background="?attr/colorSurface"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_margin_large"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginEnd="@dimen/material_margin"
-        android:layout_marginBottom="@dimen/material_margin_large"
-        >
+        android:layout_height="?attr/actionBarSize">
 
         <TextView
             android:id="@+id/tv_spend"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/material_margin"
             android:text="@string/label_spend" />
 
         <ImageButton
-            android:id="@+id/btn_close"
+            android:id="@+id/btn_entry_close"
+            style="@style/IconImageButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="end"
-            style="@style/IconImageButton"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="@dimen/material_margin"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_close" />
     </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:drawable/divider_horizontal_bright"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -44,8 +46,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content" >
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tvl_name"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -53,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/material_small_margin"
                 android:layout_marginStart="@dimen/material_margin"
                 android:layout_marginEnd="@dimen/material_margin">
 
@@ -103,7 +105,7 @@
             </com.google.android.material.chip.ChipGroup>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tvl_amount"
+                android:id="@+id/tvl_cost"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -114,7 +116,7 @@
                 android:layout_marginEnd="@dimen/material_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_amount"
+                    android:id="@+id/tv_cost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/label_cost"
@@ -123,72 +125,12 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/tv_picture"
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tvl_amount"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="@dimen/material_margin"
-                android:layout_marginTop="@dimen/material_margin"
-                android:layout_marginEnd="@dimen/material_margin"
-                android:text="Pictures" />
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_picture"
-                android:layout_alignParentStart="true"
-                android:paddingStart="@dimen/material_margin"
-                android:paddingEnd="@dimen/material_margin"
-                android:clipToPadding="true"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/hsv_add_pic"
-                >
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/lnl_add_picture"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cd_add_picture"
-                        style="@style/RoundedShape"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_below="@id/tv_picture"
-                        android:layout_alignStart="@id/tv_picture"
-                        android:layout_marginTop="@dimen/material_margin"
-                        android:layout_marginBottom="@dimen/material_margin"
-                        tools:ignore="ExtraText">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:contentDescription="@string/label_description"
-                            android:src="@drawable/ic_add" />
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_picture"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/material_margin"
-                        android:layout_marginTop="@dimen/material_margin"
-                        android:layout_marginBottom="@dimen/material_margin"
-                        android:orientation="horizontal"
-                        tools:itemCount="1"
-                        tools:listitem="@layout/item_add_picture"
-                        tools:orientation="horizontal" />
-                </LinearLayout>
-            </HorizontalScrollView>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tvl_description"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_below="@id/hsv_add_pic"
+                android:layout_below="@id/tvl_cost"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="@dimen/material_margin"
