@@ -32,9 +32,11 @@
         android:id="@+id/tv_feedback"
         android:text="@string/label_feedback"
         app:layout_constraintTop_toTopOf="@id/tb_feedback"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="@dimen/material_margin"
         style="@style/TextAppearance.MaterialComponents.Headline6" />
 
     <androidx.core.widget.NestedScrollView

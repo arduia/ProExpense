@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.MainActivity"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:id="@+id/imv_update"
+        android:src="@drawable/img_taylor"
+        android:scaleType="centerCrop"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"/>
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nv_info"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/imv_update">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/material_margin"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/material_margin_large"
+                android:text="A new version of VMate is ready!"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:id="@+id/tv_update_title"/>
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/tv_update_detail"
+               style="@style/TextAppearance.MaterialComponents.Body1"
+               android:layout_alignStart="@id/tv_update_title"
+               android:layout_below="@id/tv_update_title"
+               android:layout_marginTop="@dimen/material_margin"
+               android:layout_marginBottom="@dimen/material_margin"
+               android:text="@string/label_feedback_description" />
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

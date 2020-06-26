@@ -29,8 +29,10 @@
         android:id="@+id/tv_settings"
         app:layout_constraintTop_toTopOf="@id/btn_menu"
         app:layout_constraintBottom_toBottomOf="@id/btn_menu"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_menu"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="@dimen/material_margin"
         android:text="@string/label_settings"
         style="@style/TextAppearance.MaterialComponents.Headline6"/>
 
@@ -88,12 +90,42 @@
            <View
                android:layout_width="match_parent"
                android:layout_height="1dp"
-               android:id="@+id/dv"
+               android:id="@+id/dv_font"
                android:layout_centerHorizontal="true"
                android:layout_marginStart="@dimen/material_margin"
                android:layout_marginEnd="@dimen/material_margin"
                android:background="@android:drawable/divider_horizontal_bright"
                android:layout_below="@id/tv_font_level"/>
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/tv_update_status"
+               android:text="Update Status"
+               style="@style/TextAppearance.MaterialComponents.Subtitle1"
+
+               android:layout_below="@id/dv_font"
+               android:layout_marginTop="@dimen/material_margin_large"
+               android:layout_marginBottom="@dimen/material_margin"
+               android:layout_alignStart="@id/tv_font_level"/>
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/tv_update_value"
+               android:text="Latest version!"
+               android:textColor="@color/primaryColor"
+               style="@style/TextAppearance.MaterialComponents.Body2"
+               android:layout_alignParentEnd="true"
+               android:layout_alignBaseline="@id/tv_update_status"
+               android:layout_marginEnd="@dimen/material_margin"/>
+           <View
+               android:layout_width="match_parent"
+               android:layout_height="1dp"
+               android:id="@+id/dv_update"
+               android:layout_centerHorizontal="true"
+               android:layout_marginStart="@dimen/material_margin"
+               android:layout_marginEnd="@dimen/material_margin"
+               android:background="@android:drawable/divider_horizontal_bright"
+               android:layout_below="@id/tv_update_status"/>
        </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

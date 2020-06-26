@@ -34,10 +34,11 @@
         android:id="@+id/tv_owe"
         android:text="@string/label_borrows"
         style="@style/TextAppearance.MaterialComponents.Headline6"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_open"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btn_open"
         app:layout_constraintBottom_toBottomOf="@id/btn_open"
+        app:layout_constraintHorizontal_bias="0"
         android:layout_marginStart="@dimen/material_margin" />
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
