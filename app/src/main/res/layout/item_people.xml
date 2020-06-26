@@ -12,6 +12,8 @@
         android:id="@+id/imv_owe_people"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginBottom="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin"
         android:src="@drawable/img_taylor"/>
     <TextView

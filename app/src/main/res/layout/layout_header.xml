@@ -16,6 +16,7 @@
         android:layout_marginTop="@dimen/material_margin"
         android:scaleType="centerInside"
         android:src="@drawable/ic_close"
+        android:background="?attr/selectableItemBackgroundBorderless"
         style="@style/IconImageButton"/>
 
     <de.hdodenhof.circleimageview.CircleImageView

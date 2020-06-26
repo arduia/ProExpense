@@ -33,7 +33,7 @@
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
-            android:tint="@color/iconColorTint"
+            style="@style/IconImageButton"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_close" />
     </FrameLayout>

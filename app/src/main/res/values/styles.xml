@@ -29,8 +29,8 @@
 
     <style name="IconImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="tint">@color/iconColorTint</item>
-        <item name="android:scaleType">center</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">center</item>
     </style>
 
     <style name="NavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
