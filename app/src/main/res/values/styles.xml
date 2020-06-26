@@ -28,7 +28,7 @@
 <!--    IconButton-->
 
     <style name="IconImageButton" parent="Widget.AppCompat.ImageButton">
-        <item name="tint">@color/iconColorTint</item>
+        <item name="tint">@color/iconTintColor</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">center</item>
     </style>

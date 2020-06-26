@@ -17,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
     <ImageButton
         android:id="@+id/btn_menu_open"
         android:layout_width="30dp"
@@ -55,32 +54,7 @@
         android:layout_marginTop="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_more"
-        android:text="More"
-        android:layout_marginEnd="@dimen/material_small_margin"
-        app:layout_constraintEnd_toStartOf="@id/btn_more"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cd_value"
-        app:layout_constraintBottom_toBottomOf="@id/tv_recent"
-        app:layout_constraintVertical_bias="1"
-        app:layout_constraintHorizontal_bias="1"/>
 
-    <ImageButton
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:scaleType="center"
-        style="@style/IconImageButton"
-        android:src="@drawable/ic_choose_more"
-        android:id="@+id/btn_more"
-        app:layout_constraintTop_toTopOf="@id/tv_more"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tv_recent"
-        app:layout_constraintHorizontal_bias="1"
-        android:layout_marginEnd="@dimen/material_margin"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -93,7 +67,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bl_recent"
         app:layout_constraintVertical_bias="0"
-        android:visibility="invisible"
         />
     <View
         android:layout_width="0dp"
@@ -145,7 +118,7 @@
         android:elevation="3dp"
         app:cardBackgroundColor="@color/primaryColor"
         app:cardCornerRadius="@dimen/corner_radius"
-        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_small_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">

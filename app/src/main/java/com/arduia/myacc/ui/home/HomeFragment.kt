@@ -42,9 +42,9 @@ class HomeFragment : BaseFragment(){
 
         btnMenuOpen.setOnClickListener { openDrawer() }
 
-        tvMore.setOnClickListener {
-            findNavController().navigate(R.id.dest_transaction)
-        }
+//        tvMore.setOnClickListener {
+//            findNavController().navigate(R.id.dest_transaction)
+//        }
 
         rvRecent.adapter = costAdapter
         rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -64,13 +64,6 @@ class HomeFragment : BaseFragment(){
 
                 totalScrollTop += dy
                 currentScrollShift += dy
-
-                when(totalScrollTop > 0){
-                    //It is scrolling...
-                    true -> dvRecent.visibility = View.VISIBLE
-                    //If it is on start point hide it
-                    false -> dvRecent.visibility = View.INVISIBLE
-                }
 
                 when(currentScrollShift > 10){
                     true -> fbAdd.hide()

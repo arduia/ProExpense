@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primaryColor">#03a9f4</color>
-    <color name="primaryDarkColor">#0277bd</color>
+    <color name="primaryColor">#039be5</color>
+    <color name="primaryDarkColor">#0288d1</color>
     <color name="accentColor">#ffcc80</color>
     <color name="onPrimaryColor">#ffffff</color>
     <color name="onSurfaceColor">#000000</color>
@@ -9,5 +9,5 @@
     <color name="backgroundColor">@android:color/white</color>
     <color name="surfaceColor">#eceff1</color>
     <color name="innerSurfaceColor">#eceff1</color>
-    <color name="iconColorTint">@android:color/darker_gray</color>
+    <color name="iconTintColor">@android:color/darker_gray</color>
 </resources>
