@@ -37,6 +37,7 @@
         <item name="itemTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle2</item>
         <item name="itemTextColor">@color/nav_text</item>
         <item name="itemIconSize">20dp</item>
+        <item name="android:background">@color/backgroundColor</item>
         <item name="itemHorizontalPadding">@dimen/material_margin_large</item>
     </style>
 

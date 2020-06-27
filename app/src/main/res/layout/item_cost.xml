@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/material_margin"
             android:text="-30,000"
-            android:textColor="@color/onSurfaceColor"
+            android:textColor="@color/primaryColor"
             app:layout_constraintBaseline_toBaselineOf="@+id/tv_name"
             app:layout_constraintEnd_toEndOf="parent" />
 
