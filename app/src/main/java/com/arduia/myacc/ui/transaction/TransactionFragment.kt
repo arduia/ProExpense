@@ -46,7 +46,6 @@ class TransactionFragment : Fragment(){
         ))
 
         //Initialize list
-        costAdapter.submitList(costList())
 
         //Close the page
         binding.btnPopBack.setOnClickListener {

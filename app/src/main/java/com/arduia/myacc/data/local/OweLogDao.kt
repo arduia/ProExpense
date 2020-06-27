@@ -1,7 +1,8 @@
-package com.arduia.myacc.data
+package com.arduia.myacc.data.local
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
+import com.arduia.myacc.data.local.OweLog
 
 @Dao
 interface OweLogDao {
@@ -10,7 +11,7 @@ interface OweLogDao {
     suspend fun insertOweLog(log: OweLog)
 
     @Query( "SELECT * from owe_log" )
-    suspend fun getAllOweLog(): List<OweLog>
+    fun getAllOweLog(): PagingSource<Int, OweLog>
 
     @Update
     suspend fun updateOweLog(log: OweLog)

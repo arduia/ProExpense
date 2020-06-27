@@ -2,6 +2,7 @@ package com.arduia.myacc.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,10 +10,11 @@ import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ItemCostBinding
 import com.arduia.myacc.ui.vto.CostCategory
 import com.arduia.myacc.ui.vto.CostVto
+import java.lang.Exception
 import javax.inject.Inject
 
-class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater):
-    ListAdapter<CostVto, CostAdapter.VH>(DIFF_CALLBACK){
+class CostAdapter constructor(private val layoutInflater: LayoutInflater):
+    PagingDataAdapter<CostVto, CostAdapter.VH>(DIFF_CALLBACK){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
@@ -23,7 +25,7 @@ class CostAdapter @Inject constructor(private val layoutInflater: LayoutInflater
 
     override fun onBindViewHolder(holder: VH, position: Int) {
 
-        val item = getItem(position)
+        val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
         with(holder.binding){
 

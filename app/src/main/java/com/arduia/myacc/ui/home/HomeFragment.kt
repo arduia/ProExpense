@@ -1,29 +1,24 @@
 package com.arduia.myacc.ui.home
 
 import android.graphics.Color
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.motion.widget.MotionScene
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.graph.SpendPoint
 import com.arduia.myacc.R
-import com.arduia.myacc.data.AccountingDatabase
-import com.arduia.myacc.data.Transaction
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
 import com.arduia.myacc.ui.adapter.CostAdapter
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import com.arduia.myacc.ui.mock.costList
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -31,9 +26,14 @@ import kotlin.random.nextInt
 class HomeFragment : BaseFragment(){
 
     private val viewBinding by lazy {
-            FragHomeBinding.inflate(layoutInflater).apply { setupView() }
+            FragHomeBinding.inflate(layoutInflater).apply {
+                lifecycle.addObserver(viewModel)
+                setupView()
+                setupViewModel()
+            }
     }
 
+    private val viewModel by viewModels<HomeViewModel>()
 
     private val costAdapter by lazy { CostAdapter(layoutInflater) }
 
@@ -100,13 +100,18 @@ class HomeFragment : BaseFragment(){
 
         }
 
+    }
 
+    private fun setupViewModel(){
+        viewModel.recentData.observe(viewLifecycleOwner, Observer {
+          MainScope().launch {
+              costAdapter.submitData(it)
+          }
+        })
     }
 
     override fun onResume() {
         super.onResume()
-
-        costAdapter.submitList(costList())
         viewBinding.imgGraph.spendPoints = getSamplePoints()
     }
 

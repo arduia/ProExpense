@@ -1,4 +1,4 @@
-package com.arduia.myacc.data
+package com.arduia.myacc.data.local
 
 import androidx.room.*
 
@@ -7,10 +7,10 @@ data class OweLog(
 
     @PrimaryKey( autoGenerate = true )
     @ColumnInfo( name = "owe_log_id" )
-    val id: Int = 0,
+    val owe_log_id: Int = 0,
 
     @Embedded
-    val owe_people: OwePeople?,
+    val owe_people: OwePeople,
 
     @ColumnInfo( name = "taken")
     val direction: String,

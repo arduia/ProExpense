@@ -1,7 +1,8 @@
-package com.arduia.myacc.data
+package com.arduia.myacc.data.local
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
+import com.arduia.myacc.data.local.Transaction
 
 @Dao
 interface TransactionDao{
@@ -10,7 +11,7 @@ interface TransactionDao{
     suspend fun insertTransaction(transaction: Transaction)
 
     @Query ( "SELECT * FROM `transaction`" )
-    suspend fun getAllTransaction(): List<Transaction>
+    fun getAllTransaction(): PagingSource<Int, Transaction>
 
     @Update
     suspend fun updateTransaction(transaction: Transaction)

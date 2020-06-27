@@ -1,4 +1,4 @@
-package com.arduia.myacc.data
+package com.arduia.myacc.data.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -9,7 +9,7 @@ data class OwePeople(
 
     @PrimaryKey( autoGenerate = true )
     @ColumnInfo( name = "owe_people_id" )
-    val id: Int,
+    val owe_people_id: Int,
 
     @ColumnInfo( name = "name")
     val name: String,

@@ -62,7 +62,8 @@ dependencies {
     def material_version = "1.1.0"
     def circle_image_version = "3.1.0"
     def digger_hilt_version = "2.28-alpha"
-    def room_version = "2.2.5"
+    def room_version = "2.3.0-alpha01"
+    def paging_version = "3.0.0-alpha02"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -95,4 +96,6 @@ dependencies {
 //    Preference
     implementation "androidx.preference:preference:$preference_version"
     implementation "androidx.preference:preference-ktx:$preference_version"
+//    Paging
+    implementation "androidx.paging:paging-runtime:$paging_version"
 }
