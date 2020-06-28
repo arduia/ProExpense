@@ -8,6 +8,7 @@ import com.arduia.myacc.data.AccRepository
 import com.arduia.myacc.data.AccRepositoryImpl
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.di.ServiceLoader
+import com.arduia.myacc.ui.mapping.AccountingMapper
 import com.arduia.myacc.ui.vto.CostCategory
 import com.arduia.myacc.ui.vto.CostVto
 import kotlinx.coroutines.Dispatchers
@@ -18,23 +19,35 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
-    private val _recentData =  MutableLiveData<PagingData<CostVto>>()
+    private val _recentData =  MutableLiveData<List<CostVto>>()
     val recentData get() = _recentData
 
     private val serviceLoader by lazy {
         ServiceLoader(app)
     }
+
+    private val accountingMapper by lazy {
+        AccountingMapper()
+    }
+
     private val accRepository: AccRepository by lazy {
         serviceLoader.getAccountingRepository()
     }
 
+    fun saveSpendData(transaction: Transaction){
+        viewModelScope.launch {
+            accRepository.insertTransaction(transaction)
+        }
+    }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(){
+
         viewModelScope.launch(Dispatchers.IO){
-            accRepository.getAllTransaction().collect {
-                _recentData.postValue(it.map {
-                    CostVto(it.name, it.created_date.toString(), CostCategory.INCOME, it.value.toString(), "") })
+            accRepository.getRecentTransaction().collect {
+                _recentData.postValue(it.map { tran -> accountingMapper.mapToCostVto(tran) })
             }
         }
+
     }
 }

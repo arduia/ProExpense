@@ -13,21 +13,7 @@ class ServiceLoader(private val context: Context){
 
     private val accDatabase by lazy {
         AccountingDatabase.getInstance(context.applicationContext)
-            .apply {
-                GlobalScope.launch {
-                    transactionDao.insertTransaction(
-                        Transaction(
-                            name = "Suger",
-                            value = 500,
-                            category = "Food",
-                            created_date = Date().time,
-                            modified_date = Date().time,
-                            expense = "OUTCOME",
-                            note = "Note"
-                        )
-                    )
-                }
-            }
+            .apply {  }
     }
 
     fun getAccountingRepository(): AccRepository =

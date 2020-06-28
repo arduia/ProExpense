@@ -3,6 +3,7 @@ package com.arduia.myacc.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.arduia.myacc.data.local.*
+import kotlinx.coroutines.flow.Flow
 
 class AccRepositoryImpl(
     private val transDao: TransactionDao,
@@ -19,6 +20,10 @@ class AccRepositoryImpl(
             config = PagingConfig(pageSize = 50),
             pagingSourceFactory = { transDao.getAllTransaction() }
         ).flow
+
+    override fun getRecentTransaction(): Flow<List<Transaction>> {
+        return transDao.getRecentTransaction()
+    }
 
     override suspend fun updateTransaction(transaction: Transaction) {
         transDao.updateTransaction(transaction)

@@ -33,6 +33,11 @@
         <item name="android:scaleType">center</item>
     </style>
 
+<!--    Material Button-->
+    <style name="AccountingButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:height">@dimen/button_height</item>
+    </style>
+
     <style name="NavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="itemTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle2</item>
         <item name="itemTextColor">@color/nav_text</item>

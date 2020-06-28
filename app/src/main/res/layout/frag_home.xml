@@ -54,7 +54,6 @@
         android:layout_marginTop="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin" />
 
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -66,8 +65,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bl_recent"
-        app:layout_constraintVertical_bias="0"
-        />
+        app:layout_constraintVertical_bias="0"/>
+
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
@@ -77,6 +76,7 @@
         app:layout_constraintStart_toStartOf="@id/tv_recent"
         app:layout_constraintEnd_toEndOf="@+id/tv_recent"
         app:layout_constraintTop_toBottomOf="@id/tv_recent"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recent"
         android:layout_width="0dp"
@@ -91,8 +91,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bl_recent"
         tools:listitem="@layout/item_cost" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fb_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,7 +107,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/ic_add" />
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cd_value"
         android:layout_width="0dp"
@@ -122,7 +120,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

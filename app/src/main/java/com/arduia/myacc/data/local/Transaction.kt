@@ -12,7 +12,7 @@ data class Transaction(
     val transaction_id: Int = 0,
 
     @ColumnInfo(name = "name")
-    val name: String,
+    val name: String?,
 
     @ColumnInfo(name = "value")
     val value: Long,
@@ -29,6 +29,9 @@ data class Transaction(
     @ColumnInfo(name = "expense")
     val expense: String,
 
+    @ColumnInfo(name = "finance_type")
+    val finance_type: String,
+
     @ColumnInfo(name = "note")
-    val note: String
+    val note: String?
 )

@@ -7,7 +7,8 @@
     android:elevation="0dp"
     app:cardBackgroundColor="@color/materialCardColor"
     xmlns:android="http://schemas.android.com/apk/res/android">
-<RelativeLayout
+
+    <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -21,8 +22,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginTop="@dimen/material_margin"
-        android:layout_marginBottom="@dimen/material_margin"
-        >
+        android:layout_marginBottom="@dimen/material_margin">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

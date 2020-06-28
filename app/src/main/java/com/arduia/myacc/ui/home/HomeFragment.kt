@@ -1,24 +1,27 @@
 package com.arduia.myacc.ui.home
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log.d
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.graph.SpendPoint
 import com.arduia.myacc.R
+import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
 import com.arduia.myacc.ui.adapter.CostAdapter
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
-import com.arduia.myacc.ui.mock.costList
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -37,6 +40,10 @@ class HomeFragment : BaseFragment(){
 
     private val costAdapter by lazy { CostAdapter(layoutInflater) }
 
+    private val inputMethod by lazy {
+        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,66 +54,83 @@ class HomeFragment : BaseFragment(){
     private fun FragHomeBinding.setupView(){
 
         fbAdd.setColorFilter(Color.WHITE)
-
-        sheetEntry.btnSave.setOnClickListener {
-
-        }
+        fbAdd.setOnClickListener { mlHome.transitionToState(R.id.expended_entry_constraint_set) }
 
         btnMenuOpen.setOnClickListener { openDrawer() }
-
-//        tvMore.setOnClickListener {
-//            findNavController().navigate(R.id.dest_transaction)
-//        }
 
         rvRecent.adapter = costAdapter
         rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
 
         rvRecent.addItemDecoration(
-            MarginItemDecoration( resources.getDimension(R.dimen.spacing_list_item).toInt(),
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.spacing_list_item).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             ))
 
-        rvRecent.addOnScrollListener(object: RecyclerView.OnScrollListener(){
-
-            private var totalScrollTop = 0
-            private var currentScrollShift = 0
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                totalScrollTop += dy
-                currentScrollShift += dy
-
-                when(currentScrollShift > 10){
-                    true -> fbAdd.hide()
-                    false -> fbAdd.show()
-                }
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                    //Scrolling is over
-                    currentScrollShift = 0
-                }
-            }
-        })
-
         with(sheetEntry){
             btnEntryClose.setOnClickListener {
-
-                mlHome.transitionToEnd()
+                mlHome.transitionToStart()
+            }
+            btnSave.setOnClickListener {
+                saveSpend()
             }
 
+            tvDescription.setOnEditorActionListener listener@{ _, aID, _ ->
+                if(aID == EditorInfo.IME_ACTION_NEXT){
+                    hideKeyboard()
+                }
+                return@listener true
+            }
         }
 
     }
 
+    private fun showKeyboard(){
+        inputMethod.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+    }
+
+    private fun hideKeyboard(){
+        inputMethod.hideSoftInputFromWindow(
+            viewBinding.sheetEntry.tvDescription.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+
+    private fun saveSpend(){
+
+        val name = viewBinding.sheetEntry.tvName.text.toString()
+        val cost = viewBinding.sheetEntry.tvCost.text.toString()
+        val description = viewBinding.sheetEntry.tvDescription.text.toString()
+
+        if(cost.isEmpty()){
+            viewBinding.sheetEntry.tvCost.error = "Cost is Empty"
+            return
+        }
+
+        val saveTransaction = Transaction(
+            name = name,
+            value = cost.toLongOrNull() ?: throw Exception("Phrase Exception for $cost"),
+            note = description,
+            expense = "Income",
+            category = "Fast",
+            finance_type = "CASH",
+            created_date = Date().time,
+            modified_date = Date().time
+        )
+
+        viewModel.saveSpendData(transaction = saveTransaction)
+        viewBinding.mlHome.transitionToStart()
+        clearSpendSheet()
+    }
+
+    private fun clearSpendSheet(){
+        viewBinding.sheetEntry.tvName.setText("")
+        viewBinding.sheetEntry.tvCost.setText("")
+        viewBinding.sheetEntry.tvDescription.setText("")
+    }
+
     private fun setupViewModel(){
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
-          MainScope().launch {
-              costAdapter.submitData(it)
-          }
+          costAdapter.submitList(it)
         })
     }
 
@@ -127,7 +151,5 @@ class HomeFragment : BaseFragment(){
     }
 
     private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
-
-
 
 }

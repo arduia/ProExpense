@@ -14,7 +14,7 @@ import java.lang.Exception
 import javax.inject.Inject
 
 class CostAdapter constructor(private val layoutInflater: LayoutInflater):
-    PagingDataAdapter<CostVto, CostAdapter.VH>(DIFF_CALLBACK){
+    ListAdapter<CostVto, CostAdapter.VH>(DIFF_CALLBACK){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
