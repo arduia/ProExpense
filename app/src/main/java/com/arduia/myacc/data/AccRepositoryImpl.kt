@@ -17,7 +17,7 @@ class AccRepositoryImpl(
 
     override suspend fun getAllTransaction() =
         Pager(
-            config = PagingConfig(pageSize = 50),
+            config = PagingConfig(pageSize = 30),
             pagingSourceFactory = { transDao.getAllTransaction() }
         ).flow
 

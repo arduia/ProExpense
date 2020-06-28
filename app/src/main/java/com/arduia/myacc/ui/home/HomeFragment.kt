@@ -6,21 +6,19 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.arduia.core.extension.dp
 import com.arduia.graph.SpendPoint
 import com.arduia.myacc.R
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
-import com.arduia.myacc.ui.adapter.CostAdapter
+import com.arduia.myacc.ui.adapter.RecentListAdapter
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -38,7 +36,7 @@ class HomeFragment : BaseFragment(){
 
     private val viewModel by viewModels<HomeViewModel>()
 
-    private val costAdapter by lazy { CostAdapter(layoutInflater) }
+    private val recentAdapter by lazy { RecentListAdapter(layoutInflater) }
 
     private val inputMethod by lazy {
         requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -57,8 +55,11 @@ class HomeFragment : BaseFragment(){
         fbAdd.setOnClickListener { mlHome.transitionToState(R.id.expended_entry_constraint_set) }
 
         btnMenuOpen.setOnClickListener { openDrawer() }
+        btnMoreTransaction.setOnClickListener {
+            findNavController().navigate(R.id.dest_transaction)
+        }
 
-        rvRecent.adapter = costAdapter
+        rvRecent.adapter = recentAdapter
         rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
 
         rvRecent.addItemDecoration(
@@ -120,6 +121,7 @@ class HomeFragment : BaseFragment(){
         viewModel.saveSpendData(transaction = saveTransaction)
         viewBinding.mlHome.transitionToStart()
         clearSpendSheet()
+        viewBinding.rvRecent.scrollY = - requireContext().dp(100)
     }
 
     private fun clearSpendSheet(){
@@ -130,7 +132,7 @@ class HomeFragment : BaseFragment(){
 
     private fun setupViewModel(){
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
-          costAdapter.submitList(it)
+            recentAdapter.submitList(it)
         })
     }
 
