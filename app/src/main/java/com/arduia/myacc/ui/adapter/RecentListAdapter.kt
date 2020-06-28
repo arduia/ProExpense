@@ -1,25 +1,24 @@
 package com.arduia.myacc.ui.adapter
 
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
-import com.arduia.myacc.databinding.ItemCostBinding
+import com.arduia.myacc.databinding.ItemTransactionBinding
 import com.arduia.myacc.ui.vto.CostCategory
-import com.arduia.myacc.ui.vto.CostVto
+import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
-    ListAdapter<CostVto, RecentListAdapter.VH>(DIFF_CALLBACK){
+    ListAdapter<TransactionVto, RecentListAdapter.VH>(DIFF_CALLBACK){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
-        val itemView = layoutInflater.inflate(R.layout.item_cost, parent, false)
+        val itemView = layoutInflater.inflate(R.layout.item_transaction, parent, false)
 
-        return VH(ItemCostBinding.bind(itemView))
+        return VH(ItemTransactionBinding.bind(itemView))
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -56,16 +55,16 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
     }
 
-    class VH(val binding: ItemCostBinding): RecyclerView.ViewHolder(binding.root)
+    class VH(val binding: ItemTransactionBinding): RecyclerView.ViewHolder(binding.root)
 
 }
 
-private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<CostVto>(){
-    override fun areItemsTheSame(oldItem: CostVto, newItem: CostVto): Boolean {
+private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
+    override fun areItemsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: CostVto, newItem: CostVto): Boolean {
+    override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return  oldItem.name == newItem.name &&
                 oldItem.cateogry == newItem.cateogry &&
                 oldItem.cost == newItem.cost &&

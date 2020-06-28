@@ -69,15 +69,12 @@ class HomeFragment : BaseFragment(){
 
         viewBinding.sheetEntry.btnSave.setOnClickListener {
             saveSpend()
-            clearSpendSheet()
-            hideSheet()
+
         }
 
         viewBinding.sheetEntry.tvDescription.setOnEditorActionListener listener@{ _, aID, _ ->
             if(aID == EditorInfo.IME_ACTION_NEXT){
                 saveSpend()
-                clearSpendSheet()
-                hideSheet()
             }
             return@listener true
         }
@@ -119,6 +116,8 @@ class HomeFragment : BaseFragment(){
         )
 
         viewModel.saveSpendData(transaction = saveTransaction)
+        clearSpendSheet()
+        hideSheet()
     }
 
     private fun clearSpendSheet(){

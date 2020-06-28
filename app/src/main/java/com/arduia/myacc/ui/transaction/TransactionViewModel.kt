@@ -5,15 +5,15 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import com.arduia.myacc.di.ServiceLoader
 import com.arduia.myacc.ui.mapping.AccountingMapper
-import com.arduia.myacc.ui.vto.CostVto
+import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleObserver{
 
-    private val _transactions = MutableLiveData<PagingData<CostVto>>()
-    val transactions: LiveData<PagingData<CostVto>> get() = _transactions
+    private val _transactions = MutableLiveData<PagingData<TransactionVto>>()
+    val transactions: LiveData<PagingData<TransactionVto>> get() = _transactions
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading

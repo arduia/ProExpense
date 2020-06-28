@@ -6,19 +6,19 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
-import com.arduia.myacc.databinding.ItemCostBinding
+import com.arduia.myacc.databinding.ItemTransactionSelectBinding
 import com.arduia.myacc.ui.vto.CostCategory
-import com.arduia.myacc.ui.vto.CostVto
+import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
 class TransactionListAdapter constructor(private val layoutInflater: LayoutInflater):
-    PagingDataAdapter<CostVto, TransactionListAdapter.VH>(DIFF_CALLBACK){
+    PagingDataAdapter<TransactionVto, TransactionListAdapter.VH>(DIFF_CALLBACK){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
-        val itemView = layoutInflater.inflate(R.layout.item_cost, parent, false)
+        val itemView = layoutInflater.inflate(R.layout.item_transaction_select, parent, false)
 
-        return VH(ItemCostBinding.bind(itemView))
+        return VH(ItemTransactionSelectBinding.bind(itemView))
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -48,22 +48,21 @@ class TransactionListAdapter constructor(private val layoutInflater: LayoutInfla
             }
 
             tvValue.text = item.cost
-
             imgType.setImageResource(imgRes)
         }
 
     }
 
-    class VH(val binding: ItemCostBinding): RecyclerView.ViewHolder(binding.root)
+    class VH(val binding: ItemTransactionSelectBinding): RecyclerView.ViewHolder(binding.root)
 
 }
 
-private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<CostVto>(){
-    override fun areItemsTheSame(oldItem: CostVto, newItem: CostVto): Boolean {
+private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
+    override fun areItemsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: CostVto, newItem: CostVto): Boolean {
+    override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return  oldItem.name == newItem.name &&
             oldItem.cateogry == newItem.cateogry &&
             oldItem.cost == newItem.cost &&

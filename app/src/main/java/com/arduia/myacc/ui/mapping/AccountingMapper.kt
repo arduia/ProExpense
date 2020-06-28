@@ -2,9 +2,8 @@ package com.arduia.myacc.ui.mapping
 
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.ui.vto.CostCategory
-import com.arduia.myacc.ui.vto.CostVto
+import com.arduia.myacc.ui.vto.TransactionVto
 import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,7 +13,7 @@ import java.util.*
      private val currencyFormatter = DecimalFormat("###,###.#")
 
      fun mapToCostVto(transaction: Transaction) =
-         CostVto(
+         TransactionVto(
              name = transaction.name?:"",
              date = dateFormatter.format(transaction.created_date),
              cost = transaction.value.formatCostValue(),

@@ -59,7 +59,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_cost" />
+        tools:listitem="@layout/item_transaction_select" />
     <ProgressBar
         android:layout_width="50dp"
         android:layout_height="50dp"

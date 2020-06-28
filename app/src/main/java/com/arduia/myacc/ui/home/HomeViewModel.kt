@@ -1,25 +1,19 @@
 package com.arduia.myacc.ui.home
 
 import android.app.Application
-import android.app.Service
 import androidx.lifecycle.*
-import androidx.paging.PagingData
 import com.arduia.myacc.data.AccRepository
-import com.arduia.myacc.data.AccRepositoryImpl
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.di.ServiceLoader
 import com.arduia.myacc.ui.mapping.AccountingMapper
-import com.arduia.myacc.ui.vto.CostCategory
-import com.arduia.myacc.ui.vto.CostVto
+import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
-    private val _recentData =  MutableLiveData<List<CostVto>>()
+    private val _recentData =  MutableLiveData<List<TransactionVto>>()
     val recentData get() = _recentData
 
     private val serviceLoader by lazy {

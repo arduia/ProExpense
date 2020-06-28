@@ -46,10 +46,10 @@ class TransactionFragment : Fragment(){
         //Setup Transaction Recycler View
         viewBinding.rvTransactions.adapter = transactionAdapter
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
-        viewBinding.rvTransactions.addItemDecoration(MarginItemDecoration(
-            resources.getDimension(R.dimen.spacing_list_item).toInt(),
-            resources.getDimension(R.dimen.margin_list_item).toInt()
-        ))
+//        viewBinding.rvTransactions.addItemDecoration(MarginItemDecoration(
+////            resources.getDimension(R.dimen.spacing_list_item).toInt(),
+////            resources.getDimension(R.dimen.margin_list_item).toInt()
+////        ))
 
         //Close the page
         viewBinding.btnPopBack.setOnClickListener {
