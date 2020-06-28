@@ -1,7 +1,11 @@
 package com.arduia.myacc
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import android.util.Log.d
+import com.arduia.myacc.data.local.AccountingDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class AccountingApp: Application(){
 

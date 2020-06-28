@@ -6,4 +6,5 @@
     <dimen name="material_small_margin">8dp</dimen>
     <dimen name="spacing_list_item">4dp</dimen>
     <dimen name="margin_list_item">@dimen/material_margin</dimen>
+    <dimen name="button_height">56dp</dimen>
 </resources>

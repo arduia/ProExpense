@@ -2,10 +2,11 @@
 <MotionScene
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
+
     <Transition
         motion:constraintSetStart="@+id/collapse_entry_constraint_set"
         motion:constraintSetEnd="@+id/expended_entry_constraint_set"
-        motion:duration="300"
+        motion:duration="400"
         android:id="@+id/expend_entry_transition" >
 
         <KeyFrameSet>
@@ -19,37 +20,7 @@
                 motion:motionTarget="@+id/sheet_entry"
                 motion:percentY="-0.5"
                 motion:framePosition="50" />
-
         </KeyFrameSet>
-
-        <OnClick motion:targetId="@+id/fb_add"
-            motion:clickAction="transitionToEnd"/>
-
-    </Transition>
-
-    <Transition
-        motion:constraintSetStart="@+id/collapse_entry_constraint_set"
-        motion:constraintSetEnd="@+id/expended_entry_constraint_set"
-        motion:duration="500"
-        android:id="@+id/collapse_entry_transition" >
-
-        <KeyFrameSet>
-            <KeyPosition
-                motion:motionTarget="@+id/fb_add"
-                motion:percentX="0.9"
-                motion:percentY="0.1"
-                motion:framePosition="50"
-                />
-
-            <KeyPosition
-                motion:motionTarget="@+id/sheet_entry"
-                motion:percentY="-0.5"
-                motion:framePosition="50"
-                />
-
-        </KeyFrameSet>
-        <OnClick motion:targetId="@+id/btn_entry_close"
-            motion:clickAction="transitionToStart"/>
     </Transition>
 
     <ConstraintSet android:id="@+id/collapse_entry_constraint_set">

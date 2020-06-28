@@ -8,10 +8,6 @@
         android:icon="@drawable/ic_home"
         android:title="@string/label_home" />
     <item
-        android:id="@+id/dest_owe"
-        android:title="@string/label_borrows"
-        android:icon="@drawable/ic_borrow"/>
-    <item
         android:id="@+id/dest_feedback"
         android:icon="@drawable/ic_feedback"
         android:title="@string/label_feedback" />

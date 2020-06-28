@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:elevation="3dp"
+    android:background="@color/backgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include
@@ -119,6 +120,7 @@
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/AccountingButton"
                 android:id="@+id/btn_save_entry"
                 android:layout_marginTop="@dimen/material_margin"
                 android:layout_marginStart="@dimen/material_margin"
