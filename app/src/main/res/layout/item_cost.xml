@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".ui.MainActivity">
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_type"
             android:layout_width="55dp"
@@ -34,14 +33,20 @@
         <TextView
             android:id="@+id/tv_name"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintVertical_bias=".4"
             app:layout_constraintStart_toEndOf="@id/img_type"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_value"
+            android:maxLines="1"
+            app:layout_constraintHorizontal_bias="0"
+            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="@dimen/material_margin"
+            android:layout_marginEnd="@dimen/material_margin"
             android:text="Sugar" />
+
         <TextView
             android:id="@+id/tv_date"
             style="@style/TextAppearance.MaterialComponents.Overline"
@@ -57,11 +62,16 @@
         <TextView
             android:id="@+id/tv_value"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/material_margin"
-            android:text="-30,000"
+            android:text="-30,000000000009999"
+            android:textAlignment="textEnd"
+            android:maxLength="10"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/gl_middle"
             android:textColor="@color/primaryColor"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintBaseline_toBaselineOf="@+id/tv_name"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -75,5 +85,12 @@
             android:textColor="@android:color/darker_gray"
             app:layout_constraintBaseline_toBaselineOf="@+id/tv_date"
             app:layout_constraintEnd_toEndOf="@id/tv_value" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.7" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

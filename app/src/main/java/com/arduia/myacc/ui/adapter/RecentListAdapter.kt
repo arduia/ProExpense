@@ -1,5 +1,6 @@
 package com.arduia.myacc.ui.adapter
 
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -51,6 +52,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
            imgType.setImageResource(imgRes)
        }
+
 
     }
 

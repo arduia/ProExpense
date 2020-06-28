@@ -1,20 +1,22 @@
 package com.arduia.myacc.ui.mapping
 
-import android.annotation.SuppressLint
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.ui.vto.CostCategory
 import com.arduia.myacc.ui.vto.CostVto
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
  class AccountingMapper {
 
-     private val costDateFormat = SimpleDateFormat("dd/MM/YYYY", Locale.getDefault())
+     private val dateFormatter = SimpleDateFormat("dd/MM/YYYY", Locale.getDefault())
+     private val currencyFormatter = DecimalFormat("###,###.#")
 
      fun mapToCostVto(transaction: Transaction) =
          CostVto(
              name = transaction.name?:"",
-             date = costDateFormat.format(transaction.created_date),
+             date = dateFormatter.format(transaction.created_date),
              cost = transaction.value.formatCostValue(),
              finance = transaction.finance_type,
              cateogry = when(transaction.category){
@@ -22,6 +24,7 @@ import java.util.*
              }
          )
 
-     private fun Long.formatCostValue(): String = this.toString()
+     private fun Long.formatCostValue()
+         = currencyFormatter.format(this)
 
  }

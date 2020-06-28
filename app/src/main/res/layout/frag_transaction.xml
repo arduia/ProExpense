@@ -35,11 +35,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
     <ImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:id="@+id/delete"
-        android:src="@drawable/ic_delete"
-        style="@style/IconImageButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/btn_edit"
+        android:src="@drawable/ic_edit"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="@color/primaryColor"
         app:layout_constraintTop_toTopOf="@id/btn_pop_back"
         app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,6 +52,8 @@
         android:layout_height="0dp"
         android:overScrollMode="never"
         android:scrollbars="vertical"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/tb_transaction"
         android:id="@+id/rv_transactions"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,5 +69,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_transaction"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fb_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/material_margin"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
+        android:visibility="gone"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/primaryColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_delete" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@
 <MotionScene
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
+
     <Transition
         motion:constraintSetStart="@+id/collapse_entry_constraint_set"
         motion:constraintSetEnd="@+id/expended_entry_constraint_set"
@@ -19,12 +20,7 @@
                 motion:motionTarget="@+id/sheet_entry"
                 motion:percentY="-0.5"
                 motion:framePosition="50" />
-
         </KeyFrameSet>
-
-        <OnClick
-            motion:clickAction="transitionToStart"
-            motion:targetId="@+id/btn_entry_close"/>
     </Transition>
 
     <ConstraintSet android:id="@+id/collapse_entry_constraint_set">

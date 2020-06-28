@@ -9,14 +9,7 @@ import kotlinx.coroutines.launch
 
 class AccountingApp: Application(){
 
-    private val db by lazy {
-        AccountingDatabase.getInstance(this)
-    }
-
     override fun onCreate() {
         super.onCreate()
-        GlobalScope.launch (Dispatchers.IO){
-            d("AccountingApp", "onCreate -> ${db.transactionDao.getAllTransaction()}")
-        }
     }
 }

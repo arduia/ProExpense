@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -26,13 +27,7 @@ import kotlin.random.nextInt
 
 class HomeFragment : BaseFragment(){
 
-    private val viewBinding by lazy {
-            FragHomeBinding.inflate(layoutInflater).apply {
-                lifecycle.addObserver(viewModel)
-                setupView()
-                setupViewModel()
-            }
-    }
+    private val viewBinding by lazy {  createViewBinding() }
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -48,54 +43,59 @@ class HomeFragment : BaseFragment(){
         savedInstanceState: Bundle?
     ): View? = viewBinding.root
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        lifecycle.addObserver(viewModel)
+        setupView()
+        setupViewModel()
+    }
     //Setup View
-    private fun FragHomeBinding.setupView(){
+    private fun setupView(){
 
-        fbAdd.setColorFilter(Color.WHITE)
-        fbAdd.setOnClickListener { mlHome.transitionToState(R.id.expended_entry_constraint_set) }
+        viewBinding.fbAdd.setColorFilter(Color.WHITE)
 
-        btnMenuOpen.setOnClickListener { openDrawer() }
-        btnMoreTransaction.setOnClickListener {
+        viewBinding.fbAdd.setOnClickListener { showSheet() }
+
+        viewBinding.btnMenuOpen.setOnClickListener { openDrawer() }
+
+        viewBinding.btnMoreTransaction.setOnClickListener {
             findNavController().navigate(R.id.dest_transaction)
         }
 
-        rvRecent.adapter = recentAdapter
-        rvRecent.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-
-        rvRecent.addItemDecoration(
-            MarginItemDecoration(
-                resources.getDimension(R.dimen.spacing_list_item).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
-            ))
-
-        with(sheetEntry){
-            btnEntryClose.setOnClickListener {
-                mlHome.transitionToStart()
-            }
-            btnSave.setOnClickListener {
-                saveSpend()
-            }
-
-            tvDescription.setOnEditorActionListener listener@{ _, aID, _ ->
-                if(aID == EditorInfo.IME_ACTION_NEXT){
-                    hideKeyboard()
-                }
-                return@listener true
-            }
+        viewBinding.sheetEntry.btnEntryClose.setOnClickListener {
+            clearSpendSheet()
+            hideSheet()
         }
 
-    }
+        viewBinding.sheetEntry.btnSave.setOnClickListener {
+            saveSpend()
+            clearSpendSheet()
+            hideSheet()
+        }
 
-    private fun showKeyboard(){
-        inputMethod.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        viewBinding.sheetEntry.tvDescription.setOnEditorActionListener listener@{ _, aID, _ ->
+            if(aID == EditorInfo.IME_ACTION_NEXT){
+                saveSpend()
+                clearSpendSheet()
+                hideSheet()
+            }
+            return@listener true
+        }
     }
 
     private fun hideKeyboard(){
-        inputMethod.hideSoftInputFromWindow(
-            viewBinding.sheetEntry.tvDescription.windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS)
+        inputMethod.hideSoftInputFromWindow(viewBinding.root.windowToken, 0)
     }
 
+    private fun hideSheet(){
+        viewBinding.root.requestFocus()
+        viewBinding.mlHome.transitionToStart()
+        hideKeyboard()
+    }
+
+    private fun showSheet(){
+        viewBinding.mlHome.transitionToState(R.id.expended_entry_constraint_set)
+    }
     private fun saveSpend(){
 
         val name = viewBinding.sheetEntry.tvName.text.toString()
@@ -119,9 +119,6 @@ class HomeFragment : BaseFragment(){
         )
 
         viewModel.saveSpendData(transaction = saveTransaction)
-        viewBinding.mlHome.transitionToStart()
-        clearSpendSheet()
-        viewBinding.rvRecent.scrollY = - requireContext().dp(100)
     }
 
     private fun clearSpendSheet(){
@@ -133,6 +130,7 @@ class HomeFragment : BaseFragment(){
     private fun setupViewModel(){
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
             recentAdapter.submitList(it)
+            viewBinding.rvRecent.requestFocusFromTouch()
         })
     }
 
@@ -153,5 +151,22 @@ class HomeFragment : BaseFragment(){
     }
 
     private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
+
+    private fun createViewBinding() =
+        FragHomeBinding.inflate(layoutInflater).apply {
+            //Once Configuration
+        rvRecent.adapter = recentAdapter
+        rvRecent.layoutManager =
+            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        rvRecent.addItemDecoration(
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            ))
+    }
+
+    companion object{
+        private const val TAG = "MY_HomeFragment"
+    }
 
 }

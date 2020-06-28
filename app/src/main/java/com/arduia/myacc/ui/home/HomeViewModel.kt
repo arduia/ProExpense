@@ -45,7 +45,8 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
         viewModelScope.launch(Dispatchers.IO){
             accRepository.getRecentTransaction().collect {
-                _recentData.postValue(it.map { tran -> accountingMapper.mapToCostVto(tran) })
+                val value = it.map { trans ->  accountingMapper.mapToCostVto(trans) }
+                _recentData.postValue(value)
             }
         }
 
