@@ -42,9 +42,9 @@
             android:layout_marginEnd="@dimen/material_margin"
             android:layout_marginBottom="32dp"
             motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintEnd_toEndOf="@+id/rv_recent"
             motion:layout_constraintHorizontal_bias="1.0"
-            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintStart_toStartOf="@+id/rv_recent"
             motion:layout_constraintTop_toBottomOf="@+id/toolbar"
             motion:layout_constraintVertical_bias="1.0"/>
     </ConstraintSet>
@@ -65,9 +65,9 @@
             android:layout_height="wrap_content"
             motion:backgroundTint="@android:color/white"
             motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintEnd_toEndOf="@+id/rv_recent"
             motion:layout_constraintHorizontal_bias="0.5"
-            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintStart_toStartOf="@+id/rv_recent"
             motion:layout_constraintTop_toBottomOf="@+id/toolbar"
             motion:layout_constraintVertical_bias="0.7">
         </Constraint>

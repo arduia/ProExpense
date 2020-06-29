@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.constraintlayout.motion.widget.MotionLayout
-
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -48,11 +47,11 @@
         android:text="@string/label_recent"
         style="@style/TextAppearance.MaterialComponents.Button"
         app:layout_constraintTop_toBottomOf="@id/cd_value"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/rv_recent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginTop="@dimen/material_margin"
-        android:layout_marginStart="@dimen/material_margin" />
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin" />
     <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -60,22 +59,21 @@
         android:src="@drawable/ic_more_horizontal"
         android:tint="@color/primaryColor"
         style="@style/IconImageButton"
-        android:layout_marginEnd="@dimen/material_margin"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/dv_recent"
         app:layout_constraintTop_toTopOf="@id/tv_recent"
         app:layout_constraintBottom_toBottomOf="@id/dv_recent"/>
 
     <View
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="1dp"
         android:id="@+id/dv_recent"
         android:background="@android:drawable/divider_horizontal_bright"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginEnd="@dimen/material_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tv_recent"
+        app:layout_constraintEnd_toEndOf="@id/rv_recent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bl_recent"
         app:layout_constraintVertical_bias="0"/>
@@ -99,6 +97,7 @@
         android:overScrollMode="never"
         android:paddingBottom="@dimen/material_small_margin"
         android:paddingTop="@dimen/material_small_margin"
+        app:layout_constraintWidth_max="482dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,9 +113,9 @@
             android:tint="@android:color/white"
             app:backgroundTint="@color/primaryColor"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/rv_recent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@id/rv_recent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/ic_add" />
@@ -126,6 +125,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginEnd="@dimen/material_margin"
+        app:layout_constraintWidth_max="450dp"
+
         android:elevation="3dp"
         app:cardBackgroundColor="@color/primaryColor"
         app:cardCornerRadius="@dimen/corner_radius"
