@@ -7,6 +7,7 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -70,7 +71,10 @@ class HomeFragment : BaseFragment(){
 
         viewBinding.sheetEntry.btnSave.setOnClickListener {
             saveSpend()
+        }
 
+        viewBinding.sheetEntry.tvCost.addTextChangedListener {
+            viewBinding.sheetEntry.btnSave.isEnabled = !it.isNullOrEmpty()
         }
 
         viewBinding.sheetEntry.tvDescription.setOnEditorActionListener listener@{ _, aID, _ ->

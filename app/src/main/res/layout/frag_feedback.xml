@@ -117,6 +117,7 @@
         android:layout_height="@dimen/button_height"
         android:id="@+id/btn_send"
         android:text="@string/label_send_feedback"
+        android:enabled="false"
         android:layout_marginTop="@dimen/material_margin"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginEnd="@dimen/material_margin"
