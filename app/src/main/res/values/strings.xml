@@ -4,26 +4,26 @@
     <string name="label_resent">Recent</string>
     <string name="label_borrows">Owe</string>
     <string name="label_settings">Settings</string>
-    <string name="tmp_title">Mi Khin Lay</string>
     <string name="label_transaction">Transactions</string>
 
 <!--    Home-->
     <string name="label_log">Activity Log</string>
     <string name="label_home">Home</string>
-    <string name="label_dashboard">Dashboard</string>
     <string name="label_total">Total Balance</string>
+    <string name="label_outcome_week">Outcome a Week</string>
 
 <!--    Owe-->
     <string name="label_owe_total">Total</string>
     <string name="label_owe_log">Log</string>
     <string name="label_owe_people">People</string>
+    <string name="label_owe_name">Name*</string>
 
 <!--    Entry Sheet-->
     <string name="label_spend">Spend</string>
     <string name="label_name">Name</string>
-    <string name="label_cost">Cost</string>
+    <string name="label_amount">Amount*</string>
     <string name="label_save">Save</string>
-    <string name="label_description">Description</string>
+    <string name="label_note">Note</string>
 
 <!--    Feedback-->
     <string name="label_feedback">Feedback</string>
@@ -33,7 +33,7 @@
     <string name="label_comment">Your Comments</string>
     <string name="label_send_feedback">Send Feedback</string>
 
-    <string name="label_sending" tools:ignore="TypographyEllipsis">Sending...</string>
+    <string  name="label_sending" tools:ignore="TypographyEllipsis">Sending...</string>
     <string name="label_thanks">Thanks Your Feedback!</string>
 
 <!--    Transaction-->

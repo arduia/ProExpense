@@ -1,59 +1,61 @@
 package com.arduia.myacc.ui.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
-import com.arduia.myacc.databinding.ItemTransactionSelectBinding
-import com.arduia.myacc.ui.vto.CostCategory
+import com.arduia.myacc.databinding.ItemTransactionBinding
 import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
-class TransactionListAdapter constructor(private val layoutInflater: LayoutInflater):
-    PagingDataAdapter<TransactionVto, TransactionListAdapter.VH>(DIFF_CALLBACK){
+class TransactionListAdapter constructor(private val context: Context,
+                                         private val categoryProvider: CategoryProvider):
+    PagingDataAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(DIFF_CALLBACK){
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-
-        val itemView = layoutInflater.inflate(R.layout.item_transaction_select, parent, false)
-
-        return VH(ItemTransactionSelectBinding.bind(itemView))
+    var isSelectionMode = false
+    set(value) {
+        field = value
+        notifyDataSetChanged()
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
+    private val layoutInflater by lazy { LayoutInflater.from(context) }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
+
+        val itemView = layoutInflater.inflate(R.layout.item_transaction, parent, false)
+
+        return TransactionVH(ItemTransactionBinding.bind(itemView))
+    }
+
+    override fun onBindViewHolder(holder: TransactionVH, position: Int) {
 
         val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
         with(holder.binding){
 
-            tvName.text = item.name
-            tvDate.text = item.date
-            tvFiance.text = item.finance
-
-            val imgRes = when(item.cateogry){
-
-                CostCategory.CLOTHES         -> R.drawable.ic_clothes
-                CostCategory.HOUSEHOLD       -> R.drawable.ic_household
-                CostCategory.TRANSPORTATION  -> R.drawable.ic_transportation
-                CostCategory.FOOD            -> R.drawable.ic_food
-                CostCategory.UTILITIES       -> R.drawable.ic_utities
-                CostCategory.HEARTHCARE      -> R.drawable.ic_healthcare
-                CostCategory.SOCIAL          -> R.drawable.ic_social
-                CostCategory.EDUCATION       -> R.drawable.ic_education
-                CostCategory.DONATIONS       -> R.drawable.ic_donations
-                CostCategory.ENTERTAINMENT   -> R.drawable.ic_entertainment
-                CostCategory.INCOME          -> R.drawable.ic_borrow
-
+            //For Selection Mode, show select bubble
+            imvSelect.visibility = when(isSelectionMode){
+                true -> View.VISIBLE
+                false -> View.GONE
             }
 
-            tvValue.text = item.cost
-            imgType.setImageResource(imgRes)
+            tvName.text = item.name
+            tvDate.text = item.date
+            tvFinanceType.text = item.finance
+
+            tvAmount.text = item.cost
+            val imgRes = categoryProvider.getDrawableCategory(item.cateogry)
+            imvCategory.setImageResource(imgRes)
+
         }
 
     }
 
-    class VH(val binding: ItemTransactionSelectBinding): RecyclerView.ViewHolder(binding.root)
+    class TransactionVH(val binding: ItemTransactionBinding): RecyclerView.ViewHolder(binding.root)
 
 }
 

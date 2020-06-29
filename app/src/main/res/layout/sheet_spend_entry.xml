@@ -119,7 +119,7 @@
                     android:id="@+id/tv_cost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/label_cost"
+                    android:hint="@string/label_amount"
                     android:imeOptions="actionNext|actionSend"
                     android:inputType="number"
                     android:singleLine="true" />
@@ -142,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="top"
-                    android:hint="@string/label_description"
+                    android:hint="@string/label_note"
                     android:nextFocusDown="@id/btn_save"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>

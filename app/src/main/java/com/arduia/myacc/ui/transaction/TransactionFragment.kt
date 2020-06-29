@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
+import com.arduia.myacc.ui.adapter.CategoryProvider
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import com.arduia.myacc.ui.adapter.TransactionListAdapter
 import kotlinx.coroutines.MainScope
@@ -20,9 +21,9 @@ import kotlinx.coroutines.launch
 
 class TransactionFragment : Fragment(){
 
-    private val viewBinding by lazy { FragTransactionBinding.inflate(layoutInflater) }
+    private val viewBinding by lazy { createViewBinding()}
 
-    private val transactionAdapter by lazy { TransactionListAdapter(layoutInflater) }
+    private val transactionAdapter by lazy { TransactionListAdapter(requireContext(), CategoryProvider()) }
 
     private val viewModel by viewModels<TransactionViewModel>()
 
@@ -46,18 +47,16 @@ class TransactionFragment : Fragment(){
         //Setup Transaction Recycler View
         viewBinding.rvTransactions.adapter = transactionAdapter
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
-//        viewBinding.rvTransactions.addItemDecoration(MarginItemDecoration(
-////            resources.getDimension(R.dimen.spacing_list_item).toInt(),
-////            resources.getDimension(R.dimen.margin_list_item).toInt()
-////        ))
 
         //Close the page
         viewBinding.btnPopBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
         viewBinding.fbDelete.setColorFilter(Color.WHITE)
         viewBinding.btnEdit.setOnClickListener {
             viewBinding.fbDelete.show()
+            transactionAdapter.isSelectionMode = true
         }
     }
 
@@ -66,6 +65,7 @@ class TransactionFragment : Fragment(){
         viewModel.transactions.observe(viewLifecycleOwner, Observer {
             MainScope().launch {
                 transactionAdapter.submitData(it)
+
             }
         })
 
@@ -75,6 +75,18 @@ class TransactionFragment : Fragment(){
                 false -> viewBinding.pbLoading.visibility = View.GONE
             }
         })
+
+    }
+
+    private fun createViewBinding():FragTransactionBinding{
+        val binding = FragTransactionBinding.inflate(layoutInflater)
+        //One Time Operation
+        binding.rvTransactions.addItemDecoration(
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            ))
+        return binding
 
     }
 

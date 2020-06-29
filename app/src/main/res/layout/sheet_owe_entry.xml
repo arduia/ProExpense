@@ -61,7 +61,7 @@
                 android:layout_marginStart="@dimen/material_margin"
                 android:layout_marginEnd="@dimen/material_margin"
                 android:id="@+id/tvl_name"
-                android:hint="@string/label_name"
+                android:hint="@string/label_owe_name"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                  >
                 <com.google.android.material.textfield.TextInputEditText
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tvl_value"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="@string/label_cost"
+                android:hint="@string/label_amount"
                 android:layout_marginStart="@dimen/material_margin"
                 android:layout_marginEnd="@dimen/material_margin"
                 android:layout_marginTop="@dimen/material_margin">
@@ -105,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvl_description"
-                android:hint="Description"
+                android:hint="@string/label_note"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginStart="@dimen/material_margin"
                 android:layout_marginEnd="@dimen/material_margin"

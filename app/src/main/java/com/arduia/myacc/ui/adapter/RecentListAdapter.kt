@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ItemTransactionBinding
-import com.arduia.myacc.ui.vto.CostCategory
 import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
-class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
+class RecentListAdapter constructor(private val layoutInflater: LayoutInflater,
+                                    private val categoryProvider: CategoryProvider):
     ListAdapter<TransactionVto, RecentListAdapter.VH>(DIFF_CALLBACK){
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
@@ -29,27 +30,13 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
            tvName.text = item.name
            tvDate.text = item.date
-           tvFiance.text = item.finance
+           tvFinanceType.text = item.finance
 
-           val imgRes = when(item.cateogry){
+           val imgRes =  categoryProvider.getDrawableCategory(item.cateogry)
 
-               CostCategory.CLOTHES         -> R.drawable.ic_clothes
-               CostCategory.HOUSEHOLD       -> R.drawable.ic_household
-               CostCategory.TRANSPORTATION  -> R.drawable.ic_transportation
-               CostCategory.FOOD            -> R.drawable.ic_food
-               CostCategory.UTILITIES       -> R.drawable.ic_utities
-               CostCategory.HEARTHCARE      -> R.drawable.ic_healthcare
-               CostCategory.SOCIAL          -> R.drawable.ic_social
-               CostCategory.EDUCATION       -> R.drawable.ic_education
-               CostCategory.DONATIONS       -> R.drawable.ic_donations
-               CostCategory.ENTERTAINMENT   -> R.drawable.ic_entertainment
-               CostCategory.INCOME          -> R.drawable.ic_borrow
+           tvAmount.text = item.cost
 
-           }
-
-           tvValue.text = item.cost
-
-           imgType.setImageResource(imgRes)
+           imvCategory.setImageResource(imgRes)
        }
 
 

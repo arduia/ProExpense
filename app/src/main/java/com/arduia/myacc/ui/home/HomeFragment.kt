@@ -18,6 +18,7 @@ import com.arduia.myacc.R
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
+import com.arduia.myacc.ui.adapter.CategoryProvider
 import com.arduia.myacc.ui.adapter.RecentListAdapter
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import java.util.*
@@ -31,7 +32,7 @@ class HomeFragment : BaseFragment(){
 
     private val viewModel by viewModels<HomeViewModel>()
 
-    private val recentAdapter by lazy { RecentListAdapter(layoutInflater) }
+    private val recentAdapter by lazy { RecentListAdapter(layoutInflater, CategoryProvider()) }
 
     private val inputMethod by lazy {
         requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
