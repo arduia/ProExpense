@@ -2,6 +2,7 @@ package com.arduia.myacc.ui.transaction
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.arduia.myacc.databinding.FragTransactionBinding
 import com.arduia.myacc.ui.adapter.CategoryProvider
 import com.arduia.myacc.ui.adapter.MarginItemDecoration
 import com.arduia.myacc.ui.adapter.TransactionListAdapter
+import kotlinx.android.synthetic.main.activ_main.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -47,6 +49,9 @@ class TransactionFragment : Fragment(){
         //Setup Transaction Recycler View
         viewBinding.rvTransactions.adapter = transactionAdapter
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
+        transactionAdapter.setItemClickListener {
+            d("Transaction Fragment", "$it")
+        }
 
         //Close the page
         viewBinding.btnPopBack.setOnClickListener {
@@ -56,8 +61,11 @@ class TransactionFragment : Fragment(){
         viewBinding.fbDelete.setColorFilter(Color.WHITE)
         viewBinding.btnEdit.setOnClickListener {
             viewBinding.fbDelete.show()
-            transactionAdapter.isSelectionMode = true
+            transactionAdapter.isSelectionMode =
+                transactionAdapter.isSelectionMode.not()
+            viewBinding.btnEdit.setImageResource(R.drawable.ic_done)
         }
+
     }
 
     private fun setupViewModel(){

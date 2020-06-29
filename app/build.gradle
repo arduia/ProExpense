@@ -64,6 +64,8 @@ dependencies {
     def digger_hilt_version = "2.28-alpha"
     def room_version = "2.3.0-alpha01"
     def paging_version = "3.0.0-alpha02"
+    def recycler_version = "1.1.0"
+    def recycler_selection_view = "1.1.0-rc01"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -79,6 +81,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
+    implementation "androidx.recyclerview:recyclerview:$recycler_version"
+    implementation "androidx.recyclerview:recyclerview-selection:$recycler_selection_view"
 //    Testing
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_testing_version"

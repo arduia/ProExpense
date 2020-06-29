@@ -5,7 +5,7 @@ data class TransactionVto(val name:String,
                           val cateogry:CostCategory,
                           val cost:String,
                           val finance:String,
-                          val isSelected:Boolean = false)
+                          var isSelected:Boolean = false)
 
 enum class CostCategory{
     HOUSEHOLD,

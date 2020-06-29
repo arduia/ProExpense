@@ -86,11 +86,11 @@
                 android:layout_centerHorizontal="true"
                 android:id="@+id/chip_category"
                 app:singleSelection="true"
-                app:singleLine="true"
+                android:nestedScrollingEnabled="true"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_below="@id/tvl_name"
                 android:layout_marginTop="@dimen/material_margin"
-                android:paddingStart="@dimen/material_margin"  >
+                android:paddingStart="@dimen/material_margin" >
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
