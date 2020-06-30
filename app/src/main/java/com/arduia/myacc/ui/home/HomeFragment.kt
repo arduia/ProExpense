@@ -6,22 +6,19 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.core.extension.dp
 import com.arduia.graph.SpendPoint
 import com.arduia.myacc.R
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
-import com.arduia.myacc.ui.adapter.CategoryProvider
-import com.arduia.myacc.ui.adapter.RecentListAdapter
-import com.arduia.myacc.ui.adapter.MarginItemDecoration
+import com.arduia.myacc.ui.common.CategoryProvider
+import com.arduia.myacc.ui.common.MarginItemDecoration
 import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -33,7 +30,12 @@ class HomeFragment : BaseFragment(){
 
     private val viewModel by viewModels<HomeViewModel>()
 
-    private val recentAdapter by lazy { RecentListAdapter(layoutInflater, CategoryProvider()) }
+    private val recentAdapter by lazy {
+        RecentListAdapter(
+            layoutInflater,
+            CategoryProvider()
+        )
+    }
 
     private val inputMethod by lazy {
         requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

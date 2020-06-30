@@ -14,10 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
-import com.arduia.myacc.ui.adapter.CategoryProvider
-import com.arduia.myacc.ui.adapter.MarginItemDecoration
-import com.arduia.myacc.ui.adapter.TransactionListAdapter
-import kotlinx.android.synthetic.main.activ_main.*
+import com.arduia.myacc.ui.common.CategoryProvider
+import com.arduia.myacc.ui.common.MarginItemDecoration
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -25,7 +23,12 @@ class TransactionFragment : Fragment(){
 
     private val viewBinding by lazy { createViewBinding()}
 
-    private val transactionAdapter by lazy { TransactionListAdapter(requireContext(), CategoryProvider()) }
+    private val transactionAdapter by lazy {
+        TransactionListAdapter(
+            requireContext(),
+            CategoryProvider()
+        )
+    }
 
     private val viewModel by viewModels<TransactionViewModel>()
 
@@ -61,9 +64,6 @@ class TransactionFragment : Fragment(){
         viewBinding.fbDelete.setColorFilter(Color.WHITE)
         viewBinding.btnEdit.setOnClickListener {
             viewBinding.fbDelete.show()
-            transactionAdapter.isSelectionMode =
-                transactionAdapter.isSelectionMode.not()
-            viewBinding.btnEdit.setImageResource(R.drawable.ic_done)
         }
 
     }
@@ -73,7 +73,6 @@ class TransactionFragment : Fragment(){
         viewModel.transactions.observe(viewLifecycleOwner, Observer {
             MainScope().launch {
                 transactionAdapter.submitData(it)
-
             }
         })
 

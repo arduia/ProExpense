@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.adapter
+package com.arduia.myacc.ui.owe
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,14 +6,23 @@ import android.widget.ScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
+import com.arduia.myacc.ui.common.MarginItemDecoration
 import com.arduia.myacc.ui.vto.OweLogVto
 import com.arduia.myacc.ui.vto.OwePeopleVto
 
 class OwePagerAdapter(private val layoutInflater: LayoutInflater):
     RecyclerView.Adapter<OwePagerAdapter.VH>(){
 
-    private val oweLogAdapter by lazy { OweLogAdapter(layoutInflater) }
-    private val peopleAdapter by lazy { OwePeopleAdapter(layoutInflater) }
+    private val oweLogAdapter by lazy {
+        OweLogAdapter(
+            layoutInflater
+        )
+    }
+    private val peopleAdapter by lazy {
+        OwePeopleAdapter(
+            layoutInflater
+        )
+    }
 
     var oweLogs: MutableList<OweLogVto> = oweLogAdapter.currentList
     set(value) { oweLogAdapter.submitList(value) }
@@ -37,9 +46,11 @@ class OwePagerAdapter(private val layoutInflater: LayoutInflater):
             overScrollMode = ScrollView.OVER_SCROLL_NEVER
 
             //First Adapter Use Item Decoration
-            val marginDecorator = MarginItemDecoration(
-                resources.getDimension(R.dimen.spacing_list_item).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt())
+            val marginDecorator =
+                MarginItemDecoration(
+                    resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                    resources.getDimension(R.dimen.margin_list_item).toInt()
+                )
 
             //Add Decorator to view
             addItemDecoration(marginDecorator)

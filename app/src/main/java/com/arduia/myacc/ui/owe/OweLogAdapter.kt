@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.adapter
+package com.arduia.myacc.ui.owe
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,9 @@ import com.arduia.myacc.databinding.ItemOweBinding
 import com.arduia.myacc.ui.vto.OweLogVto
 
 class OweLogAdapter(private val layoutInflater: LayoutInflater):
-    ListAdapter<OweLogVto,OweLogAdapter.VH>(DIFF_CALLBACK){
+    ListAdapter<OweLogVto, OweLogAdapter.VH>(
+        DIFF_CALLBACK
+    ){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 

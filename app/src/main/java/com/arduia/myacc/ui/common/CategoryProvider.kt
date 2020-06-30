@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.adapter
+package com.arduia.myacc.ui.common
 
 import com.arduia.myacc.R
 import com.arduia.myacc.ui.vto.CostCategory

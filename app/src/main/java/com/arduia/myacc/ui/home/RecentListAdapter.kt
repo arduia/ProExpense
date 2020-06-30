@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.adapter
+package com.arduia.myacc.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,19 +7,25 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ItemTransactionBinding
+import com.arduia.myacc.ui.common.CategoryProvider
 import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater,
-                                    private val categoryProvider: CategoryProvider):
-    ListAdapter<TransactionVto, RecentListAdapter.VH>(DIFF_CALLBACK){
+                                    private val categoryProvider: CategoryProvider
+):
+    ListAdapter<TransactionVto, RecentListAdapter.VH>(
+        DIFF_CALLBACK
+    ){
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
         val itemView = layoutInflater.inflate(R.layout.item_transaction, parent, false)
 
-        return VH(ItemTransactionBinding.bind(itemView))
+        return VH(
+            ItemTransactionBinding.bind(itemView)
+        )
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {

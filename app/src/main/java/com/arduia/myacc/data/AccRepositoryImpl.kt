@@ -21,7 +21,7 @@ class AccRepositoryImpl(
             pagingSourceFactory = { transDao.getAllTransaction() }
         ).flow
 
-    override fun getRecentTransaction(): Flow<List<Transaction>> {
+    override suspend fun getRecentTransaction(): Flow<List<Transaction>> {
         return transDao.getRecentTransaction()
     }
 
