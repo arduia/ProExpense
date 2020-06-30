@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import com.arduia.myacc.data.AccRepository
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.di.ServiceLoader
-import com.arduia.myacc.ui.mapping.AccountingMapper
 import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -17,11 +16,11 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     val recentData get() = _recentData
 
     private val serviceLoader by lazy {
-        ServiceLoader(app)
+        ServiceLoader.getInstance(app)
     }
 
-    private val accountingMapper by lazy {
-        AccountingMapper()
+    private val transactionMapper by lazy {
+        serviceLoader.getTransactionMapper()
     }
 
     private val accRepository: AccRepository by lazy {
@@ -39,7 +38,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
         viewModelScope.launch(Dispatchers.IO){
             accRepository.getRecentTransaction().collect {
-                val value = it.map { trans ->  accountingMapper.mapToCostVto(trans) }
+                val value = it.map { trans ->  this@HomeViewModel.transactionMapper.mapToCostVto(trans) }
                 _recentData.postValue(value)
             }
         }

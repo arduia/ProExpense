@@ -32,9 +32,7 @@ class HomeFragment : BaseFragment(){
 
     private val recentAdapter by lazy {
         RecentListAdapter(
-            layoutInflater,
-            CategoryProvider()
-        )
+            layoutInflater )
     }
 
     private val inputMethod by lazy {

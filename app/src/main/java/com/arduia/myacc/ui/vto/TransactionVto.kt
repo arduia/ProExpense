@@ -1,11 +1,15 @@
 package com.arduia.myacc.ui.vto
 
-data class TransactionVto(val name:String,
+import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
+
+data class TransactionVto(val id: Int,
+                          val name:String,
                           val date:String,
-                          val cateogry:CostCategory,
+                          @DrawableRes
+                          val category: Int,
                           val cost:String,
-                          val finance:String,
-                          var isSelected:Boolean = false)
+                          val finance:String)
 
 enum class CostCategory{
     HOUSEHOLD,

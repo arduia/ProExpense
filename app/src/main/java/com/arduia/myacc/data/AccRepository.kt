@@ -19,6 +19,8 @@ interface AccRepository {
 
     suspend fun deleteTransaction(transaction: Transaction)
 
+    suspend fun deleteAllTransaction(list: List<Int>)
+
     //OwePeople
     suspend fun insertOwePeople(people: OwePeople)
 

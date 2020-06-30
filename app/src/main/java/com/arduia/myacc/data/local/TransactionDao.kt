@@ -23,4 +23,7 @@ interface TransactionDao{
     @Delete
     suspend fun deleteTransaction(transaction: Transaction)
 
+    @Query( "DELETE FROM `transaction` WHERE  transaction_id in (:idLists)")
+    suspend fun deleteTransactionByIDs(idLists: List<Int>)
+
 }

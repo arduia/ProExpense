@@ -6,15 +6,16 @@ import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
-import com.arduia.myacc.ui.common.CategoryProvider
 import com.arduia.myacc.ui.common.MarginItemDecoration
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -25,12 +26,13 @@ class TransactionFragment : Fragment(){
 
     private val transactionAdapter by lazy {
         TransactionListAdapter(
-            requireContext(),
-            CategoryProvider()
+            requireContext()
         )
     }
 
     private val viewModel by viewModels<TransactionViewModel>()
+
+    private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +54,14 @@ class TransactionFragment : Fragment(){
         //Setup Transaction Recycler View
         viewBinding.rvTransactions.adapter = transactionAdapter
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
+        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvTransactions)
+
+        itemSwipeCallback.setSwipeListener {
+            val item = transactionAdapter.getItemFromPosition(it)
+            viewModel.onItemSelect(item)
+            transactionAdapter.refresh()
+        }
+
         transactionAdapter.setItemClickListener {
             d("Transaction Fragment", "$it")
         }
@@ -61,9 +71,8 @@ class TransactionFragment : Fragment(){
             findNavController().popBackStack()
         }
 
-        viewBinding.fbDelete.setColorFilter(Color.WHITE)
-        viewBinding.btnEdit.setOnClickListener {
-            viewBinding.fbDelete.show()
+        viewBinding.btnDone.setOnClickListener {
+            viewModel.deleteConfirm()
         }
 
     }
@@ -73,6 +82,7 @@ class TransactionFragment : Fragment(){
         viewModel.transactions.observe(viewLifecycleOwner, Observer {
             MainScope().launch {
                 transactionAdapter.submitData(it)
+                d("TransactionFragment", "transaction changed $it")
             }
         })
 
@@ -80,6 +90,21 @@ class TransactionFragment : Fragment(){
             when(it){
                 true -> viewBinding.pbLoading.visibility = View.VISIBLE
                 false -> viewBinding.pbLoading.visibility = View.GONE
+            }
+        })
+
+        viewModel.notifyMessage.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.isSelectedMode.observe(viewLifecycleOwner, Observer {
+            when(it){
+                true -> {
+                    viewBinding.btnDone.visibility = View.VISIBLE
+                }
+                false -> {
+                    viewBinding.btnDone.visibility = View.INVISIBLE
+                }
             }
         })
 

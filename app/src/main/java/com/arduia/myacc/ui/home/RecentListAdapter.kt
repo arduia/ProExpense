@@ -7,13 +7,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ItemTransactionBinding
-import com.arduia.myacc.ui.common.CategoryProvider
 import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
-class RecentListAdapter constructor(private val layoutInflater: LayoutInflater,
-                                    private val categoryProvider: CategoryProvider
-):
+class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
     ListAdapter<TransactionVto, RecentListAdapter.VH>(
         DIFF_CALLBACK
     ){
@@ -23,9 +20,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater,
 
         val itemView = layoutInflater.inflate(R.layout.item_transaction, parent, false)
 
-        return VH(
-            ItemTransactionBinding.bind(itemView)
-        )
+        return VH( ItemTransactionBinding.bind(itemView ) )
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -34,17 +29,13 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater,
 
         with(holder.binding){
 
-           tvName.text = item.name
-           tvDate.text = item.date
-           tvFinanceType.text = item.finance
+            tvName.text = item.name
+            tvDate.text = item.date
+            tvFinanceType.text = item.finance
+            imvCategory.setImageResource(item.category)
+            tvAmount.text = item.cost
 
-           val imgRes =  categoryProvider.getDrawableCategory(item.cateogry)
-
-           tvAmount.text = item.cost
-
-           imvCategory.setImageResource(imgRes)
        }
-
 
     }
 
@@ -59,7 +50,7 @@ private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
 
     override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return  oldItem.name == newItem.name &&
-                oldItem.cateogry == newItem.cateogry &&
+                oldItem.category == newItem.category &&
                 oldItem.cost == newItem.cost &&
                 oldItem.date == newItem.date &&
                 oldItem.finance == newItem.finance

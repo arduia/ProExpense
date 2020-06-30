@@ -33,6 +33,10 @@ class AccRepositoryImpl(
         transDao.deleteTransaction(transaction)
     }
 
+    override suspend fun deleteAllTransaction(list: List<Int>) {
+        transDao.deleteTransactionByIDs(list)
+    }
+
     override suspend fun insertOwePeople(people: OwePeople) {
         peopleDao.insertOwePeople(people)
     }
