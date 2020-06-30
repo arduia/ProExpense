@@ -97,6 +97,7 @@
         android:overScrollMode="never"
         android:paddingBottom="@dimen/material_small_margin"
         android:paddingTop="@dimen/material_small_margin"
+
         app:layout_constraintWidth_max="482dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

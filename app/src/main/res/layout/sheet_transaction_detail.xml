@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surfaceColor"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/chip_category"
+            app:chipIcon="@drawable/ic_food"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            app:iconStartPadding="10dp"
+            app:chipMinHeight="40dp"
+            android:text="Food"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/material_margin"
+            android:layout_marginTop="@dimen/material_margin"
+            android:checked="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_name"
+        style="@style/TextAppearance.MaterialComponents.Overline"
+        android:text="@string/label_name"
+        android:layout_below="@id/chip_category"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
+        android:textColor="@color/onSurfaceColor"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_name_value"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:text="Suger"
+        android:layout_below="@id/tv_name"
+        android:layout_alignStart="@id/tv_name"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_date"
+        style="@style/TextAppearance.MaterialComponents.Overline"
+        android:layout_below="@+id/tv_name_value"
+        android:text="Date"
+        android:layout_alignStart="@id/tv_name_value"
+        android:layout_marginTop="@dimen/material_margin"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_date_value"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:text="20/2/2019"
+        android:layout_below="@id/tv_date"
+        android:layout_alignStart="@id/tv_date"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_note"
+        style="@style/TextAppearance.MaterialComponents.Overline"
+        android:text="@string/label_note"
+        android:layout_below="@id/tv_date_value"/>
+
+
+</RelativeLayout>

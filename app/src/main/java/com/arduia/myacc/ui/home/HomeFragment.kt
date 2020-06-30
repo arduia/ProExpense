@@ -3,6 +3,7 @@ package com.arduia.myacc.ui.home
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log.d
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -35,6 +36,10 @@ class HomeFragment : BaseFragment(){
             layoutInflater )
     }
 
+    private val linearLayoutManager by lazy {
+        LinearLayoutManager(requireContext())
+    }
+
     private val inputMethod by lazy {
         requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     }
@@ -51,6 +56,7 @@ class HomeFragment : BaseFragment(){
         setupView()
         setupViewModel()
     }
+
     //Setup View
     private fun setupView(){
 
@@ -134,7 +140,6 @@ class HomeFragment : BaseFragment(){
     private fun setupViewModel(){
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
             recentAdapter.submitList(it)
-            viewBinding.rvRecent.requestFocusFromTouch()
         })
     }
 
@@ -160,8 +165,7 @@ class HomeFragment : BaseFragment(){
         FragHomeBinding.inflate(layoutInflater).apply {
             //Once Configuration
         rvRecent.adapter = recentAdapter
-        rvRecent.layoutManager =
-            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        rvRecent.layoutManager = linearLayoutManager
         rvRecent.addItemDecoration(
             MarginItemDecoration(
                 resources.getDimension(R.dimen.spacing_list_item).toInt(),
