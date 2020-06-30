@@ -62,9 +62,13 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
             _isLoading.postValue(true)
             accRepo.deleteAllTransaction(selectedItems)
             _isLoading.postValue(false)
-            _notifyMessage.postValue("${selectedItems.size} is Deleted")
+            _notifyMessage.postValue("${selectedItems.size} Items is Deleted")
             clearSelection()
         }
+    }
+
+    fun cancelDelete(){
+        clearSelection()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

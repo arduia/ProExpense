@@ -13,6 +13,9 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arduia.core.view.asGone
+import com.arduia.core.view.asInvisible
+import com.arduia.core.view.asVisible
 import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
@@ -71,10 +74,13 @@ class TransactionFragment : Fragment(){
             findNavController().popBackStack()
         }
 
-        viewBinding.btnDone.setOnClickListener {
+        viewBinding.btnDoneDelete.setOnClickListener {
             viewModel.deleteConfirm()
         }
 
+        viewBinding.btnCancelDelete.setOnClickListener {
+            viewModel.cancelDelete()
+        }
     }
 
     private fun setupViewModel(){
@@ -99,13 +105,24 @@ class TransactionFragment : Fragment(){
 
         viewModel.isSelectedMode.observe(viewLifecycleOwner, Observer {
             when(it){
-                true -> {
-                    viewBinding.btnDone.visibility = View.VISIBLE
-                }
                 false -> {
-                    viewBinding.btnDone.visibility = View.INVISIBLE
+                    viewBinding.btnPopBack.visibility = View.VISIBLE
+                    viewBinding.btnCancelDelete.visibility = View.GONE
+                    viewBinding.tvConfirmDelete.visibility = View.GONE
+                    viewBinding.btnDoneDelete.visibility = View.GONE
+                    viewBinding.tvTransactions.visibility = View.VISIBLE
+                    transactionAdapter.refresh()
+                }
+
+                true -> {
+                    viewBinding.btnPopBack.visibility = View.GONE
+                    viewBinding.btnCancelDelete.visibility =  View.VISIBLE
+                    viewBinding.tvConfirmDelete.visibility = View.VISIBLE
+                    viewBinding.btnDoneDelete.visibility = View.VISIBLE
+                    viewBinding.tvTransactions.visibility = View.INVISIBLE
                 }
             }
+
         })
 
     }

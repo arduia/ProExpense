@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
     tools:context=".ui.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -18,17 +19,40 @@
         android:layout_height="30dp"
         android:id="@+id/btn_pop_back"
         style="@style/IconImageButton"
+        android:visibility="gone"
         android:src="@drawable/ic_back"
         android:tint="@android:color/darker_gray"
         android:layout_marginStart="@dimen/material_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tb_transaction"/>
+
+    <TextView
+        android:id="@+id/tv_confirm_delete"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm Delete"
         app:layout_constraintBottom_toBottomOf="@id/tb_transaction"
-        />
-    <androidx.appcompat.widget.AppCompatTextView
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tb_transaction" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_cancel_delete"
+        style="@style/IconImageButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="@dimen/material_margin"
+        android:src="@drawable/ic_close"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_confirm_delete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_confirm_delete" />
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_transactions"
+        android:visibility="gone"
         app:layout_constraintHorizontal_bias="0"
         android:layout_marginStart="@dimen/material_margin"
         style="@style/TextAppearance.MaterialComponents.Headline6"
@@ -37,19 +61,19 @@
         app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
         app:layout_constraintStart_toEndOf="@+id/btn_pop_back"
         app:layout_constraintEnd_toEndOf="parent"/>
+
     <ImageButton
+        android:id="@+id/btn_done_delete"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/btn_done"
-        android:src="@drawable/ic_done"
-        android:visibility="invisible"
+        android:layout_marginEnd="@dimen/material_margin"
         android:background="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintTop_toTopOf="@id/btn_pop_back"
-        app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
+        android:src="@drawable/ic_done"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_confirm_delete"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_transactions"
         app:layout_constraintHorizontal_bias="1"
-        android:layout_marginEnd="@dimen/material_margin"/>
+        app:layout_constraintStart_toStartOf="@+id/tb_transaction"
+        app:layout_constraintTop_toTopOf="@+id/tv_confirm_delete" />
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -74,6 +98,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_transaction"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

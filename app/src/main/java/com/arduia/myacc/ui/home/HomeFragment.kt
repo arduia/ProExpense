@@ -139,7 +139,7 @@ class HomeFragment : BaseFragment(){
 
     private fun setupViewModel(){
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
-            recentAdapter.submitList(it)
+           recentAdapter.submitList(it)
         })
     }
 

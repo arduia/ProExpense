@@ -11,10 +11,7 @@ import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
-    ListAdapter<TransactionVto, RecentListAdapter.VH>(
-        DIFF_CALLBACK
-    ){
-
+    ListAdapter<TransactionVto, RecentListAdapter.VH>(DIFF_CALLBACK){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
@@ -25,18 +22,15 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
     override fun onBindViewHolder(holder: VH, position: Int) {
 
-        val item = getItem(position) ?: throw Exception("getItem not found at $position")
+        val item = getItem(position)
 
         with(holder.binding){
-
             tvName.text = item.name
             tvDate.text = item.date
             tvFinanceType.text = item.finance
             imvCategory.setImageResource(item.category)
             tvAmount.text = item.cost
-
        }
-
     }
 
     class VH(val binding: ItemTransactionBinding): RecyclerView.ViewHolder(binding.root)
@@ -44,15 +38,17 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 }
 
 private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
+
     override fun areItemsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return oldItem == newItem
     }
 
     override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return  oldItem.name == newItem.name &&
-                oldItem.category == newItem.category &&
-                oldItem.cost == newItem.cost &&
-                oldItem.date == newItem.date &&
-                oldItem.finance == newItem.finance
+            oldItem.category == newItem.category &&
+            oldItem.cost == newItem.cost &&
+            oldItem.date == newItem.date &&
+            oldItem.finance == newItem.finance
     }
+
 }
