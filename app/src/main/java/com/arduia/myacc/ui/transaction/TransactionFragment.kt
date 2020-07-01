@@ -62,7 +62,6 @@ class TransactionFragment : Fragment(){
         itemSwipeCallback.setSwipeListener {
             val item = transactionAdapter.getItemFromPosition(it)
             viewModel.onItemSelect(item)
-            transactionAdapter.refresh()
         }
 
         transactionAdapter.setItemClickListener {
@@ -74,13 +73,14 @@ class TransactionFragment : Fragment(){
             findNavController().popBackStack()
         }
 
+        viewBinding.btnCancelDelete.setOnClickListener {
+            viewModel.cancelDelete()
+        }
+
         viewBinding.btnDoneDelete.setOnClickListener {
             viewModel.deleteConfirm()
         }
 
-        viewBinding.btnCancelDelete.setOnClickListener {
-            viewModel.cancelDelete()
-        }
     }
 
     private fun setupViewModel(){
@@ -88,7 +88,6 @@ class TransactionFragment : Fragment(){
         viewModel.transactions.observe(viewLifecycleOwner, Observer {
             MainScope().launch {
                 transactionAdapter.submitData(it)
-                d("TransactionFragment", "transaction changed $it")
             }
         })
 
@@ -103,26 +102,22 @@ class TransactionFragment : Fragment(){
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         })
 
+        //Expense item Selected, show Confirm
         viewModel.isSelectedMode.observe(viewLifecycleOwner, Observer {
-            when(it){
-                false -> {
-                    viewBinding.btnPopBack.visibility = View.VISIBLE
-                    viewBinding.btnCancelDelete.visibility = View.GONE
-                    viewBinding.tvConfirmDelete.visibility = View.GONE
-                    viewBinding.btnDoneDelete.visibility = View.GONE
-                    viewBinding.tvTransactions.visibility = View.VISIBLE
-                    transactionAdapter.refresh()
-                }
 
-                true -> {
-                    viewBinding.btnPopBack.visibility = View.GONE
-                    viewBinding.btnCancelDelete.visibility =  View.VISIBLE
-                    viewBinding.tvConfirmDelete.visibility = View.VISIBLE
-                    viewBinding.btnDoneDelete.visibility = View.VISIBLE
-                    viewBinding.tvTransactions.visibility = View.INVISIBLE
+            when(it){
+                //Show Confirm dialog after an item is selected
+                true -> viewBinding.flConfirmDelete.visibility = View.VISIBLE
+
+                //Hide when none item is selected
+                false ->{
+                    viewBinding.flConfirmDelete.visibility = View.GONE
                 }
             }
+        })
 
+        viewModel.itemSelectionChangeEvent.observe(viewLifecycleOwner, Observer {
+            transactionAdapter.refresh()
         })
 
     }

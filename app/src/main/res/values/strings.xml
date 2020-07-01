@@ -4,7 +4,7 @@
     <string name="label_resent">Recent</string>
     <string name="label_borrows">Owe</string>
     <string name="label_settings">Settings</string>
-    <string name="label_transaction">Transactions</string>
+    <string name="label_transaction">Expenses</string>
 
 <!--    Home-->
     <string name="label_log">Activity Log</string>

@@ -15,8 +15,9 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     private val _recentData =  MutableLiveData<List<TransactionVto>>()
     val recentData get() = _recentData
 
-    private val _recentDataInsertedEvent = MutableLiveData<Unit>()
-    val recentDataInserted : LiveData<Unit> = _recentDataInsertedEvent
+    //--Caution-- Should be oneshot execution, Event LiveData
+    private val _expenseDataChanged = MutableLiveData<Unit>()
+    val expenseDataChanged : LiveData<Unit> = _expenseDataChanged
 
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
@@ -33,7 +34,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     fun saveSpendData(transaction: Transaction){
         viewModelScope.launch(Dispatchers.IO) {
             accRepository.insertTransaction(transaction)
-            _recentDataInsertedEvent.postValue(Unit)
+            _expenseDataChanged.postValue(Unit)
         }
     }
 

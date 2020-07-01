@@ -89,8 +89,20 @@ class HomeFragment : BaseFragment(){
             }
             return@listener true
         }
+        viewBinding.sheetEntry.chipCategory.setOnCheckedChangeListener { _, id ->
+            viewBinding.sheetEntry.chipCategory.check(id)
+        }
     }
 
+    private fun setupViewModel(){
+        viewModel.recentData.observe(viewLifecycleOwner, Observer {
+            recentAdapter.submitList(it)
+        })
+
+        viewModel.expenseDataChanged.observe(viewLifecycleOwner, Observer {
+            recentAdapter.notifyDataSetChanged()
+        })
+    }
     private fun hideKeyboard(){
         inputMethod.hideSoftInputFromWindow(viewBinding.root.windowToken, 0)
     }
@@ -137,11 +149,6 @@ class HomeFragment : BaseFragment(){
         viewBinding.sheetEntry.tvDescription.setText("")
     }
 
-    private fun setupViewModel(){
-        viewModel.recentData.observe(viewLifecycleOwner, Observer {
-           recentAdapter.submitList(it)
-        })
-    }
 
     override fun onResume() {
         super.onResume()
@@ -154,9 +161,9 @@ class HomeFragment : BaseFragment(){
         add(SpendPoint(2, randomRate()))
         add(SpendPoint(3, randomRate()))
         add(SpendPoint(4, randomRate()))
-        add(SpendPoint(5, randomRate()))
-        add(SpendPoint(6, randomRate()))
-        add(SpendPoint(7, randomRate()))
+//        add(SpendPoint(5, randomRate()))
+//        add(SpendPoint(6, randomRate()))
+//        add(SpendPoint(7, randomRate()))
     }
 
     private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)

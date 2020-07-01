@@ -21,6 +21,10 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
     private val _isSelectedMode = MutableLiveData<Boolean>()
     val isSelectedMode: LiveData<Boolean> = _isSelectedMode
 
+    //--Caution-- Should be Event LiveData for once shot execution
+    private val _itemSelectionChangeEvent = MutableLiveData<Unit>()
+    val itemSelectionChangeEvent : LiveData<Unit> = _itemSelectionChangeEvent
+
     //Should be Event Observer
     private val _notifyMessage = MutableLiveData<String>()
     val notifyMessage : LiveData<String>  = _notifyMessage
@@ -41,11 +45,13 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
 
     fun onItemSelect(item: TransactionVto){
         selectedItems.add(item.id)
+        _itemSelectionChangeEvent.postValue(Unit)
         _isSelectedMode.postValue(true)
     }
 
     private fun clearSelection(){
         selectedItems.clear()
+        _itemSelectionChangeEvent.postValue(Unit)
         _isSelectedMode.postValue(false)
     }
 
@@ -62,7 +68,7 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
             _isLoading.postValue(true)
             accRepo.deleteAllTransaction(selectedItems)
             _isLoading.postValue(false)
-            _notifyMessage.postValue("${selectedItems.size} Items is Deleted")
+            _notifyMessage.postValue("${selectedItems.size} Items Deleted")
             clearSelection()
         }
     }
