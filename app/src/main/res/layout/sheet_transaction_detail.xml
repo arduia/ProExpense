@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/surfaceColor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
         <com.google.android.material.chip.Chip
@@ -11,6 +11,7 @@
             app:chipIcon="@drawable/ic_food"
             style="@style/Widget.MaterialComponents.Chip.Action"
             app:iconStartPadding="10dp"
+            app:chipIconTint="@color/primaryColor"
             app:chipMinHeight="40dp"
             android:text="Food"
             android:layout_alignParentStart="true"
@@ -41,11 +42,28 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/tv_amount"
+        style="@style/TextAppearance.MaterialComponents.Overline"
+        android:text="@string/label_amount"
+        android:layout_below="@id/tv_name_value"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_amount_value"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:text="3,000"
+        android:layout_below="@id/tv_amount"
+        android:layout_alignStart="@id/tv_amount"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/tv_date"
         style="@style/TextAppearance.MaterialComponents.Overline"
-        android:layout_below="@+id/tv_name_value"
         android:text="Date"
-        android:layout_alignStart="@id/tv_name_value"
+        android:layout_below="@id/tv_amount_value"
+        android:layout_alignStart="@id/tv_amount_value"
         android:layout_marginTop="@dimen/material_margin"/>
     <TextView
         android:layout_width="wrap_content"
@@ -62,7 +80,27 @@
         android:id="@+id/tv_note"
         style="@style/TextAppearance.MaterialComponents.Overline"
         android:text="@string/label_note"
-        android:layout_below="@id/tv_date_value"/>
-
-
+        android:layout_below="@id/tv_date_value"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_note_value"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:text="This Cost should be after the Exam"
+        android:layout_marginBottom="@dimen/material_margin"
+        android:layout_below="@id/tv_note"
+        android:layout_alignStart="@id/tv_note"/>
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/btn_detail_close"
+        style="@style/IconImageButton"
+        android:src="@drawable/ic_close"
+        android:layout_marginEnd="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"/>
 </RelativeLayout>
