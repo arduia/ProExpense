@@ -14,6 +14,9 @@ interface TransactionDao{
     @Query ( "SELECT * FROM `transaction` ORDER BY created_date DESC" )
     fun getAllTransaction(): PagingSource<Int, Transaction>
 
+    @Query("SELECT * FROM `transaction` WHERE transaction_id =:id")
+    fun getItemTransaction(id: Int): Flow<Transaction>
+
     @Query( "SELECT * FROM `transaction` ORDER BY created_date DESC LIMIT 10")
     fun getRecentTransaction(): Flow<List<Transaction>>
 

@@ -11,6 +11,8 @@ interface AccRepository {
     //Transaction
     suspend fun insertTransaction(transaction: Transaction)
 
+    suspend fun getTransaction(id: Int): Flow<Transaction>
+
     suspend fun getAllTransaction(): Flow<PagingData<Transaction>>
 
     suspend fun getRecentTransaction(): Flow<List<Transaction>>

@@ -20,6 +20,8 @@ import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
 import com.arduia.myacc.ui.common.MarginItemDecoration
+import com.arduia.myacc.ui.common.TransactionDetailDialog
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -33,6 +35,10 @@ class TransactionFragment : Fragment(){
         )
     }
 
+    private val detailDialog by lazy {
+        TransactionDetailDialog()
+    }
+
     private val viewModel by viewModels<TransactionViewModel>()
 
     private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
@@ -43,6 +49,8 @@ class TransactionFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View? = viewBinding.root
 
+
+    @ExperimentalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -50,8 +58,10 @@ class TransactionFragment : Fragment(){
         lockNavigation()
         setupView()
         setupViewModel()
+        detailDialog.onAttach(requireContext())
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupView(){
 
         //Setup Transaction Recycler View
@@ -65,7 +75,7 @@ class TransactionFragment : Fragment(){
         }
 
         transactionAdapter.setItemClickListener {
-            d("Transaction Fragment", "$it")
+            viewModel.showDetailData(it)
         }
 
         //Close the page
@@ -118,6 +128,10 @@ class TransactionFragment : Fragment(){
 
         viewModel.itemSelectionChangeEvent.observe(viewLifecycleOwner, Observer {
             transactionAdapter.refresh()
+        })
+
+        viewModel.detailDataChanged.observe(viewLifecycleOwner, Observer {
+            TransactionDetailDialog().showDetail(parentFragmentManager, it)
         })
 
     }

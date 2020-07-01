@@ -1,13 +1,17 @@
 package com.arduia.myacc.ui.transaction
 
 import android.app.Application
-import androidx.annotation.MainThread
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import com.arduia.myacc.di.ServiceLoader
+import com.arduia.myacc.ui.vto.TransactionDetailsVto
 import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleObserver{
@@ -29,6 +33,10 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
     private val _notifyMessage = MutableLiveData<String>()
     val notifyMessage : LiveData<String>  = _notifyMessage
 
+    //--Caution-- Should be oneshot execution, Event LiveData
+    private val _detailDataChanged = MutableLiveData<TransactionDetailsVto>()
+    val detailDataChanged : LiveData<TransactionDetailsVto> = _detailDataChanged
+
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
     }
@@ -47,6 +55,15 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
         selectedItems.add(item.id)
         _itemSelectionChangeEvent.postValue(Unit)
         _isSelectedMode.postValue(true)
+    }
+
+    @ExperimentalCoroutinesApi
+    fun showDetailData(selectedItem: TransactionVto){
+        viewModelScope.launch(Dispatchers.IO){
+            val item = accRepo.getTransaction(selectedItem.id).first()
+            val detailData = accMapper.mapToTransactionDetail(item)
+            _detailDataChanged.postValue(detailData)
+        }
     }
 
     private fun clearSelection(){

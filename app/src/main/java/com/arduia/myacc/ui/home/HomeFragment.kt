@@ -89,6 +89,7 @@ class HomeFragment : BaseFragment(){
             }
             return@listener true
         }
+
         viewBinding.sheetEntry.chipCategory.setOnCheckedChangeListener { _, id ->
             viewBinding.sheetEntry.chipCategory.check(id)
         }

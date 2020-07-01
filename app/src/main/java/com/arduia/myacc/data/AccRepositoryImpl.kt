@@ -15,6 +15,10 @@ class AccRepositoryImpl(
         transDao.insertTransaction(transaction)
     }
 
+    override suspend fun getTransaction(id: Int): Flow<Transaction> {
+       return transDao.getItemTransaction(id)
+    }
+
     override suspend fun getAllTransaction() =
         Pager(
             config = PagingConfig(pageSize = 30),

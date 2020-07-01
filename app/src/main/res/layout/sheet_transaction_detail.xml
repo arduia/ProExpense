@@ -4,55 +4,51 @@
     android:layout_height="wrap_content"
     android:background="@color/surfaceColor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include
+        layout="@layout/layout_toolbar"
+        android:id="@+id/tb_transaction_detail"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_name_value"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginStart="@dimen/material_margin"/>
         <com.google.android.material.chip.Chip
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/chip_category"
             app:chipIcon="@drawable/ic_food"
+            app:iconStartPadding="@dimen/material_margin"
             style="@style/Widget.MaterialComponents.Chip.Action"
-            app:iconStartPadding="10dp"
-            app:chipIconTint="@color/primaryColor"
-            app:chipMinHeight="40dp"
             android:text="Food"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/tb_transaction_detail"
             android:layout_marginStart="@dimen/material_margin"
             android:layout_marginTop="@dimen/material_margin"
             android:checked="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_name"
-        style="@style/TextAppearance.MaterialComponents.Overline"
-        android:text="@string/label_name"
-        android:layout_below="@id/chip_category"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"
-        android:textColor="@color/onSurfaceColor"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_name_value"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:text="Suger"
-        android:layout_below="@id/tv_name"
-        android:layout_alignStart="@id/tv_name"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_amount"
         style="@style/TextAppearance.MaterialComponents.Overline"
         android:text="@string/label_amount"
-        android:layout_below="@id/tv_name_value"
+        android:textColor="@android:color/darker_gray"
+        android:layout_below="@id/chip_category"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginTop="@dimen/material_margin"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_amount_value"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        style="@style/TextAppearance.MaterialComponents.Body1"
         android:text="3,000"
         android:layout_below="@id/tv_amount"
         android:layout_alignStart="@id/tv_amount"/>
@@ -62,6 +58,7 @@
         android:id="@+id/tv_date"
         style="@style/TextAppearance.MaterialComponents.Overline"
         android:text="Date"
+        android:textColor="@android:color/darker_gray"
         android:layout_below="@id/tv_amount_value"
         android:layout_alignStart="@id/tv_amount_value"
         android:layout_marginTop="@dimen/material_margin"/>
@@ -69,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_date_value"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        style="@style/TextAppearance.MaterialComponents.Body1"
         android:text="20/2/2019"
         android:layout_below="@id/tv_date"
         android:layout_alignStart="@id/tv_date"/>
@@ -80,6 +77,7 @@
         android:id="@+id/tv_note"
         style="@style/TextAppearance.MaterialComponents.Overline"
         android:text="@string/label_note"
+        android:textColor="@android:color/darker_gray"
         android:layout_below="@id/tv_date_value"
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/material_margin"
@@ -93,6 +91,17 @@
         android:layout_marginBottom="@dimen/material_margin"
         android:layout_below="@id/tv_note"
         android:layout_alignStart="@id/tv_note"/>
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:id="@+id/btn_edit"
+        android:src="@drawable/ic_edit"
+        android:tint="@color/primaryColor"
+        android:layout_toEndOf="@id/tv_name_value"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_alignTop="@id/btn_detail_close"
+        android:layout_alignBottom="@id/btn_detail_close"/>
     <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"

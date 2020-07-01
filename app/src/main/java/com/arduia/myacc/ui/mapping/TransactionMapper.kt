@@ -3,6 +3,7 @@ package com.arduia.myacc.ui.mapping
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.ui.common.CategoryProvider
 import com.arduia.myacc.ui.vto.CostCategory
+import com.arduia.myacc.ui.vto.TransactionDetailsVto
 import com.arduia.myacc.ui.vto.TransactionVto
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -23,6 +24,18 @@ import java.util.*
              category = when(transaction.category){
                  else -> categoryProvider.getDrawableCategory(CostCategory.FOOD)
              }
+         )
+     fun mapToTransactionDetail(transaction: Transaction) =
+         TransactionDetailsVto(
+             id = transaction.transaction_id,
+             name = transaction.name?: "",
+             date = dateFormatter.format(transaction.created_date),
+             cost = transaction.value.formatCostValue(),
+             finance = transaction.finance_type,
+             category = when(transaction.category){
+                 else -> categoryProvider.getDrawableCategory(CostCategory.FOOD)
+             },
+             note = transaction.note?:""
          )
 
      private fun Long.formatCostValue()
