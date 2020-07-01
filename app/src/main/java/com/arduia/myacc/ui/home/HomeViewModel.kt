@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import com.arduia.myacc.data.AccRepository
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.di.ServiceLoader
-import com.arduia.myacc.ui.mapping.AccountingMapper
+import com.arduia.myacc.ui.vto.TransactionDetailsVto
 import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -16,12 +16,18 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     private val _recentData =  MutableLiveData<List<TransactionVto>>()
     val recentData get() = _recentData
 
+    //--Caution-- Should be oneshot execution, Event LiveData
+    private val _expenseDataChanged = MutableLiveData<Unit>()
+    val expenseDataChanged : LiveData<Unit> = _expenseDataChanged
+
+
+
     private val serviceLoader by lazy {
-        ServiceLoader(app)
+        ServiceLoader.getInstance(app)
     }
 
-    private val accountingMapper by lazy {
-        AccountingMapper()
+    private val transactionMapper by lazy {
+        serviceLoader.getTransactionMapper()
     }
 
     private val accRepository: AccRepository by lazy {
@@ -29,8 +35,9 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     }
 
     fun saveSpendData(transaction: Transaction){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             accRepository.insertTransaction(transaction)
+            _expenseDataChanged.postValue(Unit)
         }
     }
 
@@ -39,7 +46,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
         viewModelScope.launch(Dispatchers.IO){
             accRepository.getRecentTransaction().collect {
-                val value = it.map { trans ->  accountingMapper.mapToCostVto(trans) }
+                val value = it.map { trans ->  this@HomeViewModel.transactionMapper.mapToCostVto(trans) }
                 _recentData.postValue(value)
             }
         }

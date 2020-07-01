@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.motion.widget.MotionLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ml_home"
-    app:layoutDescription="@xml/sense_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layoutDescription="@xml/sense_home"
     tools:context=".ui.MainActivity">
 
-    <include layout="@layout/layout_toolbar"
+    <include
         android:id="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="parent"
+        layout="@layout/layout_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btn_menu_open"
+        style="@style/IconImageButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="@dimen/material_margin"
         android:src="@drawable/ic_menu"
-        style="@style/IconImageButton"
         app:layout_constraintBottom_toBottomOf="@id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -30,63 +30,66 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:id="@+id/tv_home"
-     style="@style/TextAppearance.MaterialComponents.Headline6"
-     android:text="Home"
-     app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintTop_toTopOf="parent"
-     app:layout_constraintBottom_toBottomOf="@id/toolbar"/>
-
-    <TextView
+        android:id="@+id/tv_home"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/material_margin"
+        android:text="Home"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/btn_menu_open"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/tv_recent"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_margin"
         android:text="@string/label_recent"
-        style="@style/TextAppearance.MaterialComponents.Button"
-        app:layout_constraintTop_toBottomOf="@id/cd_value"
-        app:layout_constraintStart_toStartOf="@id/rv_recent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin" />
+        app:layout_constraintStart_toStartOf="@id/rv_recent"
+        app:layout_constraintTop_toBottomOf="@id/cd_value" />
+
     <ImageButton
+        android:id="@+id/btn_more_transaction"
+        style="@style/IconImageButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/btn_more_transaction"
         android:src="@drawable/ic_more_horizontal"
         android:tint="@color/primaryColor"
-        style="@style/IconImageButton"
+        app:layout_constraintBottom_toBottomOf="@id/dv_recent"
+        app:layout_constraintEnd_toEndOf="@id/dv_recent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/dv_recent"
-        app:layout_constraintTop_toTopOf="@id/tv_recent"
-        app:layout_constraintBottom_toBottomOf="@id/dv_recent"/>
+        app:layout_constraintTop_toTopOf="@id/tv_recent" />
 
     <View
+        android:id="@+id/dv_recent"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:id="@+id/dv_recent"
-        android:background="@android:drawable/divider_horizontal_bright"
         android:layout_marginStart="@dimen/material_margin"
         android:layout_marginEnd="@dimen/material_margin"
-        app:layout_constraintStart_toStartOf="@id/tv_recent"
-        app:layout_constraintEnd_toEndOf="@id/rv_recent"
+        android:background="@android:drawable/divider_horizontal_bright"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/rv_recent"
+        app:layout_constraintStart_toStartOf="@id/tv_recent"
         app:layout_constraintTop_toBottomOf="@id/bl_recent"
-        app:layout_constraintVertical_bias="0"/>
+        app:layout_constraintVertical_bias="0" />
 
     <View
+        android:id="@+id/bl_recent"
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:id="@+id/bl_recent"
         android:layout_marginTop="@dimen/material_small_margin"
         android:background="@color/primaryColor"
-        app:layout_constraintStart_toStartOf="@id/tv_recent"
         app:layout_constraintEnd_toEndOf="@+id/tv_recent"
-        app:layout_constraintTop_toBottomOf="@id/tv_recent"/>
+        app:layout_constraintStart_toStartOf="@id/tv_recent"
+        app:layout_constraintTop_toBottomOf="@id/tv_recent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recent"
@@ -95,97 +98,105 @@
         android:clipToPadding="false"
         android:fadeScrollbars="true"
         android:overScrollMode="never"
-        android:paddingBottom="@dimen/material_small_margin"
         android:paddingTop="@dimen/material_small_margin"
-        app:layout_constraintWidth_max="482dp"
+        android:paddingBottom="@dimen/material_small_margin"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bl_recent"
+        app:layout_constraintWidth_max="482dp"
         tools:listitem="@layout/item_transaction" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fb_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/material_margin"
-            android:layout_marginBottom="32dp"
-            android:clickable="true"
-            android:tint="@android:color/white"
-            app:backgroundTint="@color/primaryColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/rv_recent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@id/rv_recent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/ic_add" />
+        android:id="@+id/fb_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/material_margin"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/primaryColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/rv_recent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/rv_recent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_add" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cd_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginTop="@dimen/material_small_margin"
         android:layout_marginEnd="@dimen/material_margin"
-        app:layout_constraintWidth_max="450dp"
 
         android:elevation="3dp"
         app:cardBackgroundColor="@color/primaryColor"
         app:cardCornerRadius="@dimen/corner_radius"
-        android:layout_marginTop="@dimen/material_small_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintWidth_max="450dp">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-             <TextView
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:id="@+id/tv_spent_week"
-                 style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                 android:textColor="@color/onPrimaryColor"
-                 android:text="Outcome a week"
-                 android:layout_alignParentStart="true"
-                 android:layout_alignParentTop="true"
-                 android:layout_marginStart="@dimen/material_margin"
-                 android:layout_marginTop="@dimen/material_margin"/>
+
             <TextView
+                android:id="@+id/tv_spent_week"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="@dimen/material_margin"
+                android:layout_marginTop="@dimen/material_margin"
+                android:text="Outcome a week"
+                android:textColor="@color/onPrimaryColor" />
+
+            <TextView
                 android:id="@+id/tv_total_value"
                 style="@style/TextAppearance.MaterialComponents.Headline4"
-                android:textColor="@color/onPrimaryColor"
-                android:text="300.0"
-                android:layout_below="@id/tv_spent_week"
-                android:layout_centerHorizontal="true"/>
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tv_spent_week"
+                android:layout_centerHorizontal="true"
+                android:text="40500.0"
+                android:textColor="@color/onPrimaryColor" />
+
+            <TextView
                 android:id="@+id/tv_currency"
                 style="@style/TextAppearance.MaterialComponents.Overline"
-                android:textColor="@android:color/white"
-                android:text="MMK"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_total_value"
                 android:layout_toEndOf="@id/tv_total_value"
-                android:layout_alignBaseline="@id/tv_total_value"/>
+                android:text="MMK"
+                android:textColor="@android:color/white" />
+
             <com.arduia.graph.SpendGraph
                 android:id="@+id/img_graph"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
-                android:padding="4dp"
                 android:layout_below="@id/tv_total_value"
-                android:layout_centerHorizontal="true"  />
+                android:layout_centerHorizontal="true"
+                android:padding="4dp" />
         </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
     <include
+        android:id="@+id/sheet_entry"
         layout="@layout/sheet_spend_entry"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintHorizontal_bias="0"
-        android:id="@+id/sheet_entry"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"/>
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
 

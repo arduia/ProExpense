@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_name"
             android:maxLines="1"
-            android:maxLength="15"
+            android:maxLength="20"
             android:ellipsize="end"
             android:layout_alignTop="@id/imv_category"
             android:layout_toEndOf="@id/imv_category"

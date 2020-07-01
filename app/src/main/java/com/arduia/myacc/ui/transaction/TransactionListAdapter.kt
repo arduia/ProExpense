@@ -1,40 +1,39 @@
-package com.arduia.myacc.ui.adapter
+package com.arduia.myacc.ui.transaction
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ItemTransactionBinding
+import com.arduia.myacc.ui.common.CategoryProvider
 import com.arduia.myacc.ui.vto.TransactionVto
 import java.lang.Exception
 
-class TransactionListAdapter constructor(private val context: Context,
-                                         private val categoryProvider: CategoryProvider):
-    PagingDataAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(DIFF_CALLBACK){
-
-    var isSelectionMode = false
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+class TransactionListAdapter constructor(private val context: Context):
+    PagingDataAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(
+        DIFF_CALLBACK
+    ){
 
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
     private var itemClickListener: (TransactionVto) -> Unit = {}
 
     private val selectedDrawable by lazy {
-        return@lazy if(Build.VERSION.SDK_INT <23){
-            ColorDrawable(context.resources.getColor(R.color.primaryColor))
-        }else{
-            ColorDrawable(context.resources.getColor(R.color.primaryColor, null))
-        }
+       ColorDrawable( ContextCompat.getColor(context, R.color.primaryColor))
     }
+
+    private val unSelectedDrawable by lazy {
+        ColorDrawable(ContextCompat.getColor(context, android.R.color.darker_gray))
+    }
+
+    var selectionTracker: SelectionTracker<Long>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
 
@@ -48,37 +47,35 @@ class TransactionListAdapter constructor(private val context: Context,
         val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
         with(holder.binding){
-
-            //For Selection Mode, show select bubble
-            imvSelect.visibility = when(isSelectionMode){
-                true -> View.VISIBLE
-                false -> View.GONE
-            }
-
             tvName.text = item.name
             tvDate.text = item.date
-
             tvFinanceType.text = item.finance
-
             tvAmount.text = item.cost
-            val imgRes = categoryProvider.getDrawableCategory(item.cateogry)
-            imvCategory.setImageResource(imgRes)
-
-            if(item.isSelected){
-                imvSelect.setImageDrawable(selectedDrawable)
+            imvCategory.setImageResource(item.category)
+            selectionTracker?.let {
+                 when(it.isSelected(getItemId(position))){
+                     true -> imvSelect.setImageDrawable(selectedDrawable)
+                     false -> imvSelect.visibility = View.GONE
+                 }
             }
-            cdTransaction.setOnClickListener(holder)
         }
     }
+
+    fun getItemFromPosition(position: Int):TransactionVto
+            = getItem(position) ?: throw Exception("Item Not Found Exception")
+
 
     inner class TransactionVH(val binding: ItemTransactionBinding,
                               private val listener: (TransactionVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
+        init {
+            binding.cdTransaction.setOnClickListener(this)
+        }
         override fun onClick(v: View?) {
             listener(getItem(absoluteAdapterPosition)!!)
         }
-        
+
     }
 
     fun setItemClickListener(listener: (TransactionVto) -> Unit){
@@ -95,7 +92,7 @@ private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
 
     override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return  oldItem.name == newItem.name &&
-            oldItem.cateogry == newItem.cateogry &&
+            oldItem.category == newItem.category &&
             oldItem.cost == newItem.cost &&
             oldItem.date == newItem.date &&
             oldItem.finance == newItem.finance

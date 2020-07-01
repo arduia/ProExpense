@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/label_name"
-                    android:maxLength="15"
+                    android:maxLength="20"
                     android:nextFocusDown="@id/tv_cost"
                     android:imeOptions="actionNext"
                     android:singleLine="true" />
@@ -95,18 +95,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:chipCornerRadius="@dimen/corner_radius"
+                    android:id="@+id/cp_clothes"
                     android:text="Clothes"
                     app:chipIcon="@drawable/ic_clothes"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:chipCornerRadius="@dimen/corner_radius"
+                    android:id="@+id/cp_house_hold"
                     android:text="Household"
                     app:chipIcon="@drawable/ic_household"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:chipCornerRadius="@dimen/corner_radius"
+                    android:id="@+id/cd_food"
                     android:text="Food"
                     app:chipIcon="@drawable/ic_food"/>
                 <com.google.android.material.chip.Chip
@@ -114,6 +117,7 @@
                     android:layout_height="wrap_content"
                     app:chipCornerRadius="@dimen/corner_radius"
                     android:text="Donation"
+                    android:id="@+id/cd_donation"
                     app:chipIcon="@drawable/ic_donations"/>
             </com.google.android.material.chip.ChipGroup>
 

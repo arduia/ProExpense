@@ -15,13 +15,17 @@ class AccRepositoryImpl(
         transDao.insertTransaction(transaction)
     }
 
+    override suspend fun getTransaction(id: Int): Flow<Transaction> {
+       return transDao.getItemTransaction(id)
+    }
+
     override suspend fun getAllTransaction() =
         Pager(
             config = PagingConfig(pageSize = 30),
             pagingSourceFactory = { transDao.getAllTransaction() }
         ).flow
 
-    override fun getRecentTransaction(): Flow<List<Transaction>> {
+    override suspend fun getRecentTransaction(): Flow<List<Transaction>> {
         return transDao.getRecentTransaction()
     }
 
@@ -31,6 +35,10 @@ class AccRepositoryImpl(
 
     override suspend fun deleteTransaction(transaction: Transaction) {
         transDao.deleteTransaction(transaction)
+    }
+
+    override suspend fun deleteAllTransaction(list: List<Int>) {
+        transDao.deleteTransactionByIDs(list)
     }
 
     override suspend fun insertOwePeople(people: OwePeople) {

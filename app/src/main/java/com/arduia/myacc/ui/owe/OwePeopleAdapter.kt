@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.adapter
+package com.arduia.myacc.ui.owe
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,18 +6,23 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
-import com.arduia.myacc.databinding.ItemOweBinding
 import com.arduia.myacc.databinding.ItemPeopleBinding
 import com.arduia.myacc.ui.vto.OwePeopleVto
 
 class OwePeopleAdapter(private val layoutInflater: LayoutInflater):
-    ListAdapter<OwePeopleVto, OwePeopleAdapter.VH>( DIFF_CALLBACK){
+    ListAdapter<OwePeopleVto, OwePeopleAdapter.VH>(
+        DIFF_CALLBACK
+    ){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
         val view = layoutInflater.inflate(R.layout.item_people,parent,false)
 
-        return VH(ItemPeopleBinding.bind(view))
+        return VH(
+            ItemPeopleBinding.bind(
+                view
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {

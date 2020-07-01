@@ -1,18 +1,13 @@
 package com.arduia.myacc.ui.owe
 
 import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
-import androidx.fragment.app.Fragment
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragOweBinding
 import com.arduia.myacc.ui.BaseFragment
-import com.arduia.myacc.ui.adapter.OwePagerAdapter
 import com.arduia.myacc.ui.vto.OweLogVto
 import com.arduia.myacc.ui.vto.OwePeopleVto
 import com.google.android.material.tabs.TabLayoutMediator
@@ -20,7 +15,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 class OweFragment: BaseFragment(){
 
     private val viewBinding by lazy { FragOweBinding.inflate(layoutInflater) }
-    private val owePagerAdapter by lazy { OwePagerAdapter(layoutInflater) }
+    private val owePagerAdapter by lazy {
+        OwePagerAdapter(
+            layoutInflater
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

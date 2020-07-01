@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.adapter
+package com.arduia.myacc.ui.common
 
 import android.graphics.Rect
 import android.view.View
@@ -19,6 +19,7 @@ class MarginItemDecoration( private val spaceHeight: Int = 10,
              if(parent.getChildAdapterPosition(view) == 0){
                  top = spaceHeight
              }
+
              bottom = spaceHeight
 
              spaceSide?.let {
