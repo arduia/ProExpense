@@ -40,4 +40,5 @@ interface AccRepository {
     suspend fun updateOweLog(log: OweLog)
 
     suspend fun deleteOweLog(log: OweLog)
+
 }

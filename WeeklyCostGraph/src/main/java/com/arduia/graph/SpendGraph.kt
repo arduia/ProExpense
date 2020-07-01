@@ -3,6 +3,7 @@ package com.arduia.graph
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.LayoutDirection
 import android.view.View
 import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
@@ -181,11 +182,22 @@ class SpendGraph @JvmOverloads constructor(context: Context,
 
     private fun getDayPositionX(day:Int, totalDay:Int = 7):Float{
 
-        val canvasLeft = dayNameCanvasF.left
         val segmentWidth = dayNameCanvasF.width() / totalDay
         val segmentHalf = segmentWidth / 2
 
-        return canvasLeft + ( (day * segmentWidth) - segmentHalf )
+        return when(layoutDirection){
+
+            LayoutDirection.RTL -> {
+                val canvasRight = dayNameCanvasF.right
+                canvasRight - ( (day * segmentWidth) - segmentHalf)
+            }
+
+            else -> {
+                val canvasLeft = dayNameCanvasF.left
+                canvasLeft + ( (day * segmentWidth) - segmentHalf )
+            }
+        }
+
     }
 
     /**
