@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class TransactionListAdapter constructor(private val mainScope: CoroutineScope, private val context: Context):
+class TransactionListAdapter constructor(private val context: Context):
     PagingDataAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(
         DIFF_CALLBACK
     ){
@@ -55,7 +55,6 @@ class TransactionListAdapter constructor(private val mainScope: CoroutineScope, 
     inner class TransactionVH(val binding: ItemTransactionBinding,
                               private val listener: (TransactionVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
-
         init {
             binding.cdTransaction.setOnClickListener(this)
         }
@@ -63,7 +62,6 @@ class TransactionListAdapter constructor(private val mainScope: CoroutineScope, 
         override fun onClick(v: View?) {
             listener(getItem(absoluteAdapterPosition)!!)
         }
-
     }
 
     fun setItemClickListener(listener: (TransactionVto) -> Unit){

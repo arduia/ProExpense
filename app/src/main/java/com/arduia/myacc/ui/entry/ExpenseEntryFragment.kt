@@ -1,6 +1,7 @@
 package com.arduia.myacc.ui.entry
 
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,15 +10,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.arduia.myacc.databinding.FragExpenseEntryBinding
 import com.arduia.myacc.ui.vto.TransactionDetailsVto
 import java.lang.IllegalStateException
 
-class ExpendEntryFragment : Fragment(){
+class ExpenseEntryFragment : Fragment(){
 
     private val viewBinding by lazy {
         FragExpenseEntryBinding.inflate(layoutInflater)
     }
+
+    private val args: ExpenseEntryFragmentArgs by navArgs()
 
     private val viewModel by viewModels<ExpenseEntryViewModel>()
 
@@ -38,6 +42,10 @@ class ExpendEntryFragment : Fragment(){
     }
 
     private fun setupView(){
+
+        val expenseId = args.expenseId
+        d("Expense", "Expense Id $expenseId")
+
 
         expenseData?.let {
             viewBinding.edtName.setText(it.name)

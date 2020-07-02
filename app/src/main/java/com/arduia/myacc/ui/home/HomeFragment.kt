@@ -133,7 +133,7 @@ class HomeFragment : BaseFragment(){
                 //For Home Fragment
             .setExitAnim(R.anim.nav_default_exit_anim)
             .setPopEnterAnim(R.anim.nav_default_enter_anim)
-
+            .setLaunchSingleTop(true)
             .build()
 
     companion object{

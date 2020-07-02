@@ -19,11 +19,10 @@ class AccRepositoryImpl(
        return transDao.getItemTransaction(id)
     }
 
-    override suspend fun getAllTransaction() =
-        Pager(
-            config = PagingConfig(pageSize = 30),
-            pagingSourceFactory = { transDao.getAllTransaction() }
-        ).flow
+    override suspend fun getAllTransaction() =  Pager(
+        config = PagingConfig(pageSize = 30),
+        pagingSourceFactory = { transDao.getAllTransaction() }
+    ).flow
 
     override suspend fun getRecentTransaction(): Flow<List<Transaction>> {
         return transDao.getRecentTransaction()

@@ -8,13 +8,10 @@ import com.arduia.myacc.di.ServiceLoader
 import com.arduia.myacc.ui.vto.TransactionDetailsVto
 import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
 class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleObserver{
-
-    private val _transactions = MutableLiveData<PagingData<TransactionVto>>()
-    val transactions: LiveData<PagingData<TransactionVto>> get() = _transactions
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -45,10 +42,7 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
         serviceLoader.getTransactionMapper()
     }
 
-    private val selectedItems = mutableListOf<Int>()
-
-
-    private val enterAnimDuration = app.resources.getInteger(R.integer.expense_anim_left_duration)
+    private val selectedItems = hashSetOf<Int>()
 
     private val accRepo by lazy {
         serviceLoader.getAccountingRepository()
@@ -56,8 +50,28 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
 
     fun onItemSelect(item: TransactionVto){
         selectedItems.add(item.id)
-        _itemSelectionChangeEvent.postValue(Unit)
-        _isSelectedMode.postValue(true)
+        _itemSelectionChangeEvent.value = Unit
+        _isSelectedMode.value = true
+    }
+
+    fun deleteConfirm(){
+        viewModelScope.launch(Dispatchers.IO){
+            //There is no Items to Delete
+            if(selectedItems.isEmpty()){
+                _isSelectedMode.postValue(true)
+                return@launch
+            }
+            //Start Delete Progress
+            _isLoading.postValue(true)
+            accRepo.deleteAllTransaction(selectedItems.toList())
+            _isLoading.postValue(false)
+            _notifyMessage.postValue("${selectedItems.size} Items Deleted")
+            clearSelection()
+        }
+    }
+
+    fun cancelDelete(){
+        clearSelection()
     }
 
     @ExperimentalCoroutinesApi
@@ -75,52 +89,16 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
         _isSelectedMode.postValue(false)
     }
 
-    fun deleteConfirm(){
-        viewModelScope.launch(Dispatchers.IO){
-
-            //There is no Items to Delete
-            if(selectedItems.isEmpty()){
-                 _isSelectedMode.postValue(true)
-                return@launch
+    @ExperimentalCoroutinesApi
+    suspend fun getAllTransactions() =
+        accRepo.getAllTransaction()
+            .flowOn(Dispatchers.IO)
+            .map {
+                it.filter { transVto ->
+                    !selectedItems.contains(transVto.transaction_id)
+                } .map {
+                transaction -> accMapper.mapToCostVto(transaction)
             }
-
-            //Start Delete Progress
-            _isLoading.postValue(true)
-            accRepo.deleteAllTransaction(selectedItems)
-            _isLoading.postValue(false)
-            _notifyMessage.postValue("${selectedItems.size} Items Deleted")
-            clearSelection()
-        }
-    }
-
-    fun cancelDelete(){
-        clearSelection()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun onCreate(){
-
-        viewModelScope.launch(Dispatchers.IO){
-            //Wait for Animation Finished
-            delay(enterAnimDuration.toLong()+100)
-            observeTransaction()
-        }
-    }
-
-    private fun observeTransaction(){
-        viewModelScope.launch(Dispatchers.IO){
-            _isLoading.postValue(true)
-            accRepo.getAllTransaction().collect {
-                _transactions.postValue(
-                    it.map {
-                            trans -> accMapper.mapToCostVto(trans)
-                    } .filter {
-                            vto -> !selectedItems.contains(vto.id)
-                    }
-                )
-                _isLoading.postValue(false)
-            }
-        }
-    }
+            }.asLiveData(Dispatchers.IO)
 
 }

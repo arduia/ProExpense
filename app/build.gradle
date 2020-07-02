@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 29
@@ -66,6 +67,7 @@ dependencies {
     def paging_version = "3.0.0-alpha02"
     def recycler_version = "1.1.0"
     def recycler_selection_view = "1.1.0-rc01"
+    def timber_version = "4.7.1"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -102,4 +104,7 @@ dependencies {
     implementation "androidx.preference:preference-ktx:$preference_version"
 //    Paging
     implementation "androidx.paging:paging-runtime:$paging_version"
+//    Timber
+    implementation "com.jakewharton.timber:timber:$timber_version"
 }
+

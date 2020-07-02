@@ -10,6 +10,7 @@ import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 

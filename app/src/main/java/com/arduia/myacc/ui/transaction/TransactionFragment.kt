@@ -12,46 +12,41 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
-import com.arduia.myacc.databinding.FragTransactionBinding
+import com.arduia.myacc.databinding.FragExpenseBinding
 import com.arduia.myacc.ui.common.MarginItemDecoration
 import com.arduia.myacc.ui.common.TransactionDetailDialog
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class TransactionFragment : Fragment(){
 
-    private val viewBinding by lazy { createViewBinding()}
+    lateinit var  viewBinding: FragExpenseBinding
 
     private val transactionAdapter by lazy {
-        TransactionListAdapter(
-            MainScope(),
-            requireContext()
-        )
+        TransactionListAdapter( requireContext() )
     }
-
 
     private val viewModel by viewModels<TransactionViewModel>()
 
     private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
 
+
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = viewBinding.root
-
+    ): View?{
+        viewBinding = FragExpenseBinding.inflate(layoutInflater)
+        lockNavigation()
+        setupView()
+        setupViewModel()
+        return viewBinding.root
+    }
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lifecycle.addObserver(viewModel)
-        lockNavigation()
-        setupView()
-        setupViewModel()
     }
 
     @ExperimentalCoroutinesApi
@@ -60,6 +55,11 @@ class TransactionFragment : Fragment(){
         //Setup Transaction Recycler View
         viewBinding.rvTransactions.adapter = transactionAdapter
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.rvTransactions.addItemDecoration(
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            ))
 
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvTransactions)
 
@@ -84,16 +84,10 @@ class TransactionFragment : Fragment(){
         viewBinding.btnDoneDelete.setOnClickListener {
             viewModel.deleteConfirm()
         }
-
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupViewModel(){
-
-        viewModel.transactions.observe(viewLifecycleOwner, Observer {
-            MainScope().launch(Dispatchers.IO){
-                transactionAdapter.submitData(it)
-            }
-        })
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer {
             when(it){
@@ -126,23 +120,28 @@ class TransactionFragment : Fragment(){
 
         viewModel.detailDataChanged.observe(viewLifecycleOwner, Observer {
             TransactionDetailDialog().apply {
-                //
+                setEditClickListener {expense ->
+                    val action = TransactionFragmentDirections
+                        .actionDestTransactionToDestExpenseEntry(expenseId = expense.id)
+                    findNavController().navigate(action)
+                }
             }.showDetail(parentFragmentManager, it)
         })
 
-
     }
 
-    private fun createViewBinding():FragTransactionBinding{
-        val binding = FragTransactionBinding.inflate(layoutInflater)
-        //One Time Operation
-        binding.rvTransactions.addItemDecoration(
-            MarginItemDecoration(
-                resources.getDimension(R.dimen.spacing_list_item).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
-            ))
-        return binding
+    @ExperimentalCoroutinesApi
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        MainScope().launch {
+            delay(resources.getInteger(R.integer.expense_anim_left_duration).toLong())
+            viewModel.getAllTransactions().observe(viewLifecycleOwner, Observer {
+                MainScope().launch(Dispatchers.IO){
+                    transactionAdapter.submitData(it)
+                }
+            })
 
+        }
     }
 
     private fun lockNavigation(){
