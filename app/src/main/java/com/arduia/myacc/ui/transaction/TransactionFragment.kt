@@ -1,26 +1,22 @@
 package com.arduia.myacc.ui.transaction
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arduia.core.view.asGone
-import com.arduia.core.view.asInvisible
-import com.arduia.core.view.asVisible
 import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragTransactionBinding
 import com.arduia.myacc.ui.common.MarginItemDecoration
 import com.arduia.myacc.ui.common.TransactionDetailDialog
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -31,13 +27,11 @@ class TransactionFragment : Fragment(){
 
     private val transactionAdapter by lazy {
         TransactionListAdapter(
+            MainScope(),
             requireContext()
         )
     }
 
-    private val detailDialog by lazy {
-        TransactionDetailDialog()
-    }
 
     private val viewModel by viewModels<TransactionViewModel>()
 
@@ -51,14 +45,13 @@ class TransactionFragment : Fragment(){
 
 
     @ExperimentalCoroutinesApi
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         lifecycle.addObserver(viewModel)
         lockNavigation()
         setupView()
         setupViewModel()
-        detailDialog.onAttach(requireContext())
     }
 
     @ExperimentalCoroutinesApi
@@ -67,6 +60,7 @@ class TransactionFragment : Fragment(){
         //Setup Transaction Recycler View
         viewBinding.rvTransactions.adapter = transactionAdapter
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
+
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvTransactions)
 
         itemSwipeCallback.setSwipeListener {
@@ -96,7 +90,7 @@ class TransactionFragment : Fragment(){
     private fun setupViewModel(){
 
         viewModel.transactions.observe(viewLifecycleOwner, Observer {
-            MainScope().launch {
+            MainScope().launch(Dispatchers.IO){
                 transactionAdapter.submitData(it)
             }
         })
@@ -109,7 +103,7 @@ class TransactionFragment : Fragment(){
         })
 
         viewModel.notifyMessage.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            Snackbar.make(viewBinding.root, it, Snackbar.LENGTH_SHORT).show()
         })
 
         //Expense item Selected, show Confirm
@@ -131,8 +125,11 @@ class TransactionFragment : Fragment(){
         })
 
         viewModel.detailDataChanged.observe(viewLifecycleOwner, Observer {
-            TransactionDetailDialog().showDetail(parentFragmentManager, it)
+            TransactionDetailDialog().apply {
+                //
+            }.showDetail(parentFragmentManager, it)
         })
+
 
     }
 

@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_dest_home_to_transactionFragment"
             app:destination="@id/dest_transaction" />
+        <action
+            android:id="@+id/action_dest_home_to_expendEntryFragment"
+            app:destination="@id/dest_expense_entry" />
     </fragment>
     <fragment
         android:id="@+id/dest_feedback"
@@ -21,9 +24,18 @@
     <fragment
         android:id="@+id/dest_settings"
         android:label="@string/label_settings"
+        tools:layout="@layout/frag_settings"
         android:name="com.arduia.myacc.ui.settings.SettingsFragment"/>
     <fragment
         android:id="@+id/dest_transaction"
+        tools:layout="@layout/frag_transaction"
         android:name="com.arduia.myacc.ui.transaction.TransactionFragment"
         android:label="TransactionFragment" />
+    <fragment
+        android:id="@+id/dest_expense_entry"
+        android:name="com.arduia.myacc.ui.entry.ExpendEntryFragment"
+        android:label="ExpendEntryFragment"
+
+        tools:layout = "@layout/frag_expense_entry"
+        />
 </navigation>

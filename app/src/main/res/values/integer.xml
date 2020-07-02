@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="expense_anim_left_duration">250</integer>
+    <integer name="expense_anim_right_duration">400</integer>
+</resources>

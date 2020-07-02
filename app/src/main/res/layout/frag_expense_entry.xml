@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -11,13 +11,9 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:background="@android:color/white"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="450dp"
         android:id="@+id/tb_spend"
         >
 
@@ -51,9 +47,8 @@
         app:layout_constraintTop_toBottomOf="@id/tb_spend"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/innerSurfaceColor"
-        app:layout_constraintWidth_max="450dp"
-        android:layout_width="0dp"
-        android:layout_height="0dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -70,12 +65,12 @@
                 android:layout_marginEnd="@dimen/material_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_name"
+                    android:id="@+id/edt_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/label_name"
                     android:maxLength="20"
-                    android:nextFocusDown="@id/tv_cost"
+                    android:nextFocusDown="@id/edt_amount"
                     android:imeOptions="actionNext"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -133,7 +128,7 @@
                 android:layout_marginEnd="@dimen/material_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_cost"
+                    android:id="@+id/edt_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/label_amount"
@@ -156,7 +151,7 @@
                 android:layout_marginEnd="@dimen/material_margin">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_description"
+                    android:id="@+id/edt_note"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="top"
@@ -182,4 +177,4 @@
         </RelativeLayout>
     </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.ItemTransactionBinding
-import com.arduia.myacc.ui.common.CategoryProvider
 import com.arduia.myacc.ui.vto.TransactionVto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class TransactionListAdapter constructor(private val context: Context):
+class TransactionListAdapter constructor(private val mainScope: CoroutineScope, private val context: Context):
     PagingDataAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(
         DIFF_CALLBACK
     ){
@@ -25,15 +27,6 @@ class TransactionListAdapter constructor(private val context: Context):
 
     private var itemClickListener: (TransactionVto) -> Unit = {}
 
-    private val selectedDrawable by lazy {
-       ColorDrawable( ContextCompat.getColor(context, R.color.primaryColor))
-    }
-
-    private val unSelectedDrawable by lazy {
-        ColorDrawable(ContextCompat.getColor(context, android.R.color.darker_gray))
-    }
-
-    var selectionTracker: SelectionTracker<Long>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
 
@@ -44,20 +37,14 @@ class TransactionListAdapter constructor(private val context: Context):
 
     override fun onBindViewHolder(holder: TransactionVH, position: Int) {
 
-        val item = getItem(position) ?: throw Exception("getItem not found at $position")
+            val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
-        with(holder.binding){
-            tvName.text = item.name
-            tvDate.text = item.date
-            tvFinanceType.text = item.finance
-            tvAmount.text = item.cost
-            imvCategory.setImageResource(item.category)
-            selectionTracker?.let {
-                 when(it.isSelected(getItemId(position))){
-                     true -> imvSelect.setImageDrawable(selectedDrawable)
-                     false -> imvSelect.visibility = View.GONE
-                 }
-            }
+            with(holder.binding){
+                tvName.text = item.name
+                tvDate.text = item.date
+                tvFinanceType.text = item.finance
+                tvAmount.text = item.amount
+                imvCategory.setImageResource(item.category)
         }
     }
 
@@ -72,6 +59,7 @@ class TransactionListAdapter constructor(private val context: Context):
         init {
             binding.cdTransaction.setOnClickListener(this)
         }
+
         override fun onClick(v: View?) {
             listener(getItem(absoluteAdapterPosition)!!)
         }
@@ -93,7 +81,7 @@ private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
     override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
         return  oldItem.name == newItem.name &&
             oldItem.category == newItem.category &&
-            oldItem.cost == newItem.cost &&
+            oldItem.amount == newItem.amount &&
             oldItem.date == newItem.date &&
             oldItem.finance == newItem.finance
     }

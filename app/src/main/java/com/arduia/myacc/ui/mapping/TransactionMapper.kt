@@ -19,7 +19,7 @@ import java.util.*
              id = transaction.transaction_id,
              name = transaction.name?:"",
              date = dateFormatter.format(transaction.created_date),
-             cost = transaction.value.formatCostValue(),
+             amount = transaction.value.formatCostValue(),
              finance = transaction.finance_type,
              category = when(transaction.category){
                  else -> categoryProvider.getDrawableCategory(CostCategory.FOOD)
@@ -30,7 +30,7 @@ import java.util.*
              id = transaction.transaction_id,
              name = transaction.name?: "",
              date = dateFormatter.format(transaction.created_date),
-             cost = transaction.value.formatCostValue(),
+             amount = transaction.value.formatCostValue(),
              finance = transaction.finance_type,
              category = when(transaction.category){
                  else -> categoryProvider.getDrawableCategory(CostCategory.FOOD)

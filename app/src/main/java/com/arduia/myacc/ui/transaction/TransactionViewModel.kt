@@ -3,16 +3,13 @@ package com.arduia.myacc.ui.transaction
 import android.app.Application
 import androidx.lifecycle.*
 import androidx.paging.PagingData
+import com.arduia.myacc.R
 import com.arduia.myacc.di.ServiceLoader
 import com.arduia.myacc.ui.vto.TransactionDetailsVto
 import com.arduia.myacc.ui.vto.TransactionVto
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.launch
 
 class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleObserver{
 
@@ -37,6 +34,9 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
     private val _detailDataChanged = MutableLiveData<TransactionDetailsVto>()
     val detailDataChanged : LiveData<TransactionDetailsVto> = _detailDataChanged
 
+    private val _editDataChangedEvent = MutableLiveData<TransactionDetailsVto>()
+    val editDataChangedEvent : LiveData<TransactionDetailsVto> = _editDataChangedEvent
+
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
     }
@@ -46,6 +46,9 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
     }
 
     private val selectedItems = mutableListOf<Int>()
+
+
+    private val enterAnimDuration = app.resources.getInteger(R.integer.expense_anim_left_duration)
 
     private val accRepo by lazy {
         serviceLoader.getAccountingRepository()
@@ -96,8 +99,12 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun onCreate(){
-        _isSelectedMode.value = false
-        observeTransaction()
+
+        viewModelScope.launch(Dispatchers.IO){
+            //Wait for Animation Finished
+            delay(enterAnimDuration.toLong()+100)
+            observeTransaction()
+        }
     }
 
     private fun observeTransaction(){

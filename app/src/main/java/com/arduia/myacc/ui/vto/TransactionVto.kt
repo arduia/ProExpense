@@ -8,7 +8,7 @@ data class TransactionVto(val id: Int,
                           val date:String,
                           @DrawableRes
                           val category: Int,
-                          val cost:String,
+                          val amount:String,
                           val finance:String)
 
 enum class CostCategory{

@@ -7,6 +7,6 @@ data class TransactionDetailsVto(val id: Int,
                                  val date: String,
                                  @DrawableRes
                                  val category: Int,
-                                 val cost: String,
+                                 val amount: String,
                                  val finance: String,
                                  val note: String)

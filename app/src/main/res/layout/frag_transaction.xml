@@ -7,6 +7,7 @@
     tools:context=".ui.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <include
         layout="@layout/layout_toolbar"
         android:id="@+id/tb_transaction"
@@ -55,7 +56,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/pb_loading"
-        android:visibility="visible"
+        android:visibility="gone"
         android:progressTint="@color/primaryColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +68,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/fl_confirm_delete"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:background="@color/backgroundColor"
         android:layout_height="?attr/actionBarSize">
