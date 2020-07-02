@@ -42,7 +42,7 @@ class TransactionDetailDialog: BottomSheetDialogFragment(){
         viewBinding.tvDateValue.text = date
         viewBinding.tvNameValue.text = name
         viewBinding.tvNoteValue.text = note
-        viewBinding.chipCategory.setChipIconResource(category)
+        viewBinding.imvCategory.setImageResource(category)
     }
 
     companion object{
