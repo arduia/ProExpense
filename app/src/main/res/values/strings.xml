@@ -24,6 +24,9 @@
     <string name="label_amount">Amount*</string>
     <string name="label_save">Save</string>
     <string name="label_note">Note</string>
+    <string name="label_update">Update</string>
+    <string name="label_update_data">Update Data</string>
+    <string name="label_expense_entry">Expense Entry</string>
 
 <!--    Feedback-->
     <string name="label_feedback">Feedback</string>

@@ -1,22 +1,31 @@
 package com.arduia.myacc.ui.entry
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.arduia.myacc.data.AccRepository
 import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.di.ServiceLoader
+import com.arduia.myacc.ui.common.*
+import com.arduia.myacc.ui.mapping.TransactionMapper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 
 class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app){
 
     //--Caution-- Should be oneshot execution, Event LiveData
-    private val _expenseDataInserted = MutableLiveData<Unit>()
-    val expenseDataInserted : LiveData<Unit> = _expenseDataInserted
+    private val _dataInserted = EventLiveData<Unit>()
+    val dataInserted get() =  _dataInserted.asLiveData()
+
+    private val _dataUpdated = EventLiveData<Unit>()
+    val dataUpdated get() = _dataUpdated.asLiveData()
+
+    private val _entryMode = EventLiveData<ExpenseEntryMode>()
+    val entryMode get() = _entryMode
+
+    private val _expenseData = BaseLiveData<UpdateDataVto>()
+    val expenseData get() = _expenseData.asLiveData()
 
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
@@ -24,6 +33,18 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
 
     private val accRepository: AccRepository by lazy {
         serviceLoader.getAccountingRepository()
+    }
+
+    private val accMapper: TransactionMapper by lazy {
+        serviceLoader.getTransactionMapper()
+    }
+
+    fun setUpdateMode(){
+        _entryMode post event(ExpenseEntryMode.UPDATE)
+    }
+
+    fun setSaveMode(){
+        _entryMode post event(ExpenseEntryMode.INSERT)
     }
 
     fun saveExpenseData(name: String,
@@ -43,7 +64,7 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
                 modified_date = Date().time
             )
             accRepository.insertTransaction(saveTransaction)
-            _expenseDataInserted.postValue(Unit)
+            _dataInserted post EventUnit
         }
     }
 
@@ -64,8 +85,19 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
                 created_date = Date().time,
                 modified_date = Date().time
             )
-            accRepository.insertTransaction(saveTransaction)
-            _expenseDataInserted.postValue(Unit)
+            accRepository.updateTransaction(saveTransaction)
+            _dataUpdated post EventUnit
+        }
+    }
+
+    fun observeExpenseData(id: Int){
+        viewModelScope.launch(Dispatchers.IO){
+
+            val repoData = accRepository.getTransaction(id).first()
+
+            val updateData = accMapper.mapToUpdateDetail(repoData)
+
+            _expenseData post updateData
         }
     }
 }

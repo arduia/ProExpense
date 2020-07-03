@@ -1,16 +1,12 @@
 package com.arduia.myacc.di
 
-import android.app.Application
 import android.content.Context
 import com.arduia.myacc.data.AccRepository
 import com.arduia.myacc.data.AccRepositoryImpl
 import com.arduia.myacc.data.local.AccountingDatabase
-import com.arduia.myacc.data.local.Transaction
 import com.arduia.myacc.ui.common.CategoryProvider
 import com.arduia.myacc.ui.mapping.TransactionMapper
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.util.*
+import java.text.DecimalFormat
 
 class ServiceLoader private constructor (private val context: Context){
 

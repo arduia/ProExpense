@@ -90,7 +90,7 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
 
     suspend fun getExpenseLiveData(): LiveData<PagedList<TransactionVto>> {
         val dataSource = accRepo.getAllTransaction()
-            .map { accMapper.mapToCostVto(it) }
+            .map { accMapper.mapToTransactionVto(it) }
 
           return LivePagedListBuilder(dataSource , 50).build().asFlow()
               .flowOn(Dispatchers.IO)
