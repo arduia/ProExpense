@@ -1,6 +1,7 @@
 package com.arduia.myacc.data
 
-import androidx.paging.PagingData
+import androidx.paging.DataSource
+import androidx.paging.PagedList
 import com.arduia.myacc.data.local.OweLog
 import com.arduia.myacc.data.local.OwePeople
 import com.arduia.myacc.data.local.Transaction
@@ -13,7 +14,7 @@ interface AccRepository {
 
     suspend fun getTransaction(id: Int): Flow<Transaction>
 
-    suspend fun getAllTransaction(): Flow<PagingData<Transaction>>
+    suspend fun getAllTransaction(): DataSource.Factory<Int, Transaction>
 
     suspend fun getRecentTransaction(): Flow<List<Transaction>>
 
@@ -26,7 +27,7 @@ interface AccRepository {
     //OwePeople
     suspend fun insertOwePeople(people: OwePeople)
 
-    suspend fun getAllOwePeople(): Flow<PagingData<OwePeople>>
+    suspend fun getAllOwePeople(): DataSource.Factory<Int, OwePeople>
 
     suspend fun updateOwePeople(people: OwePeople)
 
@@ -35,7 +36,7 @@ interface AccRepository {
     //Owe Log
     suspend fun insertOweLog(log: OweLog)
 
-    suspend fun getAllOweLog(): Flow<PagingData<OweLog>>
+    suspend fun getAllOweLog(): DataSource.Factory<Int, OweLog>
 
     suspend fun updateOweLog(log: OweLog)
 

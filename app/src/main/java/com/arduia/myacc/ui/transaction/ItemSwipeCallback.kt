@@ -17,7 +17,7 @@ class ItemSwipeCallback :
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-       swipeListener(viewHolder.absoluteAdapterPosition)
+       swipeListener(viewHolder.adapterPosition)
     }
 
     fun setSwipeListener(listener: (Int) -> Unit){

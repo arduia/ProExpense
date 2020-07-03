@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.paging.PagingDataAdapter
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class TransactionListAdapter constructor(private val context: Context):
-    PagingDataAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(
+    PagedListAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(
         DIFF_CALLBACK
     ){
 
@@ -60,7 +60,7 @@ class TransactionListAdapter constructor(private val context: Context):
         }
 
         override fun onClick(v: View?) {
-            listener(getItem(absoluteAdapterPosition)!!)
+            listener(getItem(adapterPosition)!!)
         }
     }
 

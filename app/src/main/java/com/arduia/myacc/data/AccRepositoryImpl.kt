@@ -1,7 +1,7 @@
 package com.arduia.myacc.data
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
+import androidx.lifecycle.asFlow
+import androidx.paging.LivePagedListBuilder
 import com.arduia.myacc.data.local.*
 import kotlinx.coroutines.flow.Flow
 
@@ -19,10 +19,7 @@ class AccRepositoryImpl(
        return transDao.getItemTransaction(id)
     }
 
-    override suspend fun getAllTransaction() =  Pager(
-        config = PagingConfig(pageSize = 30),
-        pagingSourceFactory = { transDao.getAllTransaction() }
-    ).flow
+    override suspend fun getAllTransaction() = transDao.getAllTransaction()
 
     override suspend fun getRecentTransaction(): Flow<List<Transaction>> {
         return transDao.getRecentTransaction()
@@ -44,11 +41,7 @@ class AccRepositoryImpl(
         peopleDao.insertOwePeople(people)
     }
 
-    override suspend fun getAllOwePeople() =
-        Pager(
-            config = PagingConfig(pageSize = 50),
-            pagingSourceFactory = { peopleDao.getAllOwePeople() }
-        ).flow
+    override suspend fun getAllOwePeople() = peopleDao.getAllOwePeople()
 
     override suspend fun updateOwePeople(people: OwePeople) {
         peopleDao.updateOwePeople(people)
@@ -62,11 +55,7 @@ class AccRepositoryImpl(
         oweLogDao.insertOweLog(log)
     }
 
-    override suspend fun getAllOweLog() =
-        Pager(
-            config = PagingConfig(pageSize = 50),
-            pagingSourceFactory = { oweLogDao.getAllOweLog() }
-        ).flow
+    override suspend fun getAllOweLog() = oweLogDao.getAllOweLog()
 
     override suspend fun updateOweLog(log: OweLog) {
         oweLogDao.updateOweLog(log)

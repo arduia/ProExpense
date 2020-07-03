@@ -1,6 +1,6 @@
 package com.arduia.myacc.data.local
 
-import androidx.paging.PagingSource
+import androidx.paging.DataSource
 import androidx.room.*
 import com.arduia.myacc.data.local.Transaction
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +12,7 @@ interface TransactionDao{
     suspend fun insertTransaction(transaction: Transaction)
 
     @Query ( "SELECT * FROM `transaction` ORDER BY created_date DESC" )
-    fun getAllTransaction(): PagingSource<Int, Transaction>
+    fun getAllTransaction(): DataSource.Factory<Int, Transaction>
 
     @Query("SELECT * FROM `transaction` WHERE transaction_id =:id")
     fun getItemTransaction(id: Int): Flow<Transaction>

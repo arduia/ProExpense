@@ -2,37 +2,36 @@ package com.arduia.myacc.ui.transaction
 
 import android.app.Application
 import androidx.lifecycle.*
-import androidx.paging.PagingData
-import com.arduia.myacc.R
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.arduia.myacc.di.ServiceLoader
+import com.arduia.myacc.ui.common.*
 import com.arduia.myacc.ui.vto.TransactionDetailsVto
 import com.arduia.myacc.ui.vto.TransactionVto
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 
 class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleObserver{
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> get() = _isLoading
+    private val _isLoading = BaseLiveData<Boolean>()
+    val isLoading  get() = _isLoading.asLiveData()
 
-    private val _isSelectedMode = MutableLiveData<Boolean>()
-    val isSelectedMode: LiveData<Boolean> = _isSelectedMode
+    private val _isSelectedMode = BaseLiveData<Boolean>()
+    val isSelectedMode get() =   _isSelectedMode.asLiveData()
 
-    //--Caution-- Should be Event LiveData for once shot execution
-    private val _itemSelectionChangeEvent = MutableLiveData<Unit>()
-    val itemSelectionChangeEvent : LiveData<Unit> = _itemSelectionChangeEvent
+
+    private val _itemSelectionChangeEvent = EventLiveData<Unit>()
+    val itemSelectionChangeEvent get()  = _itemSelectionChangeEvent.asLiveData()
 
     //Should be Event Observer
-    private val _notifyMessage = MutableLiveData<String>()
-    val notifyMessage : LiveData<String>  = _notifyMessage
+    private val _notifyMessage = BaseLiveData<String>()
+    val notifyMessage get() = _notifyMessage.asLiveData()
 
-    //--Caution-- Should be oneshot execution, Event LiveData
-    private val _detailDataChanged = MutableLiveData<TransactionDetailsVto>()
-    val detailDataChanged : LiveData<TransactionDetailsVto> = _detailDataChanged
+    private val _detailDataChanged = EventLiveData<TransactionDetailsVto>()
+    val detailDataChanged get() = _detailDataChanged.asLiveData()
 
-    private val _editDataChangedEvent = MutableLiveData<TransactionDetailsVto>()
-    val editDataChangedEvent : LiveData<TransactionDetailsVto> = _editDataChangedEvent
+    private val _editDataChangedEvent = BaseLiveData<TransactionDetailsVto>()
+    val editDataChangedEvent get() =  _editDataChangedEvent.asLiveData()
 
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
@@ -50,8 +49,8 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
 
     fun onItemSelect(item: TransactionVto){
         selectedItems.add(item.id)
-        _itemSelectionChangeEvent.value = Unit
-        _isSelectedMode.value = true
+        _itemSelectionChangeEvent set EventUnit
+        _isSelectedMode set true
     }
 
     fun deleteConfirm(){
@@ -79,26 +78,22 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
         viewModelScope.launch(Dispatchers.IO){
             val item = accRepo.getTransaction(selectedItem.id).first()
             val detailData = accMapper.mapToTransactionDetail(item)
-            _detailDataChanged.postValue(detailData)
+            _detailDataChanged post event(detailData)
         }
     }
 
     private fun clearSelection(){
         selectedItems.clear()
-        _itemSelectionChangeEvent.postValue(Unit)
-        _isSelectedMode.postValue(false)
+        _itemSelectionChangeEvent post EventUnit
+        _isSelectedMode post false
     }
 
-    @ExperimentalCoroutinesApi
-    suspend fun getAllTransactions() =
-        accRepo.getAllTransaction()
-            .flowOn(Dispatchers.IO)
-            .map {
-                it.filter { transVto ->
-                    !selectedItems.contains(transVto.transaction_id)
-                } .map {
-                transaction -> accMapper.mapToCostVto(transaction)
-            }
-            }.asLiveData(Dispatchers.IO)
+    suspend fun getExpenseLiveData(): LiveData<PagedList<TransactionVto>> {
+        val dataSource = accRepo.getAllTransaction()
+            .map { accMapper.mapToCostVto(it) }
 
+          return LivePagedListBuilder(dataSource , 50).build().asFlow()
+              .flowOn(Dispatchers.IO)
+              .asLiveData(Dispatchers.Main)
+    }
 }

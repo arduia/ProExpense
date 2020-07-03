@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.myacc.ui.NavigationDrawer
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragExpenseBinding
+import com.arduia.myacc.ui.common.EventObserver
 import com.arduia.myacc.ui.common.MarginItemDecoration
 import com.arduia.myacc.ui.common.TransactionDetailDialog
+import com.arduia.myacc.ui.common.event
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 
@@ -115,17 +117,17 @@ class TransactionFragment : Fragment(){
         })
 
         viewModel.itemSelectionChangeEvent.observe(viewLifecycleOwner, Observer {
-            transactionAdapter.refresh()
+            transactionAdapter.notifyDataSetChanged()
         })
 
-        viewModel.detailDataChanged.observe(viewLifecycleOwner, Observer {
+        viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver {
             TransactionDetailDialog().apply {
                 setEditClickListener {expense ->
                     val action = TransactionFragmentDirections
                         .actionDestTransactionToDestExpenseEntry(expenseId = expense.id)
                     findNavController().navigate(action)
                 }
-            }.showDetail(parentFragmentManager, it)
+            }.showDetail(parentFragmentManager,it)
         })
 
     }
@@ -133,14 +135,12 @@ class TransactionFragment : Fragment(){
     @ExperimentalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        MainScope().launch {
-            delay(resources.getInteger(R.integer.expense_anim_left_duration).toLong())
-            viewModel.getAllTransactions().observe(viewLifecycleOwner, Observer {
-                MainScope().launch(Dispatchers.IO){
-                    transactionAdapter.submitData(it)
-                }
-            })
 
+        MainScope().launch(Dispatchers.Main) {
+            delay(300)
+            viewModel.getExpenseLiveData().observe( viewLifecycleOwner, Observer {
+                transactionAdapter.submitList(it)
+            })
         }
     }
 
