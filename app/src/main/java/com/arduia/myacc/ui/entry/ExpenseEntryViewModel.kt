@@ -10,6 +10,7 @@ import com.arduia.myacc.ui.mapping.TransactionMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
 
 class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app){
@@ -82,7 +83,7 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
                 expense = "Income",
                 category = category,
                 finance_type = "CASH",
-                created_date = Date().time,
+                created_date = expenseData.value?.date?: throw Exception("Created Date Should not be null"),
                 modified_date = Date().time
             )
             accRepository.updateTransaction(saveTransaction)
@@ -91,8 +92,8 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
     }
 
     fun observeExpenseData(id: Int){
-        viewModelScope.launch(Dispatchers.IO){
 
+        viewModelScope.launch(Dispatchers.IO){
             val repoData = accRepository.getTransaction(id).first()
 
             val updateData = accMapper.mapToUpdateDetail(repoData)

@@ -2,21 +2,17 @@ package com.arduia.myacc.ui.home
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log.d
 import android.view.*
-import android.view.animation.BounceInterpolator
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arduia.core.extension.px
 import com.arduia.graph.SpendPoint
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
 import com.arduia.myacc.ui.common.MarginItemDecoration
-import kotlinx.android.synthetic.main.frag_home.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,11 +27,11 @@ class HomeFragment : BaseFragment(){
     private val viewModel by viewModels<HomeViewModel>()
 
     private val entryNavOption by lazy {
-        createDropUpNagOption()
+        createEntryNavOptions()
     }
 
     private val moreRecentNavOption by lazy {
-        createMoreRecentNavOption()
+        createRecentMoreNavOptions()
     }
 
     private val recentAdapter by lazy {
@@ -114,7 +110,7 @@ class HomeFragment : BaseFragment(){
             ))
     }
 
-    private fun createDropUpNagOption() =
+    private fun createEntryNavOptions() =
         NavOptions.Builder()
                 //For Entry Fragment
             .setEnterAnim(R.anim.pop_down_up)
@@ -125,7 +121,7 @@ class HomeFragment : BaseFragment(){
 
             .build()
 
-    private fun createMoreRecentNavOption() =
+    private fun createRecentMoreNavOptions() =
         NavOptions.Builder()
                 //For Transaction Fragment
             .setEnterAnim(R.anim.expense_enter_left)

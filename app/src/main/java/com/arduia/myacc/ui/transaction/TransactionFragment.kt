@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -98,10 +99,6 @@ class TransactionFragment : Fragment(){
             }
         })
 
-        viewModel.notifyMessage.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(viewBinding.root, it, Snackbar.LENGTH_SHORT).show()
-        })
-
         //Expense item Selected, show Confirm
         viewModel.isSelectedMode.observe(viewLifecycleOwner, Observer {
 
@@ -125,11 +122,17 @@ class TransactionFragment : Fragment(){
                 setEditClickListener {expense ->
                     val action = TransactionFragmentDirections
                         .actionDestTransactionToDestExpenseEntry(expenseId = expense.id)
-                    findNavController().navigate(action)
+                    findNavController().navigate(action,createEntryNavOptions())
                 }
             }.showDetail(parentFragmentManager,it)
         })
 
+        viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver{
+            Snackbar.make(viewBinding.root, when{
+                it > 0 ->  "$it Items Deleted!"
+                else -> "$it Item Deleted!"
+            }, 500).show()
+        })
     }
 
     @ExperimentalCoroutinesApi
@@ -137,7 +140,8 @@ class TransactionFragment : Fragment(){
         super.onActivityCreated(savedInstanceState)
 
         MainScope().launch(Dispatchers.Main) {
-            delay(300)
+            val animationDuration = resources.getInteger(R.integer.expense_anim_left_duration)
+            delay(animationDuration.toLong())
             viewModel.getExpenseLiveData().observe( viewLifecycleOwner, Observer {
                 transactionAdapter.submitList(it)
             })
@@ -154,5 +158,14 @@ class TransactionFragment : Fragment(){
         //Unlock the Navigation Drawer Left
         (requireActivity() as? NavigationDrawer)?.lockDrawer(false)
     }
+    private fun createEntryNavOptions() =
+        NavOptions.Builder()
+            //For Entry Fragment
+            .setEnterAnim(R.anim.pop_down_up)
+            .setPopExitAnim(R.anim.pop_up_down)
+            //For Home Fragment
+            .setExitAnim(android.R.anim.fade_out)
+            .setPopEnterAnim(R.anim.nav_default_enter_anim)
 
+            .build()
 }

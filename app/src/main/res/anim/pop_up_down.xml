@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android" android:duration="500">
-    <translate android:fromYDelta="0" android:toYDelta="70%p"
-        android:duration="500"/>
-    <alpha android:fromAlpha="1.0" android:toAlpha="0.0"
-        android:duration="400" />
+<set xmlns:android="http://schemas.android.com/apk/res/android" android:duration="@integer/entry_pop_drop_duration">
+    <translate android:fromYDelta="0" android:toYDelta="60%p"
+        android:duration="@integer/entry_pop_drop_duration"/>
+    <alpha android:fromAlpha="1.0"
+        android:toAlpha="0.0"
+        android:delay = "300"
+        android:duration="100" />
 </set>

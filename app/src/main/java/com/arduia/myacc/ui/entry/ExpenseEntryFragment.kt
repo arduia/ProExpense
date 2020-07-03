@@ -1,9 +1,11 @@
 package com.arduia.myacc.ui.entry
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,9 +18,7 @@ import com.arduia.myacc.ui.common.EventObserver
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
@@ -49,13 +49,11 @@ class ExpenseEntryFragment : Fragment(){
         when{
             args.expenseId > 0 -> {
                 // ID exist, Update Mode
-                Timber.d("UpdateMode -> ${args.expenseId}")
                 viewModel.setUpdateMode()
             }
 
             args.expenseId <= 0 -> {
                 // ID is default, Save Mode
-                Timber.d("SaveMode -> ${args.expenseId}")
                 viewModel.setSaveMode()
             }
         }
@@ -73,7 +71,6 @@ class ExpenseEntryFragment : Fragment(){
     private fun setupViewModel(){
 
         viewModel.dataInserted.observe(viewLifecycleOwner, EventObserver {
-            Snackbar.make(viewBinding.root, "Data is Inserted", Snackbar.LENGTH_SHORT).show()
             findNavController().popBackStack()
         })
 
@@ -103,22 +100,23 @@ class ExpenseEntryFragment : Fragment(){
 
 
     private fun onUpdateMode(){
-        viewBinding.tvEntryTitle.text = getString(R.string.label_update)
+        viewBinding.tvEntryTitle.text = getString(R.string.label_update_data)
         viewBinding.btnSave.text = getString(R.string.label_update)
         viewBinding.btnSave.setOnClickListener {
             updateData()
         }
         MainScope().launch(Dispatchers.IO){
-            delay(0)
             viewModel.observeExpenseData(args.expenseId)
         }
     }
 
     private fun onInsertMode(){
-        viewBinding.tvEntryTitle.text = getString(R.string.label_update)
+        viewBinding.tvEntryTitle.text = getString(R.string.label_expense_entry)
         viewBinding.btnSave.setOnClickListener {
             saveData()
         }
+
+        viewBinding.edtName.requestFocus()
     }
 
     private fun saveData(){
@@ -170,6 +168,13 @@ class ExpenseEntryFragment : Fragment(){
         viewBinding.edtName.setText("")
         viewBinding.edtAmount.setText("")
         viewBinding.edtNote.setText("")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val inputMethodManager =
+            (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+        inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)
     }
 
     companion object{

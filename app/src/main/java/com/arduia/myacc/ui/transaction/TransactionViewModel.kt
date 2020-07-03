@@ -19,19 +19,14 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
     private val _isSelectedMode = BaseLiveData<Boolean>()
     val isSelectedMode get() =   _isSelectedMode.asLiveData()
 
+    private val _deleteEvent = EventLiveData<Int>()
+    val deleteEvent = _deleteEvent.asLiveData()
 
     private val _itemSelectionChangeEvent = EventLiveData<Unit>()
     val itemSelectionChangeEvent get()  = _itemSelectionChangeEvent.asLiveData()
 
-    //Should be Event Observer
-    private val _notifyMessage = BaseLiveData<String>()
-    val notifyMessage get() = _notifyMessage.asLiveData()
-
     private val _detailDataChanged = EventLiveData<TransactionDetailsVto>()
     val detailDataChanged get() = _detailDataChanged.asLiveData()
-
-    private val _editDataChangedEvent = BaseLiveData<TransactionDetailsVto>()
-    val editDataChangedEvent get() =  _editDataChangedEvent.asLiveData()
 
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
@@ -64,7 +59,7 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
             _isLoading.postValue(true)
             accRepo.deleteAllTransaction(selectedItems.toList())
             _isLoading.postValue(false)
-            _notifyMessage.postValue("${selectedItems.size} Items Deleted")
+            _deleteEvent post event(selectedItems.size)
             clearSelection()
         }
     }
