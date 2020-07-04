@@ -15,10 +15,7 @@ class ServiceLoader private constructor (private val context: Context){
     }
 
     fun getAccountingRepository(): AccRepository =
-         AccRepositoryImpl(
-            accDatabase.transactionDao,
-            accDatabase.owePeopleDao,
-            accDatabase.oweLogDao)
+         AccRepositoryImpl(accDatabase.transactionDao)
 
 
     fun getCategoryProvider() = CategoryProvider()

@@ -7,13 +7,11 @@ import androidx.room.RoomDatabase
 import java.lang.Exception
 
 @Database(
-    entities = [Transaction::class, OwePeople::class, OweLog::class],
+    entities = [Transaction::class],
     version = 3 )
 abstract class AccountingDatabase : RoomDatabase(){
 
     abstract val transactionDao: TransactionDao
-    abstract val owePeopleDao: OwePeopleDao
-    abstract val oweLogDao: OweLogDao
 
     companion object{
 

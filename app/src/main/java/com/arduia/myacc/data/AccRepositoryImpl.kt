@@ -6,9 +6,7 @@ import com.arduia.myacc.data.local.*
 import kotlinx.coroutines.flow.Flow
 
 class AccRepositoryImpl(
-    private val transDao: TransactionDao,
-    private val peopleDao: OwePeopleDao,
-    private val oweLogDao: OweLogDao
+    private val transDao: TransactionDao
     ) : AccRepository{
 
     override suspend fun insertTransaction(transaction: Transaction) {
@@ -36,33 +34,4 @@ class AccRepositoryImpl(
     override suspend fun deleteAllTransaction(list: List<Int>) {
         transDao.deleteTransactionByIDs(list)
     }
-
-    override suspend fun insertOwePeople(people: OwePeople) {
-        peopleDao.insertOwePeople(people)
-    }
-
-    override suspend fun getAllOwePeople() = peopleDao.getAllOwePeople()
-
-    override suspend fun updateOwePeople(people: OwePeople) {
-        peopleDao.updateOwePeople(people)
-    }
-
-    override suspend fun deleteOwePeople(people: OwePeople) {
-        peopleDao.deleteOwePeople(people)
-    }
-
-    override suspend fun insertOweLog(log: OweLog) {
-        oweLogDao.insertOweLog(log)
-    }
-
-    override suspend fun getAllOweLog() = oweLogDao.getAllOweLog()
-
-    override suspend fun updateOweLog(log: OweLog) {
-        oweLogDao.updateOweLog(log)
-    }
-
-    override suspend fun deleteOweLog(log: OweLog) {
-        oweLogDao.deleteOweLog(log)
-    }
-
 }
