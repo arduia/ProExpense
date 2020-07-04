@@ -19,7 +19,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         style="@style/IconImageButton"/>
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/img_taylor"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -28,7 +28,9 @@
         android:layout_marginTop="@dimen/material_margin_large"
         android:layout_marginStart="@dimen/material_margin_large"
         android:layout_marginBottom="@dimen/material_margin"
-        android:src="@drawable/img_taylor" />
+        android:scaleType="center"
+        android:tint="@color/primaryColor"
+        android:src="@drawable/ic_launcher_foreground" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -41,20 +43,12 @@
         android:layout_marginStart="@dimen/material_margin">
 
     <TextView
-        android:id="@+id/tv_taylor"
+        android:id="@+id/tv_app_name"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Guest User"
+        android:text="Pro Expense"
         android:textColor="@color/onSurfaceColor" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_email"
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        android:layout_below="@id/tv_taylor"
-        android:text="some@gmail.com"
-        android:layout_alignStart="@id/tv_taylor"/>
     </LinearLayout>
 
 </RelativeLayout>

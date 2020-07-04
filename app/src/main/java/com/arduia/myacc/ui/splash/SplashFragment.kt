@@ -31,7 +31,7 @@ class SplashFragment: Fragment(){
     override fun onResume() {
         super.onResume()
         MainScope().launch(Dispatchers.Main){
-            delay(500)
+            delay(600)
 
             findNavController().popBackStack()
             findNavController().navigate(R.id.dest_home)
