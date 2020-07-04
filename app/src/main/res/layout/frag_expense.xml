@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/btn_pop_back"

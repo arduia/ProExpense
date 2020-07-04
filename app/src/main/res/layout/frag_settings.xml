@@ -11,7 +11,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/tb_settings"/>
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/btn_menu"

@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_menu_open"
         style="@style/IconImageButton"
         android:layout_width="30dp"
@@ -55,7 +55,7 @@
         app:layout_constraintStart_toStartOf="@id/rv_recent"
         app:layout_constraintTop_toBottomOf="@id/cd_value" />
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_more_transaction"
         style="@style/IconImageButton"
         android:layout_width="30dp"

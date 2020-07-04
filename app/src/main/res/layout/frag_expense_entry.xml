@@ -24,7 +24,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/material_margin"
             android:text="@string/label_expense_entry" />
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_entry_close"
             style="@style/IconImageButton"
             android:layout_width="30dp"
