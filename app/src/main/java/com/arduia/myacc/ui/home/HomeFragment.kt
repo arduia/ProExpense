@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.graph.SpendPoint
 import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragHomeBinding
-import com.arduia.myacc.ui.BaseFragment
+import com.arduia.myacc.ui.NavBaseFragment
 import com.arduia.myacc.ui.common.MarginItemDecoration
 import kotlin.random.Random
 import kotlin.random.nextInt
 
 
-class HomeFragment : BaseFragment(){
+class HomeFragment : NavBaseFragment(){
 
     private val viewBinding by lazy {  createViewBinding() }
 

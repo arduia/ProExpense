@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.arduia.myacc.databinding.FragSettingsBinding
+import com.arduia.myacc.ui.NavBaseFragment
 import com.arduia.myacc.ui.NavigationDrawer
-class SettingsFragment: Fragment(){
+
+class SettingsFragment: NavBaseFragment(){
 
     private val binding by lazy { FragSettingsBinding.inflate(layoutInflater) }
 
@@ -29,7 +31,7 @@ class SettingsFragment: Fragment(){
     private fun setupView(){
 
         binding.btnMenu.setOnClickListener{
-            (requireActivity() as? NavigationDrawer)?.openDrawer()
+            openDrawer()
         }
 
     }
