@@ -13,9 +13,6 @@ import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragHomeBinding
 import com.arduia.myacc.ui.BaseFragment
 import com.arduia.myacc.ui.common.MarginItemDecoration
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -67,7 +64,7 @@ class HomeFragment : BaseFragment(){
         viewBinding.btnMenuOpen.setOnClickListener { openDrawer() }
 
         viewBinding.btnMoreTransaction.setOnClickListener {
-            findNavController().navigate(R.id.dest_transaction, null, moreRecentNavOption)
+            findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
         }
 
         viewBinding.imgGraph.spendPoints = getSamplePoints()

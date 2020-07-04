@@ -4,7 +4,7 @@
     <string name="label_resent">Recent</string>
     <string name="label_borrows">Owe</string>
     <string name="label_settings">Settings</string>
-    <string name="label_transaction">Expenses</string>
+    <string name="label_expense">Expenses</string>
 
 <!--    Home-->
     <string name="label_log">Activity Log</string>
@@ -40,7 +40,6 @@
     <string name="label_thanks">Thanks Your Feedback!</string>
 
 <!--    Transaction-->
-    <string name="label_transition">Transactions</string>
     <string name="label_recent">Recents</string>
 
 <!--    Settings-->

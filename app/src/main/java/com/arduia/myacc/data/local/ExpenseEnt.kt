@@ -4,12 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "transaction")
-data class Transaction(
+@Entity(tableName = "expense")
+data class ExpenseEnt(
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "transaction_id")
-    val transaction_id: Int = 0,
+    @ColumnInfo(name = "expense_id")
+    val expense_id: Int = 0,
 
     @ColumnInfo(name = "name")
     val name: String?,

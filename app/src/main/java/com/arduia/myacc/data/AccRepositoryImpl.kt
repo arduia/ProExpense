@@ -1,37 +1,35 @@
 package com.arduia.myacc.data
 
-import androidx.lifecycle.asFlow
-import androidx.paging.LivePagedListBuilder
 import com.arduia.myacc.data.local.*
 import kotlinx.coroutines.flow.Flow
 
 class AccRepositoryImpl(
-    private val transDao: TransactionDao
+    private val transDao: ExpenseDao
     ) : AccRepository{
 
-    override suspend fun insertTransaction(transaction: Transaction) {
-        transDao.insertTransaction(transaction)
+    override suspend fun insertExpense(expenseEnt: ExpenseEnt) {
+        transDao.insertExpense(expenseEnt)
     }
 
-    override suspend fun getTransaction(id: Int): Flow<Transaction> {
-       return transDao.getItemTransaction(id)
+    override suspend fun getExpense(id: Int): Flow<ExpenseEnt> {
+       return transDao.getItemExpense(id)
     }
 
-    override suspend fun getAllTransaction() = transDao.getAllTransaction()
+    override suspend fun getAllExpense() = transDao.getAllExpense()
 
-    override suspend fun getRecentTransaction(): Flow<List<Transaction>> {
-        return transDao.getRecentTransaction()
+    override suspend fun getRecentExpense(): Flow<List<ExpenseEnt>> {
+        return transDao.getRecentExpense()
     }
 
-    override suspend fun updateTransaction(transaction: Transaction) {
-        transDao.updateTransaction(transaction)
+    override suspend fun updateExpense(expenseEnt: ExpenseEnt) {
+        transDao.updateExpense(expenseEnt)
     }
 
-    override suspend fun deleteTransaction(transaction: Transaction) {
-        transDao.deleteTransaction(transaction)
+    override suspend fun deleteExpense(expenseEnt: ExpenseEnt) {
+        transDao.deleteExpense(expenseEnt)
     }
 
-    override suspend fun deleteAllTransaction(list: List<Int>) {
-        transDao.deleteTransactionByIDs(list)
+    override suspend fun deleteAllExpense(list: List<Int>) {
+        transDao.deleteExpenseByIDs(list)
     }
 }

@@ -6,20 +6,19 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
-import com.arduia.myacc.databinding.ItemTransactionBinding
-import com.arduia.myacc.ui.vto.TransactionVto
-import kotlinx.coroutines.CoroutineScope
+import com.arduia.myacc.databinding.ItemExpenseBinding
+import com.arduia.myacc.ui.vto.ExpenseVto
 
 class RecentListAdapter constructor( private val layoutInflater: LayoutInflater):
-    ListAdapter<TransactionVto, RecentListAdapter.VH>(DIFF_CALLBACK){
+    ListAdapter<ExpenseVto, RecentListAdapter.VH>(DIFF_CALLBACK){
 
     private var newItemInsertionListener: ((Unit) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
-        val itemView = layoutInflater.inflate(R.layout.item_transaction, parent, false)
+        val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
 
-        return VH( ItemTransactionBinding.bind(itemView ) )
+        return VH( ItemExpenseBinding.bind(itemView ) )
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -36,8 +35,8 @@ class RecentListAdapter constructor( private val layoutInflater: LayoutInflater)
     }
 
     override fun onCurrentListChanged(
-        previousList: MutableList<TransactionVto>,
-        currentList: MutableList<TransactionVto>
+        previousList: MutableList<ExpenseVto>,
+        currentList: MutableList<ExpenseVto>
     ) {
         super.onCurrentListChanged(previousList, currentList)
 
@@ -56,17 +55,17 @@ class RecentListAdapter constructor( private val layoutInflater: LayoutInflater)
         newItemInsertionListener = listener
     }
 
-    class VH(val binding: ItemTransactionBinding): RecyclerView.ViewHolder(binding.root)
+    class VH(val binding: ItemExpenseBinding): RecyclerView.ViewHolder(binding.root)
 
 }
 
-private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
+private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ExpenseVto>(){
 
-    override fun areItemsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
+    override fun areItemsTheSame(oldItem: ExpenseVto, newItem: ExpenseVto): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
+    override fun areContentsTheSame(oldItem: ExpenseVto, newItem: ExpenseVto): Boolean {
         return  oldItem.name == newItem.name &&
             oldItem.category == newItem.category &&
             oldItem.amount == newItem.amount &&

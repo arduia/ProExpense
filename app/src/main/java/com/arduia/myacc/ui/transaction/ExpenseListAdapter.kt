@@ -1,38 +1,32 @@
 package com.arduia.myacc.ui.transaction
 
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.paging.PagedListAdapter
-import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.myacc.R
-import com.arduia.myacc.databinding.ItemTransactionBinding
-import com.arduia.myacc.ui.vto.TransactionVto
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.arduia.myacc.databinding.ItemExpenseBinding
+import com.arduia.myacc.ui.vto.ExpenseVto
 import java.lang.Exception
 
-class TransactionListAdapter constructor(private val context: Context):
-    PagedListAdapter<TransactionVto, TransactionListAdapter.TransactionVH>(
+class ExpenseListAdapter constructor(private val context: Context):
+    PagedListAdapter<ExpenseVto, ExpenseListAdapter.TransactionVH>(
         DIFF_CALLBACK
     ){
 
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
-    private var itemClickListener: (TransactionVto) -> Unit = {}
+    private var itemClickListener: (ExpenseVto) -> Unit = {}
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
 
-        val itemView = layoutInflater.inflate(R.layout.item_transaction, parent, false)
+        val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
 
-        return TransactionVH(ItemTransactionBinding.bind(itemView), itemClickListener)
+        return TransactionVH(ItemExpenseBinding.bind(itemView), itemClickListener)
     }
 
     override fun onBindViewHolder(holder: TransactionVH, position: Int) {
@@ -48,12 +42,12 @@ class TransactionListAdapter constructor(private val context: Context):
         }
     }
 
-    fun getItemFromPosition(position: Int):TransactionVto
+    fun getItemFromPosition(position: Int):ExpenseVto
             = getItem(position) ?: throw Exception("Item Not Found Exception")
 
 
-    inner class TransactionVH(val binding: ItemTransactionBinding,
-                              private val listener: (TransactionVto) -> Unit):
+    inner class TransactionVH(val binding: ItemExpenseBinding,
+                              private val listener: (ExpenseVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
         init {
             binding.cdTransaction.setOnClickListener(this)
@@ -64,19 +58,19 @@ class TransactionListAdapter constructor(private val context: Context):
         }
     }
 
-    fun setItemClickListener(listener: (TransactionVto) -> Unit){
+    fun setItemClickListener(listener: (ExpenseVto) -> Unit){
         itemClickListener = listener
     }
 
 }
 
-private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TransactionVto>(){
+private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ExpenseVto>(){
 
-    override fun areItemsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
+    override fun areItemsTheSame(oldItem: ExpenseVto, newItem: ExpenseVto): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: TransactionVto, newItem: TransactionVto): Boolean {
+    override fun areContentsTheSame(oldItem: ExpenseVto, newItem: ExpenseVto): Boolean {
         return  oldItem.name == newItem.name &&
             oldItem.category == newItem.category &&
             oldItem.amount == newItem.amount &&

@@ -5,34 +5,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import com.arduia.myacc.databinding.SheetTransactionDetailBinding
-import com.arduia.myacc.ui.vto.TransactionDetailsVto
+import com.arduia.myacc.databinding.SheetExpenseDetailBinding
+import com.arduia.myacc.ui.vto.ExpenseDetailsVto
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class TransactionDetailDialog: BottomSheetDialogFragment(){
+class ExpenseDetailDialog: BottomSheetDialogFragment(){
 
-    private val viewBinding by lazy { SheetTransactionDetailBinding.inflate(layoutInflater) }
+    private val viewBinding by lazy { SheetExpenseDetailBinding.inflate(layoutInflater) }
 
-    private var transactionDetail: TransactionDetailsVto? = null
+    private var expenseDetail: ExpenseDetailsVto? = null
 
-    private var editClickListener: (TransactionDetailsVto) -> Unit = {}
+    private var editClickListener: (ExpenseDetailsVto) -> Unit = {}
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        transactionDetail!!.bindDetailData()
+        expenseDetail!!.bindDetailData()
         setupView()
         return viewBinding.root
     }
 
-    fun setEditClickListener( listener: (TransactionDetailsVto)-> Unit){
+    fun setEditClickListener( listener: (ExpenseDetailsVto)-> Unit){
         editClickListener = listener
     }
 
-    fun showDetail(fm: FragmentManager, detail: TransactionDetailsVto){
-       transactionDetail = detail
+    fun showDetail(fm: FragmentManager, detail: ExpenseDetailsVto){
+       expenseDetail = detail
         show(fm, TAG)
     }
 
@@ -42,13 +42,13 @@ class TransactionDetailDialog: BottomSheetDialogFragment(){
         }
 
         viewBinding.btnEdit.setOnClickListener {
-            editClickListener.invoke(transactionDetail!!)
+            editClickListener.invoke(expenseDetail!!)
             dismiss()
         }
 
     }
 
-    private fun TransactionDetailsVto.bindDetailData(){
+    private fun ExpenseDetailsVto.bindDetailData(){
         viewBinding.tvAmountValue.text = amount
         viewBinding.tvDateValue.text = date
         viewBinding.tvNameValue.text = name

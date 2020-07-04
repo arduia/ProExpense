@@ -4,14 +4,14 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.arduia.myacc.data.AccRepository
 import com.arduia.myacc.di.ServiceLoader
-import com.arduia.myacc.ui.vto.TransactionVto
+import com.arduia.myacc.ui.vto.ExpenseVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
-    private val _recentData =  MutableLiveData<List<TransactionVto>>()
+    private val _recentData =  MutableLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData
 
     private val serviceLoader by lazy {
@@ -29,7 +29,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(){
         viewModelScope.launch(Dispatchers.IO){
-            accRepository.getRecentTransaction().collect {
+            accRepository.getRecentExpense().collect {
                 val value = it.map { trans ->  this@HomeViewModel.transactionMapper.mapToTransactionVto(trans) }
                 _recentData.postValue(value)
             }

@@ -33,7 +33,7 @@
         app:layout_constraintHorizontal_bias="0"
         android:layout_marginStart="@dimen/material_margin"
         style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:text="@string/label_transaction"
+        android:text="@string/label_expense"
         app:layout_constraintTop_toTopOf="@id/btn_pop_back"
         app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
         app:layout_constraintStart_toEndOf="@+id/btn_pop_back"
@@ -51,7 +51,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_transaction" />
+        tools:listitem="@layout/item_expense" />
     <ProgressBar
         android:layout_width="50dp"
         android:layout_height="50dp"

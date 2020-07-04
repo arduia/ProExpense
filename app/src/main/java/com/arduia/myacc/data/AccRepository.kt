@@ -1,25 +1,24 @@
 package com.arduia.myacc.data
 
 import androidx.paging.DataSource
-import androidx.paging.PagedList
-import com.arduia.myacc.data.local.Transaction
+import com.arduia.myacc.data.local.ExpenseEnt
 import kotlinx.coroutines.flow.Flow
 
 interface AccRepository {
 
-    //Transaction
-    suspend fun insertTransaction(transaction: Transaction)
+    //Expense
+    suspend fun insertExpense(expenseEnt: ExpenseEnt)
 
-    suspend fun getTransaction(id: Int): Flow<Transaction>
+    suspend fun getExpense(id: Int): Flow<ExpenseEnt>
 
-    suspend fun getAllTransaction(): DataSource.Factory<Int, Transaction>
+    suspend fun getAllExpense(): DataSource.Factory<Int, ExpenseEnt>
 
-    suspend fun getRecentTransaction(): Flow<List<Transaction>>
+    suspend fun getRecentExpense(): Flow<List<ExpenseEnt>>
 
-    suspend fun updateTransaction(transaction: Transaction)
+    suspend fun updateExpense(expenseEnt: ExpenseEnt)
 
-    suspend fun deleteTransaction(transaction: Transaction)
+    suspend fun deleteExpense(expenseEnt: ExpenseEnt)
 
-    suspend fun deleteAllTransaction(list: List<Int>)
+    suspend fun deleteAllExpense(list: List<Int>)
 
 }

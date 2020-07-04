@@ -16,20 +16,19 @@ import com.arduia.myacc.R
 import com.arduia.myacc.databinding.FragExpenseBinding
 import com.arduia.myacc.ui.common.EventObserver
 import com.arduia.myacc.ui.common.MarginItemDecoration
-import com.arduia.myacc.ui.common.TransactionDetailDialog
-import com.arduia.myacc.ui.common.event
+import com.arduia.myacc.ui.common.ExpenseDetailDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 
-class TransactionFragment : Fragment(){
+class ExpenseFragment : Fragment(){
 
     lateinit var  viewBinding: FragExpenseBinding
 
-    private val transactionAdapter by lazy {
-        TransactionListAdapter( requireContext() )
+    private val expenseListAdapter by lazy {
+        ExpenseListAdapter( requireContext() )
     }
 
-    private val viewModel by viewModels<TransactionViewModel>()
+    private val viewModel by viewModels<ExpenseViewModel>()
 
     private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
 
@@ -56,7 +55,7 @@ class TransactionFragment : Fragment(){
     private fun setupView(){
 
         //Setup Transaction Recycler View
-        viewBinding.rvTransactions.adapter = transactionAdapter
+        viewBinding.rvTransactions.adapter = expenseListAdapter
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.rvTransactions.addItemDecoration(
             MarginItemDecoration(
@@ -67,11 +66,11 @@ class TransactionFragment : Fragment(){
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvTransactions)
 
         itemSwipeCallback.setSwipeListener {
-            val item = transactionAdapter.getItemFromPosition(it)
+            val item = expenseListAdapter.getItemFromPosition(it)
             viewModel.onItemSelect(item)
         }
 
-        transactionAdapter.setItemClickListener {
+        expenseListAdapter.setItemClickListener {
             viewModel.showDetailData(it)
         }
 
@@ -114,14 +113,14 @@ class TransactionFragment : Fragment(){
         })
 
         viewModel.itemSelectionChangeEvent.observe(viewLifecycleOwner, Observer {
-            transactionAdapter.notifyDataSetChanged()
+            expenseListAdapter.notifyDataSetChanged()
         })
 
         viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver {
-            TransactionDetailDialog().apply {
+            ExpenseDetailDialog().apply {
                 setEditClickListener {expense ->
-                    val action = TransactionFragmentDirections
-                        .actionDestTransactionToDestExpenseEntry(expenseId = expense.id)
+                    val action = ExpenseFragmentDirections
+                        .actionDestExpenseToDestExpenseEntry(expenseId = expense.id)
                     findNavController().navigate(action,createEntryNavOptions())
                 }
             }.showDetail(parentFragmentManager,it)
@@ -142,8 +141,8 @@ class TransactionFragment : Fragment(){
         MainScope().launch(Dispatchers.Main) {
             val animationDuration = resources.getInteger(R.integer.expense_anim_left_duration)
             delay(animationDuration.toLong())
-            viewModel.getExpenseLiveData().observe( viewLifecycleOwner, Observer {
-                transactionAdapter.submitList(it)
+            viewModel.getExpenseLiveData().observe(viewLifecycleOwner, Observer {
+                expenseListAdapter.submitList(it)
             })
         }
     }

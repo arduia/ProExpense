@@ -6,12 +6,12 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.myacc.di.ServiceLoader
 import com.arduia.myacc.ui.common.*
-import com.arduia.myacc.ui.vto.TransactionDetailsVto
-import com.arduia.myacc.ui.vto.TransactionVto
+import com.arduia.myacc.ui.vto.ExpenseDetailsVto
+import com.arduia.myacc.ui.vto.ExpenseVto
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleObserver{
+class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObserver{
 
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading  get() = _isLoading.asLiveData()
@@ -25,7 +25,7 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
     private val _itemSelectionChangeEvent = EventLiveData<Unit>()
     val itemSelectionChangeEvent get()  = _itemSelectionChangeEvent.asLiveData()
 
-    private val _detailDataChanged = EventLiveData<TransactionDetailsVto>()
+    private val _detailDataChanged = EventLiveData<ExpenseDetailsVto>()
     val detailDataChanged get() = _detailDataChanged.asLiveData()
 
     private val serviceLoader by lazy {
@@ -42,7 +42,7 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
         serviceLoader.getAccountingRepository()
     }
 
-    fun onItemSelect(item: TransactionVto){
+    fun onItemSelect(item: ExpenseVto){
         selectedItems.add(item.id)
         _itemSelectionChangeEvent set EventUnit
         _isSelectedMode set true
@@ -57,7 +57,7 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
             }
             //Start Delete Progress
             _isLoading.postValue(true)
-            accRepo.deleteAllTransaction(selectedItems.toList())
+            accRepo.deleteAllExpense(selectedItems.toList())
             _isLoading.postValue(false)
             _deleteEvent post event(selectedItems.size)
             clearSelection()
@@ -69,9 +69,9 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
     }
 
     @ExperimentalCoroutinesApi
-    fun showDetailData(selectedItem: TransactionVto){
+    fun showDetailData(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
-            val item = accRepo.getTransaction(selectedItem.id).first()
+            val item = accRepo.getExpense(selectedItem.id).first()
             val detailData = accMapper.mapToTransactionDetail(item)
             _detailDataChanged post event(detailData)
         }
@@ -83,8 +83,8 @@ class TransactionViewModel(app: Application) : AndroidViewModel(app), LifecycleO
         _isSelectedMode post false
     }
 
-    suspend fun getExpenseLiveData(): LiveData<PagedList<TransactionVto>> {
-        val dataSource = accRepo.getAllTransaction()
+    suspend fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
+        val dataSource = accRepo.getAllExpense()
             .map { accMapper.mapToTransactionVto(it) }
 
           return LivePagedListBuilder(dataSource , 50).build().asFlow()

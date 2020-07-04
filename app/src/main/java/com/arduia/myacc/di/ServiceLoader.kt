@@ -5,8 +5,7 @@ import com.arduia.myacc.data.AccRepository
 import com.arduia.myacc.data.AccRepositoryImpl
 import com.arduia.myacc.data.local.AccountingDatabase
 import com.arduia.myacc.ui.common.CategoryProvider
-import com.arduia.myacc.ui.mapping.TransactionMapper
-import java.text.DecimalFormat
+import com.arduia.myacc.ui.mapping.ExpenseMapper
 
 class ServiceLoader private constructor (private val context: Context){
 
@@ -15,12 +14,12 @@ class ServiceLoader private constructor (private val context: Context){
     }
 
     fun getAccountingRepository(): AccRepository =
-         AccRepositoryImpl(accDatabase.transactionDao)
+         AccRepositoryImpl(accDatabase.expenseDao)
 
 
     fun getCategoryProvider() = CategoryProvider()
 
-    fun getTransactionMapper() = TransactionMapper(getCategoryProvider())
+    fun getTransactionMapper() = ExpenseMapper(getCategoryProvider())
 
     companion object{
 
