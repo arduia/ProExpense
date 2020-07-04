@@ -114,6 +114,7 @@
         android:layout_marginEnd="@dimen/material_margin"
         android:layout_marginBottom="32dp"
         android:clickable="true"
+        android:scaleType="center"
         android:tint="@android:color/white"
         app:backgroundTint="@color/primaryColor"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -122,7 +123,7 @@
         app:layout_constraintStart_toStartOf="@id/rv_recent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_add" />
+        app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cd_value"

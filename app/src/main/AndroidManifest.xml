@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.arduia.myacc">
+    package="com.arduia.expense">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:name=".AccountingApp"
+        android:name="com.arduia.expense.AccountingApp"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/SplashTheme"
         android:supportsRtl="true">
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.arduia.expense.ui.MainActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

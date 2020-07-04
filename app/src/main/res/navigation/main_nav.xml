@@ -6,7 +6,7 @@
     android:id="@+id/main_nav">
     <fragment
         android:id="@+id/dest_home"
-        android:name="com.arduia.myacc.ui.home.HomeFragment"
+        android:name="com.arduia.expense.ui.home.HomeFragment"
         android:label="@string/label_home"
         tools:layout = "@layout/frag_home">
         <action
@@ -19,17 +19,17 @@
     <fragment
         android:id="@+id/dest_feedback"
         android:label="@string/label_feedback"
-        android:name="com.arduia.myacc.ui.feedback.FeedbackFragment"
+        android:name="com.arduia.expense.ui.feedback.FeedbackFragment"
         tools:layout="@layout/frag_feedback"/>
     <fragment
         android:id="@+id/dest_settings"
         android:label="@string/label_settings"
         tools:layout="@layout/frag_settings"
-        android:name="com.arduia.myacc.ui.settings.SettingsFragment"/>
+        android:name="com.arduia.expense.ui.settings.SettingsFragment"/>
     <fragment
         android:id="@+id/dest_expense"
         tools:layout="@layout/frag_expense"
-        android:name="com.arduia.myacc.ui.expense.ExpenseFragment"
+        android:name="com.arduia.expense.ui.expense.ExpenseFragment"
         android:label="ExpenseFragment">
         <action
             android:id="@+id/action_dest_expense_to_dest_expense_entry"
@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/dest_expense_entry"
-        android:name="com.arduia.myacc.ui.entry.ExpenseEntryFragment"
+        android:name="com.arduia.expense.ui.entry.ExpenseEntryFragment"
         android:label="ExpendEntryFragment"
         tools:layout = "@layout/frag_expense_entry"
         >
@@ -53,7 +53,7 @@
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.arduia.myacc.ui.splash.SplashFragment"
+        android:name="com.arduia.expense.ui.splash.SplashFragment"
         android:label="SplashFragment" >
         <action
             android:id="@+id/action_splashFragment_to_dest_home"
