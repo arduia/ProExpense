@@ -1,47 +1,54 @@
-package com.arduia.myacc.ui
+package com.arduia.myacc.ui.splash
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.arduia.core.extension.px
 import com.arduia.myacc.R
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class SplashActivity : AppCompatActivity(){
+class SplashFragment: Fragment(){
 
     private val contentView by lazy {  createView() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(contentView)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =  contentView
 
-        //This execution can be in App Alive.
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         MainScope().launch(Dispatchers.Main){
-            delay(150)
-            val intent = Intent(this@SplashActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        }
+            delay(1000)
 
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.dest_home)
+        }
     }
 
-    private fun createView():View{
+    private fun createView(): View {
 
         //Require View Components
-        val frameLayout = FrameLayout(this)
-        val imageView = ImageView(this)
-        val progressBar = ProgressBar(this)
+        val frameLayout = FrameLayout(requireContext())
+        val imageView = ImageView(requireContext())
+        val progressBar = ProgressBar(requireContext())
 
         //Configure
         with(frameLayout){
-            background = ContextCompat.getDrawable(this@SplashActivity, R.color.primaryColor)
+            background = ContextCompat.getDrawable(requireContext(), R.color.primaryColor)
             layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         }
 
@@ -66,5 +73,4 @@ class SplashActivity : AppCompatActivity(){
 
         return frameLayout
     }
-
 }

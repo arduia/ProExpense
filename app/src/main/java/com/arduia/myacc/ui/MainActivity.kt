@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(viewBinding.root)
 
         setupView()

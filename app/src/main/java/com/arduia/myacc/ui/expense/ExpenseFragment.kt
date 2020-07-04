@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.transaction
+package com.arduia.myacc.ui.expense
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -157,6 +157,7 @@ class ExpenseFragment : Fragment(){
         //Unlock the Navigation Drawer Left
         (requireActivity() as? NavigationDrawer)?.lockDrawer(false)
     }
+
     private fun createEntryNavOptions() =
         NavOptions.Builder()
             //For Entry Fragment

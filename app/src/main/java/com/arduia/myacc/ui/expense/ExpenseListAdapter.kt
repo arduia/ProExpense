@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.transaction
+package com.arduia.myacc.ui.expense
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -20,7 +20,6 @@ class ExpenseListAdapter constructor(private val context: Context):
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
     private var itemClickListener: (ExpenseVto) -> Unit = {}
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
 

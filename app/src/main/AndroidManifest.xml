@@ -11,18 +11,14 @@
         android:theme="@style/SplashTheme"
         android:supportsRtl="true">
         <activity
-            android:name=".ui.SplashActivity"
-            android:windowSoftInputMode="adjustResize"
-            >
+            android:name=".ui.MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.MainActivity"
-            android:theme= "@style/AppTheme"/>
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/dest_home"
+    app:startDestination="@id/splashFragment"
     android:id="@+id/main_nav">
     <fragment
         android:id="@+id/dest_home"
@@ -29,7 +29,7 @@
     <fragment
         android:id="@+id/dest_expense"
         tools:layout="@layout/frag_expense"
-        android:name="com.arduia.myacc.ui.transaction.ExpenseFragment"
+        android:name="com.arduia.myacc.ui.expense.ExpenseFragment"
         android:label="ExpenseFragment">
         <action
             android:id="@+id/action_dest_expense_to_dest_expense_entry"
@@ -50,6 +50,14 @@
             android:name="expense_id"
             app:argType="integer"
             android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.arduia.myacc.ui.splash.SplashFragment"
+        android:label="SplashFragment" >
+        <action
+            android:id="@+id/action_splashFragment_to_dest_home"
+            app:destination="@id/dest_home" />
     </fragment>
 
 </navigation>

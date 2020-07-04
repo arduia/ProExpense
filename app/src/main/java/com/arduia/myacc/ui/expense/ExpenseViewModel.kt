@@ -1,4 +1,4 @@
-package com.arduia.myacc.ui.transaction
+package com.arduia.myacc.ui.expense
 
 import android.app.Application
 import androidx.lifecycle.*
