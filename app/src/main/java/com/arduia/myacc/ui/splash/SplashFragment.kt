@@ -32,7 +32,7 @@ class SplashFragment: Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         MainScope().launch(Dispatchers.Main){
-            delay(1000)
+            delay(200)
 
             findNavController().popBackStack()
             findNavController().navigate(R.id.dest_home)

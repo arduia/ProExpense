@@ -1,6 +1,7 @@
 package com.arduia.myacc.ui.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -14,12 +15,16 @@ class RecentListAdapter constructor( private val layoutInflater: LayoutInflater)
 
     private var newItemInsertionListener: ((Unit) -> Unit)? = null
 
+    private var onItemClickListener: (ExpenseVto) -> Unit = {}
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
         val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
 
-        return VH( ItemExpenseBinding.bind(itemView ) )
+        return VH( ItemExpenseBinding.bind(itemView ), onItemClickListener)
     }
+
+
 
     override fun onBindViewHolder(holder: VH, position: Int) {
 
@@ -55,7 +60,19 @@ class RecentListAdapter constructor( private val layoutInflater: LayoutInflater)
         newItemInsertionListener = listener
     }
 
-    class VH(val binding: ItemExpenseBinding): RecyclerView.ViewHolder(binding.root)
+    fun setOnItemClickListener(listener: (ExpenseVto) -> Unit){
+        this.onItemClickListener = listener
+    }
+
+    inner class VH(val binding: ItemExpenseBinding, private val listener: (ExpenseVto) -> Unit): RecyclerView.ViewHolder(binding.root), View.OnClickListener{
+
+        init {
+            binding.cdTransaction.setOnClickListener(this)
+        }
+        override fun onClick(v: View?) {
+            listener(getItem(adapterPosition))
+        }
+    }
 
 }
 
