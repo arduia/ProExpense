@@ -28,11 +28,10 @@ class SplashFragment: Fragment(){
         savedInstanceState: Bundle?
     ): View? =  contentView
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onResume() {
+        super.onResume()
         MainScope().launch(Dispatchers.Main){
-            delay(200)
+            delay(500)
 
             findNavController().popBackStack()
             findNavController().navigate(R.id.dest_home)
@@ -53,10 +52,10 @@ class SplashFragment: Fragment(){
         }
 
         with(imageView){
-            layoutParams = FrameLayout.LayoutParams(px(80), px(80)).apply {
+            layoutParams = FrameLayout.LayoutParams(px(120), px(120)).apply {
                 gravity = Gravity.CENTER
             }
-            setImageResource(R.drawable.ic_borrow)
+            setImageResource(R.drawable.ic_launcher_foreground)
             setColorFilter(android.R.color.white)
         }
 

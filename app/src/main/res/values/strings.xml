@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 <!--    Base-->
-    <string name="app_name">MyAccounting</string>
+    <string name="app_name">Pro Expense</string>
     <string name="label_resent">Recent</string>
     <string name="label_borrows">Owe</string>
     <string name="label_settings">Settings</string>
