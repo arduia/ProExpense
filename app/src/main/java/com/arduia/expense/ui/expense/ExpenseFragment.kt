@@ -19,7 +19,6 @@ import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 class ExpenseFragment : Fragment(){
 
@@ -72,7 +71,7 @@ class ExpenseFragment : Fragment(){
         }
 
         expenseListAdapter.setItemClickListener {
-            viewModel.showDetailData(it)
+            viewModel.selectItemForDetail(it)
         }
 
         //Close the page

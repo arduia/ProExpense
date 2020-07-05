@@ -72,7 +72,7 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
     }
 
     @ExperimentalCoroutinesApi
-    fun showDetailData(selectedItem: ExpenseVto){
+    fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
             val item = accRepo.getExpense(selectedItem.id).first()
             val detailData = accMapper.mapToTransactionDetail(item)

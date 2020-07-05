@@ -14,7 +14,12 @@
             app:destination="@id/dest_expense" />
         <action
             android:id="@+id/action_dest_home_to_dest_expense_entry"
-            app:destination="@id/dest_expense_entry" />
+            app:destination="@id/dest_expense_entry">
+            <argument
+                android:name="expense_id"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/dest_feedback"

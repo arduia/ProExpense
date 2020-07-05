@@ -12,7 +12,11 @@ import com.arduia.graph.SpendPoint
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragHomeBinding
 import com.arduia.expense.ui.NavBaseFragment
+import com.arduia.expense.ui.common.EventObserver
+import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.expense.ExpenseFragmentDirections
+import com.arduia.expense.ui.expense.ExpenseListAdapter
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -73,14 +77,27 @@ class HomeFragment : NavBaseFragment(){
             //Item inserted
             viewBinding.rvRecent.smoothScrollToPosition(0)
         }
+
+        recentAdapter.setOnItemClickListener {
+            viewModel.selectItemForDetail(it)
+        }
     }
 
     private fun setupViewModel(){
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
             recentAdapter.submitList(it)
         })
-    }
 
+        viewModel.detailData.observe(viewLifecycleOwner, EventObserver {
+            ExpenseDetailDialog().apply {
+                setEditClickListener {expense ->
+                    val action = HomeFragmentDirections
+                        .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
+                    findNavController().navigate(action,createEntryNavOptions())
+                }
+            }.showDetail(parentFragmentManager,it)
+        })
+    }
 
     private fun getSamplePoints() =
         mutableListOf<SpendPoint>().apply {
