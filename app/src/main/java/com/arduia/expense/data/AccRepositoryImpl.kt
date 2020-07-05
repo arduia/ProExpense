@@ -4,6 +4,7 @@ import com.arduia.expense.data.local.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import java.util.*
 
 class AccRepositoryImpl(
@@ -36,32 +37,19 @@ class AccRepositoryImpl(
         expenseDao.deleteExpenseByIDs(list)
     }
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
-    override suspend fun getWeeklyCostTotal(): Flow<Long> {
-
-
-      return expenseDao.getLastWeekCosts(getStartWeek()).map { it.sum() }
+    override suspend fun getWeeklyCostRates(): Flow<List<ExpenseEnt>> {
+        val startDay = getLastWeekStart()
+        return expenseDao.getLastWeekExpenses(startDay)
     }
 
-    override suspend fun getWeeklyCostRates(): Flow<Map<Int, Int>> {
-        return expenseDao.getLastWeekCosts(getStartWeek()).map {
-            val data  = mutableMapOf<Int,Int>()
-            data[1] = 100
-            data[2] = 29
-            data[3] = 50
-            data[3] = 5
-            data[5] = 60
-            data[6] = 50
-            data[7] = 100
-            data
-        }
-    }
+    private fun getLastWeekStart():Long{
+        val calendar = Calendar.getInstance()
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+        val startSunDay = (dayOfYear - dayOfWeek)+1
 
+        calendar.set(Calendar.DAY_OF_YEAR, startSunDay)
+        return calendar.timeInMillis
 
-
-    private fun getStartWeek(): Long{
-
-        return 0
     }
 }

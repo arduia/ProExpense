@@ -58,7 +58,7 @@ import java.util.*
 
      fun mapToGraphData(rawData: Map<Int, Int>) =
          ExpensePointVto().apply {
-             this.rates = rawData
+             this.rates =  rawData
          }
 
      private fun Long.formatCostValue()

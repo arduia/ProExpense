@@ -15,7 +15,8 @@ class ExpenseGraphAdapter : SpendGraph.Adapter(){
 
     override fun getCostRate(day: Int): Int = points.rates[day] ?: -1
 
-    override fun getStartDay(): Int =  points.rates.keys.min()?: SpendGraph.SPEND_DAY_SUN
+//    override fun getStartDay(): Int =  points.rates.keys.min()?: SpendGraph.SPEND_DAY_SUN
+    override fun getStartDay(): Int = SpendGraph.SPEND_DAY_SUN
 
     override fun getEndDay(): Int =  points.rates.keys.max()?: SpendGraph.SPEND_DAY_SUN
 

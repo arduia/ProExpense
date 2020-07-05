@@ -2,7 +2,9 @@ package com.arduia.expense.ui.home
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.arduia.core.performance.printDurationMilli
 import com.arduia.expense.data.AccRepository
+import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.BaseLiveData
 import com.arduia.expense.ui.common.EventLiveData
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.DecimalFormat
+import java.util.*
+import kotlin.system.measureTimeMillis
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
@@ -67,18 +71,48 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
             }
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            _weeklyCost post currencyFormatter.format(0)
-            accRepository.getWeeklyCostTotal().collect {
-                _weeklyCost post currencyFormatter.format(it)
+        viewModelScope.launch (Dispatchers.IO) {
+            accRepository.getWeeklyCostRates().collect {
+
+                val totalLastWeekCost = it.map { data -> data.value }.sum()
+                _weeklyCost post currencyFormatter.format(totalLastWeekCost)
+
+                val rawRates = genRates(it)
+                _graphPoints post transactionMapper.mapToGraphData(rawRates)
             }
+        }
+    }
+
+
+    private fun genRates(list: List<ExpenseEnt>): Map<Int,Int>{
+
+        //To Check Day Count
+        val calendar = Calendar.getInstance()
+        val actualDayCosts = hashMapOf<Int, Long>()
+
+        list.forEach { exp ->
+
+            calendar.timeInMillis = exp.created_date
+            val day = calendar[Calendar.DAY_OF_WEEK]
+
+            val costOfDay = actualDayCosts[day]
+
+            //If First Entry,
+            actualDayCosts[day] = if(costOfDay == null)
+                exp.value
+            else
+                costOfDay + exp.value
+
         }
 
-        viewModelScope.launch (Dispatchers.IO) {
-            accRepository.getWeeklyCostRates().collect{
-               val data = accMapper.mapToGraphData(it)
-                _graphPoints post data
-            }
+        //Max Cost in Week
+        val maxValue = actualDayCosts.maxBy { result -> result.value }?.value
+
+        val dayRates = hashMapOf<Int, Int>()
+
+        actualDayCosts.forEach { result ->
+            dayRates[result.key] = ((result.value/ maxValue!!) * 100).toInt()
         }
+        return dayRates
     }
 }
