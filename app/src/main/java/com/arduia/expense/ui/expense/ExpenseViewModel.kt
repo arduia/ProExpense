@@ -2,7 +2,6 @@ package com.arduia.expense.ui.expense
 
 import android.app.Application
 import androidx.lifecycle.*
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.*
@@ -22,8 +21,6 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
     private val _deleteEvent = EventLiveData<Int>()
     val deleteEvent = _deleteEvent.asLiveData()
 
-    private val _itemSelectionChangeEvent = EventLiveData<Unit>()
-    val itemSelectionChangeEvent get()  = _itemSelectionChangeEvent.asLiveData()
 
     private val _detailDataChanged = EventLiveData<ExpenseDetailsVto>()
     val detailDataChanged get() = _detailDataChanged.asLiveData()
@@ -36,30 +33,36 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
         serviceLoader.getTransactionMapper()
     }
 
-    private val selectedItems = hashSetOf<Int>()
+    private var livePagedListBuilder: FilterableLivePagedListBuilder<Int,ExpenseVto>? = null
+
+    private val mSelectedItems = hashSetOf<Int>()
 
     private val accRepo by lazy {
         serviceLoader.getAccountingRepository()
     }
 
     fun onItemSelect(item: ExpenseVto){
-        selectedItems.add(item.id)
-        _itemSelectionChangeEvent set EventUnit
+        mSelectedItems.add(item.id)
+       onSelectedItemChanged()
         _isSelectedMode set true
+    }
+
+    private fun onSelectedItemChanged(){
+        livePagedListBuilder?.invalidate()
     }
 
     fun deleteConfirm(){
         viewModelScope.launch(Dispatchers.IO){
             //There is no Items to Delete
-            if(selectedItems.isEmpty()){
+            if(mSelectedItems.isEmpty()){
                 _isSelectedMode.postValue(true)
                 return@launch
             }
             //Start Delete Progress
             _isLoading.postValue(true)
-            accRepo.deleteAllExpense(selectedItems.toList())
+            accRepo.deleteAllExpense(mSelectedItems.toList())
             _isLoading.postValue(false)
-            _deleteEvent post event(selectedItems.size)
+            _deleteEvent post event(mSelectedItems.size)
             clearSelection()
         }
     }
@@ -78,17 +81,21 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
     }
 
     private fun clearSelection(){
-        selectedItems.clear()
-        _itemSelectionChangeEvent post EventUnit
+        mSelectedItems.clear()
+        onSelectedItemChanged()
         _isSelectedMode post false
     }
 
     suspend fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
-        val dataSource = accRepo.getAllExpense()
+        livePagedListBuilder = createLivePagedList()
+        return livePagedListBuilder!!.build()
+    }
+
+    private suspend fun createLivePagedList(): FilterableLivePagedListBuilder<Int,ExpenseVto> {
+        val dataSourceFactory = accRepo.getAllExpense()
             .map { accMapper.mapToTransactionVto(it) }
 
-          return LivePagedListBuilder(dataSource , 50).build().asFlow()
-              .flowOn(Dispatchers.IO)
-              .asLiveData(Dispatchers.Main)
+        return FilterableLivePagedListBuilder(dataSourceFactory,10)
+            .filter { !mSelectedItems.contains(it.id) }
     }
 }
