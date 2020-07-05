@@ -164,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_spent_week"
                 android:layout_centerHorizontal="true"
-                android:text="40500.0"
+                android:text="0.0"
                 android:textColor="@color/onPrimaryColor" />
 
             <TextView

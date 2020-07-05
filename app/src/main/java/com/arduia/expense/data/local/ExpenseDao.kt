@@ -28,4 +28,6 @@ interface ExpenseDao{
     @Query( "DELETE FROM `expense` WHERE  expense_id in (:idLists)")
     suspend fun deleteExpenseByIDs(idLists: List<Int>)
 
+    @Query( "SELECT `value` FROM expense WHERE created_date > :startDate")
+    fun getLastWeekCosts(startDate: Long): Flow<List<Long>>
 }

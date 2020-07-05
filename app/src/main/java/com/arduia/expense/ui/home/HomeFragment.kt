@@ -97,6 +97,10 @@ class HomeFragment : NavBaseFragment(){
                 }
             }.showDetail(parentFragmentManager,it)
         })
+
+        viewModel.weeklyCost.observe( viewLifecycleOwner, Observer{
+            viewBinding.tvTotalValue.text = it
+        })
     }
 
     private fun getSamplePoints() =
@@ -146,7 +150,7 @@ class HomeFragment : NavBaseFragment(){
             .setLaunchSingleTop(true)
             .build()
 
-    companion object{
+    companion object {
         private const val TAG = "MY_HomeFragment"
     }
 

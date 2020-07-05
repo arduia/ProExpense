@@ -1,35 +1,44 @@
 package com.arduia.expense.data
 
 import com.arduia.expense.data.local.*
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 
 class AccRepositoryImpl(
-    private val transDao: ExpenseDao
+    private val expenseDao: ExpenseDao
     ) : AccRepository{
 
     override suspend fun insertExpense(expenseEnt: ExpenseEnt) {
-        transDao.insertExpense(expenseEnt)
+        expenseDao.insertExpense(expenseEnt)
     }
 
     override suspend fun getExpense(id: Int): Flow<ExpenseEnt> {
-       return transDao.getItemExpense(id)
+       return expenseDao.getItemExpense(id)
     }
 
-    override suspend fun getAllExpense() = transDao.getAllExpense()
+    override suspend fun getAllExpense() = expenseDao.getAllExpense()
 
     override suspend fun getRecentExpense(): Flow<List<ExpenseEnt>> {
-        return transDao.getRecentExpense()
+        return expenseDao.getRecentExpense()
     }
 
     override suspend fun updateExpense(expenseEnt: ExpenseEnt) {
-        transDao.updateExpense(expenseEnt)
+        expenseDao.updateExpense(expenseEnt)
     }
 
     override suspend fun deleteExpense(expenseEnt: ExpenseEnt) {
-        transDao.deleteExpense(expenseEnt)
+        expenseDao.deleteExpense(expenseEnt)
     }
 
     override suspend fun deleteAllExpense(list: List<Int>) {
-        transDao.deleteExpenseByIDs(list)
+        expenseDao.deleteExpenseByIDs(list)
     }
+
+    @FlowPreview
+    @ExperimentalCoroutinesApi
+    override suspend fun getCostPerWeek(startDate: Long): Flow<Long> {
+      return expenseDao.getLastWeekCosts(startDate).map { it.sum() }
+    }
+
 }
