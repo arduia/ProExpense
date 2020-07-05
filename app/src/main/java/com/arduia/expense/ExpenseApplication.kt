@@ -3,7 +3,7 @@ package com.arduia.expense
 import android.app.Application
 import timber.log.Timber
 
-class AccountingApp: Application(){
+class ExpenseApplication: Application(){
 
     override fun onCreate() {
         super.onCreate()
