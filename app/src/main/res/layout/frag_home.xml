@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ml_home"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <include
         android:id="@+id/toolbar"
@@ -185,9 +185,6 @@
                 android:layout_centerHorizontal="true"
                 android:padding="4dp" />
         </RelativeLayout>
-
     </com.google.android.material.card.MaterialCardView>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,6 +5,7 @@ import com.arduia.expense.ui.common.CategoryProvider
 import com.arduia.expense.ui.entry.ExpenseUpdateDataVto
 import com.arduia.expense.ui.vto.ExpenseCategory
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import com.arduia.expense.ui.vto.ExpensePointVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -53,6 +54,12 @@ import java.util.*
              },
              note = expenseEnt.note ?: ""
          )
+
+
+     fun mapToGraphData(rawData: Map<Int, Int>) =
+         ExpensePointVto().apply {
+             this.rates = rawData
+         }
 
      private fun Long.formatCostValue()
          = currencyFormatter.format(this)

@@ -9,11 +9,11 @@ import com.arduia.expense.ui.common.EventLiveData
 import com.arduia.expense.ui.common.event
 import com.arduia.expense.ui.common.post
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import com.arduia.expense.ui.vto.ExpensePointVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.DecimalFormat
@@ -28,6 +28,9 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
     private val _weeklyCost = BaseLiveData<String>()
     val weeklyCost get() = _weeklyCost.asLiveData()
+
+    private val _graphPoints = BaseLiveData<ExpensePointVto>()
+    val graphPoints get() = _graphPoints.asLiveData()
 
     private val currencyFormatter = DecimalFormat("###,###.0")
 
@@ -66,8 +69,15 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
         viewModelScope.launch(Dispatchers.IO) {
             _weeklyCost post currencyFormatter.format(0)
-            accRepository.getCostPerWeek(0).collect {
+            accRepository.getWeeklyCostTotal().collect {
                 _weeklyCost post currencyFormatter.format(it)
+            }
+        }
+
+        viewModelScope.launch (Dispatchers.IO) {
+            accRepository.getWeeklyCostRates().collect{
+               val data = accMapper.mapToGraphData(it)
+                _graphPoints post data
             }
         }
     }

@@ -39,6 +39,10 @@ class HomeFragment : NavBaseFragment(){
         RecentListAdapter( layoutInflater )
     }
 
+    private val expenseGraphAdapter by lazy {
+        ExpenseGraphAdapter()
+    }
+
     private val linearLayoutManager by lazy {
         LinearLayoutManager(requireContext())
     }
@@ -71,7 +75,7 @@ class HomeFragment : NavBaseFragment(){
             findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
         }
 
-        viewBinding.imgGraph.spendPoints = getSamplePoints()
+        viewBinding.imgGraph.adapter = expenseGraphAdapter
 
         recentAdapter.setItemInsertionListener {
             //Item inserted
@@ -101,20 +105,13 @@ class HomeFragment : NavBaseFragment(){
         viewModel.weeklyCost.observe( viewLifecycleOwner, Observer{
             viewBinding.tvTotalValue.text = it
         })
+
+        viewModel.graphPoints.observe( viewLifecycleOwner, Observer {
+            expenseGraphAdapter.points = it
+        })
     }
 
-    private fun getSamplePoints() =
-        mutableListOf<SpendPoint>().apply {
-        add(SpendPoint(1, randomRate()))
-        add(SpendPoint(2, randomRate()))
-        add(SpendPoint(3, randomRate()))
-        add(SpendPoint(4, randomRate()))
-//        add(SpendPoint(5, randomRate()))
-//        add(SpendPoint(6, randomRate()))
-//        add(SpendPoint(7, randomRate()))
-    }
 
-    private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
 
     private fun createViewBinding() =
         FragHomeBinding.inflate(layoutInflater).apply {
