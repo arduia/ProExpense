@@ -74,46 +74,7 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.chip.ChipGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/chip_category"
-                app:singleSelection="true"
-                android:nestedScrollingEnabled="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_below="@id/tvl_name"
-                android:layout_marginTop="@dimen/material_margin"
-                android:paddingStart="@dimen/material_margin" >
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:chipCornerRadius="@dimen/corner_radius"
-                    android:id="@+id/cp_clothes"
-                    android:text="Clothes"
-                    app:chipIcon="@drawable/ic_clothes"/>
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:chipCornerRadius="@dimen/corner_radius"
-                    android:id="@+id/cp_house_hold"
-                    android:text="Household"
-                    app:chipIcon="@drawable/ic_household"/>
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:chipCornerRadius="@dimen/corner_radius"
-                    android:id="@+id/cd_food"
-                    android:text="Food"
-                    app:chipIcon="@drawable/ic_food"/>
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:chipCornerRadius="@dimen/corner_radius"
-                    android:text="Donation"
-                    android:id="@+id/cd_donation"
-                    app:chipIcon="@drawable/ic_donations"/>
-            </com.google.android.material.chip.ChipGroup>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tvl_cost"
@@ -121,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/chip_category"
+                android:layout_below="@+id/tvl_name"
                 android:layout_marginStart="@dimen/material_margin"
                 android:layout_marginTop="@dimen/material_margin"
                 android:layout_marginEnd="@dimen/material_margin">
@@ -136,13 +97,24 @@
                     android:inputType="number"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
-
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/chip_gp_category"
+                app:singleSelection="true"
+                android:nestedScrollingEnabled="true"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:paddingStart="@dimen/material_margin"
+                android:layout_below="@id/tvl_cost"
+                android:layout_marginTop="@dimen/material_margin">
+            </com.google.android.material.chip.ChipGroup>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tvl_description"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_below="@id/tvl_cost"
+                android:layout_below="@id/chip_gp_category"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="@dimen/material_margin"

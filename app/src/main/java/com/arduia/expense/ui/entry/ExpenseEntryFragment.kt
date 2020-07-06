@@ -15,10 +15,13 @@ import androidx.navigation.fragment.navArgs
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
+import com.arduia.expense.ui.vto.ExpenseCategory
+import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
@@ -65,17 +68,19 @@ class ExpenseEntryFragment : Fragment(){
         viewBinding.edtAmount.addTextChangedListener {
             viewBinding.btnSave.isEnabled = !it.isNullOrEmpty()
         }
+
     }
 
 
     private fun setupViewModel(){
 
         viewModel.dataInserted.observe(viewLifecycleOwner, EventObserver {
+
             findNavController().popBackStack()
         })
 
         viewModel.dataUpdated.observe(viewLifecycleOwner, EventObserver{
-            Snackbar.make(viewBinding.root, "Data Updated", Snackbar.LENGTH_SHORT).show()
+
             findNavController().popBackStack()
         })
 
@@ -105,6 +110,7 @@ class ExpenseEntryFragment : Fragment(){
         viewBinding.btnSave.setOnClickListener {
             updateData()
         }
+
         MainScope().launch(Dispatchers.IO){
             viewModel.observeExpenseData(args.expenseId)
         }
@@ -134,10 +140,9 @@ class ExpenseEntryFragment : Fragment(){
             name = name,
             cost = cost.toLongOrNull() ?: throw IllegalStateException("Entry cost is not a Decimal"),
             description = description,
-            category = "Food"
+            category = ExpenseCategory.ENTERTAINMENT.name
         )
 
-        clearSpendSheet()
     }
 
     private fun updateData(){
@@ -157,17 +162,10 @@ class ExpenseEntryFragment : Fragment(){
             name = name,
             cost = cost.toLongOrNull() ?: throw IllegalStateException("Entry cost is not a Decimal"),
             description = description,
-            category = "Food"
+            category = ExpenseCategory.SOCIAL.name
         )
 
-        clearSpendSheet()
-    }
 
-
-    private fun clearSpendSheet(){
-        viewBinding.edtName.setText("")
-        viewBinding.edtAmount.setText("")
-        viewBinding.edtNote.setText("")
     }
 
     override fun onDestroyView() {

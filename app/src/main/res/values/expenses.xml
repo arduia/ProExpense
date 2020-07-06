@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="type_income">Income</string>
+    <string name="type_food">Food</string>
+    <string name="type_house">House</string>
+    <string name="type_transportation">Transportation</string>
+    <string name="type_utility">Utility</string>
+    <string name="type_clothes">Clothes</string>
+    <string name="type_hearth_care">Hearth Care</string>
+    <string name="type_social">Social</string>
+    <string name="type_education">Education</string>
+    <string name="type_donation">Donation</string>
+    <string name="type_entertainment">Entertainment</string>
+
+</resources>

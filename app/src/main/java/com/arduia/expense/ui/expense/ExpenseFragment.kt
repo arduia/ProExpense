@@ -22,7 +22,9 @@ import kotlinx.coroutines.*
 
 class ExpenseFragment : Fragment(){
 
-    lateinit var  viewBinding: FragExpenseBinding
+    private val viewBinding by lazy {
+        FragExpenseBinding.inflate(layoutInflater)
+    }
 
     private val expenseListAdapter by lazy {
         ExpenseListAdapter( requireContext() )
@@ -39,16 +41,15 @@ class ExpenseFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?{
-        viewBinding = FragExpenseBinding.inflate(layoutInflater)
-        lockNavigation()
-        setupView()
-        setupViewModel()
         return viewBinding.root
     }
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lockNavigation()
+        setupView()
+        setupViewModel()
     }
 
     @ExperimentalCoroutinesApi
@@ -86,6 +87,7 @@ class ExpenseFragment : Fragment(){
         viewBinding.btnDoneDelete.setOnClickListener {
             viewModel.deleteConfirm()
         }
+
     }
 
     @ExperimentalCoroutinesApi
