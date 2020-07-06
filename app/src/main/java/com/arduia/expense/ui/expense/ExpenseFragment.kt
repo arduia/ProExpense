@@ -22,9 +22,7 @@ import kotlinx.coroutines.*
 
 class ExpenseFragment : Fragment(){
 
-    private val viewBinding by lazy {
-        FragExpenseBinding.inflate(layoutInflater)
-    }
+    private lateinit var viewBinding: FragExpenseBinding
 
     private val expenseListAdapter by lazy {
         ExpenseListAdapter( requireContext() )
@@ -41,6 +39,8 @@ class ExpenseFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?{
+        viewBinding =  FragExpenseBinding.inflate(layoutInflater)
+
         return viewBinding.root
     }
 

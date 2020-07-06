@@ -23,7 +23,12 @@ import kotlin.random.nextInt
 
 class HomeFragment : NavBaseFragment(){
 
-    private val viewBinding by lazy {  createViewBinding() }
+    private val viewBinding by lazy {
+        FragHomeBinding.inflate(layoutInflater).apply {
+            setupView()
+        }
+
+    }
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -43,43 +48,50 @@ class HomeFragment : NavBaseFragment(){
         ExpenseGraphAdapter()
     }
 
-    private val linearLayoutManager by lazy {
-        LinearLayoutManager(requireContext())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = viewBinding.root
+    ): View?{
+
+        return viewBinding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycle.addObserver(viewModel)
-        setupView()
         setupViewModel()
     }
 
     //Setup View
-    private fun setupView(){
+    private fun FragHomeBinding.setupView(){
 
-        viewBinding.fbAdd.setColorFilter(Color.WHITE)
+        rvRecent.adapter = recentAdapter
+        rvRecent.layoutManager = LinearLayoutManager(requireContext())
+        rvRecent.addItemDecoration(
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            ))
 
-        viewBinding.fbAdd.setOnClickListener {
+        fbAdd.setColorFilter(Color.WHITE)
+
+        fbAdd.setOnClickListener {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption )
         }
 
-        viewBinding.btnMenuOpen.setOnClickListener { openDrawer() }
+        btnMenuOpen.setOnClickListener { openDrawer() }
 
-        viewBinding.btnMoreExpenses.setOnClickListener {
+        btnMoreExpenses.setOnClickListener {
             findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
         }
 
-        viewBinding.imgGraph.adapter = expenseGraphAdapter
+        imgGraph.adapter = expenseGraphAdapter
 
         recentAdapter.setItemInsertionListener {
             //Item inserted
-            viewBinding.rvRecent.smoothScrollToPosition(0)
+            rvRecent.smoothScrollToPosition(0)
         }
 
         recentAdapter.setOnItemClickListener {
@@ -111,19 +123,6 @@ class HomeFragment : NavBaseFragment(){
         })
     }
 
-
-
-    private fun createViewBinding() =
-        FragHomeBinding.inflate(layoutInflater).apply {
-            //Once Configuration
-        rvRecent.adapter = recentAdapter
-        rvRecent.layoutManager = linearLayoutManager
-        rvRecent.addItemDecoration(
-            MarginItemDecoration(
-                resources.getDimension(R.dimen.spacing_list_item).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
-            ))
-    }
 
     private fun createEntryNavOptions() =
         NavOptions.Builder()

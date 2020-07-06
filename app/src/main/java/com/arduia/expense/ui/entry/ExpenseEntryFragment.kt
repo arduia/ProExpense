@@ -26,9 +26,7 @@ import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
 
-    private val viewBinding by lazy {
-        FragExpenseEntryBinding.inflate(layoutInflater)
-    }
+    private lateinit var viewBinding: FragExpenseEntryBinding
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
 
@@ -38,7 +36,11 @@ class ExpenseEntryFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = viewBinding.root
+    ): View?{
+        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater)
+
+        return viewBinding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -142,7 +144,7 @@ class ExpenseEntryFragment : Fragment(){
             description = description,
             category = ExpenseCategory.ENTERTAINMENT.name
         )
-
+        hideKeyboard()
     }
 
     private fun updateData(){
@@ -164,15 +166,18 @@ class ExpenseEntryFragment : Fragment(){
             description = description,
             category = ExpenseCategory.SOCIAL.name
         )
-
+        hideKeyboard()
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    private fun hideKeyboard(){
         val inputMethodManager =
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
         inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideKeyboard()
     }
 
     companion object{

@@ -20,13 +20,14 @@ import kotlinx.coroutines.launch
 
 class SplashFragment: Fragment(){
 
-    private val contentView by lazy {  createView() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =  contentView
+    ): View?{
+        return createView()
+    }
 
     override fun onResume() {
         super.onResume()

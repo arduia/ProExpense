@@ -10,19 +10,20 @@ import com.arduia.expense.ui.NavBaseFragment
 
 class SettingsFragment: NavBaseFragment(){
 
-    private val binding by lazy { FragSettingsBinding.inflate(layoutInflater) }
+    private lateinit var binding: FragSettingsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragSettingsBinding.inflate(layoutInflater)
+
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupView()
     }
 
