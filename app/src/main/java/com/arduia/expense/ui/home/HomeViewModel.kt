@@ -16,11 +16,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
+    init {
+        Timber.d("HomeViewModel")
+    }
     private val _recentData =  BaseLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData.asLiveData()
 
@@ -111,5 +115,10 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
             dayRates[result.key] = ((result.value/ maxValue!!) * 100).toInt()
         }
         return dayRates
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Timber.d("onCleared")
     }
 }

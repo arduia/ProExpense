@@ -1,7 +1,9 @@
 package com.arduia.expense.ui.home
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,6 +19,7 @@ import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.expense.ExpenseFragmentDirections
 import com.arduia.expense.ui.expense.ExpenseListAdapter
+import timber.log.Timber
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -26,6 +29,7 @@ class HomeFragment : NavBaseFragment(){
     private val viewBinding by lazy {
         FragHomeBinding.inflate(layoutInflater).apply {
             setupView()
+            setupViewModel()
         }
 
     }
@@ -58,10 +62,9 @@ class HomeFragment : NavBaseFragment(){
         return viewBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        setupViewModel()
     }
 
     //Setup View
@@ -99,7 +102,7 @@ class HomeFragment : NavBaseFragment(){
         }
     }
 
-    private fun setupViewModel(){
+    private fun FragHomeBinding.setupViewModel(){
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
             recentAdapter.submitList(it)
         })
@@ -115,14 +118,13 @@ class HomeFragment : NavBaseFragment(){
         })
 
         viewModel.weeklyCost.observe( viewLifecycleOwner, Observer{
-            viewBinding.tvTotalValue.text = it
+            tvTotalValue.text = it
         })
 
         viewModel.graphPoints.observe( viewLifecycleOwner, Observer {
             expenseGraphAdapter.points = it
         })
     }
-
 
     private fun createEntryNavOptions() =
         NavOptions.Builder()

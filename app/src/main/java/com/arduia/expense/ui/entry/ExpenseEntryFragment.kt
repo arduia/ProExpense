@@ -26,7 +26,12 @@ import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
 
-    private lateinit var viewBinding: FragExpenseEntryBinding
+    private val viewBinding by lazy {
+        FragExpenseEntryBinding.inflate(layoutInflater).apply {
+            setupView()
+            setupViewModel()
+        }
+    }
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
 
@@ -36,20 +41,9 @@ class ExpenseEntryFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View?{
-        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater)
+    ): View? = viewBinding.root
 
-        return viewBinding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupView()
-        setupViewModel()
-    }
-
-    private fun setupView(){
+    private fun FragExpenseEntryBinding.setupView(){
 
         when{
             args.expenseId > 0 -> {
@@ -63,18 +57,17 @@ class ExpenseEntryFragment : Fragment(){
             }
         }
 
-        viewBinding.btnEntryClose.setOnClickListener {
+        btnEntryClose.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        viewBinding.edtAmount.addTextChangedListener {
+        edtAmount.addTextChangedListener {
             viewBinding.btnSave.isEnabled = !it.isNullOrEmpty()
         }
-
     }
 
 
-    private fun setupViewModel(){
+    private fun FragExpenseEntryBinding.setupViewModel(){
 
         viewModel.dataInserted.observe(viewLifecycleOwner, EventObserver {
 
@@ -99,9 +92,9 @@ class ExpenseEntryFragment : Fragment(){
         })
 
         viewModel.expenseData.observe(viewLifecycleOwner, Observer {
-            viewBinding.edtName.setText(it.name)
-            viewBinding.edtAmount.setText(it.amount)
-            viewBinding.edtNote.setText(it.note)
+             edtName.setText(it.name)
+             edtAmount.setText(it.amount)
+             edtNote.setText(it.note)
         })
     }
 

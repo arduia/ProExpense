@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
+import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity(), NavigationDrawer {
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Timber.d("onCreate")
         setTheme(R.style.AppTheme)
         setContentView(viewBinding.root)
 
@@ -171,7 +174,23 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
     //
     override fun onDestroy() {
         super.onDestroy()
+        Timber.d("onDestroy")
         itemSelectionTask = {}
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.d("onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.d("onResume")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.d("onStop")
     }
 
 }
