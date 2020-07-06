@@ -18,7 +18,7 @@ import java.util.*
      private val currencyFormatter: DecimalFormat= DecimalFormat("###,###.#")
  ){
 
-     fun mapToTransactionVto(expenseEnt: ExpenseEnt) =
+     fun mapToExpenseVto(expenseEnt: ExpenseEnt) =
          ExpenseVto(
              id = expenseEnt.expense_id,
              name = expenseEnt.name?:"",
@@ -30,7 +30,7 @@ import java.util.*
              }
          )
 
-     fun mapToTransactionDetail(transaction: ExpenseEnt) =
+     fun mapToExpenseDetailVto(transaction: ExpenseEnt) =
          ExpenseDetailsVto(
              id = transaction.expense_id,
              name = transaction.name?: "",
@@ -43,7 +43,7 @@ import java.util.*
              note = transaction.note?:""
          )
 
-     fun mapToUpdateDetail(expenseEnt: ExpenseEnt) =
+     fun mapToUpdateDetailVto(expenseEnt: ExpenseEnt) =
          ExpenseUpdateDataVto(
              id = expenseEnt.expense_id,
              name = expenseEnt.name ?: "",
@@ -56,7 +56,7 @@ import java.util.*
          )
 
 
-     fun mapToGraphData(rawData: Map<Int, Int>) =
+     fun mapToGraphPointVto(rawData: Map<Int, Int>) =
          ExpensePointVto().apply {
              this.rates =  rawData
          }

@@ -2,7 +2,6 @@ package com.arduia.expense.ui.home
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.arduia.core.performance.printDurationMilli
 import com.arduia.expense.data.AccRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.ServiceLoader
@@ -17,10 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
-import kotlin.system.measureTimeMillis
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
@@ -42,8 +39,8 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
         ServiceLoader.getInstance(app)
     }
 
-    private val transactionMapper by lazy {
-        serviceLoader.getTransactionMapper()
+    private val expenseMapper by lazy {
+        serviceLoader.getExpenseMapper()
     }
 
     private val accRepository: AccRepository by lazy {
@@ -51,13 +48,13 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     }
 
     private val accMapper by lazy {
-        serviceLoader.getTransactionMapper()
+        serviceLoader.getExpenseMapper()
     }
 
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
             val item = accRepository.getExpense(selectedItem.id).first()
-            val detailData = accMapper.mapToTransactionDetail(item)
+            val detailData = accMapper.mapToExpenseDetailVto(item)
             _detailData post event(detailData)
         }
     }
@@ -66,7 +63,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     private fun onCreate(){
         viewModelScope.launch(Dispatchers.IO){
             accRepository.getRecentExpense().collect {
-                val value = it.map { trans ->  this@HomeViewModel.transactionMapper.mapToTransactionVto(trans) }
+                val value = it.map { trans ->  this@HomeViewModel.expenseMapper.mapToExpenseVto(trans) }
                 _recentData.postValue(value)
             }
         }
@@ -78,7 +75,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
                 _weeklyCost post currencyFormatter.format(totalLastWeekCost)
 
                 val rawRates = genRates(it)
-                _graphPoints post transactionMapper.mapToGraphData(rawRates)
+                _graphPoints post expenseMapper.mapToGraphPointVto(rawRates)
             }
         }
     }

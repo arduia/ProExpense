@@ -55,15 +55,15 @@ class ExpenseFragment : Fragment(){
     private fun setupView(){
 
         //Setup Transaction Recycler View
-        viewBinding.rvTransactions.adapter = expenseListAdapter
-        viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
-        viewBinding.rvTransactions.addItemDecoration(
+        viewBinding.rvExpenses.adapter = expenseListAdapter
+        viewBinding.rvExpenses.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.rvExpenses.addItemDecoration(
             MarginItemDecoration(
                 resources.getDimension(R.dimen.spacing_list_item).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             ))
 
-        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvTransactions)
+        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpenses)
 
         itemSwipeCallback.setSwipeListener {
             val item = expenseListAdapter.getItemFromPosition(it)

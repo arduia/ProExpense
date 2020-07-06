@@ -37,7 +37,7 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
     }
 
     private val accMapper: ExpenseMapper by lazy {
-        serviceLoader.getTransactionMapper()
+        serviceLoader.getExpenseMapper()
     }
 
     fun setUpdateMode(){
@@ -96,7 +96,7 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
         viewModelScope.launch(Dispatchers.IO){
             val repoData = accRepository.getExpense(id).first()
 
-            val updateData = accMapper.mapToUpdateDetail(repoData)
+            val updateData = accMapper.mapToUpdateDetailVto(repoData)
 
             _expenseData post updateData
         }

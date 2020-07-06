@@ -19,7 +19,7 @@ class ServiceLoader private constructor (private val context: Context){
 
     fun getCategoryProvider() = CategoryProvider()
 
-    fun getTransactionMapper() = ExpenseMapper(getCategoryProvider())
+    fun getExpenseMapper() = ExpenseMapper(getCategoryProvider())
 
     companion object{
 

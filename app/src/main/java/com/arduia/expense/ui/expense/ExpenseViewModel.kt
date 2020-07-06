@@ -30,7 +30,7 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
     }
 
     private val accMapper by lazy {
-        serviceLoader.getTransactionMapper()
+        serviceLoader.getExpenseMapper()
     }
 
     private var livePagedListBuilder: FilterableLivePagedListBuilder<Int,ExpenseVto>? = null
@@ -75,11 +75,10 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
             val item = accRepo.getExpense(selectedItem.id).first()
-            val detailData = accMapper.mapToTransactionDetail(item)
+            val detailData = accMapper.mapToExpenseDetailVto(item)
             _detailDataChanged post event(detailData)
         }
     }
-
     private fun clearSelection(){
         mSelectedItems.clear()
         onSelectedItemChanged()
@@ -93,7 +92,7 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
 
     private suspend fun createLivePagedList(): FilterableLivePagedListBuilder<Int,ExpenseVto> {
         val dataSourceFactory = accRepo.getAllExpense()
-            .map { accMapper.mapToTransactionVto(it) }
+            .map { accMapper.mapToExpenseVto(it) }
 
         return FilterableLivePagedListBuilder(dataSourceFactory,10)
             .filter { !mSelectedItems.contains(it.id) }

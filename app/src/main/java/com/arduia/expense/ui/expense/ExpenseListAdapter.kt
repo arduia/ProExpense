@@ -13,7 +13,7 @@ import com.arduia.expense.ui.vto.ExpenseVto
 import java.lang.Exception
 
 class ExpenseListAdapter constructor(private val context: Context):
-    PagedListAdapter<ExpenseVto, ExpenseListAdapter.TransactionVH>(
+    PagedListAdapter<ExpenseVto, ExpenseListAdapter.ExpenseVH>(
         DIFF_CALLBACK
     ){
 
@@ -21,14 +21,14 @@ class ExpenseListAdapter constructor(private val context: Context):
 
     private var itemClickListener: (ExpenseVto) -> Unit = {}
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseVH {
 
         val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
 
-        return TransactionVH(ItemExpenseBinding.bind(itemView), itemClickListener)
+        return ExpenseVH(ItemExpenseBinding.bind(itemView), itemClickListener)
     }
 
-    override fun onBindViewHolder(holder: TransactionVH, position: Int) {
+    override fun onBindViewHolder(holder: ExpenseVH, position: Int) {
 
             val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
@@ -45,11 +45,11 @@ class ExpenseListAdapter constructor(private val context: Context):
             = getItem(position) ?: throw Exception("Item Not Found Exception")
 
 
-    inner class TransactionVH(val binding: ItemExpenseBinding,
-                              private val listener: (ExpenseVto) -> Unit):
+    inner class ExpenseVH(val binding: ItemExpenseBinding,
+                          private val listener: (ExpenseVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
         init {
-            binding.cdTransaction.setOnClickListener(this)
+            binding.cdExpense.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
