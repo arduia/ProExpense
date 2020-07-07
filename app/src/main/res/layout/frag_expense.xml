@@ -10,7 +10,7 @@
 
     <include
         layout="@layout/layout_toolbar"
-        android:id="@+id/tb_transaction"
+        android:id="@+id/tb_expense"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -19,19 +19,19 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/btn_pop_back"
-        style="@style/IconImageButton"
+        style="@style/IconButton"
         android:src="@drawable/ic_back"
         android:tint="@android:color/darker_gray"
-        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginStart="@dimen/margin_material"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tb_transaction"/>
+        app:layout_constraintBottom_toBottomOf="@id/tb_expense"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_transactions"
+        android:id="@+id/tv_expense_logs"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_margin"
+        android:layout_marginStart="@dimen/margin_material"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:text="@string/label_expense"
         app:layout_constraintTop_toTopOf="@id/btn_pop_back"
@@ -45,8 +45,8 @@
         android:scrollbars="vertical"
         android:paddingBottom="80dp"
         android:clipToPadding="false"
-        app:layout_constraintWidth_max="450dp"
-        app:layout_constraintTop_toBottomOf="@id/tb_transaction"
+        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
+        app:layout_constraintTop_toBottomOf="@id/tb_expense"
         android:id="@+id/rv_transactions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
         android:progressTint="@color/primaryColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_transaction"
+        app:layout_constraintTop_toBottomOf="@id/tb_expense"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <FrameLayout
@@ -72,28 +72,28 @@
         android:layout_width="match_parent"
         android:background="@color/backgroundColor"
         android:layout_height="?attr/actionBarSize">
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/btn_cancel_delete"
-            style="@style/IconImageButton"
+            style="@style/IconButton"
             android:src="@drawable/ic_close"
             android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="@dimen/material_margin"/>
+            android:layout_marginStart="@dimen/margin_material"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tv_confirm_delete"
-            android:text="Confirm Delete"
+            android:text="@string/label_confirm_delete"
             style="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_gravity="center"/>
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/btn_done_delete"
-            style="@style/IconImageButton"
+            style="@style/IconButton"
             android:src="@drawable/ic_done"
-            android:layout_marginEnd="@dimen/material_margin"
+            android:layout_marginEnd="@dimen/margin_material"
             android:layout_gravity="end|center_vertical"/>
         <View
             android:layout_width="match_parent"

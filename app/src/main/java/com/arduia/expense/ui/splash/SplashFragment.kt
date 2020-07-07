@@ -62,7 +62,7 @@ class SplashFragment: Fragment(){
         with(progressBar){
             layoutParams = FrameLayout.LayoutParams(px(30), px(30)).apply {
                 gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                bottomMargin = resources.getDimension(R.dimen.material_margin).toInt()
+                bottomMargin = resources.getDimension(R.dimen.margin_material).toInt()
             }
             id = View.generateViewId()
         }

@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
     <include
-        layout="@layout/layout_toolbar"
         android:id="@+id/tb_feedback"
+        layout="@layout/layout_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_drawer_open"
+        style="@style/IconButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/btn_menu"
+        android:layout_marginStart="@dimen/margin_material"
         android:src="@drawable/ic_menu"
-        style="@style/IconImageButton"
-        android:layout_marginStart="@dimen/material_margin"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_feedback"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_feedback"
+        android:layout_marginStart="@dimen/margin_material"
         android:text="@string/label_feedback"
-        app:layout_constraintTop_toTopOf="@id/tb_feedback"
-        app:layout_constraintStart_toEndOf="@id/btn_menu"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_margin"
-        style="@style/TextAppearance.MaterialComponents.Headline6" />
+        app:layout_constraintStart_toEndOf="@id/btn_drawer_open"
+        app:layout_constraintTop_toTopOf="@id/tb_feedback" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_feedback"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_max="450dp"
-        >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_feedback"
+        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin">
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_feedback_description"
-            android:text="@string/label_feedback_description"
-            style="@style/TextAppearance.MaterialComponents.Body1"
-            android:textAlignment="viewStart"
-            android:layout_marginStart="@dimen/material_margin"
-            android:layout_marginEnd="@dimen/material_margin"
-            android:layout_marginTop="@dimen/material_margin"/>
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_feedback_description"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginTop="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:text="@string/label_feedback_description"
+                android:textAlignment="viewStart" />
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edl_name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/edl_name"
-                android:hint="@string/label_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginStart="@dimen/material_margin"
-                android:layout_marginTop="@dimen/material_margin_large"
-                android:layout_marginEnd="@dimen/material_margin">
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginTop="@dimen/margin_large_material"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:hint="@string/label_name">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_name"
                     android:layout_width="match_parent"
@@ -79,49 +79,51 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/edl_email"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"
-        android:layout_marginEnd="@dimen/material_margin"
-        android:hint="@string/label_email">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edt_email"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:singleLine="true" />
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edl_email"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginTop="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:hint="@string/label_email">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/edl_comment"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"
-        android:layout_marginEnd="@dimen/material_margin">
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edt_comment"
-            android:gravity="top"
-            android:hint="@string/label_comment"
-            android:lines="3"  />
-    </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:id="@+id/btn_send"
-        android:text="@string/label_send_feedback"
-        android:enabled="false"
-        android:layout_marginTop="@dimen/material_margin"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginEnd="@dimen/material_margin"
-        android:layout_marginBottom="@dimen/material_margin"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edl_comment"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginTop="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/label_comment"
+                    android:lines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_button"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginTop="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:layout_marginBottom="@dimen/margin_material"
+                android:enabled="false"
+                android:text="@string/label_send_feedback" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

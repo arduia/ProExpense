@@ -1,54 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".ui.MainActivity">
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_back"
+        android:id="@+id/btn_close"
+        style="@style/IconButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_close"
+        android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
         android:background="?attr/selectableItemBackgroundBorderless"
-        style="@style/IconImageButton"/>
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_close" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_taylor"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_below="@id/btn_close"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/btn_back"
-        android:layout_marginTop="@dimen/material_margin_large"
-        android:layout_marginStart="@dimen/material_margin_large"
-        android:layout_marginBottom="@dimen/material_margin"
+        android:layout_marginStart="@dimen/margin_large_material"
+        android:layout_marginTop="@dimen/margin_large_material"
+        android:layout_marginBottom="@dimen/margin_material"
         android:scaleType="center"
-        android:tint="@color/primaryColor"
-        android:src="@drawable/ic_launcher_foreground" />
+        android:src="@drawable/ic_launcher_foreground"
+        android:tint="@color/primaryColor" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignTop="@id/img_taylor"
-        android:layout_toEndOf="@id/img_taylor"
         android:layout_alignBottom="@id/img_taylor"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_toEndOf="@id/img_taylor"
         android:gravity="center_vertical"
-        android:layout_marginStart="@dimen/material_margin">
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_app_name"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pro Expense"
-        android:textColor="@color/onSurfaceColor" />
+        <TextView
+            android:id="@+id/tv_app_name"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/onSurfaceColor" />
     </LinearLayout>
 
 </RelativeLayout>

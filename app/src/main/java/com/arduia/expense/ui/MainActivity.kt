@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
 
         })
 
-        headerBinding.btnBack.setOnClickListener {
+        headerBinding.btnClose.setOnClickListener {
            closeDrawer()
         }
 

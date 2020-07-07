@@ -15,8 +15,6 @@ import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.expense.ExpenseFragmentDirections
-import com.arduia.expense.ui.expense.ExpenseListAdapter
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -119,7 +117,7 @@ class HomeFragment : NavBaseFragment(){
         rvRecent.layoutManager = linearLayoutManager
         rvRecent.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.space_between_items).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             ))
     }

@@ -5,6 +5,6 @@
     <SwitchPreferenceCompat
 
         app:key="font"
-        app:title="@string/label_font"/>
+        app:title="@string/label_language"/>
 
 </androidx.preference.PreferenceScreen>

@@ -49,7 +49,7 @@ class ExpenseListAdapter constructor(private val context: Context):
                               private val listener: (ExpenseVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
         init {
-            binding.cdTransaction.setOnClickListener(this)
+            binding.cdExpense.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {

@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dl_main"
-    tools:openDrawer="start"
-    tools:context=".ui.MainActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity"
+    tools:openDrawer="start">
 
     <fragment
         android:id="@+id/fc_main"
@@ -17,12 +17,12 @@
         app:navGraph="@navigation/main_nav" />
 
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nv_main"
+        style="@style/NavTheme"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        style="@style/NavTheme"
-        android:id="@+id/nv_main"
-        app:menu="@menu/menu_home"
+        android:layout_gravity="start"
         app:headerLayout="@layout/layout_header"
-        android:layout_gravity="start"/>
+        app:menu="@menu/menu_home" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

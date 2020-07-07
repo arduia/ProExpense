@@ -2,13 +2,13 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/splashFragment"
-    android:id="@+id/main_nav">
+    android:id="@+id/main_nav"
+    app:startDestination="@id/splashFragment">
     <fragment
         android:id="@+id/dest_home"
         android:name="com.arduia.expense.ui.home.HomeFragment"
         android:label="@string/label_home"
-        tools:layout = "@layout/frag_home">
+        tools:layout="@layout/frag_home">
         <action
             android:id="@+id/action_dest_home_to_dest_expense"
             app:destination="@id/dest_expense" />
@@ -17,49 +17,48 @@
             app:destination="@id/dest_expense_entry">
             <argument
                 android:name="expense_id"
-                app:argType="integer"
-                android:defaultValue="0" />
+                android:defaultValue="0"
+                app:argType="integer" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/dest_feedback"
-        android:label="@string/label_feedback"
         android:name="com.arduia.expense.ui.feedback.FeedbackFragment"
-        tools:layout="@layout/frag_feedback"/>
+        android:label="@string/label_feedback"
+        tools:layout="@layout/frag_feedback" />
     <fragment
         android:id="@+id/dest_settings"
+        android:name="com.arduia.expense.ui.settings.SettingsFragment"
         android:label="@string/label_settings"
-        tools:layout="@layout/frag_settings"
-        android:name="com.arduia.expense.ui.settings.SettingsFragment"/>
+        tools:layout="@layout/frag_settings" />
     <fragment
         android:id="@+id/dest_expense"
-        tools:layout="@layout/frag_expense"
         android:name="com.arduia.expense.ui.expense.ExpenseFragment"
-        android:label="ExpenseFragment">
+        android:label="ExpenseFragment"
+        tools:layout="@layout/frag_expense">
         <action
             android:id="@+id/action_dest_expense_to_dest_expense_entry"
             app:destination="@id/dest_expense_entry">
             <argument
                 android:name="expense_id"
-                app:argType="integer"
-                android:defaultValue="0" />
+                android:defaultValue="0"
+                app:argType="integer" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/dest_expense_entry"
         android:name="com.arduia.expense.ui.entry.ExpenseEntryFragment"
         android:label="ExpendEntryFragment"
-        tools:layout = "@layout/frag_expense_entry"
-        >
+        tools:layout="@layout/frag_expense_entry">
         <argument
             android:name="expense_id"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.arduia.expense.ui.splash.SplashFragment"
-        android:label="SplashFragment" >
+        android:label="SplashFragment">
         <action
             android:id="@+id/action_splashFragment_to_dest_home"
             app:destination="@id/dest_home" />

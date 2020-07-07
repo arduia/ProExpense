@@ -1,78 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cd_expense"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/cd_transaction"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="@dimen/corner_radius"
-    tools:layout_marginStart="@dimen/material_margin"
-    tools:layout_marginEnd="@dimen/material_margin"
-    tools:layout_marginTop="2dp"
+    app:cardCornerRadius="@dimen/radius_corner"
     tools:layout_marginBottom="2dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:layout_marginEnd="@dimen/margin_material"
+    tools:layout_marginStart="@dimen/margin_material"
+    tools:layout_marginTop="2dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imv_category"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            android:id="@+id/imv_category"
-            android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/material_margin"
-            android:layout_marginTop="@dimen/material_small_margin"
-            android:layout_marginBottom="@dimen/material_small_margin"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/margin_material"
+            android:layout_marginTop="@dimen/margin_small_material"
+            android:layout_marginBottom="@dimen/margin_small_material"
+            android:src="@drawable/img_taylor"
             app:civ_border_color="@color/onPrimaryColor"
-            app:civ_border_width="2dp"
-            android:src="@drawable/img_taylor"/>
+            app:civ_border_width="2dp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/tv_name"
-            android:maxLines="1"
-            android:maxLength="20"
-            android:ellipsize="end"
-            android:layout_alignTop="@id/imv_category"
-            android:layout_toEndOf="@id/imv_category"
-            android:layout_toStartOf="@id/tv_amount"
-            android:layout_marginStart="@dimen/material_margin"
-            android:layout_marginTop="@dimen/material_small_margin"
-            android:layout_marginEnd="@dimen/material_small_margin"
-            style="@style/TextAppearance.MaterialComponents.Body1"/>
-
-        <TextView
+            style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@id/imv_category"
+            android:layout_marginStart="@dimen/margin_material"
+            android:layout_marginTop="@dimen/margin_small_material"
+            android:layout_marginEnd="@dimen/margin_small_material"
+            android:layout_toStartOf="@id/tv_amount"
+            android:layout_toEndOf="@id/imv_category"
+            android:ellipsize="end"
+            android:maxLength="20"
+            android:maxLines="1" />
+
+        <TextView
             android:id="@+id/tv_date"
             style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_alignBottom="@id/imv_category"
-            android:layout_toEndOf="@id/imv_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignStart="@id/tv_name"
-            android:layout_marginBottom="@dimen/material_small_margin"/>
+            android:layout_alignBottom="@id/imv_category"
+            android:layout_marginBottom="@dimen/margin_small_material"
+            android:layout_toEndOf="@id/imv_category" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/tv_amount"
-            android:maxLength="15"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/material_margin"
-            android:layout_alignBaseline="@id/tv_name"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:textColor="@color/primaryColor"/>
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tv_name"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/margin_material"
+            android:maxLength="15"
+            android:textColor="@color/primaryColor" />
+
+        <TextView
             android:id="@+id/tv_finance_type"
-            android:maxLength="6"
             style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tv_date"
             android:layout_alignEnd="@id/tv_amount"
-            android:layout_alignBaseline="@id/tv_date"/>
+            android:maxLength="6" />
     </RelativeLayout>
 
 </com.google.android.material.card.MaterialCardView>

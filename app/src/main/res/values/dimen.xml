@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="material_margin">16dp</dimen>
-    <dimen name="material_margin_large">32dp</dimen>
-    <dimen name="corner_radius">2dp</dimen>
-    <dimen name="material_small_margin">8dp</dimen>
-    <dimen name="spacing_list_item">4dp</dimen>
-    <dimen name="margin_list_item">@dimen/material_margin</dimen>
-    <dimen name="button_height">56dp</dimen>
+    <dimen name="margin_material">16dp</dimen>
+    <dimen name="margin_large_material">32dp</dimen>
+    <dimen name="margin_small_material">8dp</dimen>
+    <dimen name="margin_list_item">@dimen/margin_material</dimen>
+    <dimen name="space_between_items">4dp</dimen>
+    <dimen name="radius_corner">2dp</dimen>
+    <dimen name="height_button">56dp</dimen>
+    <dimen name="width_minimum">450dp</dimen>
+    <dimen name="width_minimum_and_margin">482dp</dimen>
 </resources>

@@ -23,7 +23,7 @@ class FeedbackFragment : NavBaseFragment(){
     ): View? =  viewBinding.root
 
     private fun FragFeedbackBinding.setupView(){
-        btnMenu.setOnClickListener{
+        btnDrawerOpen.setOnClickListener{
             (requireActivity() as? NavigationDrawer)?.openDrawer()
         }
     }

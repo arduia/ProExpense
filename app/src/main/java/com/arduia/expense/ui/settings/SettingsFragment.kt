@@ -28,7 +28,7 @@ class SettingsFragment: NavBaseFragment(){
 
     private fun setupView(){
 
-        binding.btnMenu.setOnClickListener{
+        binding.btnDrawerOpen.setOnClickListener{
             openDrawer()
         }
 

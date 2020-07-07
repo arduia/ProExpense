@@ -67,7 +67,7 @@ class RecentListAdapter constructor( private val layoutInflater: LayoutInflater)
     inner class VH(val binding: ItemExpenseBinding, private val listener: (ExpenseVto) -> Unit): RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
         init {
-            binding.cdTransaction.setOnClickListener(this)
+            binding.cdExpense.setOnClickListener(this)
         }
         override fun onClick(v: View?) {
             listener(getItem(adapterPosition))

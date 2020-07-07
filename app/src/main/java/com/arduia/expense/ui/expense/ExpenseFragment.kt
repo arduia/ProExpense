@@ -59,7 +59,7 @@ class ExpenseFragment : Fragment(){
         viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.rvTransactions.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.space_between_items).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             ))
 

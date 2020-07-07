@@ -37,7 +37,7 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
     }
 
     private fun setupView(){
-        viewBinding.btnDetailClose.setOnClickListener {
+        viewBinding.btnClose.setOnClickListener {
             dismiss()
         }
 
