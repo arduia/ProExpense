@@ -20,14 +20,12 @@ class SettingsFragment: NavBaseFragment(){
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupView()
     }
 
     private fun setupView(){
-
         binding.btnDrawerOpen.setOnClickListener{
             openDrawer()
         }
