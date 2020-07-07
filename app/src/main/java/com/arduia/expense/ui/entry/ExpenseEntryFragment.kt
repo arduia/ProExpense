@@ -24,7 +24,7 @@ import java.lang.IllegalStateException
 class ExpenseEntryFragment : Fragment(){
 
     private val viewBinding by lazy {
-        FragExpenseEntryBinding.inflate(layoutInflater)
+        createViewBinding()
     }
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
@@ -44,19 +44,11 @@ class ExpenseEntryFragment : Fragment(){
         setupViewModel()
     }
 
+    private fun createViewBinding() =
+        FragExpenseEntryBinding.inflate(layoutInflater)
+
     private fun setupView(){
 
-        when{
-            args.expenseId > 0 -> {
-                // ID exist, Update Mode
-                viewModel.setUpdateMode()
-            }
-
-            args.expenseId <= 0 -> {
-                // ID is default, Save Mode
-                viewModel.setSaveMode()
-            }
-        }
 
         viewBinding.btnEntryClose.setOnClickListener {
             findNavController().popBackStack()
@@ -69,6 +61,18 @@ class ExpenseEntryFragment : Fragment(){
 
 
     private fun setupViewModel(){
+
+        when{
+            args.expenseId > 0 -> {
+                // ID exist, Update Mode
+                viewModel.setUpdateMode()
+            }
+
+            args.expenseId <= 0 -> {
+                // ID is default, Save Mode
+                viewModel.setSaveMode()
+            }
+        }
 
         viewModel.dataInserted.observe(viewLifecycleOwner, EventObserver {
             findNavController().popBackStack()
@@ -105,9 +109,7 @@ class ExpenseEntryFragment : Fragment(){
         viewBinding.btnSave.setOnClickListener {
             updateData()
         }
-        MainScope().launch(Dispatchers.IO){
-            viewModel.observeExpenseData(args.expenseId)
-        }
+        viewModel.observeExpenseData(args.expenseId)
     }
 
     private fun onInsertMode(){
@@ -115,7 +117,6 @@ class ExpenseEntryFragment : Fragment(){
         viewBinding.btnSave.setOnClickListener {
             saveData()
         }
-
         viewBinding.edtName.requestFocus()
     }
 
