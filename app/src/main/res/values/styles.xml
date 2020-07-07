@@ -54,4 +54,11 @@
         <item name="tabUnboundedRipple">false</item>
         <item name="android:background">@color/backgroundColor</item>
     </style>
+
+    <style name="MaterialChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="checkedIcon">@drawable/ic_done</item>
+        <item name="checkedIconEnabled">true</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="chipCornerRadius">@dimen/radius_corner</item>
+    </style>
 </resources>

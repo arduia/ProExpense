@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.entry
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.arduia.expense.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
+import com.google.android.material.chip.Chip
 import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
@@ -48,10 +50,9 @@ class ExpenseEntryFragment : Fragment(){
     private fun createViewBinding() =
         FragExpenseEntryBinding.inflate(layoutInflater)
 
-    private fun setupView(){
+    private fun setupView() {
 
-        mainHost  = requireActivity() as MainHost
-
+        mainHost = requireActivity() as MainHost
 
         viewBinding.btnEntryClose.setOnClickListener {
             findNavController().popBackStack()
@@ -61,7 +62,6 @@ class ExpenseEntryFragment : Fragment(){
             viewBinding.btnSave.isEnabled = !it.isNullOrEmpty()
         }
     }
-
 
     private fun setupViewModel(){
 

@@ -134,7 +134,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="@dimen/margin_material"
                 android:layout_marginTop="@dimen/margin_material"
-                android:text="@string/tmp_outcome"
+                android:text="@string/tmp_outcome_a_week"
                 android:textColor="@color/onPrimaryColor" />
 
             <TextView

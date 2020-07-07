@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.home
 
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
@@ -16,6 +17,8 @@ import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import com.arduia.expense.ui.vto.ExpenseVto
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -42,6 +45,13 @@ class HomeFragment : NavBaseFragment() {
         requireActivity() as MainHost
     }
 
+    private val detailEditListener by lazy {
+        createDetailEditClickListener()
+    }
+
+    private val detailDismissListener by lazy {
+        return@lazy { mainHost.showAddButton() }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,15 +118,21 @@ class HomeFragment : NavBaseFragment() {
         })
 
         viewModel.detailData.observe(viewLifecycleOwner, EventObserver {
+
             ExpenseDetailDialog().apply {
-                setEditClickListener { expense ->
-                    val action = HomeFragmentDirections
-                        .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
-                    findNavController().navigate(action, createEntryNavOptions())
-                }
+                setEditClickListener(detailEditListener)
+                setDismissListener(detailDismissListener)
             }.showDetail(parentFragmentManager, it)
+            mainHost.hideAddButton()
         })
     }
+
+    private fun createDetailEditClickListener() = { expense: ExpenseDetailsVto ->
+        val action = HomeFragmentDirections
+            .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
+        findNavController().navigate(action, createEntryNavOptions())
+    }
+
 
     private fun getSamplePoints() =
         mutableListOf<SpendPoint>().apply {
@@ -145,7 +161,6 @@ class HomeFragment : NavBaseFragment() {
             //For Home Fragment
             .setExitAnim(android.R.anim.fade_out)
             .setPopEnterAnim(R.anim.nav_default_enter_anim)
-
             .build()
 
     private fun createRecentMoreNavOptions() =
@@ -162,6 +177,5 @@ class HomeFragment : NavBaseFragment() {
     companion object {
         private const val TAG = "MY_HomeFragment"
     }
-
 
 }

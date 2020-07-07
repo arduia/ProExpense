@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.common
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,8 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
     private var expenseDetail: ExpenseDetailsVto? = null
 
     private var editClickListener: (ExpenseDetailsVto) -> Unit = {}
+
+    private var dismissListener: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +49,15 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
             dismiss()
         }
 
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        dismissListener?.invoke()
+    }
+
+    fun setDismissListener(listener: () -> Unit){
+        dismissListener = listener
     }
 
     private fun ExpenseDetailsVto.bindDetailData(){

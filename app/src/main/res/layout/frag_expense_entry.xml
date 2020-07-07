@@ -80,59 +80,12 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_category"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/edl_name"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/margin_material"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="true"
-                android:paddingStart="@dimen/margin_material"
-                android:paddingEnd="@dimen/margin_material"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/cp_clothes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tmp_clothes"
-                    app:chipCornerRadius="@dimen/radius_corner"
-                    app:chipIcon="@drawable/ic_clothes" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/cp_house_hold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tmp_household"
-                    app:chipCornerRadius="@dimen/radius_corner"
-                    app:chipIcon="@drawable/ic_household" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/cd_food"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tmp_food"
-                    app:chipCornerRadius="@dimen/radius_corner"
-                    app:chipIcon="@drawable/ic_food" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/cd_donation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tmp_donation"
-                    app:chipCornerRadius="@dimen/radius_corner"
-                    app:chipIcon="@drawable/ic_donations" />
-            </com.google.android.material.chip.ChipGroup>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_cost"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/chip_category"
+                android:layout_below="@id/edl_name"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/margin_material"
                 android:layout_marginTop="@dimen/margin_material"

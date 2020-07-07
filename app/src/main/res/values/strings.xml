@@ -10,7 +10,7 @@
     <string name="label_log">Activity Log</string>
     <string name="label_home">Home</string>
     <string name="label_total">Total Balance</string>
-    <string name="tmp_outcome">Outcome a week</string>
+    <string name="tmp_outcome_a_week">Outcome a week</string>
     <string name="tmp_outcome_value">45,600</string>
     <string name="tmp_currency">MMK</string>
     <string name="label_recent">Recent</string>
@@ -37,10 +37,18 @@
     <string name="label_update">Update</string>
     <string name="label_update_data">Update Data</string>
     <string name="label_expense_entry">Expense Entry</string>
+    <string name="tmp_income">Income</string>
+    <string name="tmp_social">Social</string>
     <string name="tmp_clothes">Clothes</string>
     <string name="tmp_household">HouseHold</string>
     <string name="tmp_food">Food</string>
+    <string name="tmp_outcome">Outcome</string>
     <string name="tmp_donation">Donation</string>
+    <string name="tmp_utilities">Utilities</string>
+    <string name="tmp_entertainment">Entertainment</string>
+    <string name="tmp_education">Education</string>
+    <string name="tmp_transportation">Transportation</string>
+    <string name="tmp_heath_care">Health Care</string>
     <string name="label_single_item_deleted">Item Deleted</string>
     <string name="label_multi_item_deleted">Items Deleted</string>
     <string name="label_data_updated">Data Updated!</string>
