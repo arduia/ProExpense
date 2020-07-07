@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.arduia.expense.data.AccRepository
 import com.arduia.expense.di.ServiceLoader
+import com.arduia.expense.ui.common.BaseLiveData
 import com.arduia.expense.ui.common.EventLiveData
 import com.arduia.expense.ui.common.event
 import com.arduia.expense.ui.common.post
@@ -16,12 +17,11 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
-    private val _recentData =  MutableLiveData<List<ExpenseVto>>()
-    val recentData get() = _recentData
-
+    private val _recentData =  BaseLiveData<List<ExpenseVto>>()
+    val recentData get() = _recentData.asLiveData()
 
     private val _detailData = EventLiveData<ExpenseDetailsVto>()
-    val detailData = _detailData.asLiveData()
+    val detailData get() = _detailData.asLiveData()
 
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
@@ -38,7 +38,6 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     private val accMapper by lazy {
         serviceLoader.getTransactionMapper()
     }
-
 
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){

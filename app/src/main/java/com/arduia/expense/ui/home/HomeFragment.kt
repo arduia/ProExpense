@@ -19,9 +19,9 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 
-class HomeFragment : NavBaseFragment(){
+class HomeFragment : NavBaseFragment() {
 
-    private val viewBinding by lazy {  createViewBinding() }
+    private val viewBinding by lazy { createViewBinding() }
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -34,12 +34,9 @@ class HomeFragment : NavBaseFragment(){
     }
 
     private val recentAdapter by lazy {
-        RecentListAdapter( layoutInflater )
+        RecentListAdapter(layoutInflater)
     }
 
-    private val linearLayoutManager by lazy {
-        LinearLayoutManager(requireContext())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,13 +51,24 @@ class HomeFragment : NavBaseFragment(){
         setupViewModel()
     }
 
+    private fun FragHomeBinding.initSetupView() {
+        rvRecent.adapter = recentAdapter
+        rvRecent.layoutManager = LinearLayoutManager(requireContext())
+        rvRecent.addItemDecoration(
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.space_between_items).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            )
+        )
+    }
+
     //Setup View
-    private fun setupView(){
+    private fun setupView() {
 
         viewBinding.fbAdd.setColorFilter(Color.WHITE)
 
         viewBinding.fbAdd.setOnClickListener {
-            findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption )
+            findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
 
         viewBinding.btnMenuOpen.setOnClickListener { openDrawer() }
@@ -81,53 +89,47 @@ class HomeFragment : NavBaseFragment(){
         }
     }
 
-    private fun setupViewModel(){
+    private fun setupViewModel() {
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
             recentAdapter.submitList(it)
         })
 
         viewModel.detailData.observe(viewLifecycleOwner, EventObserver {
             ExpenseDetailDialog().apply {
-                setEditClickListener {expense ->
+                setEditClickListener { expense ->
                     val action = HomeFragmentDirections
                         .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
-                    findNavController().navigate(action,createEntryNavOptions())
+                    findNavController().navigate(action, createEntryNavOptions())
                 }
-            }.showDetail(parentFragmentManager,it)
+            }.showDetail(parentFragmentManager, it)
         })
     }
 
     private fun getSamplePoints() =
         mutableListOf<SpendPoint>().apply {
-        add(SpendPoint(1, randomRate()))
-        add(SpendPoint(2, randomRate()))
-        add(SpendPoint(3, randomRate()))
-        add(SpendPoint(4, randomRate()))
+            add(SpendPoint(1, randomRate()))
+            add(SpendPoint(2, randomRate()))
+            add(SpendPoint(3, randomRate()))
+            add(SpendPoint(4, randomRate()))
 //        add(SpendPoint(5, randomRate()))
 //        add(SpendPoint(6, randomRate()))
 //        add(SpendPoint(7, randomRate()))
-    }
+        }
 
     private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
 
     private fun createViewBinding() =
         FragHomeBinding.inflate(layoutInflater).apply {
-            //Once Configuration
-        rvRecent.adapter = recentAdapter
-        rvRecent.layoutManager = linearLayoutManager
-        rvRecent.addItemDecoration(
-            MarginItemDecoration(
-                resources.getDimension(R.dimen.space_between_items).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
-            ))
-    }
+            //Once Setup
+            initSetupView()
+        }
 
     private fun createEntryNavOptions() =
         NavOptions.Builder()
-                //For Entry Fragment
+            //For Entry Fragment
             .setEnterAnim(R.anim.pop_down_up)
             .setPopExitAnim(R.anim.pop_up_down)
-                //For Home Fragment
+            //For Home Fragment
             .setExitAnim(android.R.anim.fade_out)
             .setPopEnterAnim(R.anim.nav_default_enter_anim)
 
@@ -135,16 +137,16 @@ class HomeFragment : NavBaseFragment(){
 
     private fun createRecentMoreNavOptions() =
         NavOptions.Builder()
-                //For Transaction Fragment
+            //For Transaction Fragment
             .setEnterAnim(R.anim.expense_enter_left)
             .setPopExitAnim(R.anim.expense_exit_right)
-                //For Home Fragment
+            //For Home Fragment
             .setExitAnim(R.anim.nav_default_exit_anim)
             .setPopEnterAnim(R.anim.nav_default_enter_anim)
             .setLaunchSingleTop(true)
             .build()
 
-    companion object{
+    companion object {
         private const val TAG = "MY_HomeFragment"
     }
 
