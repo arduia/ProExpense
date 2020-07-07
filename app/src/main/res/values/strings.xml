@@ -43,6 +43,7 @@
     <string name="tmp_donation">Donation</string>
     <string name="label_single_item_deleted">Item Deleted</string>
     <string name="label_multi_item_deleted">Items Deleted</string>
+    <string name="label_data_updated">Data Updated!</string>
 
     <!--    Feedback-->
     <string name="label_feedback">Feedback</string>

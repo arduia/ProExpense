@@ -106,23 +106,6 @@
         app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
         tools:listitem="@layout/item_expense" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fb_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_material"
-        android:layout_marginBottom="32dp"
-        android:scaleType="center"
-        android:tint="@android:color/white"
-        app:backgroundTint="@color/primaryColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/rv_recent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@id/rv_recent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_add" />
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cd_value"
         android:layout_width="0dp"

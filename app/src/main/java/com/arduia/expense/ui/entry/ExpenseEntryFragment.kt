@@ -12,13 +12,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.arduia.expense.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
@@ -30,6 +27,9 @@ class ExpenseEntryFragment : Fragment(){
     private val args: ExpenseEntryFragmentArgs by navArgs()
 
     private val viewModel by viewModels<ExpenseEntryViewModel>()
+
+    private var mainHost: MainHost? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,10 +44,13 @@ class ExpenseEntryFragment : Fragment(){
         setupViewModel()
     }
 
+
     private fun createViewBinding() =
         FragExpenseEntryBinding.inflate(layoutInflater)
 
     private fun setupView(){
+
+        mainHost  = requireActivity() as MainHost
 
 
         viewBinding.btnEntryClose.setOnClickListener {
@@ -79,7 +82,7 @@ class ExpenseEntryFragment : Fragment(){
         })
 
         viewModel.dataUpdated.observe(viewLifecycleOwner, EventObserver{
-            Snackbar.make(viewBinding.root, "Data Updated", Snackbar.LENGTH_SHORT).show()
+            mainHost?.showSnackMessage(getString(R.string.label_data_updated))
             findNavController().popBackStack()
         })
 

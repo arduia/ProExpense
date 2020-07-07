@@ -11,6 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arduia.expense.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseBinding
@@ -34,6 +35,9 @@ class ExpenseFragment : Fragment(){
 
     private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
 
+    private val mainHost by lazy {
+        requireActivity() as MainHost
+    }
 
     @ExperimentalCoroutinesApi
     override fun onCreateView(
@@ -129,11 +133,12 @@ class ExpenseFragment : Fragment(){
             }.showDetail(parentFragmentManager,it)
         })
 
-        viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver{
-            Snackbar.make(viewBinding.root, when{
-                it > 0 ->  "$it ${getString(R.string.label_single_item_deleted)}"
+        viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver {
+            val message = when {
+                it > 0 -> "$it ${getString(R.string.label_single_item_deleted)}"
                 else -> "$it ${getString(R.string.label_multi_item_deleted)}"
-            }, 500).show()
+            }
+            mainHost.showSnackMessage(message)
         })
     }
 

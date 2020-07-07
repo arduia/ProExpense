@@ -1,6 +1,7 @@
 package com.arduia.expense.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -9,12 +10,16 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.*
 import androidx.navigation.ui.setupWithNavController
+import com.arduia.expense.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.*
+import timber.log.Timber
 
 
-class MainActivity : AppCompatActivity(), NavigationDrawer {
+class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
 
     private val viewBinding by lazy { ActivMainBinding.inflate(layoutInflater) }
 
@@ -26,6 +31,15 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
 
     private var itemSelectionTask: (() -> Unit)? = null
 
+    override val defaultSnackBarDuration: Int  by lazy { resources.getInteger(R.integer.duration_short_snack) }
+
+    private var addBtnClickListener: () -> Unit = { }
+
+    //To Listen sna
+    private var lastSnackBar: Snackbar? = null
+
+    private var addFabShowTask: (() -> Unit)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
@@ -35,10 +49,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
     }
 
     private fun setupView(){
-        setupNavigation()
-    }
 
-    private fun setupNavigation(){
+        viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
+
+        viewBinding.fbMainAdd.setOnClickListener {
+            addBtnClickListener.invoke()
+        }
+
+        viewBinding.fbMainAdd.hide()
 
         viewBinding.nvMain.setupWithNavController(navController)
 
@@ -160,6 +178,52 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
         }
         //Should Close
         return true
+    }
+
+    override fun showAddButton() {
+
+        addFabShowTask =  { showAddFab() }
+
+        when(lastSnackBar?.isShown){
+            true -> {
+
+                //Wait for finish snack bar show
+               MainScope().launch {
+                   val delayDuration = (lastSnackBar?.duration ?:0 ) + 300 //Extra 100 for animation
+                   delay(delayDuration.toLong())
+                   addFabShowTask?.invoke()
+               }
+            }
+
+            //null or false
+            else -> {
+
+                //Show Instantly
+                addFabShowTask?.invoke()
+            }
+        }
+    }
+
+    //for easily methods
+    private fun showAddFab(){
+        viewBinding.fbMainAdd.show()
+    }
+
+    override fun hideAddButton() {
+        //remove task
+        addFabShowTask = null
+
+        viewBinding.fbMainAdd.hide()
+    }
+
+    override fun showSnackMessage(message: String, duration: Int) {
+           lastSnackBar = Snackbar.make(viewBinding.clMain, message, duration).apply {
+               show()
+           }
+    }
+
+    override fun setAddButtonClickListener(listener: () -> Unit) {
+        addBtnClickListener = listener
     }
 
     // Separated function to improve readability

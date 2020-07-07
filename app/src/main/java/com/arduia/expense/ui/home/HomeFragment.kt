@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arduia.expense.MainHost
 import com.arduia.graph.SpendPoint
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragHomeBinding
@@ -37,6 +38,10 @@ class HomeFragment : NavBaseFragment() {
         RecentListAdapter(layoutInflater)
     }
 
+    private val mainHost by lazy {
+        requireActivity() as MainHost
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +54,16 @@ class HomeFragment : NavBaseFragment() {
         lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainHost.showAddButton()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mainHost.hideAddButton()
     }
 
     private fun FragHomeBinding.initSetupView() {
@@ -65,9 +80,7 @@ class HomeFragment : NavBaseFragment() {
     //Setup View
     private fun setupView() {
 
-        viewBinding.fbAdd.setColorFilter(Color.WHITE)
-
-        viewBinding.fbAdd.setOnClickListener {
+        mainHost.setAddButtonClickListener {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
 
@@ -149,5 +162,6 @@ class HomeFragment : NavBaseFragment() {
     companion object {
         private const val TAG = "MY_HomeFragment"
     }
+
 
 }
