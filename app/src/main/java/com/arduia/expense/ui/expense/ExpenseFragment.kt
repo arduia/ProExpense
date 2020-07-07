@@ -22,7 +22,9 @@ import kotlinx.coroutines.*
 
 class ExpenseFragment : Fragment(){
 
-    lateinit var  viewBinding: FragExpenseBinding
+    private val viewBinding by lazy{
+        createViewBinding()
+    }
 
     private val expenseListAdapter by lazy {
         ExpenseListAdapter( requireContext() )
@@ -38,39 +40,44 @@ class ExpenseFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View?{
-        viewBinding = FragExpenseBinding.inflate(layoutInflater)
-        lockNavigation()
-        setupView()
-        setupViewModel()
-        return viewBinding.root
-    }
+    ): View? =  viewBinding.root
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lockNavigation()
+        setupView()
+        setupViewModel()
+    }
+
+    private fun createViewBinding() =
+        FragExpenseBinding.inflate(layoutInflater).apply {
+            initSetupView()
+        }
+
+    private fun FragExpenseBinding.initSetupView(){
+         rvExpense.adapter = expenseListAdapter
+         rvExpense.layoutManager = LinearLayoutManager(requireContext())
+         rvExpense.addItemDecoration(
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.space_between_items).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            ))
     }
 
     @ExperimentalCoroutinesApi
     private fun setupView(){
 
         //Setup Transaction Recycler View
-        viewBinding.rvTransactions.adapter = expenseListAdapter
-        viewBinding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
-        viewBinding.rvTransactions.addItemDecoration(
-            MarginItemDecoration(
-                resources.getDimension(R.dimen.space_between_items).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
-            ))
 
-        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvTransactions)
+        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
 
         itemSwipeCallback.setSwipeListener {
             val item = expenseListAdapter.getItemFromPosition(it)
             viewModel.onItemSelect(item)
         }
 
-        expenseListAdapter.setItemClickListener {
+        expenseListAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
 
@@ -124,8 +131,8 @@ class ExpenseFragment : Fragment(){
 
         viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver{
             Snackbar.make(viewBinding.root, when{
-                it > 0 ->  "$it Items Deleted!"
-                else -> "$it Item Deleted!"
+                it > 0 ->  "$it ${getString(R.string.label_single_item_deleted)}"
+                else -> "$it ${getString(R.string.label_multi_item_deleted)}"
             }, 500).show()
         })
     }

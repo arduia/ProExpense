@@ -41,6 +41,8 @@
     <string name="tmp_household">HouseHold</string>
     <string name="tmp_food">Food</string>
     <string name="tmp_donation">Donation</string>
+    <string name="label_single_item_deleted">Item Deleted</string>
+    <string name="label_multi_item_deleted">Items Deleted</string>
 
     <!--    Feedback-->
     <string name="label_feedback">Feedback</string>
@@ -53,6 +55,7 @@
 
     <!--    Expense-->
     <string name="label_confirm_delete">Confirm Delete</string>
+
 
     <!--    Settings-->
     <string name="label_language">Language</string>

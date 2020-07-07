@@ -24,7 +24,6 @@
             android:layout_marginStart="@dimen/margin_material"
             android:layout_marginTop="@dimen/margin_small_material"
             android:layout_marginBottom="@dimen/margin_small_material"
-            android:src="@drawable/img_taylor"
             app:civ_border_color="@color/onPrimaryColor"
             app:civ_border_width="2dp" />
 

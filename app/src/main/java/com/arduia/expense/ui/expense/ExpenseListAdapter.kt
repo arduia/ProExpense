@@ -19,13 +19,13 @@ class ExpenseListAdapter constructor(private val context: Context):
 
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
-    private var itemClickListener: (ExpenseVto) -> Unit = {}
+    private var onItemClickListener: (ExpenseVto) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
 
         val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
 
-        return TransactionVH(ItemExpenseBinding.bind(itemView), itemClickListener)
+        return TransactionVH(ItemExpenseBinding.bind(itemView), onItemClickListener)
     }
 
     override fun onBindViewHolder(holder: TransactionVH, position: Int) {
@@ -48,17 +48,16 @@ class ExpenseListAdapter constructor(private val context: Context):
     inner class TransactionVH(val binding: ItemExpenseBinding,
                               private val listener: (ExpenseVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
-        init {
-            binding.cdExpense.setOnClickListener(this)
-        }
+
+        init { binding.cdExpense.setOnClickListener(this)  }
 
         override fun onClick(v: View?) {
             listener(getItem(adapterPosition)!!)
         }
     }
 
-    fun setItemClickListener(listener: (ExpenseVto) -> Unit){
-        itemClickListener = listener
+    fun setOnItemClickListener(listener: (ExpenseVto) -> Unit){
+        onItemClickListener = listener
     }
 
 }

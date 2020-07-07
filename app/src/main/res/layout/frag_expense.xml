@@ -47,7 +47,7 @@
         android:clipToPadding="false"
         app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
         app:layout_constraintTop_toBottomOf="@id/tb_expense"
-        android:id="@+id/rv_transactions"
+        android:id="@+id/rv_expense"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

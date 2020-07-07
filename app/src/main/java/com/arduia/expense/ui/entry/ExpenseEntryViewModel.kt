@@ -10,6 +10,7 @@ import com.arduia.expense.ui.mapping.ExpenseMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 
@@ -101,4 +102,5 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
             _expenseData post updateData
         }
     }
+
 }
