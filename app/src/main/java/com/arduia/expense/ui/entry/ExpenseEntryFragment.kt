@@ -54,7 +54,7 @@ class ExpenseEntryFragment : Fragment(){
 
 
     private fun createViewBinding() =
-        FragExpenseEntryBinding.inflate(layoutInflater).apply {
+        FragExpenseEntryBinding.inflate(layoutInflater, null, false).apply {
             initSetupView()
         }
 

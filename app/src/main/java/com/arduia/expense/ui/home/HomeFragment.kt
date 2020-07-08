@@ -151,7 +151,7 @@ class HomeFragment : NavBaseFragment() {
     private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
 
     private fun createViewBinding() =
-        FragHomeBinding.inflate(layoutInflater).apply {
+        FragHomeBinding.inflate(layoutInflater, null, false).apply {
             //Once Setup
             initSetupView()
         }

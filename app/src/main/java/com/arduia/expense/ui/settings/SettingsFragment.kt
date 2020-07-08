@@ -10,7 +10,7 @@ import com.arduia.expense.ui.NavBaseFragment
 
 class SettingsFragment: NavBaseFragment(){
 
-    private val binding by lazy { FragSettingsBinding.inflate(layoutInflater) }
+    private val binding by lazy { FragSettingsBinding.inflate(layoutInflater, null, false) }
 
     override fun onCreateView(
         inflater: LayoutInflater,

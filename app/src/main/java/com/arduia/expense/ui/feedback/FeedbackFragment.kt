@@ -11,7 +11,7 @@ import com.arduia.expense.ui.NavigationDrawer
 class FeedbackFragment : NavBaseFragment(){
 
     private val viewBinding by lazy {
-        FragFeedbackBinding.inflate(layoutInflater)
+        FragFeedbackBinding.inflate(layoutInflater, null, false)
     }
 
     override fun onCreateView(
