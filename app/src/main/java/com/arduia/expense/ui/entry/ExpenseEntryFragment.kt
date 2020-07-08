@@ -28,9 +28,7 @@ import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
 
-    private val viewBinding by lazy {
-        createViewBinding()
-    }
+    private lateinit var viewBinding: FragExpenseEntryBinding
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
 
@@ -50,7 +48,12 @@ class ExpenseEntryFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = viewBinding.root
+    ): View?{
+        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, null, false).apply {
+            initSetupView()
+        }
+        return viewBinding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -23,9 +23,7 @@ import kotlinx.coroutines.*
 
 class ExpenseFragment : Fragment(){
 
-    private val viewBinding by lazy{
-        createViewBinding()
-    }
+    private lateinit var viewBinding: FragExpenseBinding
 
     private val expenseListAdapter by lazy {
         ExpenseListAdapter( requireContext() )
@@ -44,7 +42,12 @@ class ExpenseFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =  viewBinding.root
+    ): View?{
+        viewBinding =  FragExpenseBinding.inflate(layoutInflater, null, false).apply {
+            initSetupView()
+        }
+        return viewBinding.root
+    }
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -26,7 +26,7 @@ import kotlin.random.nextInt
 
 class HomeFragment : NavBaseFragment() {
 
-    private val viewBinding by lazy { createViewBinding() }
+    private lateinit var viewBinding: FragHomeBinding
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -59,7 +59,13 @@ class HomeFragment : NavBaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = viewBinding.root
+    ): View? {
+        viewBinding = FragHomeBinding.inflate(layoutInflater, null, false).apply {
+            //Once Setup
+            initSetupView()
+        }
+       return viewBinding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -149,12 +155,6 @@ class HomeFragment : NavBaseFragment() {
         }
 
     private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
-
-    private fun createViewBinding() =
-        FragHomeBinding.inflate(layoutInflater, null, false).apply {
-            //Once Setup
-            initSetupView()
-        }
 
     private fun createEntryNavOptions() =
         NavOptions.Builder()

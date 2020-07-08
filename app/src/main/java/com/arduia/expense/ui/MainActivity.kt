@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.*
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.arduia.expense.MainHost
 import com.arduia.expense.R
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
 
     private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
 
-    private val navController by lazy { findNavController(R.id.fc_main) }
+    private val navController by lazy {  findNavController() }
 
     private val navOption by lazy { createNavOption() }
 
@@ -48,6 +49,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
         setupView()
     }
 
+    private fun findNavController(): NavController{
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fc_main) as NavHostFragment
+        return navHostFragment.navController
+    }
     private fun setupView(){
 
         viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
