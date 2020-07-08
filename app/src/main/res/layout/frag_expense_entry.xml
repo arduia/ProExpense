@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:elevation="3dp"
     android:orientation="vertical">
 
@@ -102,12 +103,27 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rv_category"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_category"
+                android:layout_below="@id/edl_cost"
+                android:layout_marginTop="@dimen/margin_material"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_centerHorizontal="true"
+                android:paddingStart="@dimen/margin_material"
+                android:paddingEnd="@dimen/margin_material"
+                android:clipToPadding="false"
+                tools:itemCount="1" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_description"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_below="@id/edl_cost"
+                android:layout_below="@id/rv_category"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="@dimen/margin_material"

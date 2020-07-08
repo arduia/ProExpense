@@ -17,6 +17,7 @@ import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.entry.CategoryListAdapter
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import kotlin.random.Random
@@ -40,6 +41,7 @@ class HomeFragment : NavBaseFragment() {
     private val recentAdapter by lazy {
         RecentListAdapter(layoutInflater)
     }
+
 
     private val mainHost by lazy {
         requireActivity() as MainHost
@@ -85,6 +87,7 @@ class HomeFragment : NavBaseFragment() {
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             )
         )
+
     }
 
     //Setup View
@@ -161,6 +164,7 @@ class HomeFragment : NavBaseFragment() {
             //For Home Fragment
             .setExitAnim(android.R.anim.fade_out)
             .setPopEnterAnim(R.anim.nav_default_enter_anim)
+            .setLaunchSingleTop(true)
             .build()
 
     private fun createRecentMoreNavOptions() =

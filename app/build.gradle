@@ -60,7 +60,7 @@ dependencies {
     def junit_version = "4.13"
     def androidx_testing_version = "1.1.1"
     def espresso_version = "3.2.0"
-    def material_version = "1.1.0"
+    def material_version = "1.2.0-beta01"
     def circle_image_version = "3.1.0"
     def digger_hilt_version = "2.28-alpha"
     def room_version = "2.3.0-alpha01"

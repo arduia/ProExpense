@@ -4,8 +4,9 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class MarginItemDecoration( private val spaceHeight: Int = 10,
-                            private val spaceSide: Int? = null): RecyclerView.ItemDecoration(){
+class MarginItemDecoration( private val spaceHeight: Int = 0,
+                            private val spaceSide: Int? = null,
+                            private val isHorizontal: Boolean = false): RecyclerView.ItemDecoration(){
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -17,7 +18,9 @@ class MarginItemDecoration( private val spaceHeight: Int = 10,
          with(outRect){
 //             Fist tem should has top height
              if(parent.getChildAdapterPosition(view) == 0){
-                 top = spaceHeight
+                when(isHorizontal){
+                    false ->  top = spaceHeight
+                }
              }
 
              bottom = spaceHeight

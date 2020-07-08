@@ -83,13 +83,9 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
 
         viewBinding.dlMain.addDrawerListener(object: DrawerLayout.DrawerListener{
 
-            override fun onDrawerStateChanged(newState: Int) {
+            override fun onDrawerStateChanged(newState: Int) { }
 
-            }
-
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-
-            }
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {  }
 
             override fun onDrawerClosed(drawerView: View) {
                 //execute selected item
@@ -207,12 +203,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
     //for easily methods
     private fun showAddFab(){
         viewBinding.fbMainAdd.show()
+        viewBinding.fbMainAdd.isClickable = true
     }
 
     override fun hideAddButton() {
         //remove task
         addFabShowTask = null
 
+        viewBinding.fbMainAdd.isClickable = false
         viewBinding.fbMainAdd.hide()
     }
 

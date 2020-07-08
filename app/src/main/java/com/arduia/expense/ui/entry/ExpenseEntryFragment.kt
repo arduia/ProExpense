@@ -13,10 +13,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.arduia.core.extension.px
 import com.arduia.expense.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
+import com.arduia.expense.ui.common.MarginItemDecoration
 import com.google.android.material.chip.Chip
 import java.lang.IllegalStateException
 
@@ -33,6 +35,10 @@ class ExpenseEntryFragment : Fragment(){
     private var mainHost: MainHost? = null
 
 
+    private val categoryAdapter by lazy {
+        CategoryListAdapter(layoutInflater)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,7 +54,18 @@ class ExpenseEntryFragment : Fragment(){
 
 
     private fun createViewBinding() =
-        FragExpenseEntryBinding.inflate(layoutInflater)
+        FragExpenseEntryBinding.inflate(layoutInflater).apply {
+            initSetupView()
+        }
+
+    private fun FragExpenseEntryBinding.initSetupView(){
+        rvCategory.adapter = categoryAdapter
+        rvCategory.addItemDecoration(MarginItemDecoration(
+            requireContext().px(4),
+            requireContext().px(4),
+            true
+        ))
+    }
 
     private fun setupView() {
 
@@ -61,6 +78,12 @@ class ExpenseEntryFragment : Fragment(){
         viewBinding.edtAmount.addTextChangedListener {
             viewBinding.btnSave.isEnabled = !it.isNullOrEmpty()
         }
+
+        categoryAdapter.submitList(mutableListOf<ExpenseCategoryVto>().apply{
+            add(ExpenseCategoryVto("Single",false))
+            add(ExpenseCategoryVto("is",true))
+            add(ExpenseCategoryVto("Best",false))
+        })
     }
 
     private fun setupViewModel(){
