@@ -23,6 +23,7 @@ import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.MarginItemDecoration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
@@ -36,9 +37,7 @@ class ExpenseEntryFragment : Fragment(){
 
     private var mainHost: MainHost? = null
 
-    private val categoryAdapter by lazy {
-        CategoryListAdapter(layoutInflater)
-    }
+    private lateinit var categoryAdapter: CategoryListAdapter
 
     private val categoryProvider by lazy {
         ExpenseCategoryProviderImpl(resources)
@@ -49,9 +48,7 @@ class ExpenseEntryFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?{
-        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, null, false).apply {
-            initSetupView()
-        }
+        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
         return viewBinding.root
     }
 
@@ -63,23 +60,23 @@ class ExpenseEntryFragment : Fragment(){
         setupViewModel()
     }
 
-
-    private fun createViewBinding() =
-        FragExpenseEntryBinding.inflate(layoutInflater, null, false).apply {
-            initSetupView()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        MainScope().launch (Dispatchers.Main){
+            val aniDuration = resources.getInteger(R.integer.entry_pop_up_duration)
+            delay(aniDuration.toLong())
+            categoryAdapter.submitList(categoryProvider.getCategoryList())
         }
+    }
 
-    private fun FragExpenseEntryBinding.initSetupView(){
-        rvCategory.adapter = categoryAdapter
-        rvCategory.addItemDecoration(MarginItemDecoration(
+    private fun setupView() {
+        categoryAdapter = CategoryListAdapter(layoutInflater)
+        viewBinding.rvCategory.adapter = categoryAdapter
+        viewBinding.rvCategory.addItemDecoration(MarginItemDecoration(
             requireContext().px(4),
             requireContext().px(4),
             true
         ))
-    }
-
-    private fun setupView() {
-
         mainHost = requireActivity() as MainHost
 
         viewBinding.btnEntryClose.setOnClickListener {
@@ -93,6 +90,8 @@ class ExpenseEntryFragment : Fragment(){
         categoryAdapter.setOnItemClickListener {
              viewModel.selectCategory(it)
         }
+
+        categoryAdapter.submitList(categoryProvider.getCategoryList().take(1) )
 
     }
 
@@ -109,7 +108,6 @@ class ExpenseEntryFragment : Fragment(){
                 viewModel.setSaveMode()
             }
         }
-
         viewModel.dataInserted.observe(viewLifecycleOwner, EventObserver {
             findNavController().popBackStack()
         })
@@ -222,14 +220,6 @@ class ExpenseEntryFragment : Fragment(){
         val inputMethodManager =
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
         inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        MainScope().launch(Dispatchers.IO){
-            categoryAdapter.submitList(categoryProvider.getCategoryList())
-            viewModel.selectCategory(categoryProvider.getCategoryByID(1))
-        }
     }
 
     companion object{

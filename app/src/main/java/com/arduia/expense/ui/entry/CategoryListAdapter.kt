@@ -14,6 +14,8 @@ class CategoryListAdapter(private val layoutInflater: LayoutInflater) :
 
     private var itemClickListener: (ExpenseCategory) -> Unit = {}
 
+
+
     var selectedItem: ExpenseCategory? = null
     set(value) {
         field = value

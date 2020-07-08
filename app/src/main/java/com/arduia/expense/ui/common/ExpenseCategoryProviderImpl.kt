@@ -8,7 +8,9 @@ import java.lang.Exception
 class ExpenseCategoryProviderImpl(private val resource: Resources):
         ExpenseCategoryProvider{
 
-    private val categoryList = mutableListOf<ExpenseCategory>()
+    companion object{
+        private val categoryList = mutableListOf<ExpenseCategory>()
+    }
 
     override fun getCategoryList(): List<ExpenseCategory> {
         return categoryList
@@ -19,12 +21,23 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
     }
 
     init {
-        categoryList.clear()
-        categoryList.addAll(getCategoryData())
+        if(categoryList.isEmpty()){
+            categoryList.addAll(getCategoryData())
+        }
     }
 
     private fun getCategoryData() = mutableListOf<ExpenseCategory>().apply {
-        add(ExpenseCategory(1, (R.string.tmp_outcome).res(), R.drawable.ic_edit ))
+        add(ExpenseCategory(1, (R.string.tmp_outcome).res(), R.drawable.ic_outcome ))
+        add(ExpenseCategory(2, (R.string.tmp_income).res(), R.drawable.ic_income))
+        add(ExpenseCategory(3, (R.string.tmp_food).res(), R.drawable.ic_food))
+        add(ExpenseCategory(4, (R.string.tmp_household).res(), R.drawable.ic_household))
+        add(ExpenseCategory(5, (R.string.tmp_social).res(), R.drawable.ic_social))
+        add(ExpenseCategory(6, (R.string.tmp_entertainment).res(), R.drawable.ic_entertainment))
+        add(ExpenseCategory(7, (R.string.tmp_transportation).res(), R.drawable.ic_transportation))
+        add(ExpenseCategory( 8, (R.string.tmp_clothes).res(), R.drawable.ic_clothes))
+        add(ExpenseCategory(9, (R.string.tmp_heath_care).res(), R.drawable.ic_healthcare))
+        add(ExpenseCategory(10, (R.string.tmp_education).res(), R.drawable.ic_education))
+        add(ExpenseCategory( 11, (R.string.tmp_donation).res(), R.drawable.ic_donations))
     }
 
     override fun getCategoryByID(id: Int): ExpenseCategory {
@@ -32,7 +45,6 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
     }
 
     private fun Int.res(): String = resource.getString(this)
-
 }
 
 data class ExpenseCategory(val id: Int,
