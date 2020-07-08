@@ -10,9 +10,15 @@ import com.arduia.expense.databinding.SheetExpenseDetailBinding
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ExpenseDetailDialog: BottomSheetDialogFragment(){
+class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
-    private val viewBinding by lazy { SheetExpenseDetailBinding.inflate(layoutInflater, null, false) }
+    private val viewBinding by lazy {
+        SheetExpenseDetailBinding.inflate(
+            layoutInflater,
+            null,
+            false
+        )
+    }
 
     private var expenseDetail: ExpenseDetailsVto? = null
 
@@ -30,16 +36,16 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
         return viewBinding.root
     }
 
-    fun setEditClickListener( listener: (ExpenseDetailsVto)-> Unit){
+    fun setEditClickListener(listener: (ExpenseDetailsVto) -> Unit) {
         editClickListener = listener
     }
 
-    fun showDetail(fm: FragmentManager, detail: ExpenseDetailsVto){
-       expenseDetail = detail
+    fun showDetail(fm: FragmentManager, detail: ExpenseDetailsVto) {
+        expenseDetail = detail
         show(fm, TAG)
     }
 
-    private fun setupView(){
+    private fun setupView() {
         viewBinding.btnClose.setOnClickListener {
             dismiss()
         }
@@ -56,11 +62,11 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
         dismissListener?.invoke()
     }
 
-    fun setDismissListener(listener: () -> Unit){
+    fun setDismissListener(listener: () -> Unit) {
         dismissListener = listener
     }
 
-    private fun ExpenseDetailsVto.bindDetailData(){
+    private fun ExpenseDetailsVto.bindDetailData() {
         viewBinding.tvAmountValue.text = amount
         viewBinding.tvDateValue.text = date
         viewBinding.tvNameValue.text = name
@@ -68,7 +74,7 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
         viewBinding.imvCategory.setImageResource(category)
     }
 
-    companion object{
+    companion object {
         private const val TAG = "TransactionDetail"
     }
 }

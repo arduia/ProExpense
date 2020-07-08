@@ -5,8 +5,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/category_bg"
-    android:checkable="true"
     app:cardElevation="0dp"
+    android:checkable="true"
     app:checkedIcon="@android:color/transparent"
     app:cardCornerRadius="@dimen/radius_corner">
 

@@ -7,38 +7,50 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemCategoryBinding
+import com.arduia.expense.ui.common.ExpenseCategory
 
-class CategoryListAdapter(private val layoutInflater: LayoutInflater):
-    ListAdapter<ExpenseCategoryVto, CategoryListAdapter.VH>( DIFF_CALLBACK)
-{
-    private var itemClickListener: (ExpenseCategoryVto)-> Unit = {}
+class CategoryListAdapter(private val layoutInflater: LayoutInflater) :
+    ListAdapter<ExpenseCategory, CategoryListAdapter.VH>(DIFF_CALLBACK) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH{
+    private var itemClickListener: (ExpenseCategory) -> Unit = {}
 
-        val viewBinding = ItemCategoryBinding.inflate(layoutInflater,parent, false)
+    var selectedItem: ExpenseCategory? = null
+    set(value) {
+        field = value
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+
+        val viewBinding = ItemCategoryBinding.inflate(layoutInflater, parent, false)
 
         return VH(viewBinding)
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
 
-        with(holder.viewBinding){
+        with(holder.viewBinding) {
             val item = getItem(position)
             tvName.text = item.name
-            imvCategory.visibility = when(item.isSelected){
-                true -> View.VISIBLE
-                else -> View.GONE
+            imvCategory.visibility = when (item.id == selectedItem?.id) {
+                true ->{
+                    cdCategory.isChecked = true
+                    View.VISIBLE
+                }
+                else -> {
+                    cdCategory.isChecked = false
+                    View.GONE
+                }
             }
         }
-
     }
 
-    private fun setOnItemClickListener(listener: (ExpenseCategoryVto) -> Unit){
+    fun setOnItemClickListener(listener: (ExpenseCategory) -> Unit) {
         this.itemClickListener = listener
     }
 
-    inner class VH(val viewBinding: ItemCategoryBinding):
-        RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener{
+    inner class VH(val viewBinding: ItemCategoryBinding) :
+        RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener {
 
         init {
             viewBinding.cdCategory.setOnClickListener(this)
@@ -51,19 +63,21 @@ class CategoryListAdapter(private val layoutInflater: LayoutInflater):
     }
 }
 
-private val DIFF_CALLBACK get() = object : DiffUtil.ItemCallback<ExpenseCategoryVto>(){
-    override fun areItemsTheSame(
-        oldItem: ExpenseCategoryVto,
-        newItem: ExpenseCategoryVto
-    ): Boolean {
-        return oldItem == newItem
-    }
+private val DIFF_CALLBACK
+    get() = object : DiffUtil.ItemCallback<ExpenseCategory>() {
+        override fun areItemsTheSame(
+            oldItem: ExpenseCategory,
+            newItem: ExpenseCategory
+        ): Boolean {
+            return oldItem == newItem
+        }
 
-    override fun areContentsTheSame(
-        oldItem: ExpenseCategoryVto,
-        newItem: ExpenseCategoryVto
-    ): Boolean {
-        return (oldItem.name == newItem.name) &&
-                (oldItem.isSelected == newItem.isSelected)
+        override fun areContentsTheSame(
+            oldItem: ExpenseCategory,
+            newItem: ExpenseCategory
+        ): Boolean {
+            return (oldItem.name == newItem.name) &&
+                    (oldItem.id == newItem.id) &&
+                    (oldItem.img == newItem.img)
+        }
     }
-}

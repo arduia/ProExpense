@@ -14,24 +14,19 @@ data class ExpenseEnt(
     @ColumnInfo(name = "name")
     val name: String?,
 
-    @ColumnInfo(name = "value")
-    val value: Long,
+    @ColumnInfo(name = "amount")
+    val amount: Long,
 
     @ColumnInfo(name = "category")
-    val category: String,
+    val category: Int,
+
+    @ColumnInfo(name = "note")
+    val note: String?,
 
     @ColumnInfo(name = "created_date")
     val created_date: Long,
 
     @ColumnInfo(name = "modified_date")
-    val modified_date: Long,
+    val modified_date: Long
 
-    @ColumnInfo(name = "expense")
-    val expense: String,
-
-    @ColumnInfo(name = "finance_type")
-    val finance_type: String,
-
-    @ColumnInfo(name = "note")
-    val note: String?
 )

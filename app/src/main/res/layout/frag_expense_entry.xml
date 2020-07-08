@@ -116,6 +116,7 @@
                 android:paddingStart="@dimen/margin_material"
                 android:paddingEnd="@dimen/margin_material"
                 android:clipToPadding="false"
+                android:animateLayoutChanges="false"
                 tools:itemCount="1" />
 
             <com.google.android.material.textfield.TextInputLayout

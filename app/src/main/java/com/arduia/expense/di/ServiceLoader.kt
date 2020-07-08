@@ -4,7 +4,8 @@ import android.content.Context
 import com.arduia.expense.data.AccRepository
 import com.arduia.expense.data.AccRepositoryImpl
 import com.arduia.expense.data.local.AccountingDatabase
-import com.arduia.expense.ui.common.CategoryProvider
+import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.mapping.ExpenseMapper
 
 class ServiceLoader private constructor (private val context: Context){
@@ -17,7 +18,8 @@ class ServiceLoader private constructor (private val context: Context){
          AccRepositoryImpl(accDatabase.expenseDao)
 
 
-    fun getCategoryProvider() = CategoryProvider()
+    fun getCategoryProvider(): ExpenseCategoryProvider
+            = ExpenseCategoryProviderImpl(context.resources)
 
     fun getTransactionMapper() = ExpenseMapper(getCategoryProvider())
 

@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.entry
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
@@ -18,8 +18,12 @@ import com.arduia.expense.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
+import com.arduia.expense.ui.common.ExpenseCategory
+import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.google.android.material.chip.Chip
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
@@ -34,9 +38,12 @@ class ExpenseEntryFragment : Fragment(){
 
     private var mainHost: MainHost? = null
 
-
     private val categoryAdapter by lazy {
         CategoryListAdapter(layoutInflater)
+    }
+
+    private val categoryProvider by lazy {
+        ExpenseCategoryProviderImpl(resources)
     }
 
     override fun onCreateView(
@@ -48,6 +55,7 @@ class ExpenseEntryFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
     }
@@ -79,11 +87,10 @@ class ExpenseEntryFragment : Fragment(){
             viewBinding.btnSave.isEnabled = !it.isNullOrEmpty()
         }
 
-        categoryAdapter.submitList(mutableListOf<ExpenseCategoryVto>().apply{
-            add(ExpenseCategoryVto("Single",false))
-            add(ExpenseCategoryVto("is",true))
-            add(ExpenseCategoryVto("Best",false))
-        })
+        categoryAdapter.setOnItemClickListener {
+             viewModel.selectCategory(it)
+        }
+
     }
 
     private fun setupViewModel(){
@@ -125,7 +132,13 @@ class ExpenseEntryFragment : Fragment(){
             viewBinding.edtName.setText(it.name)
             viewBinding.edtAmount.setText(it.amount)
             viewBinding.edtNote.setText(it.note)
+            viewModel.selectCategory(it.category)
         })
+
+        viewModel.selectedCategory.observe(viewLifecycleOwner){
+            categoryAdapter.selectedItem = it
+        }
+
     }
 
 
@@ -157,11 +170,13 @@ class ExpenseEntryFragment : Fragment(){
             return
         }
 
+        val category = categoryAdapter.selectedItem!!
+
         viewModel.saveExpenseData(
             name = name,
             cost = cost.toLongOrNull() ?: throw IllegalStateException("Entry cost is not a Decimal"),
             description = description,
-            category = "Food"
+            category = category.id
         )
 
         clearSpendSheet()
@@ -179,17 +194,19 @@ class ExpenseEntryFragment : Fragment(){
             return
         }
 
+        val category = categoryAdapter.selectedItem!!
+
         viewModel.updateExpenseData(
             id = args.expenseId,
             name = name,
             cost = cost.toLongOrNull() ?: throw IllegalStateException("Entry cost is not a Decimal"),
             description = description,
-            category = "Food"
+            category = category.id
+
         )
 
         clearSpendSheet()
     }
-
 
     private fun clearSpendSheet(){
         viewBinding.edtName.setText("")
@@ -204,9 +221,16 @@ class ExpenseEntryFragment : Fragment(){
         inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        MainScope().launch(Dispatchers.IO){
+            categoryAdapter.submitList(categoryProvider.getCategoryList())
+            viewModel.selectCategory(categoryProvider.getCategoryByID(1))
+        }
+    }
+
     companion object{
         private const val TAG = "ExpenseUpdate"
     }
-
 
 }
