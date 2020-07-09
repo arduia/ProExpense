@@ -18,13 +18,13 @@ import com.arduia.expense.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
-import com.arduia.expense.ui.common.ExpenseCategory
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.MarginItemDecoration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment(){
@@ -49,6 +49,7 @@ class ExpenseEntryFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View?{
         viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
+
         return viewBinding.root
     }
 
@@ -62,13 +63,31 @@ class ExpenseEntryFragment : Fragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        MainScope().launch (Dispatchers.Main){
-            val aniDuration = resources.getInteger(R.integer.entry_pop_up_duration)
-            delay(aniDuration.toLong())
-            categoryAdapter.submitList(categoryProvider.getCategoryList())
-        }
+       fillCategoryLists()
     }
 
+    private fun fillCategoryLists(){
+
+        MainScope().launch (Dispatchers.Main){
+
+            val aniDuration = resources.getInteger(R.integer.entry_pop_up_duration)
+            delay(aniDuration.toLong())
+
+            categoryAdapter.submitList( categoryProvider.getCategoryList())
+
+            //Start Observe Selected Item
+            viewModel.selectedCategory.observe(viewLifecycleOwner){
+                categoryAdapter.selectedItem = it
+
+                //Scroll to Selected Category
+                val index = categoryProvider.getIndexByCategory(it)
+                if(index <0 ) return@observe
+                viewBinding.rvCategory.smoothScrollToPosition(index)
+
+            }
+        }
+
+    }
     private fun setupView() {
         categoryAdapter = CategoryListAdapter(layoutInflater)
         viewBinding.rvCategory.adapter = categoryAdapter
@@ -77,6 +96,7 @@ class ExpenseEntryFragment : Fragment(){
             requireContext().px(4),
             true
         ))
+
         mainHost = requireActivity() as MainHost
 
         viewBinding.btnEntryClose.setOnClickListener {
@@ -92,7 +112,6 @@ class ExpenseEntryFragment : Fragment(){
         }
 
         categoryAdapter.submitList(categoryProvider.getCategoryList().take(1) )
-
     }
 
     private fun setupViewModel(){
@@ -136,10 +155,7 @@ class ExpenseEntryFragment : Fragment(){
             viewModel.selectCategory(it.category)
         })
 
-        viewModel.selectedCategory.observe(viewLifecycleOwner){
-            categoryAdapter.selectedItem = it
-        }
-
+        viewModel.selectCategory(categoryProvider.getCategoryByID(1))
     }
 
 

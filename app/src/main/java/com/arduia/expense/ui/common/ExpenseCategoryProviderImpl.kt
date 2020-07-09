@@ -44,6 +44,10 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
         return categoryList.firstOrNull{ it.id == id }?: throw Exception("Category Not Found $id")
     }
 
+    override fun getIndexByCategory(category: ExpenseCategory): Int {
+        return categoryList.indexOf(category)
+    }
+
     private fun Int.res(): String = resource.getString(this)
 }
 

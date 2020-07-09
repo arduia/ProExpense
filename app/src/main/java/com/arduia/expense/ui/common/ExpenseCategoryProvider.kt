@@ -10,4 +10,6 @@ interface ExpenseCategoryProvider{
     fun getCategoryDrawableByID(id: Int):Int
 
     fun getCategoryByID(id: Int):ExpenseCategory
+
+    fun getIndexByCategory(category: ExpenseCategory):Int
 }
