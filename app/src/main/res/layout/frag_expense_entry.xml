@@ -116,7 +116,6 @@
                 android:paddingStart="@dimen/margin_material"
                 android:paddingEnd="@dimen/margin_material"
                 android:clipToPadding="false"
-                android:animateLayoutChanges="false"
                 tools:itemCount="1" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -153,7 +152,6 @@
                 android:layout_marginTop="@dimen/margin_material"
                 android:layout_marginEnd="@dimen/margin_material"
                 android:layout_marginBottom="@dimen/margin_material"
-                android:enabled="false"
                 android:text="@string/label_save" />
         </RelativeLayout>
     </ScrollView>

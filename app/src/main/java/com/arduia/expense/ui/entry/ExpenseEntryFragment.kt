@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.IllegalStateException
 
-class ExpenseEntryFragment : Fragment(){
+class ExpenseEntryFragment : Fragment() {
 
     private lateinit var viewBinding: FragExpenseEntryBinding
 
@@ -48,7 +48,7 @@ class ExpenseEntryFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View?{
+    ): View? {
         viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
 
         return viewBinding.root
@@ -64,39 +64,43 @@ class ExpenseEntryFragment : Fragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-       fillCategoryLists()
-    }
 
-    private fun fillCategoryLists(){
-
-        MainScope().launch (Dispatchers.Main){
-
+        MainScope().launch(Dispatchers.Main) {
             val aniDuration = resources.getInteger(R.integer.entry_pop_up_duration)
             delay(aniDuration.toLong())
-
-            categoryAdapter.submitList( categoryProvider.getCategoryList())
-
-            //Start Observe Selected Item
-            viewModel.selectedCategory.observe(viewLifecycleOwner){
-                categoryAdapter.selectedItem = it
-
-                //Scroll to Selected Category
-                val index = categoryProvider.getIndexByCategory(it)
-                if(index <0 ) return@observe
-                viewBinding.rvCategory.smoothScrollToPosition(index)
-
-            }
+            afterAnimation()
         }
 
     }
+
+    private fun afterAnimation() {
+
+        categoryAdapter.submitList(categoryProvider.getCategoryList())
+        viewBinding.btnSave.isEnabled = true
+
+        //Start Observe Selected Item
+        viewModel.selectedCategory.observe(viewLifecycleOwner) {
+            categoryAdapter.selectedItem = it
+
+            //Scroll to Selected Category
+            val index = categoryProvider.getIndexByCategory(it)
+            if (index < 0) return@observe
+            viewBinding.rvCategory.smoothScrollToPosition(index)
+
+        }
+
+    }
+
     private fun setupView() {
         categoryAdapter = CategoryListAdapter(layoutInflater)
         viewBinding.rvCategory.adapter = categoryAdapter
-        viewBinding.rvCategory.addItemDecoration(MarginItemDecoration(
-            requireContext().px(4),
-            requireContext().px(4),
-            true
-        ))
+        viewBinding.rvCategory.addItemDecoration(
+            MarginItemDecoration(
+                requireContext().px(4),
+                requireContext().px(4),
+                true
+            )
+        )
 
         mainHost = requireActivity() as MainHost
 
@@ -104,20 +108,18 @@ class ExpenseEntryFragment : Fragment(){
             findNavController().popBackStack()
         }
 
-        viewBinding.edtAmount.addTextChangedListener {
-            viewBinding.btnSave.isEnabled = !it.isNullOrEmpty()
-        }
-
         categoryAdapter.setOnItemClickListener {
-             viewModel.selectCategory(it)
+            viewModel.selectCategory(it)
         }
 
-        categoryAdapter.submitList(categoryProvider.getCategoryList().take(1) )
+        val sampleCategory = categoryProvider.getCategoryList().take(1)
+        categoryAdapter.submitList(sampleCategory)
+
     }
 
-    private fun setupViewModel(){
+    private fun setupViewModel() {
 
-        when{
+        when {
             args.expenseId > 0 -> {
                 // ID exist, Update Mode
                 viewModel.setUpdateMode()
@@ -132,19 +134,19 @@ class ExpenseEntryFragment : Fragment(){
             findNavController().popBackStack()
         })
 
-        viewModel.dataUpdated.observe(viewLifecycleOwner, EventObserver{
+        viewModel.dataUpdated.observe(viewLifecycleOwner, EventObserver {
             mainHost?.showSnackMessage(getString(R.string.label_data_updated))
             findNavController().popBackStack()
         })
 
-        viewModel.entryMode.observe(viewLifecycleOwner, EventObserver{
-            when(it){
+        viewModel.entryMode.observe(viewLifecycleOwner, EventObserver {
+            when (it) {
                 ExpenseEntryMode.UPDATE -> {
                     onUpdateMode()
                 }
 
                 ExpenseEntryMode.INSERT -> {
-                   onInsertMode()
+                    onInsertMode()
                 }
             }
         })
@@ -160,7 +162,7 @@ class ExpenseEntryFragment : Fragment(){
     }
 
 
-    private fun onUpdateMode(){
+    private fun onUpdateMode() {
         viewBinding.tvEntryTitle.text = getString(R.string.label_update_data)
         viewBinding.btnSave.text = getString(R.string.label_update)
         viewBinding.btnSave.setOnClickListener {
@@ -169,7 +171,7 @@ class ExpenseEntryFragment : Fragment(){
         viewModel.observeExpenseData(args.expenseId)
     }
 
-    private fun onInsertMode(){
+    private fun onInsertMode() {
         viewBinding.tvEntryTitle.text = getString(R.string.label_expense_entry)
         viewBinding.btnSave.setOnClickListener {
             saveData()
@@ -177,22 +179,23 @@ class ExpenseEntryFragment : Fragment(){
         viewBinding.edtName.requestFocus()
     }
 
-    private fun saveData(){
+    private fun saveData() {
         val name = viewBinding.edtName.text.toString()
         val cost = viewBinding.edtAmount.text.toString()
         val description = viewBinding.edtNote.text.toString()
 
         //View Level Validation
-        if(cost.isEmpty()){
+        if (cost.isEmpty()) {
             viewBinding.edtAmount.error = "Cost is Empty"
             return
         }
 
-        val category = categoryAdapter.selectedItem!!
+        val category = categoryAdapter.selectedItem ?: return
 
         viewModel.saveExpenseData(
             name = name,
-            cost = cost.toLongOrNull() ?: throw IllegalStateException("Entry cost is not a Decimal"),
+            cost = cost.toLongOrNull()
+                ?: throw IllegalStateException("Entry cost is not a Decimal"),
             description = description,
             category = category.id
         )
@@ -200,14 +203,14 @@ class ExpenseEntryFragment : Fragment(){
         clearSpendSheet()
     }
 
-    private fun updateData(){
+    private fun updateData() {
 
         val name = viewBinding.edtName.text.toString()
         val cost = viewBinding.edtAmount.text.toString()
         val description = viewBinding.edtNote.text.toString()
 
         //View Level Validation
-        if(cost.isEmpty()){
+        if (cost.isEmpty()) {
             viewBinding.edtAmount.error = "Cost is Empty"
             return
         }
@@ -217,7 +220,8 @@ class ExpenseEntryFragment : Fragment(){
         viewModel.updateExpenseData(
             id = args.expenseId,
             name = name,
-            cost = cost.toLongOrNull() ?: throw IllegalStateException("Entry cost is not a Decimal"),
+            cost = cost.toLongOrNull()
+                ?: throw IllegalStateException("Entry cost is not a Decimal"),
             description = description,
             category = category.id
         )
@@ -225,7 +229,7 @@ class ExpenseEntryFragment : Fragment(){
         clearSpendSheet()
     }
 
-    private fun clearSpendSheet(){
+    private fun clearSpendSheet() {
         viewBinding.edtName.setText("")
         viewBinding.edtAmount.setText("")
         viewBinding.edtNote.setText("")
@@ -238,7 +242,7 @@ class ExpenseEntryFragment : Fragment(){
         inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)
     }
 
-    companion object{
+    companion object {
         private const val TAG = "ExpenseUpdate"
     }
 

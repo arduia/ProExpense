@@ -120,6 +120,7 @@ class HomeFragment : NavBaseFragment() {
         recentAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
+
     }
 
     private fun setupViewModel() {
