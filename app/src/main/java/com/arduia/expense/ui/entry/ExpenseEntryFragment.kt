@@ -19,6 +19,7 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
+import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -219,7 +220,6 @@ class ExpenseEntryFragment : Fragment(){
             cost = cost.toLongOrNull() ?: throw IllegalStateException("Entry cost is not a Decimal"),
             description = description,
             category = category.id
-
         )
 
         clearSpendSheet()

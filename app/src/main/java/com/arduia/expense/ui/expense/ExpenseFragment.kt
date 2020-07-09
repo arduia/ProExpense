@@ -37,6 +37,8 @@ class ExpenseFragment : Fragment(){
         requireActivity() as MainHost
     }
 
+    private var detailDialog: ExpenseDetailDialog? = null
+
     @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -127,13 +129,17 @@ class ExpenseFragment : Fragment(){
         })
 
         viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver {
-            ExpenseDetailDialog().apply {
+            //Remove Old Dialog, If Exist
+            detailDialog?.dismiss()
+            //Show selected Data
+            detailDialog = ExpenseDetailDialog().apply {
                 setEditClickListener {expense ->
                     val action = ExpenseFragmentDirections
                         .actionDestExpenseToDestExpenseEntry(expenseId = expense.id)
                     findNavController().navigate(action,createEntryNavOptions())
                 }
-            }.showDetail(parentFragmentManager,it)
+            }
+            detailDialog?.showDetail(parentFragmentManager,it)
         })
 
         viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver {

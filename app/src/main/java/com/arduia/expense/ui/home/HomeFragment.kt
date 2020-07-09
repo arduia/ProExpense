@@ -42,6 +42,7 @@ class HomeFragment : NavBaseFragment() {
         RecentListAdapter(layoutInflater)
     }
 
+    private var detailDialog: ExpenseDetailDialog? = null
 
     private val mainHost by lazy {
         requireActivity() as MainHost
@@ -127,11 +128,14 @@ class HomeFragment : NavBaseFragment() {
         })
 
         viewModel.detailData.observe(viewLifecycleOwner, EventObserver {
-
-            ExpenseDetailDialog().apply {
+            //Remove Old Dialog if double clicked
+            detailDialog?.dismiss()
+            //Show Selected Dialog
+            detailDialog = ExpenseDetailDialog().apply {
                 setEditClickListener(detailEditListener)
                 setDismissListener(detailDismissListener)
-            }.showDetail(parentFragmentManager, it)
+            }
+            detailDialog?.showDetail(parentFragmentManager, it)
             mainHost.hideAddButton()
         })
     }
