@@ -76,6 +76,7 @@ class ExpenseEntryFragment : Fragment() {
     private fun afterAnimation() {
 
         categoryAdapter.submitList(categoryProvider.getCategoryList())
+
         viewBinding.btnSave.isEnabled = true
 
         //Start Observe Selected Item
@@ -84,16 +85,19 @@ class ExpenseEntryFragment : Fragment() {
 
             //Scroll to Selected Category
             val index = categoryProvider.getIndexByCategory(it)
+
             if (index < 0) return@observe
             viewBinding.rvCategory.smoothScrollToPosition(index)
-
         }
 
     }
 
     private fun setupView() {
+
         categoryAdapter = CategoryListAdapter(layoutInflater)
+
         viewBinding.rvCategory.adapter = categoryAdapter
+
         viewBinding.rvCategory.addItemDecoration(
             MarginItemDecoration(
                 requireContext().px(4),
@@ -130,6 +134,7 @@ class ExpenseEntryFragment : Fragment() {
                 viewModel.setSaveMode()
             }
         }
+
         viewModel.dataInserted.observe(viewLifecycleOwner, EventObserver {
             findNavController().popBackStack()
         })
@@ -159,6 +164,7 @@ class ExpenseEntryFragment : Fragment() {
         })
 
         viewModel.selectCategory(categoryProvider.getCategoryByID(1))
+
     }
 
 
@@ -194,8 +200,9 @@ class ExpenseEntryFragment : Fragment() {
 
         viewModel.saveExpenseData(
             name = name,
-            cost = cost.toLongOrNull()
-                ?: throw IllegalStateException("Entry cost is not a Decimal"),
+            cost = cost.toLongOrNull() ?:
+            throw IllegalStateException("Entry cost is not a Decimal"),
+
             description = description,
             category = category.id
         )
@@ -237,6 +244,7 @@ class ExpenseEntryFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         val inputMethodManager =
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
         inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)

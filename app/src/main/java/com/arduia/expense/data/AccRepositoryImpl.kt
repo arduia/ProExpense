@@ -2,6 +2,7 @@ package com.arduia.expense.data
 
 import com.arduia.expense.data.local.*
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 class AccRepositoryImpl(
     private val expenseDao: ExpenseDao
@@ -31,5 +32,20 @@ class AccRepositoryImpl(
 
     override suspend fun deleteAllExpense(list: List<Int>) {
         expenseDao.deleteExpenseByIDs(list)
+    }
+
+    override suspend fun getWeekExpenses(): Flow<List<ExpenseEnt>> {
+        return expenseDao.getWeekExpense(getWeekStartTime())
+    }
+
+    private fun getWeekStartTime(): Long {
+
+        val calendar = Calendar.getInstance()
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+        val startSunDay = (dayOfYear - dayOfWeek) + 1
+
+        calendar.set(Calendar.DAY_OF_YEAR, startSunDay)
+        return calendar.timeInMillis
     }
 }

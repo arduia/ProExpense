@@ -20,6 +20,7 @@ import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.entry.CategoryListAdapter
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
+import java.text.DecimalFormat
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -55,6 +56,8 @@ class HomeFragment : NavBaseFragment() {
     private val detailDismissListener by lazy {
         return@lazy { mainHost.showAddButton() }
     }
+
+    private val totalCostFormat = DecimalFormat("#,###.0")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -138,6 +141,10 @@ class HomeFragment : NavBaseFragment() {
             }
             detailDialog?.showDetail(parentFragmentManager, it)
             mainHost.hideAddButton()
+        })
+
+        viewModel.totalCost.observe(viewLifecycleOwner, Observer {
+            viewBinding.tvTotalValue.text = totalCostFormat.format(it)
         })
     }
 

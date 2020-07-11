@@ -14,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.*
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
@@ -22,6 +24,9 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
     private val _detailData = EventLiveData<ExpenseDetailsVto>()
     val detailData get() = _detailData.asLiveData()
+
+    private val _totalCost = BaseLiveData<Long>()
+    val totalCost get() = _totalCost.asLiveData()
 
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
@@ -53,6 +58,13 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
             accRepository.getRecentExpense().collect {
                 val value = it.map { trans ->  this@HomeViewModel.transactionMapper.mapToTransactionVto(trans) }
                 _recentData.postValue(value)
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO){
+            accRepository.getWeekExpenses().collect {
+                val total = it.map { expenseEnt -> expenseEnt.amount }.sum()
+                _totalCost.postValue(total)
             }
         }
 

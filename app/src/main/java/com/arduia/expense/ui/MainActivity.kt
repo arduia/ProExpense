@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fc_main) as NavHostFragment
         return navHostFragment.navController
     }
+
     private fun setupView(){
 
         viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
