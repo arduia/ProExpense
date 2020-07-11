@@ -2,6 +2,7 @@ package com.arduia.expense.data
 
 import com.arduia.expense.data.local.*
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 import java.util.*
 
 class AccRepositoryImpl(
@@ -41,11 +42,16 @@ class AccRepositoryImpl(
     private fun getWeekStartTime(): Long {
 
         val calendar = Calendar.getInstance()
+
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
         val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
         val startSunDay = (dayOfYear - dayOfWeek) + 1
 
         calendar.set(Calendar.DAY_OF_YEAR, startSunDay)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND,0)
+
         return calendar.timeInMillis
     }
 }

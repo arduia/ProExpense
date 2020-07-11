@@ -20,7 +20,7 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
         return getCategoryByID(id).img
     }
 
-    init {
+    fun init(){
         if(categoryList.isEmpty()){
             categoryList.addAll(getCategoryData())
         }

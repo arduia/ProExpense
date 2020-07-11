@@ -17,7 +17,7 @@ class ExpenseApplication: Application(){
             true -> Timber.plant(Timber.DebugTree())
             false -> Unit
         }
-        ExpenseCategoryProviderImpl(resources)
+        ExpenseCategoryProviderImpl(resources).init()
     }
 
 }

@@ -7,10 +7,12 @@ import android.util.LayoutDirection
 import android.view.View
 import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
+import java.lang.IllegalArgumentException
 
 class SpendGraph @JvmOverloads constructor(context: Context,
                                            attrs: AttributeSet? = null,
-                                           defStyleAttrs: Int = 0): View(context, attrs, defStyleAttrs){
+                                           defStyleAttrs: Int = 0): View(context, attrs, defStyleAttrs),
+    GraphView {
 
     //Whole Custom View
     private val viewF by lazy { createViewFrame() }
@@ -43,9 +45,12 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     /**
      * Interface Fields
      */
-    var spendPoints = emptyList<SpendPoint>()
-    set(value) { field = value; refreshView() }
 
+    var adapter: Adapter? = null
+    set(value) {
+        field = value
+        adapter?.graphView = this
+    }
     /**
      * Framework Callback Methods
      */
@@ -70,7 +75,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         val linePath = Path()
 
         //just store in method reference
-        val list = spendPoints
+        val list =  adapter?.getSpendPoints()
 
         // high of line graph
         val heightF = lineCanvasF.height()
@@ -78,7 +83,10 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         //bottom point of graph
         val bottomF = lineCanvasF.bottom
 
-        list.forEachIndexed { i, point ->
+       list?.forEachIndexed { i, point ->
+
+           //Not Exist Rate
+           if(point.rate < 0) return@forEachIndexed
 
             val xPosition = getDayPositionX(point.day)
 
@@ -101,7 +109,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         drawPath(linePath, linePaint)
 
         //get highest Point
-        val highestPoint  = list.maxBy { it.rate }
+        val highestPoint  = list?.maxBy { it.rate }
 
         //if has draw vertical
         highestPoint?.let {
@@ -214,7 +222,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         graphPaddingBottom = dayNameHeight
     }
 
-    private fun refreshView(){
+    override fun refreshView(){
         invalidate()
     }
 
@@ -281,4 +289,58 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     private fun createViewFrame() =
         RectF(0f, 0f, width.toFloat(), height.toFloat())
 
+    abstract class Adapter {
+
+        private val lists = mutableListOf<SpendPoint>()
+
+        var graphView: GraphView? = null
+
+        internal fun getSpendPoints() = lists
+
+        abstract fun getRate(day: Int): Int
+
+        fun notifyDataChanged(){
+            fetchData()
+            graphView?.refreshView()
+        }
+
+        fun notifyPointChanged(day: Int){
+            updatePointData(day)
+            graphView?.refreshView()
+        }
+
+        private fun updatePointData(day: Int){
+
+            //Just update all data
+            if(lists.size < 7 ){
+                fetchData()
+                return
+            }
+
+            lists[day] = SpendPoint(day, getCalculatedRate(day))
+        }
+
+        private fun fetchData(){
+            //Clear all data to add fresh data
+            lists.clear()
+            (1..7).forEach {
+                lists.add(SpendPoint(it, getCalculatedRate(it)))
+            }
+        }
+
+        private fun getCalculatedRate(day: Int): Float{
+            //GetRaw Rates
+            val rate = getRate(day)
+
+            if(rate !in 0..100) return -1f
+
+            return  rate % 101 /100f
+        }
+
+    }
+
+}
+
+interface GraphView{
+    fun refreshView()
 }

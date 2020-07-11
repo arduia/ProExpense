@@ -28,6 +28,9 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     private val _totalCost = BaseLiveData<Long>()
     val totalCost get() = _totalCost.asLiveData()
 
+    private val _costRates = BaseLiveData<Map<Int,Int>>()
+    val costRate get() = _costRates.asLiveData()
+
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
     }
@@ -42,6 +45,10 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
     private val accMapper by lazy {
         serviceLoader.getTransactionMapper()
+    }
+
+    private val rateCalculator:ExpenseRateCalculator by lazy {
+        ExpenseRateCalculatorImpl()
     }
 
     fun selectItemForDetail(selectedItem: ExpenseVto){
@@ -63,10 +70,21 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
         viewModelScope.launch(Dispatchers.IO){
             accRepository.getWeekExpenses().collect {
-                val total = it.map { expenseEnt -> expenseEnt.amount }.sum()
+
+                val total = it.filter { expenseEnt ->
+                    expenseEnt.category != 1
+                }.map { expenseEnt -> expenseEnt.amount }.sum()
+
                 _totalCost.postValue(total)
+
+                rateCalculator.setWeekExpenses(it)
+
+
+                _costRates post rateCalculator.getRates()
+
             }
         }
 
     }
+
 }

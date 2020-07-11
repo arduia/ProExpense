@@ -1,25 +1,22 @@
 package com.arduia.expense.ui.home
 
-import android.content.DialogInterface
-import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.expense.MainHost
-import com.arduia.graph.SpendPoint
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragHomeBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.entry.CategoryListAdapter
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
-import com.arduia.expense.ui.vto.ExpenseVto
+import timber.log.Timber
 import java.text.DecimalFormat
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -55,6 +52,10 @@ class HomeFragment : NavBaseFragment() {
 
     private val detailDismissListener by lazy {
         return@lazy { mainHost.showAddButton() }
+    }
+
+    private val graphAdapter by lazy {
+        ExpenseGraphAdapter()
     }
 
     private val totalCostFormat = DecimalFormat("#,###.0")
@@ -113,7 +114,8 @@ class HomeFragment : NavBaseFragment() {
             findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
         }
 
-        viewBinding.imgGraph.spendPoints = getSamplePoints()
+        viewBinding.imgGraph.adapter = graphAdapter
+
 
         recentAdapter.setItemInsertionListener {
             //Item inserted
@@ -145,7 +147,12 @@ class HomeFragment : NavBaseFragment() {
 
         viewModel.totalCost.observe(viewLifecycleOwner, Observer {
             viewBinding.tvTotalValue.text = totalCostFormat.format(it)
+            Timber.d("TotalCost -> $it")
         })
+
+        viewModel.costRate.observe(viewLifecycleOwner){
+            graphAdapter.expenseMap = it
+        }
     }
 
     private fun createDetailEditClickListener() = { expense: ExpenseDetailsVto ->
@@ -153,20 +160,6 @@ class HomeFragment : NavBaseFragment() {
             .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
         findNavController().navigate(action, createEntryNavOptions())
     }
-
-
-    private fun getSamplePoints() =
-        mutableListOf<SpendPoint>().apply {
-            add(SpendPoint(1, randomRate()))
-            add(SpendPoint(2, randomRate()))
-            add(SpendPoint(3, randomRate()))
-            add(SpendPoint(4, randomRate()))
-//        add(SpendPoint(5, randomRate()))
-//        add(SpendPoint(6, randomRate()))
-//        add(SpendPoint(7, randomRate()))
-        }
-
-    private fun randomRate() = (Random.nextInt(0..100).toFloat() / 100)
 
     private fun createEntryNavOptions() =
         NavOptions.Builder()
