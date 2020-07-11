@@ -3,19 +3,17 @@ package com.arduia.expense.ui.home
 import android.app.Application
 import androidx.lifecycle.*
 import com.arduia.expense.data.AccRepository
+import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.ServiceLoader
-import com.arduia.expense.ui.common.BaseLiveData
-import com.arduia.expense.ui.common.EventLiveData
-import com.arduia.expense.ui.common.event
-import com.arduia.expense.ui.common.post
+import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.*
 
 class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
@@ -61,30 +59,42 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun onCreate(){
-        viewModelScope.launch(Dispatchers.IO){
-            accRepository.getRecentExpense().collect {
-                val value = it.map { trans ->  this@HomeViewModel.transactionMapper.mapToTransactionVto(trans) }
-                _recentData.postValue(value)
-            }
-        }
-
-        viewModelScope.launch(Dispatchers.IO){
-            accRepository.getWeekExpenses().collect {
-
-                val total = it.filter { expenseEnt ->
-                    expenseEnt.category != 1
-                }.map { expenseEnt -> expenseEnt.amount }.sum()
-
-                _totalCost.postValue(total)
-
-                rateCalculator.setWeekExpenses(it)
-
-
-                _costRates post rateCalculator.getRates()
-
-            }
-        }
-
+        observeRecentExpenses()
+        observeWeekExpenses()
     }
 
+    private fun observeRecentExpenses(){
+        viewModelScope.launch(Dispatchers.IO){
+            accRepository.getRecentExpense().collect(recentFlowCollector)
+        }
+    }
+
+    private fun observeWeekExpenses(){
+        viewModelScope.launch(Dispatchers.IO){
+            accRepository.getWeekExpenses().collect(weekFlowCollector)
+        }
+    }
+
+    private val weekFlowCollector : suspend (List<ExpenseEnt>) -> Unit = {
+
+        val totalAmount = it.filter { expenseEnt ->
+            //OutCome and Income Changes
+            expenseEnt.category != ExpenseCategory.INCOME
+        }.map { expenseEnt -> expenseEnt.amount }.sum()
+
+        _totalCost.postValue(totalAmount)
+
+        rateCalculator.setWeekExpenses(it)
+
+        _costRates post rateCalculator.getRates()
+    }
+
+    private val recentFlowCollector : suspend (List<ExpenseEnt>) -> Unit = {
+                val recentExpenses =
+                    it.map {
+                            trans ->
+                        this@HomeViewModel.transactionMapper.mapToTransactionVto(trans)
+                    }
+                _recentData.postValue(recentExpenses)
+        }
 }
