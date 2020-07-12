@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
 
-        viewBinding =  ActivMainBinding.inflate(layoutInflater)
-        headerBinding =  LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
+        viewBinding = ActivMainBinding.inflate(layoutInflater)
+        headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
 
         setContentView(viewBinding.root)
         setupView()

@@ -65,10 +65,8 @@ class HomeFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = FragHomeBinding.inflate(layoutInflater, null, false).apply {
-            //Once Setup
-            initSetupView()
-        }
+        viewBinding = FragHomeBinding.inflate(layoutInflater, null, false)
+
        return viewBinding.root
     }
 
@@ -89,21 +87,17 @@ class HomeFragment : NavBaseFragment() {
         mainHost.hideAddButton()
     }
 
-    private fun FragHomeBinding.initSetupView() {
-        rvRecent.adapter = recentAdapter
-        rvRecent.layoutManager = LinearLayoutManager(requireContext())
-        rvRecent.addItemDecoration(
+    //Setup View
+    private fun setupView() {
+
+        viewBinding.rvRecent.adapter = recentAdapter
+        viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.rvRecent.addItemDecoration(
             MarginItemDecoration(
                 resources.getDimension(R.dimen.space_between_items).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             )
         )
-
-    }
-
-    //Setup View
-    private fun setupView() {
-
         mainHost.setAddButtonClickListener {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
@@ -116,7 +110,6 @@ class HomeFragment : NavBaseFragment() {
 
         viewBinding.imgGraph.adapter = graphAdapter
 
-
         recentAdapter.setItemInsertionListener {
             //Item inserted
             viewBinding.rvRecent.smoothScrollToPosition(0)
@@ -125,6 +118,7 @@ class HomeFragment : NavBaseFragment() {
         recentAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
+
 
     }
 

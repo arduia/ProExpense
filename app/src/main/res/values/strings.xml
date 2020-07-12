@@ -65,7 +65,6 @@
     <!--    Expense-->
     <string name="label_confirm_delete">Confirm Delete</string>
 
-
     <!--    Settings-->
     <string name="label_language">Language</string>
     <string name="label_mm">MM</string>
@@ -73,5 +72,7 @@
     <string name="label_update_status">Update Status</string>
     <string name="tmp_latest_version">Latest Version!</string>
 
+<!--    About-->
+    <string name="label_about">About</string>
 </resources>
 

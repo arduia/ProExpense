@@ -63,5 +63,9 @@
             android:id="@+id/action_splashFragment_to_dest_home"
             app:destination="@id/dest_home" />
     </fragment>
+    <fragment
+        android:id="@+id/dest_about"
+        android:name="com.arduia.expense.ui.about.AboutFragment"
+        android:label="@string/label_about" />
 
 </navigation>

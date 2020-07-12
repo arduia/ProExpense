@@ -15,5 +15,9 @@
             android:id="@+id/dest_settings"
             android:icon="@drawable/ic_settings"
             android:title="@string/label_settings" />
+        <item
+            android:id="@+id/dest_about"
+            android:icon="@drawable/ic_info"
+            android:title="@string/label_about"/>
     </group>
 </menu>
