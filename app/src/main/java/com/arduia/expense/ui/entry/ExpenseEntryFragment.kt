@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -14,18 +13,16 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
-import com.arduia.expense.MainHost
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
-import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment() {
@@ -192,7 +189,7 @@ class ExpenseEntryFragment : Fragment() {
 
         //View Level Validation
         if (cost.isEmpty()) {
-            viewBinding.edtAmount.error = "Cost is Empty"
+            viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
             return
         }
 
@@ -218,7 +215,7 @@ class ExpenseEntryFragment : Fragment() {
 
         //View Level Validation
         if (cost.isEmpty()) {
-            viewBinding.edtAmount.error = "Cost is Empty"
+            viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
             return
         }
 

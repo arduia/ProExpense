@@ -1,4 +1,4 @@
-package com.arduia.expense
+package com.arduia.expense.ui
 
 import android.view.View
 

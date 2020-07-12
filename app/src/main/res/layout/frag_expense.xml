@@ -1,104 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ml_transaction"
-    tools:context=".ui.MainActivity"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ml_expense"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
 
     <include
-        layout="@layout/layout_toolbar"
         android:id="@+id/tb_expense"
-        app:layout_constraintStart_toStartOf="parent"
+        layout="@layout/layout_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
         android:id="@+id/btn_pop_back"
         style="@style/IconButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="@dimen/margin_material"
         android:src="@drawable/ic_back"
         android:tint="@android:color/darker_gray"
-        android:layout_marginStart="@dimen/margin_material"
+        app:layout_constraintBottom_toBottomOf="@id/tb_expense"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tb_expense"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
+        android:id="@+id/tv_expense_logs"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_expense_logs"
-        app:layout_constraintHorizontal_bias="0"
         android:layout_marginStart="@dimen/margin_material"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:text="@string/label_expense"
-        app:layout_constraintTop_toTopOf="@id/btn_pop_back"
         app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/btn_pop_back"
-        app:layout_constraintEnd_toEndOf="parent"/>
-      <androidx.recyclerview.widget.RecyclerView
+        app:layout_constraintTop_toTopOf="@id/btn_pop_back" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_expense"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:overScrollMode="never"
-        android:scrollbars="vertical"
-        android:paddingBottom="80dp"
         android:clipToPadding="false"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
-        app:layout_constraintTop_toBottomOf="@id/tb_expense"
-        android:id="@+id/rv_expense"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:overScrollMode="never"
+        android:paddingBottom="80dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_expense"
+        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
         tools:listitem="@layout/item_expense" />
+
     <ProgressBar
+        android:id="@+id/pb_loading"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/pb_loading"
-        android:visibility="gone"
         android:progressTint="@color/primaryColor"
-        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_expense"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_expense" />
 
     <FrameLayout
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/fl_confirm_delete"
-        android:visibility="gone"
         android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/backgroundColor"
-        android:layout_height="?attr/actionBarSize">
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <androidx.appcompat.widget.AppCompatImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
             android:id="@+id/btn_cancel_delete"
             style="@style/IconButton"
-            android:src="@drawable/ic_close"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="@dimen/margin_material"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_confirm_delete"
-            android:text="@string/label_confirm_delete"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_gravity="center"/>
-        <androidx.appcompat.widget.AppCompatImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/margin_material"
+            android:src="@drawable/ic_close" />
+
+        <TextView
+            android:id="@+id/tv_confirm_delete"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/label_confirm_delete" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_done_delete"
             style="@style/IconButton"
-            android:src="@drawable/ic_done"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="@dimen/margin_material"
-            android:layout_gravity="end|center_vertical"/>
+            android:src="@drawable/ic_done" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_gravity="bottom"
-            android:background="@android:drawable/divider_horizontal_bright"/>
+            android:background="@android:drawable/divider_horizontal_bright" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

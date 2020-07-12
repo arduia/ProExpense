@@ -8,7 +8,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arduia.expense.MainHost
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragHomeBinding
 import com.arduia.expense.ui.NavBaseFragment
@@ -16,10 +16,7 @@ import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
-import timber.log.Timber
 import java.text.DecimalFormat
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 
 class HomeFragment : NavBaseFragment() {
@@ -123,6 +120,7 @@ class HomeFragment : NavBaseFragment() {
     }
 
     private fun setupViewModel() {
+
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
             recentAdapter.submitList(it)
         })
@@ -146,6 +144,7 @@ class HomeFragment : NavBaseFragment() {
         viewModel.costRate.observe(viewLifecycleOwner){
             graphAdapter.expenseMap = it
         }
+
     }
 
     private fun createDetailEditClickListener() = { expense: ExpenseDetailsVto ->

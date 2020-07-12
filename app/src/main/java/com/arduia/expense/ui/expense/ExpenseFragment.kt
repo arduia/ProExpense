@@ -11,14 +11,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arduia.expense.MainHost
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseBinding
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 
 class ExpenseFragment : Fragment(){

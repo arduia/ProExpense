@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.arduia.expense.MainHost
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.databinding.FragAboutBinding
 import com.arduia.expense.ui.NavBaseFragment
 
@@ -45,6 +45,9 @@ class AboutFragment : NavBaseFragment(){
             mainHost.showSnackMessage("Opens-Source Libraries")
         }
 
+        viewBinding.flContribute.setOnClickListener {
+            mainHost.showSnackMessage("Contribute the app")
+        }
     }
 
 }

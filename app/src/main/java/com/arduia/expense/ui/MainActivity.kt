@@ -11,18 +11,15 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.*
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.arduia.expense.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ActivMainBinding
-import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
-import com.arduia.expense.ui.entry.ExpenseEntryFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 
-class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
+class MainActivity : AppCompatActivity(), NavigationDrawer,
+    MainHost {
 
     private lateinit var viewBinding: ActivMainBinding
 

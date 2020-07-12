@@ -5,6 +5,7 @@
     <string name="label_borrows">Owe</string>
     <string name="label_settings">Settings</string>
     <string name="label_expense">Expense Logs</string>
+    <string name="app_version">v0.1.0 Beta</string>
 
     <!--    Home-->
     <string name="label_log">Activity Log</string>
@@ -52,6 +53,7 @@
     <string name="label_single_item_deleted">Item Deleted</string>
     <string name="label_multi_item_deleted">Items Deleted</string>
     <string name="label_data_updated">Data Updated!</string>
+    <string name="label_cost_empty">Cost is Empty</string>
 
     <!--    Feedback-->
     <string name="label_feedback">Feedback</string>

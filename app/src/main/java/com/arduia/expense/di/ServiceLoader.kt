@@ -3,7 +3,6 @@ package com.arduia.expense.di
 import android.content.Context
 import com.arduia.expense.data.AccRepository
 import com.arduia.expense.data.AccRepositoryImpl
-import com.arduia.expense.data.cache.ExpenseCacheImpl
 import com.arduia.expense.data.local.AccountingDatabase
 import com.arduia.expense.ui.common.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
