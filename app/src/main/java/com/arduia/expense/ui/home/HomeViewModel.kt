@@ -91,8 +91,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
 
     private val recentFlowCollector : suspend (List<ExpenseEnt>) -> Unit = {
                 val recentExpenses =
-                    it.map {
-                            trans ->
+                    it.map { trans ->
                         this@HomeViewModel.transactionMapper.mapToTransactionVto(trans)
                     }
                 _recentData.postValue(recentExpenses)

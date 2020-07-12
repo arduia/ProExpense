@@ -141,7 +141,6 @@ class HomeFragment : NavBaseFragment() {
 
         viewModel.totalCost.observe(viewLifecycleOwner, Observer {
             viewBinding.tvTotalValue.text = totalCostFormat.format(it)
-            Timber.d("TotalCost -> $it")
         })
 
         viewModel.costRate.observe(viewLifecycleOwner){

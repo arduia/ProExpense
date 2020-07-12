@@ -4,12 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.arduia.expense.MainHost
 import com.arduia.expense.databinding.FragAboutBinding
 import com.arduia.expense.ui.NavBaseFragment
 
 class AboutFragment : NavBaseFragment(){
 
     private lateinit var viewBinding: FragAboutBinding
+
+    private val mainHost by lazy {
+        requireActivity() as MainHost
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +37,13 @@ class AboutFragment : NavBaseFragment(){
             openDrawer()
         }
 
+        viewBinding.flPrivacy.setOnClickListener {
+            mainHost.showSnackMessage("Privacy and Policy")
+        }
 
+        viewBinding.flOpenSources.setOnClickListener {
+            mainHost.showSnackMessage("Opens-Source Libraries")
+        }
 
     }
 

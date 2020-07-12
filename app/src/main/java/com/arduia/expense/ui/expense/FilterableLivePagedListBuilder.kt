@@ -9,7 +9,7 @@ import androidx.paging.PositionalDataSource
 import java.util.concurrent.Executor
 
 class FilterableLivePagedListBuilder <Key, Value>
-    (private val dataSourceFactory: DataSource.Factory<Key, Value>,
+    ( private val dataSourceFactory: DataSource.Factory<Key, Value>,
       private val pageConfig: PagedList.Config ){
 
     constructor(dataSource:  DataSource.Factory<Key, Value>, pageSize: Int):

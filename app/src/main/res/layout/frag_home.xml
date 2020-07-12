@@ -165,10 +165,9 @@
                 android:layout_below="@id/tv_total_value"
                 android:layout_centerHorizontal="true"
                 android:padding="4dp" />
+
         </RelativeLayout>
-
     </com.google.android.material.card.MaterialCardView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
