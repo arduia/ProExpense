@@ -24,9 +24,9 @@ import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
 
-    private val viewBinding by lazy { ActivMainBinding.inflate(layoutInflater) }
+    private lateinit var viewBinding: ActivMainBinding
 
-    private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
+    private lateinit var headerBinding: LayoutHeaderBinding
 
     private val navController by lazy {  findNavController() }
 
@@ -46,6 +46,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
+
+        viewBinding =  ActivMainBinding.inflate(layoutInflater)
+        headerBinding =  LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
+
         setContentView(viewBinding.root)
         setupView()
     }
@@ -101,9 +105,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer, MainHost {
                 itemSelectionTask = null
             }
 
-            override fun onDrawerOpened(drawerView: View) {
-
-            }
+            override fun onDrawerOpened(drawerView: View) { }
 
         })
 
