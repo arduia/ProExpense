@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_household"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
+        android:layout_marginTop="100dp"
+        android:id="@+id/imv_configure"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_configure"
-        android:text="Configure"
+        android:id="@+id/tv_welcome"
         style="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_gravity="center"/>
+        android:text = "Configuration"
+        android:layout_below="@id/imv_configure"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/margin_material"/>
 
-</FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_welcome_description"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tv_welcome"
+        android:layout_marginTop="@dimen/margin_material"
+        android:text="Helllo"/>
+
+
+</RelativeLayout>

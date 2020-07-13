@@ -3,15 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_social"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
+        android:layout_marginTop="100dp"
+        android:id="@+id/imv_welcome"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_welcome"
         style="@style/TextAppearance.MaterialComponents.Headline5"
         android:text = "Welcome"
-        android:layout_centerVertical="true"
+        android:layout_below="@id/imv_welcome"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin_large_material"/>
+        android:layout_marginTop="@dimen/margin_material"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_welcome_description"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tv_welcome"
+        android:layout_marginTop="@dimen/margin_material"
+        android:text="Helllo"/>
 
 
 </RelativeLayout>

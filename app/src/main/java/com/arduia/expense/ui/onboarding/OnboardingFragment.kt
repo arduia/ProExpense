@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragOnboardBinding
@@ -35,6 +36,10 @@ class OnboardingFragment : Fragment(){
 
         viewBinding.diDotIndicator.setViewPager2(viewBinding.vpOnboard)
 
+        viewBinding.btnSkip.setOnClickListener {
+            viewBinding.vpOnboard.currentItem = 1
+        }
+
         viewBinding.vpOnboard.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -42,10 +47,18 @@ class OnboardingFragment : Fragment(){
                     0 -> {
                         viewBinding.btnNext.text = getString(R.string.label_next)
                         viewBinding.btnSkip.visibility = View.VISIBLE
+                        viewBinding.btnNext.setOnClickListener {
+                            viewBinding.vpOnboard.currentItem += 1
+                        }
                     }
+
                     else    -> {
                         viewBinding.btnNext.text = getString(R.string.label_start_now)
                         viewBinding.btnSkip.visibility = View.INVISIBLE
+                        viewBinding.btnNext.setOnClickListener {
+                            findNavController().popBackStack()
+                            findNavController().navigate(R.id.dest_home)
+                        }
                     }
                 }
             }
