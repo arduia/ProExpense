@@ -44,9 +44,8 @@ class ExpenseFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?{
-        viewBinding =  FragExpenseBinding.inflate(layoutInflater, null, false).apply {
-            initSetupView()
-        }
+        viewBinding =  FragExpenseBinding.inflate(layoutInflater, null, false)
+
         return viewBinding.root
     }
 
@@ -58,25 +57,18 @@ class ExpenseFragment : Fragment(){
         setupViewModel()
     }
 
-    private fun createViewBinding() =
-        FragExpenseBinding.inflate(layoutInflater, null, false).apply {
-            initSetupView()
-        }
-
-    private fun FragExpenseBinding.initSetupView(){
-         rvExpense.adapter = expenseListAdapter
-         rvExpense.layoutManager = LinearLayoutManager(requireContext())
-         rvExpense.addItemDecoration(
-            MarginItemDecoration(
-                resources.getDimension(R.dimen.space_between_items).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
-            ))
-    }
 
     @ExperimentalCoroutinesApi
     private fun setupView(){
 
         //Setup Transaction Recycler View
+        viewBinding.rvExpense.adapter = expenseListAdapter
+        viewBinding.rvExpense.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.rvExpense.addItemDecoration(
+            MarginItemDecoration(
+                resources.getDimension(R.dimen.space_between_items).toInt(),
+                resources.getDimension(R.dimen.margin_list_item).toInt()
+            ))
 
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
 

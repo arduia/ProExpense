@@ -83,6 +83,8 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         //bottom point of graph
         val bottomF = lineCanvasF.bottom
 
+        var isPointMoved = false
+
        list?.forEachIndexed { i, point ->
 
            //Not Exist Rate
@@ -96,9 +98,11 @@ class SpendGraph @JvmOverloads constructor(context: Context,
             //draw the point
             drawLinePoint(xPosition, yPosition)
 
-            if(i == 0){
+            if(isPointMoved.not()){
                 //move to first position
                 linePath.moveTo(xPosition, yPosition)
+                isPointMoved = true
+
             }else{
                 //line to each position
                 linePath.lineTo(xPosition, yPosition)

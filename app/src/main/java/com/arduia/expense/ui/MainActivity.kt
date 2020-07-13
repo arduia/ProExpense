@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun navigateUpTo(upIntent: Intent?): Boolean {
         // Check navigation has back stack
-        return super.navigateUpTo(upIntent)  or navController.navigateUp()
+        return super.navigateUpTo(upIntent) or navController.navigateUp()
     }
 
     override fun onBackPressed() {
@@ -172,7 +172,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     private fun drawerClosure():Boolean{
 
         val isDrawerOpen = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
-
         if(isDrawerOpen){
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
             //Should Open

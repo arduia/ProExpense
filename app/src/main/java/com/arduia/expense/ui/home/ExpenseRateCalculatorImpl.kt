@@ -12,7 +12,7 @@ class ExpenseRateCalculatorImpl : ExpenseRateCalculator{
     override fun getRates(): Map<Int, Int> {
 
         val dailyCosts = getDailyCosts()
-        val maxCost = dailyCosts.maxBy { it.value }?.value ?:0L
+        val maxCost = dailyCosts.maxBy { it.value }?.value ?: return emptyMap()
         val result = mutableMapOf<Int, Int>()
         //All WEEK
         (1..7).forEach {
