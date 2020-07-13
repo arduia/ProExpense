@@ -7,6 +7,9 @@
     <string name="label_expense">Expense Logs</string>
     <string name="app_version">v0.1.0 Beta</string>
 
+    <string name="label_next">Next</string>
+    <string name="label_start_now">Start Now</string>
+    <string name="label_skip">Skip</string>
     <!--    Home-->
     <string name="label_log">Activity Log</string>
     <string name="label_home">Home</string>

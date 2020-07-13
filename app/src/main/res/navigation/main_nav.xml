@@ -62,10 +62,17 @@
         <action
             android:id="@+id/action_splashFragment_to_dest_home"
             app:destination="@id/dest_home" />
+        <action
+            android:id="@+id/action_splashFragment_to_onboardingFragment"
+            app:destination="@id/dest_onboard" />
     </fragment>
     <fragment
         android:id="@+id/dest_about"
         android:name="com.arduia.expense.ui.about.AboutFragment"
         android:label="@string/label_about" />
+    <fragment
+        android:id="@+id/dest_onboard"
+        android:name="com.arduia.expense.ui.onboarding.OnboardingFragment"
+        android:label="OnboardingFragment" />
 
 </navigation>
