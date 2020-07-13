@@ -45,7 +45,7 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
         add(ExpenseCategory(SOCIAL, (R.string.tmp_social).res(), R.drawable.ic_social))
         add(ExpenseCategory(ENTERTAINMENT, (R.string.tmp_entertainment).res(), R.drawable.ic_entertainment))
         add(ExpenseCategory(TRANSPORTATION, (R.string.tmp_transportation).res(), R.drawable.ic_transportation))
-        add(ExpenseCategory(     CLOTHES, (R.string.tmp_clothes).res(), R.drawable.ic_clothes))
+        add(ExpenseCategory(CLOTHES, (R.string.tmp_clothes).res(), R.drawable.ic_clothes))
         add(ExpenseCategory(HEALTH_CARE, (R.string.tmp_heath_care).res(), R.drawable.ic_healthcare))
         add(ExpenseCategory(EDUCATION, (R.string.tmp_education).res(), R.drawable.ic_education))
         add(ExpenseCategory( DONATION, (R.string.tmp_donation).res(), R.drawable.ic_donations))

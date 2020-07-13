@@ -95,7 +95,7 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
         viewModelScope.launch(Dispatchers.IO){
             val repoData = accRepository.getExpense(id).first()
 
-            val updateData = accMapper.mapToUpdateDetailVto(repoData)
+            val updateData = accMapper.mapToUpdateDetail(repoData)
 
             _expenseData post updateData
         }

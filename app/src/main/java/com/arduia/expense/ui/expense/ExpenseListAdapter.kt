@@ -13,22 +13,22 @@ import com.arduia.expense.ui.vto.ExpenseVto
 import java.lang.Exception
 
 class ExpenseListAdapter constructor(private val context: Context):
-    PagedListAdapter<ExpenseVto, ExpenseListAdapter.TransactionVH>(
+    PagedListAdapter<ExpenseVto, ExpenseListAdapter.ExpenseVH>(
         DIFF_CALLBACK
     ){
 
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
-    private var onItemClickListener: (ExpenseVto) -> Unit = {}
+    private var onItemClickListener: (com.arduia.expense.ui.vto.ExpenseVto) -> Unit = {}
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseVH {
 
         val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
 
-        return TransactionVH(ItemExpenseBinding.bind(itemView), onItemClickListener)
+        return ExpenseVH(ItemExpenseBinding.bind(itemView), onItemClickListener)
     }
 
-    override fun onBindViewHolder(holder: TransactionVH, position: Int) {
+    override fun onBindViewHolder(holder: ExpenseVH, position: Int) {
 
             val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
@@ -41,12 +41,12 @@ class ExpenseListAdapter constructor(private val context: Context):
         }
     }
 
-    fun getItemFromPosition(position: Int):ExpenseVto
+    fun getItemFromPosition(position: Int): com.arduia.expense.ui.vto.ExpenseVto
             = getItem(position) ?: throw Exception("Item Not Found Exception")
 
 
-    inner class TransactionVH(val binding: ItemExpenseBinding,
-                              private val listener: (ExpenseVto) -> Unit):
+    inner class ExpenseVH(val binding: ItemExpenseBinding,
+                          private val listener: (com.arduia.expense.ui.vto.ExpenseVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
         init { binding.cdExpense.setOnClickListener(this)  }
@@ -56,7 +56,7 @@ class ExpenseListAdapter constructor(private val context: Context):
         }
     }
 
-    fun setOnItemClickListener(listener: (ExpenseVto) -> Unit){
+    fun setOnItemClickListener(listener: (com.arduia.expense.ui.vto.ExpenseVto) -> Unit){
         onItemClickListener = listener
     }
 

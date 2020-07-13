@@ -16,7 +16,7 @@ import java.util.*
      private val currencyFormatter: DecimalFormat= DecimalFormat("###,###.#")
  ){
 
-     fun mapToTransactionVto(expenseEnt: ExpenseEnt) =
+     fun mapToExpenseVto(expenseEnt: ExpenseEnt) =
          ExpenseVto(
              id = expenseEnt.expense_id,
              name = expenseEnt.name?:"",
@@ -26,7 +26,7 @@ import java.util.*
              category = categoryProvider.getCategoryDrawableByID(expenseEnt.category)
          )
 
-     fun mapToTransactionDetail(expenseEnt: ExpenseEnt) =
+     fun mapToExpenseDetailVto(expenseEnt: ExpenseEnt) =
          ExpenseDetailsVto(
              id = expenseEnt.expense_id,
              name = expenseEnt.name?: "",

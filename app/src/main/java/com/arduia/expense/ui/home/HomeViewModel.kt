@@ -9,8 +9,6 @@ import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -33,8 +31,8 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
         ServiceLoader.getInstance(app)
     }
 
-    private val transactionMapper by lazy {
-        serviceLoader.getTransactionMapper()
+    private val expenseMapper by lazy {
+        serviceLoader.getExpenseMapper()
     }
 
     private val accRepository: AccRepository by lazy {
@@ -42,7 +40,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     }
 
     private val accMapper by lazy {
-        serviceLoader.getTransactionMapper()
+        serviceLoader.getExpenseMapper()
     }
 
     private val rateCalculator:ExpenseRateCalculator by lazy {
@@ -52,7 +50,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
             val item = accRepository.getExpense(selectedItem.id).first()
-            val detailData = accMapper.mapToTransactionDetail(item)
+            val detailData = accMapper.mapToExpenseDetailVto(item)
             _detailData post event(detailData)
         }
     }
@@ -92,7 +90,7 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     private val recentFlowCollector : suspend (List<ExpenseEnt>) -> Unit = {
                 val recentExpenses =
                     it.map { trans ->
-                        this@HomeViewModel.transactionMapper.mapToTransactionVto(trans)
+                        this@HomeViewModel.expenseMapper.mapToExpenseVto(trans)
                     }
                 _recentData.postValue(recentExpenses)
         }

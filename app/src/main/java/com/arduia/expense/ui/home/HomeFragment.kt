@@ -101,7 +101,7 @@ class HomeFragment : NavBaseFragment() {
 
         viewBinding.btnMenuOpen.setOnClickListener { openDrawer() }
 
-        viewBinding.btnMoreTransaction.setOnClickListener {
+        viewBinding.btnMoreExpenses.setOnClickListener {
             findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
         }
 

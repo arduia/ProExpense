@@ -95,6 +95,6 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
             .map { accMapper.mapToExpenseVto(it) }
 
         return FilterableLivePagedListBuilder(dataSourceFactory,10)
-            .filter { !mSelectedItems.contains(it.id) }
+            .filter {item -> !mSelectedItems.contains(item.id) }
     }
 }
