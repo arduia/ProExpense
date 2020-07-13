@@ -12,30 +12,29 @@
         <item name="colorSurface">@color/surfaceColor</item>
     </style>
 
-<!--    Splash Screen-->
+    <!--    Splash Screen-->
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/primaryColor</item>
     </style>
 
     <style name="RoundedShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerSize">@dimen/corner_radius</item>
+        <item name="cornerSize">@dimen/radius_corner</item>
     </style>
 
     <style name="ImageCard" parent="Widget.MaterialComponents.CardView">
         <item name="android:bottomLeftRadius">60dp</item>
     </style>
 
-<!--    IconButton-->
-
-    <style name="IconImageButton" parent="Widget.AppCompat.ImageButton">
+    <!--    IconButton-->
+    <style name="IconButton" parent="Widget.AppCompat.ImageButton">
         <item name="tint">@color/iconTintColor</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">center</item>
     </style>
 
-<!--    Material Button-->
-    <style name="AccountingButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:height">@dimen/button_height</item>
+    <!--    Material Button-->
+    <style name="ExpenseButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:height">@dimen/height_button</item>
     </style>
 
     <style name="NavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
@@ -43,10 +42,10 @@
         <item name="itemTextColor">@color/nav_text</item>
         <item name="itemIconSize">20dp</item>
         <item name="android:background">@color/backgroundColor</item>
-        <item name="itemHorizontalPadding">@dimen/material_margin_large</item>
+        <item name="itemHorizontalPadding">@dimen/margin_large_material</item>
     </style>
 
-<!--    Material Tab-->
+    <!--    Material Tab-->
     <style name="MaterialTab" parent="Widget.MaterialComponents.TabLayout">
         <item name="tabIndicatorColor">@color/primaryColor</item>
         <item name="tabIndicatorFullWidth">false</item>
@@ -54,5 +53,12 @@
         <item name="tabGravity">center</item>
         <item name="tabUnboundedRipple">false</item>
         <item name="android:background">@color/backgroundColor</item>
+    </style>
+
+    <style name="MaterialChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="checkedIcon">@drawable/ic_done</item>
+        <item name="checkedIconEnabled">true</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="chipCornerRadius">@dimen/radius_corner</item>
     </style>
 </resources>

@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <group android:id="@+id/gp_navigation"
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/gp_navigation"
         android:checkableBehavior="single">
-    <item
-        android:id="@+id/dest_home"
-        android:icon="@drawable/ic_home"
-        android:title="@string/label_home" />
-    <item
-        android:id="@+id/dest_feedback"
-        android:icon="@drawable/ic_feedback"
-        android:title="@string/label_feedback" />
-    <item
-        android:id="@+id/dest_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/label_settings" />
+        <item
+            android:id="@+id/dest_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/label_home" />
+        <item
+            android:id="@+id/dest_feedback"
+            android:icon="@drawable/ic_feedback"
+            android:title="@string/label_feedback" />
+        <item
+            android:id="@+id/dest_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/label_settings" />
+        <item
+            android:id="@+id/dest_about"
+            android:icon="@drawable/ic_info"
+            android:title="@string/label_about"/>
     </group>
 </menu>

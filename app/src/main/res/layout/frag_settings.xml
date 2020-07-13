@@ -1,132 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <include
+        android:id="@+id/tb_settings"
         layout="@layout/layout_toolbar"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/tb_settings"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_drawer_open"
+        style="@style/IconButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/btn_menu"
-        android:src="@drawable/ic_menu"
+        android:layout_marginStart="@dimen/margin_material"
         android:scaleType="center"
-        style="@style/IconImageButton"
-        android:layout_marginStart="@dimen/material_margin"
+        android:src="@drawable/ic_menu"
         app:layout_constraintBottom_toBottomOf="@id/tb_settings"
         app:layout_constraintStart_toStartOf="@id/tb_settings"
-        app:layout_constraintTop_toTopOf="@id/tb_settings"/>
+        app:layout_constraintTop_toTopOf="@id/tb_settings" />
 
     <TextView
+        android:id="@+id/tv_settings"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_settings"
-        app:layout_constraintTop_toTopOf="@id/btn_menu"
-        app:layout_constraintBottom_toBottomOf="@id/btn_menu"
-        app:layout_constraintStart_toEndOf="@id/btn_menu"
+        android:layout_marginStart="@dimen/margin_material"
+        android:text="@string/label_settings"
+        app:layout_constraintBottom_toBottomOf="@id/btn_drawer_open"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_margin"
-        android:text="@string/label_settings"
-        style="@style/TextAppearance.MaterialComponents.Headline6"/>
+        app:layout_constraintStart_toEndOf="@id/btn_drawer_open"
+        app:layout_constraintTop_toTopOf="@id/btn_drawer_open" />
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:id="@+id/nv_settings"
-        app:layout_constraintTop_toBottomOf="@+id/tb_settings"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-       <RelativeLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content">
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/tv_font_level"
-               android:layout_marginTop="@dimen/material_margin_large"
-               android:layout_marginBottom="@dimen/material_margin"
-               android:layout_marginStart="@dimen/material_margin_large"
-               android:layout_alignParentStart="true"
-               android:layout_alignParentTop="true"
-               style="@style/TextAppearance.MaterialComponents.Body1"
-               android:text="@string/label_font">
-           </TextView>
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/tv_eng"
-               android:layout_alignBaseline="@id/tv_font_level"
-               android:layout_toStartOf="@id/sw_font"
-               style="@style/TextAppearance.MaterialComponents.Subtitle2"
-               android:text="@string/label_eng"
-               android:layout_marginEnd="@dimen/material_margin"/>
-           <com.google.android.material.switchmaterial.SwitchMaterial
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/sw_font"
-               app:trackTint="@color/primaryColor"
-               app:thumbTint="@color/primaryDarkColor"
-               android:layout_marginEnd="@dimen/material_margin_large"
-               android:layout_alignEnd="@id/tv_mm"
-               android:layout_alignBaseline="@id/tv_font_level"/>
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/tv_mm"
-               android:text="@string/label_mm"
-               android:textColor="@android:color/darker_gray"
-               style="@style/TextAppearance.MaterialComponents.Subtitle2"
-               android:layout_alignParentEnd="true"
-               android:layout_alignBaseline="@id/tv_font_level"
-               android:layout_marginEnd="@dimen/material_margin"/>
-           <View
-               android:layout_width="match_parent"
-               android:layout_height="1dp"
-               android:id="@+id/dv_font"
-               android:layout_centerHorizontal="true"
-               android:layout_marginStart="@dimen/material_margin"
-               android:layout_marginEnd="@dimen/material_margin"
-               android:background="@android:drawable/divider_horizontal_bright"
-               android:layout_below="@id/tv_font_level"/>
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/tv_update_status"
-               android:text="Update Status"
-               style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintTop_toBottomOf="@+id/tb_settings"
+        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin">
 
-               android:layout_below="@id/dv_font"
-               android:layout_marginTop="@dimen/material_margin_large"
-               android:layout_marginBottom="@dimen/material_margin"
-               android:layout_alignStart="@id/tv_font_level"/>
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/tv_update_value"
-               android:text="Latest version!"
-               android:textColor="@color/primaryColor"
-               style="@style/TextAppearance.MaterialComponents.Body2"
-               android:layout_alignParentEnd="true"
-               android:layout_alignBaseline="@id/tv_update_status"
-               android:layout_marginEnd="@dimen/material_margin"/>
-           <View
-               android:layout_width="match_parent"
-               android:layout_height="1dp"
-               android:id="@+id/dv_update"
-               android:layout_centerHorizontal="true"
-               android:layout_marginStart="@dimen/material_margin"
-               android:layout_marginEnd="@dimen/material_margin"
-               android:background="@android:drawable/divider_horizontal_bright"
-               android:layout_below="@id/tv_update_status"/>
-       </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_language"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="@dimen/margin_large_material"
+                android:layout_marginTop="@dimen/margin_large_material"
+                android:layout_marginBottom="@dimen/margin_material"
+                android:layout_toStartOf="@id/tv_eng"
+                android:text="@string/label_language" />
+
+            <TextView
+                android:id="@+id/tv_eng"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_language"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:layout_toStartOf="@id/sw_font"
+                android:text="@string/label_eng" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/sw_font"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_language"
+                android:layout_alignEnd="@id/tv_mm"
+                android:layout_marginEnd="@dimen/margin_large_material"
+                app:trackTint="@color/primaryColor" />
+
+            <TextView
+                android:id="@+id/tv_mm"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_language"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:text="@string/label_mm"
+                android:textColor="@android:color/darker_gray" />
+
+            <View
+                android:id="@+id/dv_font"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/tv_language"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:background="@android:drawable/divider_horizontal_bright" />
+
+            <TextView
+                android:id="@+id/tv_update_status"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dv_font"
+                android:layout_alignStart="@id/tv_language"
+                android:layout_marginTop="@dimen/margin_large_material"
+                android:layout_marginBottom="@dimen/margin_material"
+                android:text="@string/label_update_status" />
+
+            <TextView
+                android:id="@+id/tv_update_value"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_update_status"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:text="@string/tmp_latest_version"
+                android:textColor="@android:color/darker_gray" />
+
+            <View
+                android:id="@+id/dv_update"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/tv_update_status"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:background="@android:drawable/divider_horizontal_bright" />
+        </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

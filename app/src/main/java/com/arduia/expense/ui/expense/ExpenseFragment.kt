@@ -11,25 +11,18 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseBinding
-import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 
-class ExpenseFragment : NavBaseFragment(){
+class ExpenseFragment : Fragment(){
 
-    @ExperimentalCoroutinesApi
-    private val viewBinding by lazy {
-        FragExpenseBinding.inflate(layoutInflater).apply {
-            setupView()
-            setupViewModel()
-        }
-    }
+    private lateinit var viewBinding: FragExpenseBinding
 
     private val expenseListAdapter by lazy {
         ExpenseListAdapter( requireContext() )
@@ -39,59 +32,76 @@ class ExpenseFragment : NavBaseFragment(){
 
     private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
 
+    private val mainHost by lazy {
+        requireActivity() as MainHost
+    }
+
+    private var detailDialog: ExpenseDetailDialog? = null
+
     @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =  viewBinding.root
+    ): View?{
+        viewBinding =  FragExpenseBinding.inflate(layoutInflater, null, false)
+
+        return viewBinding.root
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        lockNavigation()
+        setupView()
+        setupViewModel()
+    }
 
 
     @ExperimentalCoroutinesApi
-    private fun FragExpenseBinding.setupView(){
+    private fun setupView(){
 
         //Setup Transaction Recycler View
-        rvExpenses.adapter = expenseListAdapter
-        rvExpenses.layoutManager = LinearLayoutManager(requireContext())
-        rvExpenses.addItemDecoration(
+        viewBinding.rvExpense.adapter = expenseListAdapter
+        viewBinding.rvExpense.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.rvExpense.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.spacing_list_item).toInt(),
+                resources.getDimension(R.dimen.space_between_items).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             ))
 
-        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(rvExpenses)
+        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
 
         itemSwipeCallback.setSwipeListener {
             val item = expenseListAdapter.getItemFromPosition(it)
             viewModel.onItemSelect(item)
         }
 
-        expenseListAdapter.setItemClickListener {
+        expenseListAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
 
         //Close the page
-        btnPopBack.setOnClickListener {
+        viewBinding.btnPopBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
-         btnCancelDelete.setOnClickListener {
+        viewBinding.btnCancelDelete.setOnClickListener {
             viewModel.cancelDelete()
         }
 
-         btnDoneDelete.setOnClickListener {
+        viewBinding.btnDoneDelete.setOnClickListener {
             viewModel.deleteConfirm()
         }
-
     }
 
     @ExperimentalCoroutinesApi
-    private fun FragExpenseBinding.setupViewModel(){
+    private fun setupViewModel(){
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer {
             when(it){
-                true ->  pbLoading.visibility = View.VISIBLE
-                false ->  pbLoading.visibility = View.GONE
+                true -> viewBinding.pbLoading.visibility = View.VISIBLE
+                false -> viewBinding.pbLoading.visibility = View.GONE
             }
         })
 
@@ -100,38 +110,41 @@ class ExpenseFragment : NavBaseFragment(){
 
             when(it){
                 //Show Confirm dialog after an item is selected
-                true ->  flConfirmDelete.visibility = View.VISIBLE
+                true -> viewBinding.flConfirmDelete.visibility = View.VISIBLE
 
                 //Hide when none item is selected
                 false ->{
-                     flConfirmDelete.visibility = View.GONE
+                    viewBinding.flConfirmDelete.visibility = View.GONE
                 }
             }
         })
 
         viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver {
-            ExpenseDetailDialog().apply {
+            //Remove Old Dialog, If Exist
+            detailDialog?.dismiss()
+            //Show selected Data
+            detailDialog = ExpenseDetailDialog().apply {
                 setEditClickListener {expense ->
                     val action = ExpenseFragmentDirections
                         .actionDestExpenseToDestExpenseEntry(expenseId = expense.id)
                     findNavController().navigate(action,createEntryNavOptions())
                 }
-            }.showDetail(parentFragmentManager,it)
+            }
+            detailDialog?.showDetail(parentFragmentManager,it)
         })
 
-        viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver{
-            Snackbar.make(root, when{
-                it > 0 ->  "$it Items Deleted!"
-                else -> "$it Item Deleted!"
-            }, 500).show()
+        viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver {
+            val message = when {
+                it > 0 -> "$it ${getString(R.string.label_single_item_deleted)}"
+                else -> "$it ${getString(R.string.label_multi_item_deleted)}"
+            }
+            mainHost.showSnackMessage(message)
         })
     }
 
     @ExperimentalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        lockNavigation()
 
         MainScope().launch(Dispatchers.Main) {
             val animationDuration = resources.getInteger(R.integer.expense_anim_left_duration)

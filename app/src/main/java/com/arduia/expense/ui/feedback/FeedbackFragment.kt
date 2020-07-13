@@ -10,9 +10,7 @@ import com.arduia.expense.ui.NavigationDrawer
 
 class FeedbackFragment : NavBaseFragment(){
 
-
     private lateinit var viewBinding: FragFeedbackBinding
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,9 +27,8 @@ class FeedbackFragment : NavBaseFragment(){
 
         setupView()
     }
-
-    private fun setupView(){
-        viewBinding.btnMenu.setOnClickListener{
+    private fun  setupView(){
+        viewBinding.btnDrawerOpen.setOnClickListener{
             (requireActivity() as? NavigationDrawer)?.openDrawer()
         }
     }

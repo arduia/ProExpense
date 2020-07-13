@@ -17,7 +17,8 @@ class SettingsFragment: NavBaseFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragSettingsBinding.inflate(layoutInflater)
+
+        binding =  FragSettingsBinding.inflate(layoutInflater, container, false)
 
         return binding.root
     }
@@ -28,8 +29,7 @@ class SettingsFragment: NavBaseFragment(){
     }
 
     private fun setupView(){
-
-        binding.btnMenu.setOnClickListener{
+        binding.btnDrawerOpen.setOnClickListener{
             openDrawer()
         }
 

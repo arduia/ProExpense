@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/backgroundColor"
-    app:layout_constraintWidth_max="450dp">
+    app:layout_constraintWidth_max="@dimen/width_minimum_and_margin">
 
-    <ImageButton
-        android:id="@+id/btn_detail_close"
-        style="@style/IconImageButton"
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_close"
+        style="@style/IconButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="@dimen/material_margin"
-        android:layout_marginEnd="@dimen/material_margin"
-        android:src="@drawable/ic_drop_down"
+        android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
         android:scaleType="fitCenter"
+        android:src="@drawable/ic_drop_down"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,100 +26,106 @@
         android:id="@+id/imv_category"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_material"
         android:src="@drawable/ic_food"
         app:civ_border_color="@android:color/white"
         app:civ_border_width="1dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_detail_close" />
+        app:layout_constraintTop_toBottomOf="@id/btn_close" />
+
     <TextView
         android:id="@+id/tv_name_value"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/material_margin"
-        android:text="Sugar"
+        android:layout_marginStart="@dimen/margin_material"
         app:layout_constraintBottom_toBottomOf="@id/imv_category"
         app:layout_constraintStart_toEndOf="@id/imv_category"
-        app:layout_constraintTop_toTopOf="@id/imv_category" />
-    <ImageButton
+        app:layout_constraintTop_toTopOf="@id/imv_category"
+        tools:text="@string/tmp_sugar" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_edit"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/btn_edit"
-        android:src="@drawable/ic_edit"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
         android:background="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintStart_toEndOf="@id/tv_name_value"
-        android:layout_marginStart="@dimen/material_margin"
-        app:layout_constraintTop_toTopOf="@id/tv_name_value"
-        app:layout_constraintBottom_toBottomOf="@id/tv_name_value"
         android:scaleType="center"
-        android:layout_marginEnd="@dimen/material_margin"
+        android:src="@drawable/ic_edit"
+        app:layout_constraintBottom_toBottomOf="@id/tv_name_value"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1"/>
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/tv_name_value"
+        app:layout_constraintTop_toTopOf="@id/tv_name_value" />
 
 
     <TextView
+        android:id="@+id/tv_amount"
+        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:id="@+id/tv_amount"
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        android:text="Amount"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_large_material"
+        android:text="@string/label_amount"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imv_category"
-        android:layout_marginStart="@dimen/material_margin"
-        android:layout_marginTop="@dimen/material_margin_large"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imv_category" />
 
     <TextView
         android:id="@+id/tv_amount_value"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="20,200"
         android:textColor="@color/primaryColor"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_amount"
-        app:layout_constraintStart_toStartOf="@+id/tv_name_value" />
+        app:layout_constraintStart_toStartOf="@+id/tv_name_value"
+        tools:text="@string/tmp_sugar_amount" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/tv_date"
         style="@style/TextAppearance.MaterialComponents.Caption"
-        android:text="Date"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_amount"
-        android:layout_marginTop="@dimen/material_margin_large"
-        app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/material_margin"/>
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_large_material"
+        android:text="@string/label_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_amount" />
+
+    <TextView
         android:id="@+id/tv_date_value"
         style="@style/TextAppearance.MaterialComponents.Body1"
-        android:text="27/2/2018"
-        app:layout_constraintStart_toStartOf="@id/tv_amount_value"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_date" />
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_date"
+        app:layout_constraintStart_toStartOf="@id/tv_amount_value"
+        tools:text="@string/tmp_sugar_date" />
+
+    <TextView
         android:id="@+id/tv_note"
         style="@style/TextAppearance.MaterialComponents.Caption"
-        android:text="Note"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="50dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintTop_toBottomOf="@id/tv_date"
-        android:layout_marginTop="@dimen/material_margin_large"
-        android:layout_marginStart="@dimen/material_margin"/>
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_large_material"
+        android:layout_marginBottom="50dp"
+        android:text="@string/label_note"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_date"
+        app:layout_constraintVertical_bias="0" />
+
+    <TextView
         android:id="@+id/tv_note_value"
         style="@style/TextAppearance.MaterialComponents.Body1"
-        android:text="This is just a test software"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_note"
         app:layout_constraintStart_toStartOf="@id/tv_date_value"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_note" />
+        tools:text="@string/tmp_sugar_note" />
 </androidx.constraintlayout.widget.ConstraintLayout>

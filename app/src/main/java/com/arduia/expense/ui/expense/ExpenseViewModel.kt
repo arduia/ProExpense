@@ -90,7 +90,7 @@ class ExpenseViewModel(app: Application) : AndroidViewModel(app), LifecycleObser
         return livePagedListBuilder!!.build()
     }
 
-    private suspend fun createLivePagedList(): FilterableLivePagedListBuilder<Int,ExpenseVto> {
+    private suspend fun createLivePagedList(): FilterableLivePagedListBuilder<Int, ExpenseVto> {
         val dataSourceFactory = accRepo.getAllExpense()
             .map { accMapper.mapToExpenseVto(it) }
 

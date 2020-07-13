@@ -4,21 +4,20 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.LayoutDirection
-import android.util.Log.d
 import android.view.View
 import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
-import java.lang.IllegalStateException
+import java.lang.IllegalArgumentException
 
 class SpendGraph @JvmOverloads constructor(context: Context,
                                            attrs: AttributeSet? = null,
-                                           defStyleAttrs: Int = 0): View(context, attrs, defStyleAttrs){
+                                           defStyleAttrs: Int = 0): View(context, attrs, defStyleAttrs),
+    GraphView {
 
     //Whole Custom View
     private val viewF by lazy { createViewFrame() }
 
     //Internal Graph Padding between Whole view and Graph Canvas Frame
-
     private var graphPaddingLeft = 0f
     private var graphPaddingTop = 0f
     private var graphPaddingRight = 0f
@@ -47,13 +46,11 @@ class SpendGraph @JvmOverloads constructor(context: Context,
      * Interface Fields
      */
 
-
     var adapter: Adapter? = null
     set(value) {
         field = value
-        adapter?.graph = this
+        adapter?.graphView = this
     }
-
     /**
      * Framework Callback Methods
      */
@@ -77,57 +74,51 @@ class SpendGraph @JvmOverloads constructor(context: Context,
 
         val linePath = Path()
 
+        //just store in method reference
+        val list =  adapter?.getSpendPoints()
+
         // high of line graph
         val heightF = lineCanvasF.height()
 
         //bottom point of graph
         val bottomF = lineCanvasF.bottom
 
-        var oldRate = 0f
-        adapter?.let {
+        var isPointMoved = false
 
-            val startDay = it.startDay()
-            val endDay = it.endDay()
-            if(endDay< startDay) throw IllegalStateException(" start Day $startDay should be lessthan endDay $endDay")
+       list?.forEachIndexed { i, point ->
 
-            for ((count, day) in (it.startDay()..it.endDay()).withIndex()) {
+           //Not Exist Rate
+           if(point.rate < 0) return@forEachIndexed
 
-                val xPosition = getDayPositionX(day)
-                var rate = it.getDayCostRate(day)
+            val xPosition = getDayPositionX(point.day)
 
-                d("SpendGraph", "rate -> $rate count -> $count")
+            //ratio of height for rate
+            val yPosition = bottomF - (point.rate * heightF)
 
-                if(rate == SPEND_RATE_NULL){
-                    rate = oldRate
-                }
-                //ratio of height for rate
-                val yPosition = bottomF - (rate * heightF)
-                //draw the point
-                drawLinePoint(xPosition, yPosition)
+            //draw the point
+            drawLinePoint(xPosition, yPosition)
 
-                if(count == 0){
-                    //move to first position
-                    linePath.moveTo(xPosition, yPosition)
-                }else{
-                    //line to each position
-                    linePath.lineTo(xPosition, yPosition)
-                }
+            if(isPointMoved.not()){
+                //move to first position
+                linePath.moveTo(xPosition, yPosition)
+                isPointMoved = true
 
-                oldRate = rate
+            }else{
+                //line to each position
+                linePath.lineTo(xPosition, yPosition)
             }
         }
 
-            //draw graph line on line Path
-            drawPath(linePath, linePaint)
+        //draw graph line on line Path
+        drawPath(linePath, linePaint)
 
-//            //get highest Point
-//            val highestPoint  = list.maxBy { it.rate }
-//
-//            //if has draw vertical
-//            highestPoint.let {
-//                drawHighestVertical(it)
-//            }
+        //get highest Point
+        val highestPoint  = list?.maxBy { it.rate }
 
+        //if has draw vertical
+        highestPoint?.let {
+            drawHighestVertical(it)
+        }
     }
 
     private fun Canvas.drawHighestVertical(point: SpendPoint){
@@ -235,7 +226,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         graphPaddingBottom = dayNameHeight
     }
 
-    private fun refreshView(){
+    override fun refreshView(){
         invalidate()
     }
 
@@ -302,51 +293,58 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     private fun createViewFrame() =
         RectF(0f, 0f, width.toFloat(), height.toFloat())
 
-    abstract class Adapter{
+    abstract class Adapter {
 
-        internal var graph: SpendGraph ? = null
+        private val lists = mutableListOf<SpendPoint>()
 
-        internal fun getDayCostRate(@SpendDay day: Int):Float{
-            val rate = getCostRate(day)
-            if(rate < 0) return  SPEND_RATE_NULL
-            return (rate % 101)/100f
-         }
+        var graphView: GraphView? = null
 
-        internal fun startDay():Int{
-            val day = getStartDay()
-            if(day !in SPEND_DAY_SUN..SPEND_DAY_SAT) throw IllegalStateException("startDay $day should be between 1 and 7")
-            return day
-        }
+        internal fun getSpendPoints() = lists
 
-        internal fun endDay():Int{
-            val day = getEndDay()
-            if(day !in SPEND_DAY_SUN..SPEND_DAY_SAT) throw IllegalStateException("endDay $day should be between 1..7")
-            return day
-        }
-
-        @SpendDay
-        protected abstract fun getStartDay():Int
-
-        @SpendDay
-        protected abstract fun getEndDay():Int
-
-        protected abstract fun getCostRate(@SpendDay day: Int):Int
+        abstract fun getRate(day: Int): Int
 
         fun notifyDataChanged(){
-            graph?.refreshView()
+            fetchData()
+            graphView?.refreshView()
         }
+
+        fun notifyPointChanged(day: Int){
+            updatePointData(day)
+            graphView?.refreshView()
+        }
+
+        private fun updatePointData(day: Int){
+
+            //Just update all data
+            if(lists.size < 7 ){
+                fetchData()
+                return
+            }
+
+            lists[day] = SpendPoint(day, getCalculatedRate(day))
+        }
+
+        private fun fetchData(){
+            //Clear all data to add fresh data
+            lists.clear()
+            (1..7).forEach {
+                lists.add(SpendPoint(it, getCalculatedRate(it)))
+            }
+        }
+
+        private fun getCalculatedRate(day: Int): Float{
+            //GetRaw Rates
+            val rate = getRate(day)
+
+            if(rate !in 0..100) return -1f
+
+            return  rate % 101 /100f
+        }
+
     }
 
-    companion object{
+}
 
-        private const val SPEND_RATE_NULL = -1f
-
-        const val SPEND_DAY_SUN = 1
-        const val SPEND_DAY_MON = 2
-        const val SPEND_DAY_TUE = 3
-        const val SPEND_DAY_WED = 4
-        const val SPEND_DAY_THU = 5
-        const val SPEND_DAY_FRI = 6
-        const val SPEND_DAY_SAT = 7
-    }
+interface GraphView{
+    fun refreshView()
 }

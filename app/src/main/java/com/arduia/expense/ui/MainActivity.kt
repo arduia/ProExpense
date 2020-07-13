@@ -1,6 +1,7 @@
 package com.arduia.expense.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -8,40 +9,62 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.*
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
-import timber.log.Timber
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.*
 
 
-class MainActivity : AppCompatActivity(), NavigationDrawer {
+class MainActivity : AppCompatActivity(), NavigationDrawer,
+    MainHost {
 
-    private val viewBinding by lazy { ActivMainBinding.inflate(layoutInflater) }
+    private lateinit var viewBinding: ActivMainBinding
 
-    private val headerBinding by lazy { LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0)) }
+    private lateinit var headerBinding: LayoutHeaderBinding
 
-    private val navController by lazy { findNavController(R.id.fc_main) }
+    private val navController by lazy {  findNavController() }
 
     private val navOption by lazy { createNavOption() }
 
     private var itemSelectionTask: (() -> Unit)? = null
 
+    override val defaultSnackBarDuration: Int  by lazy { resources.getInteger(R.integer.duration_short_snack) }
+
+    private var addBtnClickListener: () -> Unit = { }
+
+    //To Listen sna
+    private var lastSnackBar: Snackbar? = null
+
+    private var addFabShowTask: (() -> Unit)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Timber.d("onCreate")
         setTheme(R.style.AppTheme)
-        setContentView(viewBinding.root)
 
+        viewBinding = ActivMainBinding.inflate(layoutInflater)
+        headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
+
+        setContentView(viewBinding.root)
         setupView()
     }
 
-    private fun setupView(){
-        setupNavigation()
+    private fun findNavController(): NavController{
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fc_main) as NavHostFragment
+        return navHostFragment.navController
     }
 
-    private fun setupNavigation(){
+    private fun setupView(){
+
+        viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
+
+        viewBinding.fbMainAdd.setOnClickListener {
+            addBtnClickListener.invoke()
+        }
+
+        viewBinding.fbMainAdd.hide()
 
         viewBinding.nvMain.setupWithNavController(navController)
 
@@ -68,13 +91,9 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
 
         viewBinding.dlMain.addDrawerListener(object: DrawerLayout.DrawerListener{
 
-            override fun onDrawerStateChanged(newState: Int) {
+            override fun onDrawerStateChanged(newState: Int) { }
 
-            }
-
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-
-            }
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {  }
 
             override fun onDrawerClosed(drawerView: View) {
                 //execute selected item
@@ -83,13 +102,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
                 itemSelectionTask = null
             }
 
-            override fun onDrawerOpened(drawerView: View) {
-
-            }
+            override fun onDrawerOpened(drawerView: View) { }
 
         })
 
-        headerBinding.btnBack.setOnClickListener {
+        headerBinding.btnClose.setOnClickListener {
            closeDrawer()
         }
 
@@ -138,7 +155,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
 
     override fun navigateUpTo(upIntent: Intent?): Boolean {
         // Check navigation has back stack
-        return super.navigateUpTo(upIntent)  or navController.navigateUp()
+        return super.navigateUpTo(upIntent) or navController.navigateUp()
     }
 
     override fun onBackPressed() {
@@ -155,7 +172,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
     private fun drawerClosure():Boolean{
 
         val isDrawerOpen = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
-
         if(isDrawerOpen){
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
             //Should Open
@@ -163,6 +179,54 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
         }
         //Should Close
         return true
+    }
+
+    override fun showAddButton() {
+
+        addFabShowTask =  { showAddFab() }
+
+        when(lastSnackBar?.isShown){
+            true -> {
+
+                //Wait for finish snack bar show
+               MainScope().launch {
+                   val delayDuration = (lastSnackBar?.duration ?:0 ) + 300 //Extra 100 for animation
+                   delay(delayDuration.toLong())
+                   addFabShowTask?.invoke()
+               }
+            }
+
+            //null or false
+            else -> {
+
+                //Show Instantly
+                addFabShowTask?.invoke()
+            }
+        }
+    }
+
+    //for easily methods
+    private fun showAddFab(){
+        viewBinding.fbMainAdd.show()
+        viewBinding.fbMainAdd.isClickable = true
+    }
+
+    override fun hideAddButton() {
+        //remove task
+        addFabShowTask = null
+
+        viewBinding.fbMainAdd.isClickable = false
+        viewBinding.fbMainAdd.hide()
+    }
+
+    override fun showSnackMessage(message: String, duration: Int) {
+           lastSnackBar = Snackbar.make(viewBinding.clMain, message, duration).apply {
+               show()
+           }
+    }
+
+    override fun setAddButtonClickListener(listener: () -> Unit) {
+        addBtnClickListener = listener
     }
 
     // Separated function to improve readability
@@ -174,23 +238,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer {
     //
     override fun onDestroy() {
         super.onDestroy()
-        Timber.d("onDestroy")
         itemSelectionTask = {}
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Timber.d("onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.d("onResume")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.d("onStop")
     }
 
 }

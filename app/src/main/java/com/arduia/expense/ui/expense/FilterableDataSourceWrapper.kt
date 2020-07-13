@@ -23,7 +23,7 @@ class FilterableDataSourceWrapper <T>(private val source: PositionalDataSource<T
     }
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<T>) {
-       source.loadRange(params,object : LoadRangeCallback<T>(){
+       source.loadRange(params, object : LoadRangeCallback<T>(){
            override fun onResult(data: MutableList<T>) {
                val result = data.filterList()
                callback.onResult(result)

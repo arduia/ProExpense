@@ -3,26 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dl_main"
-    tools:openDrawer="start"
-    tools:context=".ui.MainActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity" >
 
-    <fragment
-        android:id="@+id/fc_main"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/cl_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/main_nav" />
+        android:layout_height="match_parent">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fc_main"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            tools:layout="@layout/frag_home"
+            app:navGraph="@navigation/main_nav" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fb_main_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_material"
+            android:layout_marginBottom="32dp"
+            android:scaleType="center"
+            android:tint="@android:color/white"
+            app:backgroundTint="@color/primaryColor"
+            android:layout_gravity="end|bottom"
+            app:srcCompat="@drawable/ic_add" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nv_main"
+        style="@style/NavTheme"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        style="@style/NavTheme"
-        android:id="@+id/nv_main"
-        app:menu="@menu/menu_home"
+        android:layout_gravity="start"
         app:headerLayout="@layout/layout_header"
-        android:layout_gravity="start"/>
+        app:menu="@menu/menu_home" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

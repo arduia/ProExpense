@@ -4,4 +4,5 @@
     <integer name="expense_anim_right_duration">400</integer>
     <integer name="entry_pop_drop_duration">360</integer>
     <integer name="entry_pop_up_duration">400</integer>
+    <integer name="duration_short_snack">1000</integer>
 </resources>

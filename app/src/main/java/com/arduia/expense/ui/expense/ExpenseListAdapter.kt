@@ -13,22 +13,22 @@ import com.arduia.expense.ui.vto.ExpenseVto
 import java.lang.Exception
 
 class ExpenseListAdapter constructor(private val context: Context):
-    PagedListAdapter<ExpenseVto, ExpenseListAdapter.ExpenseVH>(
+    PagedListAdapter<ExpenseVto, ExpenseListAdapter.TransactionVH>(
         DIFF_CALLBACK
     ){
 
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
-    private var itemClickListener: (ExpenseVto) -> Unit = {}
+    private var onItemClickListener: (ExpenseVto) -> Unit = {}
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseVH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionVH {
 
         val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
 
-        return ExpenseVH(ItemExpenseBinding.bind(itemView), itemClickListener)
+        return TransactionVH(ItemExpenseBinding.bind(itemView), onItemClickListener)
     }
 
-    override fun onBindViewHolder(holder: ExpenseVH, position: Int) {
+    override fun onBindViewHolder(holder: TransactionVH, position: Int) {
 
             val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
@@ -45,20 +45,19 @@ class ExpenseListAdapter constructor(private val context: Context):
             = getItem(position) ?: throw Exception("Item Not Found Exception")
 
 
-    inner class ExpenseVH(val binding: ItemExpenseBinding,
-                          private val listener: (ExpenseVto) -> Unit):
+    inner class TransactionVH(val binding: ItemExpenseBinding,
+                              private val listener: (ExpenseVto) -> Unit):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
-        init {
-            binding.cdExpense.setOnClickListener(this)
-        }
+
+        init { binding.cdExpense.setOnClickListener(this)  }
 
         override fun onClick(v: View?) {
             listener(getItem(adapterPosition)!!)
         }
     }
 
-    fun setItemClickListener(listener: (ExpenseVto) -> Unit){
-        itemClickListener = listener
+    fun setOnItemClickListener(listener: (ExpenseVto) -> Unit){
+        onItemClickListener = listener
     }
 
 }

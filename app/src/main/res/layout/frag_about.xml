@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/tb_about"
+        layout="@layout/layout_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_drawer_open"
+        style="@style/IconButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="@dimen/margin_material"
+        android:scaleType="center"
+        android:src="@drawable/ic_menu"
+        app:layout_constraintBottom_toBottomOf="@id/tb_about"
+        app:layout_constraintStart_toStartOf="@id/tb_about"
+        app:layout_constraintTop_toTopOf="@id/tb_about" />
+
+    <TextView
+        android:id="@+id/tv_settings"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        android:text="@string/label_about"
+        app:layout_constraintBottom_toBottomOf="@id/btn_drawer_open"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/btn_drawer_open"
+        app:layout_constraintTop_toTopOf="@id/btn_drawer_open" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nv_about"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_about">
+
+        <RelativeLayout
+            android:id="@+id/rl_about"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imv_app"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:scaleType="center"
+                android:tint="@color/primaryColor"
+                app:srcCompat="@drawable/ic_launcher_foreground" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_app_name"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imv_app"
+                android:layout_centerHorizontal="true"
+                android:text="@string/app_name" />
+
+            <TextView
+                android:id="@+id/tv_version"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_app_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_small_material"
+                android:text="@string/app_version"
+                android:textColor="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/tv_about_description"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_version"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_material"
+                android:text="@string/label_about_description" />
+
+            <FrameLayout
+                android:id="@+id/fl_privacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_about_description"
+                android:layout_marginTop="@dimen/margin_large_material"
+                android:foreground="?attr/selectableItemBackground">
+
+                <View
+                    android:id="@+id/dv_privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="@dimen/margin_material"
+                    android:layout_marginEnd="@dimen/margin_material"
+                    android:background="@android:drawable/divider_horizontal_bright" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_policy"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="@dimen/margin_material"
+                    android:layout_marginTop="@dimen/margin_material"
+                    android:layout_marginBottom="@dimen/margin_material"
+                    android:text="@string/label_policy" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_privacy_open"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="@dimen/margin_material"
+                    android:src="@drawable/ic_more_next" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_open_sources"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fl_privacy"
+                android:foreground="?attr/selectableItemBackground">
+
+                <View
+                    android:id="@+id/dv_open_sources"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="@dimen/margin_material"
+                    android:layout_marginEnd="@dimen/margin_material"
+                    android:background="@android:drawable/divider_horizontal_bright" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_open_sources"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="@dimen/margin_material"
+                    android:layout_marginTop="@dimen/margin_material"
+                    android:layout_marginBottom="@dimen/margin_material"
+                    android:text="@string/label_open_source" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_open_source_open"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="@dimen/margin_material"
+                    android:src="@drawable/ic_more_next" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_contribute"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fl_open_sources"
+                android:foreground="?attr/selectableItemBackground">
+
+                <View
+                    android:id="@+id/dv_contribute"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="@dimen/margin_material"
+                    android:layout_marginEnd="@dimen/margin_material"
+                    android:background="@android:drawable/divider_horizontal_bright" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_contribute"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="@dimen/margin_material"
+                    android:layout_marginTop="@dimen/margin_material"
+                    android:layout_marginBottom="@dimen/margin_material"
+                    android:text="@string/label_contribute" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="@dimen/margin_material"
+                    android:src="@drawable/ic_more_next" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/dv_end"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/fl_contribute"
+                android:layout_gravity="top"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material"
+                android:background="@android:drawable/divider_horizontal_bright" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_develop"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dv_end"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_large_material"
+                android:text="@string/label_develop"
+                android:textColor="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/tv_contact_mail"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_develop"
+                android:layout_centerHorizontal="true"
+                android:text="@string/label_develop_mail"
+                android:textColor="@android:color/darker_gray" />
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.common
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +10,21 @@ import com.arduia.expense.databinding.SheetExpenseDetailBinding
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ExpenseDetailDialog: BottomSheetDialogFragment(){
+class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
-    private val viewBinding by lazy { SheetExpenseDetailBinding.inflate(layoutInflater) }
+    private val viewBinding by lazy {
+        SheetExpenseDetailBinding.inflate(
+            layoutInflater,
+            null,
+            false
+        )
+    }
 
     private var expenseDetail: ExpenseDetailsVto? = null
 
     private var editClickListener: (ExpenseDetailsVto) -> Unit = {}
+
+    private var dismissListener: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,17 +36,17 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
         return viewBinding.root
     }
 
-    fun setEditClickListener( listener: (ExpenseDetailsVto)-> Unit){
+    fun setEditClickListener(listener: (ExpenseDetailsVto) -> Unit) {
         editClickListener = listener
     }
 
-    fun showDetail(fm: FragmentManager, detail: ExpenseDetailsVto){
-       expenseDetail = detail
+    fun showDetail(fm: FragmentManager, detail: ExpenseDetailsVto) {
+        expenseDetail = detail
         show(fm, TAG)
     }
 
-    private fun setupView(){
-        viewBinding.btnDetailClose.setOnClickListener {
+    private fun setupView() {
+        viewBinding.btnClose.setOnClickListener {
             dismiss()
         }
 
@@ -48,7 +57,16 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
 
     }
 
-    private fun ExpenseDetailsVto.bindDetailData(){
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        dismissListener?.invoke()
+    }
+
+    fun setDismissListener(listener: () -> Unit) {
+        dismissListener = listener
+    }
+
+    private fun ExpenseDetailsVto.bindDetailData() {
         viewBinding.tvAmountValue.text = amount
         viewBinding.tvDateValue.text = date
         viewBinding.tvNameValue.text = name
@@ -56,7 +74,7 @@ class ExpenseDetailDialog: BottomSheetDialogFragment(){
         viewBinding.imvCategory.setImageResource(category)
     }
 
-    companion object{
+    companion object {
         private const val TAG = "TransactionDetail"
     }
 }

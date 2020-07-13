@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 
-class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app){
+class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
 
     //--Caution-- Should be oneshot execution, Event LiveData
     private val _dataInserted = EventLiveData<Unit>()
@@ -27,6 +27,9 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
 
     private val _expenseData = BaseLiveData<ExpenseUpdateDataVto>()
     val expenseData get() = _expenseData.asLiveData()
+
+    private val _selectedCategory = BaseLiveData<ExpenseCategory>()
+    val selectedCategory get() = _selectedCategory.asLiveData()
 
     private val serviceLoader by lazy {
         ServiceLoader.getInstance(app)
@@ -51,16 +54,14 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
     fun saveExpenseData(name: String,
                         cost:Long,
                         description: String,
-                        category: String){
+                        category: Int){
 
         viewModelScope.launch(Dispatchers.IO) {
             val saveTransaction = ExpenseEnt(
                 name = name,
-                value = cost,
+                amount = cost,
                 note = description,
-                expense = "Income",
                 category = category,
-                finance_type = "CASH",
                 created_date = Date().time,
                 modified_date = Date().time
             )
@@ -69,20 +70,18 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
         }
     }
 
-    fun updateExpenseData(id: Int,
+    fun updateExpenseData( id: Int,
                       name: String,
                       cost:Long,
                       description: String,
-                      category: String){
+                      category: Int){
         viewModelScope.launch(Dispatchers.IO) {
             val saveTransaction = ExpenseEnt(
                 expense_id = id,
                 name = name,
-                value = cost,
+                amount = cost,
                 note = description,
-                expense = "Income",
                 category = category,
-                finance_type = "CASH",
                 created_date = expenseData.value?.date?: throw Exception("Created Date Should not be null"),
                 modified_date = Date().time
             )
@@ -100,5 +99,9 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
 
             _expenseData post updateData
         }
+    }
+
+    fun selectCategory(category: ExpenseCategory){
+        _selectedCategory post category
     }
 }

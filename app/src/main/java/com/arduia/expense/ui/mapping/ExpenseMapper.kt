@@ -1,10 +1,9 @@
 package com.arduia.expense.ui.mapping
 
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.ui.common.ExpenseCategoryProvider
 import com.arduia.expense.ui.entry.ExpenseUpdateDataVto
-import com.arduia.expense.ui.vto.ExpenseCategory
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
-import com.arduia.expense.ui.vto.ExpensePointVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -12,46 +11,41 @@ import java.text.SimpleDateFormat
 import java.util.*
 
  class ExpenseMapper(
+     private val categoryProvider: ExpenseCategoryProvider,
      private val dateFormatter: DateFormat = SimpleDateFormat("dd/MM/YYYY", Locale.getDefault()),
      private val currencyFormatter: DecimalFormat= DecimalFormat("###,###.#")
  ){
 
-     fun mapToExpenseVto(expenseEnt: ExpenseEnt) =
+     fun mapToTransactionVto(expenseEnt: ExpenseEnt) =
          ExpenseVto(
+             id = expenseEnt.expense_id,
+             name = expenseEnt.name?:"",
+             date = dateFormatter.format(expenseEnt.created_date),
+             amount = expenseEnt.amount.formatCostValue(),
+             finance = "",
+             category = categoryProvider.getCategoryDrawableByID(expenseEnt.category)
+         )
+
+     fun mapToTransactionDetail(expenseEnt: ExpenseEnt) =
+         ExpenseDetailsVto(
              id = expenseEnt.expense_id,
              name = expenseEnt.name?: "",
              date = dateFormatter.format(expenseEnt.created_date),
-             amount = expenseEnt.value.formatCostValue(),
-             finance = expenseEnt.finance_type,
-             category = ExpenseCategory.getDrawableByName(expenseEnt.category)
+             amount = expenseEnt.amount.formatCostValue(),
+             finance = "",
+             category = categoryProvider.getCategoryDrawableByID(expenseEnt.category),
+             note = expenseEnt.note?:""
          )
 
-     fun mapToExpenseDetailVto(transaction: ExpenseEnt) =
-         ExpenseDetailsVto(
-             id = transaction.expense_id,
-             name = transaction.name?: "",
-             date = dateFormatter.format(transaction.created_date),
-             amount = transaction.value.formatCostValue(),
-             finance = transaction.finance_type,
-             category = ExpenseCategory.getDrawableByName(transaction.category),
-             note = transaction.note?: ""
-         )
-
-     fun mapToUpdateDetailVto(expenseEnt: ExpenseEnt) =
+     fun mapToUpdateDetail(expenseEnt: ExpenseEnt) =
          ExpenseUpdateDataVto(
              id = expenseEnt.expense_id,
              name = expenseEnt.name ?: "",
              date = expenseEnt.created_date,
-             amount = expenseEnt.value.toString(),
-             category = ExpenseCategory.getCategoryByName(expenseEnt.category),
+             amount = expenseEnt.amount.toString(),
+             category = categoryProvider.getCategoryByID(expenseEnt.category) ,
              note = expenseEnt.note ?: ""
          )
-
-
-     fun mapToGraphPointVto(rawData: Map<Int, Int>) =
-         ExpensePointVto().apply {
-             this.rates =  rawData
-         }
 
      private fun Long.formatCostValue()
          = currencyFormatter.format(this)

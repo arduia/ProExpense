@@ -10,10 +10,11 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseBinding
 import com.arduia.expense.ui.vto.ExpenseVto
 
-class RecentListAdapter constructor( private val layoutInflater: LayoutInflater):
+class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
     ListAdapter<ExpenseVto, RecentListAdapter.VH>(DIFF_CALLBACK){
 
-    private var newItemInsertionListener: ((Unit) -> Unit)? = null
+    // Mostly unregister, so should be able to be claimed.
+    private var onSingleItemInsertListener: ((Unit) -> Unit)? = null
 
     private var onItemClickListener: (ExpenseVto) -> Unit = {}
 
@@ -23,8 +24,6 @@ class RecentListAdapter constructor( private val layoutInflater: LayoutInflater)
 
         return VH( ItemExpenseBinding.bind(itemView ), onItemClickListener)
     }
-
-
 
     override fun onBindViewHolder(holder: VH, position: Int) {
 
@@ -37,38 +36,40 @@ class RecentListAdapter constructor( private val layoutInflater: LayoutInflater)
             imvCategory.setImageResource(item.category)
             tvAmount.text = item.amount
        }
+
     }
 
-    override fun onCurrentListChanged(
-        previousList: MutableList<ExpenseVto>,
-        currentList: MutableList<ExpenseVto>
-    ) {
+    override fun onCurrentListChanged(previousList: MutableList<ExpenseVto>,
+                                      currentList: MutableList<ExpenseVto>){
+
         super.onCurrentListChanged(previousList, currentList)
 
+        //New Insertion should be ignored
         if( currentList.size < 2 || previousList.isEmpty() ) return
 
         val oldItemAtFirst = previousList.first()
         val newItemAtSecond = currentList[1]
 
         if(oldItemAtFirst.id == newItemAtSecond.id ){
-            //There is new Item at First
-            newItemInsertionListener?.invoke(Unit)
+            //There is new Item at First Place
+            onSingleItemInsertListener?.invoke(Unit)
         }
     }
 
-    fun setItemInsertionListener( listener: (Unit)-> Unit){
-        newItemInsertionListener = listener
+    fun setItemInsertionListener(listener: (Unit) -> Unit){
+        onSingleItemInsertListener = listener
     }
 
     fun setOnItemClickListener(listener: (ExpenseVto) -> Unit){
         this.onItemClickListener = listener
     }
 
-    inner class VH(val binding: ItemExpenseBinding, private val listener: (ExpenseVto) -> Unit): RecyclerView.ViewHolder(binding.root), View.OnClickListener{
+    inner class VH(val binding: ItemExpenseBinding,
+                   private val listener: (ExpenseVto) -> Unit):
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
-        init {
-            binding.cdExpense.setOnClickListener(this)
-        }
+        init { binding.cdExpense.setOnClickListener(this) }
+
         override fun onClick(v: View?) {
             listener(getItem(adapterPosition))
         }

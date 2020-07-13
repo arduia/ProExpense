@@ -21,6 +21,6 @@ interface AccRepository {
 
     suspend fun deleteAllExpense(list: List<Int>)
 
-    suspend fun getWeeklyCostRates(): Flow<List<ExpenseEnt>>
+    suspend fun getWeekExpenses(): Flow<List<ExpenseEnt>>
 
 }
