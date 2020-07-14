@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    tools:background="@android:color/white">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imv_app"
@@ -33,22 +33,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_large_material"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
         android:text="Your country and language are detected as:"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/cd_selected_language"
+        app:layout_constraintStart_toStartOf="@id/cd_selected_language"
         app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cd_selected_language"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="@dimen/margin_material"
         android:layout_marginBottom="4dp"
         android:elevation="0dp"
+        app:layout_constraintWidth_max="@dimen/width_minimum"
         app:cardCornerRadius="@dimen/radius_corner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -106,8 +105,8 @@
         android:textAlignment="center"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginEnd="@dimen/margin_material"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/rv_languages"
+        app:layout_constraintStart_toStartOf="@id/rv_languages"
         app:layout_constraintTop_toBottomOf="@id/cd_selected_language" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -117,6 +116,8 @@
         android:clipToPadding="false"
         android:orientation="vertical"
         android:paddingBottom="80dp"
+        android:overScrollMode="never"
+        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -127,12 +128,13 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_continue"
         style="@style/ExpenseButton"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginEnd="@dimen/margin_material"
         android:layout_marginBottom="@dimen/margin_material"
         android:text="Continue"
+        app:layout_constraintWidth_max="@dimen/width_minimum"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
