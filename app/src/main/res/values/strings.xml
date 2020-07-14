@@ -7,9 +7,16 @@
     <string name="label_expense">Expense Logs</string>
     <string name="app_version">v0.1.0 Beta</string>
 
+<!--    Onboarding  Screen-->
     <string name="label_next">Next</string>
     <string name="label_start_now">Start Now</string>
     <string name="label_skip">Skip</string>
+
+    <string name="label_record">Record</string>
+    <string name="label_record_detail">Easily Manage you Finances by recording incomes and expenses</string>
+    <string name="label_statistics">Statistics</string>
+    <string name="label_free">Free</string>
+    <string name="label_free_detail">Download our app and use it for free forever</string>
     <!--    Home-->
     <string name="label_log">Activity Log</string>
     <string name="label_home">Home</string>

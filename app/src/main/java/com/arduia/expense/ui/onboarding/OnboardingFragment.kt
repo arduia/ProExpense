@@ -32,7 +32,8 @@ class OnboardingFragment : Fragment(){
     }
 
     private fun setupView(){
-        viewBinding.vpOnboard.adapter =  OnBoardingPagerAdapter(parentFragmentManager, lifecycle)
+
+        viewBinding.vpOnboard.adapter =  OnBoardingPagerAdapter(layoutInflater)
 
         viewBinding.diDotIndicator.setViewPager2(viewBinding.vpOnboard)
 
