@@ -55,7 +55,7 @@ class HomeFragment : NavBaseFragment() {
         ExpenseGraphAdapter()
     }
 
-    private val totalCostFormat = DecimalFormat("#,###.0")
+    private val totalCostFormat = DecimalFormat("#,##0.0")
 
     override fun onCreateView(
         inflater: LayoutInflater,

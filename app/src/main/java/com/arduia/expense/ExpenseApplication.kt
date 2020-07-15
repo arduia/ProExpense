@@ -13,10 +13,6 @@ class ExpenseApplication: Application(){
 
     override fun onCreate() {
         super.onCreate()
-        when(BuildConfig.DEBUG){
-            true -> Timber.plant(Timber.DebugTree())
-            false -> Unit
-        }
         ExpenseCategoryProviderImpl(resources).init()
     }
 
