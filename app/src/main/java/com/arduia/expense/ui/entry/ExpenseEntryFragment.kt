@@ -9,7 +9,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
@@ -17,6 +16,7 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
+import com.arduia.expense.ui.common.ExpenseCategory
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -66,29 +66,21 @@ class ExpenseEntryFragment : Fragment() {
             val aniDuration = resources.getInteger(R.integer.entry_pop_up_duration)
             delay(aniDuration.toLong())
 
-            afterAnimation()
+            updateCategoryList()
         }
 
     }
 
-    private fun afterAnimation() {
+    private fun updateCategoryList() {
+        val selectedCategory = categoryAdapter.selectedItem
 
-        val categoryList = categoryProvider.getCategoryList()
-        categoryAdapter.submitList(categoryList)
-
-        viewBinding.btnSave.isEnabled = true
-
-        //Start Observe Selected Item
-        viewModel.selectedCategory.observe(viewLifecycleOwner) {
-            categoryAdapter.selectedItem = it
-
-            //Scroll to Selected Category
-            val index = categoryProvider.getIndexByCategory(it)
-
-            if (index < 0) return@observe
-            viewBinding.rvCategory.smoothScrollToPosition(index)
+        selectedCategory?.let {
+            val allCategory = categoryProvider.getCategoryList().toMutableList().apply {
+                remove(it)
+            }
+            allCategory.add(0, it)
+            categoryAdapter.submitList(allCategory)
         }
-
     }
 
     private fun setupView() {
@@ -114,10 +106,6 @@ class ExpenseEntryFragment : Fragment() {
         categoryAdapter.setOnItemClickListener {
             viewModel.selectCategory(it)
         }
-
-        val sampleCategory = categoryProvider.getCategoryList().take(1)
-        categoryAdapter.submitList(sampleCategory)
-
 
     }
 
@@ -145,13 +133,6 @@ class ExpenseEntryFragment : Fragment() {
             findNavController().popBackStack()
         })
 
-//        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
-//             viewBinding.pbLoading.visibility = when(it){
-//                 true -> View.VISIBLE
-//                 false -> View.INVISIBLE
-//             }
-//        })
-
         viewModel.entryMode.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 ExpenseEntryMode.UPDATE -> {
@@ -168,10 +149,17 @@ class ExpenseEntryFragment : Fragment() {
             viewBinding.edtName.setText(it.name)
             viewBinding.edtAmount.setText(it.amount)
             viewBinding.edtNote.setText(it.note)
+
+            //Show Single Item Category First
             viewModel.selectCategory(it.category)
+            categoryAdapter.submitList(listOf(it.category))
         })
 
-        viewModel.selectCategory(categoryProvider.getCategoryByID(1))
+
+        viewModel.selectedCategory.observe(viewLifecycleOwner, Observer {
+            categoryAdapter.selectedItem = it
+        })
+
     }
 
     private fun changeUpdateMode() = with(viewBinding) {
@@ -186,9 +174,17 @@ class ExpenseEntryFragment : Fragment() {
         btnSave.text = getString(R.string.label_save)
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
+
+        //Show Outcome Category First
+        val defaultCategory = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
+        categoryAdapter.submitList(listOf(defaultCategory))
+        viewModel.selectCategory(defaultCategory)
     }
 
     private fun saveData() {
+
+        categoryAdapter.selectedItem?:return
+
         val currentExpenseDetail = getExpenseDetail()
         //View Level Validation
         if (currentExpenseDetail.amount.isEmpty()) {
@@ -199,6 +195,9 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun updateData() {
+
+        categoryAdapter.selectedItem?:return
+
         val currentExpenseDetail = getExpenseDetail()
         //View Level Validation
         if (currentExpenseDetail.amount.isEmpty()) {
