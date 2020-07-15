@@ -175,7 +175,7 @@ class ExpenseEntryFragment : Fragment() {
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
 
-        //Show Outcome Category First
+        //Show Outcome Category FirstK
         val defaultCategory = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
         categoryAdapter.submitList(listOf(defaultCategory))
         viewModel.selectCategory(defaultCategory)

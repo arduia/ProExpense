@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.databinding.FragAboutBinding
+import com.arduia.expense.databinding.FragExpenseBinding
+import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.NavBaseFragment
 
 class AboutFragment : NavBaseFragment(){

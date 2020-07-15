@@ -3,7 +3,7 @@
     <translate android:fromYDelta="0" android:toYDelta="80%p"
         android:duration="@integer/entry_pop_drop_duration"/>
     <alpha android:fromAlpha="1.0"
-        android:duration="200"
-        android:delay="200"
+        android:duration="300"
+        android:delay="300"
         android:toAlpha="0.0"/>
 </set>
