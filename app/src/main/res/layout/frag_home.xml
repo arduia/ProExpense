@@ -135,7 +135,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="@dimen/margin_material"
                 android:layout_marginTop="@dimen/margin_material"
-                android:text="@string/tmp_outcome_a_week"
+                android:text="@string/label_outcome_week"
                 android:textColor="@color/onPrimaryColor" />
 
             <TextView
@@ -155,7 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/tv_total_value"
                 android:layout_toEndOf="@id/tv_total_value"
-                android:text="@string/tmp_currency"
+                android:text="@string/label_mm_currency"
                 android:textColor="@android:color/white" />
 
             <com.arduia.graph.SpendGraph

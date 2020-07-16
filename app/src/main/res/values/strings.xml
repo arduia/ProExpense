@@ -2,32 +2,18 @@
     <!--    Base-->
     <string name="app_name">Pro Expense</string>
     <string name="label_resent">Recent</string>
-    <string name="label_borrows">Owe</string>
     <string name="label_settings">Settings</string>
     <string name="label_expense">Expense Logs</string>
     <string name="app_version">v0.1.0 Beta</string>
 
     <!--    Home-->
-    <string name="label_log">Activity Log</string>
     <string name="label_home">Home</string>
-    <string name="label_total">Total Balance</string>
-    <string name="tmp_outcome_a_week">Outcome a week</string>
-    <string name="tmp_outcome_value">45,600</string>
-    <string name="tmp_currency">MMK</string>
+    <string name="label_outcome_week">Outcome a week</string>
+    <string name="label_mm_currency">MMK</string>
     <string name="label_recent">Recent</string>
 
     <!--    Expense Detail-->
     <string name="label_date">Date</string>
-    <string name="tmp_sugar">Sugar</string>
-    <string name="tmp_sugar_amount">5,00</string>
-    <string name="tmp_sugar_date">25/7/2019</string>
-    <string name="tmp_sugar_note">Sugar has to open with knife</string>
-
-    <!--    Owe-->
-    <string name="label_owe_total">Total</string>
-    <string name="label_owe_log">Log</string>
-    <string name="label_owe_people">People</string>
-    <string name="label_owe_name">Name*</string>
 
     <!--    Entry Sheet-->
     <string name="label_spend">Spend</string>
@@ -38,18 +24,19 @@
     <string name="label_update">Update</string>
     <string name="label_update_data">Update Data</string>
     <string name="label_expense_entry">Expense Entry</string>
-    <string name="tmp_income">Income</string>
-    <string name="tmp_social">Social</string>
-    <string name="tmp_clothes">Clothes</string>
-    <string name="tmp_household">HouseHold</string>
-    <string name="tmp_food">Food</string>
-    <string name="tmp_outcome">Outcome</string>
-    <string name="tmp_donation">Donation</string>
-    <string name="tmp_utilities">Utilities</string>
-    <string name="tmp_entertainment">Entertainment</string>
-    <string name="tmp_education">Education</string>
-    <string name="tmp_transportation">Transportation</string>
-    <string name="tmp_heath_care">Health Care</string>
+
+    <string name="label_income">Income</string>
+    <string name="label_social">Social</string>
+    <string name="label_clothes">Clothes</string>
+    <string name="label_household">HouseHold</string>
+    <string name="label_food">Food</string>
+    <string name="label_outcome">Outcome</string>
+    <string name="label_donation">Donation</string>
+    <string name="label_entertainment">Entertainment</string>
+    <string name="label_education">Education</string>
+    <string name="label_transportation">Transportation</string>
+    <string name="label_health_care">Health Care</string>
+
     <string name="label_single_item_deleted">Item Deleted</string>
     <string name="label_multi_item_deleted">Items Deleted</string>
     <string name="label_data_updated">Data Updated!</string>
