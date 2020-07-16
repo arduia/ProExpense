@@ -33,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/imv_category"
+            android:textAlignment="viewStart"
             android:layout_marginStart="@dimen/margin_material"
             android:layout_marginTop="@dimen/margin_small_material"
             android:layout_marginEnd="@dimen/margin_small_material"
