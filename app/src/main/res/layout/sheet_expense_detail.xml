@@ -33,6 +33,7 @@
         app:civ_shadow="true"
         app:civ_shadow_color="@android:color/darker_gray"
         app:civ_shadow_radius="0.5dp"
+        android:scaleType="centerInside"
         tools:srcCompat="@drawable/ic_food"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_close"/>

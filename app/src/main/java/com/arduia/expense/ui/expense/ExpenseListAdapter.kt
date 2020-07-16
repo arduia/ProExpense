@@ -35,7 +35,6 @@ class ExpenseListAdapter constructor(private val context: Context):
             with(holder.binding){
                 tvName.text = item.name
                 tvDate.text = item.date
-                tvFinanceType.text = item.finance
                 tvAmount.text = item.amount
                 imvCategory.setImageResource(item.category)
         }

@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/imv_category"
             android:textAlignment="viewStart"
+            tools:text="Education"
             android:layout_marginStart="@dimen/margin_material"
             android:layout_marginTop="@dimen/margin_small_material"
             android:layout_marginEnd="@dimen/margin_small_material"
@@ -64,20 +65,13 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tv_name"
+            tools:text="900"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/margin_material"
             android:maxLength="15"
             android:textColor="@color/primaryColor" />
 
-        <TextView
-            android:id="@+id/tv_finance_type"
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tv_date"
-            android:layout_alignEnd="@id/tv_amount"
-            android:maxLength="6" />
     </RelativeLayout>
 
 </com.google.android.material.card.MaterialCardView>

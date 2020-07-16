@@ -48,7 +48,7 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
         add(ExpenseCategory(CLOTHES, (R.string.label_clothes).res(), R.drawable.ic_clothes))
         add(ExpenseCategory(HEALTH_CARE, (R.string.label_health_care).res(), R.drawable.ic_healthcare))
         add(ExpenseCategory(EDUCATION, (R.string.label_education).res(), R.drawable.ic_education))
-        add(ExpenseCategory( DONATION, (R.string.label_donation).res(), R.drawable.ic_donations))
+        add(ExpenseCategory( DONATION, (R.string.label_donation).res(), R.drawable.ic_donation))
     }
 
     override fun getCategoryByID(id: Int): ExpenseCategory {

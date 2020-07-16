@@ -32,7 +32,6 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
         with(holder.binding){
             tvName.text = item.name
             tvDate.text = item.date
-            tvFinanceType.text = item.finance
             imvCategory.setImageResource(item.category)
             tvAmount.text = item.amount
        }
