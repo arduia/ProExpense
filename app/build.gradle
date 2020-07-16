@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
 
-        applicationId "com.arduia.myacc"
+        applicationId "com.arduia.expense"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -98,7 +98,7 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 //    Extra
     implementation "com.google.android.material:material:$material_version"
-    implementation "de.hdodenhof:circleimageview:$circle_image_version"
+    implementation 'com.mikhaellopez:circularimageview:4.2.0'
 //    DI
     implementation "com.google.dagger:hilt-android:$digger_hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$digger_hilt_version"

@@ -145,7 +145,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_spent_week"
                 android:layout_centerHorizontal="true"
-                tools:text="@string/tmp_outcome_value"
                 android:textColor="@color/onPrimaryColor" />
 
             <TextView

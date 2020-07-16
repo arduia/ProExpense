@@ -21,6 +21,12 @@
         <item name="cornerSize">@dimen/radius_corner</item>
     </style>
 
+    <style name="CircleImageView.Overlay" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">27.5dp</item>
+        <item name="borderWidth">2dp</item>
+    </style>
+
     <style name="ImageCard" parent="Widget.MaterialComponents.CardView">
         <item name="android:bottomLeftRadius">60dp</item>
     </style>
