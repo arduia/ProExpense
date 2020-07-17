@@ -22,17 +22,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/imv_category"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginTop="@dimen/margin_material"
-        android:src="@drawable/ic_food"
-        app:civ_border_color="@android:color/white"
         app:civ_border_width="1dp"
+        app:civ_border_color="@android:color/white"
+        app:civ_shadow="true"
+        app:civ_shadow_color="@android:color/darker_gray"
+        app:civ_shadow_radius="0.5dp"
+        android:scaleType="centerInside"
+        tools:srcCompat="@drawable/ic_food"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_close" />
+        app:layout_constraintTop_toBottomOf="@id/btn_close"/>
 
     <TextView
         android:id="@+id/tv_name_value"
@@ -43,7 +47,7 @@
         app:layout_constraintBottom_toBottomOf="@id/imv_category"
         app:layout_constraintStart_toEndOf="@id/imv_category"
         app:layout_constraintTop_toTopOf="@id/imv_category"
-        tools:text="@string/tmp_sugar" />
+        tools:text="Suger" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_edit"
@@ -82,7 +86,7 @@
         android:textColor="@color/primaryColor"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_amount"
         app:layout_constraintStart_toStartOf="@+id/tv_name_value"
-        tools:text="@string/tmp_sugar_amount" />
+        tools:text=" 35,00" />
 
     <TextView
         android:id="@+id/tv_date"
@@ -104,7 +108,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_date"
         app:layout_constraintStart_toStartOf="@id/tv_amount_value"
-        tools:text="@string/tmp_sugar_date" />
+        tools:text="25/2/2020" />
 
     <TextView
         android:id="@+id/tv_note"
@@ -127,5 +131,5 @@
         android:layout_height="wrap_content"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_note"
         app:layout_constraintStart_toStartOf="@id/tv_date_value"
-        tools:text="@string/tmp_sugar_note" />
+        tools:text="Somethings.." />
 </androidx.constraintlayout.widget.ConstraintLayout>

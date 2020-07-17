@@ -1,5 +1,6 @@
 package com.arduia.expense.ui
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -11,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.*
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
@@ -241,4 +243,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         itemSelectionTask = {}
     }
 
+    override fun attachBaseContext(newBase: Context?) {
+       val updatedContext = newBase?.updateResource("my")
+        super.attachBaseContext(updatedContext)
+    }
 }

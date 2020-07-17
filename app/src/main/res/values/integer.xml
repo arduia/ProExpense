@@ -2,7 +2,8 @@
 <resources>
     <integer name="expense_anim_left_duration">250</integer>
     <integer name="expense_anim_right_duration">400</integer>
-    <integer name="entry_pop_drop_duration">360</integer>
+    <integer name="entry_pop_drop_duration">600</integer>
     <integer name="entry_pop_up_duration">400</integer>
     <integer name="duration_short_snack">1000</integer>
+    <integer name="default_expense_id">-1</integer>
 </resources>

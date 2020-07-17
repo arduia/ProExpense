@@ -6,7 +6,7 @@
     android:id="@+id/ml_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:theme="@style/AppTheme">
+    tools:background="@android:color/white">
 
     <include
         android:id="@+id/toolbar"
@@ -59,7 +59,7 @@
         style="@style/IconButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/ic_navigation_next"
+        android:src="@drawable/ic_nav_next"
         android:tint="@color/primaryColor"
         app:layout_constraintBottom_toBottomOf="@id/dv_recent"
         app:layout_constraintEnd_toEndOf="@id/dv_recent"
@@ -135,7 +135,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="@dimen/margin_material"
                 android:layout_marginTop="@dimen/margin_material"
-                android:text="@string/tmp_outcome_a_week"
+                android:text="@string/label_outcome_week"
                 android:textColor="@color/onPrimaryColor" />
 
             <TextView
@@ -145,7 +145,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_spent_week"
                 android:layout_centerHorizontal="true"
-                android:text="@string/tmp_outcome_value"
                 android:textColor="@color/onPrimaryColor" />
 
             <TextView
@@ -155,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/tv_total_value"
                 android:layout_toEndOf="@id/tv_total_value"
-                android:text="@string/tmp_currency"
+                android:text="@string/label_mm_currency"
                 android:textColor="@android:color/white" />
 
             <com.arduia.graph.SpendGraph

@@ -9,7 +9,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
@@ -17,13 +16,14 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.EventObserver
+import com.arduia.expense.ui.common.ExpenseCategory
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 
 class ExpenseEntryFragment : Fragment() {
 
@@ -65,28 +65,22 @@ class ExpenseEntryFragment : Fragment() {
         MainScope().launch(Dispatchers.Main) {
             val aniDuration = resources.getInteger(R.integer.entry_pop_up_duration)
             delay(aniDuration.toLong())
-            afterAnimation()
+
+            updateCategoryList()
         }
 
     }
 
-    private fun afterAnimation() {
+    private fun updateCategoryList() {
+        val selectedCategory = categoryAdapter.selectedItem
 
-        categoryAdapter.submitList(categoryProvider.getCategoryList())
-
-        viewBinding.btnSave.isEnabled = true
-
-        //Start Observe Selected Item
-        viewModel.selectedCategory.observe(viewLifecycleOwner) {
-            categoryAdapter.selectedItem = it
-
-            //Scroll to Selected Category
-            val index = categoryProvider.getIndexByCategory(it)
-
-            if (index < 0) return@observe
-            viewBinding.rvCategory.smoothScrollToPosition(index)
+        selectedCategory?.let {
+            val allCategory = categoryProvider.getCategoryList().toMutableList().apply {
+                remove(it)
+            }
+            allCategory.add(0, it)
+            categoryAdapter.submitList(allCategory)
         }
-
     }
 
     private fun setupView() {
@@ -113,22 +107,20 @@ class ExpenseEntryFragment : Fragment() {
             viewModel.selectCategory(it)
         }
 
-        val sampleCategory = categoryProvider.getCategoryList().take(1)
-        categoryAdapter.submitList(sampleCategory)
-
     }
 
     private fun setupViewModel() {
 
-        when {
-            args.expenseId > 0 -> {
-                // ID exist, Update Mode
-                viewModel.setUpdateMode()
-            }
+        val defaultExpenseID =  resources.getInteger(R.integer.default_expense_id)
 
-            args.expenseId <= 0 -> {
+        when (args.expenseId == defaultExpenseID) {
+            true -> {
                 // ID is default, Save Mode
                 viewModel.setSaveMode()
+            }
+            false -> {
+                // ID exist, Update Mode
+                viewModel.setUpdateMode()
             }
         }
 
@@ -144,11 +136,11 @@ class ExpenseEntryFragment : Fragment() {
         viewModel.entryMode.observe(viewLifecycleOwner, EventObserver {
             when (it) {
                 ExpenseEntryMode.UPDATE -> {
-                    onUpdateMode()
+                    changeUpdateMode()
                 }
 
                 ExpenseEntryMode.INSERT -> {
-                    onInsertMode()
+                    changeSaveMode()
                 }
             }
         })
@@ -157,91 +149,85 @@ class ExpenseEntryFragment : Fragment() {
             viewBinding.edtName.setText(it.name)
             viewBinding.edtAmount.setText(it.amount)
             viewBinding.edtNote.setText(it.note)
+
+            //Show Single Item Category First
             viewModel.selectCategory(it.category)
+            categoryAdapter.submitList(listOf(it.category))
         })
 
-        viewModel.selectCategory(categoryProvider.getCategoryByID(1))
+
+        viewModel.selectedCategory.observe(viewLifecycleOwner, Observer {
+            categoryAdapter.selectedItem = it
+        })
 
     }
 
-
-    private fun onUpdateMode() {
-        viewBinding.tvEntryTitle.text = getString(R.string.label_update_data)
-        viewBinding.btnSave.text = getString(R.string.label_update)
-        viewBinding.btnSave.setOnClickListener {
-            updateData()
-        }
-        viewModel.observeExpenseData(args.expenseId)
+    private fun changeUpdateMode() = with(viewBinding) {
+        tvEntryTitle.text = getString(R.string.label_update_data)
+        btnSave.text = getString(R.string.label_update)
+        btnSave.setOnClickListener { updateData() }
+        viewModel.setExpenseData(args.expenseId)
     }
 
-    private fun onInsertMode() {
-        viewBinding.tvEntryTitle.text = getString(R.string.label_expense_entry)
-        viewBinding.btnSave.setOnClickListener {
-            saveData()
-        }
-        viewBinding.edtName.requestFocus()
+    private fun changeSaveMode() = with(viewBinding) {
+        tvEntryTitle.text = getString(R.string.label_expense_entry)
+        btnSave.text = getString(R.string.label_save)
+        btnSave.setOnClickListener { saveData() }
+        edtName.requestFocus()
+
+        //Show Outcome Category FirstK
+        val defaultCategory = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
+        categoryAdapter.submitList(listOf(defaultCategory))
+        viewModel.selectCategory(defaultCategory)
     }
 
     private fun saveData() {
-        val name = viewBinding.edtName.text.toString()
-        val cost = viewBinding.edtAmount.text.toString()
-        val description = viewBinding.edtNote.text.toString()
 
+        categoryAdapter.selectedItem?:return
+
+        val currentExpenseDetail = getExpenseDetail()
         //View Level Validation
-        if (cost.isEmpty()) {
+        if (currentExpenseDetail.amount.isEmpty()) {
             viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
             return
         }
-
-        val category = categoryAdapter.selectedItem ?: return
-
-        viewModel.saveExpenseData(
-            name = name,
-            cost = cost.toLongOrNull() ?:
-            throw IllegalStateException("Entry cost is not a Decimal"),
-
-            description = description,
-            category = category.id
-        )
-
-        clearSpendSheet()
+        viewModel.saveExpenseData(currentExpenseDetail)
     }
 
     private fun updateData() {
 
+        categoryAdapter.selectedItem?:return
+
+        val currentExpenseDetail = getExpenseDetail()
+        //View Level Validation
+        if (currentExpenseDetail.amount.isEmpty()) {
+            viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
+            return
+        }
+        viewModel.updateExpenseData(currentExpenseDetail)
+    }
+
+    private fun getExpenseDetail(): ExpenseDetailsVto{
+
         val name = viewBinding.edtName.text.toString()
         val cost = viewBinding.edtAmount.text.toString()
         val description = viewBinding.edtNote.text.toString()
 
-        //View Level Validation
-        if (cost.isEmpty()) {
-            viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
-            return
-        }
+        val category = categoryAdapter.selectedItem ?: throw Exception("Category Item is not selected!")
 
-        val category = categoryAdapter.selectedItem!!
-
-        viewModel.updateExpenseData(
-            id = args.expenseId,
-            name = name,
-            cost = cost.toLongOrNull()
-                ?: throw IllegalStateException("Entry cost is not a Decimal"),
-            description = description,
-            category = category.id
+        return ExpenseDetailsVto(
+            args.expenseId,
+            name,
+            "",
+            category.id,
+            cost,
+            "",
+            description
         )
-
-        clearSpendSheet()
-    }
-
-    private fun clearSpendSheet() {
-        viewBinding.edtName.setText("")
-        viewBinding.edtAmount.setText("")
-        viewBinding.edtNote.setText("")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
         val inputMethodManager =
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
         inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)

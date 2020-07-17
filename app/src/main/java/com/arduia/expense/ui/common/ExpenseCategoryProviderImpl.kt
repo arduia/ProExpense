@@ -38,17 +38,17 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
     }
 
     private fun getCategoryData() = mutableListOf<ExpenseCategory>().apply {
-        add(ExpenseCategory(OUTCOME, (R.string.tmp_outcome).res(), R.drawable.ic_outcome ))
-        add(ExpenseCategory(INCOME, (R.string.tmp_income).res(), R.drawable.ic_income))
-        add(ExpenseCategory(FOOD, (R.string.tmp_food).res(), R.drawable.ic_food))
-        add(ExpenseCategory(HOUSEHOLD, (R.string.tmp_household).res(), R.drawable.ic_household))
-        add(ExpenseCategory(SOCIAL, (R.string.tmp_social).res(), R.drawable.ic_social))
-        add(ExpenseCategory(ENTERTAINMENT, (R.string.tmp_entertainment).res(), R.drawable.ic_entertainment))
-        add(ExpenseCategory(TRANSPORTATION, (R.string.tmp_transportation).res(), R.drawable.ic_transportation))
-        add(ExpenseCategory(CLOTHES, (R.string.tmp_clothes).res(), R.drawable.ic_clothes))
-        add(ExpenseCategory(HEALTH_CARE, (R.string.tmp_heath_care).res(), R.drawable.ic_healthcare))
-        add(ExpenseCategory(EDUCATION, (R.string.tmp_education).res(), R.drawable.ic_education))
-        add(ExpenseCategory( DONATION, (R.string.tmp_donation).res(), R.drawable.ic_donations))
+        add(ExpenseCategory(OUTCOME, (R.string.label_outcome).res(), R.drawable.ic_outcome ))
+        add(ExpenseCategory(INCOME, (R.string.label_income).res(), R.drawable.ic_income))
+        add(ExpenseCategory(FOOD, (R.string.label_food).res(), R.drawable.ic_food))
+        add(ExpenseCategory(HOUSEHOLD, (R.string.label_household).res(), R.drawable.ic_household))
+        add(ExpenseCategory(SOCIAL, (R.string.label_social).res(), R.drawable.ic_social))
+        add(ExpenseCategory(ENTERTAINMENT, (R.string.label_entertainment).res(), R.drawable.ic_entertainment))
+        add(ExpenseCategory(TRANSPORTATION, (R.string.label_transportation).res(), R.drawable.ic_transportation))
+        add(ExpenseCategory(CLOTHES, (R.string.label_clothes).res(), R.drawable.ic_clothes))
+        add(ExpenseCategory(HEALTH_CARE, (R.string.label_health_care).res(), R.drawable.ic_healthcare))
+        add(ExpenseCategory(EDUCATION, (R.string.label_education).res(), R.drawable.ic_education))
+        add(ExpenseCategory( DONATION, (R.string.label_donation).res(), R.drawable.ic_donation))
     }
 
     override fun getCategoryByID(id: Int): ExpenseCategory {

@@ -14,8 +14,6 @@ class CategoryListAdapter(private val layoutInflater: LayoutInflater) :
 
     private var itemClickListener: (ExpenseCategory) -> Unit = {}
 
-
-
     var selectedItem: ExpenseCategory? = null
     set(value) {
         field = value
@@ -34,14 +32,12 @@ class CategoryListAdapter(private val layoutInflater: LayoutInflater) :
         with(holder.viewBinding) {
             val item = getItem(position)
             tvName.text = item.name
-            imvCategory.visibility = when (item.id == selectedItem?.id) {
-                true ->{
+            when (item.id == selectedItem?.id) {
+                true -> {
                     cdCategory.isChecked = true
-                    View.VISIBLE
                 }
                 else -> {
                     cdCategory.isChecked = false
-                    View.GONE
                 }
             }
         }

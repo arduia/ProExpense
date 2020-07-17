@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav"
     app:startDestination="@id/splashFragment">
+
     <fragment
         android:id="@+id/dest_home"
         android:name="com.arduia.expense.ui.home.HomeFragment"
@@ -17,20 +18,23 @@
             app:destination="@id/dest_expense_entry">
             <argument
                 android:name="expense_id"
-                android:defaultValue="0"
+                android:defaultValue="-1"
                 app:argType="integer" />
         </action>
     </fragment>
+
     <fragment
         android:id="@+id/dest_feedback"
         android:name="com.arduia.expense.ui.feedback.FeedbackFragment"
         android:label="@string/label_feedback"
         tools:layout="@layout/frag_feedback" />
+
     <fragment
         android:id="@+id/dest_settings"
         android:name="com.arduia.expense.ui.settings.SettingsFragment"
         android:label="@string/label_settings"
         tools:layout="@layout/frag_settings" />
+
     <fragment
         android:id="@+id/dest_expense"
         android:name="com.arduia.expense.ui.expense.ExpenseFragment"
@@ -41,10 +45,11 @@
             app:destination="@id/dest_expense_entry">
             <argument
                 android:name="expense_id"
-                android:defaultValue="0"
+                android:defaultValue="-1"
                 app:argType="integer" />
         </action>
     </fragment>
+
     <fragment
         android:id="@+id/dest_expense_entry"
         android:name="com.arduia.expense.ui.entry.ExpenseEntryFragment"
@@ -52,9 +57,10 @@
         tools:layout="@layout/frag_expense_entry">
         <argument
             android:name="expense_id"
-            android:defaultValue="0"
+            android:defaultValue="-1"
             app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.arduia.expense.ui.splash.SplashFragment"
@@ -69,17 +75,37 @@
             android:id="@+id/action_splashFragment_to_dest_language"
             app:destination="@id/dest_language" />
     </fragment>
+
     <fragment
         android:id="@+id/dest_about"
-        android:name="com.arduia.expense.ui.about.AboutFragment"
-        android:label="@string/label_about" />
+        android:name="com.arduia.expense.ui.about.AboutFragment"  
+        android:label="@string/label_about" >
+        <action
+            android:id="@+id/action_dest_about_to_dest_web"
+            app:destination="@id/dest_web">
+            <argument
+                android:name="url"
+                app:argType="string"
+                android:defaultValue=""/>
+            <argument
+                android:name="title"
+                app:argType="string"
+                android:defaultValue="WebView"/>
+        </action>
+    </fragment>
+
     <fragment
-        android:id="@+id/dest_onboard"
-        android:name="com.arduia.expense.ui.onboarding.OnboardingFragment"
-        android:label="OnboardingFragment" />
-    <fragment
-        android:id="@+id/dest_language"
-        android:name="com.arduia.expense.ui.onboarding.LanguageFragment"
-        android:label="LanguageFragment" />
+        android:id="@+id/dest_web"
+        android:name="com.arduia.expense.ui.web.WebFragment"
+        android:label="WebFragment" >
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="WebView" />
+    </fragment> 
 
 </navigation>
