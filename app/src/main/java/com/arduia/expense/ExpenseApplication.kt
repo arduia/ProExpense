@@ -26,7 +26,7 @@ class ExpenseApplication: Application(){
     override fun onCreate() {
         super.onCreate()
 
-        Timber.d("ExpenseApplication onCreate")
+        ExpenseCategoryProviderImpl(resources).init()
 
         when(BuildConfig.DEBUG){
             true -> Timber.plant(Timber.DebugTree())
@@ -35,7 +35,6 @@ class ExpenseApplication: Application(){
     }
 
     override fun attachBaseContext(base: Context?) {
-        Timber.d("ExpenseApplication attachBaseContext")
         runBlocking {
             base?.let {
                 settings = SettingsRepositoryImpl(base, this)

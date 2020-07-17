@@ -107,7 +107,7 @@
     </fragment>
     <fragment
         android:id="@+id/dest_language"
-        android:name="com.arduia.expense.ui.onboarding.LanguageFragment"
+        android:name="com.arduia.expense.ui.language.LanguageFragment"
         android:label="LanguageFragment" />
 
 </navigation>

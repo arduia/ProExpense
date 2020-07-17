@@ -1,25 +1,21 @@
-package com.arduia.expense.ui.onboarding
+package com.arduia.expense.ui.language
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragLanguageBinding
-import com.arduia.expense.ui.MainHost
+import com.arduia.expense.databinding.FragLangDialogBinding
 import com.arduia.expense.ui.common.LanguageProviderImpl
-import com.arduia.expense.ui.vto.LanguageVto
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import timber.log.Timber
 
-class LanguageFragment: Fragment(){
+class LanguageDialogFragment : BottomSheetDialogFragment(){
 
-    private lateinit var viewBinding: FragLanguageBinding
+    private lateinit var viewBinding : FragLangDialogBinding
 
     private lateinit var languageListAdapter: LanguageListAdapter
 
@@ -34,13 +30,11 @@ class LanguageFragment: Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = FragLanguageBinding.inflate(layoutInflater, container, false)
+        viewBinding = FragLangDialogBinding.inflate(layoutInflater, container, false)
 
         return viewBinding.root
     }
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,38 +44,36 @@ class LanguageFragment: Fragment(){
     }
 
     @FlowPreview
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun setupView(){
 
         languageListAdapter = LanguageListAdapter(layoutInflater)
-
         viewBinding.rvLanguages.adapter = languageListAdapter
-
+        langProvider.init()
         languageListAdapter.languageLists = langProvider.getAvailableLanguages()
+
+        viewBinding.btnLanguageClose.setOnClickListener {
+            dismiss()
+        }
 
         languageListAdapter.setOnItemClickListener {
             viewModel.selectLanguage(it.id)
+            requireActivity().recreate()
+            dismiss()
         }
-
-        viewBinding.btnContinue.setOnClickListener {
-            viewModel.continueHome()
-        }
-
     }
 
     private fun setupViewModel(){
 
         viewModel.selectedLanguage.observe(viewLifecycleOwner, Observer {
-            val selectedLang = langProvider.getLanguageVtoByID(it)
-            languageListAdapter.selectedLanguage = selectedLang
-            Timber.d("selected Language -> $it")
+            val selectedLanguageVto = langProvider.getLanguageVtoByID(it)
+            languageListAdapter.selectedLanguage  = selectedLanguageVto
         })
 
-        viewModel.continueEvent.observe(viewLifecycleOwner, Observer {
-            requireActivity().recreate()
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.dest_home)
-        })
+    }
+
+    companion object{
+        const val TAG = "LanguageDialogFragment"
     }
 
 }

@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.onboarding
+package com.arduia.expense.ui.language
 
 import android.app.Application
 import androidx.lifecycle.*
