@@ -64,8 +64,7 @@ class LanguageFragment: Fragment(){
         }
 
         viewBinding.btnContinue.setOnClickListener {
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.dest_onboard)
+            viewModel.continueHome()
         }
 
     }
@@ -76,6 +75,12 @@ class LanguageFragment: Fragment(){
             val selectedLang = langProvider.getLanguageVtoByID(it)
             languageListAdapter.selectedLanguage = selectedLang
             Timber.d("selected Language -> $it")
+        })
+
+        viewModel.continueEvent.observe(viewLifecycleOwner, Observer {
+            requireActivity().recreate()
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.dest_home)
         })
     }
 

@@ -8,4 +8,8 @@ interface SettingsRepository{
 
     fun setSelectedLanguage(id: String)
 
+    fun getFirstUser(): Flow<Boolean>
+
+    fun setFirstUser(isFirstUser: Boolean)
+
 }

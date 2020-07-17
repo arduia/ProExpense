@@ -68,11 +68,9 @@
         <action
             android:id="@+id/action_splashFragment_to_dest_home"
             app:destination="@id/dest_home" />
+
         <action
-            android:id="@+id/action_splashFragment_to_onboardingFragment"
-            app:destination="@id/dest_onboard" />
-        <action
-            android:id="@+id/action_splashFragment_to_dest_language"
+            android:id="@+id/action_splashFragment_to_languageFragment"
             app:destination="@id/dest_language" />
     </fragment>
 
@@ -106,6 +104,10 @@
             android:name="title"
             app:argType="string"
             android:defaultValue="WebView" />
-    </fragment> 
+    </fragment>
+    <fragment
+        android:id="@+id/dest_language"
+        android:name="com.arduia.expense.ui.onboarding.LanguageFragment"
+        android:label="LanguageFragment" />
 
 </navigation>

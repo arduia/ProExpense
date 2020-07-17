@@ -14,10 +14,14 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
+import com.arduia.expense.data.SettingsRepository
+import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
+import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity(), NavigationDrawer,
@@ -41,6 +45,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     private var lastSnackBar: Snackbar? = null
 
     private var addFabShowTask: (() -> Unit)? = null
+
+    private lateinit var settings: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -244,7 +250,15 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun attachBaseContext(newBase: Context?) {
-       val updatedContext = newBase?.updateResource("my")
-        super.attachBaseContext(updatedContext)
+        runBlocking {
+            newBase?.let {
+                settings = SettingsRepositoryImpl(it, this)
+                val selectedLanguage = settings.getSelectedLanguage().first()
+
+                val localedContext = newBase.updateResource(selectedLanguage)
+                super.attachBaseContext(localedContext)
+            }
+        }
+
     }
 }

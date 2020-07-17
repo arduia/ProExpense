@@ -10,9 +10,11 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.arduia.core.extension.px
 import com.arduia.expense.R
+import com.arduia.expense.ui.common.EventObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 
 class SplashFragment: Fragment(){
 
+    private val viewModel by viewModels<SplashViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,14 +32,23 @@ class SplashFragment: Fragment(){
         return createView()
     }
 
-    override fun onResume() {
-        super.onResume()
-        MainScope().launch(Dispatchers.Main){
-            delay(1000)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        lifecycle.addObserver(viewModel)
+        setupViewModel()
+    }
+
+    private fun setupViewModel(){
+        viewModel.firstTimeEvent.observe(viewLifecycleOwner, EventObserver{
             findNavController().popBackStack()
             findNavController().navigate(R.id.dest_language)
-        }
+        })
+
+        viewModel.normalUserEvent.observe(viewLifecycleOwner, EventObserver{
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.dest_home)
+        })
     }
 
     private fun createView(): View {

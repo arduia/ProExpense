@@ -1,6 +1,8 @@
 package com.arduia.expense.data
 
 import android.content.Context
+import android.content.pm.PackageManager
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -11,11 +13,14 @@ class SettingsRepositoryImpl(private val context: Context,
                              private val scope: CoroutineScope): SettingsRepository{
 
     private val preference by lazy {
-        context.getSharedPreferences(SETTING_FILE_NAME, Context.MODE_PRIVATE)
+        PreferenceManager.getDefaultSharedPreferences(context)
     }
 
     @ExperimentalCoroutinesApi
     private val selectedLangChannel = BroadcastChannel<String>(10)
+
+    @ExperimentalCoroutinesApi
+    private val firstUserChannel = BroadcastChannel<Boolean>(10)
 
     @FlowPreview
     @ExperimentalCoroutinesApi
@@ -42,15 +47,35 @@ class SettingsRepositoryImpl(private val context: Context,
         }
     }
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
+    override fun getFirstUser(): Flow<Boolean> {
+        scope.launch (Dispatchers.IO){
+            val isFirstUser = getBoolean(KEY_FIRST_USER, DEFAULT_FIRST_USER)
+            firstUserChannel.send(isFirstUser)
+        }
+        return firstUserChannel.asFlow()
+    }
+
+    override fun setFirstUser(isFirstUser: Boolean){
+        scope.launch (Dispatchers.IO){
+            setBoolean(KEY_FIRST_USER, isFirstUser)
+        }
+    }
+
     private fun getString(key:String, defValue:String) = preference.getString(key, defValue)?:defValue
     private fun setString(key:String, value:String) = preference.edit().putString(key, value).apply()
 
-    companion object{
+    private fun getBoolean(key:String, defValue: Boolean) = preference.getBoolean(key, defValue)
+    private fun setBoolean(key:String, defValue: Boolean) = preference.edit().putBoolean(key, defValue).apply()
 
-        private const val SETTING_FILE_NAME = "settings.xml"
+    companion object{
 
         private const val KEY_SELECTED_LANGUAGE = "selected_language"
         private const val DEFAULT_SELECTED_LANGUAGE = "en"
+
+        private const val KEY_FIRST_USER = "isFirstTime"
+        private const val DEFAULT_FIRST_USER = true
 
     }
 }
