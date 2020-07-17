@@ -15,10 +15,7 @@ import com.arduia.core.extension.px
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
-import com.arduia.expense.ui.common.EventObserver
-import com.arduia.expense.ui.common.ExpenseCategory
-import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
-import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -37,9 +34,7 @@ class ExpenseEntryFragment : Fragment() {
 
     private lateinit var categoryAdapter: CategoryListAdapter
 
-    private val categoryProvider by lazy {
-        ExpenseCategoryProviderImpl(resources)
-    }
+    private lateinit var categoryProvider: ExpenseCategoryProvider
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +69,7 @@ class ExpenseEntryFragment : Fragment() {
     private fun updateCategoryList() {
         val selectedCategory = categoryAdapter.selectedItem
 
+
         selectedCategory?.let {
             val allCategory = categoryProvider.getCategoryList().toMutableList().apply {
                 remove(it)
@@ -85,6 +81,7 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun setupView() {
 
+        categoryProvider = ExpenseCategoryProviderImpl(resources)
         categoryAdapter = CategoryListAdapter(layoutInflater)
 
         viewBinding.rvCategory.adapter = categoryAdapter

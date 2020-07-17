@@ -29,7 +29,6 @@ class SettingsRepositoryImpl(private val context: Context,
         scope.launch(Dispatchers.IO){
             //Update Status
             val lang = getString(KEY_SELECTED_LANGUAGE, DEFAULT_SELECTED_LANGUAGE)
-            Timber.d("getSelectd Language -> $lang")
             selectedLangChannel.send(lang)
         }
 

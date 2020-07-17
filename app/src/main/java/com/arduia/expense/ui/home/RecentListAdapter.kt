@@ -20,9 +20,9 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
-        val itemView = layoutInflater.inflate(R.layout.item_expense, parent, false)
+        val viewBinding = ItemExpenseBinding.inflate(layoutInflater, parent, false)
 
-        return VH( ItemExpenseBinding.bind(itemView ), onItemClickListener)
+        return VH(viewBinding)
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -63,14 +63,13 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
         this.onItemClickListener = listener
     }
 
-    inner class VH(val binding: ItemExpenseBinding,
-                   private val listener: (ExpenseVto) -> Unit):
+    inner class VH(val binding: ItemExpenseBinding):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
         init { binding.cdExpense.setOnClickListener(this) }
 
         override fun onClick(v: View?) {
-            listener(getItem(adapterPosition))
+            onItemClickListener(getItem(adapterPosition))
         }
     }
 

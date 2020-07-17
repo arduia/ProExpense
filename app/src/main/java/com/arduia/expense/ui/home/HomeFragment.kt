@@ -33,9 +33,7 @@ class HomeFragment : NavBaseFragment() {
         createRecentMoreNavOptions()
     }
 
-    private val recentAdapter by lazy {
-        RecentListAdapter(layoutInflater)
-    }
+    private lateinit var recentAdapter: RecentListAdapter
 
     private var detailDialog: ExpenseDetailDialog? = null
 
@@ -51,11 +49,9 @@ class HomeFragment : NavBaseFragment() {
         return@lazy { mainHost.showAddButton() }
     }
 
-    private val graphAdapter by lazy {
-        ExpenseGraphAdapter()
-    }
+    private lateinit var graphAdapter: ExpenseGraphAdapter
 
-    private val totalCostFormat = DecimalFormat("#,##0.0")
+    private lateinit var totalCostFormat: DecimalFormat
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,6 +65,8 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        totalCostFormat = DecimalFormat("#,##0.0")
         lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
@@ -76,6 +74,7 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onResume() {
         super.onResume()
+
         mainHost.showAddButton()
     }
 
@@ -87,6 +86,7 @@ class HomeFragment : NavBaseFragment() {
     //Setup View
     private fun setupView() {
 
+        recentAdapter = RecentListAdapter(layoutInflater)
         viewBinding.rvRecent.adapter = recentAdapter
         viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.rvRecent.addItemDecoration(
@@ -104,8 +104,9 @@ class HomeFragment : NavBaseFragment() {
         viewBinding.btnMoreExpenses.setOnClickListener {
             findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
         }
-
+        graphAdapter = ExpenseGraphAdapter()
         viewBinding.imgGraph.adapter = graphAdapter
+        viewBinding.imgGraph.dayNameProvider = ExpenseDayNameProvider(requireContext())
 
         recentAdapter.setItemInsertionListener {
             //Item inserted
@@ -116,12 +117,17 @@ class HomeFragment : NavBaseFragment() {
             viewModel.selectItemForDetail(it)
         }
 
+        viewBinding.btnMoreExpenses.visibility = View.INVISIBLE
+
 
     }
 
     private fun setupViewModel() {
 
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
+            if(it.isNotEmpty()){
+                viewBinding.btnMoreExpenses.visibility = View.VISIBLE
+            }
             recentAdapter.submitList(it)
         })
 

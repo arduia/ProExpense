@@ -11,14 +11,14 @@
     <!--    Home-->
     <string name="label_home">မူလစာမျက်နှာ</string>
     <string name="label_outcome_week">ထွက်ငွေ</string>
-    <string name="label_mm_currency"></string>
+    <string name="label_mm_currency">ကျပ်</string>
     <string name="label_recent">မှတ်တမ်းဟောင်းများ</string>
 
     <!--    Expense Detail-->
     <string name="label_date">နေ့ရက်</string>
 
     <!--    Entry Sheet-->
-    <string name="label_spend">ထွက်ငွေ</string>
+    <string name="label_spend">ထွက်ငွေကျပ်</string>
     <string name="label_name">အမည်</string>
     <string name="label_amount">ပမာဏ*</string>
     <string name="label_save">သိမ်းမည်</string>
@@ -46,12 +46,12 @@
 
     <!--    Feedback-->
     <string name="label_feedback">အကြုံပြုရန်</string>
-    <string name="label_feedback_description">We went to know what you thought of your experience at Accounting app so we\'d love to hear you feedback.</string>
+    <string name="label_feedback_description">အက်ပလီကေးရှင်းနဲ့ပတ်သက်ပြီး အသုံးပြုရနဲ့ ပတ်သက်ပြီး အကြံပြုချက်တွေ သိပါရစေ</string>
     <string name="label_email">အီးမေးလ်</string>
     <string name="label_comment">အကြံပြုချက်</string>
     <string name="label_send_feedback">ပေးပို့မည်</string>
     <string name="label_sending" tools:ignore="TypographyEllipsis">ပေးပို့နေသည်...</string>
-    <string name="label_thanks">Thanks Your Feedback!</string>
+    <string name="label_thanks">အခုလိုပေးပို့ပေးလို့ ကျေးဇူးတင်ပါတယ်။</string>
 
     <!--    Expense-->
     <string name="label_confirm_delete">ဖျက်ရန်အတည်ပြုပါသည်</string>
@@ -60,12 +60,12 @@
     <string name="label_language">ဘာသာစကား</string>
     <string name="label_mm">MM</string>
     <string name="label_eng">EN</string>
-    <string name="label_update_status">ဗားရှင်းအသစ်ထွက်ပြီလား</string>
+    <string name="label_update_status">ဗားရှင်း</string>
     <string name="tmp_latest_version">နောက်ဆုံးဗားရှင်း</string>
 
     <!--    About-->
     <string name="label_about">အကြောင်း</string>
-    <string name="label_about_description">It is a free and open-source app....</string>
+    <string name="label_about_description">နေ့ စဉ် အသုံးစရိတ် နဲ့ပတ်သက်ပြီး လွယ်ကူစွာ စီမံခန့်ခွဲနိုင်ဖို့ အထောက်အကူပြုရန်အတွက် အခမဲ့ သုံးစွဲနိုင်တဲ့ အက်ပလီကေးရှင်းလေး တစ်ခုပါ။</string>
     <string name="label_policy">Privacy and Policy</string>
     <string name="url_policy">file:///android_asset/privacy_policy.html</string>
     <string name="url_open_source">file:///android_asset/open_source_licenses.html</string>
@@ -74,5 +74,22 @@
     <string name="label_contribute">Contribute the app</string>
     <string name="label_develop">Developed by Arduia</string>
     <string name="label_develop_mail">dev.arduia@gmail.com</string>
+    <string name="label_next">နောက်</string>
+    <string name="label_start_now">စမယ်</string>
+    <string name="label_skip">ကျော်မယ်</string>
+    <string name="label_record">မှတ်တမ်းတင်မယ်</string>
+    <string name="label_record_detail">လွယ်ကူစွာ စီမံခန့်ခွဲမည်</string>
+    <string name="label_statistics">ခွဲ</string>
+    <string name="label_free">အခမဲ့</string>
+    <string name="label_free_detail">အခမဲ့ သုံးစွဲနိုင်ပါသည်</string>
+    <string name="label_welcome">Hello! Welcome to Pro Expense</string>
+    <string name="label_choose_lang">Choose Language:</string>
+    <string name="label_day_mon">တင်္န</string>
+    <string name="label_day_tue">အင်္ဂါ</string>
+    <string name="label_day_wed">ဗုဒ္ဓ</string>
+    <string name="label_day_thu">ကြာ</string>
+    <string name="label_day_fri">သော</string>
+    <string name="label_day_sat">‌စနေ</string>
+    <string name="label_day_sun">‌နွေ</string>
 
 </resources>

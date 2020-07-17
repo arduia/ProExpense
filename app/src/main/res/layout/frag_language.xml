@@ -8,80 +8,56 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imv_app"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_launcher_foreground"
         android:tint="@color/primaryColor"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
 
     <TextView
         android:id="@+id/tv_welcome"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello! Welcome to ProExpense"
+        android:layout_marginTop="@dimen/margin_material"
+        android:text="@string/label_welcome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imv_app" />
 
     <TextView
-        android:id="@+id/tv_detected_language"
-        style="@style/TextAppearance.MaterialComponents.Body2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_large_material"
-        android:text="Your country and language are detected as:"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@id/cd_detected_item"
-        app:layout_constraintStart_toStartOf="@id/cd_detected_item"
-        app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
-    <include
-        layout="@layout/item_language"
-        android:id="@+id/cd_detected_item"
-        android:layout_width="0dp"
+        android:id="@+id/tv_choose_lang"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="@dimen/margin_material"
-        android:layout_marginBottom="4dp"
-        android:elevation="0dp"
-        app:layout_constraintWidth_max="@dimen/width_minimum"
+        android:layout_marginTop="@dimen/margin_large_material"
+        android:text="@string/label_choose_lang"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_detected_language"/>
-
-
-    <TextView
-        android:id="@+id/tv_select_language"
-        style="@style/TextAppearance.MaterialComponents.Body2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_large_material"
-        android:text="Prefer a different country or language? Select your preference"
-        android:textAlignment="center"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
-        app:layout_constraintEnd_toEndOf="@id/rv_languages"
-        app:layout_constraintStart_toStartOf="@id/rv_languages"
-        app:layout_constraintTop_toBottomOf="@id/cd_detected_item" />
+        app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_languages"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_material"
         android:clipToPadding="false"
         android:orientation="vertical"
-        android:paddingBottom="80dp"
         android:overScrollMode="never"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
+        android:paddingBottom="80dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_select_language"
+        app:layout_constraintTop_toBottomOf="@id/tv_choose_lang"
+        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
         tools:listitem="@layout/item_language" />
 
     <com.google.android.material.button.MaterialButton
@@ -93,9 +69,9 @@
         android:layout_marginEnd="@dimen/margin_material"
         android:layout_marginBottom="@dimen/margin_material"
         android:text="Continue"
-        app:layout_constraintWidth_max="@dimen/width_minimum"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="@dimen/width_minimum" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

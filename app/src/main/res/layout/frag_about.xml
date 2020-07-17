@@ -89,6 +89,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_version"
                 android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/margin_material"
                 android:layout_marginTop="@dimen/margin_material"
                 android:text="@string/label_about_description" />
 

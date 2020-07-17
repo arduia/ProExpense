@@ -73,7 +73,7 @@
 
 <!--    About-->
     <string name="label_about">About</string>
-    <string name="label_about_description">It is a free and open-source app....</string>
+    <string name="label_about_description">It is free and open source for easily manage daily finance.</string>
     <string name="label_policy">Privacy and Policy</string>
     <string name="url_policy">file:///android_asset/privacy_policy.html</string>
     <string name="url_open_source">file:///android_asset/open_source_licenses.html</string>
@@ -82,6 +82,15 @@
     <string name="label_contribute">Contribute the app</string>
     <string name="label_develop">Developed by Arduia</string>
     <string name="label_develop_mail">dev.arduia@gmail.com</string>
+    <string name="label_welcome">Hello! Welcome to Pro Expense</string>
+    <string name="label_choose_lang">Choose Language:</string>
+    <string name="label_day_sun">SU</string>
+    <string name="label_day_mon">MO</string>
+    <string name="label_day_tue">TU</string>
+    <string name="label_day_wed">WE</string>
+    <string name="label_day_thu">TH</string>
+    <string name="label_day_fri">FR</string>
+    <string name="label_day_sat">SAT</string>
 
 </resources>
 

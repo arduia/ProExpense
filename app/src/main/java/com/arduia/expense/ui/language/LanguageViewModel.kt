@@ -1,6 +1,7 @@
 package com.arduia.expense.ui.language
 
 import android.app.Application
+import android.icu.util.LocaleData
 import androidx.lifecycle.*
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
@@ -16,19 +17,22 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.*
 
 class LanguageViewModel(app:Application): AndroidViewModel(app), LifecycleObserver{
 
     private val _selectedLanguage = BaseLiveData<String>()
     val selectedLanguage get() =  _selectedLanguage.asLiveData()
 
+    private val _detectedLanguage = BaseLiveData<String>()
+    val detectedLanguage get() = _detectedLanguage.asLiveData()
+
     private val _continueEvent = EventLiveData<Unit>()
     val continueEvent get() =  _continueEvent.asLiveData()
 
-    private val settingsRepository by lazy {
+    private val settingsRepository: SettingsRepository by lazy {
         SettingsRepositoryImpl(app, viewModelScope)
     }
-
 
     @ExperimentalCoroutinesApi
     @FlowPreview
@@ -51,4 +55,5 @@ class LanguageViewModel(app:Application): AndroidViewModel(app), LifecycleObserv
             settingsRepository.setFirstUser(false)
             _continueEvent.postValue(EventUnit)
     }
+
 }

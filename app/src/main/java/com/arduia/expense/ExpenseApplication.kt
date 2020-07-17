@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
+import java.util.*
 
 class ExpenseApplication: Application(){
 
@@ -39,7 +40,6 @@ class ExpenseApplication: Application(){
             base?.let {
                 settings = SettingsRepositoryImpl(base, this)
                 val selectedLanguage = settings.getSelectedLanguage().first()
-
                 val localedContext = base.updateResource(selectedLanguage)
                 super.attachBaseContext(localedContext)
             }

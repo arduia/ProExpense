@@ -40,7 +40,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     private val linePaint by lazy { createLinePaint() }
     private val labelPaint by lazy { createLabelPaint() }
 
-    private val dayNameProvider:DayNameProvider by lazy { DayNameProviderImpl(context) }
+    var dayNameProvider:DayNameProvider  =  DayNameProviderImpl(context)
 
     /**
      * Interface Fields

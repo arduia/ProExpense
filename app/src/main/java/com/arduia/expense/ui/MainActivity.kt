@@ -191,6 +191,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun showAddButton() {
 
+
+
         addFabShowTask =  { showAddFab() }
 
         when(lastSnackBar?.isShown){

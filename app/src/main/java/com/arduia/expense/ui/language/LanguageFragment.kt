@@ -1,6 +1,10 @@
 package com.arduia.expense.ui.language
 
+import android.content.Context
+import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
+import android.telephony.TelephonyManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +18,7 @@ import com.arduia.expense.ui.common.LanguageProviderImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import timber.log.Timber
+import java.util.*
 
 class LanguageFragment: Fragment(){
 
@@ -73,7 +78,6 @@ class LanguageFragment: Fragment(){
         viewModel.selectedLanguage.observe(viewLifecycleOwner, Observer {
             val selectedLang = langProvider.getLanguageVtoByID(it)
             languageListAdapter.selectedLanguage = selectedLang
-            Timber.d("selected Language -> $it")
         })
 
         viewModel.continueEvent.observe(viewLifecycleOwner, Observer {
@@ -81,6 +85,7 @@ class LanguageFragment: Fragment(){
             findNavController().popBackStack()
             findNavController().navigate(R.id.dest_home)
         })
+
     }
 
 }
