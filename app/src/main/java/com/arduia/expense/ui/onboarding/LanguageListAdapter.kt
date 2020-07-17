@@ -15,6 +15,12 @@ class LanguageListAdapter(private val layoutInflater: LayoutInflater): RecyclerV
         notifyDataSetChanged()
     }
 
+    var selectedLanguage: LanguageVto? = null
+    set(value){
+        field = value
+        notifyDataSetChanged()
+    }
+
     private var itemClickListener: (LanguageVto) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -32,6 +38,14 @@ class LanguageListAdapter(private val layoutInflater: LayoutInflater): RecyclerV
 
             imvFlag.setImageResource(item.flag)
             tvLanguageName.text = item.name
+
+            selectedLanguage?.let {
+                imvChecked.visibility =
+                    when(it.id == item.id) {
+                        true -> View.VISIBLE
+                        false -> View.INVISIBLE
+                    }
+            }
         }
     }
 

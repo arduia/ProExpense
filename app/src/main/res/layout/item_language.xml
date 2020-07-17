@@ -35,6 +35,18 @@
             android:layout_toEndOf="@id/imv_flag"
             android:layout_marginStart="@dimen/margin_material"/>
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imv_checked"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="@dimen/margin_material"
+            android:src="@drawable/ic_done"
+            android:visibility="invisible"
+            android:tint="@color/primaryColor" />
+
     </RelativeLayout>
 
 </com.google.android.material.card.MaterialCardView>
