@@ -35,7 +35,7 @@ class SplashFragment: Fragment(){
             delay(1000)
 
             findNavController().popBackStack()
-            findNavController().navigate(R.id.dest_home)
+            findNavController().navigate(R.id.dest_language)
         }
     }
 

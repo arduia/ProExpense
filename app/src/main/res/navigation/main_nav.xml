@@ -68,11 +68,17 @@
         <action
             android:id="@+id/action_splashFragment_to_dest_home"
             app:destination="@id/dest_home" />
+        <action
+            android:id="@+id/action_splashFragment_to_onboardingFragment"
+            app:destination="@id/dest_onboard" />
+        <action
+            android:id="@+id/action_splashFragment_to_dest_language"
+            app:destination="@id/dest_language" />
     </fragment>
 
     <fragment
         android:id="@+id/dest_about"
-        android:name="com.arduia.expense.ui.about.AboutFragment"
+        android:name="com.arduia.expense.ui.about.AboutFragment"  
         android:label="@string/label_about" >
         <action
             android:id="@+id/action_dest_about_to_dest_web"
@@ -100,6 +106,6 @@
             android:name="title"
             app:argType="string"
             android:defaultValue="WebView" />
-    </fragment>
+    </fragment> 
 
 </navigation>
