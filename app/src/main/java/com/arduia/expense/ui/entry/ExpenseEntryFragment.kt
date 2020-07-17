@@ -15,6 +15,7 @@ import com.arduia.core.extension.px
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
+import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,11 @@ class ExpenseEntryFragment : Fragment() {
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
 
-    private val viewModel by viewModels<ExpenseEntryViewModel>()
+    private val viewModel by viewModels<ExpenseEntryViewModel>{
+        val serviceLoader = ServiceLoader.getInstance(requireContext())
+        ExpenseEntryVMFactory(serviceLoader.getAccountingRepository(),
+            serviceLoader.getExpenseMapper())
+    }
 
     private var mainHost: MainHost? = null
 

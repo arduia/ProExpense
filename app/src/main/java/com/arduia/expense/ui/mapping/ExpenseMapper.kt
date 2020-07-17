@@ -12,7 +12,7 @@ import java.util.*
 
  class ExpenseMapper(
      private val categoryProvider: ExpenseCategoryProvider,
-     private val dateFormatter: DateFormat = SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()),
+     private val dateFormatter: DateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()),
      private val currencyFormatter: DecimalFormat= DecimalFormat("###,###.#")
  ){
 

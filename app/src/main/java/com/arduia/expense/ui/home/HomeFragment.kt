@@ -10,11 +10,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
+import com.arduia.expense.data.AccRepositoryImpl
 import com.arduia.expense.databinding.FragHomeBinding
+import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.EventObserver
+import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import java.text.DecimalFormat
 
@@ -23,7 +27,14 @@ class HomeFragment : NavBaseFragment() {
 
     private lateinit var viewBinding: FragHomeBinding
 
-    private val viewModel by viewModels<HomeViewModel>()
+    private val viewModel by viewModels<HomeViewModel>{
+        val serviceLoader = ServiceLoader.getInstance(requireContext())
+        HomeViewModelFactory(
+            serviceLoader.getExpenseMapper(),
+            serviceLoader.getAccountingRepository(),
+            serviceLoader.getExpenseRateCalculator()
+        )
+    }
 
     private val entryNavOption by lazy {
         createEntryNavOptions()
@@ -33,7 +44,9 @@ class HomeFragment : NavBaseFragment() {
         createRecentMoreNavOptions()
     }
 
-    private lateinit var recentAdapter: RecentListAdapter
+    private val recentAdapter: RecentListAdapter by lazy {
+        RecentListAdapter(layoutInflater)
+    }
 
     private var detailDialog: ExpenseDetailDialog? = null
 
@@ -74,7 +87,6 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onResume() {
         super.onResume()
-
         mainHost.showAddButton()
     }
 
@@ -86,7 +98,6 @@ class HomeFragment : NavBaseFragment() {
     //Setup View
     private fun setupView() {
 
-        recentAdapter = RecentListAdapter(layoutInflater)
         viewBinding.rvRecent.adapter = recentAdapter
         viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.rvRecent.addItemDecoration(
@@ -180,6 +191,8 @@ class HomeFragment : NavBaseFragment() {
             .setPopEnterAnim(R.anim.nav_default_enter_anim)
             .setLaunchSingleTop(true)
             .build()
+
+
 
     companion object {
         private const val TAG = "MY_HomeFragment"

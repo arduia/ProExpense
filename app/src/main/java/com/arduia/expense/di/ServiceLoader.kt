@@ -6,12 +6,13 @@ import com.arduia.expense.data.AccRepositoryImpl
 import com.arduia.expense.data.local.AccountingDatabase
 import com.arduia.expense.ui.common.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
+import com.arduia.expense.ui.home.ExpenseRateCalculatorImpl
 import com.arduia.expense.ui.mapping.ExpenseMapper
 
 class ServiceLoader private constructor (private val context: Context){
 
-    private val accDatabase by lazy {
-        AccountingDatabase.getInstance(context.applicationContext)
+    init {
+        accDatabase = AccountingDatabase.getInstance(context)
     }
 
     fun getAccountingRepository(): AccRepository =
@@ -23,23 +24,16 @@ class ServiceLoader private constructor (private val context: Context){
 
     fun getExpenseMapper() = ExpenseMapper(getCategoryProvider())
 
+    fun getExpenseRateCalculator() = ExpenseRateCalculatorImpl()
+
     companion object{
+
+        private lateinit var accDatabase: AccountingDatabase
 
         @Volatile
         private  var INSTANCE: ServiceLoader? = null
 
-        fun getInstance(context: Context): ServiceLoader{
-
-            if(INSTANCE == null){
-                synchronized(this){
-                    if(INSTANCE == null){
-                        INSTANCE = ServiceLoader(context)
-                    }
-                }
-            }
-
-            return INSTANCE!!
-        }
+        fun getInstance(context: Context) =  ServiceLoader(context)
     }
 
 }

@@ -19,9 +19,7 @@ import java.lang.Exception
 class ExpenseCategoryProviderImpl(private val resource: Resources):
         ExpenseCategoryProvider{
 
-    companion object{
         private val categoryList = mutableListOf<ExpenseCategory>()
-    }
 
     override fun getCategoryList(): List<ExpenseCategory> {
         return categoryList
@@ -31,10 +29,9 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
         return getCategoryByID(id).img
     }
 
-    fun init(){
-        if(categoryList.isEmpty()){
-            categoryList.addAll(getCategoryData())
-        }
+    init {
+    categoryList.addAll(getCategoryData())
+
     }
 
     private fun getCategoryData() = mutableListOf<ExpenseCategory>().apply {

@@ -15,20 +15,30 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseBinding
+import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class ExpenseFragment : Fragment(){
 
     private lateinit var viewBinding: FragExpenseBinding
 
-    private val expenseListAdapter by lazy {
-        ExpenseListAdapter( requireContext() )
+    private val expenseListAdapter : ExpenseListAdapter by lazy {
+        ExpenseListAdapter(layoutInflater)
     }
 
-    private val viewModel by viewModels<ExpenseViewModel>()
+    private val viewModel by viewModels<ExpenseViewModel>{
+        val serviceLoader = ServiceLoader.getInstance(requireContext())
+        ExpenseVMFactory(
+            serviceLoader.getExpenseMapper(),
+            serviceLoader.getAccountingRepository()
+        )
+    }
+
+    private var isAnimated = false
 
     private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
 

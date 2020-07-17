@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 
-class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
+class ExpenseEntryViewModel(private val accRepository: AccRepository,
+                            private val accMapper: ExpenseMapper) : ViewModel(), LifecycleObserver{
 
     //--Caution-- Should be oneshot execution, Event LiveData
     private val _dataInserted = EventLiveData<Unit>()
@@ -34,18 +35,6 @@ class ExpenseEntryViewModel(private val app:Application) : AndroidViewModel(app)
 
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading
-
-    private val serviceLoader by lazy {
-        ServiceLoader.getInstance(app)
-    }
-
-    private val accRepository: AccRepository by lazy {
-        serviceLoader.getAccountingRepository()
-    }
-
-    private val accMapper: ExpenseMapper by lazy {
-        serviceLoader.getExpenseMapper()
-    }
 
     fun setUpdateMode(){
         _entryMode post event(ExpenseEntryMode.UPDATE)

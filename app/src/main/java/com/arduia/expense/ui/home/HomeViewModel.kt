@@ -6,6 +6,7 @@ import com.arduia.expense.data.AccRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.*
+import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val app:Application) : AndroidViewModel(app), LifecycleObserver{
+class HomeViewModel(private val expenseMapper: ExpenseMapper,
+                    private val accRepository: AccRepository,
+                    private val rateCalculator: ExpenseRateCalculator) : ViewModel(), LifecycleObserver{
 
     private val _recentData =  BaseLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData.asLiveData()
@@ -27,30 +30,10 @@ class HomeViewModel(private val app:Application) : AndroidViewModel(app), Lifecy
     private val _costRates = BaseLiveData<Map<Int,Int>>()
     val costRate get() = _costRates.asLiveData()
 
-    private val serviceLoader by lazy {
-        ServiceLoader.getInstance(app)
-    }
-
-    private val expenseMapper by lazy {
-        serviceLoader.getExpenseMapper()
-    }
-
-    private val accRepository: AccRepository by lazy {
-        serviceLoader.getAccountingRepository()
-    }
-
-    private val accMapper by lazy {
-        serviceLoader.getExpenseMapper()
-    }
-
-    private val rateCalculator:ExpenseRateCalculator by lazy {
-        ExpenseRateCalculatorImpl()
-    }
-
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
             val item = accRepository.getExpense(selectedItem.id).first()
-            val detailData = accMapper.mapToExpenseDetailVto(item)
+            val detailData = expenseMapper.mapToExpenseDetailVto(item)
             _detailData post event(detailData)
         }
     }

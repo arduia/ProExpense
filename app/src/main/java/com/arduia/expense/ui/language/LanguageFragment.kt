@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.language
 
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
@@ -81,11 +82,18 @@ class LanguageFragment: Fragment(){
         })
 
         viewModel.continueEvent.observe(viewLifecycleOwner, Observer {
-            requireActivity().recreate()
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.dest_home)
+             restartActivity()
         })
 
+    }
+    private fun restartActivity(){
+        val currentActivity = requireActivity()
+        val intent = currentActivity.intent
+        currentActivity.finish()
+        val animationBundle =
+            ActivityOptions.makeCustomAnimation(requireContext(),
+                R.anim.expense_enter_left, android.R.anim.fade_out).toBundle()
+        startActivity(intent, animationBundle)
     }
 
 }

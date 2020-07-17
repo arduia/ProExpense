@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.language
 
+import android.app.ActivityOptions
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.arduia.expense.R
 import com.arduia.expense.databinding.FragLangDialogBinding
 import com.arduia.expense.ui.common.LanguageProviderImpl
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -56,11 +58,28 @@ class LanguageDialogFragment : BottomSheetDialogFragment(){
             dismiss()
         }
 
+        viewBinding.btnRestart.isEnabled = false
+
         languageListAdapter.setOnItemClickListener {
-            viewModel.selectLanguage(it.id)
-            requireActivity().recreate()
-            dismiss()
+           languageListAdapter.selectedLanguage = it
+            viewBinding.btnRestart.isEnabled = true
         }
+
+        viewBinding.btnRestart.setOnClickListener {
+            viewModel.selectLanguage(languageListAdapter.selectedLanguage!!.id)
+            dismiss()
+            restartActivity()
+        }
+    }
+
+    private fun restartActivity(){
+        val currentActivity = requireActivity()
+        val intent = currentActivity.intent
+        currentActivity.finish()
+        val animationBundle =
+            ActivityOptions.makeCustomAnimation(requireContext(),
+                R.anim.expense_enter_left, android.R.anim.fade_out).toBundle()
+        startActivity(intent, animationBundle)
     }
 
     private fun setupViewModel(){

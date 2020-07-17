@@ -26,9 +26,6 @@ class ExpenseApplication: Application(){
 
     override fun onCreate() {
         super.onCreate()
-
-        ExpenseCategoryProviderImpl(resources).init()
-
         when(BuildConfig.DEBUG){
             true -> Timber.plant(Timber.DebugTree())
             false -> Unit
