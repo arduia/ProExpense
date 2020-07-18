@@ -45,7 +45,7 @@
     <string name="label_cost_empty">ပမာဏမရှိပါ</string>
 
     <!--    Feedback-->
-    <string name="label_feedback">အကြံပြုုရန်</string>
+    <string name="label_feedback">အကြံပြုချက်</string>
     <string name="label_feedback_description">အက်ပလီကေးရှင်းနဲ့ပတ်သက်ပြီး အသုံးပြုရနဲ့ ပတ်သက်ပြီး အကြံပြုချက်တွေ သိပါရစေ</string>
     <string name="label_email">အီးမေးလ်</string>
     <string name="label_comment">အကြံပြုချက်</string>

@@ -189,9 +189,13 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         return true
     }
 
-    override fun showAddButton() {
 
+    override fun showAddButton(showInstantly: Boolean) {
 
+        if(showInstantly){
+            showAddFab()
+            return
+        }
 
         addFabShowTask =  { showAddFab() }
 
@@ -199,11 +203,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             true -> {
 
                 //Wait for finish snack bar show
-               MainScope().launch {
-                   val delayDuration = (lastSnackBar?.duration ?:0 ) + 300 //Extra 100 for animation
-                   delay(delayDuration.toLong())
-                   addFabShowTask?.invoke()
-               }
+                MainScope().launch {
+                    val delayDuration = (lastSnackBar?.duration ?:0 ) + 300 //Extra 100 for animation
+                    delay(delayDuration.toLong())
+                    addFabShowTask?.invoke()
+                }
             }
 
             //null or false

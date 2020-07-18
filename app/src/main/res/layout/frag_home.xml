@@ -98,7 +98,7 @@
         android:fadeScrollbars="true"
         android:overScrollMode="never"
         android:paddingTop="@dimen/margin_small_material"
-        android:paddingBottom="@dimen/margin_small_material"
+        android:paddingBottom="80dp"
         android:animateLayoutChanges="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

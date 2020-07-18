@@ -8,6 +8,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.data.AccRepositoryImpl
@@ -130,7 +131,25 @@ class HomeFragment : NavBaseFragment() {
 
         viewBinding.btnMoreExpenses.visibility = View.INVISIBLE
 
-
+        //Auto Hide when scroll
+        viewBinding.rvRecent.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            private var currentScrollPhrase = 0
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                currentScrollPhrase += dy
+                when(currentScrollPhrase> 10){
+                    true -> mainHost.hideAddButton()
+                    false -> mainHost.showAddButton(showInstantly = true)
+                }
+            }
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                    //Scrolling is over
+                    currentScrollPhrase = 0
+                }
+            }
+        })
     }
 
     private fun setupViewModel() {
