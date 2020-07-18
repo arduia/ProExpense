@@ -85,6 +85,7 @@
             <TextView
                 android:id="@+id/tv_about_description"
                 style="@style/TextAppearance.MaterialComponents.Body2"
+                android:lineSpacingExtra="@dimen/spacing_body_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_version"

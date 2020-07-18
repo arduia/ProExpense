@@ -91,6 +91,8 @@
     <string name="label_day_thu">TH</string>
     <string name="label_day_fri">FR</string>
     <string name="label_day_sat">SAT</string>
+    <string name="label_choose_language">Choose Language</string>
+    <string name="label_restart">Restart</string>
 
 </resources>
 

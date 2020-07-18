@@ -50,6 +50,7 @@ class LanguageDialogFragment : BottomSheetDialogFragment(){
     private fun setupView(){
 
         languageListAdapter = LanguageListAdapter(layoutInflater)
+
         viewBinding.rvLanguages.adapter = languageListAdapter
         langProvider.init()
         languageListAdapter.languageLists = langProvider.getAvailableLanguages()

@@ -12,7 +12,7 @@
     <string name="label_home">မူလစာမျက်နှာ</string>
     <string name="label_outcome_week">ထွက်ငွေ</string>
     <string name="label_mm_currency">ကျပ်</string>
-    <string name="label_recent">မှတ်တမ်းဟောင်းများ</string>
+    <string name="label_recent">မှတ်တမ်းများ</string>
 
     <!--    Expense Detail-->
     <string name="label_date">နေ့ရက်</string>
@@ -45,7 +45,7 @@
     <string name="label_cost_empty">ပမာဏမရှိပါ</string>
 
     <!--    Feedback-->
-    <string name="label_feedback">အကြုံပြုရန်</string>
+    <string name="label_feedback">အကြံပြုုရန်</string>
     <string name="label_feedback_description">အက်ပလီကေးရှင်းနဲ့ပတ်သက်ပြီး အသုံးပြုရနဲ့ ပတ်သက်ပြီး အကြံပြုချက်တွေ သိပါရစေ</string>
     <string name="label_email">အီးမေးလ်</string>
     <string name="label_comment">အကြံပြုချက်</string>
@@ -91,5 +91,7 @@
     <string name="label_day_fri">သော</string>
     <string name="label_day_sat">‌စနေ</string>
     <string name="label_day_sun">‌နွေ</string>
+    <string name="label_choose_language">ဘာသာစကား</string>
+    <string name="label_restart">ြီးပါပြီ</string>
 
 </resources>

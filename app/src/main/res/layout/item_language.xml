@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:elevation="0dp"
     android:id="@+id/cd_language"
+    android:backgroundTint="@color/surfaceColor"
     android:layout_marginStart="@dimen/margin_material"
     android:layout_marginEnd="@dimen/margin_material"
     android:layout_marginTop="4dp"

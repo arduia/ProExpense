@@ -17,6 +17,10 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.FragWebBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class WebFragment : Fragment(){
 
@@ -44,6 +48,10 @@ class WebFragment : Fragment(){
         setupView()
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+    }
 
     private fun setupView(){
 
@@ -54,10 +62,7 @@ class WebFragment : Fragment(){
         }
 
         viewBinding.tvWebTitle.text = args.title
-
         viewBinding.wvMain.loadUrl(args.url)
-
-
         viewBinding.wvMain.webViewClient = object : WebViewClient(){
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {

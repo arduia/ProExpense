@@ -9,4 +9,5 @@
     <dimen name="height_button">56dp</dimen>
     <dimen name="width_minimum">450dp</dimen>
     <dimen name="width_minimum_and_margin">482dp</dimen>
+    <dimen name="spacing_body_text">10sp</dimen>
 </resources>

@@ -63,7 +63,7 @@
                     style="@style/TextAppearance.MaterialComponents.Body1"
                     android:text="@string/label_language"
                     android:layout_marginStart="@dimen/margin_material"
-                    android:layout_marginTop="@dimen/margin_large_material"
+                    android:layout_marginTop="@dimen/margin_material"
                     android:layout_marginBottom="@dimen/margin_material"/>
                 <View
                     android:layout_width="match_parent"
@@ -76,35 +76,15 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:id="@+id/imv_language"
-                    app:srcCompat="@drawable/tmp_myanmar"
+                    tools:srcCompat="@drawable/tmp_myanmar"
+                    android:elevation="1dp"
                     android:scaleType="centerCrop"
                     android:layout_gravity="end|bottom"
                     android:layout_marginBottom="@dimen/margin_material"
                     android:layout_marginEnd="@dimen/margin_material"/>
 
             </FrameLayout>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:id="@+id/fl_update_status">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_update_status"
-                    style="@style/TextAppearance.MaterialComponents.Body1"
-                    android:text="@string/label_update_status"
-                    android:layout_marginStart="@dimen/margin_material"
-                    android:layout_marginTop="@dimen/margin_large_material"
-                    android:layout_marginBottom="@dimen/margin_material"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginStart="@dimen/margin_small_material"
-                    android:layout_marginEnd="@dimen/margin_small_material"
-                    android:background="@android:drawable/divider_horizontal_bright"/>
-            </FrameLayout>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
