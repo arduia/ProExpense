@@ -45,8 +45,8 @@
     <string name="label_cost_empty">ပမာဏမရှိပါ</string>
 
     <!--    Feedback-->
-    <string name="label_feedback">အကြံပြုချက်</string>
-    <string name="label_feedback_description">အက်ပလီကေးရှင်းနဲ့ပတ်သက်ပြီး အသုံးပြုရနဲ့ ပတ်သက်ပြီး အကြံပြုချက်တွေ သိပါရစေ</string>
+    <string name="label_feedback">အကြံပြုရန်</string>
+    <string name="label_feedback_description">Pro Expense အက်ပလီကေးရှင်း အသုံးပြုမှုနဲ့ ပတ်သက်ပြီး အဆင်ပြေမှု ရှိမရှိ၊ ‌လိုအပ်ချက်များကို အကြုံပြု ရေးသားပေးပို့နိုင်ပါသည်။</string>
     <string name="label_email">အီးမေးလ်</string>
     <string name="label_comment">အကြံပြုချက်</string>
     <string name="label_send_feedback">ပေးပို့မည်</string>
@@ -92,6 +92,6 @@
     <string name="label_day_sat">‌စနေ</string>
     <string name="label_day_sun">‌နွေ</string>
     <string name="label_choose_language">ဘာသာစကား</string>
-    <string name="label_restart">ြီးပါပြီ</string>
+    <string name="label_restart">ပြန်လည်စတင်မည်</string>
 
 </resources>
