@@ -1,6 +1,7 @@
 package com.arduia.expense.di
 
 import android.content.Context
+import androidx.room.Room
 import com.arduia.expense.data.AccRepository
 import com.arduia.expense.data.AccRepositoryImpl
 import com.arduia.expense.data.local.AccountingDatabase
@@ -8,11 +9,12 @@ import com.arduia.expense.ui.common.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.home.ExpenseRateCalculatorImpl
 import com.arduia.expense.ui.mapping.ExpenseMapper
+import java.text.DecimalFormat
 
 class ServiceLoader private constructor (private val context: Context){
 
     init {
-        accDatabase = AccountingDatabase.getInstance(context)
+        accDatabase = Room.databaseBuilder(context, AccountingDatabase::class.java, "acc.db").build()
     }
 
     fun getAccountingRepository(): AccRepository =
@@ -22,7 +24,7 @@ class ServiceLoader private constructor (private val context: Context){
     fun getCategoryProvider(): ExpenseCategoryProvider
             = ExpenseCategoryProviderImpl(context.resources)
 
-    fun getExpenseMapper() = ExpenseMapper(getCategoryProvider())
+    fun getExpenseMapper() = ExpenseMapper(getCategoryProvider(), currencyFormatter = DecimalFormat("###0.0"))
 
     fun getExpenseRateCalculator() = ExpenseRateCalculatorImpl()
 

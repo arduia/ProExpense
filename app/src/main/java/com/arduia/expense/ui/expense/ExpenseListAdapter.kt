@@ -17,7 +17,6 @@ class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater)
         DIFF_CALLBACK
     ){
 
-
     private var onItemClickListener: (com.arduia.expense.ui.vto.ExpenseVto) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseVH {

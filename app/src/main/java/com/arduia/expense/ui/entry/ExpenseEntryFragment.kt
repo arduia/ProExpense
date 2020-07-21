@@ -18,28 +18,28 @@ import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ExpenseEntryFragment : Fragment() {
 
     private lateinit var viewBinding: FragExpenseEntryBinding
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
 
-    private val viewModel by viewModels<ExpenseEntryViewModel>{
-        val serviceLoader = ServiceLoader.getInstance(requireContext())
-        ExpenseEntryVMFactory(serviceLoader.getAccountingRepository(),
-            serviceLoader.getExpenseMapper())
-    }
+    private val viewModel by viewModels<ExpenseEntryViewModel>()
 
     private var mainHost: MainHost? = null
 
     private lateinit var categoryAdapter: CategoryListAdapter
 
-    private lateinit var categoryProvider: ExpenseCategoryProvider
+    @Inject
+    lateinit var categoryProvider: ExpenseCategoryProvider
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,7 +86,6 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun setupView() {
 
-        categoryProvider = ExpenseCategoryProviderImpl(resources)
         categoryAdapter = CategoryListAdapter(layoutInflater)
 
         viewBinding.rvCategory.adapter = categoryAdapter

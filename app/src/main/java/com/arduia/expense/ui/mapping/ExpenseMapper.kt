@@ -9,11 +9,12 @@ import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
- class ExpenseMapper(
+class ExpenseMapper(
      private val categoryProvider: ExpenseCategoryProvider,
      private val dateFormatter: DateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()),
-     private val currencyFormatter: DecimalFormat= DecimalFormat("###,###.#")
+     private val currencyFormatter: DecimalFormat = DecimalFormat("#,###")
  ){
 
      fun mapToExpenseVto(expenseEnt: ExpenseEnt) =

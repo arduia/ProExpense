@@ -13,16 +13,20 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.databinding.FragAboutBinding
 import com.arduia.expense.databinding.FragExpenseBinding
 import com.arduia.expense.databinding.FragExpenseEntryBinding
+import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.ui.NavBaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 import java.net.URI
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AboutFragment : NavBaseFragment(){
 
     private lateinit var viewBinding: FragAboutBinding
 
-    private val mainHost by lazy {
-        requireActivity() as MainHost
-    }
+    @Inject
+    @LefSideNavOption
+    lateinit var slideNavOptions: NavOptions
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,18 +75,6 @@ class AboutFragment : NavBaseFragment(){
     private fun navigateToWeb(title:String, url:String){
         val action = AboutFragmentDirections
             .actionDestAboutToDestWeb(url = url, title = title)
-        findNavController().navigate(action, createWebNavOption())
+        findNavController().navigate(action, slideNavOptions)
     }
-
-    private fun createWebNavOption() =
-        NavOptions.Builder()
-            //For Transaction Fragment
-            .setEnterAnim(R.anim.expense_enter_left)
-            .setPopExitAnim(R.anim.expense_exit_right)
-            //For Home Fragment
-            .setExitAnim(R.anim.nav_default_exit_anim)
-            .setPopEnterAnim(R.anim.nav_default_enter_anim)
-            .setLaunchSingleTop(true)
-            .build()
-
 }
