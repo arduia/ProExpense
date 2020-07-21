@@ -19,11 +19,13 @@ import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
 
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationDrawer,
     MainHost {
 

@@ -21,22 +21,16 @@ import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.text.DecimalFormat
 
-
+@AndroidEntryPoint
 class HomeFragment : NavBaseFragment() {
 
     private lateinit var viewBinding: FragHomeBinding
 
-    private val viewModel by viewModels<HomeViewModel>{
-        val serviceLoader = ServiceLoader.getInstance(requireContext())
-        HomeViewModelFactory(
-            serviceLoader.getExpenseMapper(),
-            serviceLoader.getAccountingRepository(),
-            serviceLoader.getExpenseRateCalculator()
-        )
-    }
+    private val viewModel by viewModels<HomeViewModel>()
 
     private val entryNavOption by lazy {
         createEntryNavOptions()
