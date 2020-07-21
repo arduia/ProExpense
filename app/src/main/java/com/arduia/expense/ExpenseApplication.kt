@@ -19,12 +19,10 @@ import javax.inject.Inject
 @HiltAndroidApp
 class ExpenseApplication: Application(){
 
-    private lateinit var settings: SettingsRepository
-
     override fun attachBaseContext(base: Context?) {
         runBlocking {
             base?.let {
-                settings = SettingsRepositoryImpl(base, GlobalScope)
+                val settings = SettingsRepositoryImpl(base, GlobalScope)
                 val selectedLanguage = settings.getSelectedLanguage().first()
                 val localedContext = base.updateResource(selectedLanguage)
                 super.attachBaseContext(localedContext)

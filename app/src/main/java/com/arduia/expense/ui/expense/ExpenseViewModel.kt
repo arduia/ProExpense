@@ -1,6 +1,7 @@
 package com.arduia.expense.ui.expense
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.PagedList
 import com.arduia.expense.data.AccRepository
@@ -13,8 +14,9 @@ import com.arduia.expense.ui.vto.ExpenseVto
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-class ExpenseViewModel(private val accMapper: ExpenseMapper,
-                       private val accRepo: AccRepository) : ViewModel(), LifecycleObserver{
+class ExpenseViewModel @ViewModelInject constructor(
+                    private val accMapper: ExpenseMapper,
+                    private val accRepo: AccRepository) : ViewModel(), LifecycleObserver{
 
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading  get() = _isLoading.asLiveData()

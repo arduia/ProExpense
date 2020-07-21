@@ -1,6 +1,7 @@
 package com.arduia.expense.ui.entry
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.AccRepository
 import com.arduia.expense.data.local.ExpenseEnt
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 
-class ExpenseEntryViewModel(private val accRepository: AccRepository,
+class ExpenseEntryViewModel @ViewModelInject constructor(
+                            private val accRepository: AccRepository,
                             private val accMapper: ExpenseMapper) : ViewModel(), LifecycleObserver{
 
     //--Caution-- Should be oneshot execution, Event LiveData

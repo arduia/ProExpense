@@ -12,7 +12,10 @@ import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.LanguageProvider
 import com.arduia.expense.ui.common.LanguageProviderImpl
 import com.arduia.expense.ui.language.LanguageDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsFragment: NavBaseFragment(){
 
     private lateinit var viewBinding: FragSettingsBinding
@@ -21,9 +24,8 @@ class SettingsFragment: NavBaseFragment(){
 
     private val viewModel by viewModels<SettingsViewModel>()
 
-    private val languageProvider: LanguageProvider by lazy {
-        LanguageProviderImpl()
-    }
+    @Inject
+    lateinit var languageProvider: LanguageProvider
 
     override fun onCreateView(
         inflater: LayoutInflater,

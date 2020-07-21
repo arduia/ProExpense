@@ -13,7 +13,10 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.data.AccRepositoryImpl
 import com.arduia.expense.databinding.FragHomeBinding
+import com.arduia.expense.di.FloatingDecimal
+import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.ServiceLoader
+import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
@@ -21,9 +24,11 @@ import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import com.arduia.graph.DayNameProvider
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.text.DecimalFormat
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : NavBaseFragment() {
@@ -32,17 +37,23 @@ class HomeFragment : NavBaseFragment() {
 
     private val viewModel by viewModels<HomeViewModel>()
 
-    private val entryNavOption by lazy {
-        createEntryNavOptions()
-    }
+    @Inject
+    @TopDropNavOption
+    lateinit var entryNavOption: NavOptions
 
-    private val moreRecentNavOption by lazy {
-        createRecentMoreNavOptions()
-    }
+    @Inject
+    @LefSideNavOption
+    lateinit var moreRecentNavOption: NavOptions
 
-    private val recentAdapter: RecentListAdapter by lazy {
-        RecentListAdapter(layoutInflater)
-    }
+    @Inject
+    @FloatingDecimal
+    lateinit var totalCostFormat: DecimalFormat
+
+    @Inject
+    lateinit var dayNameProvider: DayNameProvider
+
+    @Inject
+    lateinit var recentAdapter: RecentListAdapter
 
     private var detailDialog: ExpenseDetailDialog? = null
 
@@ -60,8 +71,6 @@ class HomeFragment : NavBaseFragment() {
 
     private lateinit var graphAdapter: ExpenseGraphAdapter
 
-    private lateinit var totalCostFormat: DecimalFormat
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -75,7 +84,6 @@ class HomeFragment : NavBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        totalCostFormat = DecimalFormat("#,##0.0")
         lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
@@ -113,7 +121,8 @@ class HomeFragment : NavBaseFragment() {
         }
         graphAdapter = ExpenseGraphAdapter()
         viewBinding.imgGraph.adapter = graphAdapter
-        viewBinding.imgGraph.dayNameProvider = ExpenseDayNameProvider(requireContext())
+
+        viewBinding.imgGraph.dayNameProvider = dayNameProvider
 
         recentAdapter.setItemInsertionListener {
             //Item inserted
@@ -162,30 +171,8 @@ class HomeFragment : NavBaseFragment() {
     private fun createDetailEditClickListener() = { expense: ExpenseDetailsVto ->
         val action = HomeFragmentDirections
             .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
-        findNavController().navigate(action, createEntryNavOptions())
+        findNavController().navigate(action, entryNavOption)
     }
-
-    private fun createEntryNavOptions() =
-        NavOptions.Builder()
-            //For Entry Fragment
-            .setEnterAnim(R.anim.pop_down_up)
-            .setPopExitAnim(R.anim.pop_up_down)
-            //For Home Fragment
-            .setExitAnim(android.R.anim.fade_out)
-            .setPopEnterAnim(R.anim.nav_default_enter_anim)
-            .setLaunchSingleTop(true)
-            .build()
-
-    private fun createRecentMoreNavOptions() =
-        NavOptions.Builder()
-            //For Transaction Fragment
-            .setEnterAnim(R.anim.expense_enter_left)
-            .setPopExitAnim(R.anim.expense_exit_right)
-            //For Home Fragment
-            .setExitAnim(R.anim.nav_default_exit_anim)
-            .setPopEnterAnim(R.anim.nav_default_enter_anim)
-            .setLaunchSingleTop(true)
-            .build()
 
 
 

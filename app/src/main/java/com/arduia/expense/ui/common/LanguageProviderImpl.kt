@@ -16,7 +16,7 @@ class LanguageProviderImpl : LanguageProvider{
         init()
     }
 
-    fun init(){
+    private fun init(){
         languageList = getAllLanguages()
     }
 

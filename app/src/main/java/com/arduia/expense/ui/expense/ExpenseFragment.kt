@@ -16,29 +16,28 @@ import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseBinding
 import com.arduia.expense.di.ServiceLoader
+import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ExpenseFragment : Fragment(){
 
     private lateinit var viewBinding: FragExpenseBinding
 
-    private val expenseListAdapter : ExpenseListAdapter by lazy {
-        ExpenseListAdapter(layoutInflater)
-    }
+    @Inject
+    lateinit var expenseListAdapter : ExpenseListAdapter
 
-    private val viewModel by viewModels<ExpenseViewModel>{
-        val serviceLoader = ServiceLoader.getInstance(requireContext())
-        ExpenseVMFactory(
-            serviceLoader.getExpenseMapper(),
-            serviceLoader.getAccountingRepository()
-        )
-    }
+    private val viewModel by viewModels<ExpenseViewModel>()
 
-    private var isAnimated = false
+    @Inject
+    @TopDropNavOption
+    lateinit var topDropNavOption: NavOptions
 
     private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
 
@@ -137,7 +136,7 @@ class ExpenseFragment : Fragment(){
                 setEditClickListener {expense ->
                     val action = ExpenseFragmentDirections
                         .actionDestExpenseToDestExpenseEntry(expenseId = expense.id)
-                    findNavController().navigate(action,createEntryNavOptions())
+                    findNavController().navigate(action, topDropNavOption)
                 }
             }
             detailDialog?.showDetail(parentFragmentManager,it)
@@ -176,14 +175,4 @@ class ExpenseFragment : Fragment(){
         (requireActivity() as? NavigationDrawer)?.lockDrawer(false)
     }
 
-    private fun createEntryNavOptions() =
-        NavOptions.Builder()
-            //For Entry Fragment
-            .setEnterAnim(R.anim.pop_down_up)
-            .setPopExitAnim(R.anim.pop_up_down)
-            //For Home Fragment
-            .setExitAnim(android.R.anim.fade_out)
-            .setPopEnterAnim(R.anim.nav_default_enter_anim)
-
-            .build()
 }

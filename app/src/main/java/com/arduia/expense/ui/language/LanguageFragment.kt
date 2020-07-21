@@ -15,12 +15,16 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragLanguageBinding
+import com.arduia.expense.ui.common.LanguageProvider
 import com.arduia.expense.ui.common.LanguageProviderImpl
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LanguageFragment: Fragment(){
 
     private lateinit var viewBinding: FragLanguageBinding
@@ -29,9 +33,8 @@ class LanguageFragment: Fragment(){
 
     private val viewModel by viewModels<LanguageViewModel>()
 
-    private val langProvider by lazy {
-        LanguageProviderImpl()
-    }
+    @Inject
+    lateinit var languageProvider: LanguageProvider
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,7 +65,7 @@ class LanguageFragment: Fragment(){
 
         viewBinding.rvLanguages.adapter = languageListAdapter
 
-        languageListAdapter.languageLists = langProvider.getAvailableLanguages()
+        languageListAdapter.languageLists = languageProvider.getAvailableLanguages()
 
         languageListAdapter.setOnItemClickListener {
             viewModel.selectLanguage(it.id)
@@ -77,7 +80,7 @@ class LanguageFragment: Fragment(){
     private fun setupViewModel(){
 
         viewModel.selectedLanguage.observe(viewLifecycleOwner, Observer {
-            val selectedLang = langProvider.getLanguageVtoByID(it)
+            val selectedLang = languageProvider.getLanguageVtoByID(it)
             languageListAdapter.selectedLanguage = selectedLang
         })
 

@@ -10,11 +10,15 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragLangDialogBinding
+import com.arduia.expense.ui.common.LanguageProvider
 import com.arduia.expense.ui.common.LanguageProviderImpl
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LanguageDialogFragment : BottomSheetDialogFragment(){
 
     private lateinit var viewBinding : FragLangDialogBinding
@@ -23,9 +27,8 @@ class LanguageDialogFragment : BottomSheetDialogFragment(){
 
     private val viewModel by viewModels<LanguageViewModel>()
 
-    private val langProvider by lazy {
-        LanguageProviderImpl()
-    }
+    @Inject
+    lateinit var languageProvider: LanguageProvider
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,8 +55,7 @@ class LanguageDialogFragment : BottomSheetDialogFragment(){
         languageListAdapter = LanguageListAdapter(layoutInflater)
 
         viewBinding.rvLanguages.adapter = languageListAdapter
-        langProvider.init()
-        languageListAdapter.languageLists = langProvider.getAvailableLanguages()
+        languageListAdapter.languageLists = languageProvider.getAvailableLanguages()
 
         viewBinding.btnLanguageClose.setOnClickListener {
             dismiss()
@@ -86,7 +88,7 @@ class LanguageDialogFragment : BottomSheetDialogFragment(){
     private fun setupViewModel(){
 
         viewModel.selectedLanguage.observe(viewLifecycleOwner, Observer {
-            val selectedLanguageVto = langProvider.getLanguageVtoByID(it)
+            val selectedLanguageVto = languageProvider.getLanguageVtoByID(it)
             languageListAdapter.selectedLanguage  = selectedLanguageVto
         })
 

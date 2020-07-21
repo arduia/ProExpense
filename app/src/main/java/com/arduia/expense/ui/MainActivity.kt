@@ -23,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -48,7 +49,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private var addFabShowTask: (() -> Unit)? = null
 
-    private lateinit var settings: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -260,7 +260,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     override fun attachBaseContext(newBase: Context?) {
         runBlocking {
             newBase?.let {
-                settings = SettingsRepositoryImpl(it, this)
+                val settings = SettingsRepositoryImpl(it, this)
                 val selectedLanguage = settings.getSelectedLanguage().first()
 
                 val localedContext = newBase.updateResource(selectedLanguage)

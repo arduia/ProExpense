@@ -12,13 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
-    private val viewBinding by lazy {
-        SheetExpenseDetailBinding.inflate(
-            layoutInflater,
-            null,
-            false
-        )
-    }
+    private lateinit var viewBinding : SheetExpenseDetailBinding
 
     private var expenseDetail: ExpenseDetailsVto? = null
 
@@ -31,6 +25,7 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewBinding = SheetExpenseDetailBinding.inflate(layoutInflater, container, false)
         expenseDetail!!.bindDetailData()
         setupView()
         return viewBinding.root
