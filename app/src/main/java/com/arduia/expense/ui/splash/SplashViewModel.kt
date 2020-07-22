@@ -5,8 +5,8 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
-import com.arduia.expense.ui.common.EventLiveData
-import com.arduia.expense.ui.common.EventUnit
+import com.arduia.mvvm.EventLiveData
+import com.arduia.mvvm.EventUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect

@@ -18,6 +18,7 @@ import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope

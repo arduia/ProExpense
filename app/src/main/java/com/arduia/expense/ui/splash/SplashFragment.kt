@@ -14,12 +14,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.arduia.core.extension.px
 import com.arduia.expense.R
-import com.arduia.expense.ui.common.EventObserver
+import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashFragment: Fragment(){

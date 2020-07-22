@@ -11,6 +11,7 @@ import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
+import com.arduia.mvvm.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -38,7 +39,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     fun onItemSelect(item: ExpenseVto){
         mSelectedItems.add(item.id)
        onSelectedItemChanged()
-        _isSelectedMode set true
+        _isSelectedMode set  true
     }
 
     private fun onSelectedItemChanged(){
@@ -56,7 +57,7 @@ class ExpenseViewModel @ViewModelInject constructor(
             _isLoading.postValue(true)
             accRepo.deleteAllExpense(mSelectedItems.toList())
             _isLoading.postValue(false)
-            _deleteEvent post event(mSelectedItems.size)
+            _deleteEvent post  event(mSelectedItems.size)
             clearSelection()
         }
     }

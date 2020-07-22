@@ -1,25 +1,17 @@
 package com.arduia.expense.ui.language
 
-import android.app.Application
-import android.icu.util.LocaleData
+
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.data.SettingsRepositoryImpl
-import com.arduia.expense.ui.common.BaseLiveData
-import com.arduia.expense.ui.common.EventLiveData
-import com.arduia.expense.ui.common.EventUnit
-import com.arduia.expense.ui.vto.LanguageVto
+import com.arduia.mvvm.BaseLiveData
+import com.arduia.mvvm.EventLiveData
+import com.arduia.mvvm.EventUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
 
 class LanguageViewModel @ViewModelInject
     constructor(private val settingsRepository: SettingsRepository): ViewModel(), LifecycleObserver{

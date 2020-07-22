@@ -117,5 +117,7 @@ dependencies {
 //    Timber
     implementation "com.jakewharton.timber:timber:$timber_version"
 
+    implementation "com.github.arduia:mvvm-core:0.0.1"
+
 }
 

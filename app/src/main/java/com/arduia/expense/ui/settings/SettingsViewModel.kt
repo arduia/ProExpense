@@ -5,8 +5,8 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
-import com.arduia.expense.ui.common.BaseLiveData
 import com.arduia.expense.ui.vto.LanguageVto
+import com.arduia.mvvm.BaseLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

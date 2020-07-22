@@ -18,13 +18,13 @@ import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.EventObserver
 import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.graph.DayNameProvider
+import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.text.DecimalFormat
