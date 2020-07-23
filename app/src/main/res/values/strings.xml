@@ -93,6 +93,11 @@
     <string name="label_day_sat">SAT</string>
     <string name="label_choose_language">Choose Language</string>
     <string name="label_restart">Restart</string>
+    <string name="label_backup">Backup</string>
+    <string name="label_export">Export</string>
+    <string name="label_total">Total</string>
+    <string name="label_export_now">Export Now</string>
+
 
 </resources>
 

@@ -19,6 +19,13 @@ import javax.inject.Inject
 @HiltAndroidApp
 class ExpenseApplication: Application(){
 
+    override fun onCreate() {
+        super.onCreate()
+        when(BuildConfig.DEBUG){
+            true -> Timber.plant(Timber.DebugTree())
+            false ->  Unit
+        }
+    }
     override fun attachBaseContext(base: Context?) {
         runBlocking {
             base?.let {
