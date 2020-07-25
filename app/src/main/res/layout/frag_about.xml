@@ -65,6 +65,8 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_app_name"
                 style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:textStyle="italic"
+                android:alpha="0.75"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/imv_app"
@@ -80,11 +82,12 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/margin_small_material"
                 android:text="@string/app_version"
+                android:textStyle="bold"
                 android:textColor="@android:color/darker_gray" />
 
             <TextView
                 android:id="@+id/tv_about_description"
-                style="@style/TextAppearance.MaterialComponents.Body2"
+                style="@style/BodyText2"
                 android:lineSpacingExtra="@dimen/spacing_body_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -114,7 +117,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_policy"
-                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    style="@style/ItemText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|start"
@@ -151,9 +154,9 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_open_sources"
-                    style="@style/TextAppearance.MaterialComponents.Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="@style/ItemText"
                     android:layout_gravity="center_vertical|start"
                     android:layout_marginStart="@dimen/margin_material"
                     android:layout_marginTop="@dimen/margin_material"
@@ -188,9 +191,9 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_contribute"
-                    style="@style/TextAppearance.MaterialComponents.Body1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="@style/ItemText"
                     android:layout_gravity="center_vertical|start"
                     android:layout_marginStart="@dimen/margin_material"
                     android:layout_marginTop="@dimen/margin_material"

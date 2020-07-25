@@ -55,7 +55,7 @@
 
             <TextView
                 android:id="@+id/tv_feedback_description"
-                style="@style/TextAppearance.MaterialComponents.Body1"
+                style="@style/BodyText1"
                 android:lineSpacingExtra="@dimen/spacing_body_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
                 android:layout_marginTop="@dimen/margin_material"
                 android:layout_marginEnd="@dimen/margin_material"
                 android:layout_marginBottom="@dimen/margin_material"
-                android:enabled="false"
+
                 android:text="@string/label_send_feedback" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

@@ -61,6 +61,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/tv_language_name"
                     style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:textStyle="bold"
+                    android:alpha="0.80"
                     android:text="@string/label_language"
                     android:layout_marginStart="@dimen/margin_material"
                     android:layout_marginTop="@dimen/margin_material"
