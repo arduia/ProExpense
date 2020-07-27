@@ -25,7 +25,7 @@
             style="@style/IconButton"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="@dimen/margin_small_material"/>
+            android:layout_margin="@dimen/margin_material"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,6 +41,7 @@
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:progress="50"
+            android:id="@+id/pb_backup"
             android:progressTint="@color/primaryColor"
             android:layout_marginStart="@dimen/margin_material"
             android:layout_marginEnd="@dimen/margin_material"
