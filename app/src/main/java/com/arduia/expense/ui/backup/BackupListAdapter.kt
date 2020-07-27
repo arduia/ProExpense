@@ -27,16 +27,14 @@ class BackupListAdapter(private val layoutInflater: LayoutInflater):
             tvBackupName.text = item.name
             tvDate.text = item.date
             pbBackup.progress = item.progress
-
+            cdBackup.setOnClickListener(holder)
         }
     }
 
     inner class VH(val viewBinding: ItemBackupBinding):
         RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener{
 
-
         override fun onClick(v: View?) {
-
             val item = getItem(adapterPosition)
 
             itemClickListener.invoke(item)

@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/cd_backup"
     xmlns:tools="http://schemas.android.com/tools"
     tools:layout_margin="@dimen/margin_small_material">
     <RelativeLayout
@@ -47,7 +48,7 @@
             android:layout_marginEnd="@dimen/margin_material"
             android:layout_below="@id/tv_date"
             android:layout_marginTop="@dimen/margin_small_material"
-            android:layout_marginBottom="@dimen/margin_material"
+            android:layout_marginBottom="@dimen/margin_small_material"
             android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

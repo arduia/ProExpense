@@ -48,6 +48,10 @@ class BackupFragment: NavBaseFragment(){
             BackupDialogFragment().show(parentFragmentManager, BackupDialogFragment.TAG)
         }
 
+        viewBinding.btnMenuOpen.setOnClickListener{
+            openDrawer()
+        }
+
         viewBinding.rvBackupList.adapter = backupListAdapter
         viewBinding.rvBackupList.addItemDecoration(
             MarginItemDecoration(
