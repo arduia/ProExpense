@@ -2,12 +2,25 @@ package com.arduia.expense.data
 
 
 import com.arduia.expense.data.local.*
+import com.arduia.expense.data.network.ExpenseNetworkDao
+import com.arduia.expense.data.network.ExpenseVersionDto
+import com.arduia.expense.data.network.FeedbackDto
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import timber.log.Timber
 import java.util.*
 
 class AccRepositoryImpl(
-    private val expenseDao: ExpenseDao
+    private val expenseDao: ExpenseDao,
+    private val networkDao: ExpenseNetworkDao
     ) : AccRepository{
+
+    private val feedbackBroadCast = BroadcastChannel<FeedbackDto.Response>(10)
+
+
+    private val versionBroadCast = BroadcastChannel<ExpenseVersionDto>(10)
 
     override suspend fun insertExpense(expenseEnt: ExpenseEnt) {
         expenseDao.insertExpense(expenseEnt)
@@ -39,6 +52,34 @@ class AccRepositoryImpl(
         return expenseDao.getWeekExpense(getWeekStartTime())
     }
 
+    override suspend fun postFeedback(comment: FeedbackDto.Request): Flow<FeedbackDto.Response> {
+         postComment(comment)
+        return feedbackBroadCast.asFlow()
+    }
+
+    override suspend fun getVersionStatus(): Flow<ExpenseVersionDto> {
+
+         checkVersion()
+        return versionBroadCast.asFlow()
+    }
+
+    private suspend fun checkVersion(){
+        val version = networkDao.getVersionStatus().execute()
+        version.body()?.let {
+            Timber.d("version -> $it")
+            versionBroadCast.send(it)
+        }
+        Timber.d("checkVersion -> $version")
+    }
+
+    private suspend fun postComment(comment: FeedbackDto.Request){
+        val comment = networkDao.postFeedback(comment).execute()
+
+        comment.body()?.let {
+            feedbackBroadCast.send(it)
+        }
+    }
+
     private fun getWeekStartTime(): Long {
 
         val calendar = Calendar.getInstance()
@@ -54,4 +95,6 @@ class AccRepositoryImpl(
 
         return calendar.timeInMillis
     }
+
+
 }

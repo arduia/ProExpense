@@ -8,25 +8,19 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
-import com.arduia.expense.data.AccRepositoryImpl
 import com.arduia.expense.databinding.FragHomeBinding
 import com.arduia.expense.di.FloatingDecimal
 import com.arduia.expense.di.LefSideNavOption
-import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.text.DecimalFormat
 import javax.inject.Inject
 

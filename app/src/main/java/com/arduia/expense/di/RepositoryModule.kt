@@ -7,6 +7,7 @@ import com.arduia.expense.data.AccRepositoryImpl
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.data.local.ExpenseDao
+import com.arduia.expense.data.network.ExpenseNetworkDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,8 +21,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideAccRepo(accDao: ExpenseDao): AccRepository
-     = AccRepositoryImpl(accDao)
+    fun provideAccRepo(accDao: ExpenseDao, netDao: ExpenseNetworkDao): AccRepository
+     = AccRepositoryImpl(accDao, netDao)
 
     @Provides
     @Singleton

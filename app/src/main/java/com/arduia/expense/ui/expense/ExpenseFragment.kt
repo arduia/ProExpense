@@ -15,14 +15,12 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseBinding
-import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint

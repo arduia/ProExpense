@@ -2,6 +2,8 @@ package com.arduia.expense.data
 
 import androidx.paging.DataSource
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.data.network.ExpenseVersionDto
+import com.arduia.expense.data.network.FeedbackDto
 import kotlinx.coroutines.flow.Flow
 
 interface AccRepository {
@@ -22,5 +24,9 @@ interface AccRepository {
     suspend fun deleteAllExpense(list: List<Int>)
 
     suspend fun getWeekExpenses(): Flow<List<ExpenseEnt>>
+
+    suspend fun postFeedback(comment: FeedbackDto.Request): Flow<FeedbackDto.Response>
+
+    suspend fun getVersionStatus(): Flow<ExpenseVersionDto>
 
 }
