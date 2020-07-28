@@ -49,7 +49,6 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
             editClickListener.invoke(expenseDetail!!)
             dismiss()
         }
-
     }
 
     override fun onDismiss(dialog: DialogInterface) {

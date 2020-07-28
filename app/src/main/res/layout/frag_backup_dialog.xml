@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginTop="@dimen/margin_material"
-        android:text="@string/label_export"
+        android:text="Export Data"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,124 +50,15 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/tv_total"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_material"
-        android:text="Total Item: "
-        app:layout_constraintEnd_toEndOf="@+id/tv_total_value"
-        app:layout_constraintStart_toStartOf="@+id/tv_total_value"
-        app:layout_constraintTop_toBottomOf="@id/tl_name" />
-
-    <TextView
-        android:id="@+id/tv_total_value"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_small_material"
-        android:text="344,33"
-        android:textColor="@color/primaryColor"
-        app:layout_constraintEnd_toEndOf="@+id/tl_name"
-        app:layout_constraintStart_toStartOf="@+id/tl_name"
-        app:layout_constraintTop_toBottomOf="@id/tv_total" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_from"
-        android:text="From"
-        style="@style/TextAppearance.MaterialComponents.Overline"
-        app:layout_constraintStart_toStartOf="@id/cd_start"
-        app:layout_constraintBottom_toTopOf="@id/cd_start"/>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cd_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_material"
-        app:layout_constraintEnd_toStartOf="@+id/cd_end"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tl_name"
-        app:layout_constraintTop_toBottomOf="@id/tv_total_value">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_start_month"
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_material"
-                android:text="Jun"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/tv_start_year"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_small_material"
-                android:layout_marginEnd="@dimen/margin_material"
-                android:layout_marginBottom="@dimen/margin_material"
-                android:text="2018" />
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_to"
-        android:text="To"
-        style="@style/TextAppearance.MaterialComponents.Overline"
-        app:layout_constraintStart_toStartOf="@id/cd_end"
-        app:layout_constraintBottom_toTopOf="@id/cd_end"/>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cd_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_material"
-        app:layout_constraintEnd_toEndOf="@+id/tl_name"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/cd_start"
-        app:layout_constraintTop_toBottomOf="@id/tv_total_value">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_end_month"
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_material"
-                android:text="May"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/tv_end_year"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_small_material"
-                android:layout_marginEnd="@dimen/margin_material"
-                android:layout_marginBottom="@dimen/margin_material"
-                android:text="2020" />
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:id="@+id/tv_folder"
+         style="@style/TextAppearance.MaterialComponents.Caption"
+         android:text="/sdcard/0/Downloads/BackupExpense.expense"
+         app:layout_constraintTop_toBottomOf="@id/tl_name"
+         app:layout_constraintStart_toStartOf="@id/tl_name"
+         android:layout_marginTop="@dimen/margin_material"/>
     <Button
         android:id="@+id/btn_export_now"
         style="@style/ExpenseButton"
@@ -180,7 +71,7 @@
         app:layout_constraintEnd_toEndOf="@+id/tl_name"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tl_name"
-        app:layout_constraintTop_toBottomOf="@id/cd_start"
+        app:layout_constraintTop_toBottomOf="@id/tv_folder"
         app:layout_constraintVertical_bias="0.0"
         app:layout_goneMarginTop="@dimen/margin_material" />
 </androidx.constraintlayout.widget.ConstraintLayout>

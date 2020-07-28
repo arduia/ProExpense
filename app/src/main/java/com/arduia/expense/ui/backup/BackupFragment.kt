@@ -61,7 +61,7 @@ class BackupFragment: NavBaseFragment(){
         )
 
         backupListAdapter.submitList(listOf(
-            BackupVto("Backup1_sdf.expense",332, "12.2.2019", 40),
+//            BackupVto("Backup1_sdf.expense",332, "12.2.2019", 40),
             BackupVto("Backup_some.expense" ,3423, "23.3.2020", 10)
         ))
     }

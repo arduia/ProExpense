@@ -5,11 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arduia.expense.databinding.FragBackupDialogBinding
+import com.arduia.expense.ui.MainHost
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class BackupDialogFragment : BottomSheetDialogFragment(){
 
     private lateinit var viewBinding: FragBackupDialogBinding
+
+    @Inject
+    lateinit var mainHost: MainHost
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,16 +35,22 @@ class BackupDialogFragment : BottomSheetDialogFragment(){
     }
 
     private fun setupView(){
+
+        viewBinding.edtName.setText("BackupExpense")
+        viewBinding.edtName.selectAll()
+
         viewBinding.btnDrop.setOnClickListener {
             dismiss()
         }
 
         viewBinding.btnExportNow.setOnClickListener {
             dismiss()
+            mainHost.showSnackMessage("Exported!")
         }
     }
+
     companion object{
-        const val TAG = "BackDialogFragment"
+        const val TAG = "BackupDialogFragment"
     }
 
 }
