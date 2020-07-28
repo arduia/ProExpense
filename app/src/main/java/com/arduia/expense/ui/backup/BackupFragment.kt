@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupBinding
 import com.arduia.expense.ui.MainHost
@@ -18,6 +20,8 @@ import javax.inject.Inject
 class BackupFragment: NavBaseFragment(){
 
     private lateinit var viewBinding: FragBackupBinding
+
+    private val viewModel by viewModels<BackupViewModel>()
 
     @Inject
     lateinit var mainHost: MainHost
@@ -39,7 +43,9 @@ class BackupFragment: NavBaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        lifecycle.addObserver(viewModel)
         setupView()
+        setupViewModel()
     }
 
     private fun setupView(){
@@ -60,10 +66,11 @@ class BackupFragment: NavBaseFragment(){
             )
         )
 
-        backupListAdapter.submitList(listOf(
-//            BackupVto("Backup1_sdf.expense",332, "12.2.2019", 40),
-            BackupVto("Backup_some.expense" ,3423, "23.3.2020", 10)
-        ))
     }
 
+    private fun setupViewModel(){
+        viewModel.backupList.observe(viewLifecycleOwner, Observer {
+            backupListAdapter.submitList(it)
+        })
+    }
 }

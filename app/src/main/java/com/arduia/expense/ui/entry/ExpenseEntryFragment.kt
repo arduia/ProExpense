@@ -15,7 +15,6 @@ import com.arduia.core.extension.px
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
-import com.arduia.expense.di.ServiceLoader
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver

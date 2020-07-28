@@ -2,10 +2,8 @@ package com.arduia.expense.di
 
 import android.app.Application
 import android.content.Context
-import com.arduia.expense.data.AccRepository
-import com.arduia.expense.data.AccRepositoryImpl
-import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.data.SettingsRepositoryImpl
+import com.arduia.expense.data.*
+import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.ExpenseDao
 import dagger.Module
 import dagger.Provides
@@ -27,5 +25,10 @@ object RepositoryModule {
     @Singleton
     fun provideSettingRepo(application: Application, @CoroutineIO scope:CoroutineScope): SettingsRepository
     = SettingsRepositoryImpl(application.applicationContext, scope)
+
+    @Singleton
+    @Provides
+    fun provideBackupRepo(backupDao: BackupDao): BackupRepository
+            = BackupRepositoryImpl(backupDao)
 
 }
