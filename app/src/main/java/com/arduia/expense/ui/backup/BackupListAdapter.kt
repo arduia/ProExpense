@@ -12,7 +12,7 @@ import com.arduia.expense.ui.vto.BackupVto
 class BackupListAdapter(private val layoutInflater: LayoutInflater):
     ListAdapter<BackupVto,BackupListAdapter.VH>(DIFF_UTIL){
 
-    private var itemClickListener = {item: BackupVto -> }
+    private var itemClickListener = {_: BackupVto -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val viewBinding = ItemBackupBinding.inflate(layoutInflater)
@@ -26,7 +26,7 @@ class BackupListAdapter(private val layoutInflater: LayoutInflater):
 
             tvBackupName.text = item.name
             tvDate.text = item.date
-            pbBackup.progress = item.progress
+
             cdBackup.setOnClickListener(holder)
         }
     }

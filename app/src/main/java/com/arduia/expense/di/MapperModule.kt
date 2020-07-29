@@ -26,7 +26,7 @@ object MapperModule {
     fun privateBackupMapper(dateFormat: DateFormat): BackupMapper
             = object :BackupMapper{
         override fun mapToBackupVto(ent: BackupEnt) =
-            BackupVto(ent.name, ent.backupID, dateFormat.format(ent.created_date), ent.progress_items)
+            BackupVto(ent.name, ent.backupID, dateFormat.format(ent.created_date), (ent.progress_items/ent.total_items)*100 )
     }
 
 }

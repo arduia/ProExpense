@@ -8,7 +8,9 @@ import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.BaseLiveData
 import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -29,12 +31,20 @@ class BackupViewModel @ViewModelInject constructor(
         }
     }
 
-    fun createBackup(){
-        viewModelScope.launch (Dispatchers.IO){
-             backupRepo.insertBackup(
-                 BackupEnt(0, "Name",
-             "url", Date().time,10,4,-1,false)
-             )
+    fun addBackup(){
+        viewModelScope.launch(Dispatchers.IO){
+            backupRepo.insertBackup(
+                BackupEnt(
+                    backupID = 1,
+                    name = "Backup_some",
+                    created_date = Date().time,
+                    type = -1,
+                    progress_items = 100,
+                    total_items = 199,
+                    isExported = false,
+                    url = "/sdcard/Download/ProExpense.expense"
+                )
+            )
         }
     }
 

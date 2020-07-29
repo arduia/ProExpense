@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class ExpenseMapper(
      private val categoryProvider: ExpenseCategoryProvider,
-     private val dateFormatter: DateFormat = SimpleDateFormat("dd/M/yyyy", Locale.getDefault()),
+     private val dateFormatter: DateFormat = SimpleDateFormat("dd/MMMM/yyyy", Locale.getDefault()),
      private val currencyFormatter: DecimalFormat = DecimalFormat("#,###")
  ){
 

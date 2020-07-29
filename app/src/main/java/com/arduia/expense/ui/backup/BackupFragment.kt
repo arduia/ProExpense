@@ -66,11 +66,19 @@ class BackupFragment: NavBaseFragment(){
             )
         )
 
+        backupListAdapter.setItemClickListener {
+            BackupDetailDialogFragment().show(parentFragmentManager, "DetailDialog")
+        }
+
     }
 
     private fun setupViewModel(){
         viewModel.backupList.observe(viewLifecycleOwner, Observer {
+            Timber.d("setupViewModel -> $it")
             backupListAdapter.submitList(it)
+
+            viewBinding.btnExport.visibility = if(it.isNotEmpty()) View.INVISIBLE else View.VISIBLE
+
         })
     }
 }

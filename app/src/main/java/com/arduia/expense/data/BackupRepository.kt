@@ -11,6 +11,8 @@ interface BackupRepository {
 
     suspend fun deleteBackup(item: BackupEnt)
 
+    suspend fun deleteBackupByID(id: Int)
+
     suspend fun getBackupAll(): Flow<List<BackupEnt>>
 
     suspend fun getBackupByID(id: Int): Flow<BackupEnt>

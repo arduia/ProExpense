@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/tv_backup_detail"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_material"
+        android:text="@string/label_backup"
+        android:alpha="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_drop_close"
+        style="@style/IconButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="@dimen/margin_material"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_drop_down"
+        app:layout_constraintBottom_toBottomOf="@id/tv_backup_detail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_backup_detail" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        style="@style/TextAppearance.MaterialComponents.Overline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_material"
+        android:text="@string/label_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_backup_detail" />
+
+    <TextView
+        android:id="@+id/tv_name_value"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        android:textStyle="bold"
+        android:alpha=".8"
+        android:text="Backup_expense_some" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_items"
+        style="@style/TextAppearance.MaterialComponents.Overline"
+        android:text="Total Items"
+        app:layout_constraintTop_toBottomOf="@id/tv_name_value"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginStart="@dimen/margin_material"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_items_value"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:textStyle="bold"
+        android:alpha=".8"
+        app:layout_constraintTop_toBottomOf="@id/tv_items"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/margin_material"
+        android:text="100 Items"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_path"
+        android:text="/sdcard/Downloads/Backup.expense"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_material"
+        app:layout_constraintTop_toBottomOf="@id/tv_items_value"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <ImageButton
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/btn_folder_open"
+        style="@style/IconButton"
+        android:src="@drawable/ic_folder"
+        android:scaleType="centerInside"
+        android:tint="@color/primaryColor"
+        app:layout_constraintTop_toTopOf="@id/tv_path"
+        app:layout_constraintBottom_toBottomOf="@id/tv_path"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/margin_material"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_import"
+        style="@style/ExpenseButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_material"
+        android:text="Import"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintTop_toBottomOf="@id/tv_path"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

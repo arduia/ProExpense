@@ -12,6 +12,9 @@ interface BackupDao {
     @Delete
     suspend fun deleteBackup(item: BackupEnt)
 
+    @Query("DELETE FROM backup WHERE backup_id =:id")
+    fun deleteBackupByID(id: Int)
+
     @Update
     suspend fun updateBackup(item: BackupEnt)
 

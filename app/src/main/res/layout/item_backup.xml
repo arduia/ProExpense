@@ -19,43 +19,64 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_toStartOf="@id/fl_status"
             android:layout_marginStart="@dimen/margin_material"
             android:layout_marginTop="@dimen/margin_material"
-            android:text="Backup1_1341_c34.csv" />
+            android:ellipsize="middle"
+            tools:text="Backup1_1341_c34.csv"
+            android:singleLine="true" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_delete"
-            style="@style/IconButton"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentTop="true"
+        <FrameLayout
+            android:id="@+id/fl_status"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@id/tv_backup_name"
             android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/margin_material"
-            android:src="@drawable/ic_delete" />
+            android:layout_marginEnd="@dimen/margin_material">
+
+            <ProgressBar
+                android:id="@+id/pb_status"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:visibility="visible"
+                android:indeterminateTint="@color/primaryColor"
+                android:layout_marginEnd="@dimen/margin_material" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imv_status"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:scaleType="centerInside"
+                android:visibility="invisible"
+                android:tint="@color/primaryColor"
+                android:layout_marginEnd="@dimen/margin_material"
+                app:srcCompat="@drawable/ic_accomplish" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tv_date"
-            style="@style/TextAppearance.MaterialComponents.Caption"
+            style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_backup_name"
             android:layout_alignParentStart="true"
             android:layout_marginStart="@dimen/margin_material"
-            android:layout_marginTop="@dimen/margin_small_material"
-            android:text="20/1/2019" />
+            android:layout_marginTop="@dimen/margin_material"
+            android:layout_marginBottom="@dimen/margin_material"
+            android:alpha="0.7"
+            tools:text="20/1/2019" />
 
-        <ProgressBar
-            android:id="@+id/pb_backup"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_items"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_date"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/margin_material"
-            android:layout_marginTop="@dimen/margin_small_material"
+            android:layout_alignBottom="@id/tv_date"
+            android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/margin_material"
-            android:layout_marginBottom="@dimen/margin_small_material"
-            android:progress="50"
-            android:progressTint="@color/primaryColor" />
+            android:alpha="0.7"
+            android:text="32 items" />
+
     </RelativeLayout>
+
 </com.google.android.material.card.MaterialCardView>

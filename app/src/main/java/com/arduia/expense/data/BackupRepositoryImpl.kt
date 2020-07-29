@@ -17,6 +17,10 @@ class BackupRepositoryImpl (private val dao: BackupDao): BackupRepository{
         dao.deleteBackup(item)
     }
 
+    override suspend fun deleteBackupByID(id: Int) {
+        dao.deleteBackupByID(id)
+    }
+
     override suspend fun getBackupAll() = dao.getBackupAll()
 
     override suspend fun getBackupByID(id: Int) = dao.getBackupByID(id)
