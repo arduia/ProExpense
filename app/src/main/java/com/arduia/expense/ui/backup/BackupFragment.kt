@@ -1,9 +1,12 @@
 package com.arduia.expense.ui.backup
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.arduia.expense.R
@@ -11,7 +14,7 @@ import com.arduia.expense.databinding.FragBackupBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.vto.BackupVto
+import com.arduia.expense.ui.common.requestStoragePermission
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -46,7 +49,9 @@ class BackupFragment: NavBaseFragment(){
         lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
+        checkRequestPermission()
     }
+
 
     private fun setupView(){
 
@@ -72,6 +77,31 @@ class BackupFragment: NavBaseFragment(){
 
     }
 
+    private fun checkRequestPermission(){
+        val storagePm = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        when(storagePm == PackageManager.PERMISSION_GRANTED){
+            true -> {
+                Timber.d("Permission is already Granted!")
+            }
+            false -> {
+                Timber.d("Permission is not Granted!")
+                requestStoragePermission(STORAGE_PM_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == STORAGE_PM_REQUEST_CODE && grantResults.isNotEmpty()){
+            mainHost.showSnackMessage("Permission is Granted!")
+        }
+    }
+
+
     private fun setupViewModel(){
         viewModel.backupList.observe(viewLifecycleOwner, Observer {
             Timber.d("setupViewModel -> $it")
@@ -80,5 +110,9 @@ class BackupFragment: NavBaseFragment(){
             viewBinding.btnExport.visibility = if(it.isNotEmpty()) View.INVISIBLE else View.VISIBLE
 
         })
+    }
+
+    companion object{
+        private const val STORAGE_PM_REQUEST_CODE = 3000
     }
 }
