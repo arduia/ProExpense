@@ -4,5 +4,6 @@ data class BackupVto(
     val name: String,
     val id: Int,
     val date: String,
-    val progress: Int
+    val items: String,
+    val onProgress: Boolean
 )

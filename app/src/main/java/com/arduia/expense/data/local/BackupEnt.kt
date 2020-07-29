@@ -9,28 +9,24 @@ data class BackupEnt(
 
     @ColumnInfo(name = "backup_id")
     @PrimaryKey(autoGenerate = true)
-    val backupID: Int,
+    val backupId: Int,
 
     @ColumnInfo(name = "name")
     val name: String,
 
-    @ColumnInfo(name = "url")
-    val url: String,
+    @ColumnInfo(name = "path")
+    val filePath: String,
 
     @ColumnInfo(name = "created_date")
-    val created_date: Long,
+    val createdDate: Long,
 
-    @ColumnInfo(name = "total_items")
-    val total_items: Int,
+    @ColumnInfo(name = "item_total")
+    val itemTotal: Int,
 
-    @ColumnInfo(name = "progress_items")
-    val progress_items: Int,
+    @ColumnInfo(name = "worker_id")
+    val workerId: Int,
 
-    //Import or Export
-    @ColumnInfo(name = "type")
-    val type: Int,
-
-    @ColumnInfo(name = "is_exported")
-    val isExported: Boolean
+    @ColumnInfo(name = "is_completed")
+    val isCompleted : Boolean
 
 )

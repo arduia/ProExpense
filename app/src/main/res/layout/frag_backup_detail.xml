@@ -38,6 +38,7 @@
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginTop="@dimen/margin_material"
         android:text="@string/label_name"
+        android:alpha="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_backup_detail" />
 
@@ -59,6 +60,7 @@
         android:id="@+id/tv_items"
         style="@style/TextAppearance.MaterialComponents.Overline"
         android:text="Total Items"
+        android:alpha="0.7"
         app:layout_constraintTop_toBottomOf="@id/tv_name_value"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/margin_material"

@@ -29,7 +29,7 @@ class ExpenseRateCalculatorImpl : ExpenseRateCalculator{
         val amountOfWeek = mutableMapOf<Int, Long>()
 
         mExpenseLists.forEach {
-            mCalendar.timeInMillis = it.created_date
+            mCalendar.timeInMillis = it.createdDate
             val dayOfWeek = mCalendar[Calendar.DAY_OF_WEEK]
             amountOfWeek[dayOfWeek]  = it.amount + (amountOfWeek[dayOfWeek]?:0)
         }

@@ -205,7 +205,6 @@ class ExpenseEntryFragment : Fragment() {
             viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
             return
         }
-        viewModel.updateExpenseData(currentExpenseDetail)
     }
 
     private fun getExpenseDetail(): ExpenseDetailsVto{

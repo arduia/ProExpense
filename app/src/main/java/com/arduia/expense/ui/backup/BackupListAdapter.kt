@@ -26,6 +26,9 @@ class BackupListAdapter(private val layoutInflater: LayoutInflater):
 
             tvBackupName.text = item.name
             tvDate.text = item.date
+            tvItems.text = item.items
+            pbStatus.visibility = if(item.onProgress) View.VISIBLE else View.INVISIBLE
+            imvStatus.visibility = if(item.onProgress) View.INVISIBLE else View.VISIBLE
 
             cdBackup.setOnClickListener(holder)
         }
@@ -56,6 +59,7 @@ private val DIFF_UTIL get() = object : DiffUtil.ItemCallback<BackupVto>(){
         return (oldItem.date == newItem.date) &&
                 (oldItem.id == newItem.id) &&
                 (oldItem.name == newItem.name) &&
-                (oldItem.progress == newItem.progress)
+                (oldItem.onProgress == newItem.onProgress) &&
+                (oldItem.items == newItem.items)
     }
 }
