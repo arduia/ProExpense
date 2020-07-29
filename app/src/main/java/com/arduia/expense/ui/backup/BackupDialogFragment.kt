@@ -48,9 +48,9 @@ class BackupDialogFragment : BottomSheetDialogFragment(){
         }
 
         viewBinding.btnExportNow.setOnClickListener {
-            viewModel.addBackup()
+            val backupName = viewBinding.edtName.text.toString()
+            viewModel.exportBackup(backupName)
             dismiss()
-            mainHost.showSnackMessage("Exported!")
         }
     }
 

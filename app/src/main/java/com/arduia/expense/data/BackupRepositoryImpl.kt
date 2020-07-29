@@ -2,6 +2,7 @@ package com.arduia.expense.data
 
 import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.BackupEnt
+import kotlinx.coroutines.flow.Flow
 
 class BackupRepositoryImpl (private val dao: BackupDao): BackupRepository{
 
@@ -25,4 +26,7 @@ class BackupRepositoryImpl (private val dao: BackupDao): BackupRepository{
 
     override suspend fun getBackupByID(id: Int) = dao.getBackupByID(id)
 
+    override suspend fun getBackupByWorkerID(id: String): Flow<BackupEnt> {
+        return dao.getBackupByWorkerID(id)
+    }
 }

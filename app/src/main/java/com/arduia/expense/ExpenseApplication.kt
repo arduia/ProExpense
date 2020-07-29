@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import android.view.LayoutInflater
+import androidx.hilt.work.HiltWorkerFactory
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
@@ -17,7 +18,10 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltAndroidApp
-class ExpenseApplication: Application(){
+class ExpenseApplication: Application(), androidx.work.Configuration.Provider{
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
@@ -26,6 +30,12 @@ class ExpenseApplication: Application(){
             false ->  Unit
         }
     }
+
+    override fun getWorkManagerConfiguration(): androidx.work.Configuration  =
+        androidx.work.Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
+
     override fun attachBaseContext(base: Context?) {
         runBlocking {
             base?.let {

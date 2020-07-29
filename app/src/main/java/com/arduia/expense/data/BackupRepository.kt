@@ -17,4 +17,6 @@ interface BackupRepository {
 
     suspend fun getBackupByID(id: Int): Flow<BackupEnt>
 
+    suspend fun getBackupByWorkerID(id: String): Flow<BackupEnt>
+
 }

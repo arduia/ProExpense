@@ -1,3 +1,4 @@
+include ':backup'
 include ':core'
 include ':WeeklyCostGraph'
 include ':app'

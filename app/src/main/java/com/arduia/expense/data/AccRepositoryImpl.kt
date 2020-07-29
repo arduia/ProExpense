@@ -23,6 +23,14 @@ class AccRepositoryImpl(
         return expenseDao.getRecentExpense()
     }
 
+    override suspend fun getExpenseTotalCount(): Flow<Int> {
+        return expenseDao.getExpenseTotalCount()
+    }
+
+    override suspend fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>> {
+       return expenseDao.getExpenseRange(limit, offset)
+    }
+
     override suspend fun updateExpense(expenseEnt: ExpenseEnt) {
         expenseDao.updateExpense(expenseEnt)
     }

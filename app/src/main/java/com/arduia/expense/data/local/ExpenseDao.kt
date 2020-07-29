@@ -19,6 +19,12 @@ interface ExpenseDao{
     @Query( "SELECT * FROM `expense` ORDER BY created_date DESC LIMIT 10")
     fun getRecentExpense(): Flow<List<ExpenseEnt>>
 
+    @Query("SELECT COUNT(*) FROM expense")
+    fun getExpenseTotalCount(): Flow<Int>
+
+    @Query("SELECT * FROM 'expense' ORDER BY created_date DESC LIMIT :limit OFFSET :offset")
+    fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>>
+
     @Update
     suspend fun updateExpense(expenseEnt: ExpenseEnt)
 

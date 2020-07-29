@@ -24,9 +24,9 @@ data class BackupEnt(
     val itemTotal: Int,
 
     @ColumnInfo(name = "worker_id")
-    val workerId: Int,
+    val workerId: String,
 
     @ColumnInfo(name = "is_completed")
-    val isCompleted : Boolean
+    var isCompleted : Boolean
 
 )

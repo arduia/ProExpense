@@ -15,6 +15,10 @@ interface AccRepository {
 
     suspend fun getRecentExpense(): Flow<List<ExpenseEnt>>
 
+    suspend fun getExpenseTotalCount(): Flow<Int>
+
+    suspend fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>>
+
     suspend fun updateExpense(expenseEnt: ExpenseEnt)
 
     suspend fun deleteExpense(expenseEnt: ExpenseEnt)

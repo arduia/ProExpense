@@ -21,6 +21,9 @@ interface BackupDao {
     @Query("SELECT * FROM backup WHERE backup_id =:id ")
     fun getBackupByID(id: Int): Flow<BackupEnt>
 
+    @Query("SELECT * FROM backup WHERE worker_id =:worker_id")
+    fun getBackupByWorkerID(worker_id: String): Flow<BackupEnt>
+
     @Query("SELECT * FROM backup ORDER BY created_date DESC")
     fun getBackupAll(): Flow<List<BackupEnt>>
 

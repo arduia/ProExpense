@@ -48,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':backup')
 
 //    Version_Variable
     def fragment_version = "1.2.4"
@@ -119,5 +120,17 @@ dependencies {
 
     implementation "com.github.arduia:mvvm-core:0.0.1"
 
+    def work_version = "2.4.0"
+    implementation "androidx.work:work-runtime:$work_version"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
+    def fast_csv_version = "1.0.3"
+    implementation "de.siegmar:fastcsv:$fast_csv_version"
+
+    def gson_version = "2.8.6"
+    implementation "com.google.code.gson:gson:$gson_version"
+
+    implementation 'androidx.hilt:hilt-work:1.0.0-alpha02'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
 }
 
