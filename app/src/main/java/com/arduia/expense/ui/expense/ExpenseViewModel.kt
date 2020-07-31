@@ -82,7 +82,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     }
 
     private suspend fun createLivePagedList(): FilterableLivePagedListBuilder<Int, ExpenseVto> {
-        val dataSourceFactory = accRepo.getAllExpense()
+        val dataSourceFactory = accRepo.getExpenseSourceAll()
             .map { accMapper.mapToExpenseVto(it) }
 
         return FilterableLivePagedListBuilder(dataSourceFactory,10)

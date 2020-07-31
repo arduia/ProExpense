@@ -33,9 +33,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    def gson_version = "2.8.6"
-    implementation "com.google.code.gson:gson:$gson_version"
 
-    def fast_csv_version = "1.0.3"
-    implementation "de.siegmar:fastcsv:$fast_csv_version"
+    def jxl_version = "2.6.12"
+    implementation "net.sourceforge.jexcelapi:jxl:$jxl_version"
 }

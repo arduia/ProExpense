@@ -131,8 +131,6 @@ dependencies {
     implementation 'androidx.hilt:hilt-work:1.0.0-alpha02'
     kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
 
-    def jxl_version = "2.6.12"
-    implementation "net.sourceforge.jexcelapi:jxl:$jxl_version"
 
 }
 

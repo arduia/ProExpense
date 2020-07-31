@@ -21,7 +21,7 @@ data class BackupEnt(
     val createdDate: Long,
 
     @ColumnInfo(name = "item_total")
-    val itemTotal: Int,
+    var itemTotal: Int,
 
     @ColumnInfo(name = "worker_id")
     val workerId: String,

@@ -1,4 +1,4 @@
-package com.arduia.backup.generator
+package com.arduia.backup
 
 interface FileNameGenerator {
 
