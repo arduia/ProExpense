@@ -5,6 +5,7 @@ import jxl.Workbook
 import jxl.write.Label
 import jxl.write.WritableWorkbook
 import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
 
 abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
@@ -15,11 +16,8 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
         try {
             val sheetData = getDataFromSheet(sheet)
             source.writeAll(sheetData)
-        }catch (ie: IllegalArgumentException){
-            throw BackupException(
-                "Data Type doesn't match",
-                ie
-            )
+        } catch (ie: IllegalArgumentException) {
+            throw BackupException("Data Type doesn't match", ie)
         }
     }
 
@@ -63,7 +61,7 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
             sheet.addCell(Label(column, 0, label))
         }
 
-        source.readAll().forEachIndexed { itemPosition , data ->
+        source.readAll().forEachIndexed { itemPosition, data ->
             itemCount++
             //Shift 1 of Header Row
             val rowNo = itemPosition + 1
@@ -77,6 +75,36 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
         }
 
         return itemCount
+    }
+
+    internal fun itemCounts(book: Workbook): Int {
+        val sheet = book.getSheet(sheetName)
+
+        val rowCount = sheet.rows
+        //No Header
+        if (rowCount == 0) return -1
+
+        val headerRow = sheet.getRow(0)
+        val fieldNames = getFieldNames()
+        //assume valid first
+        var isValidSheet = true
+
+        try {
+
+            fieldNames.forEachIndexed { index, name ->
+                //Get Header Row Cells * can cause index out of error *
+                val labelCell = headerRow[index]
+                isValidSheet = isValidSheet && (labelCell.contents == name)
+            }
+
+            if (isValidSheet.not()) return -1
+
+        } catch (e: IndexOutOfBoundsException) {
+            return -1
+        }
+
+        //Remove first header row
+        return (rowCount - 1)
     }
 
     protected abstract val sheetName: String

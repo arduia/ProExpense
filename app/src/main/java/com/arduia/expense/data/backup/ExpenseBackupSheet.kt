@@ -9,26 +9,34 @@ class ExpenseBackupSheet( source: BackupSource<ExpenseEnt>): BackupSheet<Expense
 
     override val sheetName = "expense"
 
-    override fun getFieldNames() = listOf("Name", "Amount", "Category", "Note", "Date")
+    override fun getFieldNames() = listOf(FIELD_NAME, FIELD_AMOUNT, FIELD_CATEGORY, FIELD_NOTE, FIELD_DATE)
 
     override fun create(row: Map<String, String>): ExpenseEnt {
 
-        val name = row["Name"]
-        val amount = row["Amount"]?.toLong() ?: 0
-        val category = row["Category"]?.toInt() ?: 0
-        val note = row["Note"]
-        val date = row["Date"]?.toLong() ?: 0
+        val name = row[FIELD_NAME]
+        val amount = row[FIELD_AMOUNT]?.toLong() ?: 0
+        val category = row[FIELD_CATEGORY]?.toInt() ?: 0
+        val note = row[FIELD_NOTE]
+        val date = row[FIELD_DATE]?.toLong() ?: 0
 
         return ExpenseEnt(0, name, amount, category, note, date, Date().time)
     }
 
     override fun map(item: ExpenseEnt): Map<String, String> {
        return mutableMapOf<String, String>().apply {
-           put("Name", item.name?:"")
-           put("Amount", item.amount.toString())
-           put("Category", item.category.toString())
-           put("Note", item.note?:"")
-           put("Date", item.createdDate.toString())
+           put(FIELD_NAME, item.name?:"")
+           put(FIELD_AMOUNT, item.amount.toString())
+           put(FIELD_CATEGORY, item.category.toString())
+           put(FIELD_NOTE, item.note?:"")
+           put(FIELD_DATE, item.createdDate.toString())
        }
+    }
+
+    companion object{
+        private const val FIELD_NAME = "Name"
+        private const val FIELD_AMOUNT = "Amount"
+        private const val FIELD_CATEGORY = "Category"
+        private const val FIELD_NOTE = "Note"
+        private const val FIELD_DATE = "Date"
     }
 }

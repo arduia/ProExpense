@@ -7,9 +7,12 @@ import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.ui.mapping.BackupMapper
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.BaseLiveData
+import com.arduia.mvvm.EventLiveData
+import com.arduia.mvvm.event
 import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class BackupViewModel @ViewModelInject constructor(
@@ -21,12 +24,23 @@ class BackupViewModel @ViewModelInject constructor(
     private val _backupList = BaseLiveData<List<BackupVto>>()
     val backupList = _backupList.asLiveData()
 
+    private val _backupFilePath = EventLiveData<String>()
+    val backupFilePath = _backupFilePath.asLiveData()
+
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun onCreate(){
         viewModelScope.launch (Dispatchers.IO){
             backupRepo.getBackupAll().collect {
                 _backupList post it.map { backupEnt ->  mapper.mapToBackupVto(backupEnt) }
             }
+        }
+    }
+
+    fun selectBackupItem(id: Int){
+        viewModelScope.launch(Dispatchers.IO){
+            val item = backupRepo.getBackupByID(id).first()
+
+            _backupFilePath post event(item.filePath)
         }
     }
 

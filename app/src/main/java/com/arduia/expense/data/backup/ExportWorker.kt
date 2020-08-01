@@ -16,8 +16,8 @@ import java.util.*
 
 class ExportWorker @WorkerInject constructor(@Assisted context: Context,
                                              @Assisted param: WorkerParameters,
-                                             private val backupRepo: BackupRepository,
-                                             private val backupSheet: BackupSheet<ExpenseEnt>): CoroutineWorker(context, param){
+                                             private val backupRep: BackupRepository,
+                                             private val excelBackup: ExcelBackup): CoroutineWorker(context, param){
     override suspend fun doWork(): Result {
 
         val savePath = inputData.getString("SAVE_PATH")?: return Result.failure()
@@ -27,19 +27,15 @@ class ExportWorker @WorkerInject constructor(@Assisted context: Context,
         val filePath = "$savePath${File.separator}$fileName"
 
         val taskBackupItem = BackupEnt(0, fileName, filePath, Date().time,0, id.toString(), false )
-        backupRepo.insertBackup(taskBackupItem)
-
-        val excelBackup = ExcelBackup.Builder()
-            .addBackupSheet(backupSheet)
-            .build()
+        backupRep.insertBackup(taskBackupItem)
 
         val totalCount = excelBackup.export(filePath)
 
-        val backupItemBefore = backupRepo.getBackupByWorkerID(id.toString()).first()
+        val backupItemBefore = backupRep.getBackupByWorkerID(id.toString()).first()
         backupItemBefore.isCompleted= true
         backupItemBefore.itemTotal = totalCount
 
-        backupRepo.updateBackup(backupItemBefore)
+        backupRep.updateBackup(backupItemBefore)
 
         return Result.success()
     }

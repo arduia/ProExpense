@@ -33,6 +33,23 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
         book.close()
     }
 
+    @Throws(IOException::class, SecurityException::class)
+    suspend fun itemCount(filePath: String): Int{
+
+        var itemCount = 0
+
+        val book = Workbook.getWorkbook(File(filePath))
+
+        sheets.forEach {backupSheet ->
+            itemCount += backupSheet.itemCounts(book)
+        }
+        book.close()
+
+        if(itemCount < 0) return  -1
+
+        return itemCount
+    }
+
     class Builder{
         private val sheets = mutableListOf<BackupSheet<*>>()
 

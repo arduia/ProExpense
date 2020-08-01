@@ -19,4 +19,6 @@ interface BackupRepository {
 
     suspend fun getBackupByWorkerID(id: String): Flow<BackupEnt>
 
+    suspend fun getItemCount(filePath: String): Flow<Int>
+
 }

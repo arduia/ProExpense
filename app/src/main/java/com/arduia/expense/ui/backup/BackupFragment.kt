@@ -15,6 +15,7 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.core.requestStoragePermission
+import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -32,6 +33,7 @@ class BackupFragment: NavBaseFragment(){
     @Inject
     lateinit var backupListAdapter: BackupListAdapter
 
+    private var backDetailDialog: BackupDetailDialogFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +74,7 @@ class BackupFragment: NavBaseFragment(){
         )
 
         backupListAdapter.setItemClickListener {
-            BackupDetailDialogFragment().show(parentFragmentManager, "DetailDialog")
+            viewModel.selectBackupItem(it.id)
         }
 
     }
@@ -106,8 +108,14 @@ class BackupFragment: NavBaseFragment(){
         viewModel.backupList.observe(viewLifecycleOwner, Observer {
             Timber.d("setupViewModel -> $it")
             backupListAdapter.submitList(it)
-
             viewBinding.btnExport.visibility = if(it.isNotEmpty()) View.INVISIBLE else View.VISIBLE
+        })
+
+        viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver{
+            //Close Old Detail Dialog
+            backDetailDialog?.dismiss()
+            backDetailDialog = BackupDetailDialogFragment()
+            backDetailDialog?.showBackupDetail(parentFragmentManager, it)
 
         })
     }

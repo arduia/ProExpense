@@ -2,6 +2,7 @@ package com.arduia.expense.di
 
 import android.app.Application
 import android.content.Context
+import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.*
 import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.ExpenseDao
@@ -28,7 +29,7 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideBackupRepo(backupDao: BackupDao): BackupRepository
-            = BackupRepositoryImpl(backupDao)
+    fun provideBackupRepo(backupDao: BackupDao, excelBackup: ExcelBackup): BackupRepository
+            = BackupRepositoryImpl(backupDao, excelBackup)
 
 }
