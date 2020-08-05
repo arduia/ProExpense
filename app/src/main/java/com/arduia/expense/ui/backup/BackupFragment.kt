@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +18,10 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.core.requestStoragePermission
+import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,7 +37,7 @@ class BackupFragment: NavBaseFragment(){
     @Inject
     lateinit var backupListAdapter: BackupListAdapter
 
-    private var backDetailDialog: BackupDetailDialogFragment? = null
+    private var backDetailDialog: ImportDialogFragment? = null
 
     private var exportDialog: ExportDialogFragment? = null
 
@@ -53,12 +54,10 @@ class BackupFragment: NavBaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
-        checkRequestPermission()
+        checkOrRequestStoragePm()
     }
-
 
     private fun setupView(){
 
@@ -78,38 +77,102 @@ class BackupFragment: NavBaseFragment(){
             openImportFolder()
         }
 
-        viewBinding.rvBackupList.adapter = backupListAdapter
+        backupListAdapter.setItemClickListener {
+            viewModel.selectBackupItem(it.id)
+        }
 
+        //Setup Recycler View
+        viewBinding.rvBackupList.adapter = backupListAdapter
         viewBinding.rvBackupList.addItemDecoration(
             MarginItemDecoration(
                 resources.getDimension(R.dimen.space_between_items).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
             )
         )
+    }
 
-        backupListAdapter.setItemClickListener {
-            viewModel.selectBackupItem(it.id)
+    private fun setupViewModel(){
+
+        lifecycle.addObserver(viewModel)
+
+        viewModel.backupList.observe(viewLifecycleOwner, Observer {list ->
+            showBackupList(list)
+
+            when(list.isEmpty()){
+                true -> showExportButton()
+                false -> hideExportButton()
+            }
+        })
+
+        viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver{
+            showImportDialog(uri = it)
+        })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        val isDocResult =   (requestCode == OPEN_DOC_CODE && resultCode  == Activity.RESULT_OK)
+
+        if(isDocResult){
+            val resultUri = data?.data ?: return
+            viewModel.selectImportUri(uri = resultUri)
         }
+    }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        val isStoragePermissionGranted = (requestCode == STORAGE_PM_REQUEST_CODE && grantResults.isNotEmpty())
+
+        if(isStoragePermissionGranted){
+            mainHost.showSnackMessage("Permission is Granted!")
+        }
+    }
+
+
+    private fun hideExportButton(){
+        viewBinding.btnExport.visibility = View.INVISIBLE
+    }
+
+    private fun showExportButton(){
+        viewBinding.btnExport.visibility = View.VISIBLE
+    }
+
+    private fun showBackupList(list: List<BackupVto>){
+        backupListAdapter.submitList(list)
     }
 
     private fun showExportDialog(){
+        //Close Old Detail Dialog
         exportDialog?.dismiss()
         exportDialog = ExportDialogFragment()
         exportDialog?.show(parentFragmentManager, ExportDialogFragment.TAG)
     }
 
+    private fun showImportDialog(uri: Uri){
+        //Close Old Detail Dialog
+        backDetailDialog?.dismiss()
+        backDetailDialog = ImportDialogFragment()
+        backDetailDialog?.showBackupDetail(parentFragmentManager, uri)
+    }
+
     private fun openImportFolder(){
-        val openDocumentIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/vnd.ms-excel"
         }
-        startActivityForResult(openDocumentIntent, OPEN_DOC_CODE)
+        startActivityForResult(intent, OPEN_DOC_CODE)
     }
 
-    private fun checkRequestPermission(){
-        val storagePm = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        when(storagePm == PackageManager.PERMISSION_GRANTED){
+    private fun checkOrRequestStoragePm(){
+        val storagePmStatus = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        when(isPermissionGranted(storagePmStatus)){
             true -> {
                 Timber.d("Permission is already Granted!")
             }
@@ -120,42 +183,8 @@ class BackupFragment: NavBaseFragment(){
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if(requestCode == OPEN_DOC_CODE && resultCode == Activity.RESULT_OK){
-           Timber.d("Open Document Result OK")
-            viewModel.selectImportUri( data?.data ?: throw Exception("Uri Not Found!"))
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == STORAGE_PM_REQUEST_CODE && grantResults.isNotEmpty()){
-            mainHost.showSnackMessage("Permission is Granted!")
-        }
-    }
-
-
-    private fun setupViewModel(){
-        viewModel.backupList.observe(viewLifecycleOwner, Observer {
-            Timber.d("setupViewModel -> $it")
-            backupListAdapter.submitList(it)
-            viewBinding.btnExport.visibility = if(it.isNotEmpty()) View.INVISIBLE else View.VISIBLE
-        })
-
-        viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver{
-            //Close Old Detail Dialog
-            backDetailDialog?.dismiss()
-            backDetailDialog = BackupDetailDialogFragment()
-            backDetailDialog?.showBackupDetail(parentFragmentManager, it)
-
-        })
-    }
+    private fun isPermissionGranted(permissionStatus: Int)
+            = (permissionStatus == PackageManager.PERMISSION_GRANTED)
 
     companion object{
         private const val STORAGE_PM_REQUEST_CODE = 3000

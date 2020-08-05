@@ -8,18 +8,25 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupDetailBinding
+import com.arduia.expense.ui.MainHost
+import com.arduia.mvvm.EventObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class BackupDetailDialogFragment: BottomSheetDialogFragment(){
+class ImportDialogFragment: BottomSheetDialogFragment(){
 
     private lateinit var viewBinding : FragBackupDetailBinding
 
     private  var fileUri: Uri? = null
 
-    private val viewModel by viewModels<BackupDetailViewModel>()
+    private val viewModel by viewModels<ImportViewModel>()
+
+    @Inject
+    lateinit var mainHost: MainHost
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +52,6 @@ class BackupDetailDialogFragment: BottomSheetDialogFragment(){
         viewBinding.btnImport.setOnClickListener {
             viewModel.importData()
         }
-
     }
 
     private fun setupViewModel(){
@@ -55,6 +61,14 @@ class BackupDetailDialogFragment: BottomSheetDialogFragment(){
 
         viewModel.totalCount.observe(viewLifecycleOwner, Observer {
             viewBinding.tvItemsValue.text = it
+        })
+
+        viewModel.closeEvent.observe(viewLifecycleOwner, EventObserver{
+            dismiss()
+        })
+
+        viewModel.fileNotFoundEvent.observe(viewLifecycleOwner, EventObserver{
+            mainHost.showSnackMessage(getString(R.string.label_file_not_found))
         })
 
         viewModel.setFileUri(fileUri?: throw Exception("Url not found exception!"))

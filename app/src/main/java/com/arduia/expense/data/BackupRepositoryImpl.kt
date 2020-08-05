@@ -2,6 +2,7 @@ package com.arduia.expense.data
 
 import android.content.Context
 import android.net.Uri
+import com.arduia.backup.BackupException
 import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.BackupEnt
@@ -38,8 +39,16 @@ class BackupRepositoryImpl ( private val appContext: Context,
 
     override suspend fun getItemCount(uri: Uri) =
         flow {
-            val contentResolver = appContext.contentResolver
-            val inputStream = contentResolver.openInputStream(uri)?: return@flow
-            emit(backup.itemCount(inputStream))
+            try {
+                val contentResolver = appContext.contentResolver
+                val inputStream = contentResolver.openInputStream(uri)?: return@flow
+                val itemCount = backup.itemCount(inputStream)
+
+                emit(itemCount)
+
+            }catch (e: BackupException){
+                emit(-1)
+                return@flow
+            }
         }
 }

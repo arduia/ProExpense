@@ -1,6 +1,7 @@
 package com.arduia.backup
 
 import jxl.Workbook
+import jxl.read.biff.BiffException
 import jxl.write.WritableWorkbook
 import java.io.File
 import java.io.IOException
@@ -33,8 +34,16 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
 
     @Throws(IOException::class, SecurityException::class)
     suspend fun import(inputStream: InputStream){
-        val book = Workbook.getWorkbook(inputStream)
-        importExcelData(book)
+
+        try {
+
+            val book = Workbook.getWorkbook(inputStream)
+            importExcelData(book)
+
+        }catch (e: BiffException){
+            throw BackupException("File Not Found Exception", e)
+        }
+
     }
 
     @Throws(IOException::class, SecurityException::class)
@@ -55,8 +64,15 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
 
     @Throws(IOException::class, SecurityException::class)
     fun itemCount(inputStream: InputStream): Int{
-        val book = Workbook.getWorkbook(inputStream)
-        return itemCount(book)
+
+        try {
+            val book = Workbook.getWorkbook(inputStream)
+            return itemCount(book)
+
+        }catch (e: BiffException){
+            throw BackupException("File Doesn't Exist", e)
+        }
+
     }
 
     private fun itemCount(book: Workbook): Int{

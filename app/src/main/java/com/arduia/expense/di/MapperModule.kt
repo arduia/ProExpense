@@ -18,8 +18,11 @@ object MapperModule {
 
     @Provides
     fun provideExpenseMapper(categoryProvider: ExpenseCategoryProvider,
+                             dateFormatter: DateFormat,
                              @IntegerDecimal decimalFormat: DecimalFormat): ExpenseMapper
-        = ExpenseMapper(categoryProvider, currencyFormatter = decimalFormat)
+        = ExpenseMapper(categoryProvider,
+        dateFormatter = dateFormatter,
+        currencyFormatter = decimalFormat)
 
     @Provides
     fun privateBackupMapper(dateFormat: DateFormat): BackupMapper
