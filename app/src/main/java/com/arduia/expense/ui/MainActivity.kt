@@ -14,7 +14,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
-import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
@@ -22,8 +21,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import timber.log.Timber
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -38,13 +35,12 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private val navOption by lazy { createNavOption() }
 
-    private var itemSelectionTask: (() -> Unit)? = null
+    private var itemSelectTask: (() -> Unit)? = null
 
     override val defaultSnackBarDuration: Int  by lazy { resources.getInteger(R.integer.duration_short_snack) }
 
     private var addBtnClickListener: () -> Unit = { }
 
-    //To Listen sna
     private var lastSnackBar: Snackbar? = null
 
     private var addFabShowTask: (() -> Unit)? = null
@@ -56,8 +52,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
-
         setContentView(viewBinding.root)
+
         setupView()
     }
 
@@ -69,33 +65,27 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     private fun setupView(){
 
         viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
-
         viewBinding.fbMainAdd.setOnClickListener {
             addBtnClickListener.invoke()
         }
-
         viewBinding.fbMainAdd.hide()
 
         viewBinding.nvMain.setupWithNavController(navController)
 
-        viewBinding.nvMain.setNavigationItemSelectedListener listener@{
+        viewBinding.nvMain.setNavigationItemSelectedListener listener@{menuItem ->
 
             //for smooth drawer motions
             //register new task
-            itemSelectionTask = { selectItem(it) }
+            itemSelectTask = { selectPage(selectedMenuItem = menuItem) }
 
-            //If Drawer is in Tablet Mode
-            if(!viewBinding.dlMain.isDrawerOpen(GravityCompat.START)){
+            val isDrawerInTabletMode = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
 
-                itemSelectionTask?.invoke()
-
-                itemSelectionTask = {}
-
+            if(isDrawerInTabletMode){
+                itemSelectTask?.invoke()
+                itemSelectTask = null
             }
 
-            //close drawer first
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
-
             return@listener true
         }
 
@@ -107,9 +97,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
             override fun onDrawerClosed(drawerView: View) {
                 //execute selected item
-                itemSelectionTask?.invoke()
-                //remove old task
-                itemSelectionTask = null
+                itemSelectTask?.invoke()
+                itemSelectTask = null
             }
 
             override fun onDrawerOpened(drawerView: View) { }
@@ -122,46 +111,37 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     }
 
-    private fun selectItem(item: MenuItem){
+    private fun selectPage(selectedMenuItem: MenuItem){
 
-        // select Item
-        if( item.itemId == R.id.dest_home ){
+        val isHomePage = (selectedMenuItem.itemId == R.id.dest_home)
+
+        if(isHomePage){
             navController.popBackStack(R.id.dest_home, false)
         }
-        // navigate Item
-        navController.navigate(item.itemId, null, navOption)
+
+        navController.navigate(selectedMenuItem.itemId, null, navOption)
 
     }
 
     override fun openDrawer() {
-        // Open Drawer
         viewBinding.dlMain.openDrawer(GravityCompat.START)
     }
 
     override fun closeDrawer() {
-        //Close Drawer
         viewBinding.dlMain.closeDrawer(GravityCompat.START)
     }
 
-    //Lock Drawer for Some Fragment which doesn't require Drawer
-    override fun lockDrawer(isLocked: Boolean) {
-
-        when(isLocked){
-            true -> {
-                with(viewBinding.dlMain){
-                    // Firstly close the drawer
-                    closeDrawer(GravityCompat.START)
-                    // Lock the Drawer
-                    setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                }
-            }
-            false -> {
-                // Unlock the drawer
-                viewBinding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-            }
+    override fun lockNavDrawer() {
+        with(viewBinding.dlMain){
+            closeDrawer(GravityCompat.START)
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
-
     }
+
+    override fun unlockNavDrawer() {
+        viewBinding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
+
 
     override fun navigateUpTo(upIntent: Intent?): Boolean {
         // Check navigation has back stack
@@ -245,16 +225,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         addBtnClickListener = listener
     }
 
-    // Separated function to improve readability
     private fun createNavOption() =
         NavOptions.Builder()
             .setLaunchSingleTop(true)
             .build()
 
-    //
     override fun onDestroy() {
         super.onDestroy()
-        itemSelectionTask = {}
+        itemSelectTask = {}
     }
 
     override fun attachBaseContext(newBase: Context?) {

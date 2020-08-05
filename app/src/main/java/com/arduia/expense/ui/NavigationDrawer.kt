@@ -6,6 +6,8 @@ interface NavigationDrawer {
 
     fun closeDrawer()
 
-    fun lockDrawer(isLocked: Boolean)
+    fun lockNavDrawer()
+
+    fun unlockNavDrawer()
 
 }
