@@ -13,7 +13,6 @@ import com.arduia.expense.databinding.FragExportDialogBinding
 import com.arduia.expense.ui.MainHost
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,56 +46,63 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
     private fun setupView(){
 
         viewBinding.btnDrop.setOnClickListener {
-            dismiss()
+            closeDialog()
         }
 
         viewBinding.btnExportNow.setOnClickListener {
-            openSaveAs()
+            openExternalFileBrowserToSave()
         }
     }
 
     private fun setupViewModel(){
 
-        viewModel.exportFileName.observe(viewLifecycleOwner, Observer {
-            viewBinding.edtName.setText(it)
+        viewModel.exportFileName.observe(viewLifecycleOwner, Observer {fileName ->
+            viewBinding.edtName.setText(fileName)
 
             viewBinding.edtName.selectAll()
         })
     }
 
-    private fun openSaveAs(){
+    private fun openExternalFileBrowserToSave(){
 
-        val fileName =  viewBinding.edtName.text.toString() + ".xls"
+        val fileNameWithExtension =  getCurrentFileName() + ".xls"
 
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/xls"
-            putExtra(Intent.EXTRA_TITLE, fileName)
+            putExtra(Intent.EXTRA_TITLE, fileNameWithExtension)
         }
 
-        startActivityForResult(intent, SAVE_AS_CODE)
+        startActivityForResult(intent, SAVE_AS_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == SAVE_AS_CODE && resultCode == Activity.RESULT_OK){
-            data?.data?.also {
-                Timber.d("FilePath -> $it")
-                onUriReturn(uri = it)
-            }
+        val isSaveAsRequestOK = (requestCode == SAVE_AS_REQUEST_CODE && resultCode == Activity.RESULT_OK)
+
+        if(isSaveAsRequestOK){
+            val selectedFileUri = data?.data ?: return
+            onSaveFileUriReturn(fieUri = selectedFileUri)
         }
     }
 
-    private fun onUriReturn(uri: Uri){
-        val fileName =  viewBinding.edtName.text.toString()
-        viewModel.exportData(fileName, uri)
+    private fun onSaveFileUriReturn(fieUri: Uri){
+
+        val currentFileName = getCurrentFileName()
+        viewModel.exportData(fileName = currentFileName, fileUri = fieUri)
+        closeDialog()
+    }
+
+    private fun getCurrentFileName() = viewBinding.edtName.text.toString()
+
+    private fun closeDialog(){
         dismiss()
     }
 
     companion object{
         const val TAG = "BackupDialogFragment"
-        private const val SAVE_AS_CODE = 8000
+        private const val SAVE_AS_REQUEST_CODE = 8000
     }
 
 }
