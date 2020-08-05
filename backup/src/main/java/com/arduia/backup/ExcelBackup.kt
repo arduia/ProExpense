@@ -1,17 +1,24 @@
 package com.arduia.backup
 
 import jxl.Workbook
+import jxl.write.WritableWorkbook
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.io.OutputStream
 
 class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) {
 
-    @Throws(IOException::class, SecurityException::class)
-    suspend fun export(filePath: String): Int{
-        var totalCount = 0
 
-        val book = Workbook.createWorkbook(File(filePath))
+    @Throws(IOException::class, SecurityException::class)
+    suspend fun export(outputStream: OutputStream):Int{
+        val book = Workbook.createWorkbook(outputStream)
+
+        return exportData(book)
+    }
+
+    private suspend fun exportData(book: WritableWorkbook): Int{
+        var totalCount = 0
 
         sheets.forEachIndexed { index, backupSheet ->
             totalCount+= backupSheet.export(book, index)
@@ -22,6 +29,7 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
 
         return totalCount
     }
+
 
     @Throws(IOException::class, SecurityException::class)
     suspend fun import(inputStream: InputStream){

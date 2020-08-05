@@ -50,28 +50,19 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-     <TextView
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:id="@+id/tv_folder"
-         style="@style/TextAppearance.MaterialComponents.Caption"
-         android:text="/sdcard/0/Downloads/BackupExpense.expense"
-         app:layout_constraintTop_toBottomOf="@id/tl_name"
-         app:layout_constraintStart_toStartOf="@id/tl_name"
-         android:layout_marginTop="@dimen/margin_material"/>
     <Button
         android:id="@+id/btn_export_now"
         style="@style/ExpenseButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_large_material"
         android:layout_marginBottom="@dimen/margin_material"
-        android:text="@string/label_export_now"
+        android:text="@string/label_save_as"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tl_name"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tl_name"
-        app:layout_constraintTop_toBottomOf="@id/tv_folder"
+        app:layout_constraintTop_toBottomOf="@id/tl_name"
         app:layout_constraintVertical_bias="0.0"
         app:layout_goneMarginTop="@dimen/margin_material" />
 </androidx.constraintlayout.widget.ConstraintLayout>

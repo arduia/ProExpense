@@ -48,6 +48,4 @@ class BackupViewModel @ViewModelInject constructor(
     fun selectImportUri(uri: Uri){
         _backupFilePath post event(uri)
     }
-
-
 }

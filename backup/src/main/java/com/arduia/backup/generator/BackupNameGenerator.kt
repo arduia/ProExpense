@@ -1,25 +1,23 @@
 package com.arduia.backup.generator
 
 import com.arduia.backup.FileNameGenerator
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class BackupNameGenerator:
+class BackupNameGenerator (private val dateFormatter: DateFormat = SimpleDateFormat(DATE_PATTERN, Locale.ENGLISH)):
     FileNameGenerator {
 
     companion object{
         private const val PREFIX = "Backup"
-        private const val EXTENSION = ".xls"
-        private const val DATE_PATTERN = "_ddMyyyyHms"
+        private const val DATE_PATTERN = "_MMMd_yyyy_Hms"
     }
 
     override fun generate(): String {
         val date = Date().time
 
-        val sampleDateFormatter = SimpleDateFormat( DATE_PATTERN, Locale.getDefault())
+        val dateSuffix = dateFormatter.format(date)
 
-        val dateSuffix = sampleDateFormatter.format(date)
-
-        return "$PREFIX$dateSuffix$EXTENSION"
+        return "$PREFIX$dateSuffix"
     }
 }

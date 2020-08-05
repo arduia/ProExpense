@@ -96,6 +96,6 @@
     <string name="label_backup">Backup</string>
     <string name="label_export">Export</string>
     <string name="label_total">Total</string>
-    <string name="label_export_now">Export Now</string>
+    <string name="label_save_as">Save As</string>
 
 </resources>

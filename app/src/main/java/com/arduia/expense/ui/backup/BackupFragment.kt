@@ -38,6 +38,8 @@ class BackupFragment: NavBaseFragment(){
 
     private var backDetailDialog: BackupDetailDialogFragment? = null
 
+    private var exportDialog: ExportDialogFragment? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -61,7 +63,7 @@ class BackupFragment: NavBaseFragment(){
     private fun setupView(){
 
         viewBinding.btnExport.setOnClickListener {
-            BackupDialogFragment().show(parentFragmentManager, BackupDialogFragment.TAG)
+            showExportDialog()
         }
 
         viewBinding.btnMenuOpen.setOnClickListener{
@@ -69,7 +71,7 @@ class BackupFragment: NavBaseFragment(){
         }
 
         viewBinding.btnExportOpen.setOnClickListener {
-            BackupDialogFragment().show(parentFragmentManager, BackupDialogFragment.TAG)
+            showExportDialog()
         }
 
         viewBinding.btnImportOpen.setOnClickListener {
@@ -77,6 +79,7 @@ class BackupFragment: NavBaseFragment(){
         }
 
         viewBinding.rvBackupList.adapter = backupListAdapter
+
         viewBinding.rvBackupList.addItemDecoration(
             MarginItemDecoration(
                 resources.getDimension(R.dimen.space_between_items).toInt(),
@@ -88,6 +91,12 @@ class BackupFragment: NavBaseFragment(){
             viewModel.selectBackupItem(it.id)
         }
 
+    }
+
+    private fun showExportDialog(){
+        exportDialog?.dismiss()
+        exportDialog = ExportDialogFragment()
+        exportDialog?.show(parentFragmentManager, ExportDialogFragment.TAG)
     }
 
     private fun openImportFolder(){
