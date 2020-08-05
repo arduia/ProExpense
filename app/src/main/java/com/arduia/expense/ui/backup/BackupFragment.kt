@@ -56,7 +56,6 @@ class BackupFragment: NavBaseFragment(){
 
         setupView()
         setupViewModel()
-        checkOrRequestStoragePm()
     }
 
     private fun setupView(){
@@ -169,22 +168,22 @@ class BackupFragment: NavBaseFragment(){
         startActivityForResult(intent, OPEN_DOC_CODE)
     }
 
-    private fun checkOrRequestStoragePm(){
-        val storagePmStatus = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-        when(isPermissionGranted(storagePmStatus)){
-            true -> {
-                Timber.d("Permission is already Granted!")
-            }
-            false -> {
-                Timber.d("Permission is not Granted!")
-                requestStoragePermission(STORAGE_PM_REQUEST_CODE)
-            }
-        }
-    }
-
-    private fun isPermissionGranted(permissionStatus: Int)
-            = (permissionStatus == PackageManager.PERMISSION_GRANTED)
+//    private fun checkOrRequestStoragePm(){
+//        val storagePmStatus = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//
+//        when(isPermissionGranted(storagePmStatus)){
+//            true -> {
+//                Timber.d("Permission is already Granted!")
+//            }
+//            false -> {
+//                Timber.d("Permission is not Granted!")
+//                requestStoragePermission(STORAGE_PM_REQUEST_CODE)
+//            }
+//        }
+//    }
+//
+//    private fun isPermissionGranted(permissionStatus: Int)
+//            = (permissionStatus == PackageManager.PERMISSION_GRANTED)
 
     companion object{
         private const val STORAGE_PM_REQUEST_CODE = 3000

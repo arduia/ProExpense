@@ -46,7 +46,6 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
 
     private fun setupView(){
 
-
         viewBinding.btnDrop.setOnClickListener {
             dismiss()
         }
@@ -80,9 +79,8 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Timber.d("onActivityResult -> ")
+
         if(requestCode == SAVE_AS_CODE && resultCode == Activity.RESULT_OK){
-            Timber.d("onActivityResult -> ")
             data?.data?.also {
                 Timber.d("FilePath -> $it")
                 onUriReturn(uri = it)
