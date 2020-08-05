@@ -40,41 +40,43 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupView()
         setupViewModel()
     }
 
     private fun setupView(){
         viewBinding.btnDropClose.setOnClickListener {
-            dismiss()
+            this.dismiss()
         }
 
         viewBinding.btnImport.setOnClickListener {
-            viewModel.importData()
+            viewModel.startImportData()
         }
     }
 
     private fun setupViewModel(){
-        viewModel.fileName.observe(viewLifecycleOwner, Observer {
-            viewBinding.tvNameValue.text = it
+        viewModel.fileName.observe(viewLifecycleOwner, Observer {name ->
+            viewBinding.tvNameValue.text = name
         })
 
-        viewModel.totalCount.observe(viewLifecycleOwner, Observer {
-            viewBinding.tvItemsValue.text = it
+        viewModel.totalCount.observe(viewLifecycleOwner, Observer {count ->
+            viewBinding.tvItemsValue.text = count
         })
 
         viewModel.closeEvent.observe(viewLifecycleOwner, EventObserver{
-            dismiss()
+            this.dismiss()
         })
 
         viewModel.fileNotFoundEvent.observe(viewLifecycleOwner, EventObserver{
             mainHost.showSnackMessage(getString(R.string.label_file_not_found))
         })
 
-        viewModel.setFileUri(fileUri?: throw Exception("Url not found exception!"))
+        val importFileUrl = this.fileUri?: throw Exception("Url not found exception!")
+        viewModel.setFileUri(importFileUrl)
     }
 
-    fun showBackupDetail(fm: FragmentManager, uri: Uri){
+    fun showDialog(fm: FragmentManager, uri: Uri){
         this.fileUri = uri
         show(fm, "BackupDetail")
     }

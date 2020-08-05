@@ -76,8 +76,8 @@ class BackupFragment: NavBaseFragment(){
             openImportFolder()
         }
 
-        backupListAdapter.setItemClickListener {
-            viewModel.selectBackupItem(it.id)
+        backupListAdapter.setItemClickListener { backupItem ->
+            viewModel.onBackupItemSelect(id = backupItem.id)
         }
 
         //Setup Recycler View
@@ -94,7 +94,7 @@ class BackupFragment: NavBaseFragment(){
 
         lifecycle.addObserver(viewModel)
 
-        viewModel.backupList.observe(viewLifecycleOwner, Observer {list ->
+        viewModel.backupList.observe(viewLifecycleOwner, Observer { list ->
             showBackupList(list)
 
             when(list.isEmpty()){
@@ -103,8 +103,8 @@ class BackupFragment: NavBaseFragment(){
             }
         })
 
-        viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver{
-            showImportDialog(uri = it)
+        viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver{ fileUri ->
+            showImportDialog(uri = fileUri)
         })
     }
 
@@ -115,7 +115,7 @@ class BackupFragment: NavBaseFragment(){
 
         if(isDocResult){
             val resultUri = data?.data ?: return
-            viewModel.selectImportUri(uri = resultUri)
+            viewModel.setImportUri(uri = resultUri)
         }
     }
 
@@ -157,7 +157,7 @@ class BackupFragment: NavBaseFragment(){
         //Close Old Detail Dialog
         backDetailDialog?.dismiss()
         backDetailDialog = ImportDialogFragment()
-        backDetailDialog?.showBackupDetail(parentFragmentManager, uri)
+        backDetailDialog?.showDialog(parentFragmentManager, uri)
     }
 
     private fun openImportFolder(){

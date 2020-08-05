@@ -28,7 +28,7 @@ class ExportViewModel @ViewModelInject constructor(app: Application,
         _exportFileName set fileNameGen.generate()
     }
 
-    fun exportData(fileName:String, fileUri: Uri){
+    fun exportDataTo(fileName:String, fileUri: Uri){
 
         val inputUriData = Data.Builder()
             .putString(ExportWorker.FILE_URI, fileUri.toString())

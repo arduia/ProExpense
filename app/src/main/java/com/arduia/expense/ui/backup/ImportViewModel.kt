@@ -10,14 +10,18 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.backup.ImportWorker
+import com.arduia.expense.di.IntegerDecimal
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 
 class ImportViewModel @ViewModelInject constructor(
     private val backupRepo: BackupRepository,
     private val contentResolver: ContentResolver,
+    @IntegerDecimal
+    private val decimalFormat: DecimalFormat,
     private val workManger: WorkManager
 ) : ViewModel() {
 
@@ -42,18 +46,19 @@ class ImportViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             val itemCount = backupRepo.getItemCount(uri).first()
+            val isInvalidItem = (itemCount < 0)
 
-            if (itemCount < 0) {
+            if (isInvalidItem) {
                 _fileNotFoundEvent post EventUnit
                 _closeEvent post EventUnit
                 return@launch
             }
 
-            val fileName = getFileNameFromUri(uri)
+            val fileName = getFileNameFromUri(uri = uri)
 
             _fileName post fileName
 
-            _totalCount post "$itemCount"
+            _totalCount post decimalFormat.format(itemCount)
         }
     }
 
@@ -65,7 +70,7 @@ class ImportViewModel @ViewModelInject constructor(
         return cursor.getString(fileNameColumnIndex)
     }
 
-    fun importData() {
+    fun startImportData() {
         val fileUri = currentSelectedUri?.toString() ?: return
 
         val inputData = Data.Builder()

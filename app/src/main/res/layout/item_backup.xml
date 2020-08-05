@@ -55,7 +55,7 @@
 
         <TextView
             android:id="@+id/tv_date"
-            style="@style/TextAppearance.MaterialComponents.Body2"
+            style="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_backup_name"
@@ -75,7 +75,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/margin_material"
             android:alpha="0.7"
-            android:text="32 items" />
+            tools:text="32 items" />
 
     </RelativeLayout>
 

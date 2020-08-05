@@ -31,21 +31,28 @@ class BackupViewModel @ViewModelInject constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun onCreate(){
         viewModelScope.launch (Dispatchers.IO){
-            backupRepo.getBackupAll().collect {
-                _backupList post it.map { backupEnt ->  mapper.mapToBackupVto(backupEnt) }
+
+            backupRepo.getBackupAll().collect {list ->
+
+                val backupVtoList = list.map {  mapper.mapToBackupVto(it) }
+
+                _backupList post backupVtoList
             }
+
         }
     }
 
-    fun selectBackupItem(id: Int){
+    fun onBackupItemSelect(id: Int){
         viewModelScope.launch(Dispatchers.IO){
-            val item = backupRepo.getBackupByID(id).first()
+            val backupEnt = backupRepo.getBackupByID(id).first()
 
-            _backupFilePath post event(Uri.parse(item.filePath))
+            val backupFileUri = Uri.parse(backupEnt.filePath)
+
+            _backupFilePath post event(backupFileUri)
         }
     }
 
-    fun selectImportUri(uri: Uri){
+    fun setImportUri(uri: Uri){
         _backupFilePath post event(uri)
     }
 }
