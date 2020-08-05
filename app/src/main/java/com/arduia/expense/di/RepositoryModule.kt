@@ -10,6 +10,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
@@ -29,7 +30,7 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideBackupRepo(backupDao: BackupDao, excelBackup: ExcelBackup): BackupRepository
-            = BackupRepositoryImpl(backupDao, excelBackup)
+    fun provideBackupRepo(@ApplicationContext context: Context, backupDao: BackupDao, excelBackup: ExcelBackup): BackupRepository
+            = BackupRepositoryImpl(context, backupDao, excelBackup)
 
 }

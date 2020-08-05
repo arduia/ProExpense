@@ -1,6 +1,7 @@
 package com.arduia.expense.ui.backup
 
 import android.app.Application
+import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.BackupRepository
@@ -24,7 +25,7 @@ class BackupViewModel @ViewModelInject constructor(
     private val _backupList = BaseLiveData<List<BackupVto>>()
     val backupList = _backupList.asLiveData()
 
-    private val _backupFilePath = EventLiveData<String>()
+    private val _backupFilePath = EventLiveData<Uri>()
     val backupFilePath = _backupFilePath.asLiveData()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -40,8 +41,12 @@ class BackupViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO){
             val item = backupRepo.getBackupByID(id).first()
 
-            _backupFilePath post event(item.filePath)
+            _backupFilePath post event(Uri.parse(item.filePath))
         }
+    }
+
+    fun selectImportUri(uri: Uri){
+        _backupFilePath post event(uri)
     }
 
 

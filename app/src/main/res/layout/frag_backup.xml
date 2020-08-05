@@ -35,6 +35,29 @@
         app:layout_constraintBottom_toBottomOf="@id/btn_menu_open"
         app:layout_constraintStart_toEndOf="@id/btn_menu_open"
         app:layout_constraintTop_toTopOf="@id/btn_menu_open" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/btn_import_open"
+        style="@style/IconButton"
+        app:srcCompat="@drawable/ic_folder"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tb_backup"
+        app:layout_constraintBottom_toBottomOf="@id/tb_backup"
+        android:layout_marginEnd="@dimen/margin_material"/>
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/btn_export_open"
+        style="@style/IconButton"
+        app:srcCompat="@drawable/ic_export"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@id/btn_import_open"
+        app:layout_constraintTop_toTopOf="@id/tb_backup"
+        app:layout_constraintBottom_toBottomOf="@id/tb_backup"
+        android:layout_marginEnd="@dimen/margin_material"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="0dp"
         android:layout_height="0dp"

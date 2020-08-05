@@ -1,5 +1,6 @@
 package com.arduia.expense.data
 
+import android.net.Uri
 import com.arduia.expense.data.local.BackupEnt
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +20,6 @@ interface BackupRepository {
 
     suspend fun getBackupByWorkerID(id: String): Flow<BackupEnt>
 
-    suspend fun getItemCount(filePath: String): Flow<Int>
+    suspend fun getItemCount(uri: Uri): Flow<Int>
 
 }

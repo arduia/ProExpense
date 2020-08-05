@@ -3,6 +3,7 @@ package com.arduia.backup
 import jxl.Workbook
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 
 class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) {
 
@@ -23,9 +24,19 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
     }
 
     @Throws(IOException::class, SecurityException::class)
+    suspend fun import(inputStream: InputStream){
+        val book = Workbook.getWorkbook(inputStream)
+        importExcelData(book)
+    }
+
+    @Throws(IOException::class, SecurityException::class)
     suspend fun import(filePath: String) {
         val book = Workbook.getWorkbook(File(filePath))
 
+        importExcelData(book)
+    }
+
+    private suspend fun importExcelData(book: Workbook){
         sheets.forEach {backupSheet ->
             backupSheet.import(book)
         }
@@ -33,12 +44,15 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
         book.close()
     }
 
+
     @Throws(IOException::class, SecurityException::class)
-    suspend fun itemCount(filePath: String): Int{
+    fun itemCount(inputStream: InputStream): Int{
+        val book = Workbook.getWorkbook(inputStream)
+        return itemCount(book)
+    }
 
+    private fun itemCount(book: Workbook): Int{
         var itemCount = 0
-
-        val book = Workbook.getWorkbook(File(filePath))
 
         sheets.forEach {backupSheet ->
             itemCount += backupSheet.itemCounts(book)

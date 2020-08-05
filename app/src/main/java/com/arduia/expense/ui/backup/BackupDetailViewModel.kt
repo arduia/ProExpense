@@ -1,11 +1,11 @@
 package com.arduia.expense.ui.backup
 
+import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.backup.ImportWorker
 import com.arduia.mvvm.BaseLiveData
@@ -13,11 +13,11 @@ import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 
 class BackupDetailViewModel @ViewModelInject constructor(private val backupRepo: BackupRepository,
-                                                         private val workManger: WorkManager)
-    : ViewModel(){
+                                                         private val workManger: WorkManager) : ViewModel(){
 
     private val _fileName = BaseLiveData<String>()
     val fileName = _fileName.asLiveData()
@@ -25,30 +25,29 @@ class BackupDetailViewModel @ViewModelInject constructor(private val backupRepo:
     private val _totalCount = BaseLiveData<String>()
     val totalCount = _totalCount.asLiveData()
 
-    private val _filePath = BaseLiveData<String>()
-    val filePath = _filePath.asLiveData()
+    private var currentSelectedUri: Uri? = null
 
-    fun setFile(filePath: String){
+    fun setFileUri(uri: Uri){
+
+        currentSelectedUri = uri
+
+        _fileName post (uri.host ?:"")
 
         viewModelScope.launch(Dispatchers.IO){
+            val itemCount = backupRepo.getItemCount(uri).first()
+            val fileName = (File(uri.path)).name
 
-            val file = File(filePath)
-
-            _fileName post file.name
-            _filePath post filePath
-
-            val itemCount = backupRepo.getItemCount(filePath).first()
-
-            _totalCount post itemCount.toString()
+            _fileName post fileName
+            _totalCount post "$itemCount"
         }
     }
 
     fun importData(){
-        val filePath = _filePath.value ?: return
-
+        val fileUri = currentSelectedUri?.toString()?: return
         val importRequest = OneTimeWorkRequestBuilder<ImportWorker>()
-            .setInputData(Data.Builder().putString("FILE_PATH",filePath).build())
+            .setInputData(Data.Builder().putString("FILE_URI",fileUri).build())
             .build()
         workManger.enqueue(importRequest)
+        Timber.d("Start Import")
     }
 }

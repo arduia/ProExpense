@@ -77,29 +77,6 @@
         android:layout_marginStart="@dimen/margin_material"
         android:text="100"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_path"
-        android:text="/sdcard/Downloads/Backup.expense"
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_material"
-        app:layout_constraintTop_toBottomOf="@id/tv_items_value"
-        app:layout_constraintStart_toStartOf="parent"/>
-    <ImageButton
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:id="@+id/btn_folder_open"
-        style="@style/IconButton"
-        android:src="@drawable/ic_folder"
-        android:scaleType="centerInside"
-        android:tint="@color/primaryColor"
-        app:layout_constraintTop_toTopOf="@id/tv_path"
-        app:layout_constraintBottom_toBottomOf="@id/tv_path"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/margin_material"/>
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_import"
         style="@style/ExpenseButton"
@@ -107,10 +84,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_material"
         android:text="Import"
-        app:layout_constraintVertical_bias="1"
-        app:layout_constraintTop_toBottomOf="@id/tv_path"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_items_value" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

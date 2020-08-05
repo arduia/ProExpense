@@ -1,13 +1,16 @@
 package com.arduia.expense.data
 
+import android.content.Context
+import android.net.Uri
 import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.BackupEnt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class BackupRepositoryImpl (private val dao: BackupDao,
-                            private val backup: ExcelBackup): BackupRepository{
+class BackupRepositoryImpl ( private val appContext: Context,
+                             private val dao: BackupDao,
+                             private val backup: ExcelBackup): BackupRepository{
 
     override suspend fun insertBackup(item: BackupEnt) {
         dao.insertBackup(item)
@@ -33,6 +36,10 @@ class BackupRepositoryImpl (private val dao: BackupDao,
         return dao.getBackupByWorkerID(id)
     }
 
-    override suspend fun getItemCount(filePath: String) =
-        flow { emit(backup.itemCount(filePath)) }
+    override suspend fun getItemCount(uri: Uri) =
+        flow {
+            val contentResolver = appContext.contentResolver
+            val inputStream = contentResolver.openInputStream(uri)?: return@flow
+            emit(backup.itemCount(inputStream))
+        }
 }

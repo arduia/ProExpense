@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.backup
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,7 @@ class BackupDetailDialogFragment: BottomSheetDialogFragment(){
 
     private lateinit var viewBinding : FragBackupDetailBinding
 
-    private  var filePath: String? = null
+    private  var fileUri: Uri? = null
 
     private val viewModel by viewModels<BackupDetailViewModel>()
 
@@ -52,19 +53,15 @@ class BackupDetailDialogFragment: BottomSheetDialogFragment(){
             viewBinding.tvNameValue.text = it
         })
 
-        viewModel.filePath.observe(viewLifecycleOwner, Observer {
-            viewBinding.tvPath.text  = it
-        })
-
         viewModel.totalCount.observe(viewLifecycleOwner, Observer {
             viewBinding.tvItemsValue.text = it
         })
 
-        viewModel.setFile(filePath!!)
+        viewModel.setFileUri(fileUri?: throw Exception("Url not found exception!"))
     }
 
-    fun showBackupDetail(fm: FragmentManager, filePath: String){
-        this.filePath = filePath
+    fun showBackupDetail(fm: FragmentManager, uri: Uri){
+        this.fileUri = uri
         show(fm, "BackupDetail")
     }
 

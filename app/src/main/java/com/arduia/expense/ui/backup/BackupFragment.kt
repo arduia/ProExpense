@@ -1,6 +1,8 @@
 package com.arduia.expense.ui.backup
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +20,7 @@ import com.arduia.core.requestStoragePermission
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -65,6 +68,14 @@ class BackupFragment: NavBaseFragment(){
             openDrawer()
         }
 
+        viewBinding.btnExportOpen.setOnClickListener {
+            BackupDialogFragment().show(parentFragmentManager, BackupDialogFragment.TAG)
+        }
+
+        viewBinding.btnImportOpen.setOnClickListener {
+            openImportFolder()
+        }
+
         viewBinding.rvBackupList.adapter = backupListAdapter
         viewBinding.rvBackupList.addItemDecoration(
             MarginItemDecoration(
@@ -79,6 +90,14 @@ class BackupFragment: NavBaseFragment(){
 
     }
 
+    private fun openImportFolder(){
+        val openDocumentIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/vnd.ms-excel"
+        }
+        startActivityForResult(openDocumentIntent, OPEN_DOC_CODE)
+    }
+
     private fun checkRequestPermission(){
         val storagePm = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         when(storagePm == PackageManager.PERMISSION_GRANTED){
@@ -89,6 +108,15 @@ class BackupFragment: NavBaseFragment(){
                 Timber.d("Permission is not Granted!")
                 requestStoragePermission(STORAGE_PM_REQUEST_CODE)
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == OPEN_DOC_CODE && resultCode == Activity.RESULT_OK){
+           Timber.d("Open Document Result OK")
+            viewModel.selectImportUri( data?.data ?: throw Exception("Uri Not Found!"))
         }
     }
 
@@ -122,5 +150,6 @@ class BackupFragment: NavBaseFragment(){
 
     companion object{
         private const val STORAGE_PM_REQUEST_CODE = 3000
+        private const val OPEN_DOC_CODE = 9000
     }
 }
