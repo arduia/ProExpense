@@ -90,7 +90,7 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
     private fun onSaveFileUriReturn(fieUri: Uri){
 
         val currentFileName = getCurrentFileName()
-        viewModel.exportData(fileName = currentFileName, fileUri = fieUri)
+        viewModel.exportDataTo(fileUri = fieUri, fileName = currentFileName)
         closeDialog()
     }
 

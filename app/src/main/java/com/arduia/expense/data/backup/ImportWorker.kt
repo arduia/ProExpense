@@ -1,5 +1,6 @@
 package com.arduia.expense.data.backup
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import androidx.hilt.Assisted
@@ -12,15 +13,15 @@ import java.lang.Exception
 
 class ImportWorker  @WorkerInject constructor(@Assisted context: Context,
                                               @Assisted param: WorkerParameters,
+                                              private val contentResolver: ContentResolver,
                                               private val excelBackup: ExcelBackup ): CoroutineWorker(context, param){
     override suspend fun doWork(): Result {
 
-        val uriString = inputData.getString(FILE_URI) ?: return Result.failure()
+        val inputFileUri = inputData.getString(FILE_URI) ?: return Result.failure()
 
-        val contentResolver = applicationContext.contentResolver
-        val fileUri = Uri.parse(uriString)
+        val importUri = Uri.parse(inputFileUri)
 
-        val fileInputStream = contentResolver.openInputStream(fileUri)
+        val fileInputStream = contentResolver.openInputStream(importUri)
             ?: throw Exception("Cannot Open InputStream from Content Provider Uri")
 
         try {

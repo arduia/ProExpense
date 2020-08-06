@@ -9,9 +9,9 @@ class ExpenseBackupSheet( source: BackupSource<ExpenseEnt>): BackupSheet<Expense
 
     override val sheetName = "expense"
 
-    override fun getFieldNames() = listOf(FIELD_NAME, FIELD_AMOUNT, FIELD_CATEGORY, FIELD_NOTE, FIELD_DATE)
+    override fun getSheetFieldNames() = listOf(FIELD_NAME, FIELD_AMOUNT, FIELD_CATEGORY, FIELD_NOTE, FIELD_DATE)
 
-    override fun create(row: Map<String, String>): ExpenseEnt {
+    override fun mapToEntityFromSheetData(row: Map<String, String>): ExpenseEnt {
 
         val name = row[FIELD_NAME]
         val amount = row[FIELD_AMOUNT]?.toLong() ?: 0
@@ -22,7 +22,7 @@ class ExpenseBackupSheet( source: BackupSource<ExpenseEnt>): BackupSheet<Expense
         return ExpenseEnt(0, name, amount, category, note, date, Date().time)
     }
 
-    override fun map(item: ExpenseEnt): Map<String, String> {
+    override fun mapToSheetDataFromEntity(item: ExpenseEnt): Map<String, String> {
        return mutableMapOf<String, String>().apply {
            put(FIELD_NAME, item.name?:"")
            put(FIELD_AMOUNT, item.amount.toString())

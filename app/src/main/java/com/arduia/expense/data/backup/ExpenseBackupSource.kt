@@ -6,15 +6,15 @@ import com.arduia.expense.data.local.ExpenseEnt
 import kotlinx.coroutines.flow.first
 
 class ExpenseBackupSource (private val repo: AccRepository): BackupSource<ExpenseEnt>{
-    override suspend fun write(item: ExpenseEnt) {
+    override suspend fun writeSingleItem(item: ExpenseEnt) {
         repo.insertExpense(item)
     }
 
-    override suspend fun writeAll(items: List<ExpenseEnt>) {
+    override suspend fun writeAllItem(items: List<ExpenseEnt>) {
         repo.insertExpenseAll(items)
     }
 
-    override suspend fun readAll(): List<ExpenseEnt> {
+    override suspend fun readAllItem(): List<ExpenseEnt> {
        return repo.getExpenseAll().first()
     }
 }

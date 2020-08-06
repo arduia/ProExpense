@@ -15,7 +15,7 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
         try {
             val sheetData = getDataFromSheet(sheet)
-            source.writeAll(sheetData)
+            source.writeAllItem(sheetData)
         } catch (ie: IllegalArgumentException) {
             throw BackupException("Data Type doesn't match", ie)
         }
@@ -26,7 +26,7 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
         val sheetData = mutableListOf<T>()
 
         //Header
-        val columnNames = getFieldNames()
+        val columnNames = getSheetFieldNames()
         //Total Item
         val rowCount = sheet.rows
 
@@ -41,7 +41,7 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
                 tmpRowMap[columnName] = cellData
             }
             //create entity from map
-            val data = create(tmpRowMap)
+            val data = mapToEntityFromSheetData(tmpRowMap)
             //add map to data list
             sheetData.add(data)
             //recycle map instance
@@ -53,7 +53,7 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
     internal suspend fun export(book: WritableWorkbook, index: Int): Int {
         val sheet = book.createSheet(sheetName, index)
-        val fieldNames = getFieldNames()
+        val fieldNames = getSheetFieldNames()
         var itemCount = 0
 
         //Add Headers
@@ -61,12 +61,12 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
             sheet.addCell(Label(column, 0, label))
         }
 
-        source.readAll().forEachIndexed { itemPosition, data ->
+        source.readAllItem().forEachIndexed { itemPosition, data ->
             itemCount++
             //Shift 1 of Header Row
             val rowNo = itemPosition + 1
 
-            val map = map(data)
+            val map = mapToSheetDataFromEntity(data)
 
             fieldNames.forEachIndexed { column, name ->
                 val cellValue = map[name] ?: ""
@@ -85,7 +85,7 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
         if (rowCount == 0) return -1
 
         val headerRow = sheet.getRow(0)
-        val fieldNames = getFieldNames()
+        val fieldNames = getSheetFieldNames()
         //assume valid first
         var isValidSheet = true
 
@@ -109,10 +109,10 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
     protected abstract val sheetName: String
 
-    protected abstract fun getFieldNames(): List<String>
+    protected abstract fun getSheetFieldNames(): List<String>
 
-    protected abstract fun create(row: Map<String, String>): T
+    protected abstract fun mapToEntityFromSheetData(row: Map<String, String>): T
 
-    protected abstract fun map(item: T): Map<String, String>
+    protected abstract fun mapToSheetDataFromEntity(item: T): Map<String, String>
 
 }

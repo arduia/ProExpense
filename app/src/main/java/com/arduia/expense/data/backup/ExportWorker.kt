@@ -1,5 +1,6 @@
 package com.arduia.expense.data.backup
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import androidx.hilt.Assisted
@@ -14,32 +15,44 @@ import java.util.*
 
 class ExportWorker @WorkerInject constructor(@Assisted context: Context,
                                              @Assisted param: WorkerParameters,
-                                             private val backupRep: BackupRepository,
+                                             private val contentResolver: ContentResolver,
+                                             private val backupRepo: BackupRepository,
                                              private val excelBackup: ExcelBackup): CoroutineWorker(context, param){
     override suspend fun doWork(): Result {
 
-        val uriString = inputData.getString(FILE_URI)?: return Result.failure()
-        val fileName = inputData.getString(FILE_NAME)?: return Result.failure()
+        val inputFileUri = inputData.getString(FILE_URI)?: return Result.failure()
+        val inputFileName = inputData.getString(FILE_NAME)?: return Result.failure()
 
-        //Save Progress to Repo
-        val taskBackupItem = BackupEnt(0, fileName, uriString, Date().time,0, id.toString(), false )
-        backupRep.insertBackup(taskBackupItem)
+        val initialBackupLog = createBackupEntityForExportWork(exportName = inputFileName, exportUri = inputFileUri)
+        backupRepo.insertBackup(initialBackupLog)
 
-        val contentResolver =  applicationContext.contentResolver
 
-        val fileUri = Uri.parse(uriString)
-        val outputStream = contentResolver.openOutputStream(fileUri) ?: return Result.failure()
+        val exportUri = Uri.parse(inputFileUri)
+        val outputStream = contentResolver.openOutputStream(exportUri) ?: return Result.failure()
 
-        val totalCount = excelBackup.export(outputStream)
+        val exportedItemCount = excelBackup.export(outputStream)
 
-        val backupItemBefore = backupRep.getBackupByWorkerID(id.toString()).first()
-        backupItemBefore.isCompleted= true
-        backupItemBefore.itemTotal = totalCount
-
-        backupRep.updateBackup(backupItemBefore)
+        updateBackupLogAsCompleted(itemCount = exportedItemCount)
 
         return Result.success()
     }
+
+    private suspend fun updateBackupLogAsCompleted(itemCount: Int){
+        val oldBackupLog = backupRepo.getBackupByWorkerID(id.toString()).first()
+        oldBackupLog.isCompleted= true
+        oldBackupLog.itemTotal = itemCount
+        backupRepo.updateBackup(oldBackupLog)
+    }
+
+    private fun createBackupEntityForExportWork(exportName: String, exportUri: String)=
+         BackupEnt(backupId = 0,
+             name = exportName,
+             filePath =  exportUri,
+             createdDate = Date().time,
+             itemTotal = 0,
+             workerId = id.toString(),
+             isCompleted = false)
+
 
     companion object{
         const val FILE_URI = "FILE_URI"
