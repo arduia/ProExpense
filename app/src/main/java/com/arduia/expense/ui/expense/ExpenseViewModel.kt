@@ -11,67 +11,81 @@ import com.arduia.expense.ui.vto.ExpenseVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
 class ExpenseViewModel @ViewModelInject constructor(
-                    private val accMapper: ExpenseMapper,
-                    private val accRepo: AccRepository) : ViewModel(), LifecycleObserver{
+    private val accMapper: ExpenseMapper,
+    private val accRepo: AccRepository
+) : ViewModel(), LifecycleObserver {
 
     private val _isLoading = BaseLiveData<Boolean>()
-    val isLoading  get() = _isLoading.asLiveData()
+    val isLoading get() = _isLoading.asLiveData()
 
     private val _isSelectedMode = BaseLiveData<Boolean>()
     val isSelectedMode get() = _isSelectedMode.asLiveData()
 
     private val _deleteEvent = EventLiveData<Int>()
-    val deleteEvent = _deleteEvent.asLiveData()
+    val deleteEvent get() = _deleteEvent.asLiveData()
+
+    private val _selectedItemChangeEvent = EventLiveData<Unit>()
+    val selectedItemChangeEvent get() = _selectedItemChangeEvent.asLiveData()
 
     private val _detailDataChanged = EventLiveData<ExpenseDetailsVto>()
     val detailDataChanged get() = _detailDataChanged.asLiveData()
 
-    private var livePagedListBuilder: FilterableLivePagedListBuilder<Int,ExpenseVto>? = null
+    private var livePagedListBuilder: LivePagedListBuilder<Int, ExpenseVto>? = null
 
     private val mSelectedItems = hashSetOf<Int>()
 
-
-    fun onItemSelect(item: ExpenseVto){
-        mSelectedItems.add(item.id)
-       onSelectedItemChanged()
-        _isSelectedMode set  true
+    fun onItemSelect(item: ExpenseVto) {
+        addNewSelectedItemId(item.id)
+        setSelectedModeOn()
+        onSelectedItemChanged()
     }
 
-    private fun onSelectedItemChanged(){
-        livePagedListBuilder?.invalidate()
+    private fun onSelectedItemChanged() {
+        _selectedItemChangeEvent post EventUnit
     }
 
-    fun deleteConfirm(){
-        viewModelScope.launch(Dispatchers.IO){
+    private fun setSelectedModeOn(){
+        _isSelectedMode set true
+    }
+
+    private fun addNewSelectedItemId(id: Int) {
+        mSelectedItems.add(id)
+    }
+
+
+    fun deleteConfirm() {
+        viewModelScope.launch(Dispatchers.IO) {
             //There is no Items to Delete
-            if(mSelectedItems.isEmpty()){
-                _isSelectedMode.postValue(true)
+            if (mSelectedItems.isEmpty()) {
+                _isSelectedMode post true
                 return@launch
             }
             //Start Delete Progress
             _isLoading.postValue(true)
             accRepo.deleteAllExpense(mSelectedItems.toList())
-            _isLoading.postValue(false)
-            _deleteEvent post  event(mSelectedItems.size)
+            _isLoading post false
+            _deleteEvent post event(mSelectedItems.size)
             clearSelection()
         }
     }
 
-    fun cancelDelete(){
+    fun cancelDeletion() {
         clearSelection()
     }
 
     @ExperimentalCoroutinesApi
-    fun selectItemForDetail(selectedItem: ExpenseVto){
-        viewModelScope.launch(Dispatchers.IO){
+    fun selectItemForDetail(selectedItem: ExpenseVto) {
+        viewModelScope.launch(Dispatchers.IO) {
             val item = accRepo.getExpense(selectedItem.id).first()
             val detailData = accMapper.mapToExpenseDetailVto(item)
             _detailDataChanged post event(detailData)
         }
     }
-    private fun clearSelection(){
+
+    private fun clearSelection() {
         mSelectedItems.clear()
         onSelectedItemChanged()
         _isSelectedMode post false
@@ -83,16 +97,12 @@ class ExpenseViewModel @ViewModelInject constructor(
 
     private suspend fun createPagedListLiveData(): LiveData<PagedList<ExpenseVto>> {
         val dataSourceFactory = accRepo.getExpenseSourceAll()
-            .map{ accMapper.mapToExpenseVto(it) }
-
-        return LivePagedListBuilder(dataSourceFactory, 100).build()
-    }
-
-    private suspend fun createLivePagedList(): FilterableLivePagedListBuilder<Int, ExpenseVto> {
-        val dataSourceFactory = accRepo.getExpenseSourceAll()
             .map { accMapper.mapToExpenseVto(it) }
 
-        return FilterableLivePagedListBuilder(dataSourceFactory,10)
-            .filter {item -> !mSelectedItems.contains(item.id) }
+        return LivePagedListBuilder(dataSourceFactory, 100)
+            .also {
+                livePagedListBuilder = it
+            }.build()
     }
+
 }

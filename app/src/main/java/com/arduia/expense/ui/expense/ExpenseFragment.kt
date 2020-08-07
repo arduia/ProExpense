@@ -24,12 +24,12 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ExpenseFragment : Fragment(){
+class ExpenseFragment : Fragment() {
 
     private lateinit var viewBinding: FragExpenseBinding
 
     @Inject
-    lateinit var expenseListAdapter : ExpenseListAdapter
+    lateinit var expenseListAdapter: ExpenseListAdapter
 
     private val viewModel by viewModels<ExpenseViewModel>()
 
@@ -37,7 +37,7 @@ class ExpenseFragment : Fragment(){
     @TopDropNavOption
     lateinit var topDropNavOption: NavOptions
 
-    private val itemSwipeCallback  by lazy { ItemSwipeCallback() }
+    private val itemSwipeCallback by lazy { ItemSwipeCallback() }
 
     private val mainHost by lazy {
         requireActivity() as MainHost
@@ -50,24 +50,55 @@ class ExpenseFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View?{
-        viewBinding =  FragExpenseBinding.inflate(layoutInflater, null, false)
-
+    ): View? {
+        initializeViewBinding()
         return viewBinding.root
     }
+
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lockNavigation()
+        lockNavDrawer()
         setupView()
         setupViewModel()
     }
 
-
     @ExperimentalCoroutinesApi
-    private fun setupView(){
+    private fun setupView() {
+        setupExpenseListAdapter()
+        setupNavigateBackButton()
+        setupCancelButton()
+        setupDeleteButton()
+    }
 
+    private fun setupViewModel() {
+        observeIsLoadingEvent()
+        observeIsSelectedMode()
+        observeDetailDataSelectEvent()
+        observeDeleteEvent()
+        observeSelectedItemChangeEvent()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        observeExpenseListAfterAnimation()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unlockNavDrawer()
+    }
+
+    private fun unlockNavDrawer(){
+        (requireActivity() as? NavigationDrawer)?.unlockDrawer()
+    }
+
+    private fun lockNavDrawer() {
+        (requireActivity() as? NavigationDrawer)?.lockDrawer()
+    }
+
+    private fun setupExpenseListAdapter() {
         //Setup Transaction Recycler View
         viewBinding.rvExpense.adapter = expenseListAdapter
         viewBinding.rvExpense.layoutManager = LinearLayoutManager(requireContext())
@@ -75,72 +106,45 @@ class ExpenseFragment : Fragment(){
             MarginItemDecoration(
                 resources.getDimension(R.dimen.space_between_items).toInt(),
                 resources.getDimension(R.dimen.margin_list_item).toInt()
-            ))
-
+            )
+        )
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
-
         itemSwipeCallback.setSwipeListener {
             val item = expenseListAdapter.getItemFromPosition(it)
             viewModel.onItemSelect(item)
         }
-
         expenseListAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
+    }
 
-        //Close the page
-        viewBinding.btnPopBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
-        viewBinding.btnCancelDelete.setOnClickListener {
-            viewModel.cancelDelete()
-        }
-
+    private fun setupDeleteButton(){
         viewBinding.btnDoneDelete.setOnClickListener {
             viewModel.deleteConfirm()
         }
     }
 
-    @ExperimentalCoroutinesApi
-    private fun setupViewModel(){
+    private fun setupCancelButton(){
+        viewBinding.btnCancelDelete.setOnClickListener {
+            viewModel.cancelDeletion()
+        }
+    }
 
-        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
-            when(it){
-                true -> viewBinding.pbLoading.visibility = View.VISIBLE
-                false -> viewBinding.pbLoading.visibility = View.GONE
-            }
+    private fun setupNavigateBackButton() {
+        viewBinding.btnPopBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
+
+
+    private fun observeSelectedItemChangeEvent() {
+        viewModel.selectedItemChangeEvent.observe(viewLifecycleOwner, EventObserver {
+            expenseListAdapter.notifyDataSetChanged()
         })
+    }
 
-        //Expense item Selected, show Confirm
-        viewModel.isSelectedMode.observe(viewLifecycleOwner, Observer {
-
-            when(it){
-                //Show Confirm dialog after an item is selected
-                true -> viewBinding.flConfirmDelete.visibility = View.VISIBLE
-
-                //Hide when none item is selected
-                false ->{
-                    viewBinding.flConfirmDelete.visibility = View.GONE
-                }
-            }
-        })
-
-        viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver {
-            //Remove Old Dialog, If Exist
-            detailDialog?.dismiss()
-            //Show selected Data
-            detailDialog = ExpenseDetailDialog().apply {
-                setEditClickListener {expense ->
-                    val action = ExpenseFragmentDirections
-                        .actionDestExpenseToDestExpenseEntry(expenseId = expense.id)
-                    findNavController().navigate(action, topDropNavOption)
-                }
-            }
-            detailDialog?.showDetail(parentFragmentManager,it)
-        })
-
-        viewModel.deleteEvent.observe( viewLifecycleOwner, EventObserver {
+    private fun observeDeleteEvent() {
+        viewModel.deleteEvent.observe(viewLifecycleOwner, EventObserver {
             val message = when {
                 it > 0 -> "$it ${getString(R.string.label_single_item_deleted)}"
                 else -> "$it ${getString(R.string.label_multi_item_deleted)}"
@@ -149,10 +153,46 @@ class ExpenseFragment : Fragment(){
         })
     }
 
-    @ExperimentalCoroutinesApi
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    private fun observeDetailDataSelectEvent() {
+        viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver {
+            //Remove Old Dialog, If Exist
+            detailDialog?.dismiss()
+            //Show selected Data
+            detailDialog = ExpenseDetailDialog().apply {
+                setEditClickListener { expense ->
+                    val action = ExpenseFragmentDirections
+                        .actionDestExpenseToDestExpenseEntry(expenseId = expense.id)
+                    findNavController().navigate(action, topDropNavOption)
+                }
+            }
+            detailDialog?.showDetail(parentFragmentManager, it)
+        })
+    }
 
+    private fun observeIsSelectedMode() {
+        viewModel.isSelectedMode.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                //Show Confirm dialog after an item is selected
+                true -> viewBinding.flConfirmDelete.visibility = View.VISIBLE
+
+                //Hide when none item is selected
+                false -> {
+                    viewBinding.flConfirmDelete.visibility = View.GONE
+                }
+            }
+        })
+    }
+
+    private fun observeIsLoadingEvent() {
+        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                true -> viewBinding.pbLoading.visibility = View.VISIBLE
+                false -> viewBinding.pbLoading.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun observeExpenseListAfterAnimation(){
         MainScope().launch(Dispatchers.Main) {
             val animationDuration = resources.getInteger(R.integer.expense_anim_left_duration)
             delay(animationDuration.toLong())
@@ -162,15 +202,8 @@ class ExpenseFragment : Fragment(){
         }
     }
 
-    private fun lockNavigation(){
-        //Lock Navigation Drawer Left
-        (requireActivity() as? NavigationDrawer)?.lockDrawer()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //Unlock the Navigation Drawer Left
-        (requireActivity() as? NavigationDrawer)?.unlockDrawer()
+    private fun initializeViewBinding() {
+        viewBinding = FragExpenseBinding.inflate(layoutInflater, null, false)
     }
 
 }
