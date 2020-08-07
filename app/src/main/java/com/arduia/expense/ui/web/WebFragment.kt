@@ -124,12 +124,12 @@ class WebFragment : Fragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        navDrawer.lockNavDrawer()
+        navDrawer.lockDrawer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        navDrawer.unlockNavDrawer()
+        navDrawer.unlockDrawer()
     }
 
 }

@@ -6,7 +6,9 @@ interface MainHost{
 
     val defaultSnackBarDuration: Int
 
-    fun showAddButton(showInstantly: Boolean = false)
+    fun showAddButton()
+
+    fun showAddButtonInstantly()
 
     fun hideAddButton()
 

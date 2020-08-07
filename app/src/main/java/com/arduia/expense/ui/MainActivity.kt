@@ -131,14 +131,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         viewBinding.dlMain.closeDrawer(GravityCompat.START)
     }
 
-    override fun lockNavDrawer() {
+    override fun lockDrawer() {
         with(viewBinding.dlMain){
             closeDrawer(GravityCompat.START)
             setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
     }
 
-    override fun unlockNavDrawer() {
+    override fun unlockDrawer() {
         viewBinding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 
@@ -171,13 +171,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         return true
     }
 
-
-    override fun showAddButton(showInstantly: Boolean) {
-
-        if(showInstantly){
-            showAddFab()
-            return
-        }
+    override fun showAddButton() {
 
         addFabShowTask =  { showAddFab() }
 
@@ -199,6 +193,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
                 addFabShowTask?.invoke()
             }
         }
+    }
+
+    override fun showAddButtonInstantly() {
+        showAddFab()
     }
 
     //for easily methods

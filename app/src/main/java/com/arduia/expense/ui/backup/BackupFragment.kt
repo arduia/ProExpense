@@ -65,7 +65,7 @@ class BackupFragment: NavBaseFragment(){
         }
 
         viewBinding.btnMenuOpen.setOnClickListener{
-            openDrawer()
+            navigationDrawer?.openDrawer()
         }
 
         viewBinding.btnExportOpen.setOnClickListener {

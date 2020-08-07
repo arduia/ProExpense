@@ -2,6 +2,7 @@ package com.arduia.expense.ui.expense
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.expense.data.AccRepository
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -19,7 +20,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     val isLoading  get() = _isLoading.asLiveData()
 
     private val _isSelectedMode = BaseLiveData<Boolean>()
-    val isSelectedMode get() =   _isSelectedMode.asLiveData()
+    val isSelectedMode get() = _isSelectedMode.asLiveData()
 
     private val _deleteEvent = EventLiveData<Int>()
     val deleteEvent = _deleteEvent.asLiveData()
@@ -77,8 +78,14 @@ class ExpenseViewModel @ViewModelInject constructor(
     }
 
     suspend fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
-        livePagedListBuilder = createLivePagedList()
-        return livePagedListBuilder!!.build()
+        return createPagedListLiveData()
+    }
+
+    private suspend fun createPagedListLiveData(): LiveData<PagedList<ExpenseVto>> {
+        val dataSourceFactory = accRepo.getExpenseSourceAll()
+            .map{ accMapper.mapToExpenseVto(it) }
+
+        return LivePagedListBuilder(dataSourceFactory, 100).build()
     }
 
     private suspend fun createLivePagedList(): FilterableLivePagedListBuilder<Int, ExpenseVto> {

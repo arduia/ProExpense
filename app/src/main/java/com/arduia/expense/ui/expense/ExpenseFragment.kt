@@ -164,13 +164,13 @@ class ExpenseFragment : Fragment(){
 
     private fun lockNavigation(){
         //Lock Navigation Drawer Left
-        (requireActivity() as? NavigationDrawer)?.lockNavDrawer()
+        (requireActivity() as? NavigationDrawer)?.lockDrawer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         //Unlock the Navigation Drawer Left
-        (requireActivity() as? NavigationDrawer)?.unlockNavDrawer()
+        (requireActivity() as? NavigationDrawer)?.unlockDrawer()
     }
 
 }

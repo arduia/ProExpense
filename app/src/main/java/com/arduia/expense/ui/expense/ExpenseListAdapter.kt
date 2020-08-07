@@ -4,20 +4,20 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseBinding
 import com.arduia.expense.ui.vto.ExpenseVto
+import timber.log.Timber
 import java.lang.Exception
 
 class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater):
-    PagedListAdapter<ExpenseVto, ExpenseListAdapter.ExpenseVH>(
-        DIFF_CALLBACK
-    ){
+    PagedListAdapter<ExpenseVto, ExpenseListAdapter.ExpenseVH>( DIFF_CALLBACK ){
 
-    private var onItemClickListener: (com.arduia.expense.ui.vto.ExpenseVto) -> Unit = {}
+    private var onItemClickListener: (ExpenseVto) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseVH {
 
@@ -56,6 +56,11 @@ class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater)
         onItemClickListener = listener
     }
 
+    override fun getCurrentList(): PagedList<ExpenseVto>? {
+        val getCurrentList = super.getCurrentList()
+        Timber.d("GetCurrentList -> $getCurrentList")
+        return getCurrentList
+    }
 }
 
 private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ExpenseVto>(){
