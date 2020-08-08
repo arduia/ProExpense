@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.expense.data.AccRepository
+import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
@@ -21,59 +22,42 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading.asLiveData()
 
-    private val _isSelectedMode = BaseLiveData<Boolean>()
-    val isSelectedMode get() = _isSelectedMode.asLiveData()
-
-    private val _deleteEvent = EventLiveData<Int>()
-    val deleteEvent get() = _deleteEvent.asLiveData()
-
-    private val _selectedItemChangeEvent = EventLiveData<Unit>()
-    val selectedItemChangeEvent get() = _selectedItemChangeEvent.asLiveData()
+    private val _isDeleteMode = BaseLiveData<Boolean>()
+    val isDeleteMode get() = _isDeleteMode.asLiveData()
 
     private val _detailDataChanged = EventLiveData<ExpenseDetailsVto>()
     val detailDataChanged get() = _detailDataChanged.asLiveData()
 
+    private val _itemDeletedEvent = EventLiveData<Int>()
+    val itemDeletedEvent get() = _itemDeletedEvent.asLiveData()
+
+
     private var livePagedListBuilder: LivePagedListBuilder<Int, ExpenseVto>? = null
 
-    private val mSelectedItems = hashSetOf<Int>()
+    private val deletedItemList = mutableListOf<ExpenseEnt>()
 
-    fun onItemSelect(item: ExpenseVto) {
-        addNewSelectedItemId(item.id)
-        setSelectedModeOn()
-        onSelectedItemChanged()
+    suspend fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
+        return createPagedListLiveData()
     }
 
-    private fun onSelectedItemChanged() {
-        _selectedItemChangeEvent post EventUnit
-    }
-
-    private fun setSelectedModeOn(){
-        _isSelectedMode set true
-    }
-
-    private fun addNewSelectedItemId(id: Int) {
-        mSelectedItems.add(id)
-    }
-
-
-    fun deleteConfirm() {
+    fun deleteItem(item: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            //There is no Items to Delete
-            if (mSelectedItems.isEmpty()) {
-                _isSelectedMode post true
-                return@launch
-            }
-            //Start Delete Progress
-            _isLoading.postValue(true)
-            accRepo.deleteAllExpense(mSelectedItems.toList())
-            _isLoading post false
-            _deleteEvent post event(mSelectedItems.size)
-            clearSelection()
+            val expenseEnt = getExpenseItemByID(item.id)
+            accRepo.deleteExpense(expenseEnt)
+            deletedItemList.add(expenseEnt)
+            deletedModeOn()
         }
     }
 
-    fun cancelDeletion() {
-        clearSelection()
+    private suspend fun getExpenseItemByID(itemId: Int) =
+        accRepo.getExpense(itemId).first()
+
+    fun restoreDeletion(){
+        viewModelScope.launch(Dispatchers.IO){
+            restoreDeletedItem()
+            clearDeletedItemList()
+            deletedModeOff()
+        }
     }
 
     @ExperimentalCoroutinesApi
@@ -85,16 +69,6 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun clearSelection() {
-        mSelectedItems.clear()
-        onSelectedItemChanged()
-        _isSelectedMode post false
-    }
-
-    suspend fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
-        return createPagedListLiveData()
-    }
-
     private suspend fun createPagedListLiveData(): LiveData<PagedList<ExpenseVto>> {
         val dataSourceFactory = accRepo.getExpenseSourceAll()
             .map { accMapper.mapToExpenseVto(it) }
@@ -104,5 +78,22 @@ class ExpenseViewModel @ViewModelInject constructor(
                 livePagedListBuilder = it
             }.build()
     }
+
+    private fun clearDeletedItemList() {
+        deletedItemList.clear()
+    }
+
+    private fun deletedModeOn() {
+        _isDeleteMode post true
+    }
+
+    private fun deletedModeOff() {
+        _isDeleteMode post false
+    }
+
+    private suspend fun restoreDeletedItem() {
+        accRepo.insertExpenseAll(deletedItemList)
+    }
+
 
 }

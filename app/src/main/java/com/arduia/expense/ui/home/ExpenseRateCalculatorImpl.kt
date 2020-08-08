@@ -14,7 +14,7 @@ class ExpenseRateCalculatorImpl : ExpenseRateCalculator{
         val dailyCosts = getDailyCosts()
         val maxCost = dailyCosts.maxBy { it.value }?.value ?: return emptyMap()
         val result = mutableMapOf<Int, Int>()
-        //All WEEK
+
         (1..7).forEach {
             val costOfDay = dailyCosts[it]?: return@forEach
             val rateOfDay = (costOfDay.toDouble() / maxCost) * 100
@@ -33,6 +33,7 @@ class ExpenseRateCalculatorImpl : ExpenseRateCalculator{
             val dayOfWeek = mCalendar[Calendar.DAY_OF_WEEK]
             amountOfWeek[dayOfWeek]  = it.amount + (amountOfWeek[dayOfWeek]?:0)
         }
+
         return amountOfWeek
     }
 

@@ -39,6 +39,20 @@
         app:layout_constraintStart_toEndOf="@+id/btn_pop_back"
         app:layout_constraintTop_toTopOf="@id/btn_pop_back" />
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        style="@style/IconButton"
+        android:id="@+id/btn_restore_deletion"
+        android:src="@drawable/ic_export"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tb_expense"
+        app:layout_constraintBottom_toBottomOf="@id/tb_expense"
+        app:layout_constraintHorizontal_bias="1"
+        android:layout_marginEnd="@dimen/margin_material"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_expense"
         android:layout_width="0dp"
@@ -65,46 +79,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_expense" />
 
-    <FrameLayout
-        android:id="@+id/fl_confirm_delete"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/backgroundColor"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_cancel_delete"
-            style="@style/IconButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="@dimen/margin_material"
-            android:src="@drawable/ic_close" />
-
-        <TextView
-            android:id="@+id/tv_confirm_delete"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/label_confirm_delete" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_done_delete"
-            style="@style/IconButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="@dimen/margin_material"
-            android:src="@drawable/ic_done" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="bottom"
-            android:background="@android:drawable/divider_horizontal_bright" />
-    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

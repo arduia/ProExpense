@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private var addFabShowTask: (() -> Unit)? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
@@ -102,7 +101,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             }
 
             override fun onDrawerOpened(drawerView: View) { }
-
         })
 
         headerBinding.btnClose.setOnClickListener {

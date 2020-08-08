@@ -37,6 +37,9 @@ interface ExpenseDao{
     @Delete
     suspend fun deleteExpense(expenseEnt: ExpenseEnt)
 
+    @Query("DELETE FROM `expense` WHERE expense_id =:id" )
+    suspend fun deleteExpenseRowById(id:Int)
+
     @Query( "DELETE FROM `expense` WHERE  expense_id in (:idLists)")
     suspend fun deleteExpenseByIDs(idLists: List<Int>)
 

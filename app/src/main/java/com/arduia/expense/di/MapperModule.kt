@@ -11,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import java.text.DateFormat
 import java.text.DecimalFormat
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityComponent::class)

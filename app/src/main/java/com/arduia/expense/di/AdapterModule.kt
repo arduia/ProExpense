@@ -16,7 +16,8 @@ import dagger.hilt.android.qualifiers.ActivityContext
 object AdapterModule{
 
     @Provides
-    fun provideLayoutInflater(@ActivityContext context: Context) = LayoutInflater.from(context)
+    fun provideLayoutInflater(@ActivityContext context: Context)
+        : LayoutInflater = LayoutInflater.from(context)
 
     @Provides
     fun provideExpenseAdapter(layoutInflater: LayoutInflater) =
@@ -29,4 +30,6 @@ object AdapterModule{
     @Provides
     fun provideBackupListAdapter(layoutInflater: LayoutInflater) =
         BackupListAdapter(layoutInflater)
+
+
 }

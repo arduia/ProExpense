@@ -68,26 +68,29 @@ class ExpenseFragment : Fragment() {
     private fun setupView() {
         setupExpenseListAdapter()
         setupNavigateBackButton()
-        setupCancelButton()
-        setupDeleteButton()
+        setupRestoreButton()
     }
 
     private fun setupViewModel() {
+        addLifecycleObserver()
         observeIsLoadingEvent()
         observeIsSelectedMode()
         observeDetailDataSelectEvent()
         observeDeleteEvent()
-        observeSelectedItemChangeEvent()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        observeExpenseListAfterAnimation()
+        waitAnimationAndObserveExpenseList()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unlockNavDrawer()
+    }
+
+    private fun addLifecycleObserver(){
+        lifecycle.addObserver(viewModel)
     }
 
     private fun unlockNavDrawer(){
@@ -111,22 +114,16 @@ class ExpenseFragment : Fragment() {
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
         itemSwipeCallback.setSwipeListener {
             val item = expenseListAdapter.getItemFromPosition(it)
-            viewModel.onItemSelect(item)
+            viewModel.deleteItem(item)
         }
         expenseListAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
     }
 
-    private fun setupDeleteButton(){
-        viewBinding.btnDoneDelete.setOnClickListener {
-            viewModel.deleteConfirm()
-        }
-    }
-
-    private fun setupCancelButton(){
-        viewBinding.btnCancelDelete.setOnClickListener {
-            viewModel.cancelDeletion()
+    private fun setupRestoreButton(){
+        viewBinding.btnRestoreDeletion.setOnClickListener {
+            viewModel.restoreDeletion()
         }
     }
 
@@ -137,14 +134,8 @@ class ExpenseFragment : Fragment() {
     }
 
 
-    private fun observeSelectedItemChangeEvent() {
-        viewModel.selectedItemChangeEvent.observe(viewLifecycleOwner, EventObserver {
-            expenseListAdapter.notifyDataSetChanged()
-        })
-    }
-
     private fun observeDeleteEvent() {
-        viewModel.deleteEvent.observe(viewLifecycleOwner, EventObserver {
+        viewModel.itemDeletedEvent.observe(viewLifecycleOwner, EventObserver {
             val message = when {
                 it > 0 -> "$it ${getString(R.string.label_single_item_deleted)}"
                 else -> "$it ${getString(R.string.label_multi_item_deleted)}"
@@ -170,15 +161,10 @@ class ExpenseFragment : Fragment() {
     }
 
     private fun observeIsSelectedMode() {
-        viewModel.isSelectedMode.observe(viewLifecycleOwner, Observer {
+        viewModel.isDeleteMode.observe(viewLifecycleOwner, Observer {
             when (it) {
-                //Show Confirm dialog after an item is selected
-                true -> viewBinding.flConfirmDelete.visibility = View.VISIBLE
-
-                //Hide when none item is selected
-                false -> {
-                    viewBinding.flConfirmDelete.visibility = View.GONE
-                }
+                true -> viewBinding.btnRestoreDeletion.visibility = View.VISIBLE
+                false -> viewBinding.btnRestoreDeletion.visibility = View.INVISIBLE
             }
         })
     }
@@ -192,15 +178,22 @@ class ExpenseFragment : Fragment() {
         })
     }
 
-    private fun observeExpenseListAfterAnimation(){
+    private fun waitAnimationAndObserveExpenseList(){
         MainScope().launch(Dispatchers.Main) {
-            val animationDuration = resources.getInteger(R.integer.expense_anim_left_duration)
-            delay(animationDuration.toLong())
-            viewModel.getExpenseLiveData().observe(viewLifecycleOwner, Observer {
-                expenseListAdapter.submitList(it)
-            })
+            val animationDuration = getAnimationDuration().toLong()
+            delay(animationDuration)
+            observeExpenseList()
         }
     }
+
+    private suspend fun observeExpenseList(){
+        viewModel.getExpenseLiveData().observe(viewLifecycleOwner, Observer {
+            expenseListAdapter.submitList(it)
+        })
+    }
+
+    private fun getAnimationDuration() =
+        resources.getInteger(R.integer.expense_anim_left_duration)
 
     private fun initializeViewBinding() {
         viewBinding = FragExpenseBinding.inflate(layoutInflater, null, false)

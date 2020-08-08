@@ -35,7 +35,6 @@ class ImportWorker  @WorkerInject constructor(@Assisted context: Context,
         return Result.success()
     }
 
-
     companion object{
         const val FILE_URI = "FILE_URI"
     }

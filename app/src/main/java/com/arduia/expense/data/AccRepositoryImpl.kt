@@ -47,6 +47,10 @@ class AccRepositoryImpl(
         expenseDao.deleteExpense(expenseEnt)
     }
 
+    override suspend fun deleteExpenseById(id: Int) {
+        expenseDao.deleteExpenseRowById(id)
+    }
+
     override suspend fun deleteAllExpense(list: List<Int>) {
         expenseDao.deleteExpenseByIDs(list)
     }
