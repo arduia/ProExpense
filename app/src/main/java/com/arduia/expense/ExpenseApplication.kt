@@ -35,12 +35,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
-    override fun onCreate() {
-        super.onCreate()
-        if(BuildConfig.DEBUG){
-            Timber.plant(Timber.DebugTree())
-        }
-    }
     override fun attachBaseContext(base: Context?) {
         if (base == null) return
         val updatedLocale = updateToLanguageContext(baseContext = base)
