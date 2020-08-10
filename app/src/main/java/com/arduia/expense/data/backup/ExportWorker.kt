@@ -24,16 +24,12 @@ class ExportWorker @WorkerInject constructor(@Assisted context: Context,
         val inputFileName = inputData.getString(FILE_NAME)?: return Result.failure()
 
         val initialBackupLog = createBackupEntityForExportWork(exportName = inputFileName, exportUri = inputFileUri)
-        backupRepo.insertBackup(initialBackupLog)
-
+        backupRepo.insertBackup(item = initialBackupLog)
 
         val exportUri = Uri.parse(inputFileUri)
         val outputStream = contentResolver.openOutputStream(exportUri) ?: return Result.failure()
-
         val exportedItemCount = excelBackup.export(outputStream)
-
         updateBackupLogAsCompleted(itemCount = exportedItemCount)
-
         return Result.success()
     }
 

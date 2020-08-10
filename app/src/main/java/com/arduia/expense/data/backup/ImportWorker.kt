@@ -18,20 +18,15 @@ class ImportWorker  @WorkerInject constructor(@Assisted context: Context,
     override suspend fun doWork(): Result {
 
         val inputFileUri = inputData.getString(FILE_URI) ?: return Result.failure()
-
         val importUri = Uri.parse(inputFileUri)
-
         val fileInputStream = contentResolver.openInputStream(importUri)
             ?: throw Exception("Cannot Open InputStream from Content Provider Uri")
 
         try {
-
             excelBackup.import(fileInputStream)
-
         }catch (e: BackupException){
             return Result.failure()
         }
-
         return Result.success()
     }
 
