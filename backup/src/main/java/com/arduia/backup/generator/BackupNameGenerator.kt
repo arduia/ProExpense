@@ -15,9 +15,7 @@ class BackupNameGenerator (private val dateFormatter: DateFormat = SimpleDateFor
 
     override fun generate(): String {
         val date = Date().time
-
         val dateSuffix = dateFormatter.format(date)
-
         return "$PREFIX$dateSuffix"
     }
 }

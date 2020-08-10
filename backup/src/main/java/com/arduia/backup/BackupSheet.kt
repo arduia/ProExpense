@@ -10,9 +10,7 @@ import java.lang.IndexOutOfBoundsException
 abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
     internal suspend fun import(book: Workbook) {
-
         val sheet = book.getSheet(sheetName)
-
         try {
             val sheetData = getDataFromSheet(sheet)
             source.writeAllItem(sheetData)
@@ -24,28 +22,19 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
     private fun getDataFromSheet(sheet: Sheet): List<T> {
 
         val sheetData = mutableListOf<T>()
-
-        //Header
-        val columnNames = getSheetFieldNames()
-        //Total Item
+        val columnNameList = getSheetFieldNames()
         val rowCount = sheet.rows
+        val rowDataTmp = mutableMapOf<String, String>()
+        val rowNoList = (1 until rowCount)
 
-        //EveryRow UseCase
-        val tmpRowMap = mutableMapOf<String, String>()
-        //Jump Header Row. start from 1
-        (1 until rowCount).forEach { rowNo ->
-            //Read every Column and map
-            columnNames.forEachIndexed { columnNo, columnName ->
-
-                val cellData = sheet.getCell(columnNo, rowNo).contents
-                tmpRowMap[columnName] = cellData
+        rowNoList.forEach { rowNo ->
+            columnNameList.forEachIndexed { columnNo, columnName ->
+                val cellContent = sheet.getCell(columnNo, rowNo).contents
+                rowDataTmp[columnName] = cellContent
             }
-            //create entity from map
-            val data = mapToEntityFromSheetData(tmpRowMap)
-            //add map to data list
-            sheetData.add(data)
-            //recycle map instance
-            tmpRowMap.clear()
+            val rowItem = mapToEntityFromSheetData(rowDataTmp)
+            sheetData.add(rowItem)
+            rowDataTmp.clear()
         }
 
         return sheetData
@@ -53,58 +42,50 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
     internal suspend fun export(book: WritableWorkbook, index: Int): Int {
         val sheet = book.createSheet(sheetName, index)
-        val fieldNames = getSheetFieldNames()
+        val fieldNameList = getSheetFieldNames()
         var itemCount = 0
 
-        //Add Headers
-        fieldNames.forEachIndexed { column, label ->
+        fieldNameList.forEachIndexed { column, label ->
             sheet.addCell(Label(column, 0, label))
         }
 
-        source.readAllItem().forEachIndexed { itemPosition, data ->
+        val sheetItemList = source.readAllItem()
+
+        sheetItemList.forEachIndexed { rowNo, data ->
             itemCount++
-            //Shift 1 of Header Row
-            val rowNo = itemPosition + 1
-
-            val map = mapToSheetDataFromEntity(data)
-
-            fieldNames.forEachIndexed { column, name ->
-                val cellValue = map[name] ?: ""
-                sheet.addCell(Label(column, rowNo, cellValue))
+            val dataRowNo = rowNo + 1
+            val rawData = mapToSheetDataFromEntity(data)
+            fieldNameList.forEachIndexed { columnNo, columnName ->
+                val cellContent = rawData[columnName] ?: ""
+                sheet.addCell(Label(columnNo, dataRowNo, cellContent))
             }
         }
-
         return itemCount
     }
 
     internal fun itemCounts(book: Workbook): Int {
-        val sheet = book.getSheet(sheetName)
+        val invalidCount = -1
+        val headerRowCount = 1
 
-        val rowCount = sheet.rows
-        //No Header
-        if (rowCount == 0) return -1
+        val sheet = book.getSheet(sheetName)
+        val totalRowCount = sheet.rows
+        if (totalRowCount == 0) return invalidCount
 
         val headerRow = sheet.getRow(0)
-        val fieldNames = getSheetFieldNames()
-        //assume valid first
+        val fieldNameList = getSheetFieldNames()
         var isValidSheet = true
 
         try {
-
-            fieldNames.forEachIndexed { index, name ->
-                //Get Header Row Cells * can cause index out of error *
-                val labelCell = headerRow[index]
-                isValidSheet = isValidSheet && (labelCell.contents == name)
+            fieldNameList.forEachIndexed { position, fieldName ->
+                val labelCell = headerRow[position]
+                val isValidFieldName = (labelCell.contents == fieldName)
+                isValidSheet = isValidSheet && isValidFieldName
             }
-
-            if (isValidSheet.not()) return -1
-
         } catch (e: IndexOutOfBoundsException) {
-            return -1
+            return invalidCount
         }
-
-        //Remove first header row
-        return (rowCount - 1)
+        if (isValidSheet.not()) return invalidCount
+        return (totalRowCount - headerRowCount)
     }
 
     protected abstract val sheetName: String
