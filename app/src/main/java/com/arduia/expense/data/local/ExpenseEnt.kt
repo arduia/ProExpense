@@ -9,7 +9,7 @@ data class ExpenseEnt(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "expense_id")
-    val expense_id: Int = 0,
+    val expenseId: Int = 0,
 
     @ColumnInfo(name = "name")
     val name: String?,
@@ -24,9 +24,9 @@ data class ExpenseEnt(
     val note: String?,
 
     @ColumnInfo(name = "created_date")
-    val created_date: Long,
+    val createdDate: Long,
 
     @ColumnInfo(name = "modified_date")
-    val modified_date: Long
+    val modifiedDate: Long
 
 )

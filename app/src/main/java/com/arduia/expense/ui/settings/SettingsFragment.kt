@@ -49,7 +49,7 @@ class SettingsFragment: NavBaseFragment(){
     private fun setupView(){
 
         viewBinding.btnDrawerOpen.setOnClickListener{
-            openDrawer()
+            navigationDrawer?.openDrawer()
         }
 
         viewBinding.flLanguage.setOnClickListener {

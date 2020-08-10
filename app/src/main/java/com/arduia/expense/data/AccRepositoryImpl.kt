@@ -26,14 +26,30 @@ class AccRepositoryImpl(
         expenseDao.insertExpense(expenseEnt)
     }
 
+    override suspend fun insertExpenseAll(expenses: List<ExpenseEnt>) {
+        expenseDao.insertExpenseAll(expenses)
+    }
+
+    override suspend fun getExpenseAll(): Flow<List<ExpenseEnt>> {
+        return expenseDao.getExpenseAll()
+    }
+
     override suspend fun getExpense(id: Int): Flow<ExpenseEnt> {
        return expenseDao.getItemExpense(id)
     }
 
-    override suspend fun getAllExpense() = expenseDao.getAllExpense()
+    override suspend fun getExpenseSourceAll() = expenseDao.getExpenseSourceAll()
 
     override suspend fun getRecentExpense(): Flow<List<ExpenseEnt>> {
         return expenseDao.getRecentExpense()
+    }
+
+    override suspend fun getExpenseTotalCount(): Flow<Int> {
+        return expenseDao.getExpenseTotalCount()
+    }
+
+    override suspend fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>> {
+       return expenseDao.getExpenseRange(limit, offset)
     }
 
     override suspend fun updateExpense(expenseEnt: ExpenseEnt) {
@@ -42,6 +58,10 @@ class AccRepositoryImpl(
 
     override suspend fun deleteExpense(expenseEnt: ExpenseEnt) {
         expenseDao.deleteExpense(expenseEnt)
+    }
+
+    override suspend fun deleteExpenseById(id: Int) {
+        expenseDao.deleteExpenseRowById(id)
     }
 
     override suspend fun deleteAllExpense(list: List<Int>) {

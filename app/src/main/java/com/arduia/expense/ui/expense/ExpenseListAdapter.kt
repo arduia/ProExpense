@@ -1,23 +1,22 @@
 package com.arduia.expense.ui.expense
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseBinding
 import com.arduia.expense.ui.vto.ExpenseVto
+import timber.log.Timber
 import java.lang.Exception
 
 class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater):
-    PagedListAdapter<ExpenseVto, ExpenseListAdapter.ExpenseVH>(
-        DIFF_CALLBACK
-    ){
+    PagedListAdapter<ExpenseVto, ExpenseListAdapter.ExpenseVH>( DIFF_CALLBACK ){
 
-    private var onItemClickListener: (com.arduia.expense.ui.vto.ExpenseVto) -> Unit = {}
+    private var onItemClickListener: (ExpenseVto) -> Unit = {}
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseVH {
 
@@ -31,6 +30,7 @@ class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater)
             val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
             with(holder.binding){
+
                 tvName.text = item.name
                 tvDate.text = item.date
                 tvAmount.text = item.amount
@@ -38,7 +38,7 @@ class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater)
         }
     }
 
-    fun getItemFromPosition(position: Int): com.arduia.expense.ui.vto.ExpenseVto
+    fun getItemFromPosition(position: Int): ExpenseVto
             = getItem(position) ?: throw Exception("Item Not Found Exception")
 
 

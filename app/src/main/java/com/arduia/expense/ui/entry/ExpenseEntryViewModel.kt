@@ -54,8 +54,8 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
                 amount = detail.amount.toLong(),
                 note = detail.note,
                 category = detail.category,
-                created_date = Date().time,
-                modified_date = Date().time
+                createdDate = Date().time,
+                modifiedDate = Date().time
             )
             accRepository.insertExpense(saveExpenseEnt)
             _dataInserted post EventUnit
@@ -63,23 +63,6 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
         }
     }
 
-    fun updateExpenseData(detail: ExpenseDetailsVto){
-        viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.postValue(true)
-            val updateExpenseEnt = ExpenseEnt(
-                expense_id = detail.id,
-                name = detail.name,
-                amount = detail.amount.toLong(),
-                note = detail.note,
-                category = detail.category,
-                created_date = expenseData.value?.date?: throw Exception("Created Date Should not be null"),
-                modified_date = Date().time
-            )
-            accRepository.updateExpense(updateExpenseEnt)
-            _dataUpdated post EventUnit
-            _isLoading.postValue(false)
-        }
-    }
 
     fun setExpenseData(id: Int){
         observeExpenseData(id)

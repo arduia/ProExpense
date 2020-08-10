@@ -12,12 +12,17 @@
             android:icon="@drawable/ic_feedback"
             android:title="@string/label_feedback" />
         <item
-            android:id="@+id/dest_settings"
-            android:icon="@drawable/ic_settings"
-            android:title="@string/label_settings" />
-        <item
             android:id="@+id/dest_about"
             android:icon="@drawable/ic_info"
             android:title="@string/label_about"/>
+        <item
+            android:id="@+id/dest_backup"
+            android:icon="@drawable/ic_backup"
+            android:title="@string/label_backup"/>
+        <item
+            android:id="@+id/dest_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/label_settings" />
+
     </group>
 </menu>

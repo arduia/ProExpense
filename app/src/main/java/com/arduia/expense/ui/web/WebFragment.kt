@@ -2,6 +2,7 @@ package com.arduia.expense.ui.web
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,18 +11,15 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.arduia.expense.R
 import com.arduia.expense.databinding.FragWebBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WebFragment : Fragment(){
 
     private lateinit var viewBinding: FragWebBinding
@@ -31,6 +29,10 @@ class WebFragment : Fragment(){
     private val navDrawer by lazy {
         requireActivity() as NavigationDrawer
     }
+
+    @Inject
+    lateinit var mainHost: MainHost
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,64 +50,86 @@ class WebFragment : Fragment(){
         setupView()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-    }
-
     private fun setupView(){
 
-        if(args.url.isEmpty()){
-            findNavController().popBackStack()
-            val mainHost = (requireActivity() as MainHost)
+        val currentWebUrl = args.url
+
+        if(currentWebUrl.isEmpty()){
             mainHost.showSnackMessage("No URL found!")
+            popBackToPreviousFragment()
+            return
         }
 
-        viewBinding.tvWebTitle.text = args.title
-        viewBinding.wvMain.loadUrl(args.url)
-        viewBinding.wvMain.webViewClient = object : WebViewClient(){
+        val pageTitleText = args.title
 
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                viewBinding.pbLoading.visibility = View.VISIBLE
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                viewBinding.pbLoading.visibility = View.INVISIBLE
-            }
-
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-                request?.url?.let {
-                    if(it.path != args.url){
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = it
-                        }
-                        startActivity(intent)
-                        return true
-                    }
-                }
-                return false
-            }
-        }
+        viewBinding.tvWebTitle.text = pageTitleText
+        viewBinding.wvMain.loadUrl(currentWebUrl)
+        viewBinding.wvMain.webViewClient = getWebClient()
 
         viewBinding.btnPopBack.setOnClickListener {
-            findNavController().popBackStack()
+            popBackToPreviousFragment()
         }
     }
 
+    private fun getWebClient() = object : WebViewClient(){
+
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            showLoading()
+        }
+
+        override fun onPageFinished(view: WebView?, url: String?) {
+            super.onPageFinished(view, url)
+            hideLoading()
+        }
+
+        override fun shouldOverrideUrlLoading(
+            view: WebView?,
+            request: WebResourceRequest?
+        ): Boolean {
+
+            val shouldOverload = false
+            val shouldNotOverload = true
+
+            val requestUrl = request?.url ?: return shouldNotOverload
+
+            val isCurrentUrl = (requestUrl.path == args.url)
+
+            if(isCurrentUrl.not()){
+                openUrlToExternalBrowser(url = requestUrl)
+                return shouldNotOverload
+            }
+
+            return shouldOverload
+        }
+
+        private fun openUrlToExternalBrowser(url: Uri){
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = url
+            }
+            startActivity(intent)
+        }
+    }
+
+    private fun showLoading(){
+        viewBinding.pbLoading.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading(){
+        viewBinding.pbLoading.visibility = View.INVISIBLE
+    }
+    private fun popBackToPreviousFragment(){
+        findNavController().popBackStack()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        navDrawer.lockDrawer(true)
+        navDrawer.lockDrawer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        navDrawer.lockDrawer(false)
+        navDrawer.unlockDrawer()
     }
 
 }

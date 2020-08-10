@@ -19,7 +19,8 @@ import java.lang.Exception
 class ExpenseCategoryProviderImpl(private val resource: Resources):
         ExpenseCategoryProvider{
 
-        private val categoryList = mutableListOf<ExpenseCategory>()
+
+    private val categoryList = mutableListOf<ExpenseCategory>()
 
     override fun getCategoryList(): List<ExpenseCategory> {
         return categoryList

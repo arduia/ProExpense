@@ -76,7 +76,8 @@
 
     <fragment
         android:id="@+id/dest_about"
-        android:name="com.arduia.expense.ui.about.AboutFragment"  
+        android:name="com.arduia.expense.ui.about.AboutFragment"
+        tools:layout="@layout/frag_about"
         android:label="@string/label_about" >
         <action
             android:id="@+id/action_dest_about_to_dest_web"
@@ -95,6 +96,7 @@
     <fragment
         android:id="@+id/dest_web"
         android:name="com.arduia.expense.ui.web.WebFragment"
+        tools:layout="@layout/frag_web"
         android:label="WebFragment" >
         <argument
             android:name="url"
@@ -108,6 +110,12 @@
     <fragment
         android:id="@+id/dest_language"
         android:name="com.arduia.expense.ui.language.LanguageFragment"
+        tools:layout="@layout/frag_language"
         android:label="LanguageFragment" />
+    <fragment
+        android:id="@+id/dest_backup"
+        tools:layout="@layout/frag_backup"
+        android:name="com.arduia.expense.ui.backup.BackupFragment"
+        android:label="BackupFragment" />
 
 </navigation>

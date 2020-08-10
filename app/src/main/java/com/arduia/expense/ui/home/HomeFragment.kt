@@ -88,8 +88,8 @@ class HomeFragment : NavBaseFragment() {
         mainHost.showAddButton()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         mainHost.hideAddButton()
     }
 
@@ -108,7 +108,7 @@ class HomeFragment : NavBaseFragment() {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
 
-        viewBinding.btnMenuOpen.setOnClickListener { openDrawer() }
+        viewBinding.btnMenuOpen.setOnClickListener { navigationDrawer?.openDrawer() }
 
         viewBinding.btnMoreExpenses.setOnClickListener {
             findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
@@ -159,7 +159,6 @@ class HomeFragment : NavBaseFragment() {
         viewModel.costRate.observe(viewLifecycleOwner){
             graphAdapter.expenseMap = it
         }
-
     }
 
     private fun createDetailEditClickListener() = { expense: ExpenseDetailsVto ->
@@ -167,8 +166,6 @@ class HomeFragment : NavBaseFragment() {
             .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
         findNavController().navigate(action, entryNavOption)
     }
-
-
 
     companion object {
         private const val TAG = "MY_HomeFragment"
