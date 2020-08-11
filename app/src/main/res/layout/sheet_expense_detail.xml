@@ -8,19 +8,43 @@
     android:background="@color/backgroundColor"
     app:layout_constraintWidth_max="@dimen/width_minimum_and_margin">
 
+    <TextView
+        android:id="@+id/tv_expense_detail"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:alpha="0.7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_material"
+        android:text="Expense Detail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_close"
         style="@style/IconButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="@dimen/margin_material"
         android:layout_marginEnd="@dimen/margin_material"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_drop_down"
+        app:layout_constraintBottom_toBottomOf="@id/tv_expense_detail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@id/tv_expense_detail" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/cd_info"
+        android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
+        app:layout_constraintTop_toBottomOf="@id/tv_expense_detail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/imv_category"
@@ -28,108 +52,107 @@
         android:layout_height="55dp"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginTop="@dimen/margin_material"
-        app:civ_border_width="1dp"
+        android:scaleType="centerInside"
         app:civ_border_color="@android:color/white"
+        app:civ_border_width="1dp"
         app:civ_shadow="true"
         app:civ_shadow_color="@android:color/darker_gray"
         app:civ_shadow_radius="0.5dp"
-        android:scaleType="centerInside"
-        tools:srcCompat="@drawable/ic_food"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_close"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/ic_food" />
 
     <TextView
         android:id="@+id/tv_name_value"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/margin_large_material"
         app:layout_constraintBottom_toBottomOf="@id/imv_category"
         app:layout_constraintStart_toEndOf="@id/imv_category"
         app:layout_constraintTop_toTopOf="@id/imv_category"
         tools:text="Suger" />
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_edit"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="center"
-        android:src="@drawable/ic_edit"
-        app:layout_constraintBottom_toBottomOf="@id/tv_name_value"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toEndOf="@id/tv_name_value"
-        app:layout_constraintTop_toTopOf="@id/tv_name_value" />
-
-
     <TextView
-        android:id="@+id/tv_amount"
-        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/tv_amount"
+        android:text="Amount"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:alpha="0.7"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_amount_value"
         android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_large_material"
-        android:text="@string/label_amount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imv_category" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/tv_amount_value"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_material"
         android:textColor="@color/primaryColor"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_amount"
         app:layout_constraintStart_toStartOf="@+id/tv_name_value"
+        app:layout_constraintTop_toBottomOf="@id/imv_category"
         tools:text=" 35,00" />
-
     <TextView
-        android:id="@+id/tv_date"
-        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_large_material"
-        android:text="@string/label_date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
+        android:id="@+id/tv_date"
+        android:text="Date"
+
+        android:alpha="0.7"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_date_value"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_amount" />
+        android:layout_marginStart="@dimen/margin_material"/>
 
     <TextView
         android:id="@+id/tv_date_value"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_date"
+        android:layout_marginTop="@dimen/margin_material"
         app:layout_constraintStart_toStartOf="@id/tv_amount_value"
+        app:layout_constraintTop_toBottomOf="@id/tv_amount_value"
         tools:text="25/2/2020" />
 
     <TextView
-        android:id="@+id/tv_note"
-        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_large_material"
-        android:layout_marginBottom="50dp"
-        android:text="@string/label_note"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/tv_note"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:text="Note"
+
+        android:alpha="0.7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_date"
-        app:layout_constraintVertical_bias="0" />
+        android:layout_marginStart="@dimen/margin_material"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_note_value"/>
 
     <TextView
         android:id="@+id/tv_note_value"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_note"
+        android:layout_marginTop="@dimen/margin_material"
         app:layout_constraintStart_toStartOf="@id/tv_date_value"
+        app:layout_constraintTop_toBottomOf="@id/tv_date_value"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/margin_large_material"
         tools:text="Somethings.." />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <Button
+        android:id="@+id/btn_edit"
+        style="@style/ExpenseButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
+        android:layout_marginBottom="@dimen/margin_material"
+        android:text="Edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cd_info" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

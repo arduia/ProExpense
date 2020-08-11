@@ -77,13 +77,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             //register new task
             itemSelectTask = { selectPage(selectedMenuItem = menuItem) }
 
-            val isDrawerInTabletMode = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
-
-            if(isDrawerInTabletMode){
-                itemSelectTask?.invoke()
-                itemSelectTask = null
-            }
-
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
             return@listener true
         }
