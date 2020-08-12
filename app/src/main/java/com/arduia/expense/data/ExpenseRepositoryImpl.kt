@@ -5,17 +5,16 @@ import com.arduia.expense.data.local.*
 import com.arduia.expense.data.network.ExpenseNetworkDao
 import com.arduia.expense.data.network.ExpenseVersionDto
 import com.arduia.expense.data.network.FeedbackDto
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import timber.log.Timber
 import java.util.*
 
-class AccRepositoryImpl(
+class ExpenseRepositoryImpl(
     private val expenseDao: ExpenseDao,
     private val networkDao: ExpenseNetworkDao
-    ) : AccRepository{
+    ) : ExpenseRepository{
 
     private val feedbackBroadCast = BroadcastChannel<FeedbackDto.Response>(10)
 

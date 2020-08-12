@@ -1,12 +1,9 @@
 package com.arduia.expense.ui.settings
 
-import android.app.Application
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.arduia.expense.data.AccRepository
+import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.data.SettingsRepositoryImpl
-import com.arduia.expense.ui.vto.LanguageVto
 import com.arduia.mvvm.BaseLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +13,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SettingsViewModel @ViewModelInject constructor(
-    private val accRepository: AccRepository,
+    private val expenseRepository: ExpenseRepository,
     private val settingsRepository: SettingsRepository): ViewModel(), LifecycleObserver{
 
     private val _selectedLanguage = BaseLiveData<String>()
@@ -34,7 +31,7 @@ class SettingsViewModel @ViewModelInject constructor(
         }
 
         viewModelScope.launch(Dispatchers.IO){
-            accRepository.getVersionStatus().collect {
+            expenseRepository.getVersionStatus().collect {
                 Timber.d("VersionStatus ->  $it")
             }
         }

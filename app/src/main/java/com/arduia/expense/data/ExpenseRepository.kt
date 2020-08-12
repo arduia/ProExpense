@@ -6,7 +6,7 @@ import com.arduia.expense.data.network.ExpenseVersionDto
 import com.arduia.expense.data.network.FeedbackDto
 import kotlinx.coroutines.flow.Flow
 
-interface AccRepository {
+interface ExpenseRepository {
 
     //Expense
     suspend fun insertExpense(expenseEnt: ExpenseEnt)

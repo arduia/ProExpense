@@ -34,7 +34,8 @@ class ExpenseEntryFragment : Fragment() {
 
     private val viewModel by viewModels<ExpenseEntryViewModel>()
 
-    private var mainHost: MainHost? = null
+    @Inject
+    lateinit var mainHost: MainHost
 
     private lateinit var categoryAdapter: CategoryListAdapter
 
@@ -46,50 +47,44 @@ class ExpenseEntryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
-
+        initViewBinding(parent = container)
         return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
+        chooseEntryMode()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        MainScope().launch(Dispatchers.Main) {
-            val aniDuration = resources.getInteger(R.integer.entry_pop_up_duration)
-            delay(aniDuration.toLong())
-
-            updateCategoryList()
-        }
-
-    }
-
-    private fun updateCategoryList() {
-        val selectedCategory = categoryAdapter.selectedItem
-
-
-        selectedCategory?.let {
-            val allCategory = categoryProvider.getCategoryList().toMutableList().apply {
-                remove(it)
-            }
-            allCategory.add(0, it)
-            categoryAdapter.submitList(allCategory)
-        }
+        updateCategoryListAfterAnimation()
     }
 
     private fun setupView() {
+        setupCategoryListAdapter()
+        setupCategoryListView()
+        setupEntryCloseButton()
+    }
 
-        categoryAdapter = CategoryListAdapter(layoutInflater)
+    private fun setupViewModel() {
+        addLifecycleObserver()
+        observeDataInsertedEvent()
+        observeDataUpdatedEvent()
+        observeEntryModeEvent()
+        observeEventExpenseDataState()
+        observeSelectedCategoryState()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideInputKeyboard()
+    }
+
+    private fun setupCategoryListView() {
         viewBinding.rvCategory.adapter = categoryAdapter
-
         viewBinding.rvCategory.addItemDecoration(
             MarginItemDecoration(
                 requireContext().px(4),
@@ -97,140 +92,202 @@ class ExpenseEntryFragment : Fragment() {
                 true
             )
         )
+    }
 
-        mainHost = requireActivity() as MainHost
-
-        viewBinding.btnEntryClose.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
+    private fun setupCategoryListAdapter() {
+        categoryAdapter = CategoryListAdapter(layoutInflater)
         categoryAdapter.setOnItemClickListener {
             viewModel.selectCategory(it)
         }
-
     }
 
-    private fun setupViewModel() {
-
-        val defaultExpenseID =  resources.getInteger(R.integer.default_expense_id)
-
-        when (args.expenseId == defaultExpenseID) {
-            true -> {
-                // ID is default, Save Mode
-                viewModel.setSaveMode()
-            }
-            false -> {
-                // ID exist, Update Mode
-                viewModel.setUpdateMode()
-            }
+    private fun setupEntryCloseButton() {
+        viewBinding.btnEntryClose.setOnClickListener {
+            backToPreviousFragment()
         }
-
-        viewModel.dataInserted.observe(viewLifecycleOwner, EventObserver {
-            findNavController().popBackStack()
-        })
-
-        viewModel.dataUpdated.observe(viewLifecycleOwner, EventObserver {
-            mainHost?.showSnackMessage(getString(R.string.label_data_updated))
-            findNavController().popBackStack()
-        })
-
-        viewModel.entryMode.observe(viewLifecycleOwner, EventObserver {
-            when (it) {
-                ExpenseEntryMode.UPDATE -> {
-                    changeUpdateMode()
-                }
-
-                ExpenseEntryMode.INSERT -> {
-                    changeSaveMode()
-                }
-            }
-        })
-
-        viewModel.expenseData.observe(viewLifecycleOwner, Observer {
-            viewBinding.edtName.setText(it.name)
-            viewBinding.edtAmount.setText(it.amount)
-            viewBinding.edtNote.setText(it.note)
-
-            //Show Single Item Category First
-            viewModel.selectCategory(it.category)
-            categoryAdapter.submitList(listOf(it.category))
-        })
-
-
-        viewModel.selectedCategory.observe(viewLifecycleOwner, Observer {
-            categoryAdapter.selectedItem = it
-        })
-
     }
 
-    private fun changeUpdateMode() = with(viewBinding) {
+    private fun addLifecycleObserver() {
+        lifecycle.addObserver(viewModel)
+    }
+
+    private fun observeSelectedCategoryState() {
+        viewModel.selectedCategory.observe(viewLifecycleOwner, Observer { item ->
+            setSelectedItem(item)
+        })
+    }
+
+    private fun observeDataInsertedEvent() {
+        viewModel.insertedEvent.observe(viewLifecycleOwner, EventObserver {
+            backToPreviousFragment()
+        })
+    }
+
+    private fun observeDataUpdatedEvent() {
+        viewModel.updatedEvent.observe(viewLifecycleOwner, EventObserver {
+            showDataUpdatedMessage()
+            backToPreviousFragment()
+        })
+    }
+
+    private fun observeEntryModeEvent() {
+        viewModel.currentModeEvent.observe(viewLifecycleOwner, EventObserver { mode ->
+            changeViewToSelectedMode(mode)
+        })
+    }
+
+    private fun observeEventExpenseDataState() {
+        viewModel.data.observe(viewLifecycleOwner, Observer { data ->
+            bindExpenseDetail(data)
+        })
+    }
+
+    private fun chooseEntryMode() {
+        val defaultID = resources.getInteger(R.integer.default_expense_id)
+
+        if(args.expenseId == defaultID)
+            viewModel.chooseSaveMode()
+        else
+            viewModel.chooseUpdateMode()
+    }
+
+    private fun changeViewToSelectedMode(mode: ExpenseEntryMode) {
+        when (mode) {
+            ExpenseEntryMode.UPDATE -> changeToUpdateMode()
+            ExpenseEntryMode.INSERT -> changeToSaveMode()
+        }
+    }
+
+    private fun bindExpenseDetail(data: ExpenseUpdateDataVto) {
+        viewBinding.edtName.setText(data.name)
+        viewBinding.edtAmount.setText(data.amount)
+        viewBinding.edtNote.setText(data.note)
+        viewModel.selectCategory(data.category)
+        categoryAdapter.submitList(listOf(data.category))
+    }
+
+    private fun updateCategoryListAfterAnimation() {
+        MainScope().launch(Dispatchers.Main) {
+            val duration = resources.getInteger(R.integer.entry_pop_up_duration).toLong()
+            delay(duration)
+            updateCategoryList()
+        }
+    }
+
+    private fun updateCategoryList() {
+        val list = getCategoryList()
+        val item = categoryAdapter.selectedItem
+        if (item != null) {
+            moveItemToFirstIndex(list = list, item = item)
+        }
+        categoryAdapter.submitList(list)
+    }
+
+    private fun moveItemToFirstIndex(list: MutableList<ExpenseCategory>, item: ExpenseCategory) {
+        list.remove(item)
+        list.add(0, item)
+    }
+
+    private fun getCategoryList(): MutableList<ExpenseCategory> {
+        return categoryProvider.getCategoryList().toMutableList()
+    }
+
+    private fun changeToUpdateMode() = with(viewBinding) {
         tvEntryTitle.text = getString(R.string.label_update_data)
         btnSave.text = getString(R.string.label_update)
         btnSave.setOnClickListener { updateData() }
-        viewModel.setExpenseData(args.expenseId)
+        viewModel.setCurrentExpenseId(args.expenseId)
     }
 
-    private fun changeSaveMode() = with(viewBinding) {
+    private fun changeToSaveMode() = with(viewBinding) {
         tvEntryTitle.text = getString(R.string.label_expense_entry)
         btnSave.text = getString(R.string.label_save)
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
+        setInitialDefaultCategory()
+    }
 
-        //Show Outcome Category FirstK
-        val defaultCategory = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
-        categoryAdapter.submitList(listOf(defaultCategory))
-        viewModel.selectCategory(defaultCategory)
+    private fun setInitialDefaultCategory(){
+        val default = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
+        categoryAdapter.submitList(listOf(default))
+        viewModel.selectCategory(default)
     }
 
     private fun saveData() {
+        val expense = getCurrentExpenseDetail()
+        val isEmpty = expense.amount.isEmpty()
 
-        categoryAdapter.selectedItem?:return
-
-        val currentExpenseDetail = getExpenseDetail()
-        //View Level Validation
-        if (currentExpenseDetail.amount.isEmpty()) {
-            viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
+        if (isEmpty) {
+            showAmountEmptyError()
             return
         }
-        viewModel.saveExpenseData(currentExpenseDetail)
+
+        viewModel.saveExpenseData(expense)
     }
+
 
     private fun updateData() {
+        val expense = getCurrentExpenseDetail()
+        val isEmpty = expense.amount.isEmpty()
 
-        categoryAdapter.selectedItem?:return
-
-        val currentExpenseDetail = getExpenseDetail()
-        //View Level Validation
-        if (currentExpenseDetail.amount.isEmpty()) {
-            viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
+        if (isEmpty) {
+            showAmountEmptyError()
             return
         }
+
+        viewModel.updateExpenseData(expense)
     }
 
-    private fun getExpenseDetail(): ExpenseDetailsVto{
+    private fun showAmountEmptyError() {
+        viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
+    }
 
-        val name = viewBinding.edtName.text.toString()
-        val cost = viewBinding.edtAmount.text.toString()
-        val description = viewBinding.edtNote.text.toString()
+    private fun getCurrentExpenseDetail(): ExpenseDetailsVto {
 
-        val category = categoryAdapter.selectedItem ?: throw Exception("Category Item is not selected!")
+        val name = getNameText()
+        val amount = getAmountText()
+        val note = getNoteText()
+        val category = getSelectedCategory()
 
         return ExpenseDetailsVto(
-            args.expenseId,
-            name,
-            "",
-            category.id,
-            cost,
-            "",
-            description
+            id = args.expenseId,
+            name = name,
+            date = "",
+            category = category.id,
+            amount = amount,
+            finance = "",
+            note = note
         )
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    private fun getNameText() = viewBinding.edtName.toString()
+
+    private fun getAmountText() = viewBinding.edtAmount.toString()
+
+    private fun getNoteText() = viewBinding.edtNote.toString()
+
+    private fun getSelectedCategory() = categoryAdapter.selectedItem
+        ?: throw Exception("Category Item is not selected!")
+
+    private fun hideInputKeyboard() {
         val inputMethodManager =
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
         inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)
+    }
+
+    private fun initViewBinding(parent: ViewGroup?) {
+        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, parent, false)
+    }
+    private fun showDataUpdatedMessage() {
+        mainHost.showSnackMessage(getString(R.string.label_data_updated))
+    }
+
+    private fun backToPreviousFragment() {
+        findNavController().popBackStack()
+    }
+
+    private fun setSelectedItem(item: ExpenseCategory){
+        categoryAdapter.selectedItem = item
     }
 
     companion object {

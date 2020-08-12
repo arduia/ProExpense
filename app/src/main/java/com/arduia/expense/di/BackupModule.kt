@@ -4,7 +4,7 @@ import com.arduia.backup.BackupSheet
 import com.arduia.backup.ExcelBackup
 import com.arduia.backup.FileNameGenerator
 import com.arduia.backup.generator.BackupNameGenerator
-import com.arduia.expense.data.AccRepository
+import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.backup.ExpenseBackupSheet
 import com.arduia.expense.data.backup.ExpenseBackupSource
 import com.arduia.expense.data.local.ExpenseEnt
@@ -27,7 +27,7 @@ object BackupModule {
 
     @Provides
     @Singleton
-    fun provideExpenseSource(repo: AccRepository) =
+    fun provideExpenseSource(repo: ExpenseRepository) =
         ExpenseBackupSource(repo)
 
     @Provides

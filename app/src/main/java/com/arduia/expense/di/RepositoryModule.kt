@@ -21,8 +21,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideAccRepo(accDao: ExpenseDao, netDao: ExpenseNetworkDao): AccRepository
-     = AccRepositoryImpl(accDao, netDao)
+    fun provideAccRepo(accDao: ExpenseDao, netDao: ExpenseNetworkDao): ExpenseRepository
+     = ExpenseRepositoryImpl(accDao, netDao)
 
     @Provides
     @Singleton

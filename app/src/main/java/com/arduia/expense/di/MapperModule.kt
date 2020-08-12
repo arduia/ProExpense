@@ -4,6 +4,7 @@ import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.ui.mapping.BackupMapper
 import com.arduia.expense.ui.common.ExpenseCategoryProvider
 import com.arduia.expense.ui.mapping.ExpenseMapper
+import com.arduia.expense.ui.mapping.ExpenseMapperImpl
 import com.arduia.expense.ui.vto.BackupVto
 import dagger.Module
 import dagger.Provides
@@ -11,7 +12,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import java.text.DateFormat
 import java.text.DecimalFormat
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityComponent::class)
@@ -21,7 +21,7 @@ object MapperModule {
     fun provideExpenseMapper(categoryProvider: ExpenseCategoryProvider,
                              dateFormatter: DateFormat,
                              @IntegerDecimal decimalFormat: DecimalFormat): ExpenseMapper
-        = ExpenseMapper(categoryProvider,
+        = ExpenseMapperImpl(categoryProvider,
         dateFormatter = dateFormatter,
         currencyFormatter = decimalFormat)
 

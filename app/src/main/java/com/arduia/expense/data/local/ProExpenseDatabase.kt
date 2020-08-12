@@ -9,7 +9,7 @@ import java.lang.Exception
 @Database(
     entities = [ExpenseEnt::class, BackupEnt::class],
     version = 4 )
-abstract class  AccountingDatabase : RoomDatabase(){
+abstract class  ProExpenseDatabase : RoomDatabase(){
 
     abstract val expenseDao: ExpenseDao
 

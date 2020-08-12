@@ -2,7 +2,7 @@ package com.arduia.expense.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.arduia.expense.data.AccRepository
+import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class HomeViewModel @ViewModelInject constructor(
-                    private val expenseMapper: ExpenseMapper,
-                    private val accRepository: AccRepository,
-                    private val rateCalculator: ExpenseRateCalculator) : ViewModel(), LifecycleObserver{
+    private val mapper: ExpenseMapper,
+    private val repo: ExpenseRepository,
+    private val calculator: ExpenseRateCalculator) : ViewModel(), LifecycleObserver{
 
     private val _recentData =  BaseLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData.asLiveData()
@@ -36,8 +36,8 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
-            val item = accRepository.getExpense(selectedItem.id).first()
-            val detailData = expenseMapper.mapToExpenseDetailVto(item)
+            val item = repo.getExpense(selectedItem.id).first()
+            val detailData = mapper.mapToDetailVto(item)
             _detailData post event(detailData)
         }
     }
@@ -50,13 +50,13 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun observeRecentExpenses(){
         viewModelScope.launch(Dispatchers.IO){
-            accRepository.getRecentExpense().collect(recentFlowCollector)
+            repo.getRecentExpense().collect(recentFlowCollector)
         }
     }
 
     private fun observeWeekExpenses(){
         viewModelScope.launch(Dispatchers.IO){
-            accRepository.getWeekExpenses().collect(weekFlowCollector)
+            repo.getWeekExpenses().collect(weekFlowCollector)
         }
     }
 
@@ -69,15 +69,15 @@ class HomeViewModel @ViewModelInject constructor(
 
         _totalCost.postValue(totalAmount)
 
-        rateCalculator.setWeekExpenses(it)
+        calculator.setWeekExpenses(it)
 
-        _costRates post rateCalculator.getRates()
+        _costRates post calculator.getRates()
     }
 
     private val recentFlowCollector : suspend (List<ExpenseEnt>) -> Unit = {
                 val recentExpenses =
                     it.map { trans ->
-                        this@HomeViewModel.expenseMapper.mapToExpenseVto(trans)
+                        this@HomeViewModel.mapper.mapToVto(trans)
                     }
                 _recentData.postValue(recentExpenses)
         }

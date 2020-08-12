@@ -1,11 +1,8 @@
 package com.arduia.expense.di
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.arduia.expense.data.local.AccountingDatabase
+import com.arduia.expense.data.local.ProExpenseDatabase
 import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.ExpenseDao
 import dagger.Module
@@ -20,17 +17,17 @@ object DatabaseModule{
 
     @Provides
     @Singleton
-    fun provideAccDatabase(application: Application): AccountingDatabase {
-        return  Room.databaseBuilder(application, AccountingDatabase::class.java, "accounting.db")
+    fun provideAccDatabase(application: Application): ProExpenseDatabase {
+        return  Room.databaseBuilder(application, ProExpenseDatabase::class.java, "accounting.db")
             .build()
     }
 
 
     @Provides
     @Singleton
-    fun provideAccDao(accDb: AccountingDatabase): ExpenseDao = accDb.expenseDao
+    fun provideAccDao(accDb: ProExpenseDatabase): ExpenseDao = accDb.expenseDao
 
     @Provides
     @Singleton
-    fun provideBackupDao(db: AccountingDatabase): BackupDao = db.backupDao
+    fun provideBackupDao(db: ProExpenseDatabase): BackupDao = db.backupDao
 }

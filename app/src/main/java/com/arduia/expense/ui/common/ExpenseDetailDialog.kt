@@ -25,26 +25,51 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = SheetExpenseDetailBinding.inflate(layoutInflater, container, false)
-        expenseDetail!!.bindDetailData()
-        setupView()
+        initViewBinding(container)
         return viewBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupView()
+        showDetailData()
+    }
+
+    private fun showDetailData(){
+
+        with(expenseDetail ?: return){
+            viewBinding.tvAmountValue.text = amount
+            viewBinding.tvDateValue.text = date
+            viewBinding.tvNameValue.text = name
+            viewBinding.tvNoteValue.text = note
+            viewBinding.imvCategory.setImageResource(category)
+
+            if(note.isEmpty()) hideNoteTextView()
+        }
+    }
+
+    private fun hideNoteTextView(){
+        viewBinding.tvNote.visibility = View.INVISIBLE
+        viewBinding.tvNoteValue.visibility = View.INVISIBLE
+    }
+
+    private fun initViewBinding(parent: ViewGroup?){
+        viewBinding = SheetExpenseDetailBinding.inflate(layoutInflater, parent, false)
     }
 
     fun setEditClickListener(listener: (ExpenseDetailsVto) -> Unit) {
         editClickListener = listener
     }
 
-    fun showDetail(fm: FragmentManager, detail: ExpenseDetailsVto) {
+    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailsVto) {
         expenseDetail = detail
-        show(fm, TAG)
+        show(fragmentManager, TAG)
     }
 
     private fun setupView() {
         viewBinding.btnClose.setOnClickListener {
             dismiss()
         }
-
         viewBinding.btnEdit.setOnClickListener {
             editClickListener.invoke(expenseDetail!!)
             dismiss()
@@ -60,13 +85,6 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         dismissListener = listener
     }
 
-    private fun ExpenseDetailsVto.bindDetailData() {
-        viewBinding.tvAmountValue.text = amount
-        viewBinding.tvDateValue.text = date
-        viewBinding.tvNameValue.text = name
-        viewBinding.tvNoteValue.text = note
-        viewBinding.imvCategory.setImageResource(category)
-    }
 
     companion object {
         private const val TAG = "TransactionDetail"

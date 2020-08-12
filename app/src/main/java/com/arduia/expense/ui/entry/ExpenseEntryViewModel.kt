@@ -2,7 +2,7 @@ package com.arduia.expense.ui.entry
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.arduia.expense.data.AccRepository
+import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -11,25 +11,25 @@ import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.*
 
 class ExpenseEntryViewModel @ViewModelInject constructor(
-                            private val accRepository: AccRepository,
-                            private val accMapper: ExpenseMapper) : ViewModel(), LifecycleObserver{
+    private val repo: ExpenseRepository,
+    private val mapper: ExpenseMapper
+) : ViewModel(), LifecycleObserver {
 
-    //--Caution-- Should be oneshot execution, Event LiveData
-    private val _dataInserted = EventLiveData<Unit>()
-    val dataInserted get() =  _dataInserted.asLiveData()
 
-    private val _dataUpdated = EventLiveData<Unit>()
-    val dataUpdated get() = _dataUpdated.asLiveData()
+    private val _insertedEvent = EventLiveData<Unit>()
+    val insertedEvent get() = _insertedEvent.asLiveData()
 
-    private val _entryMode = EventLiveData<ExpenseEntryMode>()
-    val entryMode get() = _entryMode
+    private val _updatedEvent = EventLiveData<Unit>()
+    val updatedEvent get() = _updatedEvent.asLiveData()
 
-    private val _expenseData = BaseLiveData<ExpenseUpdateDataVto>()
-    val expenseData get() = _expenseData.asLiveData()
+    private val _currentModeEvent = EventLiveData<ExpenseEntryMode>()
+    val currentModeEvent get() = _currentModeEvent.asLiveData()
+
+    private val _data = BaseLiveData<ExpenseUpdateDataVto>()
+    val data get() = _data.asLiveData()
 
     private val _selectedCategory = BaseLiveData<ExpenseCategory>()
     val selectedCategory get() = _selectedCategory.asLiveData()
@@ -37,49 +37,77 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading
 
-    fun setUpdateMode(){
-        _entryMode post event(ExpenseEntryMode.UPDATE)
+    fun chooseUpdateMode() {
+        _currentModeEvent post event(ExpenseEntryMode.UPDATE)
     }
 
-    fun setSaveMode(){
-        _entryMode post event(ExpenseEntryMode.INSERT)
+    fun chooseSaveMode() {
+        _currentModeEvent post event(ExpenseEntryMode.INSERT)
     }
 
-    fun saveExpenseData(detail: ExpenseDetailsVto){
+    private fun loadingOn() {
+        _isLoading post true
+    }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.postValue(true)
-            val saveExpenseEnt = ExpenseEnt(
-                name = detail.name,
-                amount = detail.amount.toLong(),
-                note = detail.note,
-                category = detail.category,
-                createdDate = Date().time,
-                modifiedDate = Date().time
-            )
-            accRepository.insertExpense(saveExpenseEnt)
-            _dataInserted post EventUnit
-            _isLoading.postValue(false)
+    private fun loadingOff() {
+        _isLoading post false
+    }
+
+    private fun onDataInserted() {
+        _insertedEvent post EventUnit
+    }
+
+    private fun onDataUpdated() {
+        _updatedEvent post EventUnit
+    }
+
+    fun updateExpenseData(expense: ExpenseDetailsVto) {
+        vmScopeIO{
+            loadingOn()
+            val expenseEnt = mapToExpenseEnt(expense)
+            repo.updateExpense(expenseEnt)
+            onDataUpdated()
+            loadingOff()
         }
     }
 
+    fun saveExpenseData(expense: ExpenseDetailsVto) {
+        vmScopeIO{
+            loadingOn()
+            val expenseEnt = mapToExpenseEnt(expense)
+            repo.insertExpense(expenseEnt)
+            onDataInserted()
+            loadingOff()
+        }
+    }
 
-    fun setExpenseData(id: Int){
+    private fun mapToExpenseEnt(vto: ExpenseDetailsVto) = ExpenseEnt(
+        expenseId = vto.id,
+        name = vto.name,
+        amount = vto.amount.toLong(),
+        note = vto.note,
+        category = vto.category,
+        createdDate = Date().time,
+        modifiedDate = Date().time
+    )
+
+    fun setCurrentExpenseId(id: Int) {
         observeExpenseData(id)
     }
 
-    private fun observeExpenseData(id: Int){
-
-        viewModelScope.launch(Dispatchers.IO){
-            val repoData = accRepository.getExpense(id).first()
-
-            val updateData = accMapper.mapToUpdateDetail(repoData)
-
-            _expenseData post updateData
+    private fun observeExpenseData(id: Int) {
+        vmScopeIO {
+            val dataEnt = repo.getExpense(id).first()
+            val dataVto = mapper.mapToUpdateDetailVto(dataEnt)
+            _data post dataVto
         }
     }
 
-    fun selectCategory(category: ExpenseCategory){
+    fun selectCategory(category: ExpenseCategory) {
         _selectedCategory post category
+    }
+
+    private inline fun vmScopeIO( crossinline ioWork: suspend ()-> Unit){
+        viewModelScope.launch(Dispatchers.IO){ioWork()}
     }
 }

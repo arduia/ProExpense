@@ -39,6 +39,7 @@
         android:layout_marginTop="@dimen/margin_material"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginEnd="@dimen/margin_material"
+        android:paddingBottom="@dimen/margin_large_material"
         app:layout_constraintTop_toBottomOf="@id/tv_expense_detail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -98,7 +99,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_date"
         android:text="Date"
-
         android:alpha="0.7"
         style="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_date_value"
@@ -110,7 +110,9 @@
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintVertical_bias="0"
         android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginBottom="@dimen/margin_material"
         app:layout_constraintStart_toStartOf="@id/tv_amount_value"
         app:layout_constraintTop_toBottomOf="@id/tv_amount_value"
         tools:text="25/2/2020" />
