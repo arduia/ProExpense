@@ -260,11 +260,11 @@ class ExpenseEntryFragment : Fragment() {
         )
     }
 
-    private fun getNameText() = viewBinding.edtName.toString()
+    private fun getNameText() = viewBinding.edtName.text.toString()
 
-    private fun getAmountText() = viewBinding.edtAmount.toString()
+    private fun getAmountText() = viewBinding.edtAmount.text.toString()
 
-    private fun getNoteText() = viewBinding.edtNote.toString()
+    private fun getNoteText() = viewBinding.edtNote.text.toString()
 
     private fun getSelectedCategory() = categoryAdapter.selectedItem
         ?: throw Exception("Category Item is not selected!")

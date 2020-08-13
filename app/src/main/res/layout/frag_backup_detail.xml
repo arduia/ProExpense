@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginTop="@dimen/margin_material"
-        android:text="@string/label_backup"
+        android:text="@string/label_backup_details"
         android:alpha="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -52,14 +52,14 @@
         app:layout_constraintTop_toBottomOf="@id/tv_name"
         android:textStyle="bold"
         android:alpha=".8"
-        android:text="Backup_expense_some" />
+        tools:text="Backup_expense_some" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_items"
         style="@style/TextAppearance.MaterialComponents.Overline"
-        android:text="Total Items"
+        android:text="@string/label_total"
         android:alpha="0.7"
         app:layout_constraintTop_toBottomOf="@id/tv_name_value"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +75,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_items"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="@dimen/margin_material"
-        android:text="100"/>
+        tools:text="100"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_import"
@@ -83,7 +83,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_material"
-        android:text="Import"
+        android:text="@string/label_import"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

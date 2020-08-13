@@ -30,10 +30,10 @@ class SettingsViewModel @ViewModelInject constructor(
             }
         }
 
-        viewModelScope.launch(Dispatchers.IO){
-            expenseRepository.getVersionStatus().collect {
-                Timber.d("VersionStatus ->  $it")
-            }
-        }
+//        viewModelScope.launch(Dispatchers.IO){
+//            expenseRepository.getVersionStatus().collect {
+//                Timber.d("VersionStatus ->  $it")
+//            }
+//        }
     }
 }

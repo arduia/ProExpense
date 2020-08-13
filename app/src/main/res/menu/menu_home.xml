@@ -17,7 +17,7 @@
             android:title="@string/label_about"/>
         <item
             android:id="@+id/dest_backup"
-            android:icon="@drawable/ic_backup"
+            android:icon="@drawable/ic_export"
             android:title="@string/label_backup"/>
         <item
             android:id="@+id/dest_settings"

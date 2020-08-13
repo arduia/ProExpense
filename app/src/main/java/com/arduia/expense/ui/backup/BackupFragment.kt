@@ -18,6 +18,7 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.core.requestStoragePermission
+import com.arduia.expense.ui.BackupMessageReceiver
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -106,6 +107,7 @@ class BackupFragment: NavBaseFragment(){
         viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver{ fileUri ->
             showImportDialog(uri = fileUri)
         })
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

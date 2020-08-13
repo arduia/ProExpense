@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -17,19 +18,25 @@ import com.arduia.expense.R
 import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
+import com.arduia.expense.ui.backup.BackupMessageViewModel
+import com.arduia.mvvm.EventObserver
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
+import timber.log.Timber
+import java.util.*
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationDrawer,
-    MainHost {
+    MainHost, BackupMessageReceiver{
 
     private lateinit var viewBinding: ActivMainBinding
 
     private lateinit var headerBinding: LayoutHeaderBinding
+
+    private val backupViewModel by viewModels<BackupMessageViewModel>()
 
     private val navController by lazy {  findNavController() }
 
@@ -54,6 +61,13 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         setContentView(viewBinding.root)
 
         setupView()
+        setupViewModel()
+    }
+
+    private fun setupViewModel(){
+        backupViewModel.finishedEvent.observe(this, EventObserver{
+            showSnackMessage("BackupFinished $it")
+        })
     }
 
     private fun findNavController(): NavController{
@@ -114,6 +128,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     }
 
+    override fun addTaskID(id: UUID) {
+        backupViewModel.addTaskID(id)
+    }
+
+    override fun removeTaskID(id: UUID) {
+       backupViewModel.removeTaskID(id)
+    }
+
     override fun openDrawer() {
         viewBinding.dlMain.openDrawer(GravityCompat.START)
     }
@@ -135,16 +157,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
 
     override fun navigateUpTo(upIntent: Intent?): Boolean {
-        // Check navigation has back stack
         return super.navigateUpTo(upIntent) or navController.navigateUp()
     }
 
     override fun onBackPressed() {
-
-        //If drawer is Opening, close the drawer
         if(drawerClosure()){
-            //true -> drawer is already closed, back press move on
-            //false -> drawer is opening, doesn't deliver back press
             super.onBackPressed()
         }
 

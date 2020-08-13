@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupDetailBinding
+import com.arduia.expense.ui.BackupMessageReceiver
 import com.arduia.expense.ui.MainHost
 import com.arduia.mvvm.EventObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -27,6 +28,9 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
 
     @Inject
     lateinit var mainHost: MainHost
+
+    @Inject
+    lateinit var backupMsgReceiver: BackupMessageReceiver
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +57,7 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
         viewBinding.btnImport.setOnClickListener {
             viewModel.startImportData()
         }
+
     }
 
     private fun setupViewModel(){
@@ -70,6 +75,10 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
 
         viewModel.fileNotFoundEvent.observe(viewLifecycleOwner, EventObserver{
             mainHost.showSnackMessage(getString(R.string.label_file_not_found))
+        })
+
+        viewModel.backupTaskEvent.observe(viewLifecycleOwner, EventObserver{id ->
+            backupMsgReceiver.addTaskID(id)
         })
 
         val importFileUrl = this.fileUri?: throw Exception("Url not found exception!")

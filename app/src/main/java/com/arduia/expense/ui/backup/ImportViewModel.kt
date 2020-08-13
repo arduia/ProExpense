@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import java.util.*
 
 class ImportViewModel @ViewModelInject constructor(
     private val backupRepo: BackupRepository,
@@ -36,6 +37,9 @@ class ImportViewModel @ViewModelInject constructor(
 
     private val _fileNotFoundEvent = EventLiveData<Unit>()
     val fileNotFoundEvent = _fileNotFoundEvent.asLiveData()
+
+    private val _backupTaskEvent = EventLiveData<UUID>()
+    val backupTaskEvent get() = _backupTaskEvent.asLiveData()
 
     private var currentSelectedUri: Uri? = null
 
@@ -81,6 +85,7 @@ class ImportViewModel @ViewModelInject constructor(
             .build()
 
         workManger.enqueue(importRequest)
+        _backupTaskEvent post event(importRequest.id)
 
         _closeEvent post EventUnit
     }

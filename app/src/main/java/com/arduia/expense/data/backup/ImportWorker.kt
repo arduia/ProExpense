@@ -23,7 +23,7 @@ class ImportWorker  @WorkerInject constructor(@Assisted context: Context,
             ?: throw Exception("Cannot Open InputStream from Content Provider Uri")
 
         try {
-            excelBackup.import(fileInputStream)
+           val count =  excelBackup.import(fileInputStream)
         }catch (e: BackupException){
             return Result.failure()
         }

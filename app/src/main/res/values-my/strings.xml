@@ -93,10 +93,12 @@
     <string name="label_day_sun">‌နွေ</string>
     <string name="label_choose_language">ဘာသာစကား</string>
     <string name="label_restart">ပြန်လည်စတင်မည်</string>
-    <string name="label_backup">Backup</string>
-    <string name="label_export">Export</string>
-    <string name="label_total">Total</string>
-    <string name="label_save_as">Save As</string>
-    <string name="label_file_not_found">File Doesn\'t Exist</string>
+    <string name="label_backup">သိမ်းဆည်းရန်</string>
+    <string name="label_export">သိမ်းမည်</string>
+    <string name="label_total">စုစုပေါင်း</string>
+    <string name="label_save_as">သိမ်းမည်</string>
+    <string name="label_file_not_found">ဖိုင်မရှိပါ</string>
+    <string name="label_import">ယူမည်</string>
+    <string name="label_backup_details">အသေးစိတ်အချက်အလက်</string>
 
 </resources>
