@@ -17,6 +17,16 @@
         android:alpha="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <ProgressBar
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/pb_loading"
+        android:visibility="visible"
+        android:indeterminateTint="@color/primaryColor"
+        app:layout_constraintStart_toEndOf="@id/tv_backup_detail"
+        app:layout_constraintTop_toTopOf="@id/tv_backup_detail"
+        app:layout_constraintBottom_toBottomOf="@id/tv_backup_detail"
+        android:layout_marginStart="@dimen/margin_small_material"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drop_close"

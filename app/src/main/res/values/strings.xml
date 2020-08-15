@@ -28,7 +28,7 @@
     <!--    Entry Sheet-->
     <string name="label_spend">Spend</string>
     <string name="label_name">Name</string>
-    <string name="label_amount">Amount*</string>
+    <string name="label_amount">Amount</string>
     <string name="label_save">Save</string>
     <string name="label_note">Note</string>
     <string name="label_update">Update</string>
@@ -100,6 +100,9 @@
     <string name="label_file_not_found">File Doesn\'t Exist</string>
     <string name="label_import">Import</string>
     <string name="label_backup_details">Backup Details</string>
+    <string name="label_expense_detail">Expense Detail</string>
+    <string name="labal_amount_important">Amount*</string>
+    <string name="label_edit">Edit</string>
 
 
 </resources>

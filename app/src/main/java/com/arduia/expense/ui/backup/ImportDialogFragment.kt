@@ -58,6 +58,7 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
             viewModel.startImportData()
         }
 
+
     }
 
     private fun setupViewModel(){
@@ -81,6 +82,12 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
             backupMsgReceiver.addTaskID(id)
         })
 
+        viewModel.loadingEvent.observe(viewLifecycleOwner, EventObserver{
+            isLoading ->
+            if(isLoading) showLoading()
+            else hideLoading()
+        })
+
         val importFileUrl = this.fileUri?: throw Exception("Url not found exception!")
         viewModel.setFileUri(importFileUrl)
     }
@@ -90,4 +97,11 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
         show(fm, "BackupDetail")
     }
 
+    private fun showLoading(){
+        viewBinding.pbLoading.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading(){
+        viewBinding.pbLoading.visibility = View.INVISIBLE
+    }
 }

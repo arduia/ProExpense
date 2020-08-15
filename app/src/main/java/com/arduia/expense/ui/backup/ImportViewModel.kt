@@ -41,6 +41,9 @@ class ImportViewModel @ViewModelInject constructor(
     private val _backupTaskEvent = EventLiveData<UUID>()
     val backupTaskEvent get() = _backupTaskEvent.asLiveData()
 
+    private val _loadingEvent = EventLiveData<Boolean>()
+    val loadingEvent get() = _loadingEvent.asLiveData()
+
     private var currentSelectedUri: Uri? = null
 
     fun setFileUri(uri: Uri) {
@@ -49,19 +52,22 @@ class ImportViewModel @ViewModelInject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
 
+            loadingOn()
             val itemCount = backupRepo.getItemCount(uri).first()
             val isInvalidItem = (itemCount < 0)
 
             if (isInvalidItem) {
                 _fileNotFoundEvent post EventUnit
                 _closeEvent post EventUnit
+                loadingOff()
                 return@launch
             }
 
             val fileName = getFileNameFromUri(uri = uri)
 
-            _fileName post fileName
 
+            loadingOff()
+            _fileName post fileName
             _totalCount post decimalFormat.format(itemCount)
         }
     }
@@ -88,5 +94,13 @@ class ImportViewModel @ViewModelInject constructor(
         _backupTaskEvent post event(importRequest.id)
 
         _closeEvent post EventUnit
+    }
+
+    private fun loadingOn(){
+        _loadingEvent post event(true)
+    }
+
+    private fun loadingOff(){
+        _loadingEvent post event(false)
     }
 }
