@@ -1,11 +1,21 @@
 package com.arduia.expense.ui.about
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.R
@@ -47,6 +57,7 @@ class AboutFragment : NavBaseFragment() {
         setupNavOpenButton()
         setupOpenSourceClick()
         setupPrivacyClick()
+        showAboutDeveloper()
     }
 
     private fun setupContributeClick() {
@@ -75,6 +86,33 @@ class AboutFragment : NavBaseFragment() {
             val url = getString(R.string.url_policy)
             navigateToWeb(title, url)
         }
+    }
+
+    private fun showAboutDeveloper() {
+        val devString = getString(R.string.label_develop)
+        val devMailString = "\n" + getString(R.string.label_develop_mail)
+        val devSpanText = SpannableStringBuilder(devString)
+        devSpanText.append(devMailString)
+        devSpanText.setSpan(
+            StyleSpan(Typeface.BOLD), devString.length, devString.length + devMailString.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        devSpanText.setSpan(
+            URLSpan(getString(R.string.link_arduia_mail)),
+            devString.length,
+            devString.length + devMailString.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        val smaillSize = RelativeSizeSpan(0.9f)
+        devSpanText.setSpan(
+            smaillSize,
+            devString.length,
+            devString.length + devMailString.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        viewBinding.tvDeveloper.movementMethod = LinkMovementMethod.getInstance()
+        viewBinding.tvDeveloper.text = devSpanText
     }
 
 

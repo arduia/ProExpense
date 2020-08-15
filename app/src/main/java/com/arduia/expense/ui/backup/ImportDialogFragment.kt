@@ -18,11 +18,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ImportDialogFragment: BottomSheetDialogFragment(){
+class ImportDialogFragment : BottomSheetDialogFragment() {
 
-    private lateinit var viewBinding : FragBackupDetailBinding
+    private lateinit var viewBinding: FragBackupDetailBinding
 
-    private  var fileUri: Uri? = null
+    private var fileUri: Uri? = null
 
     private val viewModel by viewModels<ImportViewModel>()
 
@@ -37,7 +37,7 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-       viewBinding = FragBackupDetailBinding.inflate(layoutInflater, container, false)
+        viewBinding = FragBackupDetailBinding.inflate(layoutInflater, container, false)
 
         return viewBinding.root
     }
@@ -49,7 +49,7 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
         setupViewModel()
     }
 
-    private fun setupView(){
+    private fun setupView() {
         viewBinding.btnDropClose.setOnClickListener {
             this.dismiss()
         }
@@ -61,47 +61,59 @@ class ImportDialogFragment: BottomSheetDialogFragment(){
 
     }
 
-    private fun setupViewModel(){
-        viewModel.fileName.observe(viewLifecycleOwner, Observer {name ->
+    private fun setupViewModel() {
+        viewModel.fileName.observe(viewLifecycleOwner, Observer { name ->
             viewBinding.tvNameValue.text = name
         })
 
-        viewModel.totalCount.observe(viewLifecycleOwner, Observer {count ->
+        viewModel.totalCount.observe(viewLifecycleOwner, Observer { count ->
             viewBinding.tvItemsValue.text = count
         })
 
-        viewModel.closeEvent.observe(viewLifecycleOwner, EventObserver{
+        viewModel.closeEvent.observe(viewLifecycleOwner, EventObserver {
             this.dismiss()
         })
 
-        viewModel.fileNotFoundEvent.observe(viewLifecycleOwner, EventObserver{
+        viewModel.fileNotFoundEvent.observe(viewLifecycleOwner, EventObserver {
             mainHost.showSnackMessage(getString(R.string.label_file_not_found))
         })
 
-        viewModel.backupTaskEvent.observe(viewLifecycleOwner, EventObserver{id ->
+        viewModel.backupTaskEvent.observe(viewLifecycleOwner, EventObserver { id ->
             backupMsgReceiver.addTaskID(id)
         })
 
-        viewModel.loadingEvent.observe(viewLifecycleOwner, EventObserver{
-            isLoading ->
-            if(isLoading) showLoading()
-            else hideLoading()
+        viewModel.loadingEvent.observe(viewLifecycleOwner, EventObserver { isLoading ->
+            if (isLoading) {
+                showLoading()
+                disableEditButton()
+            } else {
+                hideLoading()
+                enableEditButton()
+            }
         })
 
-        val importFileUrl = this.fileUri?: throw Exception("Url not found exception!")
+        val importFileUrl = this.fileUri ?: throw Exception("Url not found exception!")
         viewModel.setFileUri(importFileUrl)
     }
 
-    fun showDialog(fm: FragmentManager, uri: Uri){
+    fun showDialog(fm: FragmentManager, uri: Uri) {
         this.fileUri = uri
         show(fm, "BackupDetail")
     }
 
-    private fun showLoading(){
+    private fun disableEditButton() {
+        viewBinding.btnImport.isEnabled = false
+    }
+
+    private fun enableEditButton() {
+        viewBinding.btnImport.isEnabled = true
+    }
+
+    private fun showLoading() {
         viewBinding.pbLoading.visibility = View.VISIBLE
     }
 
-    private fun hideLoading(){
+    private fun hideLoading() {
         viewBinding.pbLoading.visibility = View.INVISIBLE
     }
 }

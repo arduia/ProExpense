@@ -69,11 +69,11 @@ class ExpenseFragment : Fragment() {
         setupExpenseListAdapter()
         setupNavigateBackButton()
         setupRestoreButton()
+        showLoading()
     }
 
     private fun setupViewModel() {
         addLifecycleObserver()
-        observeIsLoadingEvent()
         observeIsSelectedMode()
         observeDetailDataSelectEvent()
         observeDeleteEvent()
@@ -169,13 +169,13 @@ class ExpenseFragment : Fragment() {
         })
     }
 
-    private fun observeIsLoadingEvent() {
-        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                true -> viewBinding.pbLoading.visibility = View.VISIBLE
-                false -> viewBinding.pbLoading.visibility = View.GONE
-            }
-        })
+
+    private fun showLoading(){
+        viewBinding.pbLoading.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading(){
+        viewBinding.pbLoading.visibility = View.INVISIBLE
     }
 
     private fun waitAnimationAndObserveExpenseList(){
@@ -189,6 +189,7 @@ class ExpenseFragment : Fragment() {
     private suspend fun observeExpenseList(){
         viewModel.getExpenseLiveData().observe(viewLifecycleOwner, Observer {
             expenseListAdapter.submitList(it)
+            hideLoading()
         })
     }
 

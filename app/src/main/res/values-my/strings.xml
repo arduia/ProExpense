@@ -103,5 +103,6 @@
     <string name="label_expense_detail">အသေးစိတ်အချက်အလက်</string>
     <string name="labal_amount_important">ပမာဏ*</string>
     <string name="label_edit">ပြုန်ပြင်ရန်</string>
+    <string name="link_arduia_mail">mailto: dev.arduia@gmail.com</string>
 
 </resources>

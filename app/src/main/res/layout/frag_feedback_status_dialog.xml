@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/btn_drop"
+        style="@style/IconButton"
+        android:src="@drawable/ic_drop_down"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/margin_material"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_feedback_status"
+        android:text="Feedback Status"
+        android:alpha="0.7"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/margin_material"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_status"
+        style="@style/TextAppearance.MaterialComponents.Headline4"
+        android:text="Submitted."
+        app:layout_constraintVertical_bias="0"
+        android:layout_marginTop="@dimen/margin_large_material"
+        android:layout_marginBottom="@dimen/margin_large_material"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_drop"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/go_home"
+        style="@style/ExpenseButton"
+        android:text="@string/label_home"
+        android:layout_marginTop="@dimen/margin_large_material"
+        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginEnd="@dimen/margin_material"
+        android:layout_marginBottom="@dimen/margin_material"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_status"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

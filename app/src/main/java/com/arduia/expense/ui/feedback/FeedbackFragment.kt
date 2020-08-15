@@ -28,8 +28,13 @@ class FeedbackFragment : NavBaseFragment(){
         setupView()
     }
     private fun  setupView(){
+
         viewBinding.btnDrawerOpen.setOnClickListener{
             (requireActivity() as? NavigationDrawer)?.openDrawer()
+        }
+
+        viewBinding.btnSend.setOnClickListener {
+            FeedbackStatusDialog().show(parentFragmentManager, "Status")
         }
 
         viewBinding.edlName.requestFocus()

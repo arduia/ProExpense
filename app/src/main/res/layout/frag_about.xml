@@ -220,25 +220,20 @@
                 android:background="@android:drawable/divider_horizontal_bright" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_develop"
+                android:id="@+id/tv_developer"
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/dv_end"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
-                android:text="@string/label_develop"
-                android:textColor="@android:color/darker_gray" />
+                android:textAlignment="center"
+                android:linksClickable="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:textColorLink="@android:color/darker_gray"
 
-            <TextView
-                android:id="@+id/tv_contact_mail"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_develop"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:text="@string/label_develop_mail"
+                android:text="@string/label_develop"
                 android:textColor="@android:color/darker_gray" />
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>

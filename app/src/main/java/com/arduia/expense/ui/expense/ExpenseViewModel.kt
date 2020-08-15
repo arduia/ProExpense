@@ -18,8 +18,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val repo: ExpenseRepository
 ) : ViewModel(), LifecycleObserver {
 
-    private val _isLoading = BaseLiveData<Boolean>()
-    val isLoading get() = _isLoading.asLiveData()
+
 
     private val _isDeleteMode = BaseLiveData<Boolean>()
     val isDeleteMode get() = _isDeleteMode.asLiveData()
