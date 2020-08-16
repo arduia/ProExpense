@@ -6,19 +6,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
+import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.databinding.SheetExpenseDetailBinding
+import com.arduia.expense.di.TopDropNavOption
+import com.arduia.expense.ui.home.HomeFragmentDirections
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
     private lateinit var viewBinding : SheetExpenseDetailBinding
 
     private var expenseDetail: ExpenseDetailsVto? = null
 
-    private var editClickListener: (ExpenseDetailsVto) -> Unit = {}
+    @Inject
+    @TopDropNavOption
+    lateinit var entryNavOption: NavOptions
 
     private var dismissListener: (() -> Unit)? = null
+
+    var editOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,9 +70,6 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         viewBinding = SheetExpenseDetailBinding.inflate(layoutInflater, parent, false)
     }
 
-    fun setEditClickListener(listener: (ExpenseDetailsVto) -> Unit) {
-        editClickListener = listener
-    }
 
     fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailsVto) {
         expenseDetail = detail
@@ -71,7 +81,8 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
             dismiss()
         }
         viewBinding.btnEdit.setOnClickListener {
-            editClickListener.invoke(expenseDetail!!)
+           val detail = expenseDetail ?: return@setOnClickListener
+            editOnClickListener?.invoke(detail)
             dismiss()
         }
     }
@@ -85,6 +96,9 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         dismissListener = listener
     }
 
+    fun setOnEditClickListener(listener: (ExpenseDetailsVto) -> Unit){
+        editOnClickListener = listener
+    }
 
     companion object {
         private const val TAG = "TransactionDetail"

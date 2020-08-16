@@ -23,6 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.security.Timestamp
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -143,15 +145,19 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun chooseEntryMode() {
-        val defaultID = resources.getInteger(R.integer.default_expense_id)
 
-        if(args.expenseId == defaultID)
+        Timber.d("chooseMode")
+        val argId = args.expenseId
+        val isInvalidId = argId < 0
+        if (isInvalidId) {
             viewModel.chooseSaveMode()
-        else
+        } else {
             viewModel.chooseUpdateMode()
+        }
     }
 
     private fun changeViewToSelectedMode(mode: ExpenseEntryMode) {
+        Timber.d("changeViewToSelectedMode -> $mode")
         when (mode) {
             ExpenseEntryMode.UPDATE -> changeToUpdateMode()
             ExpenseEntryMode.INSERT -> changeToSaveMode()
@@ -207,7 +213,7 @@ class ExpenseEntryFragment : Fragment() {
         setInitialDefaultCategory()
     }
 
-    private fun setInitialDefaultCategory(){
+    private fun setInitialDefaultCategory() {
         val default = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
         categoryAdapter.submitList(listOf(default))
         viewModel.selectCategory(default)
@@ -248,16 +254,24 @@ class ExpenseEntryFragment : Fragment() {
         val amount = getAmountText()
         val note = getNoteText()
         val category = getSelectedCategory()
+        val id = getExpenseId()
 
-        return ExpenseDetailsVto(
-            id = args.expenseId,
-            name = name,
-            date = "",
-            category = category.id,
-            amount = amount,
-            finance = "",
-            note = note
-        )
+            return ExpenseDetailsVto(
+                id = id,
+                name = name,
+                date = "",
+                category = category.id,
+                amount = amount,
+                finance = "",
+                note = note
+            )
+    }
+
+    private fun getExpenseId(): Int{
+        val argId = args.expenseId
+        val isInvalid = (argId < 0)
+        return if (isInvalid) 0
+        else argId
     }
 
     private fun getNameText() = viewBinding.edtName.text.toString()
@@ -278,6 +292,7 @@ class ExpenseEntryFragment : Fragment() {
     private fun initViewBinding(parent: ViewGroup?) {
         viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, parent, false)
     }
+
     private fun showDataUpdatedMessage() {
         mainHost.showSnackMessage(getString(R.string.label_data_updated))
     }
@@ -286,7 +301,7 @@ class ExpenseEntryFragment : Fragment() {
         findNavController().popBackStack()
     }
 
-    private fun setSelectedItem(item: ExpenseCategory){
+    private fun setSelectedItem(item: ExpenseCategory) {
         categoryAdapter.selectedItem = item
     }
 

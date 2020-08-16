@@ -11,6 +11,7 @@ import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class ExpenseEntryViewModel @ViewModelInject constructor(
@@ -64,7 +65,10 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     fun updateExpenseData(expense: ExpenseDetailsVto) {
         vmScopeIO{
             loadingOn()
-            val expenseEnt = mapToExpenseEnt(expense)
+            val oldData = data.value
+            val createdDate = oldData?.date
+            val expenseEnt = mapToExpenseEnt(expense, createdDate)
+            Timber.d("updateData -> $expenseEnt")
             repo.updateExpense(expenseEnt)
             onDataUpdated()
             loadingOff()
@@ -81,13 +85,13 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun mapToExpenseEnt(vto: ExpenseDetailsVto) = ExpenseEnt(
+    private fun mapToExpenseEnt(vto: ExpenseDetailsVto, createdDate: Long? = null) = ExpenseEnt(
         expenseId = vto.id,
         name = vto.name,
         amount = vto.amount.toLong(),
         note = vto.note,
         category = vto.category,
-        createdDate = Date().time,
+        createdDate = createdDate ?: Date().time,
         modifiedDate = Date().time
     )
 

@@ -18,7 +18,7 @@
             app:destination="@id/dest_expense_entry">
             <argument
                 android:name="expense_id"
-                android:defaultValue="-1"
+                android:defaultValue="-100"
                 app:argType="integer" />
         </action>
     </fragment>
@@ -42,11 +42,10 @@
         tools:layout="@layout/frag_expense">
         <action
             android:id="@+id/action_dest_expense_to_dest_expense_entry"
-            app:destination="@id/dest_expense_entry">
+            app:destination="@id/dest_expense_entry" >
             <argument
                 android:name="expense_id"
-                android:defaultValue="-1"
-                app:argType="integer" />
+                android:defaultValue="-100" />
         </action>
     </fragment>
 
@@ -57,7 +56,7 @@
         tools:layout="@layout/frag_expense_entry">
         <argument
             android:name="expense_id"
-            android:defaultValue="-1"
+            android:defaultValue="-100"
             app:argType="integer" />
     </fragment>
 

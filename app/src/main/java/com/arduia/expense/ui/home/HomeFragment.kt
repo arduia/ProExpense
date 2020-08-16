@@ -55,10 +55,6 @@ class HomeFragment : NavBaseFragment() {
         requireActivity() as MainHost
     }
 
-    private val detailEditListener by lazy {
-        createDetailEditClickListener()
-    }
-
     private val detailDismissListener by lazy {
         return@lazy { mainHost.showAddButton() }
     }
@@ -140,15 +136,16 @@ class HomeFragment : NavBaseFragment() {
             recentAdapter.submitList(it)
         })
 
-        viewModel.detailData.observe(viewLifecycleOwner, EventObserver {
+        viewModel.detailData.observe(viewLifecycleOwner, EventObserver { expenseDetail ->
             //Remove Old Dialog if double clicked
             detailDialog?.dismiss()
             //Show Selected Dialog
-            detailDialog = ExpenseDetailDialog().apply {
-                setEditClickListener(detailEditListener)
-                setDismissListener(detailDismissListener)
+            detailDialog = ExpenseDetailDialog()
+            detailDialog?.setDismissListener(detailDismissListener)
+            detailDialog?.setOnEditClickListener {
+                navigateEntryFragment(expenseDetail.id)
             }
-            detailDialog?.showDetail(parentFragmentManager, it)
+            detailDialog?.showDetail(parentFragmentManager, expenseDetail)
             mainHost.hideAddButton()
         })
 
@@ -161,11 +158,12 @@ class HomeFragment : NavBaseFragment() {
         }
     }
 
-    private fun createDetailEditClickListener() = { expense: ExpenseDetailsVto ->
+    private fun navigateEntryFragment(id: Int){
         val action = HomeFragmentDirections
-            .actionDestHomeToDestExpenseEntry(expenseId = expense.id)
+            .actionDestHomeToDestExpenseEntry(expenseId = id)
         findNavController().navigate(action, entryNavOption)
     }
+
 
     companion object {
         private const val TAG = "MY_HomeFragment"

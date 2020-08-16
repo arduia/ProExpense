@@ -145,19 +145,20 @@ class ExpenseFragment : Fragment() {
     }
 
     private fun observeDetailDataSelectEvent() {
-        viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver {
+        viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver { expenseDetail ->
             //Remove Old Dialog, If Exist
             detailDialog?.dismiss()
             //Show selected Data
-            detailDialog = ExpenseDetailDialog().apply {
-                setEditClickListener { expense ->
-                    val action = ExpenseFragmentDirections
-                        .actionDestExpenseToDestExpenseEntry(expenseId = expense.id)
-                    findNavController().navigate(action, topDropNavOption)
-                }
-            }
-            detailDialog?.showDetail(parentFragmentManager, it)
+            detailDialog = ExpenseDetailDialog()
+            detailDialog?.setOnEditClickListener { openEntryFragment(expenseDetail.id) }
+            detailDialog?.showDetail(parentFragmentManager, expenseDetail)
         })
+    }
+
+    private fun openEntryFragment(id: Int){
+        val action = ExpenseFragmentDirections
+            .actionDestExpenseToDestExpenseEntry(id)
+        findNavController().navigate(action, topDropNavOption)
     }
 
     private fun observeIsSelectedMode() {
@@ -168,7 +169,6 @@ class ExpenseFragment : Fragment() {
             }
         })
     }
-
 
     private fun showLoading(){
         viewBinding.pbLoading.visibility = View.VISIBLE
