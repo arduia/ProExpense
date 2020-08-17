@@ -18,6 +18,7 @@ import com.arduia.expense.R
 import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
+import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.ui.backup.BackupMessageViewModel
 import com.arduia.mvvm.EventObserver
 import com.google.android.material.snackbar.Snackbar
@@ -25,7 +26,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
+import java.text.DecimalFormat
 import java.util.*
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -52,6 +55,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private var addFabShowTask: (() -> Unit)? = null
 
+    @Inject
+    @IntegerDecimal
+    lateinit var countFormat: DecimalFormat
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
@@ -66,8 +73,20 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private fun setupViewModel(){
         backupViewModel.finishedEvent.observe(this, EventObserver{
-            showSnackMessage("BackupFinished $it")
+            showBackupFinishedMessage(count = it)
         })
+    }
+
+    private fun showBackupFinishedMessage(count: Int){
+
+        val isMultiItem = (count > 1)
+
+        val msg = if(isMultiItem)
+            getString(R.string.label_multi_item_imported)
+        else
+            getString(R.string.label_single_item_imported)
+
+        showSnackMessage("${countFormat.format(count)} $msg")
     }
 
     private fun findNavController(): NavController{

@@ -73,6 +73,7 @@ class ImportViewModel @ViewModelInject constructor(
             } catch (e: SecurityException) {
                 loadingOff()
                 _closeEvent post EventUnit
+
                 _fileNotFoundEvent post EventUnit
             }
 

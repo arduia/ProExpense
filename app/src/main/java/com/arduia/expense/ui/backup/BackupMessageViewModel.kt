@@ -6,6 +6,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.arduia.expense.data.backup.ImportWorker
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.event
 import com.arduia.mvvm.post
@@ -13,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class BackupMessageViewModel @ViewModelInject constructor(private val workManager: WorkManager)
@@ -43,7 +45,7 @@ class BackupMessageViewModel @ViewModelInject constructor(private val workManage
         val liveDataList = taskIdList.map {
              workManager.getWorkInfoByIdLiveData(it)
         }
- 
+
         liveDataList.forEach { liveData ->
             collectTaskMessageFlow(liveData.asFlow())
         }
@@ -56,12 +58,23 @@ class BackupMessageViewModel @ViewModelInject constructor(private val workManage
     }
 
     private val workInfoListener: suspend (WorkInfo) -> Unit = {
-        val isValid = isFinishedData(it)
-        if(isValid){
+
+        val isFinished = isWorkFinished(it)
+        Timber.d("isFinished $isFinished $it")
+        if(isFinished){
             val count = getTotalItemCount(it)
-            _finishedEvent post event(count)
+            val isValidCount = (count > -1)
+            if(isValidCount){
+                _finishedEvent post event(count)
+            }
+            removeTaskID(it.id)
         }
+
     }
-    private fun getTotalItemCount(info: WorkInfo)  = 10
-    private fun isFinishedData(info: WorkInfo) = true
+
+    private fun getTotalItemCount(info: WorkInfo)
+    = info.outputData.getInt(ImportWorker.KEY_IMPORT_COUNT, -1)
+
+    private fun isWorkFinished(info: WorkInfo) =
+        (info.state == WorkInfo.State.SUCCEEDED)
 }

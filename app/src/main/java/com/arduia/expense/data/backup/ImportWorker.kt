@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.arduia.backup.BackupException
 import com.arduia.backup.ExcelBackup
@@ -22,15 +23,21 @@ class ImportWorker  @WorkerInject constructor(@Assisted context: Context,
         val fileInputStream = contentResolver.openInputStream(importUri)
             ?: throw Exception("Cannot Open InputStream from Content Provider Uri")
 
-        try {
-           val count =  excelBackup.import(fileInputStream)
+        return try {
+            val count =  excelBackup.import(fileInputStream)
+            val data = getProgressData(count = count)
+            Result.success(data)
         }catch (e: BackupException){
-            return Result.failure()
+            Result.failure()
         }
-        return Result.success()
     }
+
+    private fun getProgressData(count: Int) =  Data.Builder()
+            .putInt(KEY_IMPORT_COUNT, count)
+            .build()
 
     companion object{
         const val FILE_URI = "FILE_URI"
+        const val KEY_IMPORT_COUNT = "KEY_IMPORT_COUNT"
     }
 }

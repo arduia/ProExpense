@@ -28,13 +28,16 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
     }
 
     @Throws(IOException::class, SecurityException::class)
-    suspend fun import(inputStream: InputStream) {
+    suspend fun import(inputStream: InputStream):Int {
+        val count:Int
         try {
             val book = Workbook.getWorkbook(inputStream)
-            importExcelData(book)
+            count = importExcelData(book)
+
         } catch (e: BiffException) {
             throw BackupException("File Not Found Exception", e)
         }
+        return count
     }
 
     @Throws(IOException::class, SecurityException::class)
@@ -43,11 +46,13 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
         importExcelData(book)
     }
 
-    private suspend fun importExcelData(book: Workbook) {
+    private suspend fun importExcelData(book: Workbook): Int{
+        var count = -1
         sheets.forEach { backupSheet ->
-            backupSheet.import(book)
+            count = backupSheet.import(book)
         }
         book.close()
+        return count
     }
 
     @Throws(IOException::class, SecurityException::class)

@@ -56,10 +56,14 @@
     <string name="label_feedback">Feedback</string>
     <string name="label_feedback_description">We went to know what you thought of your experience at Pro Expense app so we\'d love to hear you feedback.</string>
     <string name="label_email">Email</string>
-    <string name="label_comment">Your Comments</string>
+    <string name="label_comment">Your Comments*</string>
     <string name="label_send_feedback">Send Feedback</string>
     <string name="label_sending" tools:ignore="TypographyEllipsis">Sending...</string>
     <string name="label_thanks">Thanks Your Feedback!</string>
+    <string name="label_invalid_comment">Empty Comment</string>
+    <string name="label_invalid_email">Invalid Email Address</string>
+    <string name="label_feedback_thanks">Thanks for your Comment.\n It will be delivered soon.</string>
+    <string name="label_go_home">Go Home</string>
 
     <!--    Expense-->
     <string name="label_confirm_delete">Confirm Delete</string>
@@ -93,11 +97,14 @@
     <string name="label_day_sat">SAT</string>
     <string name="label_choose_language">Choose Language</string>
     <string name="label_restart">Restart</string>
+<!--    Backup-->
     <string name="label_backup">Backup</string>
     <string name="label_export">Export</string>
     <string name="label_total">Total</string>
     <string name="label_save_as">Save As</string>
     <string name="label_file_not_found">File Doesn\'t Exist</string>
+    <string name="label_single_item_imported">item imported!</string>
+    <string name="label_multi_item_imported">items imported</string>
     <string name="label_import">Import</string>
     <string name="label_backup_details">Backup Details</string>
     <string name="label_expense_detail">Expense Detail</string>

@@ -9,14 +9,17 @@ import java.lang.IndexOutOfBoundsException
 
 abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
-    internal suspend fun import(book: Workbook) {
+    internal suspend fun import(book: Workbook): Int {
+        var count = -1
         val sheet = book.getSheet(sheetName)
         try {
             val sheetData = getDataFromSheet(sheet)
             source.writeAllItem(sheetData)
+            count = sheetData.size
         } catch (ie: IllegalArgumentException) {
             throw BackupException("Data Type doesn't match", ie)
         }
+        return count
     }
 
     private fun getDataFromSheet(sheet: Sheet): List<T> {

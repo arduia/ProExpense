@@ -34,6 +34,10 @@ class FeedbackStatusDialog : BottomSheetDialogFragment(){
             popBackHome()
             dismiss()
         }
+
+        viewBinding.btnDrop.setOnClickListener {
+            dismiss()
+        }
     }
 
     private fun popBackHome(){
