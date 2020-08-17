@@ -53,22 +53,29 @@ class ImportViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             loadingOn()
-            val itemCount = backupRepo.getItemCount(uri).first()
-            val isInvalidItem = (itemCount < 0)
+            try {
+                val itemCount = backupRepo.getItemCount(uri).first()
+                val isInvalidItem = (itemCount < 0)
 
-            if (isInvalidItem) {
-                _fileNotFoundEvent post EventUnit
-                _closeEvent post EventUnit
+                if (isInvalidItem) {
+                    _fileNotFoundEvent post EventUnit
+                    _closeEvent post EventUnit
+                    loadingOff()
+                    return@launch
+                }
+
+                val fileName = getFileNameFromUri(uri = uri)
+
                 loadingOff()
-                return@launch
+                _fileName post fileName
+                _totalCount post decimalFormat.format(itemCount)
+
+            } catch (e: SecurityException) {
+                loadingOff()
+                _closeEvent post EventUnit
+                _fileNotFoundEvent post EventUnit
             }
 
-            val fileName = getFileNameFromUri(uri = uri)
-
-
-            loadingOff()
-            _fileName post fileName
-            _totalCount post decimalFormat.format(itemCount)
         }
     }
 
@@ -96,11 +103,11 @@ class ImportViewModel @ViewModelInject constructor(
         _closeEvent post EventUnit
     }
 
-    private fun loadingOn(){
+    private fun loadingOn() {
         _loadingEvent post event(true)
     }
 
-    private fun loadingOff(){
+    private fun loadingOff() {
         _loadingEvent post event(false)
     }
 }
