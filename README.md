@@ -8,7 +8,14 @@ Simple finance note to record daily income and expense for free with no Ads.
   <a href="https://android-arsenal.com/api?level=21"><img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen"/></a> 
 </p> <br>
 
-![ScreenShot1](previews/screenshot_1.png) ![ScreenShot2](previews/screenshot_2.png) ![ScreenShot2](previews/screenshot_3.png)
+<table align="center">
+       <tr>
+          <td><img src="https://github.com/arduia/ProExpense/blob/master/previews/screenshot_1.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/master/previews/screenshot_2.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/master/previews/screenshot_3.png" width="220"></td>
+       </tr>
+ </table>
+ 
 ##Download
 <a href="https://play.google.com/store/apps/details?id=com.arduia.expense">
 <img src="https://cdn.jsdelivr.net/gh/steverichey/google-play-badge-svg/img/en_get.svg" width="30%">
