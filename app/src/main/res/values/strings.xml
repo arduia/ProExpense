@@ -81,7 +81,7 @@
     <string name="label_policy">Privacy and Policy</string>
     <string name="url_policy">file:///android_asset/privacy_policy.html</string>
     <string name="url_open_source">file:///android_asset/open_source_licenses.html</string>
-    <string name="url_github_link">https://github.com/arduia</string>
+    <string name="url_github_link">https://github.com/arduia/ProExpense</string>
     <string name="label_open_source">Opens-Source Libraries</string>
     <string name="label_contribute">Contribute the app</string>
     <string name="label_develop">Developed by Arduia</string>
