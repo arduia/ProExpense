@@ -34,7 +34,7 @@ Simple finance note to record daily income and expense for free with no Ads.
 [support-lib]: https://developer.android.com/topic/libraries/support-library/index.html
 [arch]: https://developer.android.com/arch
 [view-binding]: https://developer.android.com/topic/libraries/view-binding
-[digger-hilt]: https://dagger.dev/
+[dagger-hilt]: https://dagger.dev/
 [retrofit]: http://square.github.io/retrofit 
 [timber]: https://github.com/JakeWharton/timber 
 [material]: https://github.com/material-components/material-components-android
