@@ -98,6 +98,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         viewBinding.fbMainAdd.setOnClickListener {
             addBtnClickListener.invoke()
         }
+
         viewBinding.fbMainAdd.hide()
 
         viewBinding.nvMain.setupWithNavController(navController)
@@ -117,7 +118,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {  }
 
             override fun onDrawerClosed(drawerView: View) {
-                //execute selected item
                 itemSelectTask?.invoke()
                 itemSelectTask = null
             }
@@ -212,7 +212,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         showAddFab()
     }
 
-    //for easily methods
+
     private fun showAddFab(){
         viewBinding.fbMainAdd.show()
         viewBinding.fbMainAdd.isClickable = true
