@@ -111,6 +111,7 @@
     <string name="labal_amount_important">Amount*</string>
     <string name="label_edit">Edit</string>
     <string name="link_arduia_mail">mailto: dev.arduia@gmail.com</string>
+    <string name="label_feedback_status">Feedback Status</string>
 
 
 </resources>

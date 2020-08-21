@@ -110,5 +110,6 @@
     <string name="link_arduia_mail">mailto: dev.arduia@gmail.com</string>
     <string name="label_invalid_email">အီးမေးလိပ်စာမှားနေပါတ၊်</string>
     <string name="label_invalid_comment">မထည့်ရသေးပါ</string>
+    <string name="label_feedback_status">အကြံပြုရန်</string>
 
 </resources>

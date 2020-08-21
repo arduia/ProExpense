@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_feedback_status"
-        android:text="Feedback Status"
+        android:text="@string/label_feedback_status"
         android:alpha="0.7"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintStart_toStartOf="parent"
