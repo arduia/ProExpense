@@ -65,8 +65,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
-        setContentView(viewBinding.root)
 
+        setContentView(viewBinding.root)
         setupView()
         setupViewModel()
     }
@@ -78,9 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     private fun showBackupFinishedMessage(count: Int){
-
         val isMultiItem = (count > 1)
-
         val msg = if(isMultiItem)
             getString(R.string.label_multi_item_imported)
         else
@@ -104,13 +102,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
         viewBinding.nvMain.setupWithNavController(navController)
 
-        viewBinding.nvMain.setNavigationItemSelectedListener listener@{menuItem ->
+        viewBinding.nvMain.setNavigationItemSelectedListener listener@{ menuItem ->
 
-            //for smooth drawer motions
-            //register new task
             itemSelectTask = { selectPage(selectedMenuItem = menuItem) }
-
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
+
             return@listener true
         }
 
@@ -174,7 +170,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         viewBinding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 
-
     override fun navigateUpTo(upIntent: Intent?): Boolean {
         return super.navigateUpTo(upIntent) or navController.navigateUp()
     }
@@ -183,18 +178,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         if(drawerClosure()){
             super.onBackPressed()
         }
-
     }
 
     private fun drawerClosure():Boolean{
-
         val isDrawerOpen = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
         if(isDrawerOpen){
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
-            //Should Open
             return false
         }
-        //Should Close
         return true
     }
 
@@ -204,8 +195,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
         when(lastSnackBar?.isShown){
             true -> {
-
-                //Wait for finish snack bar show
                 MainScope().launch {
                     val delayDuration = (lastSnackBar?.duration ?:0 ) + 300 //Extra 100 for animation
                     delay(delayDuration.toLong())
@@ -213,10 +202,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
                 }
             }
 
-            //null or false
             else -> {
-
-                //Show Instantly
                 addFabShowTask?.invoke()
             }
         }

@@ -49,4 +49,3 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
         }
 
 }
- 

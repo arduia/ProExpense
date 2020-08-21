@@ -5,6 +5,10 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
+def apiProfile = rootProject.file("api.properties")
+def apiProperties = new Properties()
+apiProperties.load(new FileInputStream(apiProfile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -20,15 +24,18 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+
     buildTypes {
         debug{
             minifyEnabled false
             shrinkResources false
+            buildConfigField("String", "BASE_URL", apiProperties['main_url'])
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled true
             shrinkResources true
+            buildConfigField("String", "BASE_URL", apiProperties['main_url'])
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

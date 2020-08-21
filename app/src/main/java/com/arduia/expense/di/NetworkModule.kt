@@ -1,5 +1,6 @@
 package com.arduia.expense.di
 
+import com.arduia.expense.BuildConfig
 import com.arduia.expense.data.network.ExpenseNetworkDao
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,7 @@ object NetworkModule{
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("https://proexpense.herokuapp.com")
+        .baseUrl(BuildConfig.BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

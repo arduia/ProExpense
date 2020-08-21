@@ -1,6 +1,5 @@
 package com.arduia.expense.ui
 
-import android.view.View
 
 interface MainHost{
 

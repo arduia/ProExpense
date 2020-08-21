@@ -14,7 +14,7 @@ import java.util.*
 class ExpenseRepositoryImpl(
     private val expenseDao: ExpenseDao,
     private val networkDao: ExpenseNetworkDao
-    ) : ExpenseRepository{
+) : ExpenseRepository {
 
     private val feedbackBroadCast = BroadcastChannel<FeedbackDto.Response>(10)
 
@@ -34,7 +34,7 @@ class ExpenseRepositoryImpl(
     }
 
     override suspend fun getExpense(id: Int): Flow<ExpenseEnt> {
-       return expenseDao.getItemExpense(id)
+        return expenseDao.getItemExpense(id)
     }
 
     override suspend fun getExpenseSourceAll() = expenseDao.getExpenseSourceAll()
@@ -48,7 +48,7 @@ class ExpenseRepositoryImpl(
     }
 
     override suspend fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>> {
-       return expenseDao.getExpenseRange(limit, offset)
+        return expenseDao.getExpenseRange(limit, offset)
     }
 
     override suspend fun updateExpense(expenseEnt: ExpenseEnt) {
@@ -72,28 +72,24 @@ class ExpenseRepositoryImpl(
     }
 
     override suspend fun postFeedback(comment: FeedbackDto.Request): Flow<FeedbackDto.Response> {
-         postComment(comment)
+        postComment(comment)
         return feedbackBroadCast.asFlow()
     }
 
     override suspend fun getVersionStatus(): Flow<ExpenseVersionDto> {
-
-         checkVersion()
+        checkVersion()
         return versionBroadCast.asFlow()
     }
 
-    private suspend fun checkVersion(){
+    private suspend fun checkVersion() {
         val version = networkDao.getVersionStatus().execute()
         version.body()?.let {
-            Timber.d("version -> $it")
             versionBroadCast.send(it)
         }
-        Timber.d("checkVersion -> $version")
     }
 
-    private suspend fun postComment(comment: FeedbackDto.Request){
+    private suspend fun postComment(comment: FeedbackDto.Request) {
         val comment = networkDao.postFeedback(comment).execute()
-
         comment.body()?.let {
             feedbackBroadCast.send(it)
         }
@@ -110,7 +106,7 @@ class ExpenseRepositoryImpl(
         calendar.set(Calendar.DAY_OF_YEAR, startSunDay)
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND,0)
+        calendar.set(Calendar.SECOND, 0)
 
         return calendar.timeInMillis
     }
