@@ -1,0 +1,10 @@
+Key Features:
+
+Offline Storage
+Records are stored in local device storage.
+
+Statistics
+Weekly expenses are presented as simple Graph.
+
+Multi-Language
+Languages can easily be selected.
