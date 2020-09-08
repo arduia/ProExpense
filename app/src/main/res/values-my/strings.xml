@@ -50,8 +50,8 @@
     <string name="label_comment">အကြံပြုချက်</string>
     <string name="label_send_feedback">ပေးပို့မည်</string>
     <string name="label_sending" tools:ignore="TypographyEllipsis">ပေးပို့နေသည်...</string>
-    <string name="label_thanks">အခုလိုပေးပို့ပေးလို့ ကျေးဇူးတင်ပါတယ်။</string>
-    <string name="label_feedback_thanks">အခုလိုအကြံပြုချက်အတွက် ကျေးဇူတင်ပါသည်</string>
+    <string name="label_thanks">အခုလိုပေးပို့ပေးလို့ ကျေးဇူးတင်ပါသည်</string>
+    <string name="label_feedback_thanks">အခုလိုအကြံပြုချက်အတွက် ကျေးဇူးတင်ပါသည်</string>
     <string name="label_go_home">မူလစာမျက်နှာ သို့</string>
     <!--    Expense-->
     <string name="label_confirm_delete">ဖျက်ရန်အတည်ပြုပါသည်</string>
