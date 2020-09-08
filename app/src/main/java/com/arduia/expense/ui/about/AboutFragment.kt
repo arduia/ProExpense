@@ -22,6 +22,7 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.FragAboutBinding
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.ui.NavBaseFragment
+import com.arduia.mvvm.BuildConfig
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -53,11 +54,18 @@ class AboutFragment : NavBaseFragment() {
     }
 
     private fun setupView() {
+        setAppVersionName()
         setupContributeClick()
         setupNavOpenButton()
         setupOpenSourceClick()
         setupPrivacyClick()
         showAboutDeveloper()
+    }
+
+    private fun setAppVersionName(){
+        viewBinding.tvVersion.text = with(requireActivity()){
+            packageManager.getPackageInfo(packageName,0).versionName
+        }
     }
 
     private fun setupContributeClick() {

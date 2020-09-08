@@ -9,6 +9,9 @@ def apiProfile = rootProject.file("api.properties")
 def apiProperties = new Properties()
 apiProperties.load(new FileInputStream(apiProfile))
 
+def proExpenseVersionCode = 4
+def proExpenseVersionName = "0.1.2-beta2"
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -18,23 +21,27 @@ android {
         applicationId "com.arduia.expense"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 3
-        versionName "0.1.2-beta"
+        versionCode proExpenseVersionCode
+        versionName proExpenseVersionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
 
+    }
 
     buildTypes {
         debug{
             minifyEnabled false
             shrinkResources false
+
+
             buildConfigField("String", "BASE_URL", apiProperties['main_url'])
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled true
             shrinkResources true
+
+
             buildConfigField("String", "BASE_URL", apiProperties['main_url'])
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

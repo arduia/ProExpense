@@ -6,7 +6,6 @@
     <string name="label_resent">မှတ်တန်း‌</string>
     <string name="label_settings">ချိန်ညှိရန်</string>
     <string name="label_expense">စာရင်းများ</string>
-    <string name="app_version">v0.1.2-beta</string>
 
     <!--    Home-->
     <string name="label_home">မူလစာမျက်နှာ</string>
