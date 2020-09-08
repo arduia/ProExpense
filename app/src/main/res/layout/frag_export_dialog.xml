@@ -50,8 +50,10 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_export_now"
+        app:icon="@drawable/ic_save"
+        app:iconGravity="textStart"
         style="@style/ExpenseButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

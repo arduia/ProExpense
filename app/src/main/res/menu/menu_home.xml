@@ -8,6 +8,10 @@
             android:icon="@drawable/ic_home"
             android:title="@string/label_home" />
         <item
+            android:id="@+id/dest_backup"
+            android:icon="@drawable/ic_export"
+            android:title="@string/label_backup"/>
+        <item
             android:id="@+id/dest_feedback"
             android:icon="@drawable/ic_feedback"
             android:title="@string/label_feedback" />
@@ -15,10 +19,6 @@
             android:id="@+id/dest_about"
             android:icon="@drawable/ic_info"
             android:title="@string/label_about"/>
-        <item
-            android:id="@+id/dest_backup"
-            android:icon="@drawable/ic_export"
-            android:title="@string/label_backup"/>
         <item
             android:id="@+id/dest_settings"
             android:icon="@drawable/ic_settings"

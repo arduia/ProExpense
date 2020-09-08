@@ -24,7 +24,7 @@ object FormattingModule{
     fun provideDecimalDateFormat() = DecimalFormat("#,###")
 
     @Provides
-    fun provideDateFormat(): DateFormat = SimpleDateFormat("d/MMMM/YYYY", Locale.getDefault())
+    fun provideDateFormat(): DateFormat = SimpleDateFormat("d MMM YYYY", Locale.getDefault())
 
 }
 

@@ -52,7 +52,7 @@
         android:layout_height="30dp"
         android:id="@+id/btn_export_open"
         style="@style/IconButton"
-        app:srcCompat="@drawable/ic_export"
+        app:srcCompat="@drawable/ic_save"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toStartOf="@id/btn_import_open"
         app:layout_constraintTop_toTopOf="@id/tb_backup"

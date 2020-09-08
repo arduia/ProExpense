@@ -142,9 +142,11 @@
         tools:text="Somethings.." />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_edit"
         style="@style/ExpenseButton"
+        app:icon="@drawable/ic_edit"
+        app:iconGravity="textStart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
