@@ -9,8 +9,8 @@ def apiProfile = rootProject.file("api.properties")
 def apiProperties = new Properties()
 apiProperties.load(new FileInputStream(apiProfile))
 
-def proExpenseVersionCode = 4
-def proExpenseVersionName = "0.1.2-beta2"
+def proExpenseVersionCode = 5
+def proExpenseVersionName = "0.1.2-beta3"
 
 android {
     compileSdkVersion 29
