@@ -28,6 +28,12 @@ android {
 
     }
 
+    bundle{
+        language{
+            enableSplit = false
+        }
+    }
+
     buildTypes {
         debug{
             minifyEnabled false
