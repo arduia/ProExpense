@@ -1,0 +1,4 @@
+v0.1.2-beta3
+
+Fix Bugs:
+- Backup update error

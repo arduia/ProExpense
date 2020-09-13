@@ -1,0 +1,6 @@
+v0.1.2-beta2
+
+fix Bugs:
+ - MM font error
+ - Expense Lists Limit
+
