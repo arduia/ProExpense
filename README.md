@@ -18,7 +18,13 @@ Simple finance note to record daily income and expense for free with no Ads.
  
 ## Download
 <a href="https://play.google.com/store/apps/details?id=com.arduia.expense">
-<img src="https://cdn.jsdelivr.net/gh/steverichey/google-play-badge-svg/img/en_get.svg" width="25%">
+<img src="https://cdn.jsdelivr.net/gh/steverichey/google-play-badge-svg/img/en_get.svg"  width="170">
+</a> 
+<a href="https://appgallery.huawei.com/#/app/C102892875">
+<img src="https://huaweimobileservices.com/wp-content/uploads/2019/12/AppGallery_DownlaodBadge_ENG.png"  width="170">
+</a> 
+<a href="https://www.amazon.com/dp/B08HZFQQ3L">
+<img src="https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-appstore-badge-english-black.png"  width="160" >
 </a> 
 
 ## Libraries
