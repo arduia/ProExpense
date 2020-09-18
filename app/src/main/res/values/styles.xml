@@ -55,6 +55,11 @@
         <item name="android:scaleType">center</item>
     </style>
 
+    <style name="ExpenseCategory" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
     <!--    Material Button-->
     <style name="ExpenseButton" parent="Widget.MaterialComponents.Button">
         <item name="android:height">@dimen/height_button</item>

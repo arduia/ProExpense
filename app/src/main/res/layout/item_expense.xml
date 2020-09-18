@@ -15,20 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.mikhaellopez.circularimageview.CircularImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imv_category"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            android:src="@drawable/ic_household"
-            app:civ_circle_color="@color/surfaceColor"
-            app:civ_border_width="1dp"
-            app:civ_border_color="@color/surfaceColor"
-            app:civ_shadow="true"
-            app:civ_shadow_color="@android:color/darker_gray"
-            app:civ_shadow_radius="0.5dp"
-            android:layout_alignParentStart="true"
+            app:srcCompat="@drawable/ic_household"
+            app:shapeAppearance="@style/ExpenseCategory"
+            android:layout_alignParentStart = "true"
             android:layout_centerVertical="true"
-            android:scaleType="centerInside"
             android:layout_marginStart="@dimen/margin_material"
             android:layout_marginTop="@dimen/margin_small_material"
             android:layout_marginBottom="@dimen/margin_small_material"/>
