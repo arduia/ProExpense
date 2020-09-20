@@ -50,7 +50,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/sv_entry"
-        android:background="@color/innerSurfaceColor"
         app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

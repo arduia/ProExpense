@@ -6,8 +6,7 @@
     <color name="onPrimaryColor">#ffffff</color>
     <color name="onSurfaceColor">#000000</color>
     <color name="materialCardColor">#eceff1</color>
-    <color name="backgroundColor">@android:color/white</color>
+    <color name="backgroundColor">#eceff1</color>
     <color name="surfaceColor">#eceff1</color>
-    <color name="innerSurfaceColor">#eceff1</color>
     <color name="iconTintColor">@android:color/darker_gray</color>
 </resources>

@@ -7,6 +7,7 @@
         <item name="colorOnPrimary">@color/onPrimaryColor</item>
         <item name="rippleColor">@android:color/darker_gray</item>
         <item name="colorOnSurface">@color/onSurfaceColor</item>
+        <item name="backgroundColor">@color/backgroundColor</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="colorSurface">@color/surfaceColor</item>
