@@ -16,7 +16,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drawer_open"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="@dimen/margin_material"
@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/tv_feedback"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -55,7 +55,7 @@
 
             <TextView
                 android:id="@+id/tv_feedback_description"
-                style="@style/BodyText1"
+                style="?attr/textAppearanceBody1"
                 android:lineSpacingExtra="@dimen/spacing_body_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,7 +67,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_material"
@@ -84,7 +83,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_email"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_material"
@@ -101,7 +99,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_comment"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_material"
@@ -117,15 +114,14 @@
                     android:lines="3" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_send"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/height_button"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_material"
                 android:layout_marginTop="@dimen/margin_material"
                 android:layout_marginEnd="@dimen/margin_material"
                 android:layout_marginBottom="@dimen/margin_material"
-
                 android:text="@string/label_send_feedback" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

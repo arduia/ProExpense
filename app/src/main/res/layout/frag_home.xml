@@ -17,7 +17,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_menu_open"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="@dimen/margin_material"
@@ -30,7 +30,7 @@
 
     <TextView
         android:id="@+id/tv_home"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -43,7 +43,7 @@
 
     <TextView
         android:id="@+id/tv_recent"
-        style="@style/ItemText"
+        style="?attr/textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -56,7 +56,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_more_expenses"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/ic_nav_next"
@@ -128,7 +128,7 @@
 
             <TextView
                 android:id="@+id/tv_spent_week"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                style="?attr/textAppearanceSubtitle1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -140,7 +140,7 @@
 
             <TextView
                 android:id="@+id/tv_total_value"
-                style="@style/TextAppearance.MaterialComponents.Headline4"
+                style="?attr/textAppearanceHeadline4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_spent_week"
@@ -149,7 +149,7 @@
 
             <TextView
                 android:id="@+id/tv_currency"
-                style="@style/TextAppearance.MaterialComponents.Overline"
+                style="?attr/textAppearanceOverline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/tv_total_value"

@@ -22,7 +22,7 @@
 
         <TextView
             android:id="@+id/tv_entry_title"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            style="?attr/textAppearanceHeadline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|start"
@@ -31,7 +31,7 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_entry_close"
-            style="@style/IconButton"
+            style="?attr/iconButtonStyle"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical|end"
@@ -62,7 +62,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="?attr/textInputStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="viewStart"
@@ -86,7 +86,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_cost"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_name"
@@ -124,7 +123,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_description"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_below="@id/rv_category"
@@ -147,7 +145,6 @@
 
             <Button
                 android:id="@+id/btn_save"
-                style="@style/ExpenseButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_description"

@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/tv_backup_detail"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -30,7 +30,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drop_close"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="@dimen/margin_material"
@@ -42,7 +42,7 @@
 
     <TextView
         android:id="@+id/tv_name"
-        style="@style/TextAppearance.MaterialComponents.Overline"
+        style="?attr/textAppearanceOverline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -54,7 +54,7 @@
 
     <TextView
         android:id="@+id/tv_name_value"
-        style="@style/TextAppearance.MaterialComponents.Body1"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_items"
-        style="@style/TextAppearance.MaterialComponents.Overline"
+        style="?attr/textAppearanceBody1"
         android:text="@string/label_total"
         android:alpha="0.7"
         app:layout_constraintTop_toBottomOf="@id/tv_name_value"
@@ -79,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_items_value"
-        style="@style/TextAppearance.MaterialComponents.Body1"
+        style="?attr/textAppearanceBody1"
         android:textStyle="bold"
         android:alpha=".8"
         app:layout_constraintTop_toBottomOf="@id/tv_items"
@@ -89,11 +89,10 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_import"
-        style="@style/ExpenseButton"
         app:icon="@drawable/ic_import"
         app:iconGravity="textStart"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_button"
         android:layout_margin="@dimen/margin_material"
         android:text="@string/label_import"
         app:layout_constraintBottom_toBottomOf="parent"

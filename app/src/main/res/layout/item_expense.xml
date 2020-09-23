@@ -20,7 +20,7 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:srcCompat="@drawable/ic_household"
-            app:shapeAppearance="@style/ExpenseCategory"
+            app:shapeAppearance="?attr/shapeAppearanceMediumComponent"
             android:layout_alignParentStart = "true"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/margin_material"
@@ -29,7 +29,7 @@
 
         <TextView
             android:id="@+id/tv_name"
-            style="@style/TextAppearance.MaterialComponents.Body1"
+            style="?attr/textAppearanceBody1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/imv_category"
@@ -46,7 +46,7 @@
 
         <TextView
             android:id="@+id/tv_date"
-            style="@style/TextAppearance.MaterialComponents.Caption"
+            style="?attr/textAppearanceCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@id/tv_name"
@@ -56,7 +56,7 @@
 
         <TextView
             android:id="@+id/tv_amount"
-            style="@style/TextAppearance.MaterialComponents.Body1"
+            style="?attr/textAppearanceBody1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="900"

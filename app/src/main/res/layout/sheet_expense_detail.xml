@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/tv_expense_detail"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:alpha="0.7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_close"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="@dimen/margin_material"
@@ -65,7 +65,7 @@
 
     <TextView
         android:id="@+id/tv_name_value"
-        style="@style/TextAppearance.MaterialComponents.Body1"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large_material"
@@ -78,7 +78,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_amount"
         android:text="@string/label_amount"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+        style="?attr/textAppearanceBody2"
         android:alpha="0.7"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_amount_value"
         android:layout_marginStart="@dimen/margin_material"
@@ -86,7 +86,7 @@
 
     <TextView
         android:id="@+id/tv_amount_value"
-        style="@style/TextAppearance.MaterialComponents.Body1"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_material"
@@ -100,14 +100,14 @@
         android:id="@+id/tv_date"
         android:text="@string/label_date"
         android:alpha="0.7"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+        style="@style/TextAppearance.ProExpense.Body2"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_date_value"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="@dimen/margin_material"/>
 
     <TextView
         android:id="@+id/tv_date_value"
-        style="@style/TextAppearance.MaterialComponents.Body1"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintVertical_bias="0"
@@ -121,7 +121,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_note"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+        style="?attr/textAppearanceBody2"
         android:text="@string/label_note"
 
         android:alpha="0.7"
@@ -131,7 +131,7 @@
 
     <TextView
         android:id="@+id/tv_note_value"
-        style="@style/TextAppearance.MaterialComponents.Body1"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_material"
@@ -144,17 +144,16 @@
     </com.google.android.material.card.MaterialCardView>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_edit"
-        style="@style/ExpenseButton"
         app:icon="@drawable/ic_edit"
         app:iconGravity="textStart"
+        style="?attr/materialButtonStyle"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_button"
         android:layout_marginStart="@dimen/margin_material"
         android:layout_marginTop="@dimen/margin_material"
         android:layout_marginEnd="@dimen/margin_material"
         android:layout_marginBottom="@dimen/margin_material"
         android:text="@string/label_edit"
-        android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

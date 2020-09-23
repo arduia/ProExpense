@@ -16,7 +16,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_menu_open"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="@dimen/margin_material"
@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/tv_backup"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -40,7 +40,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/btn_import_open"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         app:srcCompat="@drawable/ic_folder"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/btn_export_open"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         app:srcCompat="@drawable/ic_save"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toStartOf="@id/btn_import_open"
@@ -75,7 +75,6 @@
         android:visibility="gone"
         android:id="@+id/btn_export"
         android:text="Export"
-        style="@style/ExpenseButton"
         app:icon="@drawable/ic_add"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -25,7 +25,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.AppTheme)
+        setTheme(R.style.Theme_ProExpense)
 
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))

@@ -13,7 +13,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_pop_back"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="@dimen/margin_material"
@@ -25,7 +25,7 @@
 
     <TextView
         android:id="@+id/tv_web_title"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -51,6 +51,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_web_view"
-        app:layout_constraintBottom_toBottomOf="@id/tb_web_view"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+        app:layout_constraintBottom_toBottomOf="@id/tb_web_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

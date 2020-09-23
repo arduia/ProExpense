@@ -10,4 +10,5 @@
     <dimen name="width_minimum">450dp</dimen>
     <dimen name="width_minimum_and_margin">482dp</dimen>
     <dimen name="spacing_body_text">10sp</dimen>
+    <dimen name="size_nav_icon">20dp</dimen>
 </resources>

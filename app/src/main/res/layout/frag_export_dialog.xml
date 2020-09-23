@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/tv_app_name"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -19,7 +19,7 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drop"
-        style="@style/IconButton"
+        style="?attr/iconButtonStyle"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="@dimen/margin_material"
@@ -32,7 +32,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tl_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -53,10 +52,10 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_export_now"
         app:icon="@drawable/ic_save"
+        style="?attr/materialButtonStyle"
         app:iconGravity="textStart"
-        style="@style/ExpenseButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_button"
         android:layout_marginTop="@dimen/margin_large_material"
         android:layout_marginBottom="@dimen/margin_material"
         android:text="@string/label_save_as"

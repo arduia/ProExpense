@@ -38,8 +38,8 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nv_main"
-        style="@style/NavTheme"
         android:layout_width="wrap_content"
+        style="?attr/proExpenseNavigationViewStyle"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/layout_header"

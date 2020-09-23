@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/tv_welcome"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_material"
@@ -32,7 +32,7 @@
 
     <TextView
         android:id="@+id/tv_choose_lang"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        style="?attr/textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
@@ -62,7 +62,6 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_continue"
-        style="@style/ExpenseButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_material"
