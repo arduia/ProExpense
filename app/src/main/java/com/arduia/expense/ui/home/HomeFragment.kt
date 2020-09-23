@@ -17,7 +17,6 @@ import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,8 +95,8 @@ class HomeFragment : NavBaseFragment() {
         viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.rvRecent.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.space_between_items).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
+                resources.getDimension(R.dimen.grid_1).toInt(),
+                resources.getDimension(R.dimen.grid_2).toInt()
             )
         )
         mainHost.setAddButtonClickListener {

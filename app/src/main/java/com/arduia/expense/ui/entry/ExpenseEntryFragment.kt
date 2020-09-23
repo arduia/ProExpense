@@ -24,7 +24,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.security.Timestamp
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -174,7 +173,7 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun updateCategoryListAfterAnimation() {
         MainScope().launch(Dispatchers.Main) {
-            val duration = resources.getInteger(R.integer.entry_pop_up_duration).toLong()
+            val duration = resources.getInteger(R.integer.duration_entry_pop_up).toLong()
             delay(duration)
             updateCategoryList()
         }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="@integer/expense_anim_left_duration">
+    android:duration="@integer/duration_left_animation">
     <translate
         android:fromXDelta="100%p"
         android:toXDelta="0"
-        android:duration="@integer/expense_anim_left_duration"/>
+        android:duration="@integer/duration_left_animation"/>
     <alpha android:fromAlpha="0.0" android:toAlpha="1.0"
-        android:duration="@integer/expense_anim_left_duration" />
+        android:duration="@integer/duration_left_animation" />
 </set>

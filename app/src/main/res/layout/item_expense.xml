@@ -5,10 +5,10 @@
     android:id="@+id/cd_expense"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/radius_corner"
+    app:cardCornerRadius="@dimen/size_radius"
     tools:layout_marginBottom="2dp"
-    tools:layout_marginEnd="@dimen/margin_material"
-    tools:layout_marginStart="@dimen/margin_material"
+    tools:layout_marginEnd="@dimen/grid_3"
+    tools:layout_marginStart="@dimen/grid_3"
     tools:layout_marginTop="2dp">
 
     <RelativeLayout
@@ -23,9 +23,9 @@
             app:shapeAppearance="?attr/shapeAppearanceMediumComponent"
             android:layout_alignParentStart = "true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_material"
-            android:layout_marginTop="@dimen/margin_small_material"
-            android:layout_marginBottom="@dimen/margin_small_material"/>
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginBottom="@dimen/grid_2"/>
 
         <TextView
             android:id="@+id/tv_name"
@@ -35,9 +35,9 @@
             android:layout_alignTop="@id/imv_category"
             android:textAlignment="viewStart"
             tools:text="Education"
-            android:layout_marginStart="@dimen/margin_material"
-            android:layout_marginTop="@dimen/margin_small_material"
-            android:layout_marginEnd="@dimen/margin_small_material"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginEnd="@dimen/grid_2"
             android:layout_toStartOf="@id/tv_amount"
             android:layout_toEndOf="@id/imv_category"
             android:ellipsize="end"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@id/tv_name"
             android:layout_alignBottom="@id/imv_category"
-            android:layout_marginBottom="@dimen/margin_small_material"
+            android:layout_marginBottom="@dimen/grid_2"
             android:layout_toEndOf="@id/imv_category" />
 
         <TextView
@@ -62,9 +62,9 @@
             tools:text="900"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/margin_material"
+            android:layout_marginEnd="@dimen/grid_3"
             android:maxLength="15"
-            android:textColor="@color/primaryColor" />
+            android:textColor="@color/blue_light_500" />
 
     </RelativeLayout>
 

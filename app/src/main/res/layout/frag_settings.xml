@@ -18,7 +18,7 @@
         style="@style/Widget.ProExpense.IconButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:scaleType="center"
         android:src="@drawable/ic_menu"
         app:layout_constraintBottom_toBottomOf="@id/tb_settings"
@@ -30,7 +30,7 @@
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:text="@string/label_settings"
         app:layout_constraintBottom_toBottomOf="@id/btn_drawer_open"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tb_settings"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin">
+        app:layout_constraintWidth_max="@dimen/with_layout_min_margin">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,15 +62,15 @@
                     android:id="@+id/tv_language_name"
                     style="?attr/textAppearanceBody1"
                     android:text="@string/label_language"
-                    android:layout_marginStart="@dimen/margin_material"
-                    android:layout_marginTop="@dimen/margin_material"
-                    android:layout_marginBottom="@dimen/margin_material"/>
+                    android:layout_marginStart="@dimen/grid_3"
+                    android:layout_marginTop="@dimen/grid_3"
+                    android:layout_marginBottom="@dimen/grid_3"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_gravity="bottom"
-                    android:layout_marginStart="@dimen/margin_small_material"
-                    android:layout_marginEnd="@dimen/margin_small_material"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:layout_marginEnd="@dimen/grid_2"
                     android:background="@android:drawable/divider_horizontal_bright"/>
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="25dp"
@@ -80,8 +80,8 @@
                     android:elevation="1dp"
                     android:scaleType="centerCrop"
                     android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="@dimen/margin_material"
-                    android:layout_marginEnd="@dimen/margin_material"/>
+                    android:layout_marginBottom="@dimen/grid_3"
+                    android:layout_marginEnd="@dimen/grid_3"/>
 
             </FrameLayout>
 

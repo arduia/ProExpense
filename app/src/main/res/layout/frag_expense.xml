@@ -18,7 +18,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/pb_loading"
-        android:indeterminateTint="@color/primaryColor"
+        android:indeterminateTint="@color/blue_light_500"
         android:visibility="invisible"
         android:indeterminateOnly="true"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,7 @@
         style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:src="@drawable/ic_back"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="@id/tb_expense"
@@ -43,7 +43,7 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:text="@string/label_expense"
         app:layout_constraintBottom_toBottomOf="@id/btn_pop_back"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,7 +63,7 @@
         app:layout_constraintTop_toTopOf="@id/tb_expense"
         app:layout_constraintBottom_toBottomOf="@id/tb_expense"
         app:layout_constraintHorizontal_bias="1"
-        android:layout_marginEnd="@dimen/margin_material"/>
+        android:layout_marginEnd="@dimen/grid_3"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_expense"
@@ -77,7 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_expense"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
+        app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
         tools:listitem="@layout/item_expense" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

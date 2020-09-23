@@ -20,7 +20,7 @@
         style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:src="@drawable/ic_menu"
         app:layout_constraintBottom_toBottomOf="@id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:text="@string/label_home"
         app:layout_constraintBottom_toBottomOf="@id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,8 +46,8 @@
         style="?attr/textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_3"
         android:text="@string/label_recent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -60,7 +60,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/ic_nav_next"
-        android:tint="@color/primaryColor"
+        android:tint="@color/blue_light_500"
         app:layout_constraintBottom_toBottomOf="@id/dv_recent"
         app:layout_constraintEnd_toEndOf="@id/dv_recent"
         app:layout_constraintHorizontal_bias="1"
@@ -71,8 +71,8 @@
         android:id="@+id/dv_recent"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginEnd="@dimen/grid_3"
         android:background="@android:drawable/divider_horizontal_bright"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/rv_recent"
@@ -84,8 +84,8 @@
         android:id="@+id/bl_recent"
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginTop="@dimen/margin_small_material"
-        android:background="@color/primaryColor"
+        android:layout_marginTop="@dimen/grid_2"
+        android:background="@color/blue_light_500"
         app:layout_constraintEnd_toEndOf="@+id/tv_recent"
         app:layout_constraintStart_toStartOf="@id/tv_recent"
         app:layout_constraintTop_toBottomOf="@id/tv_recent" />
@@ -97,30 +97,30 @@
         android:clipToPadding="false"
         android:fadeScrollbars="true"
         android:overScrollMode="never"
-        android:paddingTop="@dimen/margin_small_material"
+        android:paddingTop="@dimen/grid_2"
         android:paddingBottom="80dp"
         android:animateLayoutChanges="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bl_recent"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
+        app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
         tools:listitem="@layout/item_expense" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cd_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_small_material"
-        android:layout_marginEnd="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_2"
+        android:layout_marginEnd="@dimen/grid_3"
         android:elevation="3dp"
-        app:cardBackgroundColor="@color/primaryColor"
-        app:cardCornerRadius="@dimen/radius_corner"
+        app:cardBackgroundColor="@color/blue_light_500"
+        app:cardCornerRadius="@dimen/size_radius"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintWidth_max="@dimen/width_minimum">
+        app:layout_constraintWidth_max="@dimen/width_layout_min">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -133,10 +133,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
                 android:text="@string/label_outcome_week"
-                android:textColor="@color/onPrimaryColor" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/tv_total_value"
@@ -145,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_spent_week"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/onPrimaryColor" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/tv_currency"

@@ -26,11 +26,11 @@
             android:id="@+id/fb_main_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_material"
+            android:layout_marginEnd="@dimen/grid_3"
             android:layout_marginBottom="32dp"
             android:scaleType="center"
             android:tint="@android:color/white"
-            app:backgroundTint="@color/primaryColor"
+            app:backgroundTint="@color/blue_light_500"
             android:layout_gravity="end|bottom"
             app:srcCompat="@drawable/ic_add" />
 

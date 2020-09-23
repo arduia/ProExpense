@@ -16,8 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginTop="@dimen/margin_material"
-        android:layout_marginStart="@dimen/margin_material"/>
+        android:layout_marginTop="@dimen/grid_3"
+        android:layout_marginStart="@dimen/grid_3"/>
     <androidx.appcompat.widget.AppCompatImageButton
         android:layout_width="25dp"
         android:layout_height="25dp"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="@id/tv_choose_language"
         app:layout_constraintBottom_toBottomOf="@id/tv_choose_language"
         app:layout_constraintHorizontal_bias="1"
-        android:layout_marginEnd="@dimen/margin_material"/>
+        android:layout_marginEnd="@dimen/grid_3"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="0dp"
         android:layout_height="300dp"
@@ -45,19 +45,19 @@
         tools:listitem="@layout/item_language"
         app:layout_constraintTop_toBottomOf="@id/tv_choose_language"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="@dimen/margin_material"/>
+        android:layout_marginTop="@dimen/grid_3"/>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_restart"
         style="?attr/materialButtonStyle"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_button"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
-        android:layout_marginBottom="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginEnd="@dimen/grid_3"
+        android:layout_marginBottom="@dimen/grid_3"
         android:text="@string/label_restart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_max="@dimen/width_minimum" />
+        app:layout_constraintWidth_max="@dimen/width_layout_min" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

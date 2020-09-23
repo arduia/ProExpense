@@ -1,49 +1,17 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.ProExpense" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorOnPrimary">@color/onPrimaryColor</item>
-        <item name="rippleColor">@android:color/darker_gray</item>
-        <item name="colorOnSurface">@color/onSurfaceColor</item>
-        <item name="backgroundColor">@color/backgroundColor</item>
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowBackground">@color/backgroundColor</item>
-        <item name="colorSurface">@color/surfaceColor</item>
-
-        <item name="textAppearanceBody1">@style/TextAppearance.ProExpense.Body1</item>
-        <item name="textAppearanceBody2">@style/TextAppearance.ProExpense.Body2</item>
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.ProExpense.Subtitle1</item>
-
-        <item name="materialButtonStyle">@style/Widget.ProExpense.Button</item>
-        <item name="materialCardViewStyle">@style/Widget.ProExpense.CardView</item>
-        <item name="iconButtonStyle">@style/Widget.ProExpense.IconButton</item>
-        <item name="proExpenseNavigationViewStyle">@style/Widget.ProExpense.NavigationView.Overlay</item>
-        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar.Horizontal</item>
-        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
-
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.ProExpense.MediumComponent</item>
-    </style>
-
-    <style name="Theme.Splash" parent="Theme.ProExpense">
-        <item name="android:windowBackground">@color/primaryColor</item>
-    </style>
-
     <style name="ShapeAppearance.ProExpense.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">4dp</item>
     </style>
 
-    <attr name="proExpenseNavigationViewStyle" format="reference"/>
-
     <style name="Widget.ProExpense.NavigationView.Overlay" parent="">
         <item name="itemTextAppearance">?attr/subtitleTextAppearance</item>
         <item name="itemTextColor">@color/nav_text_color</item>
         <item name="itemIconSize">@dimen/size_nav_icon</item>
-        <item name="iconTint">@color/iconTintColor</item>
+        <item name="iconTint">@color/darker_gray</item>
         <item name="android:background">?attr/colorSurface</item>
-        <item name="itemHorizontalPadding">@dimen/margin_large_material</item>
+        <item name="itemHorizontalPadding">@dimen/grid_4</item>
     </style>
 
     <style name="Widget.ProExpense.CardView" parent="Widget.MaterialComponents.CardView">
@@ -53,18 +21,16 @@
     </style>
 
     <style name="Widget.ProExpense.IconButton" parent="Widget.MaterialComponents.Button">
-        <item name="tint">@color/iconTintColor</item>
+        <item name="tint">@color/darker_gray</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">center</item>
     </style>
 
-    <!--    Material Button-->
     <style name="Widget.ProExpense.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:height">@dimen/height_button</item>
-        <item name="android:textColor">@color/onPrimaryColor</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
-    <attr name="iconButtonStyle" format="reference"/>
 
     <style name="TextAppearance.ProExpense.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:alpha">0.70</item>
@@ -78,7 +44,7 @@
         <item name="android:alpha">0.7</item>
     </style>
 
-    <style name="ProExpense.ShapeAppearance.Circular" parent="">
+    <style name="ShapeAppearanceOverlay.ProExpense.Circular" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">27.5dp</item>
         <item name="borderWidth">2dp</item>

@@ -58,7 +58,7 @@ class SplashFragment: Fragment(){
 
         //Configure
         with(frameLayout){
-            background = ContextCompat.getDrawable(requireContext(), R.color.primaryColor)
+            background = ContextCompat.getDrawable(requireContext(), R.color.blue_light_500)
             layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         }
 
@@ -73,7 +73,7 @@ class SplashFragment: Fragment(){
         with(progressBar){
             layoutParams = FrameLayout.LayoutParams(px(30), px(30)).apply {
                 gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                bottomMargin = resources.getDimension(R.dimen.margin_material).toInt()
+                bottomMargin = resources.getDimension(R.dimen.grid_3).toInt()
             }
             id = View.generateViewId()
         }

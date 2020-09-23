@@ -19,7 +19,7 @@
         style="?attr/iconButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:src="@drawable/ic_menu"
         app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:text="@string/label_feedback"
         app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_feedback"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin">
+        app:layout_constraintWidth_max="@dimen/with_layout_min_margin">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -59,9 +59,9 @@
                 android:lineSpacingExtra="@dimen/spacing_body_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material"
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
                 android:text="@string/label_feedback_description"
                 android:textAlignment="viewStart" />
 
@@ -69,9 +69,9 @@
                 android:id="@+id/edl_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_large_material"
-                android:layout_marginEnd="@dimen/margin_material"
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_4"
+                android:layout_marginEnd="@dimen/grid_3"
                 android:hint="@string/label_name">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -85,9 +85,9 @@
                 android:id="@+id/edl_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material"
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
                 android:hint="@string/label_email">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -101,9 +101,9 @@
                 android:id="@+id/edl_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material">
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_comment"
@@ -118,10 +118,10 @@
                 android:id="@+id/btn_send"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material"
-                android:layout_marginBottom="@dimen/margin_material"
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:layout_marginBottom="@dimen/grid_3"
                 android:text="@string/label_send_feedback" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

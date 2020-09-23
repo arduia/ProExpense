@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.ProExpense" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/blue_light_500</item>
+        <item name="colorPrimaryDark">@color/blue_light_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/dark</item>
+        <item name="rippleColor">@android:color/darker_gray</item>
+        <item name="backgroundColor">@color/brown_50</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowBackground">@color/brown_50</item>
+
+        <item name="textAppearanceBody1">@style/TextAppearance.ProExpense.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.ProExpense.Body2</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.ProExpense.Subtitle1</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.ProExpense.MediumComponent</item>
+
+        <item name="materialButtonStyle">@style/Widget.ProExpense.Button</item>
+        <item name="materialCardViewStyle">@style/Widget.ProExpense.CardView</item>
+        <item name="iconButtonStyle">@style/Widget.ProExpense.IconButton</item>
+        <item name="proExpenseNavigationViewStyle">@style/Widget.ProExpense.NavigationView.Overlay</item>
+        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar.Horizontal</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+
+    </style>
+
+    <style name="Theme.Splash" parent="Theme.ProExpense">
+        <item name="android:windowBackground">@color/blue_light_500</item>
+    </style>
+
+</resources>

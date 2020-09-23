@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|start"
-            android:layout_marginStart="@dimen/margin_material"
+            android:layout_marginStart="@dimen/grid_3"
             android:text="@string/label_expense_entry" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -35,7 +35,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="@dimen/margin_material"
+            android:layout_marginEnd="@dimen/grid_3"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_close" />
 
@@ -50,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/sv_entry"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
+        app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,9 +68,9 @@
                 android:textAlignment="viewStart"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_small_material"
-                android:layout_marginEnd="@dimen/margin_material">
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_2"
+                android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_name"
@@ -90,9 +90,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_name"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material">
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_amount"
@@ -112,11 +112,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_cost"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/margin_material"
+                android:layout_marginTop="@dimen/grid_3"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
-                android:paddingStart="@dimen/margin_material"
-                android:paddingEnd="@dimen/margin_material"
+                android:paddingStart="@dimen/grid_3"
+                android:paddingEnd="@dimen/grid_3"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="1"
                 tools:listitem="@layout/item_category" />
@@ -128,9 +128,9 @@
                 android:layout_below="@id/rv_category"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material">
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_note"
@@ -149,10 +149,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_description"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material"
-                android:layout_marginBottom="@dimen/margin_material"
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:layout_marginBottom="@dimen/grid_3"
                 android:text="@string/label_save" />
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>

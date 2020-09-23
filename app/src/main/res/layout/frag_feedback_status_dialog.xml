@@ -14,7 +14,7 @@
         android:src="@drawable/ic_drop_down"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="@dimen/margin_material"/>
+        android:layout_margin="@dimen/grid_3"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,18 +24,18 @@
         style="?attr/textAppearanceHeadline6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="@dimen/margin_material"/>
+        android:layout_margin="@dimen/grid_3"/>
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:scaleType="fitCenter"
         android:id="@+id/imv_done"
         app:srcCompat="@drawable/ic_done_circle"
-        android:tint="@color/primaryColor"
+        android:tint="@color/blue_light_500"
         app:layout_constraintTop_toBottomOf="@id/tv_feedback_status"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/margin_large_material"/>
+        android:layout_marginTop="@dimen/grid_4"/>
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -43,11 +43,11 @@
         style="?attr/textAppearanceBody1"
         android:textAlignment="center"
         android:text="@string/label_feedback_thanks"
-        android:layout_marginStart="@dimen/margin_large_material"
-        android:layout_marginEnd="@dimen/margin_large_material"
+        android:layout_marginStart="@dimen/grid_4"
+        android:layout_marginEnd="@dimen/grid_4"
         app:layout_constraintVertical_bias="0"
-        android:layout_marginTop="@dimen/margin_small_material"
-        android:layout_marginBottom="@dimen/margin_large_material"
+        android:layout_marginTop="@dimen/grid_2"
+        android:layout_marginBottom="@dimen/grid_4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imv_done"
@@ -62,10 +62,10 @@
         app:iconGravity="textStart"
         android:text="@string/label_go_home"
         app:layout_constraintVertical_bias="0"
-        android:layout_marginTop="@dimen/margin_material"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
-        android:layout_marginBottom="@dimen/margin_material"
+        android:layout_marginTop="@dimen/grid_3"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginEnd="@dimen/grid_3"
+        android:layout_marginBottom="@dimen/grid_3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_status"

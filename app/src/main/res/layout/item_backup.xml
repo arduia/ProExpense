@@ -5,8 +5,8 @@
     android:id="@+id/cd_backup"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/radius_corner"
-    tools:layout_margin="@dimen/margin_small_material">
+    app:cardCornerRadius="@dimen/size_radius"
+    tools:layout_margin="@dimen/grid_2">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,8 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="@dimen/margin_material"
-            android:layout_marginTop="@dimen/margin_material"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_3"
             android:layout_toStartOf="@id/fl_status"
             android:ellipsize="middle"
             android:singleLine="true"
@@ -32,23 +32,23 @@
             android:layout_height="20dp"
             android:layout_alignBottom="@id/tv_backup_name"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/margin_material">
+            android:layout_marginEnd="@dimen/grid_3">
 
             <ProgressBar
                 android:id="@+id/pb_status"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginEnd="@dimen/margin_material"
-                android:indeterminateTint="@color/primaryColor"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:indeterminateTint="@color/blue_light_500"
                 android:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imv_status"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginEnd="@dimen/margin_material"
+                android:layout_marginEnd="@dimen/grid_3"
                 android:scaleType="centerInside"
-                android:tint="@color/primaryColor"
+                android:tint="@color/blue_light_500"
                 android:visibility="invisible"
                 app:srcCompat="@drawable/ic_accomplish" />
         </FrameLayout>
@@ -60,9 +60,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_backup_name"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/margin_material"
-            android:layout_marginTop="@dimen/margin_small_material"
-            android:layout_marginBottom="@dimen/margin_material"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginBottom="@dimen/grid_3"
             android:alpha="0.7"
             tools:text="20/1/2019" />
 
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/tv_date"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/margin_material"
+            android:layout_marginEnd="@dimen/grid_3"
             android:alpha="0.7"
             tools:text="32 items" />
 

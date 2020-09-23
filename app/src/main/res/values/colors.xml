@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primaryColor">#039be5</color>
-    <color name="primaryDarkColor">#0288d1</color>
-    <color name="accentColor">#ffcc80</color>
-    <color name="onPrimaryColor">#ffffff</color>
-    <color name="onSurfaceColor">#000000</color>
-    <color name="backgroundColor">#efebe9</color>
-    <color name="surfaceColor">@android:color/white</color>
-    <color name="iconTintColor">@android:color/darker_gray</color>
+    <color name="blue_light_500">#039be5</color>
+    <color name="blue_light_700">#0288d1</color>
+    <color name="orange_200">#ffcc80</color>
+    <color name="white">#ffffff</color>
+    <color name="dark">#000000</color>
+    <color name="brown_50">#efebe9</color>
+    <color name="darker_gray">@android:color/darker_gray</color>
 </resources>

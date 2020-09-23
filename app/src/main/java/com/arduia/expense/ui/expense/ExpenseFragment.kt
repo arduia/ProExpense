@@ -107,8 +107,8 @@ class ExpenseFragment : Fragment() {
         viewBinding.rvExpense.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.rvExpense.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.space_between_items).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
+                resources.getDimension(R.dimen.grid_1).toInt(),
+                resources.getDimension(R.dimen.grid_2).toInt()
             )
         )
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
@@ -194,7 +194,7 @@ class ExpenseFragment : Fragment() {
     }
 
     private fun getAnimationDuration() =
-        resources.getInteger(R.integer.expense_anim_left_duration)
+        resources.getInteger(R.integer.duration_left_animation)
 
     private fun initializeViewBinding() {
         viewBinding = FragExpenseBinding.inflate(layoutInflater, null, false)

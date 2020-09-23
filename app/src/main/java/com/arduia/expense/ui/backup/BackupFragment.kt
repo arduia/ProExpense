@@ -1,15 +1,12 @@
 package com.arduia.expense.ui.backup
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.arduia.expense.R
@@ -17,12 +14,9 @@ import com.arduia.expense.databinding.FragBackupBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.core.requestStoragePermission
-import com.arduia.expense.ui.BackupMessageReceiver
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -85,8 +79,8 @@ class BackupFragment: NavBaseFragment(){
         viewBinding.rvBackupList.adapter = backupListAdapter
         viewBinding.rvBackupList.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.space_between_items).toInt(),
-                resources.getDimension(R.dimen.margin_list_item).toInt()
+                resources.getDimension(R.dimen.grid_1).toInt(),
+                resources.getDimension(R.dimen.grid_2).toInt()
             )
         )
     }

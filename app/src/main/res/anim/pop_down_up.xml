@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android" android:duration="@integer/entry_pop_up_duration">
+<set xmlns:android="http://schemas.android.com/apk/res/android" android:duration="@integer/duration_entry_pop_up">
     <translate android:fromYDelta="100%p" android:toYDelta="0"
-        android:duration="@integer/entry_pop_up_duration"/>
+        android:duration="@integer/duration_entry_pop_up"/>
 </set>

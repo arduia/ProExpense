@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="@integer/expense_anim_right_duration">
+    android:duration="@integer/duration_right_animation">
     <translate android:fromXDelta="0" android:toXDelta="100%p"
-        android:duration="@integer/expense_anim_right_duration"/>
+        android:duration="@integer/duration_right_animation"/>
 </set>

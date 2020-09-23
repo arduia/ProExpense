@@ -12,8 +12,8 @@
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
+        android:layout_marginTop="@dimen/grid_3"
+        android:layout_marginEnd="@dimen/grid_3"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
         android:src="@drawable/ic_close" />
@@ -24,19 +24,19 @@
         android:layout_height="60dp"
         android:layout_below="@id/btn_close"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="@dimen/margin_large_material"
-        android:layout_marginTop="@dimen/margin_large_material"
-        android:layout_marginBottom="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_4"
+        android:layout_marginTop="@dimen/grid_4"
+        android:layout_marginBottom="@dimen/grid_3"
         android:scaleType="center"
         android:src="@drawable/ic_launcher_foreground"
-        android:tint="@color/primaryColor" />
+        android:tint="@color/blue_light_500" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/img_taylor"
         android:layout_alignBottom="@id/img_taylor"
-        android:layout_marginStart="@dimen/margin_material"
+        android:layout_marginStart="@dimen/grid_3"
         android:layout_toEndOf="@id/img_taylor"
         android:gravity="center_vertical"
         android:orientation="vertical">
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
-            android:textColor="@color/onSurfaceColor" />
+            android:textColor="@color/dark" />
     </LinearLayout>
 
 </RelativeLayout>
