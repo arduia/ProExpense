@@ -2,9 +2,8 @@
 <resources>
     <color name="blue_light_500">#039be5</color>
     <color name="blue_light_700">#0288d1</color>
-    <color name="orange_200">#ffcc80</color>
+    <color name="gray_200">#eeeeee</color>
     <color name="white">#ffffff</color>
     <color name="dark">#000000</color>
-    <color name="brown_50">#efebe9</color>
     <color name="darker_gray">@android:color/darker_gray</color>
 </resources>

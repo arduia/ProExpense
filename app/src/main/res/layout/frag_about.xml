@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/grid_3"
-        android:text="@string/label_about"
+        android:text="@string/about"
         app:layout_constraintBottom_toBottomOf="@id/btn_drawer_open"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -96,7 +96,7 @@
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginEnd="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
-                android:text="@string/label_about_description" />
+                android:text="@string/app_description" />
 
             <FrameLayout
                 android:id="@+id/fl_privacy"
@@ -124,7 +124,7 @@
                     android:layout_marginStart="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_3"
                     android:layout_marginBottom="@dimen/grid_3"
-                    android:text="@string/label_policy" />
+                    android:text="@string/privacy_policy" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_privacy_open"
@@ -161,7 +161,7 @@
                     android:layout_marginStart="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_3"
                     android:layout_marginBottom="@dimen/grid_3"
-                    android:text="@string/label_open_source" />
+                    android:text="@string/open_source_lib" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_open_source_open"
@@ -198,7 +198,7 @@
                     android:layout_marginStart="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_3"
                     android:layout_marginBottom="@dimen/grid_3"
-                    android:text="@string/label_contribute" />
+                    android:text="@string/contribute_app" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="30dp"
@@ -232,7 +232,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:textColorLink="@android:color/darker_gray"
-                android:text="@string/label_develop"
+                android:text="@string/developer"
                 android:textColor="@android:color/darker_gray" />
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>

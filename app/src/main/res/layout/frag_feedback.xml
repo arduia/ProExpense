@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/grid_3"
-        android:text="@string/label_feedback"
+        android:text="@string/feedback"
         app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -62,7 +62,7 @@
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginEnd="@dimen/grid_3"
-                android:text="@string/label_feedback_description"
+                android:text="@string/feedback_description"
                 android:textAlignment="viewStart" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -72,7 +72,7 @@
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_4"
                 android:layout_marginEnd="@dimen/grid_3"
-                android:hint="@string/label_name">
+                android:hint="@string/name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_name"
@@ -88,7 +88,7 @@
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginEnd="@dimen/grid_3"
-                android:hint="@string/label_email">
+                android:hint="@string/email">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_email"
@@ -110,7 +110,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
-                    android:hint="@string/label_comment"
+                    android:hint="@string/your_comments"
                     android:lines="3" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -122,7 +122,7 @@
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginEnd="@dimen/grid_3"
                 android:layout_marginBottom="@dimen/grid_3"
-                android:text="@string/label_send_feedback" />
+                android:text="@string/send_feedback" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

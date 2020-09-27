@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="@string/label_welcome"
+        android:text="@string/app_welcome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imv_app" />
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/grid_3"
         android:layout_marginTop="@dimen/grid_4"
-        android:text="@string/label_choose_lang"
+        android:text="@string/choose_language"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/grid_3"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="@string/label_export"
+        android:text="@string/export"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,7 +37,7 @@
         android:layout_marginStart="@dimen/grid_3"
         android:layout_marginTop="@dimen/grid_3"
         android:layout_marginEnd="@dimen/grid_3"
-        android:hint="@string/label_name"
+        android:hint="@string/name"
         app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
         android:layout_height="@dimen/height_button"
         android:layout_marginTop="@dimen/grid_4"
         android:layout_marginBottom="@dimen/grid_3"
-        android:text="@string/label_save_as"
+        android:text="@string/save_as"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tl_name"
         app:layout_constraintHorizontal_bias="0.0"

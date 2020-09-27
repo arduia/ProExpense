@@ -137,8 +137,8 @@ class ExpenseFragment : Fragment() {
     private fun observeDeleteEvent() {
         viewModel.itemDeletedEvent.observe(viewLifecycleOwner, EventObserver {
             val message = when {
-                it > 0 -> "$it ${getString(R.string.label_single_item_deleted)}"
-                else -> "$it ${getString(R.string.label_multi_item_deleted)}"
+                it > 0 -> "$it ${getString(R.string.item_deleted)}"
+                else -> "$it ${getString(R.string.multi_item_deleted)}"
             }
             mainHost.showSnackMessage(message)
         })

@@ -89,7 +89,7 @@ class FeedbackFragment : NavBaseFragment() {
     }
 
     private fun showEmailError() {
-        viewBinding.edtEmail.error = getString(R.string.label_invalid_email)
+        viewBinding.edtEmail.error = getString(R.string.invalid_email)
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -98,7 +98,7 @@ class FeedbackFragment : NavBaseFragment() {
     }
 
     private fun showCommentEmptyError() {
-        viewBinding.edtComment.error = getString(R.string.label_invalid_comment) //fix
+        viewBinding.edtComment.error = getString(R.string.empty_comment) //fix
     }
 
     private fun getName() = viewBinding.edtName.text.toString()

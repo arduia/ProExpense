@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/grid_3"
-        android:text="@string/label_backup"
+        android:text="@string/backup"
         app:layout_constraintBottom_toBottomOf="@id/btn_menu_open"
         app:layout_constraintStart_toEndOf="@id/btn_menu_open"
         app:layout_constraintTop_toTopOf="@id/btn_menu_open" />

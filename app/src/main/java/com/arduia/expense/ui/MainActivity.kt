@@ -79,9 +79,9 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     private fun showBackupFinishedMessage(count: Int){
         val isMultiItem = (count > 1)
         val msg = if(isMultiItem)
-            getString(R.string.label_multi_item_imported)
+            getString(R.string.multi_items_imported)
         else
-            getString(R.string.label_single_item_imported)
+            getString(R.string.item_imported)
 
         showSnackMessage("${countFormat.format(count)} $msg")
     }

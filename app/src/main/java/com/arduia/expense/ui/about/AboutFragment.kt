@@ -4,25 +4,21 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragAboutBinding
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.mvvm.BuildConfig
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -82,23 +78,23 @@ class AboutFragment : NavBaseFragment() {
 
     private fun setupOpenSourceClick() {
         viewBinding.flOpenSources.setOnClickListener {
-            val title = getString(R.string.label_open_source)
-            val url = getString(R.string.url_open_source)
+            val title = getString(R.string.open_source_lib)
+            val url = getString(R.string.open_source_url)
             navigateToWeb(title, url)
         }
     }
 
     private fun setupPrivacyClick() {
         viewBinding.flPrivacy.setOnClickListener {
-            val title = getString(R.string.label_policy)
-            val url = getString(R.string.url_policy)
+            val title = getString(R.string.privacy_policy)
+            val url = getString(R.string.policy_url)
             navigateToWeb(title, url)
         }
     }
 
     private fun showAboutDeveloper() {
-        val devString = getString(R.string.label_develop)
-        val devMailString = "\n" + getString(R.string.label_develop_mail)
+        val devString = getString(R.string.developer)
+        val devMailString = "\n" + getString(R.string.developer_email)
         val devSpanText = SpannableStringBuilder(devString)
         devSpanText.append(devMailString)
         devSpanText.setSpan(
@@ -107,7 +103,7 @@ class AboutFragment : NavBaseFragment() {
         )
 
         devSpanText.setSpan(
-            URLSpan(getString(R.string.link_arduia_mail)),
+            URLSpan(getString(R.string.mail_to_developer)),
             devString.length,
             devString.length + devMailString.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -126,7 +122,7 @@ class AboutFragment : NavBaseFragment() {
 
     private fun openGithubLink() {
         val intent = Intent().apply {
-            val url = getString(R.string.url_github_link)
+            val url = getString(R.string.github_link_url)
             action = Intent.ACTION_VIEW
             data = Uri.parse(url)
         }

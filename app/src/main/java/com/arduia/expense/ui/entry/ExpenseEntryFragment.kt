@@ -198,15 +198,15 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeToUpdateMode() = with(viewBinding) {
-        tvEntryTitle.text = getString(R.string.label_update_data)
-        btnSave.text = getString(R.string.label_update)
+        tvEntryTitle.text = getString(R.string.update_data)
+        btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
     }
 
     private fun changeToSaveMode() = with(viewBinding) {
-        tvEntryTitle.text = getString(R.string.label_expense_entry)
-        btnSave.text = getString(R.string.label_save)
+        tvEntryTitle.text = getString(R.string.expense_entry)
+        btnSave.text = getString(R.string.save)
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
         setInitialDefaultCategory()
@@ -244,7 +244,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun showAmountEmptyError() {
-        viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
+        viewBinding.edtAmount.error = getString(R.string.empty_cost)
     }
 
     private fun getCurrentExpenseDetail(): ExpenseDetailsVto {
@@ -293,7 +293,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun showDataUpdatedMessage() {
-        mainHost.showSnackMessage(getString(R.string.label_data_updated))
+        mainHost.showSnackMessage(getString(R.string.data_updated))
     }
 
     private fun backToPreviousFragment() {

@@ -75,7 +75,7 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
         })
 
         viewModel.fileNotFoundEvent.observe(viewLifecycleOwner, EventObserver {
-            mainHost.showSnackMessage(getString(R.string.label_file_not_found))
+            mainHost.showSnackMessage(getString(R.string.file_not_exist))
         })
 
         viewModel.backupTaskEvent.observe(viewLifecycleOwner, EventObserver { id ->
