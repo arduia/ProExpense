@@ -28,7 +28,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val _detailData = EventLiveData<ExpenseDetailsVto>()
     val detailData get() = _detailData.asLiveData()
 
-    private val _totalCost = BaseLiveData<Long>()
+    private val _totalCost = BaseLiveData<Float>()
     val totalCost get() = _totalCost.asLiveData()
 
     private val _costRates = BaseLiveData<Map<Int,Int>>()

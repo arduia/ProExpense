@@ -24,6 +24,10 @@ object FormattingModule{
     fun provideDecimalDateFormat() = DecimalFormat("#,###")
 
     @Provides
+    @CurrencyDecimalFormat
+    fun provideCurrencyDecimalFormat() = DecimalFormat("#.##")
+
+    @Provides
     fun provideDateFormat(): DateFormat = SimpleDateFormat("d-M-YYYY", Locale.getDefault())
 
 }
@@ -38,3 +42,8 @@ annotation class FloatingDecimal
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 annotation class IntegerDecimal
+
+@Qualifier
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+annotation class CurrencyDecimalFormat

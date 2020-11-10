@@ -101,7 +101,7 @@
                     android:hint="@string/amount"
                     android:imeOptions="actionNext"
                     android:nextFocusDown="@id/edt_note"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>

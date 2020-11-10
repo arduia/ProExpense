@@ -24,14 +24,14 @@ class ExpenseRateCalculatorImpl : ExpenseRateCalculator{
         return result
     }
 
-    private fun getDailyCosts(): Map<Int, Long>{
+    private fun getDailyCosts(): Map<Int, Float>{
 
-        val amountOfWeek = mutableMapOf<Int, Long>()
+        val amountOfWeek = mutableMapOf<Int, Float>()
 
         mExpenseLists.forEach {
             mCalendar.timeInMillis = it.createdDate
             val dayOfWeek = mCalendar[Calendar.DAY_OF_WEEK]
-            amountOfWeek[dayOfWeek]  = it.amount + (amountOfWeek[dayOfWeek]?:0)
+            amountOfWeek[dayOfWeek]  = it.amount + (amountOfWeek[dayOfWeek]?:0f)
         }
 
         return amountOfWeek

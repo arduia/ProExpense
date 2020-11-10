@@ -68,6 +68,7 @@ class ExpenseEntryFragment : Fragment() {
         setupCategoryListAdapter()
         setupCategoryListView()
         setupEntryCloseButton()
+        setupEntryAmountEditText()
     }
 
     private fun setupViewModel() {
@@ -93,6 +94,10 @@ class ExpenseEntryFragment : Fragment() {
                 true
             )
         )
+    }
+
+    private fun setupEntryAmountEditText(){
+        viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter(decimalLength = 3))
     }
 
     private fun setupCategoryListAdapter() {

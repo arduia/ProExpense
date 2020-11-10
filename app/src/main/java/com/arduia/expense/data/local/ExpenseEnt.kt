@@ -15,7 +15,7 @@ data class ExpenseEnt(
     val name: String?,
 
     @ColumnInfo(name = "amount")
-    val amount: Long,
+    val amount: Float,
 
     @ColumnInfo(name = "category")
     val category: Int,

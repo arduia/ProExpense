@@ -47,7 +47,7 @@ class ExpenseMapperImpl(
              note = expenseEnt.note ?: ""
          )
 
-     private fun Long.formatCostValue()
+     private fun Float.formatCostValue()
          = currencyFormatter.format(this)
 
  }

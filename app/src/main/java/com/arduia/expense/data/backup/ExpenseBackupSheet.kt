@@ -14,7 +14,7 @@ class ExpenseBackupSheet( source: BackupSource<ExpenseEnt>): BackupSheet<Expense
     override fun mapToEntityFromSheetData(row: Map<String, String>): ExpenseEnt {
 
         val name = row[FIELD_NAME]
-        val amount = row[FIELD_AMOUNT]?.toLong() ?: 0
+        val amount = row[FIELD_AMOUNT]?.toFloat() ?: 0f
         val category = row[FIELD_CATEGORY]?.toInt() ?: 0
         val note = row[FIELD_NOTE]
         val date = row[FIELD_DATE]?.toLong() ?: 0

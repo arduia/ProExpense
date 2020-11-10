@@ -10,7 +10,7 @@ import java.lang.Exception
 
 @Database(
     entities = [ExpenseEnt::class, BackupEnt::class],
-    version = 4 )
+    version = 5, exportSchema = true)
 abstract class  ProExpenseDatabase : RoomDatabase(){
 
     abstract val expenseDao: ExpenseDao
@@ -29,6 +29,16 @@ abstract class  ProExpenseDatabase : RoomDatabase(){
                     "`worker_id` TEXT NOT NULL , " +
                     "`is_completed` INTEGER NOT NULL ," +
                     "PRIMARY KEY (`backup_id`) )")
+            }
+        }
+        val MIGRATION_4_5 =  object:  Migration(4, 5){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE expense RENAME TO  tmp")
+                database.execSQL("CREATE TABLE `expense` (`expense_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `amount` REAL NOT NULL, `category` INTEGER NOT NULL, `note` TEXT, `created_date` INTEGER NOT NULL, `modified_date` INTEGER NOT NULL)")
+                database.execSQL("INSERT INTO `expense`(`expense_id`, `name`, `amount`, `category`, `note`, `created_date`, `modified_date` ) " +
+                        "SELECT `expense_id`, `name`, `amount`, `category`, `note`, `created_date`, `modified_date` " +
+                        "FROM tmp; ")
+                database.execSQL("DROP TABLE tmp;")
             }
         }
     }

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.7">
       <module name="GraphAnnotation" target="1.7" />
       <module name="GraphAnnotationProcessor" target="1.7" />
+      <module name="ProExpense.app" target="1.8" />
+      <module name="ProExpense.backup" target="1.8" />
+      <module name="ProExpense.core" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

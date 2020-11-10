@@ -20,7 +20,7 @@ object MapperModule {
     @Provides
     fun provideExpenseMapper(categoryProvider: ExpenseCategoryProvider,
                              dateFormatter: DateFormat,
-                             @IntegerDecimal decimalFormat: DecimalFormat): ExpenseMapper
+                             @CurrencyDecimalFormat decimalFormat: DecimalFormat): ExpenseMapper
         = ExpenseMapperImpl(categoryProvider,
         dateFormatter = dateFormatter,
         currencyFormatter = decimalFormat)

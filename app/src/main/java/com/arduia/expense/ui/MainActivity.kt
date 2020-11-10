@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.*
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -194,7 +195,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
         when(lastSnackBar?.isShown){
             true -> {
-                MainScope().launch {
+                lifecycleScope.launch {
                     val delayDuration = (lastSnackBar?.duration ?:0 ) + 300 //Extra 100 for animation
                     delay(delayDuration.toLong())
                     addFabShowTask?.invoke()

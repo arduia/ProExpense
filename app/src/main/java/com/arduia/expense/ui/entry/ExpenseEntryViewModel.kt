@@ -88,7 +88,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private fun mapToExpenseEnt(vto: ExpenseDetailsVto, createdDate: Long? = null) = ExpenseEnt(
         expenseId = vto.id,
         name = vto.name,
-        amount = vto.amount.toLong(),
+        amount = vto.amount.toFloat(),
         note = vto.note,
         category = vto.category,
         createdDate = createdDate ?: Date().time,

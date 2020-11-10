@@ -18,7 +18,6 @@ class ExpenseRepositoryImpl(
 
     private val feedbackBroadCast = BroadcastChannel<FeedbackDto.Response>(10)
 
-
     private val versionBroadCast = BroadcastChannel<ExpenseVersionDto>(10)
 
     override suspend fun insertExpense(expenseEnt: ExpenseEnt) {

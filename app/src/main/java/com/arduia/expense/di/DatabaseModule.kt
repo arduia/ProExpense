@@ -19,7 +19,7 @@ object DatabaseModule{
     @Singleton
     fun provideAccDatabase(application: Application): ProExpenseDatabase {
         return  Room.databaseBuilder(application, ProExpenseDatabase::class.java, "accounting.db")
-            .addMigrations(ProExpenseDatabase.MIGRATION_3_4)
+            .addMigrations(ProExpenseDatabase.MIGRATION_3_4, ProExpenseDatabase.MIGRATION_4_5)
             .build()
     }
 
