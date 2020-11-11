@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
+import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
@@ -33,7 +34,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationDrawer,
-    MainHost, BackupMessageReceiver{
+    MainHost, BackupMessageReceiver {
 
     private lateinit var viewBinding: ActivMainBinding
 
@@ -41,13 +42,13 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private val backupViewModel by viewModels<BackupMessageViewModel>()
 
-    private val navController by lazy {  findNavController() }
+    private val navController by lazy { findNavController() }
 
     private val navOption by lazy { createNavOption() }
 
     private var itemSelectTask: (() -> Unit)? = null
 
-    override val defaultSnackBarDuration: Int  by lazy { resources.getInteger(R.integer.duration_short_snack) }
+    override val defaultSnackBarDuration: Int by lazy { resources.getInteger(R.integer.duration_short_snack) }
 
     private var addBtnClickListener: () -> Unit = { }
 
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     @Inject
     @IntegerDecimal
     lateinit var countFormat: DecimalFormat
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,15 +73,15 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         setupViewModel()
     }
 
-    private fun setupViewModel(){
-        backupViewModel.finishedEvent.observe(this, EventObserver{
+    private fun setupViewModel() {
+        backupViewModel.finishedEvent.observe(this, EventObserver {
             showBackupFinishedMessage(count = it)
         })
     }
 
-    private fun showBackupFinishedMessage(count: Int){
+    private fun showBackupFinishedMessage(count: Int) {
         val isMultiItem = (count > 1)
-        val msg = if(isMultiItem)
+        val msg = if (isMultiItem)
             getString(R.string.multi_items_imported)
         else
             getString(R.string.item_imported)
@@ -87,12 +89,13 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         showSnackMessage("${countFormat.format(count)} $msg")
     }
 
-    private fun findNavController(): NavController{
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fc_main) as NavHostFragment
+    private fun findNavController(): NavController {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fc_main) as NavHostFragment
         return navHostFragment.navController
     }
 
-    private fun setupView(){
+    private fun setupView() {
 
         viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
         viewBinding.fbMainAdd.setOnClickListener {
@@ -111,31 +114,31 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             return@listener true
         }
 
-        viewBinding.dlMain.addDrawerListener(object: DrawerLayout.DrawerListener{
+        viewBinding.dlMain.addDrawerListener(object : DrawerLayout.DrawerListener {
 
-            override fun onDrawerStateChanged(newState: Int) { }
+            override fun onDrawerStateChanged(newState: Int) {}
 
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {  }
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
 
             override fun onDrawerClosed(drawerView: View) {
                 itemSelectTask?.invoke()
                 itemSelectTask = null
             }
 
-            override fun onDrawerOpened(drawerView: View) { }
+            override fun onDrawerOpened(drawerView: View) {}
         })
 
         headerBinding.btnClose.setOnClickListener {
-           closeDrawer()
+            closeDrawer()
         }
 
     }
 
-    private fun selectPage(selectedMenuItem: MenuItem){
+    private fun selectPage(selectedMenuItem: MenuItem) {
 
         val isHomePage = (selectedMenuItem.itemId == R.id.dest_home)
 
-        if(isHomePage){
+        if (isHomePage) {
             navController.popBackStack(R.id.dest_home, false)
         }
 
@@ -148,7 +151,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun removeTaskID(id: UUID) {
-       backupViewModel.removeTaskID(id)
+        backupViewModel.removeTaskID(id)
     }
 
     override fun openDrawer() {
@@ -160,7 +163,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun lockDrawer() {
-        with(viewBinding.dlMain){
+        with(viewBinding.dlMain) {
             closeDrawer(GravityCompat.START)
             setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
@@ -175,14 +178,14 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun onBackPressed() {
-        if(drawerClosure()){
+        if (drawerClosure()) {
             super.onBackPressed()
         }
     }
 
-    private fun drawerClosure():Boolean{
+    private fun drawerClosure(): Boolean {
         val isDrawerOpen = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
-        if(isDrawerOpen){
+        if (isDrawerOpen) {
             viewBinding.dlMain.closeDrawer(GravityCompat.START)
             return false
         }
@@ -191,12 +194,13 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun showAddButton() {
 
-        addFabShowTask =  { showAddFab() }
+        addFabShowTask = { showAddFab() }
 
-        when(lastSnackBar?.isShown){
+        when (lastSnackBar?.isShown) {
             true -> {
                 lifecycleScope.launch {
-                    val delayDuration = (lastSnackBar?.duration ?:0 ) + 300 //Extra 100 for animation
+                    val delayDuration =
+                        (lastSnackBar?.duration ?: 0) + 300 //Extra 100 for animation
                     delay(delayDuration.toLong())
                     addFabShowTask?.invoke()
                 }
@@ -213,7 +217,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
 
-    private fun showAddFab(){
+    private fun showAddFab() {
         viewBinding.fbMainAdd.show()
         viewBinding.fbMainAdd.isClickable = true
     }
@@ -227,9 +231,9 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun showSnackMessage(message: String, duration: Int) {
-           lastSnackBar = Snackbar.make(viewBinding.clMain, message, duration).apply {
-               show()
-           }
+        lastSnackBar = Snackbar.make(viewBinding.clMain, message, duration).apply {
+            show()
+        }
     }
 
     override fun setAddButtonClickListener(listener: () -> Unit) {
@@ -248,13 +252,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun attachBaseContext(newBase: Context?) {
         runBlocking {
-            newBase?.let {
-                val settings = SettingsRepositoryImpl(it, this)
-                val selectedLanguage = settings.getSelectedLanguage().first()
+            if (newBase == null) return@runBlocking
+            val selectedLanguage = SettingsRepositoryImpl(newBase, this).getSelectedLanguage().first()
 
-                val localedContext = newBase.updateResource(selectedLanguage)
-                super.attachBaseContext(localedContext)
-            }
+            val localedContext = newBase.updateResource(selectedLanguage)
+            super.attachBaseContext(localedContext)
         }
 
     }

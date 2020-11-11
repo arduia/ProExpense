@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import com.arduia.core.lang.updateResource
+import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.GlobalScope
@@ -17,6 +18,7 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
 
     override fun onCreate() {
         super.onCreate()
@@ -43,8 +45,7 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
 
     private fun updateToLanguageContext(baseContext: Context): Context =
         runBlocking {
-            val settings = SettingsRepositoryImpl(baseContext, GlobalScope)
-            val selectedLanguage = settings.getSelectedLanguage().first()
+            val selectedLanguage = SettingsRepositoryImpl(baseContext, this).getSelectedLanguage().first()
             return@runBlocking baseContext.updateResource(selectedLanguage)
         }
 
