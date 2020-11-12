@@ -1,14 +1,18 @@
 package com.arduia.expense.ui.entry
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
@@ -69,6 +73,14 @@ class ExpenseEntryFragment : Fragment() {
         setupCategoryListView()
         setupEntryCloseButton()
         setupEntryAmountEditText()
+        setupLockButton()
+    }
+
+    private fun setupLockButton() {
+        viewBinding.cvLock.setOnClickListener {
+            viewModel.invertLockMode()
+            mainHost.showSnackMessage("Repeat Mode Changed!")
+        }
     }
 
     private fun setupViewModel() {
@@ -78,6 +90,8 @@ class ExpenseEntryFragment : Fragment() {
         observeEntryModeEvent()
         observeEventExpenseDataState()
         observeSelectedCategoryState()
+        observeOnLockMode()
+        observeOnNext()
     }
 
     override fun onDestroyView() {
@@ -96,7 +110,7 @@ class ExpenseEntryFragment : Fragment() {
         )
     }
 
-    private fun setupEntryAmountEditText(){
+    private fun setupEntryAmountEditText() {
         viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter(decimalLength = 3))
     }
 
@@ -129,11 +143,56 @@ class ExpenseEntryFragment : Fragment() {
         })
     }
 
+    private fun observeOnNext(){
+        viewModel.onNext.observe(viewLifecycleOwner, EventObserver{
+            cleanUi()
+            focusOnName()
+            showItemSaved()
+        })
+    }
+
+    private fun showItemSaved(){
+        mainHost.showSnackMessage("Saved!")
+    }
+
     private fun observeDataUpdatedEvent() {
         viewModel.updatedEvent.observe(viewLifecycleOwner, EventObserver {
             showDataUpdatedMessage()
             backToPreviousFragment()
         })
+    }
+
+
+    private fun observeOnLockMode() {
+        viewModel.lockMode.observe(viewLifecycleOwner) {
+            //Replace with Drawable State Lists
+            when (it) {
+                LockMode.LOCKED -> {
+                    viewBinding.cvLock.backgroundTintList = getColorList(R.color.blue_light_500)
+                    viewBinding.imvLock.setImageResource(R.drawable.ic_lock_closed)
+                    viewBinding.imvLock.imageTintList = getColorList(R.color.white)
+                    viewBinding.btnSave.text = getString(R.string.next)
+                }
+                LockMode.UNLOCK -> {
+                    viewBinding.cvLock.backgroundTintList = getColorList(R.color.white)
+                    viewBinding.imvLock.setImageResource(R.drawable.ic_lock_open)
+                    viewBinding.imvLock.imageTintList = getColorList(R.color.blue_light_500)
+                    viewBinding.btnSave.text = getString(R.string.save)
+                }
+            }
+        }
+    }
+
+    private fun cleanUi(){
+        with(viewBinding){
+            edtAmount.setText("")
+            edtName.setText("")
+            edtNote.setText("")
+        }
+    }
+
+    private fun focusOnName(){
+        viewBinding.edtName.requestFocus()
     }
 
     private fun observeEntryModeEvent() {
@@ -207,6 +266,8 @@ class ExpenseEntryFragment : Fragment() {
         btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
+        viewBinding.cvLock.isEnabled = false
+        viewBinding.imvLock.imageTintList = getColorList(R.color.darker_gray)
     }
 
     private fun changeToSaveMode() = with(viewBinding) {
@@ -231,7 +292,6 @@ class ExpenseEntryFragment : Fragment() {
             showAmountEmptyError()
             return
         }
-
         viewModel.saveExpenseData(expense)
     }
 
@@ -260,18 +320,18 @@ class ExpenseEntryFragment : Fragment() {
         val category = getSelectedCategory()
         val id = getExpenseId()
 
-            return ExpenseDetailsVto(
-                id = id,
-                name = name,
-                date = "",
-                category = category.id,
-                amount = amount,
-                finance = "",
-                note = note
-            )
+        return ExpenseDetailsVto(
+            id = id,
+            name = name,
+            date = "",
+            category = category.id,
+            amount = amount,
+            finance = "",
+            note = note
+        )
     }
 
-    private fun getExpenseId(): Int{
+    private fun getExpenseId(): Int {
         val argId = args.expenseId
         val isInvalid = (argId < 0)
         return if (isInvalid) 0
