@@ -12,4 +12,5 @@
     <dimen name="with_layout_min_margin">482dp</dimen>
     <dimen name="spacing_body_text">10sp</dimen>
     <dimen name="size_nav_icon">20dp</dimen>
+    <dimen name="standard_icon_size">35dp</dimen>
 </resources>

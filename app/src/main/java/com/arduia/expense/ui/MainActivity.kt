@@ -42,15 +42,15 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private val backupViewModel by viewModels<BackupMessageViewModel>()
 
-    private val navController by lazy { findNavController() }
+    private lateinit var navController: NavController
 
-    private val navOption by lazy { createNavOption() }
+    private lateinit var navOption: NavOptions
 
     private var itemSelectTask: (() -> Unit)? = null
 
     override val defaultSnackBarDuration: Int by lazy { resources.getInteger(R.integer.duration_short_snack) }
 
-    private var addBtnClickListener: () -> Unit = { }
+    private var addBtnClickListener: () -> Unit = {}
 
     private var lastSnackBar: Snackbar? = null
 
@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     @IntegerDecimal
     lateinit var countFormat: DecimalFormat
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_ProExpense)
@@ -68,6 +67,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
 
+        navController = findNavController()
+        navOption = createNavOption()
         setContentView(viewBinding.root)
         setupView()
         setupViewModel()
@@ -135,15 +136,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     private fun selectPage(selectedMenuItem: MenuItem) {
-
         val isHomePage = (selectedMenuItem.itemId == R.id.dest_home)
-
         if (isHomePage) {
             navController.popBackStack(R.id.dest_home, false)
         }
-
         navController.navigate(selectedMenuItem.itemId, null, navOption)
-
     }
 
     override fun addTaskID(id: UUID) {
@@ -225,7 +222,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     override fun hideAddButton() {
         //remove task
         addFabShowTask = null
-
         viewBinding.fbMainAdd.isClickable = false
         viewBinding.fbMainAdd.hide()
     }
@@ -247,7 +243,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun onDestroy() {
         super.onDestroy()
-        itemSelectTask = {}
+        itemSelectTask = null
     }
 
     override fun attachBaseContext(newBase: Context?) {

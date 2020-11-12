@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:background="@android:color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:background="@android:color/white">
+
     <include
         android:id="@+id/tb_about"
         layout="@layout/layout_toolbar"
@@ -15,8 +16,8 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drawer_open"
         style="?attr/iconButtonStyle"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
         android:layout_marginStart="@dimen/grid_3"
         android:scaleType="center"
         android:src="@drawable/ic_menu"
@@ -41,11 +42,11 @@
         android:id="@+id/nv_about"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintWidth_max="@dimen/width_layout_min"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_about">
+        app:layout_constraintTop_toBottomOf="@id/tb_about"
+        app:layout_constraintWidth_max="@dimen/width_layout_min">
 
         <RelativeLayout
             android:id="@+id/rl_about"
@@ -65,13 +66,13 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_app_name"
                 style="?attr/textAppearanceHeadline6"
-                android:textStyle="italic"
-                android:alpha="0.75"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/imv_app"
                 android:layout_centerHorizontal="true"
-                android:text="@string/app_name" />
+                android:alpha="0.75"
+                android:text="@string/app_name"
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/tv_version"
@@ -81,21 +82,21 @@
                 android:layout_below="@id/tv_app_name"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/grid_2"
-                tools:text="version name"
+                android:textColor="@android:color/darker_gray"
                 android:textStyle="bold"
-                android:textColor="@android:color/darker_gray" />
+                tools:text="version name" />
 
             <TextView
                 android:id="@+id/tv_about_description"
                 style="?attr/textAppearanceBody2"
-                android:lineSpacingExtra="@dimen/spacing_body_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_version"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/grid_3"
-                android:layout_marginEnd="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:lineSpacingExtra="@dimen/spacing_body_text"
                 android:text="@string/app_description" />
 
             <FrameLayout
@@ -128,8 +129,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_privacy_open"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_3"
                     android:scaleType="center"
@@ -154,9 +155,9 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_open_sources"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     android:layout_gravity="center_vertical|start"
                     android:layout_marginStart="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_3"
@@ -165,12 +166,12 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_open_source_open"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_3"
                     android:scaleType="center"
-                    android:src="@drawable/ic_more_next"/>
+                    android:src="@drawable/ic_more_next" />
             </FrameLayout>
 
             <FrameLayout
@@ -191,9 +192,9 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_contribute"
+                    style="?attr/textAppearanceSubtitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="?attr/textAppearanceSubtitle1"
                     android:layout_gravity="center_vertical|start"
                     android:layout_marginStart="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_3"
@@ -201,8 +202,8 @@
                     android:text="@string/contribute_app" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_3"
                     android:scaleType="center"
@@ -227,13 +228,13 @@
                 android:layout_below="@id/dv_end"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
-                android:textAlignment="center"
-                android:linksClickable="true"
                 android:clickable="true"
                 android:focusable="true"
-                android:textColorLink="@android:color/darker_gray"
+                android:linksClickable="true"
                 android:text="@string/developer"
-                android:textColor="@android:color/darker_gray" />
+                android:textAlignment="center"
+                android:textColor="@android:color/darker_gray"
+                android:textColorLink="@android:color/darker_gray" />
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

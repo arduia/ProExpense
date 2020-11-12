@@ -20,8 +20,8 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drop"
         style="?attr/iconButtonStyle"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
         android:layout_marginEnd="@dimen/grid_3"
         app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,6 +52,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_export_now"
         app:icon="@drawable/ic_save"
+        app:iconSize="@dimen/standard_icon_size"
         style="?attr/materialButtonStyle"
         app:iconGravity="textStart"
         android:layout_width="0dp"

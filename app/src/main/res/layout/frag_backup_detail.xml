@@ -31,10 +31,9 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drop_close"
         style="?attr/iconButtonStyle"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
         android:layout_marginEnd="@dimen/grid_3"
-        android:scaleType="centerInside"
         android:src="@drawable/ic_drop_down"
         app:layout_constraintBottom_toBottomOf="@id/tv_backup_detail"
         app:layout_constraintEnd_toEndOf="parent"

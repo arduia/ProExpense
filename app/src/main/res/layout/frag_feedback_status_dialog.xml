@@ -7,14 +7,14 @@
     android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
         android:id="@+id/btn_drop"
         style="?attr/iconButtonStyle"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
+        android:layout_margin="@dimen/grid_3"
         android:src="@drawable/ic_drop_down"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="@dimen/grid_3"/>
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

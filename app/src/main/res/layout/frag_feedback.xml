@@ -17,10 +17,10 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_drawer_open"
         style="?attr/iconButtonStyle"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
         android:layout_marginStart="@dimen/grid_3"
-        android:src="@drawable/ic_menu"
+        app:srcCompat="@drawable/ic_menu"
         app:layout_constraintBottom_toBottomOf="@id/tb_feedback"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

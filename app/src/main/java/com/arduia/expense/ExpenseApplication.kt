@@ -19,7 +19,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
-
     override fun onCreate() {
         super.onCreate()
         setupLogging()

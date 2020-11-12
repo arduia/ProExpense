@@ -14,8 +14,8 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_pop_back"
         style="?attr/iconButtonStyle"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
         android:layout_marginStart="@dimen/grid_3"
         android:src="@drawable/ic_back"
         android:tint="@android:color/darker_gray"

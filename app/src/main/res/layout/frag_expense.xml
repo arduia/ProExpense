@@ -52,12 +52,13 @@
         app:layout_constraintTop_toTopOf="@id/btn_pop_back" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
         style="?attr/iconButtonStyle"
         android:id="@+id/btn_restore_deletion"
-        android:src="@drawable/ic_export"
+        app:srcCompat="@drawable/ic_export"
         android:visibility="invisible"
+        tools:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/tb_expense"

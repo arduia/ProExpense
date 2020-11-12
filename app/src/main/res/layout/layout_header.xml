@@ -8,8 +8,8 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_close"
         style="?attr/iconButtonStyle"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/grid_3"
