@@ -1,12 +1,14 @@
-package com.arduia.expense.ui.entry
+    package com.arduia.expense.ui.entry
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.DatePicker
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
@@ -22,12 +24,17 @@ import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.datepicker.MaterialStyledDatePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,6 +54,8 @@ class ExpenseEntryFragment : Fragment() {
     @Inject
     lateinit var categoryProvider: ExpenseCategoryProvider
 
+    private lateinit var dateFormat: DateFormat
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,6 +67,7 @@ class ExpenseEntryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dateFormat = SimpleDateFormat("d/M/yyyy h:mm a", Locale.getDefault())
         setupView()
         setupViewModel()
         chooseEntryMode()
@@ -74,8 +84,22 @@ class ExpenseEntryFragment : Fragment() {
         setupEntryCloseButton()
         setupEntryAmountEditText()
         setupLockButton()
+        setupCalendarButton()
     }
 
+    private fun setupCalendarButton(){
+        viewBinding.btnCalendar.setOnClickListener {
+            showDatePicker()
+        }
+    }
+
+    private fun showDatePicker(){
+        MaterialDatePicker.Builder.datePicker()
+            .build().apply {
+                addOnPositiveButtonClickListener(viewModel::selectDateTime)
+            }
+            .show(childFragmentManager, "DatePicker")
+        }
     private fun setupLockButton() {
         viewBinding.cvLock.setOnClickListener {
             viewModel.invertLockMode()
@@ -92,6 +116,7 @@ class ExpenseEntryFragment : Fragment() {
         observeSelectedCategoryState()
         observeOnLockMode()
         observeOnNext()
+        observeDate()
     }
 
     override fun onDestroyView() {
@@ -205,6 +230,12 @@ class ExpenseEntryFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner, Observer { data ->
             bindExpenseDetail(data)
         })
+    }
+
+    private fun observeDate(){
+        viewModel.selectedDate.observe(viewLifecycleOwner){
+            viewBinding.tvDate.text = dateFormat.format(Date(it))
+        }
     }
 
     private fun chooseEntryMode() {

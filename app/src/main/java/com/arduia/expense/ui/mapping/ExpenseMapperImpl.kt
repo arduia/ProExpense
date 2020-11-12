@@ -20,7 +20,7 @@ class ExpenseMapperImpl(
          ExpenseVto(
              id = expenseEnt.expenseId,
              name = expenseEnt.name?:"",
-             date = dateFormatter.format(expenseEnt.createdDate),
+             date = dateFormatter.format(expenseEnt.modifiedDate),
              amount = expenseEnt.amount.formatCostValue(),
              finance = "",
              category = categoryProvider.getCategoryDrawableByID(expenseEnt.category)
@@ -30,7 +30,7 @@ class ExpenseMapperImpl(
          ExpenseDetailsVto(
              id = expenseEnt.expenseId,
              name = expenseEnt.name?: "",
-             date = dateFormatter.format(expenseEnt.createdDate),
+             date = dateFormatter.format(expenseEnt.modifiedDate),
              amount = expenseEnt.amount.formatCostValue(),
              finance = "",
              category = categoryProvider.getCategoryDrawableByID(expenseEnt.category),

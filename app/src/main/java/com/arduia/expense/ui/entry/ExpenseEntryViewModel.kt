@@ -41,15 +41,15 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private val _lockMode = BaseLiveData<LockMode>()
     val lockMode get() = _lockMode.asLiveData()
 
-    private val _onNextEntryChanged = EventLiveData<Unit>()
-    val onNextEntryChanged get() = _onNextEntryChanged.asLiveData()
-
+    private val _selectedDate = BaseLiveData<Long>()
+    val selectedDate get() = _selectedDate.asLiveData()
 
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading
 
     init {
         _lockMode.value = LockMode.UNLOCK
+        updateSelectedDateAsCurrentTime()
     }
 
     fun chooseUpdateMode() {
@@ -60,9 +60,14 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
         _currentModeEvent post event(ExpenseEntryMode.INSERT)
     }
 
+    fun selectDateTime(time: Long) {
+        _selectedDate.value = time
+    }
+
     private fun loadingOn() {
         _isLoading post true
     }
+
 
     private fun loadingOff() {
         _isLoading post false
@@ -70,11 +75,12 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
 
     private fun onDataInserted() {
         val isLocked = lockMode.value ?: return
-         if(isLocked ==LockMode.LOCKED){
-             _onNext post EventUnit
-        }else{
-             _insertedEvent post EventUnit
-         }
+        if (isLocked == LockMode.LOCKED) {
+            _onNext post EventUnit
+            updateSelectedDateAsCurrentTime()
+        } else {
+            _insertedEvent post EventUnit
+        }
 
     }
 
@@ -82,8 +88,8 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
         _updatedEvent post EventUnit
     }
 
-    fun invertLockMode(){
-        when(lockMode.value?:return){
+    fun invertLockMode() {
+        when (lockMode.value ?: return) {
             LockMode.UNLOCK -> {
                 _lockMode post LockMode.LOCKED
             }
@@ -94,37 +100,46 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     }
 
     fun updateExpenseData(expense: ExpenseDetailsVto) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             loadingOn()
             val oldData = data.value
             val createdDate = oldData?.date
-            val expenseEnt = mapToExpenseEnt(expense, createdDate)
-            Timber.d("updateData -> $expenseEnt")
+            val expenseEnt = mapToExpenseEnt(
+                expense,
+                createdDate, modifiedDate = selectedDate.value
+            )
             repo.updateExpense(expenseEnt)
             onDataUpdated()
             loadingOff()
         }
     }
 
+    private fun updateSelectedDateAsCurrentTime(){
+        _selectedDate.value = Calendar.getInstance(Locale.getDefault()).timeInMillis
+    }
+
     fun saveExpenseData(expense: ExpenseDetailsVto) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             loadingOn()
-            val expenseEnt = mapToExpenseEnt(expense)
+            val expenseEnt = mapToExpenseEnt(expense, modifiedDate = selectedDate.value)
             repo.insertExpense(expenseEnt)
             onDataInserted()
             loadingOff()
-
         }
     }
 
-    private fun mapToExpenseEnt(vto: ExpenseDetailsVto, createdDate: Long? = null) = ExpenseEnt(
+    private fun mapToExpenseEnt(
+        vto: ExpenseDetailsVto,
+        createdDate: Long? = null,
+        modifiedDate: Long? = null
+    ) = ExpenseEnt(
         expenseId = vto.id,
         name = vto.name,
         amount = vto.amount.toFloat(),
         note = vto.note,
         category = vto.category,
         createdDate = createdDate ?: Date().time,
-        modifiedDate = Date().time
+        modifiedDate = modifiedDate ?: Date().time
     )
 
     fun setCurrentExpenseId(id: Int) {
@@ -133,14 +148,16 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
 
 
     private fun observeExpenseData(id: Int) {
-         viewModelScope.launch(Dispatchers.IO) {
-             try {
-                 val dataEnt = repo.getExpense(id).first()
-                 val dataVto = mapper.mapToUpdateDetailVto(dataEnt)
-                 _data post dataVto
-             }catch (e: Exception){
-                 Timber.d("Exception ${e.printStackTrace()}")
-             }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val dataEnt = repo.getExpense(id).first()
+                _selectedDate post dataEnt.modifiedDate
+                val dataVto = mapper.mapToUpdateDetailVto(dataEnt)
+                _data post dataVto
+
+            } catch (e: Exception) {
+                Timber.d("Exception ${e.printStackTrace()}")
+            }
 
         }
     }
