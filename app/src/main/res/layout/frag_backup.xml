@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="@dimen/size_radius"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:cardCornerRadius="@dimen/size_radius"
     tools:background="@android:color/white">
 
     <include
@@ -37,48 +37,51 @@
         app:layout_constraintTop_toTopOf="@id/btn_menu_open" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
         android:id="@+id/btn_import_open"
         style="?attr/iconButtonStyle"
-        app:srcCompat="@drawable/ic_folder"
-        android:scaleType="centerInside"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
+        android:layout_marginEnd="@dimen/grid_3"
+        app:layout_constraintBottom_toBottomOf="@id/tb_backup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tb_backup"
-        app:layout_constraintBottom_toBottomOf="@id/tb_backup"
-        android:layout_marginEnd="@dimen/grid_3"/>
+        app:srcCompat="@drawable/ic_folder" />
+
     <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
         android:id="@+id/btn_export_open"
         style="?attr/iconButtonStyle"
-        app:srcCompat="@drawable/ic_save"
-        android:scaleType="centerInside"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
+        android:layout_marginEnd="@dimen/grid_3"
+        app:layout_constraintBottom_toBottomOf="@id/tb_backup"
         app:layout_constraintEnd_toStartOf="@id/btn_import_open"
         app:layout_constraintTop_toTopOf="@id/tb_backup"
-        app:layout_constraintBottom_toBottomOf="@id/tb_backup"
-        android:layout_marginEnd="@dimen/grid_3"/>
+        app:srcCompat="@drawable/ic_save" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_backup_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/rv_backup_list"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_backup"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_backup"
-        tools:itemCount="1"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_backup"
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="1"
+        tools:listitem="@layout/item_backup" />
+
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_export"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:id="@+id/btn_export"
         android:text="Export"
+        android:visibility="gone"
         app:icon="@drawable/ic_add"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

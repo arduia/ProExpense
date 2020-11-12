@@ -8,10 +8,7 @@ import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
-import com.arduia.mvvm.BaseLiveData
-import com.arduia.mvvm.EventLiveData
-import com.arduia.mvvm.event
-import com.arduia.mvvm.post
+import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
@@ -34,11 +31,22 @@ class HomeViewModel @ViewModelInject constructor(
     private val _costRates = BaseLiveData<Map<Int,Int>>()
     val costRate get() = _costRates.asLiveData()
 
+    private val _onExpenseItemDeleted = EventLiveData<Unit>()
+    val onExpenseItemDeleted get() = _onExpenseItemDeleted.asLiveData()
+
+
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
             val item = repo.getExpense(selectedItem.id).first()
             val detailData = mapper.mapToDetailVto(item)
             _detailData post event(detailData)
+        }
+    }
+
+    fun deleteExpense(id: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.deleteExpenseById(id)
+            _onExpenseItemDeleted post EventUnit
         }
     }
 

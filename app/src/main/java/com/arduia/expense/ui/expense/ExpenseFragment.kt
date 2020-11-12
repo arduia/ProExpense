@@ -18,6 +18,7 @@ import com.arduia.expense.databinding.FragExpenseBinding
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
+import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -151,8 +152,15 @@ class ExpenseFragment : Fragment() {
             //Show selected Data
             detailDialog = ExpenseDetailDialog()
             detailDialog?.setOnEditClickListener { openEntryFragment(expenseDetail.id) }
+            detailDialog?.setOnDeleteClickListener(::onItemDeleted)
             detailDialog?.showDetail(parentFragmentManager, expenseDetail)
+
         })
+    }
+
+    private fun onItemDeleted(item: ExpenseDetailsVto){
+        viewModel.deleteItemById(item.id)
+        detailDialog?.dismiss()
     }
 
     private fun openEntryFragment(id: Int){

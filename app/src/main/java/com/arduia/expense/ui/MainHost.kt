@@ -1,5 +1,7 @@
 package com.arduia.expense.ui
 
+import androidx.fragment.app.Fragment
+
 
 interface MainHost{
 
@@ -16,3 +18,6 @@ interface MainHost{
     fun showSnackMessage(message: String, duration: Int = defaultSnackBarDuration)
 
 }
+
+val Fragment.mainHost
+get() = requireActivity() as MainHost

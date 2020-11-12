@@ -31,7 +31,9 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
     private var dismissListener: (() -> Unit)? = null
 
-    var editOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
+    private var editOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
+
+    private var deleteOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,6 +87,12 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
             editOnClickListener?.invoke(detail)
             dismiss()
         }
+        viewBinding.btnDelete.setOnClickListener(::onDeleteClick)
+    }
+
+    private fun onDeleteClick(view: View){
+        val item = expenseDetail?:return
+        deleteOnClickListener?.invoke(item)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -98,6 +106,10 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
     fun setOnEditClickListener(listener: (ExpenseDetailsVto) -> Unit){
         editOnClickListener = listener
+    }
+
+    fun setOnDeleteClickListener(listener: (ExpenseDetailsVto) -> Unit){
+        deleteOnClickListener = listener
     }
 
     companion object {

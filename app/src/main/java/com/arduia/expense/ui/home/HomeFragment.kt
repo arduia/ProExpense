@@ -17,6 +17,7 @@ import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -141,6 +142,7 @@ class HomeFragment : NavBaseFragment() {
             //Show Selected Dialog
             detailDialog = ExpenseDetailDialog()
             detailDialog?.setDismissListener(detailDismissListener)
+            detailDialog?.setOnDeleteClickListener(::onDeleteExpense)
             detailDialog?.setOnEditClickListener {
                 navigateEntryFragment(expenseDetail.id)
             }
@@ -155,6 +157,15 @@ class HomeFragment : NavBaseFragment() {
         viewModel.costRate.observe(viewLifecycleOwner){
             graphAdapter.expenseMap = it
         }
+
+        viewModel.onExpenseItemDeleted.observe(viewLifecycleOwner, EventObserver{
+            mainHost.showSnackMessage(getString(R.string.item_deleted))
+        })
+    }
+
+    private fun onDeleteExpense(item: ExpenseDetailsVto){
+        detailDialog?.dismiss()
+        viewModel.deleteExpense(item.id)
     }
 
     private fun navigateEntryFragment(id: Int){

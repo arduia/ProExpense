@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
         navController = findNavController()
         navOption = createNavOption()
+
         setContentView(viewBinding.root)
         setupView()
         setupViewModel()
@@ -202,7 +203,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
                     addFabShowTask?.invoke()
                 }
             }
-
             else -> {
                 addFabShowTask?.invoke()
             }
@@ -220,7 +220,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun hideAddButton() {
-        //remove task
         addFabShowTask = null
         viewBinding.fbMainAdd.isClickable = false
         viewBinding.fbMainAdd.hide()
@@ -250,7 +249,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         runBlocking {
             if (newBase == null) return@runBlocking
             val selectedLanguage = SettingsRepositoryImpl(newBase, this).getSelectedLanguage().first()
-
             val localedContext = newBase.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }

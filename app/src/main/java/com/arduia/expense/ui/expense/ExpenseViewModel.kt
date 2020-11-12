@@ -12,12 +12,13 @@ import com.arduia.expense.ui.vto.ExpenseVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import javax.inject.Singleton
+
 
 class ExpenseViewModel @ViewModelInject constructor(
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository
 ) : ViewModel(), LifecycleObserver {
-
 
 
     private val _isDeleteMode = BaseLiveData<Boolean>()
@@ -28,7 +29,6 @@ class ExpenseViewModel @ViewModelInject constructor(
 
     private val _itemDeletedEvent = EventLiveData<Int>()
     val itemDeletedEvent get() = _itemDeletedEvent.asLiveData()
-
 
     private var livePagedListBuilder: LivePagedListBuilder<Int, ExpenseVto>? = null
 
@@ -47,6 +47,12 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
 
+    fun deleteItemById(id: Int){
+        viewModelScope.launch(Dispatchers.IO){
+            repo.deleteExpenseById(id)
+            _itemDeletedEvent post event(1)
+        }
+    }
     private suspend fun getExpenseItemByID(itemId: Int) =
         repo.getExpense(itemId).first()
 

@@ -12,13 +12,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 import java.util.*
 
 class ExpenseEntryViewModel @ViewModelInject constructor(
     private val repo: ExpenseRepository,
     private val mapper: ExpenseMapper
 ) : ViewModel(), LifecycleObserver {
-
 
     private val _insertedEvent = EventLiveData<Unit>()
     val insertedEvent get() = _insertedEvent.asLiveData()
@@ -34,6 +34,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
 
     private val _selectedCategory = BaseLiveData<ExpenseCategory>()
     val selectedCategory get() = _selectedCategory.asLiveData()
+
 
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading
@@ -63,7 +64,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     }
 
     fun updateExpenseData(expense: ExpenseDetailsVto) {
-        vmScopeIO{
+        viewModelScope.launch(Dispatchers.IO){
             loadingOn()
             val oldData = data.value
             val createdDate = oldData?.date
@@ -76,7 +77,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     }
 
     fun saveExpenseData(expense: ExpenseDetailsVto) {
-        vmScopeIO{
+        viewModelScope.launch(Dispatchers.IO){
             loadingOn()
             val expenseEnt = mapToExpenseEnt(expense)
             repo.insertExpense(expenseEnt)
@@ -99,11 +100,17 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
         observeExpenseData(id)
     }
 
+
     private fun observeExpenseData(id: Int) {
-        vmScopeIO {
-            val dataEnt = repo.getExpense(id).first()
-            val dataVto = mapper.mapToUpdateDetailVto(dataEnt)
-            _data post dataVto
+         viewModelScope.launch(Dispatchers.IO) {
+             try {
+                 val dataEnt = repo.getExpense(id).first()
+                 val dataVto = mapper.mapToUpdateDetailVto(dataEnt)
+                 _data post dataVto
+             }catch (e: Exception){
+                 Timber.d("Exception ${e.printStackTrace()}")
+             }
+
         }
     }
 
@@ -111,7 +118,4 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
         _selectedCategory post category
     }
 
-    private inline fun vmScopeIO( crossinline ioWork: suspend ()-> Unit){
-        viewModelScope.launch(Dispatchers.IO){ioWork()}
-    }
 }

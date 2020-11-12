@@ -33,7 +33,7 @@ class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater)
 
                 tvName.text = item.name
                 tvDate.text = item.date
-                tvAmount.text = item.amount
+                tvAmount.text = item.amount + " MMK"
                 imvCategory.setImageResource(item.category)
         }
     }
