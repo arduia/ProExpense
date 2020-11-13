@@ -12,4 +12,7 @@ interface SettingsRepository{
 
     fun setFirstUser(isFirstUser: Boolean)
 
+    fun getSelectedCurrencyNumber(): Flow<String>
+
+    fun setSelectedCurrencyNumber(num: String)
 }

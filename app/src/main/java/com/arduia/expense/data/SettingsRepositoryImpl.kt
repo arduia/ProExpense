@@ -3,8 +3,11 @@ package com.arduia.expense.data
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.preference.PreferenceManager
+import com.arduia.expense.data.local.CacheDao
+import com.arduia.expense.data.local.CurrencyDao
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import timber.log.Timber
@@ -21,6 +24,9 @@ class SettingsRepositoryImpl(private val context: Context,
 
     @ExperimentalCoroutinesApi
     private val firstUserChannel = BroadcastChannel<Boolean>(10)
+
+    @ExperimentalCoroutinesApi
+    private val currencyNumCh = ConflatedBroadcastChannel<String>()
 
     @FlowPreview
     @ExperimentalCoroutinesApi
@@ -62,6 +68,21 @@ class SettingsRepositoryImpl(private val context: Context,
         }
     }
 
+
+    override fun getSelectedCurrencyNumber(): Flow<String> {
+        scope.launch (Dispatchers.IO){
+            val num = getString(KEY_SELECTED_CURRENCY_NUM, DEFAULT_SELECTED_CURRENCY_NUM)
+            currencyNumCh.send(num)
+        }
+        return currencyNumCh.asFlow()
+    }
+
+    override fun setSelectedCurrencyNumber(num: String) {
+        scope.launch(Dispatchers.IO){
+            setString(KEY_SELECTED_CURRENCY_NUM,num )
+        }
+    }
+
     private fun getString(key:String, defValue:String) = preference.getString(key, defValue)?:defValue
     private fun setString(key:String, value:String) = preference.edit().putString(key, value).apply()
 
@@ -75,6 +96,9 @@ class SettingsRepositoryImpl(private val context: Context,
 
         private const val KEY_FIRST_USER = "isFirstTime"
         private const val DEFAULT_FIRST_USER = true
+
+        private const val KEY_SELECTED_CURRENCY_NUM="selected_currency_number"
+        private const val DEFAULT_SELECTED_CURRENCY_NUM="840"
 
     }
 }

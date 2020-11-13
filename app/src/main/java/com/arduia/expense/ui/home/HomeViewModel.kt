@@ -2,7 +2,9 @@ package com.arduia.expense.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
+import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -10,11 +12,12 @@ import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class HomeViewModel @ViewModelInject constructor(
+    private val currencyRepository: CurrencyRepository,
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository,
     private val calculator: ExpenseRateCalculator) : ViewModel(), LifecycleObserver{
@@ -34,6 +37,12 @@ class HomeViewModel @ViewModelInject constructor(
     private val _onExpenseItemDeleted = EventLiveData<Unit>()
     val onExpenseItemDeleted get() = _onExpenseItemDeleted.asLiveData()
 
+    private val _currencySymbol = BaseLiveData<String>()
+    val currencySymbol get() = _currencySymbol.asLiveData()
+
+    init {
+        init()
+    }
 
     fun selectItemForDetail(selectedItem: ExpenseVto){
         viewModelScope.launch(Dispatchers.IO){
@@ -54,6 +63,17 @@ class HomeViewModel @ViewModelInject constructor(
     private fun onCreate(){
         observeRecentExpenses()
         observeWeekExpenses()
+    }
+
+    private fun init(){
+        observeCurrencySymbol()
+    }
+
+    private fun observeCurrencySymbol(){
+       viewModelScope.launch(Dispatchers.IO){
+           val currency= currencyRepository.getSelectedCurrency()
+           _currencySymbol post currency.symbol
+       }
     }
 
     private fun observeRecentExpenses(){

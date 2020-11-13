@@ -1,10 +1,9 @@
 package com.arduia.expense.ui.splash
 
-import android.app.Application
+
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @ViewModelInject
-    constructor(private val settingsRepository: SettingsRepository): ViewModel(), LifecycleObserver{
+    constructor(private val settingsRepository: SettingsRepository): ViewModel(){
 
     private val _firstTimeEvent = EventLiveData<Unit>()
     val firstTimeEvent = _firstTimeEvent.asLiveData()
@@ -25,8 +24,10 @@ class SplashViewModel @ViewModelInject
 
     private val splashDuration = 1000L
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private fun onResume(){
+    init {
+        checkUserAndGo()
+    }
+    private fun checkUserAndGo(){
         viewModelScope.launch(Dispatchers.IO) {
             delay(splashDuration)
             when(settingsRepository.getFirstUser().first()){

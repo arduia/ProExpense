@@ -2,10 +2,10 @@ package com.arduia.expense.di
 
 import android.app.Application
 import android.content.Context
+import android.content.res.AssetManager
 import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.*
-import com.arduia.expense.data.local.BackupDao
-import com.arduia.expense.data.local.ExpenseDao
+import com.arduia.expense.data.local.*
 import com.arduia.expense.data.network.ExpenseNetworkDao
 import dagger.Module
 import dagger.Provides
@@ -21,17 +21,44 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideAccRepo(accDao: ExpenseDao, netDao: ExpenseNetworkDao): ExpenseRepository
-     = ExpenseRepositoryImpl(accDao, netDao)
+    fun provideAccRepo(accDao: ExpenseDao, netDao: ExpenseNetworkDao): ExpenseRepository =
+        ExpenseRepositoryImpl(accDao, netDao)
 
     @Provides
     @Singleton
-    fun provideSettingRepo(application: Application, @CoroutineIO scope:CoroutineScope): SettingsRepository
-    = SettingsRepositoryImpl(application.applicationContext, scope)
+    fun provideSettingRepo(
+        application: Application,
+        @CoroutineIO scope: CoroutineScope
+    ): SettingsRepository = SettingsRepositoryImpl(application.applicationContext, scope)
 
     @Singleton
     @Provides
-    fun provideBackupRepo(@ApplicationContext context: Context, backupDao: BackupDao, excelBackup: ExcelBackup): BackupRepository
-            = BackupRepositoryImpl(context, backupDao, excelBackup)
+    fun provideBackupRepo(
+        @ApplicationContext context: Context,
+        backupDao: BackupDao,
+        excelBackup: ExcelBackup
+    ): BackupRepository = BackupRepositoryImpl(context, backupDao, excelBackup)
 
+    @Singleton
+    @Provides
+    fun provideCurrencyRepo(dao: CurrencyDao, cacheDao: CacheDao): CurrencyRepository =
+        CurrencyRepositoryImpl(dao, cacheDao)
+
+    @Singleton
+    @Provides
+    fun provideCurrencyDao(assetManager: AssetManager): CurrencyDao =
+        CurrencyDaoImpl(assetManager)
+
+    @Provides
+    fun provideAssetManager(@ApplicationContext context: Context): AssetManager = context.assets
+
+    @Provides
+    fun provideCacheDao(): CacheDao = CacheDaoImpl
+
+    @Provides
+    fun provideCacheManager(
+        settingRepo: SettingsRepository,
+        currencyRepo: CurrencyRepository,
+        cacheDao: CacheDao
+    ): CacheManager = CacheManagerImpl(settingRepo, currencyRepo, cacheDao)
 }

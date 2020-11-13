@@ -161,6 +161,10 @@ class HomeFragment : NavBaseFragment() {
         viewModel.onExpenseItemDeleted.observe(viewLifecycleOwner, EventObserver{
             mainHost.showSnackMessage(getString(R.string.item_deleted))
         })
+
+        viewModel.currencySymbol.observe(viewLifecycleOwner){
+            viewBinding.tvCurrency.text = it
+        }
     }
 
     private fun onDeleteExpense(item: ExpenseDetailsVto){
