@@ -1,0 +1,1052 @@
+[
+  {
+    "rank": 1,
+    "currency_name": "United State Dollar",
+    "code": "USD",
+    "symbol": "$",
+    "number": "840"
+  },
+  {
+    "rank": 2,
+    "currency_name": "Euro",
+    "code": "EUR",
+    "symbol": "€",
+    "number": "978"
+  },
+  {
+    "rank": 3,
+    "currency_name": "United Kingdom Pound",
+    "code": "GBP",
+    "symbol": "£",
+    "number": "826"
+  },
+  {
+    "rank": 4,
+    "currency_name": "India Rupees",
+    "code": "INR",
+    "symbol": "INR",
+    "number": "356"
+  },
+  {
+    "rank": 5,
+    "currency_name": "Australia Dollar",
+    "code": "AUD",
+    "symbol": "AUD",
+    "number": "036"
+  },
+  {
+    "rank": 6,
+    "currency_name": "Canada Dollar",
+    "code": "CAD",
+    "symbol": "CAD",
+    "number": "124"
+  },
+  {
+    "rank": 7,
+    "currency_name": "South Africa Rand",
+    "code": "ZAR",
+    "symbol": "R",
+    "number": "710"
+  },
+  {
+    "rank": 8,
+    "currency_name": "New Zealand Dollar",
+    "code": "NZD",
+    "symbol": "NZD",
+    "number": "554"
+  },
+  {
+    "rank": 9,
+    "currency_name": "Japan Yen",
+    "code": "JPY",
+    "symbol": "¥",
+    "number": "392"
+  },
+  {
+    "rank": 10,
+    "currency_name": "Singapore Dollar",
+    "code": "SGD",
+    "symbol": "SGD",
+    "number": "702"
+  },
+  {
+    "rank": 11,
+    "currency_name": "China Yuan Renminbi",
+    "code": "CNY",
+    "symbol": "¥",
+    "number": "156"
+  },
+  {
+    "rank": 12,
+    "currency_name": "Switzerland Francs",
+    "code": "CHF",
+    "symbol": "CHF",
+    "number": "756"
+  },
+  {
+    "rank": 13,
+    "currency_name": "Malaysia Ringgits",
+    "code": "MYR",
+    "symbol": "RM",
+    "number": "458"
+  },
+  {
+    "rank": 14,
+    "currency_name": "Hungary Forint",
+    "code": "HUF",
+    "symbol": "Ft",
+    "number": "348"
+  },
+  {
+    "rank": 15,
+    "currency_name": "Hong Kong Dollar",
+    "code": "HKD",
+    "symbol": "HKD",
+    "number": "344"
+  },
+  {
+    "rank": 16,
+    "currency_name": "United Arab Emirates Dirhams",
+    "code": "AED",
+    "symbol": "AED",
+    "number": "784"
+  },
+  {
+    "rank": 17,
+    "currency_name": "Thailand Baht",
+    "code": "THB",
+    "symbol": "฿",
+    "number": "764"
+  },
+  {
+    "rank": 18,
+    "currency_name": "Korea (South) Won",
+    "code": "KRW",
+    "symbol": "₩",
+    "number": "410"
+  },
+  {
+    "rank": 19,
+    "currency_name": "Sweden Kronor",
+    "code": "SEK",
+    "symbol": "kr",
+    "number": "752"
+  },
+  {
+    "rank": 20,
+    "currency_name": "Philippines Pesos",
+    "code": "PHP",
+    "symbol": "₱",
+    "number": "608"
+  },
+  {
+    "rank": 21,
+    "currency_name": "Israel New Shekels",
+    "code": "ILS",
+    "symbol": "₪",
+    "number": "376"
+  },
+  {
+    "rank": 22,
+    "currency_name": "Turkey Lira",
+    "code": "TRY",
+    "symbol": "TRY",
+    "number": "949"
+  },
+  {
+    "rank": 23,
+    "currency_name": "Poland Zlotych",
+    "code": "PLN",
+    "symbol": "zł",
+    "number": "985"
+  },
+  {
+    "rank": 24,
+    "currency_name": "Mexico Pesos",
+    "code": "MXN",
+    "symbol": "MXN",
+    "number": "484"
+  },
+  {
+    "rank": 25,
+    "currency_name": "Norway Kroner",
+    "code": "NOK",
+    "symbol": "kr",
+    "number": "578"
+  },
+  {
+    "rank": 26,
+    "currency_name": "Denmark Kroner",
+    "code": "DKK",
+    "symbol": "kr",
+    "number": "208"
+  },
+  {
+    "rank": 27,
+    "currency_name": "Kuwait Dinars",
+    "code": "KWD",
+    "symbol": "KWD",
+    "number": "414"
+  },
+  {
+    "rank": 28,
+    "currency_name": "Brazil Reals",
+    "code": "BRL",
+    "symbol": "R$",
+    "number": "986"
+  },
+  {
+    "rank": 29,
+    "currency_name": "Indonesia Rupiahs",
+    "code": "IDR",
+    "symbol": "Rp",
+    "number": "360"
+  },
+  {
+    "rank": 30,
+    "currency_name": "Taiwan New Dollars",
+    "code": "TWD",
+    "symbol": "NT$",
+    "number": "901"
+  },
+  {
+    "rank": 31,
+    "currency_name": "Saudi Arabia Riyals",
+    "code": "SAR",
+    "symbol": "﷼",
+    "number": "682"
+  },
+  {
+    "rank": 32,
+    "currency_name": "Pakistan Rupees",
+    "code": "PKR",
+    "symbol": "₨",
+    "number": "586"
+  },
+  {
+    "rank": 33,
+    "currency_name": "Czech Republic Koruny",
+    "code": "CZK",
+    "symbol": "Kč",
+    "number": "203"
+  },
+  {
+    "rank": 34,
+    "currency_name": "Iraq Dinars",
+    "code": "IQD",
+    "symbol": "IQD",
+    "number": "368"
+  },
+  {
+    "rank": 35,
+    "currency_name": "Russia Rubles",
+    "code": "RUB",
+    "symbol": "₽",
+    "number": "643"
+  },
+  {
+    "rank": 36,
+    "currency_name": "Kenya Shillings",
+    "code": "KES",
+    "symbol": "KES",
+    "number": "404"
+  },
+  {
+    "rank": 37,
+    "currency_name": "Jordan Dinars",
+    "code": "JOD",
+    "symbol": "JOD",
+    "number": "400"
+  },
+  {
+    "rank": 38,
+    "currency_name": "Chile Pesos",
+    "code": "CLP",
+    "symbol": "CLP",
+    "number": "152"
+  },
+  {
+    "rank": 39,
+    "currency_name": "Argentina Pesos",
+    "code": "ARS",
+    "symbol": "ARS",
+    "number": "032"
+  },
+  {
+    "rank": 40,
+    "currency_name": "Egypt Pounds",
+    "code": "EGP",
+    "symbol": "£",
+    "number": "818"
+  },
+  {
+    "rank": 41,
+    "currency_name": "Vietnam Dong",
+    "code": "VND",
+    "symbol": "₫",
+    "number": "704"
+  },
+  {
+    "rank": 42,
+    "currency_name": "Qatar Riyals",
+    "code": "QAR",
+    "symbol": "﷼",
+    "number": "634"
+  },
+  {
+    "rank": 43,
+    "currency_name": "Gold Ounces",
+    "code": "XAU",
+    "symbol": "XAU",
+    "number": "959"
+  },
+  {
+    "rank": 44,
+    "currency_name": "Romania New Lei",
+    "code": "RON",
+    "symbol": "lei",
+    "number": "946"
+  },
+  {
+    "rank": 45,
+    "currency_name": "Colombia Pesos",
+    "code": "COP",
+    "symbol": "COP",
+    "number": "170"
+  },
+  {
+    "rank": 46,
+    "currency_name": "Oman Rials",
+    "code": "OMR",
+    "symbol": "﷼",
+    "number": "512"
+  },
+  {
+    "rank": 47,
+    "currency_name": "Bulgaria Leva",
+    "code": "BGN",
+    "symbol": "лв",
+    "number": "975"
+  },
+  {
+    "rank": 48,
+    "currency_name": "Silver Ounces",
+    "code": "XAG",
+    "symbol": "XAG",
+    "number": "961"
+  },
+  {
+    "rank": 49,
+    "currency_name": "Tunisia Dinars",
+    "code": "TND",
+    "symbol": "TND",
+    "number": "788"
+  },
+  {
+    "rank": 50,
+    "currency_name": "Morocco Dirhams",
+    "code": "MAD",
+    "symbol": "MAD",
+    "number": "504"
+  },
+  {
+    "rank": 51,
+    "currency_name": "Bahrain Dinars",
+    "code": "BHD",
+    "symbol": "BHD",
+    "number": "048"
+  },
+  {
+    "rank": 52,
+    "currency_name": "Iceland Kronur",
+    "code": "ISK",
+    "symbol": "kr",
+    "number": "352"
+  },
+  {
+    "rank": 53,
+    "currency_name": "Sri Lanka Rupees",
+    "code": "LKR",
+    "symbol": "₨",
+    "number": "144"
+  },
+  {
+    "rank": 54,
+    "currency_name": "Croatia Kuna",
+    "code": "HRK",
+    "symbol": "kn",
+    "number": "191"
+  },
+  {
+    "rank": 55,
+    "currency_name": "Georgia Lari",
+    "code": "GEL",
+    "symbol": "GEL",
+    "number": "981"
+  },
+  {
+    "rank": 56,
+    "currency_name": "Ukraine Hryvnia",
+    "code": "UAH",
+    "symbol": "₴",
+    "number": "980"
+  },
+  {
+    "rank": 57,
+    "currency_name": "Iran Rials",
+    "code": "IRR",
+    "symbol": "﷼",
+    "number": "364"
+  },
+  {
+    "rank": 58,
+    "currency_name": "Nigeria Nairas",
+    "code": "NGN",
+    "symbol": "₦",
+    "number": "566"
+  },
+  {
+    "rank": 59,
+    "currency_name": "Coopération financière en Afrique centrale BEAC",
+    "code": "XAF",
+    "symbol": "XAF",
+    "number": "950"
+  },
+  {
+    "rank": 64,
+    "currency_name": "Mauritius Rupee",
+    "code": "MUR",
+    "symbol": "MUR",
+    "number": "950"
+  },
+  {
+    "rank": 67,
+    "currency_name": "Fiji Dollar",
+    "code": "FJD",
+    "symbol": "FJD",
+    "number": "242"
+  },
+  {
+    "rank": 69,
+    "currency_name": "Peru Nuevos Soles",
+    "code": "PEN",
+    "symbol": "S/.",
+    "number": "604"
+  },
+  {
+    "rank": 71,
+    "currency_name": "Bolivia Bolivianos",
+    "code": "BOB",
+    "symbol": "$b",
+    "number": "068"
+  },
+  {
+    "rank": 73,
+    "currency_name": "Uruguay Pesos",
+    "code": "UYU",
+    "symbol": "$U",
+    "number": "858"
+  },
+  {
+    "rank": 74,
+    "currency_name": "Bosnia and Herzegovena Convertible Marka",
+    "code": "BAM",
+    "symbol": "KM",
+    "number": "977"
+  },
+  {
+    "rank": 75,
+    "currency_name": "Uzbekistan Sums",
+    "code": "UZS",
+    "symbol": "лв",
+    "number": "860"
+  },
+  {
+    "rank": 76,
+    "currency_name": "Kazakhstan Tenge",
+    "code": "KZT",
+    "symbol": "лв",
+    "number": "398"
+  },
+  {
+    "rank": 77,
+    "currency_name": "Macedonia Denars",
+    "code": "MKD",
+    "symbol": "ден",
+    "number": "807"
+  },
+  {
+    "rank": 78,
+    "currency_name": "Moldova Lei",
+    "code": "MDL",
+    "symbol": "MDL",
+    "number": "498"
+  },
+  {
+    "rank": 79,
+    "currency_name": "Moldova Lei",
+    "code": "AMD",
+    "symbol": "AMD",
+    "number": "051"
+  },
+  {
+    "rank": 80,
+    "currency_name": "Kyrgyzstan Sums",
+    "code": "KGS",
+    "symbol": "лв",
+    "number": "417"
+  },
+  {
+    "rank": 81,
+    "currency_name": "Tajikistan Somoni",
+    "code": "TJS",
+    "symbol": "TJS",
+    "number": "972"
+  },
+  {
+    "rank": 82,
+    "currency_name": "Turkmenistan New Manats",
+    "code": "TMT",
+    "symbol": "TMT",
+    "number": "934"
+  },
+  {
+    "rank": 83,
+    "currency_name": "Venezuela Bolivares",
+    "code": "VEF",
+    "symbol": "Bs",
+    "number": "0"
+  },
+  {
+    "rank": 85,
+    "currency_name": "Jamaica Dollars",
+    "code": "JMD",
+    "symbol": "J$",
+    "number": "388"
+  },
+  {
+    "rank": 86,
+    "currency_name": "Algeria Dinars",
+    "code": "DZD",
+    "symbol": "DZD",
+    "number": "012"
+  },
+  {
+    "rank": 87,
+    "currency_name": "Algeria Dinars",
+    "code": "XPF",
+    "symbol": "XPF",
+    "number": "953"
+  },
+  {
+    "rank": 88,
+    "currency_name": "Uganda Shillings",
+    "code": "UGX",
+    "symbol": "UGX",
+    "number": "800"
+  },
+  {
+    "rank": 89,
+    "currency_name": "Costa Rica Colones",
+    "code": "CRC",
+    "symbol": "₡",
+    "number": "188"
+  },
+  {
+    "rank": 91,
+    "currency_name": "Brunei Dollars",
+    "code": "BND",
+    "symbol": "BND",
+    "number": "096"
+  },
+  {
+    "rank": 92,
+    "currency_name": "Libya Dinars",
+    "code": "LYD",
+    "symbol": "LYD",
+    "number": "434"
+  },
+  {
+    "rank": 93,
+    "currency_name": "Eastern Caribbean Dollars",
+    "code": "XCD",
+    "symbol": "XCD",
+    "number": "951"
+  },
+  {
+    "rank": 95,
+    "currency_name": "Barbados Dollars",
+    "code": "BBD",
+    "symbol": "BBD",
+    "number": "052"
+  },
+  {
+    "rank": 96,
+    "currency_name": "Barbados Dollars",
+    "code": "TTD",
+    "symbol": "TT$",
+    "number": "780"
+  },
+  {
+    "rank": 97,
+    "currency_name": "Lebanon Pounds",
+    "code": "LBP",
+    "symbol": "£",
+    "number": "422"
+  },
+  {
+    "rank": 98,
+    "currency_name": "Syria Pounds",
+    "code": "SYP",
+    "symbol": "£",
+    "number": "760"
+  },
+  {
+    "rank": 99,
+    "currency_name": "Cambodia Riels",
+    "code": "KHR",
+    "symbol": "៛",
+    "number": "116"
+  },
+  {
+    "rank": 100,
+    "currency_name": "Nepal Rupees",
+    "code": "NPR",
+    "symbol": "₨",
+    "number": "524"
+  },
+  {
+    "rank": 102,
+    "currency_name": "Guatemala Quetzales",
+    "code": "GTQ",
+    "symbol": "Q",
+    "number": "320"
+  },
+  {
+    "rank": 103,
+    "currency_name": "Palladium Ounces",
+    "code": "XPD",
+    "symbol": "XPD",
+    "number": "964"
+  },
+  {
+    "rank": 104,
+    "currency_name": "Macau Patacas",
+    "code": "MOP",
+    "symbol": "MOP",
+    "number": "446"
+  },
+  {
+    "rank": 105,
+    "currency_name": "Paraguay Guarani",
+    "code": "PYG",
+    "symbol": "Gs",
+    "number": "600"
+  },
+  {
+    "rank": 106,
+    "currency_name": "Paraguay Guarani",
+    "code": "XPT",
+    "symbol": "XPT",
+    "number": "962"
+  },
+  {
+    "rank": 107,
+    "currency_name": "Botswana Pulas",
+    "code": "BWP",
+    "symbol": "P",
+    "number": "072"
+  },
+  {
+    "rank": 108,
+    "currency_name": "Tanzania Shillings",
+    "code": "TZS",
+    "symbol": "TZS",
+    "number": "834"
+  },
+  {
+    "rank": 109,
+    "currency_name": "Netherlands Antilles Guilders",
+    "code": "ANG",
+    "symbol": "ƒ",
+    "number": "532"
+  },
+  {
+    "rank": 110,
+    "currency_name": "Bahamas Dollars",
+    "code": "BSD",
+    "symbol": "BSD",
+    "number": "044"
+  },
+  {
+    "rank": 111,
+    "currency_name": "Honduras Lempiras",
+    "code": "HNL",
+    "symbol": "L",
+    "number": "340"
+  },
+  {
+    "rank": 112,
+    "currency_name": "Namibia Dollars",
+    "code": "NAD",
+    "symbol": "NAD",
+    "number": "516"
+  },
+  {
+    "rank": 113,
+    "currency_name": "Ethiopia Birr",
+    "code": "ETB",
+    "symbol": "ETB",
+    "number": "113"
+  },
+  {
+    "rank": 114,
+    "currency_name": "Zimbabwe Dollars",
+    "code": "ZWL",
+    "symbol": "ZWL",
+    "number": "932"
+  },
+  {
+    "rank": 115,
+    "currency_name": "Bermuda Dollars",
+    "code": "BMD",
+    "symbol": "BMD",
+    "number": "060"
+  },
+  {
+    "rank": 116,
+    "currency_name": "Cuba Pesos",
+    "code": "CUP",
+    "symbol": "₱",
+    "number": "192"
+  },
+  {
+    "rank": 117,
+    "currency_name": "Nicaragua Cordobas",
+    "code": "NIO",
+    "symbol": "C$",
+    "number": "558"
+  },
+  {
+    "rank": 118,
+    "currency_name": "Malawi Kwachas",
+    "code": "MWK",
+    "symbol": "MWK",
+    "number": "454"
+  },
+  {
+    "rank": 119,
+    "currency_name": "Malawi Kwachas",
+    "code": "PAB",
+    "symbol": "B/.",
+    "number": "590"
+  },
+  {
+    "rank": 120,
+    "currency_name": "Malawi Kwachas",
+    "code": "VUV",
+    "symbol": "VUV",
+    "number": "548"
+  },
+  {
+    "rank": 121,
+    "currency_name": "Haiti Gourdes",
+    "code": "HTG",
+    "symbol": "HTG",
+    "number": "332"
+  },
+  {
+    "rank": 122,
+    "currency_name": "International Monetary Fund Special Drawing Rights",
+    "code": "XDR",
+    "symbol": "XDR",
+    "number": "960"
+  },
+  {
+    "rank": 123,
+    "currency_name": "International Monetary Fund Special Drawing Rights",
+    "code": "GYD",
+    "symbol": "GYD",
+    "number": "328"
+  },
+  {
+    "rank": 124,
+    "currency_name": "Papua New Guinea Kina",
+    "code": "PGK",
+    "symbol": "PGK",
+    "number": "598"
+  },
+  {
+    "rank": 125,
+    "currency_name": "Samoa Tala",
+    "code": "WST",
+    "symbol": "WST",
+    "number": "882"
+  },
+  {
+    "rank": 126,
+    "currency_name": "LAK Laos Kips",
+    "code": "LAK",
+    "symbol": "₭",
+    "number": "418"
+  },
+  {
+    "rank": 127,
+    "currency_name": "Belize Dollars",
+    "code": "BZD",
+    "symbol": "BZ$",
+    "number": "084"
+  },
+  {
+    "rank": 128,
+    "currency_name": "Belize DollarsYemen Rials",
+    "code": "YER",
+    "symbol": "﷼",
+    "number": "886"
+  },
+  {
+    "rank": 129,
+    "currency_name": "Gambia Dalasi",
+    "code": "GMD",
+    "symbol": "GMD",
+    "number": "270"
+  },
+  {
+    "rank": 130,
+    "currency_name": "Cayman Islands Dollar",
+    "code": "KYD",
+    "symbol": "KYD",
+    "number": "136"
+  },
+  {
+    "rank": 131,
+    "currency_name": "Mongolia Tugrik",
+    "code": "MNT",
+    "symbol": "₮",
+    "number": "496"
+  },
+  {
+    "rank": 132,
+    "currency_name": "Korea (North) Won",
+    "code": "KPW",
+    "symbol": "₩",
+    "number": "408"
+  },
+  {
+    "rank": 133,
+    "currency_name": "El Salvador Colones",
+    "code": "SVC",
+    "symbol": "SVC",
+    "number": "222"
+  },
+  {
+    "rank": 134,
+    "currency_name": "Sudan Dinars",
+    "code": "SDG",
+    "symbol": "SDG",
+    "number": "938"
+  },
+  {
+    "rank": 135,
+    "currency_name": "Madagascar Ariary",
+    "code": "MGA",
+    "symbol": "MGA",
+    "number": "969"
+  },
+  {
+    "rank": 136,
+    "currency_name": "Falkland Islands Pounds",
+    "code": "FKP",
+    "symbol": "£",
+    "number": "238"
+  },
+  {
+    "rank": 137,
+    "currency_name": "Cape Verde Escudos",
+    "code": "CVE",
+    "symbol": "CVE",
+    "number": "132"
+  },
+  {
+    "rank": 138,
+    "currency_name": "Angola Kwanza",
+    "code": "AOA",
+    "symbol": "AOA",
+    "number": "973"
+  },
+  {
+    "rank": 139,
+    "currency_name": "Seychelles Rupees",
+    "code": "SCR",
+    "symbol": "₨",
+    "number": "690"
+  },
+  {
+    "rank": 140,
+    "currency_name": "Myanmar (Burma) Kyats",
+    "code": "MMK",
+    "symbol": "MMK",
+    "number": "104"
+  },
+  {
+    "rank": 141,
+    "currency_name": "Guinea Francs",
+    "code": "GNF",
+    "symbol": "GNF",
+    "number": "324"
+  },
+  {
+    "rank": 142,
+    "currency_name": "Sierra Leone",
+    "code": "SLL",
+    "symbol": "SLL",
+    "number": "694"
+  },
+  {
+    "rank": 143,
+    "currency_name": "Aruba Guilders",
+    "code": "AWG",
+    "symbol": "ƒ",
+    "number": "533"
+  },
+  {
+    "rank": 144,
+    "currency_name": "Maldive Islands Rufiyaa",
+    "code": "MVR",
+    "symbol": "MVR",
+    "number": "462"
+  },
+  {
+    "rank": 145,
+    "currency_name": "Rwanda Francs",
+    "code": "RWF",
+    "symbol": "RWF",
+    "number": "646"
+  },
+  {
+    "rank": 146,
+    "currency_name": "Solomon Islands Dollars",
+    "code": "SBD",
+    "symbol": "SBD",
+    "number": "090"
+  },
+  {
+    "rank": 147,
+    "currency_name": "Tonga Pa'anga",
+    "code": "TOP",
+    "symbol": "TOP",
+    "number": "776"
+  },
+  {
+    "rank": 148,
+    "currency_name": "Gibraltar Pounds",
+    "code": "GIP",
+    "symbol": "£",
+    "number": "292"
+  },
+  {
+    "rank": 149,
+    "currency_name": "Djibouti Francs",
+    "code": "DJF",
+    "symbol": "DJF",
+    "number": "262"
+  },
+  {
+    "rank": 150,
+    "currency_name": "Somalia Shillings",
+    "code": "SOS",
+    "symbol": "SOS",
+    "number": "706"
+  },
+  {
+    "rank": 151,
+    "currency_name": "Liberia Dollars",
+    "code": "LRD",
+    "symbol": "LRD",
+    "number": "430"
+  },
+  {
+    "rank": 153,
+    "currency_name": "Burundi Francs",
+    "code": "BIF",
+    "symbol": "BIF",
+    "number": "108"
+  },
+  {
+    "rank": 154,
+    "currency_name": "Ghana Cedis",
+    "code": "GHS",
+    "symbol": "¢",
+    "number": "936"
+  },
+  {
+    "rank": 155,
+    "currency_name": "Bhutan Ngultrum",
+    "code": "BTN",
+    "symbol": "BTN",
+    "number": "064"
+  },
+  {
+    "rank": 156,
+    "currency_name": "Suriname Dollars",
+    "code": "SRD",
+    "symbol": "SRD",
+    "number": "968"
+  },
+  {
+    "rank": 157,
+    "currency_name": "Swaziland Emalangeni",
+    "code": "SZL",
+    "symbol": "SZL",
+    "number": "748"
+  },
+  {
+    "rank": 158,
+    "currency_name": "Lesotho Maloti",
+    "code": "LSL",
+    "symbol": "LSL",
+    "number": "426"
+  },
+  {
+    "rank": 159,
+    "currency_name": "St. Helena Pounds",
+    "code": "SHP",
+    "symbol": "£",
+    "number": "654"
+  },
+  {
+    "rank": 160,
+    "currency_name": "Comoros Francs",
+    "code": "KMF",
+    "symbol": "KMF",
+    "number": "174"
+  },
+  {
+    "rank": 162,
+    "currency_name": "Comoros Francs",
+    "code": "ERN",
+    "symbol": "ERN",
+    "number": "232"
+  },
+  {
+    "rank": 163,
+    "currency_name": "Mozambique Meticais",
+    "code": "MZN",
+    "symbol": "MZN",
+    "number": "943"
+  },
+  {
+    "rank": 164,
+    "currency_name": "Azerbaijan Manats",
+    "code": "AZN",
+    "symbol": "₼",
+    "number": "944"
+  },
+  {
+    "rank": 165,
+    "currency_name": "Afghanistan Afghanis",
+    "code": "AFN",
+    "symbol": "؋",
+    "number": "971"
+  }
+]
