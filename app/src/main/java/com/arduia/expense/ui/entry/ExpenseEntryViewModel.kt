@@ -61,7 +61,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     }
 
     fun selectDateTime(time: Long) {
-        _selectedDate.value = time
+        _selectedDate post time
     }
 
     private fun loadingOn() {
@@ -115,7 +115,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     }
 
     private fun updateSelectedDateAsCurrentTime(){
-        _selectedDate.value = Calendar.getInstance(Locale.getDefault()).timeInMillis
+        _selectedDate post Calendar.getInstance(Locale.getDefault()).timeInMillis
     }
 
     fun saveExpenseData(expense: ExpenseDetailsVto) {
