@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView android:id="@+id/cv_search"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    app:cardBackgroundColor="@color/gray_200"
+    app:cardCornerRadius="@dimen/grid_2"
+    app:cardElevation="0dp"
+    android:layout_margin="@dimen/grid_3"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edt_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/grid_3"
+        android:background="@android:color/transparent"
+        android:hint="Search" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imv_search"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
+        android:layout_gravity="end|center_vertical"
+        android:layout_margin="@dimen/grid_3"
+        android:clickable="false"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/ic_search" />
+</com.google.android.material.card.MaterialCardView>

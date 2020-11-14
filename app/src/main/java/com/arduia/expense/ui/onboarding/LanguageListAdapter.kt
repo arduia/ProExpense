@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.language
+package com.arduia.expense.ui.onboarding
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,19 +7,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemLanguageBinding
 import com.arduia.expense.ui.vto.LanguageVto
 
-class LanguageListAdapter(private val layoutInflater: LayoutInflater): RecyclerView.Adapter<LanguageListAdapter.VH>(){
+class LanguageListAdapter(private val layoutInflater: LayoutInflater) :
+    RecyclerView.Adapter<LanguageListAdapter.VH>() {
 
     var languageLists = listOf<LanguageVto>()
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     var selectedLanguage: LanguageVto? = null
-    set(value){
-        field = value
-        notifyDataSetChanged()
-    }
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     private var itemClickListener: (LanguageVto) -> Unit = {}
 
@@ -33,7 +34,7 @@ class LanguageListAdapter(private val layoutInflater: LayoutInflater): RecyclerV
     override fun getItemCount(): Int = languageLists.size
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        with(holder.viewBinding){
+        with(holder.viewBinding) {
             val item = languageLists[position]
 
             imvFlag.setImageResource(item.flag)
@@ -41,7 +42,7 @@ class LanguageListAdapter(private val layoutInflater: LayoutInflater): RecyclerV
 
             selectedLanguage?.let {
                 imvChecked.visibility =
-                    when(it.id == item.id) {
+                    when (it.id == item.id) {
                         true -> View.VISIBLE
                         false -> View.INVISIBLE
                     }
@@ -49,15 +50,15 @@ class LanguageListAdapter(private val layoutInflater: LayoutInflater): RecyclerV
         }
     }
 
-    fun setOnItemClickListener(listener: (LanguageVto) -> Unit){
+    fun setOnItemClickListener(listener: (LanguageVto) -> Unit) {
         this.itemClickListener = listener
     }
 
-    inner class VH(val viewBinding: ItemLanguageBinding):
-        RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener{
-         init {
-             viewBinding.cdLanguage.setOnClickListener(this)
-         }
+    inner class VH(val viewBinding: ItemLanguageBinding) :
+        RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener {
+        init {
+            viewBinding.cdLanguage.setOnClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             itemClickListener.invoke(languageLists[adapterPosition])

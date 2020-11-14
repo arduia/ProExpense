@@ -10,8 +10,7 @@ import androidx.lifecycle.Observer
 import com.arduia.expense.databinding.FragSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.LanguageProvider
-import com.arduia.expense.ui.common.LanguageProviderImpl
-import com.arduia.expense.ui.language.LanguageDialogFragment
+import com.arduia.expense.ui.onboarding.LanguageDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

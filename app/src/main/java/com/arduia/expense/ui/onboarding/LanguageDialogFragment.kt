@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.language
+package com.arduia.expense.ui.onboarding
 
 import android.app.ActivityOptions
 import android.os.Bundle
@@ -7,11 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragLangDialogBinding
 import com.arduia.expense.ui.common.LanguageProvider
-import com.arduia.expense.ui.common.LanguageProviderImpl
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,7 +52,7 @@ class LanguageDialogFragment : BottomSheetDialogFragment(){
 
         languageListAdapter = LanguageListAdapter(layoutInflater)
 
-        viewBinding.rvLanguages.adapter = languageListAdapter
+        viewBinding.rvCurrencies.adapter = languageListAdapter
         languageListAdapter.languageLists = languageProvider.getAvailableLanguages()
 
         viewBinding.btnLanguageClose.setOnClickListener {

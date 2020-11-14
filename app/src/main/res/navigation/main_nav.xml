@@ -108,8 +108,8 @@
     </fragment>
     <fragment
         android:id="@+id/dest_language"
-        android:name="com.arduia.expense.ui.language.LanguageFragment"
-        tools:layout="@layout/frag_language"
+        android:name="com.arduia.expense.ui.onboarding.OnBoardingConfigFragment"
+        tools:layout="@layout/frag_onboard_config"
         android:label="LanguageFragment" />
     <fragment
         android:id="@+id/dest_backup"

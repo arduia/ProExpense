@@ -19,7 +19,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:id="@+id/imv_flag"
-            tools:src="@drawable/ic_social"
+            tools:src="@drawable/tmp_myanmar"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/grid_3" />
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_language_name"
             style="?attr/textAppearanceBody1"
-            tools:text="Austrailla (English) "
+            tools:text="Myanmar(Burmese)"
             android:layout_marginTop="@dimen/grid_3"
             android:layout_marginBottom="@dimen/grid_3"
             android:layout_centerVertical="true"
