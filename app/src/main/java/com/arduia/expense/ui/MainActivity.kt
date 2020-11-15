@@ -18,6 +18,8 @@ import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
+import com.arduia.expense.data.local.PreferenceStorageDao
+import com.arduia.expense.data.local.PreferenceStorageDaoImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
@@ -248,7 +250,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     override fun attachBaseContext(newBase: Context?) {
         runBlocking {
             if (newBase == null) return@runBlocking
-            val selectedLanguage = SettingsRepositoryImpl(newBase, this).getSelectedLanguage().first()
+            val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(newBase, this)
+            val selectedLanguage = SettingsRepositoryImpl(prefDao).getSelectedLanguage().first()
             val localedContext = newBase.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }

@@ -18,7 +18,7 @@ class ChooseLanguageFragment: Fragment(){
 
     private val viewModel: ChooseLanguageViewModel by viewModels()
 
-    private lateinit var adapter: LanguageListAdapter
+    private lateinit var adapter: LangListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,18 +36,20 @@ class ChooseLanguageFragment: Fragment(){
     }
 
     private fun setupView(){
-        adapter = LanguageListAdapter(layoutInflater)
+        adapter = LangListAdapter(layoutInflater)
         binding.rvLanguages.adapter = adapter
+        binding.rvLanguages.itemAnimator = null
         binding.searchBox.edtSearch.addTextChangedListener {
             if(it==null) return@addTextChangedListener
             viewModel.searchLang(it.toString())
         }
+        adapter.setOnItemClickListener {
+            viewModel.selectLang(it.id)
+        }
     }
 
     private fun setupViewModel(){
-        viewModel.language.observe(viewLifecycleOwner){
-            adapter.languageLists = it
-        }
+        viewModel.language.observe(viewLifecycleOwner,adapter::submitList)
     }
 
 }

@@ -4,7 +4,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
-import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -14,7 +13,6 @@ import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
@@ -71,7 +69,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun observeCurrencySymbol(){
        viewModelScope.launch(Dispatchers.IO){
-           val currency= currencyRepository.getSelectedCurrency()
+           val currency= currencyRepository.getSelectedCacheCurrency()
            _currencySymbol post currency.symbol
        }
     }

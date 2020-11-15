@@ -57,7 +57,7 @@ class ChooseCurrencyFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        viewModel.currencies.observe(viewLifecycleOwner) { it ->
+        viewModel.currencies.observe(viewLifecycleOwner) {
             adapter.submitList(it)
             binding.tvNoItem.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
         }

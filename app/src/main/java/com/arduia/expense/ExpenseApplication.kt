@@ -4,9 +4,9 @@ import android.app.Application
 import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import com.arduia.core.lang.updateResource
-import com.arduia.expense.data.CacheManager
-import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
+import com.arduia.expense.data.local.PreferenceStorageDao
+import com.arduia.expense.data.local.PreferenceStorageDaoImpl
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -19,22 +19,12 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
-    @Inject
-    lateinit var cacheManager: CacheManager
-
     private val appJob = Job()
     private val appIOScope = CoroutineScope(Dispatchers.IO + appJob)
 
     override fun onCreate() {
         super.onCreate()
         setupLogging()
-        updateCache()
-    }
-
-    private fun updateCache(){
-        appIOScope.launch(Dispatchers.IO){
-            cacheManager.updateCurrencyCache()
-        }
     }
 
     private fun setupLogging() {
@@ -57,7 +47,8 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
 
     private fun updateToLanguageContext(baseContext: Context): Context =
         runBlocking {
-            val selectedLanguage = SettingsRepositoryImpl(baseContext, this).getSelectedLanguage().first()
+            val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(baseContext, this)
+            val selectedLanguage = SettingsRepositoryImpl(prefDao).getSelectedLanguage().first()
             return@runBlocking baseContext.updateResource(selectedLanguage)
         }
 

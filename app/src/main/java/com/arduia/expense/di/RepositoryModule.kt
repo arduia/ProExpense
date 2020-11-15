@@ -26,10 +26,16 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun providePreferenceStorageDao(
+        application: Application
+    ): PreferenceStorageDao = PreferenceFlowStorageDaoImpl(application.applicationContext)
+
+
+    @Provides
+    @Singleton
     fun provideSettingRepo(
-        application: Application,
-        @CoroutineIO scope: CoroutineScope
-    ): SettingsRepository = SettingsRepositoryImpl(application.applicationContext, scope)
+        dao: PreferenceStorageDao
+    ): SettingsRepository = SettingsRepositoryImpl(dao)
 
     @Singleton
     @Provides
@@ -41,7 +47,10 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideCurrencyRepo(dao: CurrencyDao, cacheDao: CacheDao): CurrencyRepository =
+    fun provideCurrencyRepo(
+        dao: CurrencyDao,
+        cacheDao: CacheDao
+    ): CurrencyRepository =
         CurrencyRepositoryImpl(dao, cacheDao)
 
     @Singleton
@@ -54,11 +63,5 @@ object RepositoryModule {
 
     @Provides
     fun provideCacheDao(): CacheDao = CacheDaoImpl
-
-    @Provides
-    fun provideCacheManager(
-        settingRepo: SettingsRepository,
-        currencyRepo: CurrencyRepository,
-        cacheDao: CacheDao
-    ): CacheManager = CacheManagerImpl(settingRepo, currencyRepo, cacheDao)
 }
+
