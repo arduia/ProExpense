@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
+import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -16,9 +17,10 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
+    private val settingRepo: SettingsRepository,
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository,
-    private val calculator: ExpenseRateCalculator) : ViewModel(), LifecycleObserver{
+    private val calculator: ExpenseRateCalculator) : ViewModel(){
 
     private val _recentData =  BaseLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData.asLiveData()
@@ -57,21 +59,20 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun onCreate(){
+    private fun init(){
+        observeCurrencySymbol()
         observeRecentExpenses()
         observeWeekExpenses()
     }
 
-    private fun init(){
-        observeCurrencySymbol()
-    }
-
     private fun observeCurrencySymbol(){
-       viewModelScope.launch(Dispatchers.IO){
-           val currency= currencyRepository.getSelectedCacheCurrency()
-           _currencySymbol post currency.symbol
-       }
+        settingRepo.getSelectedCurrencyNumber()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                currencyRepository.setSelectedCacheCurrency(it)
+                _currencySymbol post currencyRepository.getSelectedCacheCurrency().symbol
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeRecentExpenses(){

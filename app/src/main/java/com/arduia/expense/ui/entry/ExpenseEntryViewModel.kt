@@ -18,7 +18,7 @@ import java.util.*
 class ExpenseEntryViewModel @ViewModelInject constructor(
     private val repo: ExpenseRepository,
     private val mapper: ExpenseMapper
-) : ViewModel(), LifecycleObserver {
+) : ViewModel() {
 
     private val _insertedEvent = EventLiveData<Unit>()
     val insertedEvent get() = _insertedEvent.asLiveData()
@@ -67,7 +67,6 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private fun loadingOn() {
         _isLoading post true
     }
-
 
     private fun loadingOff() {
         _isLoading post false
@@ -158,7 +157,6 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
             } catch (e: Exception) {
                 Timber.d("Exception ${e.printStackTrace()}")
             }
-
         }
     }
 

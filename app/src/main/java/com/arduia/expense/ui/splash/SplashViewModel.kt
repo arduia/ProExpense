@@ -15,7 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @ViewModelInject
-    constructor(private val settingsRepository: SettingsRepository, private val currencyRep: CurrencyRepository): ViewModel(){
+constructor(
+    private val settingsRepository: SettingsRepository,
+    private val currencyRep: CurrencyRepository
+) : ViewModel() {
 
     private val _firstTimeEvent = EventLiveData<Unit>()
     val firstTimeEvent = _firstTimeEvent.asLiveData()
@@ -28,11 +31,12 @@ class SplashViewModel @ViewModelInject
     init {
         checkUserAndGo()
     }
-    private fun checkUserAndGo(){
+
+    private fun checkUserAndGo() {
         viewModelScope.launch(Dispatchers.IO) {
             delay(splashDuration)
             updateCache()
-            when(settingsRepository.getFirstUser().first()){
+            when (settingsRepository.getFirstUser().first()) {
                 true -> {
                     settingsRepository.setSelectedLanguage("en")
                     _firstTimeEvent.postValue(EventUnit)
@@ -42,7 +46,7 @@ class SplashViewModel @ViewModelInject
         }
     }
 
-    private suspend fun updateCache(){
+    private suspend fun updateCache() {
         val selectedCurrency = settingsRepository.getSelectedCurrencyNumber().first()
         currencyRep.setSelectedCacheCurrency(selectedCurrency)
     }

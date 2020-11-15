@@ -11,6 +11,8 @@ import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -18,7 +20,7 @@ class BackupViewModel @ViewModelInject constructor(
     app: Application,
     private val mapper: BackupMapper,
     private val backupRepo: BackupRepository
-    ): AndroidViewModel(app), LifecycleObserver{
+) : AndroidViewModel(app) {
 
     private val _backupList = BaseLiveData<List<BackupVto>>()
     val backupList = _backupList.asLiveData()
@@ -26,24 +28,20 @@ class BackupViewModel @ViewModelInject constructor(
     private val _backupFilePath = EventLiveData<Uri>()
     val backupFilePath = _backupFilePath.asLiveData()
 
+    init {
+        observeBackupLists()
+    }
 
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun onCreate(){
-        viewModelScope.launch (Dispatchers.IO){
-
-            backupRepo.getBackupAll().collect {list ->
-
-                val backupVtoList = list.map {  mapper.mapToBackupVto(it) }
-
-                _backupList post backupVtoList
+    private fun observeBackupLists() {
+        viewModelScope.launch(Dispatchers.IO) {
+            backupRepo.getBackupAll().collect {
+                _backupList post it.map(mapper::mapToBackupVto)
             }
-
         }
     }
 
-    fun onBackupItemSelect(id: Int){
-        viewModelScope.launch(Dispatchers.IO){
+    fun onBackupItemSelect(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
             val backupEnt = backupRepo.getBackupByID(id).first()
 
             val backupFileUri = Uri.parse(backupEnt.filePath)
@@ -52,7 +50,7 @@ class BackupViewModel @ViewModelInject constructor(
         }
     }
 
-    fun setImportUri(uri: Uri){
+    fun setImportUri(uri: Uri) {
         _backupFilePath post event(uri)
     }
 }

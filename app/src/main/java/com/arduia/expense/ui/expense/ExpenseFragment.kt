@@ -74,7 +74,6 @@ class ExpenseFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        addLifecycleObserver()
         observeIsSelectedMode()
         observeDetailDataSelectEvent()
         observeDeleteEvent()
@@ -90,9 +89,6 @@ class ExpenseFragment : Fragment() {
         unlockNavDrawer()
     }
 
-    private fun addLifecycleObserver(){
-        lifecycle.addObserver(viewModel)
-    }
 
     private fun unlockNavDrawer(){
         (requireActivity() as? NavigationDrawer)?.unlockDrawer()
