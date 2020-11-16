@@ -55,11 +55,7 @@ class OnBoardingConfigFragment : Fragment() {
         binding.vpConfig.isUserInputEnabled = false
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         binding.btnContinue.setOnClickListener {
-            binding.vpConfig.currentItem  = 1
-            binding.btnContinue.text = "Continue"
-            binding.btnContinue.setOnClickListener {
-                viewModel.finishedConfig()
-            }
+           viewModel.continued()
         }
     }
 
@@ -67,6 +63,19 @@ class OnBoardingConfigFragment : Fragment() {
         viewModel.onRestart.observe(viewLifecycleOwner, EventObserver{
             restartActivity()
         })
+        viewModel.onContinued.observe(viewLifecycleOwner,EventObserver{
+            onChooseCurrency()
+        })
+    }
+
+    private fun onChooseCurrency(){
+        with(binding){
+            vpConfig.currentItem = 1
+            btnContinue.text = getString(R.string.continue_home)
+            btnContinue.setOnClickListener {
+                viewModel.finishedConfig()
+            }
+        }
     }
 
     private fun restartActivity() {

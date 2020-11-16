@@ -37,9 +37,9 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
         updateLanguages()
     }
 
-    fun selectLang(id: String) {
+    fun selectLang(lang: LanguageVto) {
         viewModelScope.launch(Dispatchers.IO){
-            settingRepo.setSelectedLanguage(id)
+            settingRepo.setSelectedLanguage(lang.id)
         }
     }
 

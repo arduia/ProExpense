@@ -12,7 +12,7 @@ import com.arduia.expense.databinding.FragChooseLanguageBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ChooseLanguageFragment: Fragment(){
+class ChooseLanguageFragment : Fragment() {
 
     private lateinit var binding: FragChooseLanguageBinding
 
@@ -35,21 +35,19 @@ class ChooseLanguageFragment: Fragment(){
         setupViewModel()
     }
 
-    private fun setupView(){
+    private fun setupView() {
         adapter = LangListAdapter(layoutInflater)
         binding.rvLanguages.adapter = adapter
         binding.rvLanguages.itemAnimator = null
         binding.searchBox.edtSearch.addTextChangedListener {
-            if(it==null) return@addTextChangedListener
+            if (it == null) return@addTextChangedListener
             viewModel.searchLang(it.toString())
         }
-        adapter.setOnItemClickListener {
-            viewModel.selectLang(it.id)
-        }
+        adapter.setOnItemClickListener(viewModel::selectLang)
     }
 
-    private fun setupViewModel(){
-        viewModel.language.observe(viewLifecycleOwner,adapter::submitList)
+    private fun setupViewModel() {
+        viewModel.language.observe(viewLifecycleOwner, adapter::submitList)
     }
 
 }

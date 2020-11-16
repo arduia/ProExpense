@@ -17,10 +17,17 @@ class OnBoardingConfigViewModel @ViewModelInject constructor(private val setting
     private val _onRestart = EventLiveData<Unit>()
     val onRestart get() = _onRestart.asLiveData()
 
+    private val _onContinued = EventLiveData<Unit>()
+    val onContinued get() = _onContinued.asLiveData()
+
     fun finishedConfig(){
         viewModelScope.launch(Dispatchers.IO){
             settingRepo.setFirstUser(false)
             _onRestart post EventUnit
         }
+    }
+
+    fun continued(){
+        _onContinued post EventUnit
     }
 }

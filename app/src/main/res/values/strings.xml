@@ -107,6 +107,9 @@
     <string name="import_data">Import</string>
 
     <string name="choose_currency">Choose Currency:</string>
+    <string name="search">Search</string>
+    <string name="no_item">No Items</string>
+    <string name="continue_home">Continue</string>
 
 </resources>
 

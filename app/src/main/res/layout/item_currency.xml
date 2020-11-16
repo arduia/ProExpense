@@ -6,49 +6,64 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linear_currency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <TextView
+            android:id="@+id/tv_symbol"
+            style="?textAppearanceBody1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/grid_2"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_weight="4"
+            android:textStyle="bold"
+            android:textAlignment="textStart"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_currency"
+            tools:text="$" />
 
         <TextView
             android:id="@+id/tv_currency"
             style="?textAppearanceBody1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/imv_selected"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@id/tv_symbol"
             android:layout_marginVertical="@dimen/grid_3"
-            android:layout_marginEnd="@dimen/grid_3"
-            android:layout_marginStart="@dimen/grid_3"
+            android:layout_weight="5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="@dimen/grid_1"
+            app:layout_constraintEnd_toStartOf="@+id/imv_selected"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             tools:text="United State Dollar" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imv_selected"
             android:layout_width="@dimen/standard_icon_size"
             android:layout_height="@dimen/standard_icon_size"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
             android:layout_marginTop="@dimen/grid_2"
             android:layout_marginEnd="@dimen/grid_3"
-            android:visibility="invisible"
+            android:layout_weight="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:scaleType="centerInside"
+            android:visibility="visible"
             app:srcCompat="@drawable/ic_done"
+            android:layout_marginVertical="@dimen/grid_2"
             app:tint="?colorPrimary" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_symbol"
-            tools:text="$"
-            style="?textAppearanceBody1"
-            android:textStyle="bold"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/grid_3"
-            android:layout_marginTop="@dimen/grid_3"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="@dimen/grid_3"/>
-    </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
