@@ -108,7 +108,6 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        addLifecycleObserver()
         observeDataInsertedEvent()
         observeDataUpdatedEvent()
         observeEntryModeEvent()
@@ -150,10 +149,6 @@ class ExpenseEntryFragment : Fragment() {
         viewBinding.btnEntryClose.setOnClickListener {
             backToPreviousFragment()
         }
-    }
-
-    private fun addLifecycleObserver() {
-        lifecycle.addObserver(viewModel)
     }
 
     private fun observeSelectedCategoryState() {

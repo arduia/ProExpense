@@ -86,12 +86,8 @@ class BackupFragment: NavBaseFragment(){
     }
 
     private fun setupViewModel(){
-
-        lifecycle.addObserver(viewModel)
-
         viewModel.backupList.observe(viewLifecycleOwner, Observer { list ->
             showBackupList(list)
-
             when(list.isEmpty()){
                 true -> showExportButton()
                 false -> hideExportButton()

@@ -3,6 +3,7 @@ package com.arduia.expense.ui.splash
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
@@ -14,7 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @ViewModelInject
-    constructor(private val settingsRepository: SettingsRepository): ViewModel(){
+constructor(
+    private val settingsRepository: SettingsRepository,
+    private val currencyRep: CurrencyRepository
+) : ViewModel() {
 
     private val _firstTimeEvent = EventLiveData<Unit>()
     val firstTimeEvent = _firstTimeEvent.asLiveData()
@@ -27,10 +31,12 @@ class SplashViewModel @ViewModelInject
     init {
         checkUserAndGo()
     }
-    private fun checkUserAndGo(){
+
+    private fun checkUserAndGo() {
         viewModelScope.launch(Dispatchers.IO) {
             delay(splashDuration)
-            when(settingsRepository.getFirstUser().first()){
+            updateCache()
+            when (settingsRepository.getFirstUser().first()) {
                 true -> {
                     settingsRepository.setSelectedLanguage("en")
                     _firstTimeEvent.postValue(EventUnit)
@@ -38,6 +44,11 @@ class SplashViewModel @ViewModelInject
                 false -> _normalUserEvent.postValue(EventUnit)
             }
         }
+    }
+
+    private suspend fun updateCache() {
+        val selectedCurrency = settingsRepository.getSelectedCurrencyNumber().first()
+        currencyRep.setSelectedCacheCurrency(selectedCurrency)
     }
 
 }

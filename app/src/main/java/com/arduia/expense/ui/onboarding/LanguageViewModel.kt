@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.language
+package com.arduia.expense.ui.onboarding
 
 
 import androidx.hilt.lifecycle.ViewModelInject

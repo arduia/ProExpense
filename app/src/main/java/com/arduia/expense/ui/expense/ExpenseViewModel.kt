@@ -18,7 +18,7 @@ import javax.inject.Singleton
 class ExpenseViewModel @ViewModelInject constructor(
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository
-) : ViewModel(), LifecycleObserver {
+) : ViewModel() {
 
 
     private val _isDeleteMode = BaseLiveData<Boolean>()

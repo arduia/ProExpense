@@ -73,8 +73,6 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
     }

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@android:color/white">
+    android:background="?colorSurface">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imv_app"
@@ -17,7 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.2" />
+        android:layout_marginTop="@dimen/grid_3"
+        app:layout_constraintVertical_bias="0" />
 
     <TextView
         android:id="@+id/tv_welcome"
@@ -30,35 +30,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imv_app" />
 
-    <TextView
-        android:id="@+id/tv_choose_lang"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/grid_3"
-        android:layout_marginTop="@dimen/grid_4"
-        android:text="@string/choose_language"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_languages"
+    <androidx.viewpager2.widget.ViewPager2
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/grid_3"
-        android:clipToPadding="false"
-        android:orientation="vertical"
-        android:overScrollMode="never"
-        android:paddingBottom="80dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/vp_config"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_choose_lang"
-        app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
-        tools:listitem="@layout/item_language" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_welcome"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_continue"
@@ -67,7 +47,7 @@
         android:layout_marginStart="@dimen/grid_3"
         android:layout_marginEnd="@dimen/grid_3"
         android:layout_marginBottom="@dimen/grid_3"
-        android:text="Continue"
+        android:text="@string/next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -35,7 +35,7 @@
         android:layout_height="300dp"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintHeight_max="300dp"
-        android:id="@+id/rv_languages"
+        android:id="@+id/rv_currencies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

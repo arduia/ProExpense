@@ -10,19 +10,20 @@ import androidx.lifecycle.Observer
 import com.arduia.expense.databinding.FragSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.LanguageProvider
-import com.arduia.expense.ui.common.LanguageProviderImpl
-import com.arduia.expense.ui.language.LanguageDialogFragment
+import com.arduia.expense.ui.onboarding.LanguageDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment: NavBaseFragment(){
 
-    private lateinit var viewBinding: FragSettingsBinding
+    private lateinit var binding: FragSettingsBinding
 
-    private var languageChooseDialog: LanguageDialogFragment? = null
+    private var languageChooseDialog: ChooseLanguageDialog? = null
 
     private val viewModel by viewModels<SettingsViewModel>()
+
+    private var currencyDialog: ChooseCurrencyDialog? = null
 
     @Inject
     lateinit var languageProvider: LanguageProvider
@@ -32,29 +33,33 @@ class SettingsFragment: NavBaseFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding =  FragSettingsBinding.inflate(layoutInflater, container, false)
 
-        viewBinding =  FragSettingsBinding.inflate(layoutInflater, container, false)
-
-        return viewBinding.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lifecycle.addObserver(viewModel)
         setupView()
         setupViewModel()
     }
 
     private fun setupView(){
 
-        viewBinding.btnDrawerOpen.setOnClickListener{
+        binding.tbSettings.setNavigationOnClickListener {
             navigationDrawer?.openDrawer()
         }
 
-        viewBinding.flLanguage.setOnClickListener {
-            languageChooseDialog = LanguageDialogFragment()
+        binding.flLanguage.setOnClickListener {
+            currencyDialog?.dismiss()
+            languageChooseDialog = ChooseLanguageDialog()
             languageChooseDialog?.show(parentFragmentManager, LanguageDialogFragment.TAG)
+        }
+
+        binding.flCurrency.setOnClickListener {
+            currencyDialog?.dismiss()
+            currencyDialog = ChooseCurrencyDialog()
+            currencyDialog?.show(childFragmentManager)
         }
 
     }
@@ -62,8 +67,10 @@ class SettingsFragment: NavBaseFragment(){
     private fun setupViewModel(){
         viewModel.selectedLanguage.observe(viewLifecycleOwner, Observer {
             val languageVto = languageProvider.getLanguageVtoByID(it)
-            viewBinding.imvLanguage.setImageResource(languageVto.flag)
+            binding.imvLanguage.setImageResource(languageVto.flag)
         })
+
+        viewModel.currencyValue.observe(viewLifecycleOwner, binding.tvCurrencyValue::setText)
 
     }
 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?colorSurface">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imv_drop_close"
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/grid_3"
+        android:layout_marginEnd="@dimen/grid_3"
+        android:background="?selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/ic_drop_down" />
+
+    <TextView
+        android:id="@+id/tv_choose_language"
+        style="?textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_3"
+        android:layout_marginEnd="@dimen/grid_2"
+        android:layout_toStartOf="@id/imv_drop_close"
+        android:text="@string/choose_language" />
+
+    <com.arduia.expense.ui.custom.MaterialSearchBox
+        android:id="@+id/search_box"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/tv_choose_language"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_3"
+        app:cardBackgroundColor="@color/gray_200"
+        app:cornerRadius="@dimen/grid_1"
+        app:hint="@string/search" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_languages"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@id/search_box"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/grid_3"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/grid_3"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_language" />
+
+    <Button
+        android:id="@+id/btn_restart"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_button"
+        android:layout_alignBottom="@id/rv_languages"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="@dimen/grid_3"
+        android:layout_marginBottom="@dimen/grid_2"
+        android:text="@string/restart" />
+</RelativeLayout>
