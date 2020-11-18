@@ -6,10 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="@dimen/size_radius"
-    tools:layout_marginBottom="2dp"
-    tools:layout_marginEnd="@dimen/grid_3"
-    tools:layout_marginStart="@dimen/grid_3"
-    tools:layout_marginTop="2dp">
+    tools:layout_marginBottom="2dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,22 +16,22 @@
             android:id="@+id/cv_category"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            app:srcCompat="@drawable/ic_household"
-            app:shapeAppearance="@style/ShapeAppearanceOverlay.ProExpense.Circular"
-            android:layout_alignParentStart = "true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            app:cardBackgroundColor="#b3e5fc"
             android:layout_marginStart="@dimen/grid_3"
             android:layout_marginTop="@dimen/grid_2"
-            android:layout_marginBottom="@dimen/grid_2">
+            android:layout_marginBottom="@dimen/grid_2"
+            app:cardBackgroundColor="#b3e5fc"
+            app:shapeAppearance="@style/ShapeAppearanceOverlay.ProExpense.Circular"
+            app:srcCompat="@drawable/ic_household">
+
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imv_category"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_alignParentStart="true"
                 android:layout_gravity="center"
-                android:id="@+id/imv_category"
-                app:srcCompat="@drawable/ic_household"
-                android:layout_alignParentStart = "true"
-                />
+                app:srcCompat="@drawable/ic_household" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -44,8 +41,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/cv_category"
-            android:textAlignment="viewStart"
-            tools:text="Education"
             android:layout_marginStart="@dimen/grid_3"
             android:layout_marginTop="@dimen/grid_2"
             android:layout_marginEnd="@dimen/grid_2"
@@ -53,7 +48,9 @@
             android:layout_toEndOf="@id/cv_category"
             android:ellipsize="end"
             android:maxLength="20"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:textAlignment="viewStart"
+            tools:text="Education" />
 
         <TextView
             android:id="@+id/tv_date"
@@ -70,12 +67,12 @@
             style="?attr/textAppearanceBody1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="900 MMK"
-            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/grid_3"
             android:maxLength="15"
-            android:textColor="@color/blue_light_500" />
+            android:textColor="@color/blue_light_500"
+            tools:text="900 MMK" />
 
     </RelativeLayout>
 

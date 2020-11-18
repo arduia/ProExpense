@@ -12,6 +12,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arduia.core.extension.px
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
@@ -105,8 +106,8 @@ class ExpenseFragment : Fragment() {
         viewBinding.rvExpense.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.rvExpense.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.grid_1).toInt(),
-                resources.getDimension(R.dimen.grid_2).toInt()
+                spaceSide = requireContext().px(16),
+                spaceHeight = requireContext().px(4),
             )
         )
         ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
