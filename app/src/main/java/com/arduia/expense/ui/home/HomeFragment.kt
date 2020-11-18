@@ -102,7 +102,7 @@ class HomeFragment : NavBaseFragment() {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
 
-        viewBinding.btnMenuOpen.setOnClickListener { navigationDrawer?.openDrawer() }
+        viewBinding.toolbar.setNavigationOnClickListener { navigationDrawer?.openDrawer() }
 
         viewBinding.btnMoreExpenses.setOnClickListener {
             findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)

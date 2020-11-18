@@ -1,172 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/backgroundColor"
     android:id="@+id/ml_home"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/layout_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_menu_open"
-        style="?attr/iconButtonStyle"
-        android:layout_width="@dimen/standard_icon_size"
-        android:layout_height="@dimen/standard_icon_size"
-        android:layout_marginStart="@dimen/grid_3"
-        android:src="@drawable/ic_menu"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_home"
-        style="?attr/textAppearanceHeadline6"
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_home"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/grid_3"
-        android:text="@string/home"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/btn_menu_open"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:liftOnScroll="true"
+        android:background="?colorSurface">
 
-    <TextView
-        android:id="@+id/tv_recent"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/grid_3"
-        android:layout_marginTop="@dimen/grid_3"
-        android:text="@string/recents"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/rv_recent"
-        app:layout_constraintTop_toBottomOf="@id/cd_value" />
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_more_expenses"
-        style="?attr/iconButtonStyle"
-        android:layout_width="@dimen/standard_icon_size"
-        android:layout_height="@dimen/standard_icon_size"
-        android:src="@drawable/ic_nav_next"
-        android:tint="@color/blue_light_500"
-        app:layout_constraintBottom_toBottomOf="@id/dv_recent"
-        app:layout_constraintEnd_toEndOf="@id/dv_recent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_recent" />
-
-    <View
-        android:id="@+id/dv_recent"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/grid_3"
-        android:layout_marginEnd="@dimen/grid_3"
-        android:background="@android:drawable/divider_horizontal_bright"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/rv_recent"
-        app:layout_constraintStart_toStartOf="@id/tv_recent"
-        app:layout_constraintTop_toBottomOf="@id/bl_recent"
-        app:layout_constraintVertical_bias="0" />
-
-    <View
-        android:id="@+id/bl_recent"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="@dimen/grid_2"
-        android:background="@color/blue_light_500"
-        app:layout_constraintEnd_toEndOf="@+id/tv_recent"
-        app:layout_constraintStart_toStartOf="@id/tv_recent"
-        app:layout_constraintTop_toBottomOf="@id/tv_recent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:fadeScrollbars="true"
-        android:overScrollMode="never"
-        android:paddingTop="@dimen/grid_2"
-        android:paddingBottom="80dp"
-        android:animateLayoutChanges="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bl_recent"
-        app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
-        tools:listitem="@layout/item_expense" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cd_value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/grid_3"
-        android:layout_marginTop="@dimen/grid_2"
-        android:layout_marginEnd="@dimen/grid_3"
-        android:elevation="3dp"
-        app:cardBackgroundColor="@color/blue_light_500"
-        app:cardCornerRadius="@dimen/size_radius"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintWidth_max="@dimen/width_layout_min">
-
-        <RelativeLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?colorSurface"
+            app:navigationIcon="@drawable/ic_menu"
+            app:title="@string/home" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-            <TextView
-                android:id="@+id/tv_spent_week"
-                style="?attr/textAppearanceSubtitle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="@dimen/grid_3"
-                android:layout_marginTop="@dimen/grid_3"
-                android:text="@string/outcome_for_week"
-                android:textColor="@color/white" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-            <TextView
-                android:id="@+id/tv_total_value"
-                style="?attr/textAppearanceHeadline4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_spent_week"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/tv_recent"
+            style="?attr/textAppearanceSubtitle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_3"
+            android:text="@string/recents"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@id/rv_recent"
+            app:layout_constraintTop_toBottomOf="@id/cd_value" />
 
-            <TextView
-                android:id="@+id/tv_currency"
-                style="?attr/textAppearanceOverline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/tv_total_value"
-                android:layout_toEndOf="@id/tv_total_value"
-                android:text="@string/mmk"
-                android:textColor="@android:color/white" />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_more_expenses"
+            style="?attr/iconButtonStyle"
+            android:layout_width="@dimen/standard_icon_size"
+            android:layout_height="@dimen/standard_icon_size"
+            android:src="@drawable/ic_nav_next"
+            android:tint="@color/blue_light_500"
+            app:layout_constraintBottom_toBottomOf="@id/dv_recent"
+            app:layout_constraintEnd_toEndOf="@id/dv_recent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_recent" />
 
-            <com.arduia.graph.SpendGraph
-                android:id="@+id/img_graph"
+        <View
+            android:id="@+id/dv_recent"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginEnd="@dimen/grid_3"
+            android:background="@android:drawable/divider_horizontal_bright"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/rv_recent"
+            app:layout_constraintStart_toStartOf="@id/tv_recent"
+            app:layout_constraintTop_toBottomOf="@id/bl_recent"
+            app:layout_constraintVertical_bias="0" />
+
+        <View
+            android:id="@+id/bl_recent"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="@dimen/grid_2"
+            android:background="@color/blue_light_500"
+            app:layout_constraintEnd_toEndOf="@+id/tv_recent"
+            app:layout_constraintStart_toStartOf="@id/tv_recent"
+            app:layout_constraintTop_toBottomOf="@id/tv_recent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_recent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:animateLayoutChanges="false"
+            android:clipToPadding="false"
+            android:fadeScrollbars="true"
+            android:overScrollMode="never"
+            android:paddingTop="@dimen/grid_2"
+            android:paddingBottom="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bl_recent"
+            app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
+            tools:listitem="@layout/item_expense" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cd_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginEnd="@dimen/grid_3"
+            android:elevation="3dp"
+            app:cardBackgroundColor="@color/blue_light_500"
+            app:cardCornerRadius="@dimen/size_radius"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/width_layout_min">
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_below="@id/tv_total_value"
-                android:layout_centerHorizontal="true"
-                android:padding="4dp" />
+                android:layout_height="wrap_content">
 
-        </RelativeLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:id="@+id/tv_spent_week"
+                    style="?attr/textAppearanceSubtitle1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="@dimen/grid_3"
+                    android:layout_marginTop="@dimen/grid_3"
+                    android:text="@string/outcome_for_week"
+                    android:textColor="@color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/tv_total_value"
+                    style="?attr/textAppearanceHeadline4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_spent_week"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/tv_currency"
+                    style="?attr/textAppearanceOverline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@id/tv_total_value"
+                    android:layout_toEndOf="@id/tv_total_value"
+                    android:text="@string/mmk"
+                    android:textColor="@android:color/white" />
+
+                <com.arduia.graph.SpendGraph
+                    android:id="@+id/img_graph"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:layout_below="@id/tv_total_value"
+                    android:layout_centerHorizontal="true"
+                    android:padding="4dp" />
+
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

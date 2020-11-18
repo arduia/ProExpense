@@ -88,9 +88,9 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupCalendarButton(){
-        viewBinding.btnCalendar.setOnClickListener {
-            showDatePicker()
-        }
+//        viewBinding.btnCalendar.setOnClickListener {
+//            showDatePicker()
+//        }
     }
 
     private fun showDatePicker(){
@@ -146,7 +146,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupEntryCloseButton() {
-        viewBinding.btnEntryClose.setOnClickListener {
+        viewBinding.toolbar.setNavigationOnClickListener {
             backToPreviousFragment()
         }
     }
@@ -229,7 +229,7 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun observeDate(){
         viewModel.selectedDate.observe(viewLifecycleOwner){
-            viewBinding.tvDate.text = dateFormat.format(Date(it))
+            viewBinding.toolbar.subtitle = dateFormat.format(Date(it))
         }
     }
 
@@ -288,7 +288,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeToUpdateMode() = with(viewBinding) {
-        tvEntryTitle.text = getString(R.string.update_data)
+        toolbar.title = getString(R.string.update_data)
         btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
@@ -297,7 +297,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeToSaveMode() = with(viewBinding) {
-        tvEntryTitle.text = getString(R.string.expense_entry)
+        toolbar.title = getString(R.string.expense_entry)
         btnSave.text = getString(R.string.save)
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()

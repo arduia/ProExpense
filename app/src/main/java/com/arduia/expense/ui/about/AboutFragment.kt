@@ -71,7 +71,7 @@ class AboutFragment : NavBaseFragment() {
     }
 
     private fun setupNavOpenButton() {
-        viewBinding.btnDrawerOpen.setOnClickListener {
+        viewBinding.toolbar.setNavigationOnClickListener {
             navigationDrawer?.openDrawer()
         }
     }

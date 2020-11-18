@@ -59,17 +59,17 @@ class BackupFragment: NavBaseFragment(){
             showExportDialog()
         }
 
-        viewBinding.btnMenuOpen.setOnClickListener{
-            navigationDrawer?.openDrawer()
-        }
-
-        viewBinding.btnExportOpen.setOnClickListener {
-            showExportDialog()
-        }
-
-        viewBinding.btnImportOpen.setOnClickListener {
-            openImportFolder()
-        }
+//        viewBinding.btnMenuOpen.setOnClickListener{
+//            navigationDrawer?.openDrawer()
+//        }
+//
+//        viewBinding.btnExportOpen.setOnClickListener {
+//            showExportDialog()
+//        }
+//
+//        viewBinding.btnImportOpen.setOnClickListener {
+//            openImportFolder()
+//        }
 
         backupListAdapter.setItemClickListener { backupItem ->
             viewModel.onBackupItemSelect(id = backupItem.id)

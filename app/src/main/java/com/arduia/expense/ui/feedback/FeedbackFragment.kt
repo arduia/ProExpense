@@ -37,7 +37,7 @@ class FeedbackFragment : NavBaseFragment() {
 
     private fun setupView() {
 
-        viewBinding.btnDrawerOpen.setOnClickListener {
+        viewBinding.toolbar.setNavigationOnClickListener {
             (requireActivity() as? NavigationDrawer)?.openDrawer()
         }
 

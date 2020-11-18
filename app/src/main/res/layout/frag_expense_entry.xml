@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,78 +9,29 @@
     android:orientation="vertical"
     tools:background="@android:color/white">
 
-    <RelativeLayout
-        android:id="@+id/tb_entry"
-        android:layout_width="0dp"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_entry"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:liftOnScroll="true">
 
-        <TextView
-            android:id="@+id/tv_entry_title"
-            style="?attr/textAppearanceHeadline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="@dimen/grid_3"
-            android:layout_marginTop="@dimen/grid_2"
-            android:text="@string/expense_entry" />
-
-        <TextView
-            android:id="@+id/tv_date"
-            style="?textAppearanceCaption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_entry_title"
-            android:layout_alignStart="@id/tv_entry_title"
-            tools:text="10/2/2019 2:00 PM" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/btn_calendar"
-            android:scaleType="center"
-            android:background="?selectableItemBackgroundBorderless"
-            android:layout_width="@dimen/standard_icon_size"
-            android:layout_height="@dimen/standard_icon_size"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/grid_2"
-            android:layout_toEndOf="@id/tv_entry_title"
-            app:srcCompat="@drawable/ic_calendar" />
-
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_entry_close"
-            style="?attr/iconButtonStyle"
-            android:layout_width="@dimen/standard_icon_size"
-            android:layout_height="@dimen/standard_icon_size"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/grid_3"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/ic_close" />
-
-        <View
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/tv_date"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="@dimen/grid_2"
-            android:background="@android:drawable/divider_horizontal_bright" />
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:background="?colorSurface"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="@string/expense_entry"
+            tools:subtitle="Hello">
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/sv_entry"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_entry"
-        app:layout_constraintVertical_bias="1.0"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         app:layout_constraintWidth_max="@dimen/with_layout_min_margin">
 
         <RelativeLayout
@@ -95,7 +46,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/grid_3"
-                android:layout_marginTop="@dimen/grid_2"
+                android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginEnd="@dimen/grid_3"
                 android:textAlignment="viewStart">
 
@@ -207,4 +158,4 @@
 
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
