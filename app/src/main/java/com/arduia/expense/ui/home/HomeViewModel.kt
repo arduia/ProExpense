@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.home
+    package com.arduia.expense.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -20,9 +20,10 @@ class HomeViewModel @ViewModelInject constructor(
     private val settingRepo: SettingsRepository,
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository,
-    private val calculator: ExpenseRateCalculator) : ViewModel(){
+    private val calculator: ExpenseRateCalculator
+) : ViewModel() {
 
-    private val _recentData =  BaseLiveData<List<ExpenseVto>>()
+    private val _recentData = BaseLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData.asLiveData()
 
     private val _detailData = EventLiveData<ExpenseDetailsVto>()
@@ -31,7 +32,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val _totalCost = BaseLiveData<Float>()
     val totalCost get() = _totalCost.asLiveData()
 
-    private val _costRates = BaseLiveData<Map<Int,Int>>()
+    private val _costRates = BaseLiveData<Map<Int, Int>>()
     val costRate get() = _costRates.asLiveData()
 
     private val _onExpenseItemDeleted = EventLiveData<Unit>()
@@ -44,28 +45,28 @@ class HomeViewModel @ViewModelInject constructor(
         init()
     }
 
-    fun selectItemForDetail(selectedItem: ExpenseVto){
-        viewModelScope.launch(Dispatchers.IO){
+    fun selectItemForDetail(selectedItem: ExpenseVto) {
+        viewModelScope.launch(Dispatchers.IO) {
             val item = repo.getExpense(selectedItem.id).first()
             val detailData = mapper.mapToDetailVto(item)
             _detailData post event(detailData)
         }
     }
 
-    fun deleteExpense(id: Int){
+    fun deleteExpense(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             repo.deleteExpenseById(id)
             _onExpenseItemDeleted post EventUnit
         }
     }
 
-    private fun init(){
+    private fun init() {
         observeCurrencySymbol()
         observeRecentExpenses()
         observeWeekExpenses()
     }
 
-    private fun observeCurrencySymbol(){
+    private fun observeCurrencySymbol() {
         settingRepo.getSelectedCurrencyNumber()
             .flowOn(Dispatchers.IO)
             .onEach {
@@ -75,37 +76,29 @@ class HomeViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun observeRecentExpenses(){
-        viewModelScope.launch(Dispatchers.IO){
-            repo.getRecentExpense().collect(recentFlowCollector)
+    private fun observeRecentExpenses() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.getRecentExpense()
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    _recentData post it.map(mapper::mapToVto)
+                }
         }
     }
 
-    private fun observeWeekExpenses(){
-        viewModelScope.launch(Dispatchers.IO){
-            repo.getWeekExpenses().collect(weekFlowCollector)
+    private fun observeWeekExpenses() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.getWeekExpenses()
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    val totalAmount = it.filter { expenseEnt ->
+                        expenseEnt.category != ExpenseCategory.INCOME
+                    }.map { expenseEnt -> expenseEnt.amount }.sum()
+                    _totalCost post totalAmount
+                    calculator.setWeekExpenses(it)
+                    _costRates post calculator.getRates()
+                }
         }
     }
 
-    private val weekFlowCollector : suspend (List<ExpenseEnt>) -> Unit = {
-
-        val totalAmount = it.filter { expenseEnt ->
-            //OutCome and Income Changes
-            expenseEnt.category != ExpenseCategory.INCOME
-        }.map { expenseEnt -> expenseEnt.amount }.sum()
-
-        _totalCost.postValue(totalAmount)
-
-        calculator.setWeekExpenses(it)
-
-        _costRates post calculator.getRates()
-    }
-
-    private val recentFlowCollector : suspend (List<ExpenseEnt>) -> Unit = {
-                val recentExpenses =
-                    it.map { trans ->
-                        this@HomeViewModel.mapper.mapToVto(trans)
-                    }
-                _recentData.postValue(recentExpenses)
-        }
 }

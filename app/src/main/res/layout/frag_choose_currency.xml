@@ -25,7 +25,12 @@
             android:layout_marginTop="@dimen/grid_3"
             android:text="@string/choose_currency" />
 
-        <include layout="@layout/search_box" android:id="@+id/search_box"/>
+        <com.arduia.expense.ui.custom.MaterialSearchBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_box"
+            android:layout_margin="@dimen/grid_3"
+            />
     </LinearLayout>
 
 

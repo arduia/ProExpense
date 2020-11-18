@@ -39,9 +39,8 @@ class ChooseLanguageFragment : Fragment() {
         adapter = LangListAdapter(layoutInflater)
         binding.rvLanguages.adapter = adapter
         binding.rvLanguages.itemAnimator = null
-        binding.searchBox.edtSearch.addTextChangedListener {
-            if (it == null) return@addTextChangedListener
-            viewModel.searchLang(it.toString())
+        binding.searchBox.setOnSearchTextChangeListener {
+            viewModel.searchLang(it)
         }
         adapter.setOnItemClickListener(viewModel::selectLang)
     }

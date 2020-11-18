@@ -7,9 +7,9 @@
     tools:background="@color/white">
 
     <LinearLayout
+        android:id="@+id/linear_search"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/linear_search"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,22 +24,27 @@
             android:layout_marginTop="@dimen/grid_3"
             android:text="@string/choose_language" />
 
-        <include layout="@layout/search_box" android:id="@+id/search_box"/>
+        <com.arduia.expense.ui.custom.MaterialSearchBox
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/search_box"
+            android:layout_margin="@dimen/grid_3" />
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_languages"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:itemCount="3"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="vertical"
-        android:clipToPadding="false"
-        android:paddingBottom="30dp"
         android:layout_marginBottom="@dimen/grid_3"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingBottom="30dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_language"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linear_search"
-        android:id="@+id/rv_languages"/>
+        tools:itemCount="3"
+        tools:listitem="@layout/item_language" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

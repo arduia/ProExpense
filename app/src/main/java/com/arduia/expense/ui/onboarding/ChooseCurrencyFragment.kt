@@ -50,9 +50,8 @@ class ChooseCurrencyFragment : Fragment() {
         binding.rvCurrencies.adapter = adapter
         binding.rvCurrencies.addItemDecoration(spaceDeco)
         binding.rvCurrencies.itemAnimator = null
-        binding.searchBox.edtSearch.addTextChangedListener {
-            if (it == null) return@addTextChangedListener
-            viewModel.searchCurrency(it.toString())
+        binding.searchBox.setOnSearchTextChangeListener {
+            viewModel.searchCurrency(it)
         }
     }
 
