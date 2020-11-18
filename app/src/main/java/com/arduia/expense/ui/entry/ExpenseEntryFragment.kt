@@ -1,4 +1,4 @@
-    package com.arduia.expense.ui.entry
+package com.arduia.expense.ui.entry
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -84,22 +84,16 @@ class ExpenseEntryFragment : Fragment() {
         setupEntryCloseButton()
         setupEntryAmountEditText()
         setupLockButton()
-        setupCalendarButton()
     }
 
-    private fun setupCalendarButton(){
-//        viewBinding.btnCalendar.setOnClickListener {
-//            showDatePicker()
-//        }
-    }
-
-    private fun showDatePicker(){
+    private fun showDatePicker() {
         MaterialDatePicker.Builder.datePicker()
             .build().apply {
                 addOnPositiveButtonClickListener(viewModel::selectDateTime)
             }
             .show(childFragmentManager, "DatePicker")
-        }
+    }
+
     private fun setupLockButton() {
         viewBinding.cvLock.setOnClickListener {
             viewModel.invertLockMode()
@@ -132,6 +126,12 @@ class ExpenseEntryFragment : Fragment() {
                 true
             )
         )
+        viewBinding.toolbar.setOnMenuItemClickListener menu@{
+            if (it.itemId == R.id.calendar) {
+                showDatePicker()
+            }
+            return@menu true
+        }
     }
 
     private fun setupEntryAmountEditText() {
@@ -163,15 +163,15 @@ class ExpenseEntryFragment : Fragment() {
         })
     }
 
-    private fun observeOnNext(){
-        viewModel.onNext.observe(viewLifecycleOwner, EventObserver{
+    private fun observeOnNext() {
+        viewModel.onNext.observe(viewLifecycleOwner, EventObserver {
             cleanUi()
             focusOnName()
             showItemSaved()
         })
     }
 
-    private fun showItemSaved(){
+    private fun showItemSaved() {
         mainHost.showSnackMessage("Saved!")
     }
 
@@ -203,15 +203,15 @@ class ExpenseEntryFragment : Fragment() {
         }
     }
 
-    private fun cleanUi(){
-        with(viewBinding){
+    private fun cleanUi() {
+        with(viewBinding) {
             edtAmount.setText("")
             edtName.setText("")
             edtNote.setText("")
         }
     }
 
-    private fun focusOnName(){
+    private fun focusOnName() {
         viewBinding.edtName.requestFocus()
     }
 
@@ -227,8 +227,8 @@ class ExpenseEntryFragment : Fragment() {
         })
     }
 
-    private fun observeDate(){
-        viewModel.selectedDate.observe(viewLifecycleOwner){
+    private fun observeDate() {
+        viewModel.selectedDate.observe(viewLifecycleOwner) {
             viewBinding.toolbar.subtitle = dateFormat.format(Date(it))
         }
     }

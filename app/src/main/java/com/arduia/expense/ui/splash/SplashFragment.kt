@@ -57,4 +57,5 @@ class SplashFragment : Fragment() {
         super.onDestroyView()
         requireActivity().window.statusBarColor = Color.TRANSPARENT
     }
+
 }

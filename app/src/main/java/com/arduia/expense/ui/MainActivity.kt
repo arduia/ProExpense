@@ -132,6 +132,18 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             override fun onDrawerOpened(drawerView: View) {}
         })
 
+        navController.addOnDestinationChangedListener { _, dest, _ ->
+
+            if (TOP_DESTINATIONS.contains(dest.id)) {
+                viewBinding.dlMain.setDrawerLockMode(
+                    DrawerLayout.LOCK_MODE_UNLOCKED
+                )
+            } else viewBinding.dlMain.setDrawerLockMode(
+                DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+            )
+
+        }
+
         headerBinding.btnClose.setOnClickListener {
             closeDrawer()
         }
@@ -255,6 +267,15 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             val localedContext = newBase.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }
+    }
 
+    companion object {
+        private val TOP_DESTINATIONS = listOf(
+            R.id.dest_home,
+            R.id.dest_backup,
+            R.id.dest_feedback,
+            R.id.dest_about,
+            R.id.dest_settings
+        )
     }
 }

@@ -22,6 +22,7 @@ import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.text.DecimalFormat
 import javax.inject.Inject
 
@@ -62,14 +63,18 @@ class HomeFragment : NavBaseFragment() {
 
     private lateinit var graphAdapter: ExpenseGraphAdapter
 
+    init {
+        Timber.d("LIFE Home Init")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = FragHomeBinding.inflate(layoutInflater, null, false)
 
-       return viewBinding.root
+        viewBinding = FragHomeBinding.inflate(layoutInflater, null, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -129,7 +134,7 @@ class HomeFragment : NavBaseFragment() {
     private fun setupViewModel() {
 
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
-            if(it.isNotEmpty()){
+            if (it.isNotEmpty()) {
                 viewBinding.btnMoreExpenses.visibility = View.VISIBLE
             }
             recentAdapter.submitList(it)
@@ -153,25 +158,25 @@ class HomeFragment : NavBaseFragment() {
             viewBinding.tvTotalValue.text = totalCostFormat.format(it)
         })
 
-        viewModel.costRate.observe(viewLifecycleOwner){
+        viewModel.costRate.observe(viewLifecycleOwner) {
             graphAdapter.expenseMap = it
         }
 
-        viewModel.onExpenseItemDeleted.observe(viewLifecycleOwner, EventObserver{
+        viewModel.onExpenseItemDeleted.observe(viewLifecycleOwner, EventObserver {
             mainHost.showSnackMessage(getString(R.string.item_deleted))
         })
 
-        viewModel.currencySymbol.observe(viewLifecycleOwner){
+        viewModel.currencySymbol.observe(viewLifecycleOwner) {
             viewBinding.tvCurrency.text = it
         }
     }
 
-    private fun onDeleteExpense(item: ExpenseDetailsVto){
+    private fun onDeleteExpense(item: ExpenseDetailsVto) {
         detailDialog?.dismiss()
         viewModel.deleteExpense(item.id)
     }
 
-    private fun navigateEntryFragment(id: Int){
+    private fun navigateEntryFragment(id: Int) {
         val action = HomeFragmentDirections
             .actionDestHomeToDestExpenseEntry(expenseId = id)
         findNavController().navigate(action, entryNavOption)

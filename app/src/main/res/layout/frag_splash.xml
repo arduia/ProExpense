@@ -11,5 +11,4 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         app:srcCompat="@drawable/ic_launcher_foreground" />
-
 </FrameLayout>

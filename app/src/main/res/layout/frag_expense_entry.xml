@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:background="?colorSurface"
             app:navigationIcon="@drawable/ic_back"
+            app:menu="@menu/menu_entry"
             app:title="@string/expense_entry"
             tools:subtitle="Hello">
         </com.google.android.material.appbar.MaterialToolbar>
