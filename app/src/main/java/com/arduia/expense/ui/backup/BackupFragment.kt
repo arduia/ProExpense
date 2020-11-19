@@ -55,29 +55,24 @@ class BackupFragment: NavBaseFragment(){
 
     private fun setupView(){
 
-        viewBinding.btnExport.setOnClickListener {
+        viewBinding.cvExport.setOnClickListener {
             showExportDialog()
         }
 
-//        viewBinding.btnMenuOpen.setOnClickListener{
-//            navigationDrawer?.openDrawer()
-//        }
-//
-//        viewBinding.btnExportOpen.setOnClickListener {
-//            showExportDialog()
-//        }
-//
-//        viewBinding.btnImportOpen.setOnClickListener {
-//            openImportFolder()
-//        }
+        viewBinding.toolbar.setNavigationOnClickListener {
+            navigationDrawer?.openDrawer()
+        }
+        viewBinding.cvImport.setOnClickListener {
+            openImportFolder()
+        }
 
         backupListAdapter.setItemClickListener { backupItem ->
             viewModel.onBackupItemSelect(id = backupItem.id)
         }
 
         //Setup Recycler View
-        viewBinding.rvBackupList.adapter = backupListAdapter
-        viewBinding.rvBackupList.addItemDecoration(
+        viewBinding.rvBackupLogs.adapter = backupListAdapter
+        viewBinding.rvBackupLogs.addItemDecoration(
             MarginItemDecoration(
                 resources.getDimension(R.dimen.grid_1).toInt(),
                 resources.getDimension(R.dimen.grid_2).toInt()
@@ -86,12 +81,8 @@ class BackupFragment: NavBaseFragment(){
     }
 
     private fun setupViewModel(){
-        viewModel.backupList.observe(viewLifecycleOwner, Observer { list ->
+        viewModel.backupList.observe(viewLifecycleOwner, { list ->
             showBackupList(list)
-            when(list.isEmpty()){
-                true -> showExportButton()
-                false -> hideExportButton()
-            }
         })
 
         viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver{ fileUri ->
@@ -127,11 +118,11 @@ class BackupFragment: NavBaseFragment(){
 
 
     private fun hideExportButton(){
-        viewBinding.btnExport.visibility = View.INVISIBLE
+        viewBinding.cvExport.visibility = View.INVISIBLE
     }
 
     private fun showExportButton(){
-        viewBinding.btnExport.visibility = View.VISIBLE
+        viewBinding.cvExport.visibility = View.VISIBLE
     }
 
     private fun showBackupList(list: List<BackupVto>){

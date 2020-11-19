@@ -14,6 +14,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -97,7 +98,6 @@ class ExpenseEntryFragment : Fragment() {
     private fun setupLockButton() {
         viewBinding.cvLock.setOnClickListener {
             viewModel.invertLockMode()
-            mainHost.showSnackMessage("Repeat Mode Changed!")
         }
     }
 
@@ -235,7 +235,6 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun chooseEntryMode() {
 
-        Timber.d("chooseMode")
         val argId = args.expenseId
         val isInvalidId = argId < 0
         if (isInvalidId) {
@@ -246,7 +245,6 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeViewToSelectedMode(mode: ExpenseEntryMode) {
-        Timber.d("changeViewToSelectedMode -> $mode")
         when (mode) {
             ExpenseEntryMode.UPDATE -> changeToUpdateMode()
             ExpenseEntryMode.INSERT -> changeToSaveMode()
@@ -262,7 +260,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun updateCategoryListAfterAnimation() {
-        MainScope().launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
             val duration = resources.getInteger(R.integer.duration_entry_pop_up).toLong()
             delay(duration)
             updateCategoryList()

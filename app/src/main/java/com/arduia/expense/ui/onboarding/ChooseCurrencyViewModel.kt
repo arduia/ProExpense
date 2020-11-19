@@ -59,11 +59,10 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
 
     private fun observeCurrencyLists() {
         currencyRep.getCurrencies()
-            .onEach {
-                if(it is LoadingResult) _isLoading post true
-                else _isLoading post false
-            }
             .flowOn(Dispatchers.IO)
+            .onEach {
+                _isLoading post (it is LoadingResult)
+            }
             .combine(searchKey.asFlow()) { currencyResult, search ->
                 if (currencyResult is Result.Success) {
                     if (search.isEmpty()) {
@@ -74,7 +73,6 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
                 } else currencyResult
             }
             .onEach {
-                Timber.d("onEach ${it.data?.size}")
                 if (it is ErrorResult) {
                     _onError post event(it.exception.message ?: "Error")
                 }
@@ -101,6 +99,5 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
             .onEach(_currencies::postValue)
             .launchIn(viewModelScope)
     }
-
 
 }

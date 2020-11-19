@@ -4,9 +4,7 @@ import com.arduia.expense.data.exception.RepositoryException
 import com.arduia.expense.data.local.CacheDao
 import com.arduia.expense.data.local.CurrencyDao
 import com.arduia.expense.data.local.CurrencyDto
-import com.arduia.expense.model.ErrorResult
-import com.arduia.expense.model.FlowResult
-import com.arduia.expense.model.SuccessResult
+import com.arduia.expense.model.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -27,7 +25,8 @@ class CurrencyRepositoryImpl(
 
     override fun getCurrencies(): FlowResult<List<CurrencyDto>> {
         return currencyListCh.asFlow()
-            .map { SuccessResult(it) }
+            .map { SuccessResult(it) as Result<List<CurrencyDto>>}
+            .onStart { emit(LoadingResult) }
             .catch { e -> ErrorResult(RepositoryException(e)) }
     }
 

@@ -10,12 +10,13 @@ import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.*
 import kotlinx.coroutines.flow.*
 import java.lang.Exception
-import kotlin.Result
 
 
-class BackupRepositoryImpl ( private val appContext: Context,
-                             private val dao: BackupDao,
-                             private val backup: ExcelBackup): BackupRepository{
+class BackupRepositoryImpl(
+    private val appContext: Context,
+    private val dao: BackupDao,
+    private val backup: ExcelBackup
+) : BackupRepository {
 
     override suspend fun insertBackup(item: BackupEnt) {
         dao.insertBackup(item)
@@ -35,13 +36,13 @@ class BackupRepositoryImpl ( private val appContext: Context,
 
     override fun getBackupAll(): FlowResult<List<BackupEnt>> {
         return dao.getBackupAll()
-            .map{ SuccessResult(it)}
-            .catch { e -> ErrorResult(Exception(e))}
+            .map {  SuccessResult(it) }
+            .catch { e -> ErrorResult(Exception(e)) }
     }
 
     override fun getBackupByID(id: Int): FlowResult<BackupEnt> {
         return dao.getBackupByID(id)
-            .map { SuccessResult(it)}
+            .map { SuccessResult(it) }
             .catch { e -> ErrorResult(RepositoryException(e)) }
     }
 
@@ -54,13 +55,13 @@ class BackupRepositoryImpl ( private val appContext: Context,
     override fun getItemCount(uri: Uri): FlowResult<Int> = flow {
         try {
             val contentResolver = appContext.contentResolver
-            val inputStream = contentResolver.openInputStream(uri)?:
-                    throw Exception("Cannot open Input Stream")
+            val inputStream =
+                contentResolver.openInputStream(uri) ?: throw Exception("Cannot open Input Stream")
             val itemCount = backup.itemCount(inputStream)
 
             emit(itemCount)
 
-        }catch (e: BackupException){
+        } catch (e: BackupException) {
             emit(-1)
             return@flow
         }

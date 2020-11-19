@@ -6,6 +6,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.model.Result
+import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.mapping.BackupMapper
 import com.arduia.expense.ui.vto.BackupVto
@@ -13,6 +14,7 @@ import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class BackupViewModel @ViewModelInject constructor(
@@ -35,18 +37,18 @@ class BackupViewModel @ViewModelInject constructor(
         backupRepo.getBackupAll()
             .flowOn(Dispatchers.IO)
             .onEach {
-                if(it !is Result.Success) return@onEach
-                _backupList post it.data.map(mapper::mapToBackupVto)
+                if(it  is Result.Success){
+                    _backupList post it.data.map(mapper::mapToBackupVto)
+                    Timber.d("backupList ${it.data}")
+                }
             }
+            .launchIn(viewModelScope)
     }
 
     fun onBackupItemSelect(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val backupEnt = backupRepo.getBackupByID(id).single().data
-                ?:throw Exception()
-
+            val backupEnt = backupRepo.getBackupByID(id).awaitValueOrError()
             val backupFileUri = Uri.parse(backupEnt.filePath)
-
             _backupFilePath post event(backupFileUri)
         }
     }

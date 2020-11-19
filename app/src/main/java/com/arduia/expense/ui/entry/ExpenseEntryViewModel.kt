@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -150,7 +151,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private fun observeExpenseData(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val result = repo.getExpense(id).single().data ?: return@launch
+                val result = repo.getExpense(id).awaitValueOrError()
                 _selectedDate post result.modifiedDate
                 val dataVto = mapper.mapToUpdateDetailVto(result)
                 _data post dataVto
