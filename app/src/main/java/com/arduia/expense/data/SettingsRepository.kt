@@ -1,18 +1,19 @@
 package com.arduia.expense.data
 
+import com.arduia.expense.model.FlowResult
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository{
 
-    fun getSelectedLanguage(): Flow<String>
+    fun getSelectedLanguage(): FlowResult<String>
 
-    fun setSelectedLanguage(id: String)
+    suspend fun setSelectedLanguage(id: String)
 
-    fun getFirstUser(): Flow<Boolean>
+    fun getFirstUser(): FlowResult<Boolean>
 
-    fun setFirstUser(isFirstUser: Boolean)
+    suspend fun setFirstUser(isFirstUser: Boolean)
 
-    fun getSelectedCurrencyNumber(): Flow<String>
+    fun getSelectedCurrencyNumber(): FlowResult<String>
 
-    fun setSelectedCurrencyNumber(num: String)
+    suspend fun setSelectedCurrencyNumber(num: String)
 }

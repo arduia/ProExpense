@@ -1,16 +1,18 @@
 package com.arduia.expense.data.local
 
-import java.lang.IllegalStateException
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 
 object CacheDaoImpl : CacheDao{
 
-    private var selectedCurrency: CurrencyDto? = null
+    private val currencyCH = ConflatedBroadcastChannel<CurrencyDto>()
 
-    override suspend fun getSelectedCurrency(): CurrencyDto {
-        return selectedCurrency?: throw IllegalStateException("selected Currency doesn't exist!")
+    override fun getSelectedCurrency(): Flow<CurrencyDto> {
+        return currencyCH.asFlow()
     }
 
     override suspend fun setSelectedCurrency(currency: CurrencyDto) {
-        selectedCurrency = currency
+       currencyCH.send(currency)
     }
 }

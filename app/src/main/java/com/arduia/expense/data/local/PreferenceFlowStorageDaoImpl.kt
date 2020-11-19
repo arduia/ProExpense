@@ -18,7 +18,7 @@ class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceSto
         return flowPref.getString(KEY_SELECTED_LANGUAGE, DEFAULT_SELECTED_LANGUAGE).asFlow()
     }
 
-    override fun setSelectedLanguage(id: String) {
+    override suspend fun setSelectedLanguage(id: String) {
         pef.edit().putString(KEY_SELECTED_LANGUAGE, id).apply()
     }
 
@@ -26,7 +26,7 @@ class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceSto
         return flowPref.getBoolean(KEY_FIRST_USER, DEFAULT_FIRST_USER).asFlow()
     }
 
-    override fun setFirstUser(isFirstUser: Boolean) {
+    override suspend fun setFirstUser(isFirstUser: Boolean) {
         pef.edit().putBoolean(KEY_FIRST_USER, isFirstUser).apply()
     }
 
@@ -35,7 +35,7 @@ class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceSto
         return flowPref.getString(KEY_SELECTED_CURRENCY_NUM, DEFAULT_SELECTED_CURRENCY_NUM).asFlow()
     }
 
-    override fun setSelectedCurrencyNumber(num: String) {
+    override suspend fun setSelectedCurrencyNumber(num: String) {
         Timber.d("selected Currency Number $num")
         pef.edit().putString(KEY_SELECTED_CURRENCY_NUM, num).apply()
     }

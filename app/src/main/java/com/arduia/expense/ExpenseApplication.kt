@@ -7,9 +7,11 @@ import com.arduia.core.lang.updateResource
 import com.arduia.expense.data.SettingsRepositoryImpl
 import com.arduia.expense.data.local.PreferenceStorageDao
 import com.arduia.expense.data.local.PreferenceStorageDaoImpl
+import com.arduia.expense.model.data
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,17 +42,17 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
             .build()
 
     override fun attachBaseContext(base: Context?) {
-        if (base == null) return
-        val updatedLocale = updateToLanguageContext(baseContext = base)
-        super.attachBaseContext(updatedLocale)
+        runBlocking {
+            if (base == null) return@runBlocking
+            val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(base, this)
+            val selectedLanguage =
+                SettingsRepositoryImpl(prefDao).getSelectedLanguage().first().data
+                    ?: return@runBlocking
+            val localedContext = base.updateResource(selectedLanguage)
+            super.attachBaseContext(localedContext)
+        }
     }
 
-    private fun updateToLanguageContext(baseContext: Context): Context =
-        runBlocking {
-            val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(baseContext, this)
-            val selectedLanguage = SettingsRepositoryImpl(prefDao).getSelectedLanguage().first()
-            return@runBlocking baseContext.updateResource(selectedLanguage)
-        }
 
     override fun onTerminate() {
         super.onTerminate()

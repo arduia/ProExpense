@@ -5,12 +5,13 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.SettingsRepository
+import com.arduia.expense.model.Result
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
+import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,22 +34,22 @@ constructor(
     }
 
     private fun checkUserAndGo() {
-        viewModelScope.launch(Dispatchers.IO) {
-            delay(splashDuration)
-            updateCache()
-            when (settingsRepository.getFirstUser().first()) {
-                true -> {
-                    settingsRepository.setSelectedLanguage("en")
-                    _firstTimeEvent.postValue(EventUnit)
+        settingsRepository.getFirstUser()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                if(it !is Result.Success) return@onEach
+                when(it.data){
+                    false -> {
+                        delay(splashDuration)
+                        _normalUserEvent post EventUnit
+                    }
+                    true -> {
+                        settingsRepository.setSelectedLanguage("en")
+                        _firstTimeEvent post EventUnit
+                    }
                 }
-                false -> _normalUserEvent.postValue(EventUnit)
             }
-        }
-    }
-
-    private suspend fun updateCache() {
-        val selectedCurrency = settingsRepository.getSelectedCurrencyNumber().first()
-        currencyRep.setSelectedCacheCurrency(selectedCurrency)
+            .launchIn(viewModelScope)
     }
 
 }

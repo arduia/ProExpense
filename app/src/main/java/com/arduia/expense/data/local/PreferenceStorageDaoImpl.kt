@@ -37,15 +37,10 @@ class PreferenceStorageDaoImpl(private val context: Context, private val scope: 
         return selectedLangChannel.asFlow()
     }
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
-    override fun setSelectedLanguage(id: String) {
-        scope.launch(Dispatchers.IO) {
-            setString(KEY_SELECTED_LANGUAGE, id)
-            //Update Status
-            val lang = getString(KEY_SELECTED_LANGUAGE, DEFAULT_SELECTED_LANGUAGE)
-            selectedLangChannel.send(lang)
-        }
+    override suspend fun setSelectedLanguage(id: String) {
+        setString(KEY_SELECTED_LANGUAGE, id)
+        val lang = getString(KEY_SELECTED_LANGUAGE, DEFAULT_SELECTED_LANGUAGE)
+        selectedLangChannel.send(lang)
     }
 
     @ExperimentalCoroutinesApi
@@ -58,23 +53,18 @@ class PreferenceStorageDaoImpl(private val context: Context, private val scope: 
         return firstUserChannel.asFlow()
     }
 
-    override fun setFirstUser(isFirstUser: Boolean) {
-        scope.launch(Dispatchers.IO) {
-            setBoolean(KEY_FIRST_USER, isFirstUser)
-        }
+    override suspend fun setFirstUser(isFirstUser: Boolean) {
+        setBoolean(KEY_FIRST_USER, isFirstUser)
     }
-
 
     override fun getSelectedCurrencyNumber(): Flow<String> {
         updateSelectedCurrencyNum()
         return currencyNumCh.asFlow()
     }
 
-    override fun setSelectedCurrencyNumber(num: String) {
-        scope.launch(Dispatchers.IO) {
-            setString(KEY_SELECTED_CURRENCY_NUM, num)
-            currencyNumCh.offer(num)
-        }
+    override suspend fun setSelectedCurrencyNumber(num: String) {
+        setString(KEY_SELECTED_CURRENCY_NUM, num)
+        currencyNumCh.offer(num)
     }
 
     private fun updateSelectedCurrencyNum() {

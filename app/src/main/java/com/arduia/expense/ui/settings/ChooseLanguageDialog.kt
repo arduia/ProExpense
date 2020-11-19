@@ -7,16 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.arduia.core.extension.px
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragChooseLanguageBinding
 import com.arduia.expense.databinding.FragChooseLanguageDialogBinding
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ext.restartActivity
-import com.arduia.expense.ui.custom.MaterialSearchBox
 import com.arduia.expense.ui.onboarding.ChooseLanguageViewModel
 import com.arduia.expense.ui.onboarding.LangListAdapter
-import com.arduia.expense.ui.onboarding.LanguageListAdapter
-import com.arduia.expense.ui.onboarding.LanguageViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 

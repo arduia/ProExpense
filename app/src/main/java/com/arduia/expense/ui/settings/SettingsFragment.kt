@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import com.arduia.expense.databinding.FragSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.LanguageProvider
-import com.arduia.expense.ui.onboarding.LanguageDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -53,7 +52,7 @@ class SettingsFragment: NavBaseFragment(){
         binding.flLanguage.setOnClickListener {
             currencyDialog?.dismiss()
             languageChooseDialog = ChooseLanguageDialog()
-            languageChooseDialog?.show(parentFragmentManager, LanguageDialogFragment.TAG)
+            languageChooseDialog?.show(parentFragmentManager, "ChooseLanguageDialog")
         }
 
         binding.flCurrency.setOnClickListener {

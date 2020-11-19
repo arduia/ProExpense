@@ -1,5 +1,9 @@
 package com.arduia.expense.data.local
 
-interface CurrencyDao{
-    suspend fun getCurrencies(): List<CurrencyDto>
+import kotlinx.coroutines.flow.Flow
+
+interface CurrencyDao {
+
+    fun getCurrencies(): Flow<List<CurrencyDto>>
+
 }

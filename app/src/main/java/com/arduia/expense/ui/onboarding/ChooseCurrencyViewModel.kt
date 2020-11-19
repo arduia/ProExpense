@@ -8,6 +8,7 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.local.CurrencyDto
+import com.arduia.expense.model.Result
 import com.arduia.mvvm.BaseLiveData
 import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
@@ -54,32 +55,47 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
     }
 
     private fun updateCurrencies(selectedNum: String = "") {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currencies = currencyRep.getCurrencies()
-                .map(currencyMapper::map)
-                .map {
-                    if (it.number == selectedNum) {
-                        return@map CurrencyVo(it.name, it.symbol, it.number, View.VISIBLE)
-                    } else it
+        currencyRep.getCurrencies()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                when (it) {
+                    is Result.Loading -> Unit
+                    is Result.Error -> Unit
+                    is Result.Success -> {
+                        it.data.map(currencyMapper::map)
+                            .map { vo ->
+                                if (vo.number == selectedNum) {
+                                    return@map CurrencyVo(
+                                        vo.name,
+                                        vo.symbol,
+                                        vo.number,
+                                        View.VISIBLE
+                                    )
+                                } else vo
+                            }.filter { vo ->
+                                if (searchKey.isEmpty()) return@filter true
+                                vo.toString().toUpperCase(Locale.ROOT)
+                                    .contains(searchKey.toUpperCase(Locale.ROOT))
+                            }
+                    }
                 }
-
-            if (vmCacheCurrencies.isEmpty()) {
-                vmCacheCurrencies.addAll(currencies)
             }
-
-            _currencies post currencies.filter {
-                if(searchKey.isEmpty()) return@filter true
-                it.toString().toUpperCase(Locale.ROOT).contains(searchKey.toUpperCase(Locale.ROOT))
-            }
-        }
+            .launchIn(viewModelScope)
     }
 
     private fun observeSelectedCurrency() {
         settingRepo.getSelectedCurrencyNumber()
             .flowOn(Dispatchers.IO)
             .onEach {
-                updateCurrencies(selectedNum = it)
-                Timber.d("observe -> $it selected")
+                when(it){
+                    is Result.Loading -> Unit
+                    is Result.Error -> Unit
+                    is Result.Success -> {
+                        updateCurrencies(selectedNum = it.data)
+                        Timber.d("observe -> ${it.data} selected")
+                    }
+                }
+
             }
             .launchIn(viewModelScope)
     }

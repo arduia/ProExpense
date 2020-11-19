@@ -2,16 +2,18 @@ package com.arduia.expense.data.local
 
 import android.content.res.AssetManager
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.lang.RuntimeException
 
 class CurrencyDaoImpl(private val assetManager: AssetManager) : CurrencyDao {
-    override suspend fun getCurrencies(): List<CurrencyDto> {
+    override fun getCurrencies(): Flow<List<CurrencyDto>> = flow{
         try {
             val file = assetManager.open(CURRENCY_FILE_PATH)
-            return GsonBuilder()
+            emit(GsonBuilder()
                 .create()
                 .fromJson(file.reader(), Currencies::class.java)
-                .sortedBy { it.rank }
+                .sortedBy { it.rank })
         } catch (e: Exception) {
             throw RuntimeException("currencies", e)
         }

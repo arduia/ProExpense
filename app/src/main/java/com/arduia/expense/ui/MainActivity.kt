@@ -23,12 +23,14 @@ import com.arduia.expense.data.local.PreferenceStorageDaoImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
+import com.arduia.expense.model.data
 import com.arduia.expense.ui.backup.BackupMessageViewModel
 import com.arduia.mvvm.EventObserver
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -58,6 +60,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private var addFabShowTask: (() -> Unit)? = null
 
+    private val viewModel by viewModels<MainViewModel>()
+
     @Inject
     @IntegerDecimal
     lateinit var countFormat: DecimalFormat
@@ -65,6 +69,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_ProExpense)
+
+        viewModel.hashCode()
 
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
@@ -141,7 +147,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             } else viewBinding.dlMain.setDrawerLockMode(
                 DrawerLayout.LOCK_MODE_LOCKED_CLOSED
             )
-
         }
 
         headerBinding.btnClose.setOnClickListener {
@@ -263,7 +268,9 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         runBlocking {
             if (newBase == null) return@runBlocking
             val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(newBase, this)
-            val selectedLanguage = SettingsRepositoryImpl(prefDao).getSelectedLanguage().first()
+            val selectedLanguage =
+                SettingsRepositoryImpl(prefDao).getSelectedLanguage().first().data
+                    ?: return@runBlocking
             val localedContext = newBase.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }

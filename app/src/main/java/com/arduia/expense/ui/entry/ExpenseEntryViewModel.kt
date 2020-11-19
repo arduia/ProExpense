@@ -4,12 +4,13 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.Exception
@@ -149,9 +150,9 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private fun observeExpenseData(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val dataEnt = repo.getExpense(id).first()
-                _selectedDate post dataEnt.modifiedDate
-                val dataVto = mapper.mapToUpdateDetailVto(dataEnt)
+                val result = repo.getExpense(id).single().data ?: return@launch
+                _selectedDate post result.modifiedDate
+                val dataVto = mapper.mapToUpdateDetailVto(result)
                 _data post dataVto
 
             } catch (e: Exception) {

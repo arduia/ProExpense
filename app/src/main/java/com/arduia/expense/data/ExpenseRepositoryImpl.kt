@@ -1,24 +1,26 @@
 package com.arduia.expense.data
 
 
+import androidx.paging.DataSource
+import com.arduia.expense.data.exception.RepositoryException
 import com.arduia.expense.data.local.*
 import com.arduia.expense.data.network.ExpenseNetworkDao
 import com.arduia.expense.data.network.ExpenseVersionDto
 import com.arduia.expense.data.network.FeedbackDto
+import com.arduia.expense.model.ErrorResult
+import com.arduia.expense.model.FlowResult
+import com.arduia.expense.model.SuccessResult
+import kotlinx.android.synthetic.main.sheet_expense_detail.view.*
 import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import timber.log.Timber
+import kotlinx.coroutines.flow.*
 import java.util.*
+import kotlin.math.E
 
 class ExpenseRepositoryImpl(
     private val expenseDao: ExpenseDao,
     private val networkDao: ExpenseNetworkDao
 ) : ExpenseRepository {
 
-    private val feedbackBroadCast = BroadcastChannel<FeedbackDto.Response>(10)
-
-    private val versionBroadCast = BroadcastChannel<ExpenseVersionDto>(10)
 
     override suspend fun insertExpense(expenseEnt: ExpenseEnt) {
         expenseDao.insertExpense(expenseEnt)
@@ -28,26 +30,38 @@ class ExpenseRepositoryImpl(
         expenseDao.insertExpenseAll(expenses)
     }
 
-    override suspend fun getExpenseAll(): Flow<List<ExpenseEnt>> {
+    override fun getExpenseAll(): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getExpenseAll()
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
     }
 
-    override suspend fun getExpense(id: Int): Flow<ExpenseEnt> {
+    override fun getExpense(id: Int): FlowResult<ExpenseEnt> {
         return expenseDao.getItemExpense(id)
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
     }
 
-    override suspend fun getExpenseSourceAll() = expenseDao.getExpenseSourceAll()
+    override fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt> {
+        return expenseDao.getExpenseSourceAll()
+    }
 
-    override suspend fun getRecentExpense(): Flow<List<ExpenseEnt>> {
+    override fun getRecentExpense(): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getRecentExpense()
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
     }
 
-    override suspend fun getExpenseTotalCount(): Flow<Int> {
+    override fun getExpenseTotalCount(): FlowResult<Int> {
         return expenseDao.getExpenseTotalCount()
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
     }
 
-    override suspend fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>> {
+    override fun getExpenseRange(limit: Int, offset: Int): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getExpenseRange(limit, offset)
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
     }
 
     override suspend fun updateExpense(expenseEnt: ExpenseEnt) {
@@ -66,33 +80,29 @@ class ExpenseRepositoryImpl(
         expenseDao.deleteExpenseByIDs(list)
     }
 
-    override suspend fun getWeekExpenses(): Flow<List<ExpenseEnt>> {
+    override fun getWeekExpenses(): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getWeekExpense(getWeekStartTime())
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
     }
 
-    override suspend fun postFeedback(comment: FeedbackDto.Request): Flow<FeedbackDto.Response> {
-        postComment(comment)
-        return feedbackBroadCast.asFlow()
-    }
+    override fun postFeedback(comment: FeedbackDto.Request): FlowResult<FeedbackDto.Response> =
+        flow {
+            val comment = networkDao.postFeedback(comment).execute()
+            comment.body()?.let {
+                emit(it)
+            } ?: throw Exception("Network Response Error")
+        }.map { SuccessResult(it) }
+            .catch { e -> ErrorResult(RepositoryException(e)) }
 
-    override suspend fun getVersionStatus(): Flow<ExpenseVersionDto> {
-        checkVersion()
-        return versionBroadCast.asFlow()
-    }
-
-    private suspend fun checkVersion() {
+    override fun getVersionStatus(): FlowResult<ExpenseVersionDto> = flow {
         val version = networkDao.getVersionStatus().execute()
         version.body()?.let {
-            versionBroadCast.send(it)
-        }
-    }
+            emit(it)
+        } ?: throw Exception("Network Response Error")
+    }.map { SuccessResult(it) }
+        .catch { e -> ErrorResult(RepositoryException(e)) }
 
-    private suspend fun postComment(comment: FeedbackDto.Request) {
-        val comment = networkDao.postFeedback(comment).execute()
-        comment.body()?.let {
-            feedbackBroadCast.send(it)
-        }
-    }
 
     private fun getWeekStartTime(): Long {
 

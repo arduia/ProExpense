@@ -2,6 +2,7 @@ package com.arduia.expense.data
 
 import android.net.Uri
 import com.arduia.expense.data.local.BackupEnt
+import com.arduia.expense.model.FlowResult
 import kotlinx.coroutines.flow.Flow
 
 interface BackupRepository {
@@ -14,12 +15,12 @@ interface BackupRepository {
 
     suspend fun deleteBackupByID(id: Int)
 
-    suspend fun getBackupAll(): Flow<List<BackupEnt>>
+    fun getBackupAll(): FlowResult<List<BackupEnt>>
 
-    suspend fun getBackupByID(id: Int): Flow<BackupEnt>
+    fun getBackupByID(id: Int): FlowResult<BackupEnt>
 
-    suspend fun getBackupByWorkerID(id: String): Flow<BackupEnt>
+    fun getBackupByWorkerID(id: String): FlowResult<BackupEnt>
 
-    suspend fun getItemCount(uri: Uri): Flow<Int>
+    fun getItemCount(uri: Uri): FlowResult<Int>
 
 }

@@ -1,8 +1,10 @@
 package com.arduia.expense.data.local
 
+import kotlinx.coroutines.flow.Flow
+
 interface CacheDao {
 
-    suspend fun getSelectedCurrency(): CurrencyDto
+    fun getSelectedCurrency(): Flow<CurrencyDto>
 
     suspend fun setSelectedCurrency(currency: CurrencyDto)
 

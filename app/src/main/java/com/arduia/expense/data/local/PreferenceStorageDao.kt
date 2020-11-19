@@ -5,13 +5,13 @@ import kotlinx.coroutines.flow.Flow
 interface PreferenceStorageDao {
     fun getSelectedLanguage(): Flow<String>
 
-    fun setSelectedLanguage(id: String)
+    suspend fun setSelectedLanguage(id: String)
 
     fun getFirstUser(): Flow<Boolean>
 
-    fun setFirstUser(isFirstUser: Boolean)
+    suspend fun setFirstUser(isFirstUser: Boolean)
 
     fun getSelectedCurrencyNumber(): Flow<String>
 
-    fun setSelectedCurrencyNumber(num: String)
+    suspend fun setSelectedCurrencyNumber(num: String)
 }

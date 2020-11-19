@@ -5,6 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.SettingsRepository
+import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.LanguageProvider
 import com.arduia.expense.ui.vto.LanguageVto
 import com.arduia.mvvm.BaseLiveData
@@ -68,7 +69,7 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
         settingRepo.getSelectedLanguage()
             .flowOn(Dispatchers.IO)
             .onEach {
-                selectedId = it
+                selectedId = it.data ?: return@onEach
                 updateLanguages()
             }
             .launchIn(viewModelScope)

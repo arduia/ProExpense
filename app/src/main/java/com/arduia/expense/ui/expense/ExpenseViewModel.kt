@@ -6,20 +6,19 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.model.data
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import javax.inject.Singleton
 
 
 class ExpenseViewModel @ViewModelInject constructor(
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository
 ) : ViewModel() {
-
 
     private val _isDeleteMode = BaseLiveData<Boolean>()
     val isDeleteMode get() = _isDeleteMode.asLiveData()
@@ -34,13 +33,13 @@ class ExpenseViewModel @ViewModelInject constructor(
 
     private val deletedItemList = mutableListOf<ExpenseEnt>()
 
-    suspend fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
+    fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
         return createPagedListLiveData()
     }
 
     fun deleteItem(item: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val expenseEnt = getExpenseItemByID(item.id)
+            val expenseEnt = getExpenseItemByID(item.id).data ?: return@launch
             repo.deleteExpense(expenseEnt)
             deletedItemList.add(expenseEnt)
             deletedModeOn()
@@ -54,7 +53,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
     private suspend fun getExpenseItemByID(itemId: Int) =
-        repo.getExpense(itemId).first()
+        repo.getExpense(itemId).single()
 
     fun restoreDeletion(){
         viewModelScope.launch(Dispatchers.IO){
@@ -67,16 +66,17 @@ class ExpenseViewModel @ViewModelInject constructor(
     @ExperimentalCoroutinesApi
     fun selectItemForDetail(selectedItem: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val item = repo.getExpense(selectedItem.id).first()
-            val detailData = mapper.mapToDetailVto(item)
-            _detailDataChanged post event(detailData)
+            val result = repo.getExpense(selectedItem.id).single()
+            result.data?.let {
+                val detailData = mapper.mapToDetailVto(it)
+                _detailDataChanged post event(detailData)
+            }?: return@launch //Error Show
         }
     }
 
-    private suspend fun createPagedListLiveData(): LiveData<PagedList<ExpenseVto>> {
+    private fun createPagedListLiveData(): LiveData<PagedList<ExpenseVto>> {
         val dataSourceFactory = repo.getExpenseSourceAll()
             .map { mapper.mapToVto(it) }
-
         return LivePagedListBuilder(dataSourceFactory, 100)
             .also {
                 livePagedListBuilder = it
@@ -98,6 +98,5 @@ class ExpenseViewModel @ViewModelInject constructor(
     private suspend fun restoreDeletedItem() {
         repo.insertExpenseAll(deletedItemList)
     }
-
 
 }

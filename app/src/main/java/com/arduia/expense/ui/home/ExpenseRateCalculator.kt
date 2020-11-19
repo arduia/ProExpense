@@ -1,11 +1,12 @@
 package com.arduia.expense.ui.home
 
 import com.arduia.expense.data.local.ExpenseEnt
+import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRateCalculator {
 
-    fun getRates(): Map<Int,Int>
+    fun getRates(): Flow<Map<Int,Int>>
 
-    fun setWeekExpenses(list: List<ExpenseEnt>)
+    suspend fun setWeekExpenses(list: List<ExpenseEnt>)
 
 }

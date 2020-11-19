@@ -1,11 +1,11 @@
-    package com.arduia.expense.ui.home
+package com.arduia.expense.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.model.Result
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -41,15 +41,23 @@ class HomeViewModel @ViewModelInject constructor(
     private val _currencySymbol = BaseLiveData<String>()
     val currencySymbol get() = _currencySymbol.asLiveData()
 
+    private val _onError = EventLiveData<Unit>()
+    val onError get() = _onError.asLiveData()
+
     init {
         init()
     }
 
     fun selectItemForDetail(selectedItem: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val item = repo.getExpense(selectedItem.id).first()
-            val detailData = mapper.mapToDetailVto(item)
-            _detailData post event(detailData)
+            when(val result = repo.getExpense(selectedItem.id).first()){
+                is Result.Loading -> Unit
+                is Result.Error -> Unit
+                is Result.Success -> {
+                    val detailData = mapper.mapToDetailVto(result.data)
+                    _detailData post event(detailData)
+                }
+            }
         }
     }
 
@@ -64,41 +72,61 @@ class HomeViewModel @ViewModelInject constructor(
         observeCurrencySymbol()
         observeRecentExpenses()
         observeWeekExpenses()
+        observeRate()
     }
 
     private fun observeCurrencySymbol() {
-        settingRepo.getSelectedCurrencyNumber()
+        currencyRepository.getSelectedCacheCurrency()
             .flowOn(Dispatchers.IO)
             .onEach {
-                currencyRepository.setSelectedCacheCurrency(it)
-                _currencySymbol post currencyRepository.getSelectedCacheCurrency().symbol
+                when (it) {
+                    is Result.Loading -> Unit
+                    is Result.Error -> _onError post EventUnit
+                    is Result.Success -> {
+                        _currencySymbol post it.data.symbol
+                    }
+                }
             }
             .launchIn(viewModelScope)
     }
 
     private fun observeRecentExpenses() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.getRecentExpense()
-                .flowOn(Dispatchers.IO)
-                .collect {
-                    _recentData post it.map(mapper::mapToVto)
+        repo.getRecentExpense()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                when (it) {
+                    is Result.Success -> _recentData post it.data.map(mapper::mapToVto)
+                    is Result.Error -> _onError post EventUnit
+                    is Result.Loading -> Unit
                 }
-        }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeWeekExpenses() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.getWeekExpenses()
-                .flowOn(Dispatchers.IO)
-                .collect {
-                    val totalAmount = it.filter { expenseEnt ->
-                        expenseEnt.category != ExpenseCategory.INCOME
-                    }.map { expenseEnt -> expenseEnt.amount }.sum()
-                    _totalCost post totalAmount
-                    calculator.setWeekExpenses(it)
-                    _costRates post calculator.getRates()
+        repo.getWeekExpenses()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                when (it) {
+                    is Result.Loading -> Unit
+                    is Result.Error -> _onError post EventUnit
+                    is Result.Success -> {
+                        calculator.setWeekExpenses(it.data)
+                        val totalAmount = it.data.filter { expenseEnt ->
+                            expenseEnt.category != ExpenseCategory.INCOME
+                        }.map { expenseEnt -> expenseEnt.amount }.sum()
+                        _totalCost post totalAmount
+                    }
                 }
-        }
+
+            }
+    }
+
+    private fun observeRate(){
+        calculator.getRates()
+            .flowOn(Dispatchers.IO)
+            .onEach(_costRates::postValue)
+            .launchIn(viewModelScope)
     }
 
 }

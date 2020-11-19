@@ -4,6 +4,7 @@ import androidx.paging.DataSource
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.data.network.ExpenseVersionDto
 import com.arduia.expense.data.network.FeedbackDto
+import com.arduia.expense.model.FlowResult
 import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
@@ -13,17 +14,17 @@ interface ExpenseRepository {
 
     suspend fun insertExpenseAll(expenses: List<ExpenseEnt>)
 
-    suspend fun getExpense(id: Int): Flow<ExpenseEnt>
+    fun getExpense(id: Int): FlowResult<ExpenseEnt>
 
-    suspend fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt>
+    fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt>
 
-    suspend fun getExpenseAll(): Flow<List<ExpenseEnt>>
+    fun getExpenseAll(): FlowResult<List<ExpenseEnt>>
 
-    suspend fun getRecentExpense(): Flow<List<ExpenseEnt>>
+    fun getRecentExpense(): FlowResult<List<ExpenseEnt>>
 
-    suspend fun getExpenseTotalCount(): Flow<Int>
+    fun getExpenseTotalCount(): FlowResult<Int>
 
-    suspend fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>>
+    fun getExpenseRange(limit: Int, offset: Int): FlowResult<List<ExpenseEnt>>
 
     suspend fun updateExpense(expenseEnt: ExpenseEnt)
 
@@ -33,10 +34,10 @@ interface ExpenseRepository {
 
     suspend fun deleteAllExpense(list: List<Int>)
 
-    suspend fun getWeekExpenses(): Flow<List<ExpenseEnt>>
+    fun getWeekExpenses(): FlowResult<List<ExpenseEnt>>
 
-    suspend fun postFeedback(comment: FeedbackDto.Request): Flow<FeedbackDto.Response>
+    fun postFeedback(comment: FeedbackDto.Request): FlowResult<FeedbackDto.Response>
 
-    suspend fun getVersionStatus(): Flow<ExpenseVersionDto>
+    fun getVersionStatus(): FlowResult<ExpenseVersionDto>
 
 }

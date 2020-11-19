@@ -5,14 +5,13 @@ import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.BackupRepository
+import com.arduia.expense.model.Result
+import com.arduia.expense.model.data
 import com.arduia.expense.ui.mapping.BackupMapper
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -33,16 +32,18 @@ class BackupViewModel @ViewModelInject constructor(
     }
 
     private fun observeBackupLists() {
-        viewModelScope.launch(Dispatchers.IO) {
-            backupRepo.getBackupAll().collect {
-                _backupList post it.map(mapper::mapToBackupVto)
+        backupRepo.getBackupAll()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                if(it !is Result.Success) return@onEach
+                _backupList post it.data.map(mapper::mapToBackupVto)
             }
-        }
     }
 
     fun onBackupItemSelect(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val backupEnt = backupRepo.getBackupByID(id).first()
+            val backupEnt = backupRepo.getBackupByID(id).single().data
+                ?:throw Exception()
 
             val backupFileUri = Uri.parse(backupEnt.filePath)
 

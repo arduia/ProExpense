@@ -192,7 +192,7 @@ class ExpenseFragment : Fragment() {
         }
     }
 
-    private suspend fun observeExpenseList(){
+    private fun observeExpenseList(){
         viewModel.getExpenseLiveData().observe(viewLifecycleOwner, Observer {
             expenseListAdapter.submitList(it)
             hideLoading()

@@ -169,6 +169,10 @@ class HomeFragment : NavBaseFragment() {
         viewModel.currencySymbol.observe(viewLifecycleOwner) {
             viewBinding.tvCurrency.text = it
         }
+
+        viewModel.onError.observe(viewLifecycleOwner, EventObserver{
+            mainHost.showSnackMessage("Error")
+        })
     }
 
     private fun onDeleteExpense(item: ExpenseDetailsVto) {
