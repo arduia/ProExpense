@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flow
 import java.lang.RuntimeException
 
 class CurrencyDaoImpl(private val assetManager: AssetManager) : CurrencyDao {
+
     override fun getCurrencies(): Flow<List<CurrencyDto>> = flow{
         try {
             val file = assetManager.open(CURRENCY_FILE_PATH)

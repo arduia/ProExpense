@@ -47,8 +47,9 @@ inline fun <reified T> Result<T>.updateOnSuccess(liveData: MutableLiveData<T>) {
         liveData.value = data
     }
 }
-typealias FlowResult<T> = Flow<Result<T>>
 
 typealias ErrorResult = Result.Error
 
 typealias SuccessResult<T> = Result.Success<T>
+
+typealias LoadingResult = Result.Loading

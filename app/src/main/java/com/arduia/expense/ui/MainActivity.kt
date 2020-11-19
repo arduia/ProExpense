@@ -23,6 +23,7 @@ import com.arduia.expense.data.local.PreferenceStorageDaoImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
+import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.backup.BackupMessageViewModel
 import com.arduia.mvvm.EventObserver
@@ -31,9 +32,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.single
+import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
 
 
 @AndroidEntryPoint
@@ -268,9 +272,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         runBlocking {
             if (newBase == null) return@runBlocking
             val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(newBase, this)
-            val selectedLanguage =
-                SettingsRepositoryImpl(prefDao).getSelectedLanguage().first().data
-                    ?: return@runBlocking
+            val selectedLanguage: String  = SettingsRepositoryImpl(prefDao).getSelectedLanguage().awaitValueOrError()
             val localedContext = newBase.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }

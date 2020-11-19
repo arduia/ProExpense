@@ -7,13 +7,10 @@ import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.exception.RepositoryException
 import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.BackupEnt
-import com.arduia.expense.model.ErrorResult
-import com.arduia.expense.model.FlowResult
-import com.arduia.expense.model.SuccessResult
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import com.arduia.expense.model.*
+import kotlinx.coroutines.flow.*
 import java.lang.Exception
+import kotlin.Result
 
 
 class BackupRepositoryImpl ( private val appContext: Context,
@@ -38,7 +35,7 @@ class BackupRepositoryImpl ( private val appContext: Context,
 
     override fun getBackupAll(): FlowResult<List<BackupEnt>> {
         return dao.getBackupAll()
-            .map{SuccessResult(it) }
+            .map{ SuccessResult(it)}
             .catch { e -> ErrorResult(Exception(e))}
     }
 

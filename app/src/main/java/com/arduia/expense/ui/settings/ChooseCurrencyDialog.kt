@@ -67,5 +67,9 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
 
     private fun setupViewModel() {
         viewModel.currencies.observe(viewLifecycleOwner, adapter::submitList)
+
+        viewModel.isLoading.observe(viewLifecycleOwner){
+            binding.pbLoading.visibility = if(it)View.VISIBLE else View.INVISIBLE
+        }
     }
 }

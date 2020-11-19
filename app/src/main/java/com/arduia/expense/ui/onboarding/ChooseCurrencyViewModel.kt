@@ -8,13 +8,14 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.local.CurrencyDto
-import com.arduia.expense.model.Result
+import com.arduia.expense.model.*
 import com.arduia.mvvm.BaseLiveData
+import com.arduia.mvvm.EventLiveData
+import com.arduia.mvvm.event
 import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -29,75 +30,77 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
     private val _currencies = BaseLiveData<List<CurrencyVo>>()
     val currencies get() = _currencies.asLiveData()
 
+    private val _onError = EventLiveData<String>()
+    val onError get() = _onError.asLiveData()
+
+    private val _isLoading = BaseLiveData<Boolean>()
+    val isLoading get() = _isLoading.asLiveData()
+
+    private val searchKey = ConflatedBroadcastChannel<String>()
+
     init {
-        observeSelectedCurrency()
+        observeCurrencyLists()
+        searchCurrency("")
     }
 
-    private val vmCacheCurrencies = mutableListOf<CurrencyVo>()
-    private var searchKey = ""
 
     fun searchCurrency(key: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            searchKey = key
-            _currencies post vmCacheCurrencies
-                .filter {
-                    it.toString().toUpperCase(Locale.ROOT)
-                        .contains(searchKey.toUpperCase(Locale.ROOT))
-                }
+            searchKey.send(key)
         }
     }
 
     fun selectCurrency(currency: CurrencyVo) {
         viewModelScope.launch(Dispatchers.IO) {
             settingRepo.setSelectedCurrencyNumber(currency.number)
-            currencyRep.setSelectedCacheCurrency(currency.number)
         }
     }
 
-    private fun updateCurrencies(selectedNum: String = "") {
+
+    private fun observeCurrencyLists() {
         currencyRep.getCurrencies()
-            .flowOn(Dispatchers.IO)
             .onEach {
-                when (it) {
-                    is Result.Loading -> Unit
-                    is Result.Error -> Unit
-                    is Result.Success -> {
-                        it.data.map(currencyMapper::map)
-                            .map { vo ->
-                                if (vo.number == selectedNum) {
-                                    return@map CurrencyVo(
-                                        vo.name,
-                                        vo.symbol,
-                                        vo.number,
-                                        View.VISIBLE
-                                    )
-                                } else vo
-                            }.filter { vo ->
-                                if (searchKey.isEmpty()) return@filter true
-                                vo.toString().toUpperCase(Locale.ROOT)
-                                    .contains(searchKey.toUpperCase(Locale.ROOT))
-                            }
+                if(it is LoadingResult) _isLoading post true
+                else _isLoading post false
+            }
+            .flowOn(Dispatchers.IO)
+            .combine(searchKey.asFlow()) { currencyResult, search ->
+                if (currencyResult is Result.Success) {
+                    if (search.isEmpty()) {
+                        return@combine currencyResult
                     }
+                    val filterList = currencyResult.data.filter { it.number == search }
+                    SuccessResult(filterList)
+                } else currencyResult
+            }
+            .onEach {
+                Timber.d("onEach ${it.data?.size}")
+                if (it is ErrorResult) {
+                    _onError post event(it.exception.message ?: "Error")
                 }
             }
+            .combine(settingRepo.getSelectedCurrencyNumber()) { currencyResult, selectedNumResult ->
+
+                Timber.d("onCombine ${currencyResult.data?.size} $selectedNumResult")
+                if (selectedNumResult !is SuccessResult) return@combine listOf<CurrencyVo>()
+                if (currencyResult !is SuccessResult) return@combine listOf<CurrencyVo>()
+
+                val selectedNumber = selectedNumResult.data
+                currencyResult.data.map(currencyMapper::map)
+                    .map { vo ->
+                        if (vo.number == selectedNumber) {
+                            return@map CurrencyVo(
+                                vo.name,
+                                vo.symbol,
+                                vo.number,
+                                View.VISIBLE
+                            )
+                        } else vo
+                    }
+            }
+            .onEach(_currencies::postValue)
             .launchIn(viewModelScope)
     }
 
-    private fun observeSelectedCurrency() {
-        settingRepo.getSelectedCurrencyNumber()
-            .flowOn(Dispatchers.IO)
-            .onEach {
-                when(it){
-                    is Result.Loading -> Unit
-                    is Result.Error -> Unit
-                    is Result.Success -> {
-                        updateCurrencies(selectedNum = it.data)
-                        Timber.d("observe -> ${it.data} selected")
-                    }
-                }
-
-            }
-            .launchIn(viewModelScope)
-    }
 
 }

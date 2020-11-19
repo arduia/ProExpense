@@ -48,10 +48,9 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideCurrencyRepo(
-        dao: CurrencyDao,
-        cacheDao: CacheDao
+        dao: CurrencyDao
     ): CurrencyRepository =
-        CurrencyRepositoryImpl(dao, cacheDao)
+        CurrencyRepositoryImpl(dao)
 
     @Singleton
     @Provides

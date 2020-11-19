@@ -25,8 +25,9 @@ class MainViewModel @ViewModelInject constructor(
         settingRepo.getSelectedCurrencyNumber()
             .flowOn(Dispatchers.IO)
             .onEach {
-                if (it !is Result.Success) return@onEach
-                saveCurrencyData(it.data)
+                if(it is Result.Success){
+                    saveCurrencyData(it.data)
+                }
             }
             .launchIn(viewModelScope)
     }

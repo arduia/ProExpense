@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.SettingsRepository
+import com.arduia.expense.model.LoadingResult
 import com.arduia.expense.model.Result
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -17,7 +18,6 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
-    private val settingRepo: SettingsRepository,
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository,
     private val calculator: ExpenseRateCalculator
@@ -118,8 +118,8 @@ class HomeViewModel @ViewModelInject constructor(
                         _totalCost post totalAmount
                     }
                 }
-
             }
+            .launchIn(viewModelScope)
     }
 
     private fun observeRate(){

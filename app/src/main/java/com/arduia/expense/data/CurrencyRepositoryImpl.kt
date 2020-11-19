@@ -7,20 +7,22 @@ import com.arduia.expense.data.local.CurrencyDto
 import com.arduia.expense.model.ErrorResult
 import com.arduia.expense.model.FlowResult
 import com.arduia.expense.model.SuccessResult
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 
 class CurrencyRepositoryImpl(
-    private val dao: CurrencyDao,
-    private val cache: CacheDao
+    dao: CurrencyDao
 ) : CurrencyRepository {
 
     private val currencyListCh = ConflatedBroadcastChannel<List<CurrencyDto>>()
     private val cacheNumberCH = ConflatedBroadcastChannel<String>()
 
     init {
-        dao.getCurrencies().onEach(currencyListCh::send)
+        dao.getCurrencies()
+            .onEach(currencyListCh::send)
+            .launchIn(GlobalScope)
     }
 
     override fun getCurrencies(): FlowResult<List<CurrencyDto>> {
@@ -30,8 +32,8 @@ class CurrencyRepositoryImpl(
     }
 
     override fun getSelectedCacheCurrency(): FlowResult<CurrencyDto> {
-        return cacheNumberCH.asFlow()
-            .zip(currencyListCh.asFlow()) { num, list ->
+        return currencyListCh.asFlow()
+            .combine(cacheNumberCH.asFlow()) { list, num ->
                 list.find { dto -> dto.number == num } ?: throw Exception("item $num not found!")
             }
             .map { SuccessResult(it) }
