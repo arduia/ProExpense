@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import com.arduia.core.extension.px
 import com.arduia.expense.R
@@ -15,7 +16,10 @@ import com.arduia.expense.ui.onboarding.ChooseCurrencyViewModel
 import com.arduia.expense.ui.onboarding.CurrencyListAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChooseCurrencyDialog : BottomSheetDialogFragment() {
@@ -25,7 +29,7 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
     private val viewModel by viewModels<ChooseCurrencyViewModel>()
 
     private lateinit var adapter: CurrencyListAdapter
-
+    private var loadingHideJob: Job ? =null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,8 +72,24 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
     private fun setupViewModel() {
         viewModel.currencies.observe(viewLifecycleOwner, adapter::submitList)
 
-        viewModel.isLoading.observe(viewLifecycleOwner){
-            binding.pbLoading.visibility = if(it) View.VISIBLE else View.INVISIBLE
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            if (it) {
+                showLoading()
+            } else {
+                hideLoadingWithDelay()
+            }
+        }
+    }
+
+    private fun showLoading() {
+        loadingHideJob?.cancel()
+        binding.pbLoading.visibility = View.VISIBLE
+    }
+
+    private fun hideLoadingWithDelay() {
+        loadingHideJob = lifecycleScope.launch(Dispatchers.Main) {
+            delay(1000)
+            binding.pbLoading.visibility = View.INVISIBLE
         }
     }
 }

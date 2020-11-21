@@ -7,6 +7,7 @@ import com.arduia.expense.ui.common.LanguageProvider
 import com.arduia.expense.ui.common.LanguageProviderImpl
 import com.arduia.expense.ui.home.ExpenseDayNameProvider
 import com.arduia.expense.ui.home.ExpenseRateCalculator
+import com.arduia.expense.ui.home.ExpenseRateCalculatorFactory
 import com.arduia.expense.ui.home.ExpenseRateCalculatorImpl
 import com.arduia.graph.DayNameProvider
 import dagger.Module
@@ -17,6 +18,7 @@ import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.android.scopes.FragmentScoped
+import kotlinx.coroutines.CoroutineScope
 
 @Module
 @InstallIn(ActivityComponent::class)
@@ -34,8 +36,8 @@ object ExpenseProviderModule {
 
     @Provides
     @ActivityScoped
-    fun provideExpenseCalculator(): ExpenseRateCalculator =
-        ExpenseRateCalculatorImpl()
+    fun provideExpenseCalculator(): ExpenseRateCalculator.Factory =
+        ExpenseRateCalculatorFactory()
 
     @Provides
     @ActivityScoped

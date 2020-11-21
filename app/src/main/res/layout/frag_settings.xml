@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?colorSurface"
-    tools:background="@android:color/white">
+    android:background="?backgroundColor">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/ab_settings"
@@ -33,6 +32,8 @@
             android:id="@+id/linear_setting"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="@dimen/grid_2"
+            android:background="?colorSurface"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/grid_3"
             android:paddingVertical="@dimen/grid_2">
@@ -67,8 +68,8 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/small_icon_size"
                     android:layout_height="@dimen/small_icon_size"
-                    android:layout_marginEnd="@dimen/grid_2"
                     android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="@dimen/grid_2"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/ic_more_next" />
             </FrameLayout>
@@ -105,16 +106,11 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/small_icon_size"
                     android:layout_height="@dimen/small_icon_size"
-                    android:layout_marginEnd="@dimen/grid_2"
                     android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="@dimen/grid_2"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/ic_more_next" />
             </FrameLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:drawable/divider_horizontal_bright" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

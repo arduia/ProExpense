@@ -81,6 +81,7 @@ class HomeFragment : NavBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupView()
         setupViewModel()
+        restoreViewState(savedInstanceState)
     }
 
     override fun onResume() {
@@ -93,50 +94,51 @@ class HomeFragment : NavBaseFragment() {
         mainHost.hideAddButton()
     }
 
-    //Setup View
+    //    Setup View
     private fun setupView() {
 
-        viewBinding.rvRecent.adapter = recentAdapter
-        viewBinding.rvRecent.layoutManager = LinearLayoutManager(requireContext())
-        viewBinding.rvRecent.addItemDecoration(
+        viewBinding.cvExpenseList.rvRecentLists.adapter = recentAdapter
+        viewBinding.cvExpenseList.rvRecentLists.layoutManager =
+            LinearLayoutManager(requireContext())
+        viewBinding.cvExpenseList.rvRecentLists.addItemDecoration(
             MarginItemDecoration(
-                spaceSide = requireContext().px(16),
                 spaceHeight = requireContext().px(4),
             )
         )
+        viewBinding.scrollHome.isEnabled = false
+
         mainHost.setAddButtonClickListener {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
 
         viewBinding.toolbar.setNavigationOnClickListener { navigationDrawer?.openDrawer() }
 
-        viewBinding.btnMoreExpenses.setOnClickListener {
-            findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
-        }
+//        viewBinding.btnMoreExpenses.setOnClickListener {
+//            findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
+//        }
         graphAdapter = ExpenseGraphAdapter()
-        viewBinding.imgGraph.adapter = graphAdapter
+        viewBinding.cvGraph.expenseGraph.adapter = graphAdapter
 
-        viewBinding.imgGraph.dayNameProvider = dayNameProvider
+        viewBinding.cvGraph.expenseGraph.dayNameProvider = dayNameProvider
 
         recentAdapter.setItemInsertionListener {
             //Item inserted
-            viewBinding.rvRecent.smoothScrollToPosition(0)
+//            viewBinding.rvRecent.smoothScrollToPosition(0)
         }
 
         recentAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
 
-        viewBinding.btnMoreExpenses.visibility = View.INVISIBLE
+//        viewBinding.btnMoreExpenses.visibility = View.INVISIBLE
 
     }
 
     private fun setupViewModel() {
 
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-                viewBinding.btnMoreExpenses.visibility = View.VISIBLE
-            }
+            viewBinding.cvExpenseList.root.visibility =
+                if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
             recentAdapter.submitList(it)
         })
 
@@ -155,7 +157,7 @@ class HomeFragment : NavBaseFragment() {
         })
 
         viewModel.totalCost.observe(viewLifecycleOwner, Observer {
-            viewBinding.tvTotalValue.text = totalCostFormat.format(it)
+//            viewBinding.tvTotalValue.text = totalCostFormat.format(it)
         })
 
         viewModel.costRate.observe(viewLifecycleOwner) {
@@ -167,10 +169,10 @@ class HomeFragment : NavBaseFragment() {
         })
 
         viewModel.currencySymbol.observe(viewLifecycleOwner) {
-            viewBinding.tvCurrency.text = it
+//            viewBinding.tvCurrency.text = it
         }
 
-        viewModel.onError.observe(viewLifecycleOwner, EventObserver{
+        viewModel.onError.observe(viewLifecycleOwner, EventObserver {
             mainHost.showSnackMessage("Error")
         })
     }
@@ -186,9 +188,26 @@ class HomeFragment : NavBaseFragment() {
         findNavController().navigate(action, entryNavOption)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_SCROLL_POSITION, viewBinding.scrollHome.scrollY)
+    }
+
+    private fun restoreViewState(instanceState: Bundle?) {
+        val scrollPosition = instanceState?.getInt(KEY_SCROLL_POSITION) ?: return
+        restoreScrollPosition(scrollPosition)
+    }
+
+    private fun restoreScrollPosition(positionY: Int) {
+        val height = viewBinding.scrollHome.height
+        if (height <= positionY) {
+            viewBinding.scrollHome.scrollY = positionY
+        }
+    }
 
     companion object {
         private const val TAG = "MY_HomeFragment"
+        private const val KEY_SCROLL_POSITION = "scroll_position"
     }
 
 }

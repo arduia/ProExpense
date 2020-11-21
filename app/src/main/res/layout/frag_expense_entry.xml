@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:elevation="3dp"
     android:orientation="vertical"
-    tools:background="@android:color/white">
+    android:background="?backgroundColor">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/abl_entry"
@@ -31,13 +31,14 @@
         android:id="@+id/sv_entry"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorSurface"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         app:layout_constraintWidth_max="@dimen/with_layout_min_margin">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?colorSurface"
+            android:layout_margin="@dimen/grid_2">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_name"
@@ -47,7 +48,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/grid_3"
-                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_4"
                 android:layout_marginEnd="@dimen/grid_3"
                 android:textAlignment="viewStart">
 
@@ -130,7 +131,7 @@
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginEnd="@dimen/grid_3"
-                android:layout_marginBottom="@dimen/grid_3"
+                android:layout_marginBottom="@dimen/grid_4"
                 android:layout_toStartOf="@id/cv_lock"
                 android:text="@string/save" />
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SpendGraph">
+        <attr name="graph_color" format="color" />
+        <attr name="day_color" format="color" />
+    </declare-styleable>
+</resources>

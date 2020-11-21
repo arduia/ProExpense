@@ -23,9 +23,8 @@ import java.util.*
 class ChooseCurrencyViewModel @ViewModelInject constructor(
     private val currencyRep: CurrencyRepository,
     private val settingRepo: SettingsRepository,
-    private val currencyMapper: Mapper<CurrencyDto, CurrencyVo>
-) :
-    ViewModel() {
+    private val currencyMapper: Mapper<CurrencyDto,CurrencyVo>
+) : ViewModel() {
 
     private val _currencies = BaseLiveData<List<CurrencyVo>>()
     val currencies get() = _currencies.asLiveData()
@@ -78,7 +77,7 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
                 }
             }
             .combine(settingRepo.getSelectedCurrencyNumber()) { currencyResult, selectedNumResult ->
-
+                
                 Timber.d("onCombine ${currencyResult.data?.size} $selectedNumResult")
                 if (selectedNumResult !is SuccessResult) return@combine listOf<CurrencyVo>()
                 if (currencyResult !is SuccessResult) return@combine listOf<CurrencyVo>()

@@ -4,8 +4,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
-import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.model.LoadingResult
 import com.arduia.expense.model.Result
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -20,7 +18,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository,
-    private val calculator: ExpenseRateCalculator
+    calculatorFactory: ExpenseRateCalculator.Factory
 ) : ViewModel() {
 
     private val _recentData = BaseLiveData<List<ExpenseVto>>()
@@ -43,6 +41,8 @@ class HomeViewModel @ViewModelInject constructor(
 
     private val _onError = EventLiveData<Unit>()
     val onError get() = _onError.asLiveData()
+
+    private val calculator = calculatorFactory.create(viewModelScope)
 
     init {
         init()

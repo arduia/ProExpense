@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@android:color/white">
+    android:background="?backgroundColor"
+    >
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/abl_about"
@@ -26,12 +27,13 @@
         android:id="@+id/nv_about"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorSurface"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         app:layout_constraintWidth_max="@dimen/width_layout_min">
 
         <RelativeLayout
             android:id="@+id/rl_about"
+            android:background="?colorSurface"
+            android:layout_margin="@dimen/grid_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -42,6 +44,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:scaleType="center"
+                android:layout_marginTop="@dimen/grid_2"
                 android:tint="@color/blue_light_500"
                 app:srcCompat="@drawable/ic_launcher_foreground" />
 
@@ -208,6 +211,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/dv_end"
+                android:layout_marginBottom="@dimen/grid_4"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
                 android:clickable="true"

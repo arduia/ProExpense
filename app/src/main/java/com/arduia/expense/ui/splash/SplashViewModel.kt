@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.model.Result
+import com.arduia.expense.model.awaitValueOrError
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
 import com.arduia.mvvm.post
@@ -17,8 +18,7 @@ import javax.inject.Inject
 
 class SplashViewModel @ViewModelInject
 constructor(
-    private val settingsRepository: SettingsRepository,
-    private val currencyRep: CurrencyRepository
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _firstTimeEvent = EventLiveData<Unit>()
@@ -34,22 +34,15 @@ constructor(
     }
 
     private fun checkUserAndGo() {
-        settingsRepository.getFirstUser()
-            .flowOn(Dispatchers.IO)
-            .onEach {
-                if(it !is Result.Success) return@onEach
-                when(it.data){
-                    false -> {
-                        delay(splashDuration)
-                        _normalUserEvent post EventUnit
-                    }
-                    true -> {
-                        settingsRepository.setSelectedLanguage("en")
-                        _firstTimeEvent post EventUnit
-                    }
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            val isFirstTimeUser = settingsRepository.getFirstUser().awaitValueOrError()
+            delay(splashDuration)
+            if (isFirstTimeUser) { 
+                _firstTimeEvent post EventUnit
+            } else {
+                _normalUserEvent post EventUnit
             }
-            .launchIn(viewModelScope)
+        }
     }
 
 }

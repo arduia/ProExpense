@@ -9,9 +9,11 @@ import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
 import java.lang.IllegalArgumentException
 
-class SpendGraph @JvmOverloads constructor(context: Context,
-                                           attrs: AttributeSet? = null,
-                                           defStyleAttrs: Int = 0): View(context, attrs, defStyleAttrs),
+class SpendGraph @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttrs: Int = 0
+) : View(context, attrs, defStyleAttrs),
     GraphView {
 
     //Whole Custom View
@@ -21,7 +23,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     private var graphPaddingLeft = 0f
     private var graphPaddingTop = 0f
     private var graphPaddingRight = 0f
-    private var graphPaddingBottom= 0f
+    private var graphPaddingBottom = 0f
 
     //Week Name Height of the graph
     private var dayNameHeight = 0f
@@ -36,24 +38,40 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     private val dayNameCanvasF by lazy { createDayNameFrame() }
 
     private val dayPaint by lazy { createDayPaint() }
-    private val linePointPaint by lazy { createLinePointPaint()}
+    private val linePointPaint by lazy { createLinePointPaint() }
     private val linePaint by lazy { createLinePaint() }
     private val labelPaint by lazy { createLabelPaint() }
 
-    var dayNameProvider:DayNameProvider  =  DayNameProviderImpl(context)
+    var dayNameProvider: DayNameProvider = DayNameProviderImpl(context)
 
     /**
      * Interface Fields
      */
 
     var adapter: Adapter? = null
-    set(value) {
-        field = value
-        adapter?.graphView = this
-    }
+        set(value) {
+            field = value
+            adapter?.graphView = this
+        }
+
     /**
      * Framework Callback Methods
      */
+    init {
+
+        val a = context.obtainStyledAttributes(attrs,R.styleable.SpendGraph,defStyleAttrs, 0)
+        val graphColor = a.getColor(R.styleable.SpendGraph_graph_color, Color.GREEN)
+        val dayColor = a.getColor(R.styleable.SpendGraph_day_color, Color.GREEN)
+        a.recycle()
+
+        dayPaint.color = dayColor
+        linePaint.color = graphColor
+        labelPaint.color = graphColor
+        linePointPaint.color = dayColor
+
+
+    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.let {
@@ -70,12 +88,12 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     /**
      * Draw Methods
      */
-    private fun Canvas.drawPointLines(){
+    private fun Canvas.drawPointLines() {
 
         val linePath = Path()
 
         //just store in method reference
-        val list =  adapter?.getSpendPoints()
+        val list = adapter?.getSpendPoints()
 
         // high of line graph
         val heightF = lineCanvasF.height()
@@ -85,10 +103,10 @@ class SpendGraph @JvmOverloads constructor(context: Context,
 
         var isPointMoved = false
 
-       list?.forEachIndexed { i, point ->
+        list?.forEachIndexed { i, point ->
 
-           //Not Exist Rate
-           if(point.rate < 0) return@forEachIndexed
+            //Not Exist Rate
+            if (point.rate < 0) return@forEachIndexed
 
             val xPosition = getDayPositionX(point.day)
 
@@ -98,12 +116,12 @@ class SpendGraph @JvmOverloads constructor(context: Context,
             //draw the point
             drawLinePoint(xPosition, yPosition)
 
-            if(isPointMoved.not()){
+            if (isPointMoved.not()) {
                 //move to first position
                 linePath.moveTo(xPosition, yPosition)
                 isPointMoved = true
 
-            }else{
+            } else {
                 //line to each position
                 linePath.lineTo(xPosition, yPosition)
             }
@@ -113,7 +131,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         drawPath(linePath, linePaint)
 
         //get highest Point
-        val highestPoint  = list?.maxBy { it.rate }
+        val highestPoint = list?.maxBy { it.rate }
 
         //if has draw vertical
         highestPoint?.let {
@@ -121,7 +139,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         }
     }
 
-    private fun Canvas.drawHighestVertical(point: SpendPoint){
+    private fun Canvas.drawHighestVertical(point: SpendPoint) {
 
         //common X for  position X
         val commonX = getDayPositionX(point.day)
@@ -140,8 +158,8 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         dotedPath.moveTo(commonX, startY)
 
         //place doted points on path
-        for(position in startY.toInt() downTo endY.toInt() step 5){
-            when(position % 3) {
+        for (position in startY.toInt() downTo endY.toInt() step 5) {
+            when (position % 3) {
                 1 -> dotedPath.moveTo(commonX, position.toFloat())
                 2 -> dotedPath.lineTo(commonX, position.toFloat())
             }
@@ -159,27 +177,27 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         val betweenRightX = labelPositionX - lineCanvasF.right
 
         //no space between label base and canvas top, finish
-        if(betweenTopY < labelTextSize) return
+        if (betweenTopY < labelTextSize) return
 
         //no space between label and canvas right, finish
-        if(betweenRightX < (labelTextSize * 3)) return
+        if (betweenRightX < (labelTextSize * 3)) return
 
         drawText("${(point.rate * 100).toInt()} %", labelPositionX, labelPositionY, labelPaint)
     }
 
 
     //draw point
-    private fun Canvas.drawLinePoint(x:Float, y:Float){
+    private fun Canvas.drawLinePoint(x: Float, y: Float) {
         drawCircle(x, y, px(2.5f), linePointPaint)
     }
 
     //draw day names on each pattern
-    private fun Canvas.drawDayNames(){
+    private fun Canvas.drawDayNames() {
 
         val totalDays = 7
         val dayPositionY = dayNameCanvasF.centerY() + (dayPaint.textSize / 2)
 
-        for(day in 1..totalDays){
+        for (day in 1..totalDays) {
             val dayPositionX = getDayPositionX(day)
             drawDayName(dayNameProvider.getName(day), dayPositionX, dayPositionY)
         }
@@ -187,26 +205,26 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     }
 
     //draw a day name
-    private fun Canvas.drawDayName(name:String, x:Float, y:Float){
+    private fun Canvas.drawDayName(name: String, x: Float, y: Float) {
 
         drawText(name, x, y, dayPaint)
     }
 
-    private fun getDayPositionX(day:Int, totalDay:Int = 7):Float{
+    private fun getDayPositionX(day: Int, totalDay: Int = 7): Float {
 
         val segmentWidth = dayNameCanvasF.width() / totalDay
         val segmentHalf = segmentWidth / 2
 
-        return when(layoutDirection){
+        return when (layoutDirection) {
 
             LayoutDirection.RTL -> {
                 val canvasRight = dayNameCanvasF.right
-                canvasRight - ( (day * segmentWidth) - segmentHalf)
+                canvasRight - ((day * segmentWidth) - segmentHalf)
             }
 
             else -> {
                 val canvasLeft = dayNameCanvasF.left
-                canvasLeft + ( (day * segmentWidth) - segmentHalf )
+                canvasLeft + ((day * segmentWidth) - segmentHalf)
             }
         }
 
@@ -215,7 +233,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
     /**
      * Initialization Methods
      */
-    private fun initConfig(){
+    private fun initConfig() {
 
         dayNameHeight = px(30f)
 
@@ -226,7 +244,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
         graphPaddingBottom = dayNameHeight
     }
 
-    override fun refreshView(){
+    override fun refreshView() {
         invalidate()
     }
 
@@ -236,31 +254,36 @@ class SpendGraph @JvmOverloads constructor(context: Context,
      */
     private fun createDayPaint() =
         Paint().apply {
-        color = Color.WHITE
-        textSize = pxS(12f)
-        textAlign = Paint.Align.CENTER
-    }
+            color = Color.BLUE
+            textSize = pxS(12f)
+            textAlign = Paint.Align.CENTER
+            isAntiAlias = true
+            strokeWidth = pxS(1f)
+        }
 
     private fun createLinePointPaint() =
         Paint().apply {
-        color = Color.WHITE
-        style = Paint.Style.FILL_AND_STROKE
-        strokeWidth = px(1f)
-    }
+            color = Color.BLUE
+            style = Paint.Style.FILL_AND_STROKE
+            strokeWidth = px(1f)
+            isAntiAlias = true
+        }
 
     private fun createLinePaint() =
         Paint().apply {
-        color = Color.WHITE
-        style = Paint.Style.STROKE
-        strokeWidth = px(1f)
-    }
+            color = Color.BLUE
+            style = Paint.Style.STROKE
+            strokeWidth = px(1f)
+            isAntiAlias = true
+        }
 
     private fun createLabelPaint() =
         Paint().apply {
-            color = Color.WHITE
+            color = Color.BLUE
             style = Paint.Style.STROKE
             textSize = pxS(15f)
             textAlign = Paint.Align.LEFT
+            isAntiAlias = true
         }
 
 
@@ -278,7 +301,8 @@ class SpendGraph @JvmOverloads constructor(context: Context,
             canvasF.left + graphPaddingLeft,
             canvasF.top + graphPaddingTop,
             canvasF.right - graphPaddingRight,
-             canvasF.bottom - graphPaddingBottom  )
+            canvasF.bottom - graphPaddingBottom
+        )
 
     //Trim the padding between Graph Canvas and Whole View
     private fun createCanvasFrame() =
@@ -303,20 +327,20 @@ class SpendGraph @JvmOverloads constructor(context: Context,
 
         abstract fun getRate(day: Int): Int
 
-        fun notifyDataChanged(){
+        fun notifyDataChanged() {
             fetchData()
             graphView?.refreshView()
         }
 
-        fun notifyPointChanged(day: Int){
+        fun notifyPointChanged(day: Int) {
             updatePointData(day)
             graphView?.refreshView()
         }
 
-        private fun updatePointData(day: Int){
+        private fun updatePointData(day: Int) {
 
             //Just update all data
-            if(lists.size < 7 ){
+            if (lists.size < 7) {
                 fetchData()
                 return
             }
@@ -324,7 +348,7 @@ class SpendGraph @JvmOverloads constructor(context: Context,
             lists[day] = SpendPoint(day, getCalculatedRate(day))
         }
 
-        private fun fetchData(){
+        private fun fetchData() {
             //Clear all data to add fresh data
             lists.clear()
             (1..7).forEach {
@@ -332,19 +356,19 @@ class SpendGraph @JvmOverloads constructor(context: Context,
             }
         }
 
-        private fun getCalculatedRate(day: Int): Float{
+        private fun getCalculatedRate(day: Int): Float {
             //GetRaw Rates
             val rate = getRate(day)
 
-            if(rate !in 0..100) return -1f
+            if (rate !in 0..100) return -1f
 
-            return  rate % 101 /100f
+            return rate % 101 / 100f
         }
 
     }
 
 }
 
-interface GraphView{
+interface GraphView {
     fun refreshView()
 }

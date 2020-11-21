@@ -11,8 +11,8 @@
         <item name="rippleColor">@android:color/darker_gray</item>
         <item name="backgroundColor">@color/gray_200</item>
         <item name="android:windowContentTransitions">true</item>
+        <item name="android:statusBarColor">@color/gray_100</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
 
         <item name="textAppearanceBody1">@style/TextAppearance.ProExpense.Body1</item>
         <item name="textAppearanceBody2">@style/TextAppearance.ProExpense.Body2</item>

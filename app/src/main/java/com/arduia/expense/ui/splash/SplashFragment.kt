@@ -39,6 +39,7 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.blue_light_500)
+
         setupViewModel()
     }
 
@@ -55,7 +56,7 @@ class SplashFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().window.statusBarColor = Color.TRANSPARENT
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(),R.color.gray_100)
     }
 
 }

@@ -50,17 +50,20 @@
         android:layout_below="@id/search_box"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/grid_3"
+        android:background="?backgroundColor"
         android:clipToPadding="false"
         android:orientation="vertical"
         android:paddingBottom="@dimen/grid_3"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="3"
+        tools:itemCount="0"
         tools:listitem="@layout/item_currency" />
+
     <ProgressBar
         android:id="@+id/pb_loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/rv_currencies"
+        android:layout_below="@id/search_box"
+        android:layout_marginTop="@dimen/grid_2"
         android:indeterminateOnly="true"
         android:indeterminateTint="@color/blue_light_500"
         android:visibility="visible" />
