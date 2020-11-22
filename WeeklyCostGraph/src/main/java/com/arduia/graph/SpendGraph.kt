@@ -24,6 +24,7 @@ class SpendGraph @JvmOverloads constructor(
     private var graphPaddingTop = 0f
     private var graphPaddingRight = 0f
     private var graphPaddingBottom = 0f
+    private var pointCircleRadius = px(1.5f)
 
     //Week Name Height of the graph
     private var dayNameHeight = 0f
@@ -188,7 +189,7 @@ class SpendGraph @JvmOverloads constructor(
 
     //draw point
     private fun Canvas.drawLinePoint(x: Float, y: Float) {
-        drawCircle(x, y, px(2.5f), linePointPaint)
+        drawCircle(x, y, pointCircleRadius, linePointPaint)
     }
 
     //draw day names on each pattern
@@ -362,7 +363,7 @@ class SpendGraph @JvmOverloads constructor(
 
             if (rate !in 0..100) return -1f
 
-            return rate % 101 / 100f
+            return rate % 101 / 110f
         }
 
     }

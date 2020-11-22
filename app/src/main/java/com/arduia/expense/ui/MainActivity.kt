@@ -284,7 +284,8 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             R.id.dest_backup,
             R.id.dest_feedback,
             R.id.dest_about,
-            R.id.dest_settings
+            R.id.dest_settings,
+            R.id.dest_expense_logs
         )
     }
 }

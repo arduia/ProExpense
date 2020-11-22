@@ -6,6 +6,7 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -39,7 +40,7 @@ class ExpenseViewModel @ViewModelInject constructor(
 
     fun deleteItem(item: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val expenseEnt = getExpenseItemByID(item.id).data ?: return@launch
+            val expenseEnt = getExpenseItemByID(item.id)
             repo.deleteExpense(expenseEnt)
             deletedItemList.add(expenseEnt)
             deletedModeOn()
@@ -53,7 +54,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
     private suspend fun getExpenseItemByID(itemId: Int) =
-        repo.getExpense(itemId).single()
+        repo.getExpense(itemId).awaitValueOrError()
 
     fun restoreDeletion(){
         viewModelScope.launch(Dispatchers.IO){
@@ -63,14 +64,10 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
 
-    @ExperimentalCoroutinesApi
     fun selectItemForDetail(selectedItem: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repo.getExpense(selectedItem.id).single()
-            result.data?.let {
-                val detailData = mapper.mapToDetailVto(it)
-                _detailDataChanged post event(detailData)
-            }?: return@launch //Error Show
+            val result = repo.getExpense(selectedItem.id).awaitValueOrError()
+            _detailDataChanged post event(mapper.mapToDetailVto(result))
         }
     }
 

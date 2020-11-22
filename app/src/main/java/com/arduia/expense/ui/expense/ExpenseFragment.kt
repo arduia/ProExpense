@@ -18,6 +18,7 @@ import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseBinding
 import com.arduia.expense.di.TopDropNavOption
+import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -27,7 +28,7 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ExpenseFragment : Fragment() {
+class ExpenseFragment : NavBaseFragment() {
 
     private lateinit var viewBinding: FragExpenseBinding
 
@@ -39,8 +40,6 @@ class ExpenseFragment : Fragment() {
     @Inject
     @TopDropNavOption
     lateinit var topDropNavOption: NavOptions
-
-    private val itemSwipeCallback by lazy { ItemSwipeCallback() }
 
     private val mainHost by lazy {
         requireActivity() as MainHost
@@ -62,7 +61,6 @@ class ExpenseFragment : Fragment() {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lockNavDrawer()
         setupView()
         setupViewModel()
     }
@@ -86,19 +84,6 @@ class ExpenseFragment : Fragment() {
         waitAnimationAndObserveExpenseList()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unlockNavDrawer()
-    }
-
-
-    private fun unlockNavDrawer(){
-        (requireActivity() as? NavigationDrawer)?.unlockDrawer()
-    }
-
-    private fun lockNavDrawer() {
-        (requireActivity() as? NavigationDrawer)?.lockDrawer()
-    }
 
     private fun setupExpenseListAdapter() {
         //Setup Transaction Recycler View
@@ -110,28 +95,23 @@ class ExpenseFragment : Fragment() {
                 spaceHeight = requireContext().px(4),
             )
         )
-        ItemTouchHelper(itemSwipeCallback).attachToRecyclerView(viewBinding.rvExpense)
-        itemSwipeCallback.setSwipeListener {
-            val item = expenseListAdapter.getItemFromPosition(it)
-            viewModel.deleteItem(item)
-        }
+
         expenseListAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
     }
 
     private fun setupRestoreButton(){
-        viewBinding.btnRestoreDeletion.setOnClickListener {
-            viewModel.restoreDeletion()
-        }
+//        viewBinding.btnRestoreDeletion.setOnClickListener {
+//            viewModel.restoreDeletion()
+//        }
     }
 
     private fun setupNavigateBackButton() {
-        viewBinding.btnPopBack.setOnClickListener {
-            findNavController().popBackStack()
+        viewBinding.tbExpense.setNavigationOnClickListener {
+            navigationDrawer?.openDrawer()
         }
     }
-
 
     private fun observeDeleteEvent() {
         viewModel.itemDeletedEvent.observe(viewLifecycleOwner, EventObserver {
@@ -141,6 +121,10 @@ class ExpenseFragment : Fragment() {
             }
             mainHost.showSnackMessage(message)
         })
+    }
+
+    private fun showNoDataLogs(){
+        viewBinding.tvNoData.visibility = View.VISIBLE
     }
 
     private fun observeDetailDataSelectEvent() {
@@ -169,10 +153,10 @@ class ExpenseFragment : Fragment() {
 
     private fun observeIsSelectedMode() {
         viewModel.isDeleteMode.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                true -> viewBinding.btnRestoreDeletion.visibility = View.VISIBLE
-                false -> viewBinding.btnRestoreDeletion.visibility = View.INVISIBLE
-            }
+//            when (it) {
+//                true -> viewBinding.btnRestoreDeletion.visibility = View.VISIBLE
+//                false -> viewBinding.btnRestoreDeletion.visibility = View.INVISIBLE
+//            }
         })
     }
 
@@ -196,7 +180,16 @@ class ExpenseFragment : Fragment() {
         viewModel.getExpenseLiveData().observe(viewLifecycleOwner, Observer {
             expenseListAdapter.submitList(it)
             hideLoading()
+            if(it.isEmpty()){
+                showNoDataLogs()
+            }else{
+                hideNoDataLogs()
+            }
         })
+    }
+
+    private fun hideNoDataLogs(){
+        viewBinding.tvNoData.visibility = View.GONE
     }
 
     private fun getAnimationDuration() =

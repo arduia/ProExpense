@@ -113,32 +113,28 @@ class HomeFragment : NavBaseFragment() {
 
         viewBinding.toolbar.setNavigationOnClickListener { navigationDrawer?.openDrawer() }
 
-//        viewBinding.btnMoreExpenses.setOnClickListener {
-//            findNavController().navigate(R.id.dest_expense, null, moreRecentNavOption)
-//        }
+        viewBinding.cvExpenseList.btnMoreLogs.setOnClickListener {
+            navigateToExpenseLogs()
+        }
         graphAdapter = ExpenseGraphAdapter()
         viewBinding.cvGraph.expenseGraph.adapter = graphAdapter
 
         viewBinding.cvGraph.expenseGraph.dayNameProvider = dayNameProvider
 
         recentAdapter.setItemInsertionListener {
-            //Item inserted
-//            viewBinding.rvRecent.smoothScrollToPosition(0)
+            viewBinding.cvExpenseList.rvRecentLists.smoothScrollToPosition(0)
         }
 
         recentAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
-
-//        viewBinding.btnMoreExpenses.visibility = View.INVISIBLE
-
     }
 
     private fun setupViewModel() {
 
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
-            viewBinding.cvExpenseList.root.visibility =
-                if (it.isNotEmpty()) View.VISIBLE else View.INVISIBLE
+//            viewBinding.cvExpenseList.root.visibility =
+//                if (it.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
             recentAdapter.submitList(it)
         })
 
@@ -156,9 +152,6 @@ class HomeFragment : NavBaseFragment() {
             mainHost.hideAddButton()
         })
 
-        viewModel.totalCost.observe(viewLifecycleOwner, Observer {
-//            viewBinding.tvTotalValue.text = totalCostFormat.format(it)
-        })
 
         viewModel.costRate.observe(viewLifecycleOwner) {
             graphAdapter.expenseMap = it
@@ -169,12 +162,30 @@ class HomeFragment : NavBaseFragment() {
         })
 
         viewModel.currencySymbol.observe(viewLifecycleOwner) {
-//            viewBinding.tvCurrency.text = it
+            viewBinding.cvExpenseInOut.tvIncomeSymobol.text = it
+            viewBinding.cvExpenseInOut.tvOutcomeSymbol.text = it
         }
 
         viewModel.onError.observe(viewLifecycleOwner, EventObserver {
             mainHost.showSnackMessage("Error")
         })
+
+        viewModel.currentWeekDateRange.observe(viewLifecycleOwner) {
+            viewBinding.cvExpenseInOut.tvDateRange.text = it
+            viewBinding.cvGraph.tvDateRange.text = it
+        }
+
+        viewModel.weekIncome.observe(viewLifecycleOwner) {
+            viewBinding.cvExpenseInOut.tvIncomeValue.text = it
+        }
+
+        viewModel.weekOutcome.observe(viewLifecycleOwner) {
+            viewBinding.cvExpenseInOut.tvOutcomeValue.text = it
+        }
+    }
+
+    private fun navigateToExpenseLogs() {
+        findNavController().navigate(R.id.dest_expense_logs)
     }
 
     private fun onDeleteExpense(item: ExpenseDetailsVto) {

@@ -4,6 +4,8 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
+import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.di.CurrencyDecimalFormat
 import com.arduia.expense.model.Result
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
@@ -11,13 +13,16 @@ import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
     private val mapper: ExpenseMapper,
     private val repo: ExpenseRepository,
+    @CurrencyDecimalFormat private val currencyFormatter: DecimalFormat,
     calculatorFactory: ExpenseRateCalculator.Factory
 ) : ViewModel() {
 
@@ -26,9 +31,6 @@ class HomeViewModel @ViewModelInject constructor(
 
     private val _detailData = EventLiveData<ExpenseDetailsVto>()
     val detailData get() = _detailData.asLiveData()
-
-    private val _totalCost = BaseLiveData<Float>()
-    val totalCost get() = _totalCost.asLiveData()
 
     private val _costRates = BaseLiveData<Map<Int, Int>>()
     val costRate get() = _costRates.asLiveData()
@@ -42,6 +44,15 @@ class HomeViewModel @ViewModelInject constructor(
     private val _onError = EventLiveData<Unit>()
     val onError get() = _onError.asLiveData()
 
+    private val _weekIncome = BaseLiveData<String>()
+    val weekIncome get() = _weekIncome.asLiveData()
+
+    private val _weekOutcome = BaseLiveData<String>()
+    val weekOutcome get() = _weekOutcome.asLiveData()
+
+    private val _currentWeekDateRange = BaseLiveData<String>()
+    val currentWeekDateRange get() = this._currentWeekDateRange.asLiveData()
+
     private val calculator = calculatorFactory.create(viewModelScope)
 
     init {
@@ -50,7 +61,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun selectItemForDetail(selectedItem: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            when(val result = repo.getExpense(selectedItem.id).first()){
+            when (val result = repo.getExpense(selectedItem.id).first()) {
                 is Result.Loading -> Unit
                 is Result.Error -> Unit
                 is Result.Success -> {
@@ -111,18 +122,34 @@ class HomeViewModel @ViewModelInject constructor(
                     is Result.Loading -> Unit
                     is Result.Error -> _onError post EventUnit
                     is Result.Success -> {
-                        calculator.setWeekExpenses(it.data)
-                        val totalAmount = it.data.filter { expenseEnt ->
-                            expenseEnt.category != ExpenseCategory.INCOME
-                        }.map { expenseEnt -> expenseEnt.amount }.sum()
-                        _totalCost post totalAmount
+
+                        val weekExpenses = it.data
+                        calculator.setWeekExpenses(weekExpenses)
+
+                        val totalOutcome = weekExpenses.getTotalOutcomeAsync()
+                        val totalIncome = weekExpenses.getTotalIncomeAsync()
+
+                        _weekOutcome post currencyFormatter.format(totalOutcome.await())
+                        _weekIncome post currencyFormatter.format(totalIncome.await())
                     }
                 }
             }
             .launchIn(viewModelScope)
     }
 
-    private fun observeRate(){
+    private fun List<ExpenseEnt>.getTotalOutcomeAsync() = viewModelScope.async {
+        this@getTotalOutcomeAsync.filter { expense ->
+            expense.category != ExpenseCategory.INCOME
+        }.sumByDouble { expense -> expense.amount.toDouble() }
+    }
+
+    private fun List<ExpenseEnt>.getTotalIncomeAsync() = viewModelScope.async {
+        this@getTotalIncomeAsync.filter { expense ->
+            expense.category == ExpenseCategory.INCOME
+        }.sumByDouble { expense -> expense.amount.toDouble() }
+    }
+
+    private fun observeRate() {
         calculator.getRates()
             .flowOn(Dispatchers.IO)
             .onEach(_costRates::postValue)

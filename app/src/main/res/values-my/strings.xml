@@ -108,5 +108,7 @@
     <string name="search">Search</string>
     <string name="no_item">No Items</string>
     <string name="continue_home">Continue</string>
+    <string name="single_item_suffix">ခု</string>
+    <string name="multi_item_suffix">ခု</string>
 
 </resources>

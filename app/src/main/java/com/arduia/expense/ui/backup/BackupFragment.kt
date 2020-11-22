@@ -74,8 +74,7 @@ class BackupFragment: NavBaseFragment(){
         viewBinding.rvBackupLogs.adapter = backupListAdapter
         viewBinding.rvBackupLogs.addItemDecoration(
             MarginItemDecoration(
-                resources.getDimension(R.dimen.grid_1).toInt(),
-                resources.getDimension(R.dimen.grid_2).toInt()
+                spaceHeight = resources.getDimension(R.dimen.grid_1).toInt()
             )
         )
     }

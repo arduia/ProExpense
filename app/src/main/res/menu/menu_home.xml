@@ -7,10 +7,14 @@
             android:id="@+id/dest_home"
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
+        <item android:title="@string/expense_logs"
+            android:icon="@drawable/ic_expense_logs"
+            android:id="@+id/dest_expense_logs"
+            />
         <item
             android:id="@+id/dest_backup"
             android:icon="@drawable/ic_export"
-            android:title="@string/backup"/>
+            android:title="@string/backup" />
         <item
             android:id="@+id/dest_feedback"
             android:icon="@drawable/ic_feedback"
@@ -18,7 +22,7 @@
         <item
             android:id="@+id/dest_about"
             android:icon="@drawable/ic_info"
-            android:title="@string/about"/>
+            android:title="@string/about" />
         <item
             android:id="@+id/dest_settings"
             android:icon="@drawable/ic_settings"

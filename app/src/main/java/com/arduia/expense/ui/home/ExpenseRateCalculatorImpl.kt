@@ -26,7 +26,7 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
             .flowOn(Dispatchers.IO)
             .onEach {
                 val dailyCosts = it.getDailyCosts()
-                val maxCost = dailyCosts.maxOfOrNull { cost -> cost.value }?:0f
+                val maxCost = dailyCosts.maxOfOrNull { cost -> cost.value }?: 0f
                 val result = mutableMapOf<Int, Int>()
                 (1..7).forEach { count ->
                     val costOfDay = dailyCosts[count] ?: return@forEach

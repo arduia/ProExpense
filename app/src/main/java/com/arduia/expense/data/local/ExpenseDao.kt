@@ -22,7 +22,7 @@ interface ExpenseDao{
     @Query("SELECT * FROM `expense` WHERE expense_id =:id")
     fun getItemExpense(id: Int): Flow<ExpenseEnt>
 
-    @Query( "SELECT * FROM `expense` ORDER BY modified_date DESC LIMIT 10")
+    @Query( "SELECT * FROM `expense` ORDER BY modified_date DESC LIMIT 4")
     fun getRecentExpense(): Flow<List<ExpenseEnt>>
 
     @Query("SELECT COUNT(*) FROM expense")

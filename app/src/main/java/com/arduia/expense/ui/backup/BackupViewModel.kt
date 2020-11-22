@@ -4,11 +4,11 @@ import android.app.Application
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.BackupRepository
+import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.Result
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.model.data
-import com.arduia.expense.ui.mapping.BackupMapper
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ import java.util.*
 
 class BackupViewModel @ViewModelInject constructor(
     app: Application,
-    private val mapper: BackupMapper,
+    private val mapper: Mapper<BackupEnt, BackupVto>,
     private val backupRepo: BackupRepository
 ) : AndroidViewModel(app) {
 
@@ -38,7 +38,7 @@ class BackupViewModel @ViewModelInject constructor(
             .flowOn(Dispatchers.IO)
             .onEach {
                 if(it  is Result.Success){
-                    _backupList post it.data.map(mapper::mapToBackupVto)
+                    _backupList post it.data.map(mapper::map)
                     Timber.d("backupList ${it.data}")
                 }
             }

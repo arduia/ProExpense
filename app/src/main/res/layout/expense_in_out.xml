@@ -18,7 +18,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="@dimen/grid_3"
             android:layout_marginTop="@dimen/grid_3"
-            android:text="Jun 4-5" />
+            tools:text="Jun 4-5" />
 
         <TextView
             android:id="@+id/tv_income"
@@ -38,15 +38,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_income"
             android:layout_alignStart="@id/tv_income"
-            android:text="60,000" />
+            tools:text="60,000" />
 
         <TextView
-            android:id="@+id/tv_outcome_currency_sympol"
+            android:id="@+id/tv_income_symobol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/tv_income_value"
             android:layout_toEndOf="@id/tv_income_value"
-            android:text="MMK" />
+            tools:text="MMK" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
             android:text="50%"
             style="?textAppearanceBody2"
             android:textColor="?colorPrimary"
-            android:layout_alignBaseline="@id/tv_outcome_currency_sympol"
+            android:layout_alignBaseline="@id/tv_income_symobol"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/grid_4"/>
         <androidx.appcompat.widget.AppCompatImageView
@@ -85,15 +85,15 @@
             android:layout_below="@id/tv_outcome"
             android:layout_alignStart="@id/tv_outcome"
             android:layout_marginBottom="@dimen/grid_4"
-            android:text="55,500" />
+            tools:text="55,500" />
 
         <TextView
-            android:id="@+id/tv_outcome_currency_value"
+            android:id="@+id/tv_outcome_symbol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/tv_outcome_value"
             android:layout_toEndOf="@id/tv_outcome_value"
-            android:text="MMK" />
+            tools:text="MMK" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
             android:text="130%"
             style="?textAppearanceBody2"
             android:textColor="@color/red_400"
-            android:layout_alignBaseline="@id/tv_outcome_currency_value"
+            android:layout_alignBaseline="@id/tv_outcome_symbol"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/grid_4"/>
         <androidx.appcompat.widget.AppCompatImageView

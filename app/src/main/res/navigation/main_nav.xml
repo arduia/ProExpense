@@ -12,7 +12,7 @@
         tools:layout="@layout/frag_home">
         <action
             android:id="@+id/action_dest_home_to_dest_expense"
-            app:destination="@id/dest_expense" />
+            app:destination="@id/dest_expense_logs" />
         <action
             android:id="@+id/action_dest_home_to_dest_expense_entry"
             app:destination="@id/dest_expense_entry">
@@ -36,7 +36,7 @@
         tools:layout="@layout/frag_settings" />
 
     <fragment
-        android:id="@+id/dest_expense"
+        android:id="@+id/dest_expense_logs"
         android:name="com.arduia.expense.ui.expense.ExpenseFragment"
         android:label="ExpenseFragment"
         tools:layout="@layout/frag_expense">
