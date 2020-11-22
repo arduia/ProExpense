@@ -30,10 +30,10 @@ class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater)
             val item = getItem(position) ?: throw Exception("getItem not found at $position")
 
             with(holder.binding){
-
                 tvName.text = item.name
                 tvDate.text = item.date
-                tvAmount.text = item.amount + " MMK"
+                tvAmount.text = item.amount
+                tvCurrencySymbol.text = item.currencySymbol
                 imvCategory.setImageResource(item.category)
         }
     }

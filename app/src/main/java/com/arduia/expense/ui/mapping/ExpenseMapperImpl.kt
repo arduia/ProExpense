@@ -7,13 +7,14 @@ import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import java.text.DateFormat
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ExpenseMapperImpl(
      private val categoryProvider: ExpenseCategoryProvider,
      private val dateFormatter: DateFormat ,
-     private val currencyFormatter: DecimalFormat
+     private val currencyFormatter: NumberFormat
  ): ExpenseMapper{
 
      override fun mapToVto(expenseEnt: ExpenseEnt) =
@@ -23,7 +24,8 @@ class ExpenseMapperImpl(
              date = dateFormatter.format(expenseEnt.modifiedDate),
              amount = expenseEnt.amount.formatCostValue(),
              finance = "",
-             category = categoryProvider.getCategoryDrawableByID(expenseEnt.category)
+             category = categoryProvider.getCategoryDrawableByID(expenseEnt.category),
+             currencySymbol = ""
          )
 
     override fun mapToDetailVto(expenseEnt: ExpenseEnt) =
@@ -34,7 +36,8 @@ class ExpenseMapperImpl(
              amount = expenseEnt.amount.formatCostValue(),
              finance = "",
              category = categoryProvider.getCategoryDrawableByID(expenseEnt.category),
-             note = expenseEnt.note?:""
+             note = expenseEnt.note?:"",
+             symbol =""
          )
 
     override fun mapToUpdateDetailVto(expenseEnt: ExpenseEnt) =

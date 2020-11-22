@@ -65,7 +65,7 @@
 
     <TextView
         android:id="@+id/tv_items"
-        style="?attr/textAppearanceBody1"
+        style="?textAppearanceCurrencySmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/tv_date"

@@ -61,7 +61,7 @@
 
     <TextView
         android:id="@+id/tv_amount"
-        style="?attr/textAppearanceHeadline6"
+        style="?textAppearanceCurrencyLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@id/tv_currency_symbol"
@@ -73,7 +73,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_currency_symbol"
-        android:text="MMK"
         style="?textAppearanceBody2"
         android:layout_alignBaseline="@id/tv_amount"
         android:layout_alignParentEnd="true"

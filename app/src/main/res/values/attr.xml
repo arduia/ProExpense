@@ -8,4 +8,7 @@
         <attr name="cornerRadius" format="dimension"/>
         <attr name="hint" format="string"/>
     </declare-styleable>
+    <attr name="textAppearanceCurrencyLarge" format="reference"/>
+
+    <attr name="textAppearanceCurrencySmall" format="reference"/>
 </resources>

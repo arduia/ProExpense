@@ -33,7 +33,7 @@
 
         <TextView
             android:id="@+id/tv_income_value"
-            style="?textAppearanceHeadline6"
+            style="?textAppearanceCurrencyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_income"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_income_percentage"
             android:text="50%"
-            style="?textAppearanceBody2"
+            style="?textAppearanceCurrencySmall"
             android:textColor="?colorPrimary"
             android:layout_alignBaseline="@id/tv_income_symobol"
             android:layout_alignParentEnd="true"
@@ -79,7 +79,7 @@
 
         <TextView
             android:id="@+id/tv_outcome_value"
-            style="?textAppearanceHeadline6"
+            style="?textAppearanceCurrencyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_outcome"
@@ -99,7 +99,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_outcome_percentage"
             android:text="130%"
-            style="?textAppearanceBody2"
+            style="?textAppearanceCurrencySmall"
             android:textColor="@color/red_400"
             android:layout_alignBaseline="@id/tv_outcome_symbol"
             android:layout_alignParentEnd="true"

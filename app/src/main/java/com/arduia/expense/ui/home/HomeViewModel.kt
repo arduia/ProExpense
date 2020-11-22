@@ -2,11 +2,12 @@ package com.arduia.expense.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
-import com.arduia.expense.model.Result
+import com.arduia.expense.model.*
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -16,13 +17,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
-    private val mapper: ExpenseMapper,
+    private val expenseVoMapper: Mapper<ExpenseEnt, ExpenseVto>,
+    private val expenseDetailMapper: Mapper<ExpenseEnt, ExpenseDetailsVto>,
     private val repo: ExpenseRepository,
-    @CurrencyDecimalFormat private val currencyFormatter: DecimalFormat,
+    @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
     calculatorFactory: ExpenseRateCalculator.Factory
 ) : ViewModel() {
 
@@ -55,6 +61,8 @@ class HomeViewModel @ViewModelInject constructor(
 
     private val calculator = calculatorFactory.create(viewModelScope)
 
+    private val _isLoading = BaseLiveData<Boolean>()
+
     init {
         init()
     }
@@ -65,7 +73,7 @@ class HomeViewModel @ViewModelInject constructor(
                 is Result.Loading -> Unit
                 is Result.Error -> Unit
                 is Result.Success -> {
-                    val detailData = mapper.mapToDetailVto(result.data)
+                    val detailData = expenseDetailMapper.map(result.data)
                     _detailData post event(detailData)
                 }
             }
@@ -84,29 +92,37 @@ class HomeViewModel @ViewModelInject constructor(
         observeRecentExpenses()
         observeWeekExpenses()
         observeRate()
+        updateWeekDateRange()
+    }
+
+    private fun updateWeekDateRange(){
+        _currentWeekDateRange set getWeekDateRange()
     }
 
     private fun observeCurrencySymbol() {
         currencyRepository.getSelectedCacheCurrency()
-            .flowOn(Dispatchers.IO)
-            .onEach {
-                when (it) {
-                    is Result.Loading -> Unit
-                    is Result.Error -> _onError post EventUnit
-                    is Result.Success -> {
-                        _currencySymbol post it.data.symbol
-                    }
-                }
+            .flowOn(Dispatchers.IO) //Flow<Result<Dto>>
+            .onSuccess { dto->
+                _currencySymbol post dto.symbol
             }
+            .onLoading(_isLoading::postValue)
+            .onError(::onErrorResult)
             .launchIn(viewModelScope)
+    }
+
+    private fun onErrorResult(e: Exception){
+        _onError post EventUnit
     }
 
     private fun observeRecentExpenses() {
         repo.getRecentExpense()
             .flowOn(Dispatchers.IO)
+            .combine(currencySymbol.asFlow()) { recent, _ ->
+                return@combine recent
+            }
             .onEach {
                 when (it) {
-                    is Result.Success -> _recentData post it.data.map(mapper::mapToVto)
+                    is Result.Success -> _recentData post it.data.map(expenseVoMapper::map)
                     is Result.Error -> _onError post EventUnit
                     is Result.Loading -> Unit
                 }
@@ -156,4 +172,29 @@ class HomeViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
     }
 
+    private fun getWeekStartTime(): Date {
+
+        val calendar = Calendar.getInstance()
+
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+        val startSunDay = (dayOfYear - dayOfWeek) + 1
+
+        calendar.set(Calendar.DAY_OF_YEAR, startSunDay)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+
+        return calendar.time
+    }
+
+    private fun getWeekDateRange(): String{
+        val startTime = getWeekStartTime()
+        val endTime = Calendar.getInstance().time
+
+        val startMonthDay = SimpleDateFormat("MMM d", Locale.ENGLISH).format(startTime)
+        val endDay = SimpleDateFormat("d", Locale.ENGLISH).format(endTime)
+
+        return "$startMonthDay - $endDay"
+    }
 }

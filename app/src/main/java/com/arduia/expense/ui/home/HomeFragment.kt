@@ -48,8 +48,8 @@ class HomeFragment : NavBaseFragment() {
     @Inject
     lateinit var dayNameProvider: DayNameProvider
 
-    @Inject
-    lateinit var recentAdapter: RecentListAdapter
+
+    private lateinit var recentAdapter: RecentListAdapter
 
     private var detailDialog: ExpenseDetailDialog? = null
 
@@ -96,7 +96,7 @@ class HomeFragment : NavBaseFragment() {
 
     //    Setup View
     private fun setupView() {
-
+        recentAdapter = RecentListAdapter(layoutInflater)
         viewBinding.cvExpenseList.rvRecentLists.adapter = recentAdapter
         viewBinding.cvExpenseList.rvRecentLists.layoutManager =
             LinearLayoutManager(requireContext())
@@ -128,6 +128,7 @@ class HomeFragment : NavBaseFragment() {
         recentAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
+        recentAdapter.currentList
     }
 
     private fun setupViewModel() {

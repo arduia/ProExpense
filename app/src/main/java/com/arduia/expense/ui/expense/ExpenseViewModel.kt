@@ -4,20 +4,20 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.model.data
-import com.arduia.expense.ui.mapping.ExpenseMapper
+import com.arduia.expense.ui.home.ExpenseDetailMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 
 
 class ExpenseViewModel @ViewModelInject constructor(
-    private val mapper: ExpenseMapper,
+    private val expenseVoMapper: Mapper<ExpenseEnt, ExpenseVto>,
+    private val expenseDetailMapper: Mapper<ExpenseEnt, ExpenseDetailsVto>,
     private val repo: ExpenseRepository
 ) : ViewModel() {
 
@@ -67,13 +67,13 @@ class ExpenseViewModel @ViewModelInject constructor(
     fun selectItemForDetail(selectedItem: ExpenseVto) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = repo.getExpense(selectedItem.id).awaitValueOrError()
-            _detailDataChanged post event(mapper.mapToDetailVto(result))
+            _detailDataChanged post event(expenseDetailMapper.map(result))
         }
     }
 
     private fun createPagedListLiveData(): LiveData<PagedList<ExpenseVto>> {
         val dataSourceFactory = repo.getExpenseSourceAll()
-            .map { mapper.mapToVto(it) }
+            .map(expenseVoMapper::map)
         return LivePagedListBuilder(dataSourceFactory, 100)
             .also {
                 livePagedListBuilder = it

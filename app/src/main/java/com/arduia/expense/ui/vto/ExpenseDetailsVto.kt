@@ -7,6 +7,7 @@ data class ExpenseDetailsVto(val id: Int,
                              val date: String,
                              @DrawableRes
                              val category: Int,
+                             val symbol: String,
                              val amount: String,
                              val finance: String,
                              val note: String)

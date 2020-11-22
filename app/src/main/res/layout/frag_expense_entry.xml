@@ -72,13 +72,14 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
+                android:hint="@string/amount"
                 android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/amount"
+                    android:textAppearance="?textAppearanceCurrencySmall"
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
                     android:maxLength="10"

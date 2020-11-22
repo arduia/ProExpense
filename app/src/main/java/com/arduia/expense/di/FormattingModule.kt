@@ -6,9 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.FragmentScoped
-import java.text.DateFormat
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
+import java.text.*
 import java.util.*
 import javax.inject.Qualifier
 
@@ -26,10 +24,11 @@ object FormattingModule{
 
     @Provides
     @CurrencyDecimalFormat
-    fun provideCurrencyDecimalFormat() = DecimalFormat("#.##")
+    fun provideCurrencyDecimalFormat(): NumberFormat = DecimalFormat.getInstance(Locale.ENGLISH).apply {
+    }
 
     @Provides
-    fun provideDateFormat(): DateFormat = SimpleDateFormat("d-M-YYYY", Locale.getDefault())
+    fun provideDateFormat(): DateFormat = SimpleDateFormat("d-M-yyyy", Locale.ENGLISH)
 
 }
 

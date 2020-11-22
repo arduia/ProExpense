@@ -15,6 +15,7 @@ import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import java.text.DateFormat
 import java.text.DecimalFormat
+import java.text.NumberFormat
 
 @Module
 @InstallIn(ActivityComponent::class)
@@ -24,7 +25,7 @@ object MapperModule {
     fun provideExpenseMapper(
         categoryProvider: ExpenseCategoryProvider,
         dateFormatter: DateFormat,
-        @CurrencyDecimalFormat decimalFormat: DecimalFormat
+        @CurrencyDecimalFormat decimalFormat: NumberFormat
     ): ExpenseMapper = ExpenseMapperImpl(
         categoryProvider,
         dateFormatter = dateFormatter,

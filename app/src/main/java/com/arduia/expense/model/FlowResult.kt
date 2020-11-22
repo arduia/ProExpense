@@ -26,3 +26,21 @@ fun <T> FlowResult<T>.awaitValueOrError(): T = runBlocking<T> {
 }
 
 class AbortFlowException : CancellationException()
+
+fun <T> FlowResult<T>.onSuccess(success: (data: T) -> Unit): FlowResult<T> {
+    return onEach {
+        if (it is SuccessResult) success.invoke(it.data)
+    }
+}
+
+fun <T> FlowResult<T>.onLoading(loading: (Boolean) -> Unit): FlowResult<T> {
+    return onEach {
+        if (it is LoadingResult) loading.invoke(true) else loading.invoke(false)
+    }
+}
+
+fun <T> FlowResult<T>.onError(error: (Exception) -> Unit): FlowResult<T> {
+    return onEach {
+        if (it is ErrorResult) error.invoke(it.exception)
+    }
+}
