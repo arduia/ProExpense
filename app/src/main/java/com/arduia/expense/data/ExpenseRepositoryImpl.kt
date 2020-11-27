@@ -10,11 +10,8 @@ import com.arduia.expense.data.network.FeedbackDto
 import com.arduia.expense.model.ErrorResult
 import com.arduia.expense.model.FlowResult
 import com.arduia.expense.model.SuccessResult
-import kotlinx.android.synthetic.main.sheet_expense_detail.view.*
-import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.*
 import java.util.*
-import kotlin.math.E
 
 class ExpenseRepositoryImpl(
     private val expenseDao: ExpenseDao,

@@ -104,7 +104,7 @@ class SpendGraph @JvmOverloads constructor(
 
         var isPointMoved = false
 
-        list?.forEachIndexed { i, point ->
+        list?.forEachIndexed { _, point ->
 
             //Not Exist Rate
             if (point.rate < 0) return@forEachIndexed
@@ -132,7 +132,7 @@ class SpendGraph @JvmOverloads constructor(
         drawPath(linePath, linePaint)
 
         //get highest Point
-        val highestPoint = list?.maxBy { it.rate }
+        val highestPoint = list?.maxByOrNull { it.rate }
 
         //if has draw vertical
         highestPoint?.let {
