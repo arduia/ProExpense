@@ -89,7 +89,7 @@ dependencies {
     def espresso_version = "3.2.0"
     def material_version = "1.2.0-beta01"
     def circle_image_version = "3.1.0"
-    def digger_hilt_version = "2.28-alpha"
+    def digger_hilt_version = "2.28.3-alpha"
     def room_version = "2.3.0-alpha01"
     def paging_version = "2.1.2"
     def recycler_version = "1.1.0"
@@ -129,9 +129,9 @@ dependencies {
 //    DI
     implementation "com.google.dagger:hilt-android:$digger_hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$digger_hilt_version"
-    implementation "androidx.hilt:hilt-common:1.0.0-alpha01"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha01"
-    kapt "androidx.hilt:hilt-compiler:1.0.0-alpha01"
+    implementation "androidx.hilt:hilt-common:1.0.0-alpha02"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02"
+    kapt "androidx.hilt:hilt-compiler:1.0.0-alpha02"
 //    Room
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
