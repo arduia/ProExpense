@@ -16,7 +16,7 @@ class SwipeItemCallback :
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         super.onSelectedChanged(viewHolder, actionState)
         if (viewHolder !is SwipeListenerVH) return
-        viewHolder.onSelectedChanged()
+        viewHolder.onSwipeItemChanged()
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}

@@ -4,6 +4,6 @@ interface SwipeListenerVH {
 
     fun onSwipe(isOnTouch: Boolean, dx: Float)
 
-    fun onSelectedChanged()
+    fun onSwipeItemChanged()
 
 }

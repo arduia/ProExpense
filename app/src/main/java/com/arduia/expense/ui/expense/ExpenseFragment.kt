@@ -97,6 +97,10 @@ class ExpenseFragment : NavBaseFragment() {
         expenseListAdapter.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
+        expenseListAdapter.setOnItemDeleteListener {
+            viewModel.deleteItemById(it.id)
+        }
+
         val itemHelper = ItemTouchHelper(SwipeItemCallback())
         itemHelper.attachToRecyclerView(viewBinding.rvExpense)
     }
