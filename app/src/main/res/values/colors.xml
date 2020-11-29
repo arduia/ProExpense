@@ -7,5 +7,6 @@
     <color name="gray_100">#f5f5f5</color>
     <color name="white">#ffffff</color>
     <color name="dark">#000000</color>
+    <color name="green_400">#66bb6a</color>
     <color name="darker_gray">@android:color/darker_gray</color>
 </resources>

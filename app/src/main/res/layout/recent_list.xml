@@ -26,7 +26,7 @@
             android:layout_marginTop="@dimen/grid_2"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="3"
-            tools:listitem="@layout/item_expense" />
+            tools:listitem="@layout/item_expense_log" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_more_logs"

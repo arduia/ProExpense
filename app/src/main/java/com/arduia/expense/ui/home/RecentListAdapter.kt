@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.R
-import com.arduia.expense.databinding.ItemExpenseBinding
+import com.arduia.expense.databinding.ItemExpenseLogBinding
 import com.arduia.expense.ui.vto.ExpenseVto
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
@@ -20,7 +20,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
-        val viewBinding = ItemExpenseBinding.inflate(layoutInflater, parent, false)
+        val viewBinding = ItemExpenseLogBinding.inflate(layoutInflater, parent, false)
 
         return VH(viewBinding)
     }
@@ -28,14 +28,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
     override fun onBindViewHolder(holder: VH, position: Int) {
 
         val item = getItem(position)
-
-        with(holder.binding){
-            tvName.text = item.name
-            tvDate.text = item.date
-            imvCategory.setImageResource(item.category)
-            tvAmount.text = item.amount
-            tvCurrencySymbol.text = item.currencySymbol
-       }
+        holder.binding.root.bindData(item)
 
     }
 
@@ -64,7 +57,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
         this.onItemClickListener = listener
     }
 
-    inner class VH(val binding: ItemExpenseBinding):
+    inner class VH(val binding: ItemExpenseLogBinding):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
         init { binding.cdExpense.setOnClickListener(this) }

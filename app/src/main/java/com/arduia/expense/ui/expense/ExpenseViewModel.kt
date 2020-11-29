@@ -53,8 +53,10 @@ class ExpenseViewModel @ViewModelInject constructor(
             _itemDeletedEvent post event(1)
         }
     }
+
     private suspend fun getExpenseItemByID(itemId: Int) =
         repo.getExpense(itemId).awaitValueOrError()
+
 
     fun restoreDeletion(){
         viewModelScope.launch(Dispatchers.IO){
