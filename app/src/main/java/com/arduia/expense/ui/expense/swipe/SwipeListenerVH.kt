@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.tmp
+package com.arduia.expense.ui.expense.swipe
 
 interface SwipeListenerVH {
 

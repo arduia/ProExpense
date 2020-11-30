@@ -7,8 +7,8 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemExpenseLogBinding
-import com.arduia.expense.ui.tmp.SwipeFrameLayout
-import com.arduia.expense.ui.tmp.SwipeListenerVH
+import com.arduia.expense.ui.expense.swipe.SwipeFrameLayout
+import com.arduia.expense.ui.expense.swipe.SwipeListenerVH
 import com.arduia.expense.ui.vto.ExpenseVto
 import timber.log.Timber
 import java.lang.Exception
