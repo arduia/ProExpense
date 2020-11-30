@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseLogBinding
 import com.arduia.expense.ui.tmp.SwipeFrameLayout
 import com.arduia.expense.ui.tmp.SwipeListenerVH
@@ -64,7 +63,7 @@ class ExpenseListAdapter constructor(private val layoutInflater: LayoutInflater)
         }
 
         override fun onSwipeItemChanged() {
-            binding.root.onSelected()
+            binding.root.onStartSwipe()
         }
 
     }
