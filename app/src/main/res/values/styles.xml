@@ -48,6 +48,9 @@
         <item name="android:alpha">0.7</item>
     </style>
 
+    <style name="Widget.ProExpense.CircularCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="shapeAppearance">@style/ShapeAppearanceOverlay.ProExpense.Circular</item>
+    </style>
     <style name="ShapeAppearanceOverlay.ProExpense.Circular" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%p</item>
