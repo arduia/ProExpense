@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?colorSurface">
+
+    <TextView
+        android:id="@+id/tv_date_range"
+        style="?textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Date Range" />
+
+    <TextView
+        android:id="@+id/tv_from"
+        style="?textAppearanceSubtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/grid_4"
+        app:layout_constraintStart_toStartOf="@+id/cv_date_from"
+        app:layout_constraintTop_toBottomOf="@id/tv_date_range"
+        tools:text="From" />
+
+    <TextView
+        android:id="@+id/tv_from2"
+        style="?textAppearanceSubtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/grid_4"
+        app:layout_constraintStart_toStartOf="@+id/cv_date_to"
+        app:layout_constraintTop_toBottomOf="@id/tv_date_range"
+        tools:text="To" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_date_from"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/grid_4"
+        app:layout_constraintEnd_toStartOf="@+id/cv_date_to"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_from">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imv_calendar_from"
+                android:layout_width="@dimen/standard_icon_size"
+                android:layout_height="@dimen/standard_icon_size"
+                android:layout_marginVertical="@dimen/grid_2"
+                android:layout_marginStart="@dimen/grid_2"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_date" />
+
+            <TextView
+                android:id="@+id/tv_from_date_value"
+                style="?textAppearanceBody1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:text="11 Dec 2020" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_date_to"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/grid_4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cv_date_from"
+        app:layout_constraintTop_toBottomOf="@+id/tv_from2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imv_calendar_to"
+                android:layout_width="@dimen/standard_icon_size"
+                android:layout_height="@dimen/standard_icon_size"
+                android:layout_marginVertical="@dimen/grid_2"
+                android:layout_marginStart="@dimen/grid_2"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_date" />
+
+            <TextView
+                android:id="@+id/tv_to_date_value"
+                style="?textAppearanceBody1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:text="11 Dec 2020" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_sorted_by"
+        android:text="Sort by"
+        style="?textAppearanceBody1"
+        app:layout_constraintTop_toBottomOf="@id/cv_date_from"
+        app:layout_constraintStart_toStartOf="@id/cv_date_from"
+        android:layout_marginTop="@dimen/grid_3"/>
+
+    <RadioGroup
+        android:id="@+id/rg_order"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/grid_2"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/cv_date_to"
+        app:layout_constraintStart_toStartOf="@id/cv_date_from"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sorted_by">
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="?colorPrimary"
+            android:checked="true"
+            android:text="Ascending" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_3"
+            android:buttonTint="?colorPrimary"
+            android:text="Descending" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_apply_filter"
+        style="?materialButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_3"
+        android:text="Apply Filter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rg_order" />
+</androidx.constraintlayout.widget.ConstraintLayout>
