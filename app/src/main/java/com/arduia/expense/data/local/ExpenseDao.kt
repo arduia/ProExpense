@@ -19,6 +19,12 @@ interface ExpenseDao{
     @Query ( "SELECT * FROM `expense` ORDER BY created_date DESC" )
     fun getExpenseAll(): Flow<List<ExpenseEnt>>
 
+    @Query("SELECT * FROM `expense` WHERE created_date >= :startTime AND created_date <= :endTime ORDER BY created_date ASC LIMIT :limit OFFSET :offset")
+    fun getExpenseRangeAsc(startTime: Long, endTime: Long, offset: Int, limit: Int): Flow<List<ExpenseEnt>>
+
+    @Query("SELECT * FROM `expense` WHERE created_date >= :startTime AND created_date <= :endTime ORDER BY created_date DESC LIMIT :limit OFFSET :offset")
+    fun getExpenseRangeDesc(startTime: Long, endTime: Long, offset: Int, limit: Int): Flow<List<ExpenseEnt>>
+
     @Query("SELECT * FROM `expense` WHERE expense_id =:id")
     fun getItemExpense(id: Int): Flow<ExpenseEnt>
 

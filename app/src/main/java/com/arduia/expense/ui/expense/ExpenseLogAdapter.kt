@@ -3,6 +3,8 @@ package com.arduia.expense.ui.expense
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +17,7 @@ import timber.log.Timber
 import java.lang.Exception
 
 class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) :
-    ListAdapter<ExpenseLogVo, RecyclerView.ViewHolder>(DIFF_CALLBACK){
+    PagedListAdapter<ExpenseLogVo, RecyclerView.ViewHolder>(DIFF_CALLBACK){
 
     private var onItemClickListener: (ExpenseLogVo.Log) -> Unit = {}
 
@@ -60,13 +62,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
     }
 
     private fun bindLogVH(binding: ItemExpenseLogBinding, data: ExpenseLogVo.Log) {
-        val item = data.expenseLog
-        with(binding) {
-            tvName.text = item.name
-            tvDate.text = item.date
-            tvCurrencySymbol.text = item.currencySymbol
-            tvAmount.text = item.amount
-        }
+        binding.root.bindData(data)
     }
 
     private fun bindHeaderVH(binding: ItemExpenseDateHeaderBinding, data: ExpenseLogVo.Header) {
@@ -100,6 +96,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
             if (v == null) return
             val item = getItemFromPosition(adapterPosition)
             if (item !is ExpenseLogVo.Log) return
+
             when (v.id) {
                 binding.cdExpense.id -> {
                     onItemClickListener(item)
@@ -108,6 +105,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
                     onItemDeleteListener.invoke(item)
                 }
             }
+
         }
 
         override fun onSwipeItemChanged() {

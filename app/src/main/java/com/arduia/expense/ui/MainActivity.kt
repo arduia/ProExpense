@@ -75,7 +75,6 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         setTheme(R.style.Theme_ProExpense)
 
         viewModel.hashCode()
-
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
 

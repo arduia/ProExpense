@@ -4,14 +4,19 @@
 
     <item
         android:id="@+id/delete"
-        android:title="Delete"
         android:icon="@drawable/ic_delete"
-        app:showAsAction="ifRoom"  />
+        android:title="@string/delete"
+        app:showAsAction="ifRoom" />
 
     <item
-        android:title="Select"
         android:id="@+id/select"
         android:icon="@drawable/ic_select_all"
+        android:title="@string/select_all"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/ic_filter"
+        android:title="@string/filter"
         app:showAsAction="always" />
 
 </menu>

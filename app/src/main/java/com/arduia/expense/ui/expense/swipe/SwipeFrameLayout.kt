@@ -8,6 +8,7 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseLogBinding
+import com.arduia.expense.ui.expense.ExpenseLogVo
 import com.arduia.expense.ui.vto.ExpenseVto
 import kotlin.math.abs
 
@@ -49,14 +50,18 @@ class SwipeFrameLayout @JvmOverloads constructor(
         return@OnLongClickListener true
     }
 
-    fun bindData(data: ExpenseVto) {
+    fun bindData(data: ExpenseLogVo.Log) {
         with(binding) {
-            tvAmount.text = data.amount
-            tvCurrencySymbol.text = data.currencySymbol
-            tvDate.text = data.date
-            tvName.text = data.name
-            imvCategory.setImageResource(data.category)
+            tvAmount.text = data.expenseLog.amount
+            tvCurrencySymbol.text = data.expenseLog.currencySymbol
+            tvDate.text = data.expenseLog.date
+            tvName.text = data.expenseLog.name
+            imvCategory.setImageResource(data.expenseLog.category)
         }
+        binding.cdExpense.translationX = if(data.isSelected.not()){
+            0F
+        }else lockStartMargin
+
         binding.cdExpense.setOnLongClickListener(cdLongClickListener)
     }
 
@@ -188,11 +193,9 @@ class SwipeFrameLayout @JvmOverloads constructor(
         if(currentState == STATE_IDLE){
             when(oldState){
                 STATE_START_LOCKED -> {
-                    //STATE START LOCK -> IDLE
                     selectedChangedListener?.onSelectedChanged(false)
                 }
                 STATE_END_LOCKED -> {
-                    //STATE END LOCK -> IDLE
                     prepareChangedListener?.onPreparedChanged(false)
                 }
             }

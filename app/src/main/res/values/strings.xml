@@ -112,5 +112,8 @@
     <string name="continue_home">Continue</string>
     <string name="single_item_suffix"> item</string>
     <string name="multi_item_suffix"> items</string>
+    <string name="filter">Filter</string>
+    <string name="select_all">Select All</string>
+    <string name="delete">Delete</string>
 </resources>
 
