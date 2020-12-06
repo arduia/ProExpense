@@ -8,6 +8,7 @@ import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.ui.expense.mapper.ExpenseLogTransform
+import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,13 +31,10 @@ class ExpenseProxySource(
                 limit = params.pageSize,
                 offset = params.requestedStartPosition
             ).awaitValueOrError()
-
             val result = data.transform()
             callback.onResult(result, params.requestedStartPosition, result.size)
         }
     }
-
-    private fun getFakeHeader() = ExpenseLogVo.Header("Date String")
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<ExpenseLogVo>) {
         ioScope.launch(Dispatchers.IO) {

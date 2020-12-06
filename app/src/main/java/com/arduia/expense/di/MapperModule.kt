@@ -42,7 +42,7 @@ object MapperModule {
     fun provideExpenseVoMapper(
         categoryProvider: ExpenseCategoryProvider,
         dateFormatter: DateFormat,
-        @CurrencyDecimalFormat decimalFormat: NumberFormat
+        @CurrencyDecimalFormat decimalFormat: NumberFormat,
     ): Mapper<ExpenseEnt, ExpenseLogVo.Log> = ExpenseLogVoMapper(
         categoryProvider,
         dateFormatter,
@@ -50,12 +50,10 @@ object MapperModule {
     )
 
     @Provides
-    fun provideExpenseLogTransform(
-        logMapper: Mapper<ExpenseEnt, ExpenseLogVo.Log>
-    ): Mapper<List<ExpenseEnt>, List<ExpenseLogVo>> =
+    fun provideExpenseLogTransform(logMapper: Mapper<ExpenseEnt, ExpenseLogVo.Log>): Mapper<List<ExpenseEnt>, List<ExpenseLogVo>> =
         ExpenseLogTransform(
             headerDateFormat = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH),
-            logMapper = logMapper
+            logMapper
         )
 
     @Provides

@@ -2,14 +2,15 @@ package com.arduia.expense.ui.expense.swipe
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseLogBinding
 import com.arduia.expense.ui.expense.ExpenseLogVo
-import com.arduia.expense.ui.vto.ExpenseVto
 import kotlin.math.abs
 
 class SwipeFrameLayout @JvmOverloads constructor(
@@ -50,7 +51,8 @@ class SwipeFrameLayout @JvmOverloads constructor(
         return@OnLongClickListener true
     }
 
-    fun bindData(data: ExpenseLogVo.Log) {
+    fun bindData(data: ExpenseLogVo.Log, state: Int? = SwipeItemState.STATE_IDLE) {
+
         with(binding) {
             tvAmount.text = data.expenseLog.amount
             tvCurrencySymbol.text = data.expenseLog.currencySymbol
@@ -58,11 +60,47 @@ class SwipeFrameLayout @JvmOverloads constructor(
             tvName.text = data.expenseLog.name
             imvCategory.setImageResource(data.expenseLog.category)
         }
-        binding.cdExpense.translationX = if(data.isSelected.not()){
-            0F
-        }else lockStartMargin
+
+        bindState(state)
 
         binding.cdExpense.setOnLongClickListener(cdLongClickListener)
+    }
+
+    private fun bindState(state: Int?){
+
+        if(isInVisibleRange()){
+            //TranslateWithAnimation
+            currentPosition = binding.cdExpense.translationX
+            desiredDestination = when(state){
+                SwipeItemState.STATE_LOCK_START ->  lockStartMargin
+                SwipeItemState.STATE_LOCK_END ->  -lockEndMargin
+                else ->  0f
+            }
+
+            translateToDesiredDestination()
+        }else{
+            //TranslateImmediately
+            binding.cdExpense.translationX = when(state){
+                SwipeItemState.STATE_LOCK_END -> {
+                    onDirectionChanged(DIRECTION_END_TO_START)
+                    -lockEndMargin
+                }
+                SwipeItemState.STATE_LOCK_START -> {
+                    onDirectionChanged(DIRECTION_START_TO_END)
+                    lockStartMargin
+                }
+                else -> 0f
+            }
+        }
+
+    }
+
+    private fun isInVisibleRange():Boolean{
+        if(!isShown) return false
+        val actualPosition = Rect()
+        getGlobalVisibleRect(actualPosition)
+        val screen  = Rect(0, 0, width, height)
+        return actualPosition.intersect(screen)
     }
 
     private fun invertEndLockState() {

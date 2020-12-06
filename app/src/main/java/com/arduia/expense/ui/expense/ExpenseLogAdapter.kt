@@ -3,16 +3,15 @@ package com.arduia.expense.ui.expense
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseDateHeaderBinding
 import com.arduia.expense.databinding.ItemExpenseLogBinding
 import com.arduia.expense.ui.expense.swipe.SwipeFrameLayout
+import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeListenerVH
+import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import timber.log.Timber
 import java.lang.Exception
 
@@ -22,6 +21,10 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
     private var onItemClickListener: (ExpenseLogVo.Log) -> Unit = {}
 
     private var onItemDeleteListener: (ExpenseLogVo.Log) -> Unit = {}
+
+    private var swipeState = SwipeStateHolder()
+
+    private var onStateChangeListener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log) -> Unit = { _, _->}
 
     companion object {
         private const val TYPE_LOG = 0
@@ -49,6 +52,10 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         }
     }
 
+    fun restoreState(state: SwipeStateHolder){
+        this.swipeState = state
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItemFromPosition(position)
         when {
@@ -62,7 +69,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
     }
 
     private fun bindLogVH(binding: ItemExpenseLogBinding, data: ExpenseLogVo.Log) {
-        binding.root.bindData(data)
+        binding.root.bindData(data, state = swipeState.getStateOrNull(data.expenseLog.id))
     }
 
     private fun bindHeaderVH(binding: ItemExpenseDateHeaderBinding, data: ExpenseLogVo.Header) {
@@ -76,16 +83,38 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
 
     inner class LogVH(val binding: ItemExpenseLogBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener, SwipeListenerVH,
-        SwipeFrameLayout.OnSelectedChangedListener {
+        SwipeFrameLayout.OnSelectedChangedListener, SwipeFrameLayout.OnPrepareChangedListener {
 
         init {
             binding.cdExpense.setOnClickListener(this)
             binding.root.setOnSelectedChangedListener(this)
+            binding.root.setOnPrepareChangedListener(this)
             binding.imvDeleteIcon.setOnClickListener(this)
         }
 
         override fun onSelectedChanged(isSelected: Boolean) {
-            Timber.d("${adapterPosition}onSelected $isSelected")
+           onStateChanged(if(isSelected)SwipeItemState.STATE_LOCK_START else SwipeItemState.STATE_IDLE)
+        }
+
+        override fun onPreparedChanged(isPrepared: Boolean) {
+            Timber.d("onPreapredCanged $isPrepared")
+            onStateChanged(if(isPrepared)SwipeItemState.STATE_LOCK_END else SwipeItemState.STATE_IDLE)
+        }
+
+        private fun onStateChanged(@SwipeItemState.SwipeState state: Int){
+
+            val item = getItemFromPosition(adapterPosition) as? ExpenseLogVo.Log ?:return
+
+            if(state == SwipeItemState.STATE_LOCK_END){
+                Timber.d("onStateLocked")
+                swipeState.clear()
+                swipeState.updateState(item.expenseLog.id, state)
+                onStateChangeListener.invoke(swipeState,item)
+                notifyDataSetChanged()
+                return
+            }
+            swipeState.updateState(item.expenseLog.id, state)
+            onStateChangeListener.invoke(swipeState,item)
         }
 
         override fun onSwipe(isOnTouch: Boolean, dx: Float) {
@@ -113,11 +142,15 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         }
     }
 
-    fun setOnItemClickListener(listener: (ExpenseLogVo.Log) -> Unit) {
+    fun setOnClickListener(listener: (ExpenseLogVo.Log) -> Unit) {
         onItemClickListener = listener
     }
 
-    fun setOnItemDeleteListener(listener: (ExpenseLogVo.Log) -> Unit) {
+    fun setOnStateChangeListener(listener: (holder: SwipeStateHolder,item: ExpenseLogVo.Log) -> Unit){
+        this.onStateChangeListener = listener
+    }
+
+    fun setOnDeleteListener(listener: (ExpenseLogVo.Log) -> Unit) {
         onItemDeleteListener = listener
     }
 

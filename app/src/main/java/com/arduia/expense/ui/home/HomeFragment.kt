@@ -200,10 +200,6 @@ class HomeFragment : NavBaseFragment() {
         findNavController().navigate(action, entryNavOption)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(KEY_SCROLL_POSITION, viewBinding.scrollHome.scrollY)
-    }
 
     private fun restoreViewState(instanceState: Bundle?) {
         val scrollPosition = instanceState?.getInt(KEY_SCROLL_POSITION) ?: return

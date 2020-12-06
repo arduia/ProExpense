@@ -6,7 +6,7 @@ import com.arduia.expense.ui.expense.ExpenseLogVo
 import java.text.DateFormat
 import java.util.*
 
-class ExpenseLogTransform(
+class ExpenseLogTransform (
     private val headerDateFormat: DateFormat,
     private val logMapper: Mapper<ExpenseEnt, ExpenseLogVo.Log>
 ) : Mapper<List<ExpenseEnt>, List<ExpenseLogVo>> {
