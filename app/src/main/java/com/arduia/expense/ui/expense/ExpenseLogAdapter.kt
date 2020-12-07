@@ -24,7 +24,8 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
 
     private var swipeState = SwipeStateHolder()
 
-    private var onStateChangeListener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log) -> Unit = { _, _->}
+    private var onStateChangeListener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log)
+    -> Unit = { _, _-> }
 
     companion object {
         private const val TYPE_LOG = 0
@@ -97,16 +98,15 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         }
 
         override fun onPreparedChanged(isPrepared: Boolean) {
-            Timber.d("onPreapredCanged $isPrepared")
             onStateChanged(if(isPrepared)SwipeItemState.STATE_LOCK_END else SwipeItemState.STATE_IDLE)
         }
 
         private fun onStateChanged(@SwipeItemState.SwipeState state: Int){
 
-            val item = getItemFromPosition(adapterPosition) as? ExpenseLogVo.Log ?:return
+            if(adapterPosition == -1) return
+            val item = getItem(adapterPosition) as? ExpenseLogVo.Log ?:return
 
             if(state == SwipeItemState.STATE_LOCK_END){
-                Timber.d("onStateLocked")
                 swipeState.clear()
                 swipeState.updateState(item.expenseLog.id, state)
                 onStateChangeListener.invoke(swipeState,item)
@@ -134,7 +134,6 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
                     onItemDeleteListener.invoke(item)
                 }
             }
-
         }
 
         override fun onSwipeItemChanged() {

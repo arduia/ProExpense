@@ -19,8 +19,7 @@ class ExpenseProxySource(
     private val ioScope: CoroutineScope,
     private val expenseRepository: ExpenseRepository,
     private val logTransform: Mapper<List<ExpenseEnt>, List<ExpenseLogVo>>
-) :
-    PositionalDataSource<ExpenseLogVo>() {
+):  PositionalDataSource<ExpenseLogVo>() {
 
     override fun loadInitial(
         params: LoadInitialParams,

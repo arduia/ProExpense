@@ -26,7 +26,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     private val appJob = Job()
-    private val appIOScope = CoroutineScope(Dispatchers.IO + appJob)
 
     override fun onCreate() {
         super.onCreate()
@@ -35,10 +34,7 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
 
     private fun setupLogging() {
         when (BuildConfig.DEBUG) {
-            true -> {
-
-                Timber.plant(Timber.DebugTree())
-            }
+            true -> Timber.plant(Timber.DebugTree())
             false -> Unit
         }
     }
@@ -57,7 +53,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
             super.attachBaseContext(localedContext)
         }
     }
-
 
     override fun onTerminate() {
         super.onTerminate()

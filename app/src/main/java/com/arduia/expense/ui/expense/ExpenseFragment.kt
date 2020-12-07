@@ -21,11 +21,12 @@ import kotlinx.coroutines.*
 @AndroidEntryPoint
 class ExpenseFragment : NavBaseFragment() {
 
-    private lateinit var binding: FragExpenseLogsBinding
-
-    private var filterDialog: FilterDialog? = null
+    private var _binding: FragExpenseLogsBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModels<ExpenseViewModel>()
+
+    private var filterDialog: FilterDialog? = null
 
     private var adapter: ExpenseLogAdapter? = null
 
@@ -34,16 +35,31 @@ class ExpenseFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragExpenseLogsBinding.inflate(layoutInflater, container, false)
+        _binding = FragExpenseLogsBinding.inflate(layoutInflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        clean()
+    }
+
+    private fun clean(){
+        lifecycle.removeObserver(viewModel)
+        binding.rvExpense.adapter = null
+        filterDialog = null
+        adapter = null
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupToolbar()
         setupExpenseLogRecyclerview()
         setupViewModel()
         PageKeyedDataSource.LoadInitialParams<Int>(1, false)
+
     }
 
     private fun setupToolbar() {
@@ -59,25 +75,21 @@ class ExpenseFragment : NavBaseFragment() {
 
     private fun setupExpenseLogRecyclerview() {
         adapter = ExpenseLogAdapter(layoutInflater).apply {
-            setOnStateChangeListener{holder, _ ->
+            setOnStateChangeListener { holder, _ ->
                 viewModel.storeState(holder)
             }
         }
         val rvTouchHelper = ItemTouchHelper(SwipeItemCallback())
         rvTouchHelper.attachToRecyclerView(binding.rvExpense)
         binding.rvExpense.adapter = adapter
-
     }
 
     private fun setupViewModel() {
-
         lifecycle.addObserver(viewModel)
-
         viewModel.expenseList.observe(viewLifecycleOwner) {
             adapter?.submitList(it)
         }
-
-        viewModel.onRestoreSwipeState.observe(viewLifecycleOwner, EventObserver{
+        viewModel.onRestoreSwipeState.observe(viewLifecycleOwner, EventObserver {
             adapter?.restoreState(it)
             adapter?.notifyDataSetChanged()
         })

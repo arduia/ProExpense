@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.expense.filter
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -14,7 +15,8 @@ import java.util.*
 
 class FilterDialog : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FilterExpenseBinding
+    private var _binding: FilterExpenseBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var data: ExpenseLogFilterVo
 
@@ -27,7 +29,7 @@ class FilterDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FilterExpenseBinding.inflate(inflater, container, false)
+        _binding = FilterExpenseBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -51,6 +53,10 @@ class FilterDialog : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     fun show(fm: FragmentManager, data: ExpenseLogFilterVo) {
         this.data = data
         show(fm, "FilterDialog")
