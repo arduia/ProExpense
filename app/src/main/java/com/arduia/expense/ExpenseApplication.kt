@@ -14,6 +14,7 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.single
+import leakcanary.LeakCanary
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
@@ -34,7 +35,10 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
 
     private fun setupLogging() {
         when (BuildConfig.DEBUG) {
-            true -> Timber.plant(Timber.DebugTree())
+            true -> {
+
+                Timber.plant(Timber.DebugTree())
+            }
             false -> Unit
         }
     }
