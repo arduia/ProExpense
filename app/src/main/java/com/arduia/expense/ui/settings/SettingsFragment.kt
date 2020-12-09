@@ -16,7 +16,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SettingsFragment: NavBaseFragment(){
 
-    private lateinit var binding: FragSettingsBinding
+    private var _binding: FragSettingsBinding? = null
+    private val binding get() = _binding!!
 
     private var languageChooseDialog: ChooseLanguageDialog? = null
 
@@ -31,9 +32,8 @@ class SettingsFragment: NavBaseFragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding =  FragSettingsBinding.inflate(layoutInflater, container, false)
-
+    ): View  {
+        _binding =  FragSettingsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -46,7 +46,7 @@ class SettingsFragment: NavBaseFragment(){
     private fun setupView(){
 
         binding.tbSettings.setNavigationOnClickListener {
-            navigationDrawer?.openDrawer()
+            navigationDrawer.openDrawer()
         }
 
         binding.flLanguage.setOnClickListener {
@@ -70,7 +70,13 @@ class SettingsFragment: NavBaseFragment(){
         })
 
         viewModel.currencyValue.observe(viewLifecycleOwner, binding.tvCurrencyValue::setText)
-
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        languageChooseDialog = null
+        currencyDialog = null
+        _binding = null
+
+    }
 }

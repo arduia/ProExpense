@@ -24,18 +24,21 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ChooseCurrencyDialog : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragChooseCurrencyDialogBinding
+    private var _binding: FragChooseCurrencyDialogBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModels<ChooseCurrencyViewModel>()
 
-    private lateinit var adapter: CurrencyListAdapter
-    private var loadingHideJob: Job ? =null
+    private var adapter: CurrencyListAdapter? = null
+
+    private var hideLoadingJob: Job ? =null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragChooseCurrencyDialogBinding.inflate(layoutInflater, container, false)
+    ): View  {
+        _binding = FragChooseCurrencyDialogBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -51,7 +54,7 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
 
     private fun setupView() {
         adapter = CurrencyListAdapter(layoutInflater)
-        adapter.setOnItemClickListener(viewModel::selectCurrency)
+        adapter?.setOnItemClickListener(viewModel::selectCurrency)
         binding.searchBox.setOnSearchTextChangeListener(viewModel::searchCurrency)
         with(binding.rvCurrencies) {
             this.adapter = this@ChooseCurrencyDialog.adapter
@@ -70,7 +73,9 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
     }
 
     private fun setupViewModel() {
-        viewModel.currencies.observe(viewLifecycleOwner, adapter::submitList)
+        viewModel.currencies.observe(viewLifecycleOwner){
+            adapter?.submitList(it)
+        }
 
         viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
@@ -82,14 +87,21 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
     }
 
     private fun showLoading() {
-        loadingHideJob?.cancel()
+        hideLoadingJob?.cancel()
         binding.pbLoading.visibility = View.VISIBLE
     }
 
     private fun hideLoadingWithDelay() {
-        loadingHideJob = lifecycleScope.launch(Dispatchers.Main) {
+        hideLoadingJob = lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
             binding.pbLoading.visibility = View.INVISIBLE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.rvCurrencies.adapter = null
+        adapter = null
+        _binding = null
     }
 }

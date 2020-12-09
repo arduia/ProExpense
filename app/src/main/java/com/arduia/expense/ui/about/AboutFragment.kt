@@ -25,7 +25,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AboutFragment : NavBaseFragment() {
 
-    private lateinit var viewBinding: FragAboutBinding
+    private var _binding: FragAboutBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     @LefSideNavOption
@@ -35,14 +36,11 @@ class AboutFragment : NavBaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        initViewBinding(parent = container)
-        return viewBinding.root
+    ): View {
+        _binding = FragAboutBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
-    private fun initViewBinding(parent: ViewGroup?) {
-        viewBinding = FragAboutBinding.inflate(layoutInflater, parent, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,25 +57,25 @@ class AboutFragment : NavBaseFragment() {
     }
 
     private fun setAppVersionName(){
-        viewBinding.tvVersion.text = with(requireActivity()){
+        binding.tvVersion.text = with(requireActivity()){
             packageManager.getPackageInfo(packageName,0).versionName
         }
     }
 
     private fun setupContributeClick() {
-        viewBinding.flContribute.setOnClickListener {
+        binding.flContribute.setOnClickListener {
             openGithubLink()
         }
     }
 
     private fun setupNavOpenButton() {
-        viewBinding.toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             navigationDrawer?.openDrawer()
         }
     }
 
     private fun setupOpenSourceClick() {
-        viewBinding.flOpenSources.setOnClickListener {
+        binding.flOpenSources.setOnClickListener {
             val title = getString(R.string.open_source_lib)
             val url = getString(R.string.open_source_url)
             navigateToWeb(title, url)
@@ -85,7 +83,7 @@ class AboutFragment : NavBaseFragment() {
     }
 
     private fun setupPrivacyClick() {
-        viewBinding.flPrivacy.setOnClickListener {
+        binding.flPrivacy.setOnClickListener {
             val title = getString(R.string.privacy_policy)
             val url = getString(R.string.policy_url)
             navigateToWeb(title, url)
@@ -108,15 +106,15 @@ class AboutFragment : NavBaseFragment() {
             devString.length + devMailString.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-        val smaillSize = RelativeSizeSpan(0.9f)
+        val smallSize = RelativeSizeSpan(0.9f)
         devSpanText.setSpan(
-            smaillSize,
+            smallSize,
             devString.length,
             devString.length + devMailString.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-        viewBinding.tvDeveloper.movementMethod = LinkMovementMethod.getInstance()
-        viewBinding.tvDeveloper.text = devSpanText
+        binding.tvDeveloper.movementMethod = LinkMovementMethod.getInstance()
+        binding.tvDeveloper.text = devSpanText
     }
 
 
@@ -133,5 +131,10 @@ class AboutFragment : NavBaseFragment() {
         val action = AboutFragmentDirections
             .actionDestAboutToDestWeb(url = url, title = title)
         findNavController().navigate(action, slideNavOptions)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

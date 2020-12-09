@@ -16,7 +16,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FeedbackFragment : NavBaseFragment() {
 
-    private lateinit var viewBinding: FragFeedbackBinding
+    private var _binding: FragFeedbackBinding? =null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModels<FeedbackViewModel>()
 
@@ -24,9 +25,9 @@ class FeedbackFragment : NavBaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        viewBinding = FragFeedbackBinding.inflate(layoutInflater)
-        return viewBinding.root
+    ): View {
+        _binding = FragFeedbackBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,11 +38,11 @@ class FeedbackFragment : NavBaseFragment() {
 
     private fun setupView() {
 
-        viewBinding.toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             (requireActivity() as? NavigationDrawer)?.openDrawer()
         }
 
-        viewBinding.btnSend.setOnClickListener {
+        binding.btnSend.setOnClickListener {
             sendFeedback()
         }
     }
@@ -54,9 +55,9 @@ class FeedbackFragment : NavBaseFragment() {
     }
 
     private fun clearInputField() {
-        viewBinding.edtComment.setText("")
-        viewBinding.edtName.setText("")
-        viewBinding.edtEmail.setText("")
+        binding.edtComment.setText("")
+        binding.edtName.setText("")
+        binding.edtEmail.setText("")
     }
 
     private fun showFeedbackStatusDialog() {
@@ -89,7 +90,7 @@ class FeedbackFragment : NavBaseFragment() {
     }
 
     private fun showEmailError() {
-        viewBinding.edtEmail.error = getString(R.string.invalid_email)
+        binding.edtEmail.error = getString(R.string.invalid_email)
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -98,13 +99,18 @@ class FeedbackFragment : NavBaseFragment() {
     }
 
     private fun showCommentEmptyError() {
-        viewBinding.edtComment.error = getString(R.string.empty_comment) //fix
+        binding.edtComment.error = getString(R.string.empty_comment) //fix
     }
 
-    private fun getName() = viewBinding.edtName.text.toString()
+    private fun getName() = binding.edtName.text.toString()
 
-    private fun getEmail() = viewBinding.edtEmail.text.toString()
+    private fun getEmail() = binding.edtEmail.text.toString()
 
-    private fun getComment() = viewBinding.edtComment.text.toString()
+    private fun getComment() = binding.edtComment.text.toString()
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+    }
 }

@@ -18,9 +18,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ChooseLanguageDialog : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragChooseLanguageDialogBinding
+    private var _binding: FragChooseLanguageDialogBinding? = null
+    private val binding get() = _binding!!
 
-    private lateinit var adapter: LangListAdapter
+    private var adapter: LangListAdapter? =null
 
     private val viewModel by viewModels<ChooseLanguageViewModel>()
 
@@ -32,8 +33,8 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragChooseLanguageDialogBinding.inflate(layoutInflater, container, false)
+    ): View {
+        _binding = FragChooseLanguageDialogBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -68,7 +69,9 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
     }
 
     private fun setupViewModel() {
-        viewModel.language.observe(viewLifecycleOwner, adapter::submitList)
+        viewModel.language.observe(viewLifecycleOwner){
+            adapter?.submitList(it)
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -85,5 +88,12 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
 
     fun interface OnDismissListener {
         fun onDismiss(isFinished: Boolean)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.rvLanguages.adapter = null
+        adapter =null
+        _binding = null
     }
 }
