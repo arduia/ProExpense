@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.expense.filter
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,7 @@ class FilterDialog : BottomSheetDialogFragment() {
 
     private var startTime = 0L
     private var endTime = 0L
+    private var datePickerDialog: DatePickerDialog? = null
     private var sorting: Sorting = Sorting.ASC
 
     override fun onCreateView(
@@ -69,24 +71,35 @@ class FilterDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private fun createDatePicker(time: Long): MaterialDatePicker<Long>{
-        return  MaterialDatePicker.Builder.datePicker()
-            .setCalendarConstraints(CalendarConstraints.Builder()
-                .setOpenAt(time)
-                .build())
-            .build()
+    private fun createDatePicker(time: Long, onSelect: (Long)-> Unit): DatePickerDialog{
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = time
+        return DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                onSelect.invoke(calendar.timeInMillis)
+            },
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]
+        )
     }
 
     private fun openStartTimePicker(){
-        createDatePicker(startTime).apply {
-            addOnPositiveButtonClickListener(::changeStartTime)
-        }.show(childFragmentManager,"StarTimeDatePicker")
+        datePickerDialog?.dismiss()
+        datePickerDialog = createDatePicker(startTime){
+            changeStartTime(it)
+        }
+        datePickerDialog?.show()
     }
 
     private fun openEndTimePicker(){
-        createDatePicker(endTime).apply {
-            addOnPositiveButtonClickListener(::changeEndTime)
-        }.show(childFragmentManager,"EndTimeDatePicker")
+        datePickerDialog?.dismiss()
+        datePickerDialog = createDatePicker(endTime){
+            changeEndTime(it)
+        }
+        datePickerDialog?.show()
     }
 
     private fun changeStartTime(time: Long){
