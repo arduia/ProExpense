@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragSplashBinding
+import com.arduia.expense.ui.common.themeColor
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +26,8 @@ class SplashFragment : Fragment() {
     private val viewModel by viewModels<SplashViewModel>()
 
     private lateinit var binding: FragSplashBinding
+
+    private var normalStatusBarColor = Color.WHITE
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,10 +40,18 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.blue_light_500)
-
+        changeSplashStatusBarColor()
         setupViewModel()
+    }
+
+    private fun changeSplashStatusBarColor() {
+        val window = requireActivity().window
+        normalStatusBarColor = window.statusBarColor
+        window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.blue_light_500)
+    }
+
+    private fun restoreNormalStatusBarColor() {
+        requireActivity().window.statusBarColor = normalStatusBarColor
     }
 
     private fun setupViewModel() {
@@ -56,7 +67,7 @@ class SplashFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(),R.color.gray_100)
+        restoreNormalStatusBarColor()
     }
 
 }

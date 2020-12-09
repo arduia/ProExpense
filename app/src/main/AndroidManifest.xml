@@ -25,6 +25,7 @@
         android:theme="@style/Theme.Splash"
         android:supportsRtl="true">
         <activity
+            android:theme="@style/Theme.ProExpense"
             android:name="com.arduia.expense.ui.MainActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

@@ -10,5 +10,6 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
+        app:tint="@color/white"
         app:srcCompat="@drawable/ic_launcher_foreground" />
 </FrameLayout>

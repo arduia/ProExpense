@@ -28,6 +28,7 @@
             android:layout_height="30dp"
             android:layout_alignParentStart="true"
             android:layout_gravity="center"
+            app:tint="@color/dark_gray"
             app:srcCompat="@drawable/ic_household" />
 
     </com.google.android.material.card.MaterialCardView>

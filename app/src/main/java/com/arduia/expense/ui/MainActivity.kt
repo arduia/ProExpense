@@ -8,6 +8,8 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +28,7 @@ import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.backup.BackupMessageViewModel
+import com.arduia.expense.ui.common.themeColor
 import com.arduia.mvvm.EventObserver
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,16 +75,15 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.Theme_ProExpense)
-
         viewModel.hashCode()
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
-
+        setContentView(viewBinding.root)
         navController = findNavController()
         navOption = createNavOption()
 
-        setContentView(viewBinding.root)
+
         setupView()
         setupViewModel()
     }
@@ -110,7 +112,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private fun setupView() {
 
-        viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
+        viewBinding.fbMainAdd.setColorFilter(this.themeColor(R.attr.colorOnPrimary))
         viewBinding.fbMainAdd.setOnClickListener {
             addBtnClickListener.invoke()
         }

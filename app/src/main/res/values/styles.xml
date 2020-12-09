@@ -29,7 +29,7 @@
 
     <style name="Widget.ProExpense.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:height">@dimen/height_button</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
 
     <style name="TextAppearance.ProExpense.CurrencyLarge" parent="TextAppearance.MaterialComponents.Headline6">

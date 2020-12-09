@@ -2,6 +2,7 @@ package com.arduia.expense.ui.home
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
@@ -18,6 +19,7 @@ import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.themeColor
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
@@ -76,6 +78,7 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupView()
         setupViewModel()
         restoreViewState(savedInstanceState)

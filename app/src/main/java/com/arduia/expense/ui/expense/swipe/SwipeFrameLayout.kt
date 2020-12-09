@@ -10,6 +10,7 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseLogBinding
+import com.arduia.expense.ui.common.themeColor
 import com.arduia.expense.ui.expense.ExpenseLogVo
 import kotlin.math.abs
 
@@ -164,10 +165,10 @@ class SwipeFrameLayout @JvmOverloads constructor(
         this.currentDirection = direction
         when (currentDirection) {
             DIRECTION_START_TO_END -> {
-                binding.flBack.setBackgroundResource(R.color.green_400)
+                binding.flBack.setBackgroundColor(context.themeColor(R.attr.colorPositive))
             }
             DIRECTION_END_TO_START -> {
-                binding.flBack.setBackgroundResource(R.color.red_400)
+                binding.flBack.setBackgroundColor(context.themeColor(R.attr.colorNegative))
             }
         }
     }

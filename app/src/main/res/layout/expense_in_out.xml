@@ -100,7 +100,7 @@
             android:id="@+id/tv_outcome_percentage"
             android:text="130%"
             style="?textAppearanceCurrencySmall"
-            android:textColor="@color/red_400"
+            android:textColor="?colorNegative"
             android:layout_alignBaseline="@id/tv_outcome_symbol"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/grid_4"/>
