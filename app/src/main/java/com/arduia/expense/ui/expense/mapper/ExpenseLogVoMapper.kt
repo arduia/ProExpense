@@ -27,7 +27,7 @@ class ExpenseLogVoMapper(
                 amount = currencyFormatter.format(input.amount),
                 finance = "",
                 category = categoryProvider.getCategoryDrawableByID(input.category),
-                currencySymbol = ""
+                currencySymbol = "MMK"
             ), 0
         )
     }
