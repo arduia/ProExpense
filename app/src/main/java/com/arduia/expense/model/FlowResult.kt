@@ -19,7 +19,6 @@ fun <T> FlowResult<T>.awaitValueOrError(): T = runBlocking<T> {
             if (it is Result.Error) throw Exception(it.exception)
         }
     } catch (e: AbortFlowException) {
-        e.printStackTrace()
     }
 
     return@runBlocking firstSuccess ?: throw Exception("Await Value: Empty Result")

@@ -146,7 +146,7 @@ class BackupFragment: NavBaseFragment(){
     private fun openImportFolder(){
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/vnd.ms-excel"
+            type = "application/xls"
         }
         startActivityForResult(intent, OPEN_DOC_CODE)
     }

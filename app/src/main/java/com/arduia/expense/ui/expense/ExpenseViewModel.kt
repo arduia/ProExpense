@@ -2,100 +2,91 @@ package com.arduia.expense.ui.expense
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
+import androidx.paging.*
+import androidx.room.InvalidationTracker
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.ui.home.ExpenseDetailMapper
-import com.arduia.expense.ui.vto.ExpenseDetailsVto
-import com.arduia.expense.ui.vto.ExpenseVto
+import com.arduia.expense.ui.expense.swipe.SwipeItemState
+import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import com.arduia.mvvm.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class ExpenseViewModel @ViewModelInject constructor(
-    private val expenseVoMapper: Mapper<ExpenseEnt, ExpenseVto>,
-    private val expenseDetailMapper: Mapper<ExpenseEnt, ExpenseDetailsVto>,
-    private val repo: ExpenseRepository
-) : ViewModel() {
+    logTransform: Mapper<List<ExpenseEnt>, List<ExpenseLogVo>>,
+    private val expenseRepo: ExpenseRepository,
+    invalidationTracker: InvalidationTracker
+) : ViewModel(), LifecycleObserver {
 
-    private val _isDeleteMode = BaseLiveData<Boolean>()
-    val isDeleteMode get() = _isDeleteMode.asLiveData()
+    private var swipeStateHolder: SwipeStateHolder? = null
 
-    private val _detailDataChanged = EventLiveData<ExpenseDetailsVto>()
-    val detailDataChanged get() = _detailDataChanged.asLiveData()
+    private val _onRestoreSwipeState = EventLiveData<SwipeStateHolder>()
+    val onRestoreSwipeState get() = _onRestoreSwipeState.asLiveData()
 
-    private val _itemDeletedEvent = EventLiveData<Int>()
-    val itemDeletedEvent get() = _itemDeletedEvent.asLiveData()
+    private val _expenseLogMode = BaseLiveData<ExpenseMode>()
+    val expenseLogMode get() = _expenseLogMode.asLiveData()
 
-    private var livePagedListBuilder: LivePagedListBuilder<Int, ExpenseVto>? = null
-
-    private val deletedItemList = mutableListOf<ExpenseEnt>()
-
-    fun getExpenseLiveData(): LiveData<PagedList<ExpenseVto>> {
-        return createPagedListLiveData()
-    }
-
-    fun deleteItem(item: ExpenseVto) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val expenseEnt = getExpenseItemByID(item.id)
-            repo.deleteExpense(expenseEnt)
-            deletedItemList.add(expenseEnt)
-            deletedModeOn()
+    private val dataProvider = object : ExpenseLogDataProvider{
+        override fun get(offset: Int, limit: Int): List<ExpenseEnt> {
+           return expenseRepo.getExpenseRange(limit, offset).awaitValueOrError()
         }
     }
 
-    fun deleteItemById(id: Int){
+    private val source =
+        ExpenseProxySource(invalidationTracker, dataProvider, logTransform)
+
+    val expenseList: LiveData<PagedList<ExpenseLogVo>>
+
+    init {
+        val factory = ExpenseProxySource.Factory { source }
+        _expenseLogMode.value = ExpenseMode.NORMAL
+        expenseList = factory.toLiveData(config = Config(10,maxSize = 100,enablePlaceholders = false,prefetchDistance = 10))
+    }
+
+    fun storeState(state: SwipeStateHolder){
+        this.swipeStateHolder = state
+        onSwipeStateChanged()
+    }
+
+    fun clearState(){
+        this.swipeStateHolder?.clear()
+        onRestoreState()
+        onSwipeStateChanged()
+    }
+
+    fun deleteSelectedItems(){
         viewModelScope.launch(Dispatchers.IO){
-            repo.deleteExpenseById(id)
-            _itemDeletedEvent post event(1)
+            val deleteItems = swipeStateHolder?.getSelectIdList() ?: return@launch
+            expenseRepo.deleteAllExpense(deleteItems)
         }
     }
 
-    private suspend fun getExpenseItemByID(itemId: Int) =
-        repo.getExpense(itemId).awaitValueOrError()
+    private fun onSwipeStateChanged(){
+        val selectCount = swipeStateHolder?.getCount(SwipeItemState.STATE_LOCK_START) ?: return
 
+        if(selectCount > 0){
+            if(_expenseLogMode.value != ExpenseMode.SELECTION){
+                _expenseLogMode post ExpenseMode.SELECTION
+            }
+        } else  _expenseLogMode post ExpenseMode.NORMAL
+    }
 
-    fun restoreDeletion(){
-        viewModelScope.launch(Dispatchers.IO){
-            restoreDeletedItem()
-            clearDeletedItemList()
-            deletedModeOff()
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    private fun onRestoreState(){
+        val state = swipeStateHolder
+        if(state !=null){
+            _onRestoreSwipeState post event(state)
         }
     }
 
-    fun selectItemForDetail(selectedItem: ExpenseVto) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val result = repo.getExpense(selectedItem.id).awaitValueOrError()
-            _detailDataChanged post event(expenseDetailMapper.map(result))
-        }
-    }
-
-    private fun createPagedListLiveData(): LiveData<PagedList<ExpenseVto>> {
-        val dataSourceFactory = repo.getExpenseSourceAll()
-            .map(expenseVoMapper::map)
-        return LivePagedListBuilder(dataSourceFactory, 100)
-            .also {
-                livePagedListBuilder = it
-            }.build()
-    }
-
-    private fun clearDeletedItemList() {
-        deletedItemList.clear()
-    }
-
-    private fun deletedModeOn() {
-        _isDeleteMode post true
-    }
-
-    private fun deletedModeOff() {
-        _isDeleteMode post false
-    }
-
-    private suspend fun restoreDeletedItem() {
-        repo.insertExpenseAll(deletedItemList)
+    override fun onCleared() {
+        super.onCleared()
+        source.release()
+        swipeStateHolder = null
     }
 
 }

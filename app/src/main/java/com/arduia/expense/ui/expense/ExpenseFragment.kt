@@ -5,196 +5,166 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.paging.PageKeyedDataSource
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.arduia.expense.ui.MainHost
+import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseLogsBinding
-import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.ExpenseDetailDialog
+import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.expense.filter.ExpenseLogFilterEnt
+import com.arduia.expense.ui.expense.filter.FilterDialog
+import com.arduia.expense.ui.expense.filter.Sorting
 import com.arduia.expense.ui.expense.swipe.SwipeItemCallback
-import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import javax.inject.Inject
+import timber.log.Timber
+import java.util.*
 
 @AndroidEntryPoint
 class ExpenseFragment : NavBaseFragment() {
 
-    private lateinit var viewBinding: FragExpenseLogsBinding
-
-    @Inject
-    lateinit var expenseListAdapter: ExpenseListAdapter
+    private var _binding: FragExpenseLogsBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModels<ExpenseViewModel>()
 
-    @Inject
-    @TopDropNavOption
-    lateinit var topDropNavOption: NavOptions
+    private var filterDialog: FilterDialog? = null
 
-    private val mainHost by lazy {
-        requireActivity() as MainHost
-    }
+    private var adapter: ExpenseLogAdapter? = null
 
-    private var detailDialog: ExpenseDetailDialog? = null
-
-    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        viewBinding = FragExpenseLogsBinding.inflate(layoutInflater, null, false)
-        return viewBinding.root
+    ): View {
+        _binding = FragExpenseLogsBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
+    override fun onDestroyView() {
+        clean()
+        super.onDestroyView()
+    }
 
-    @ExperimentalCoroutinesApi
+    private fun clean() {
+        filterDialog?.setOnFilterApplyListener(null)
+        filterDialog = null
+        lifecycle.removeObserver(viewModel)
+        binding.tbExpense.setOnMenuItemClickListener(null)
+        binding.rvExpense.adapter = null
+        adapter = null
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupView()
+
+        setupToolbar()
+        setupExpenseLogRecyclerview()
         setupViewModel()
+        PageKeyedDataSource.LoadInitialParams<Int>(1, false)
     }
 
-    @ExperimentalCoroutinesApi
-    private fun setupView() {
-        setupExpenseListAdapter()
-        setupNavigateBackButton()
-        setupRestoreButton()
-        showLoading()
+    private fun setupToolbar() {
+        binding.tbExpense.setOnMenuItemClickListener listener@{
+            when (it.itemId) {
+                R.id.filter -> openFilterDialog()
+                R.id.select -> openFilterDialog()
+                R.id.delete -> viewModel.deleteSelectedItems()
+            }
+            return@listener true
+        }
+    }
+
+    private fun openFilterDialog() {
+        //Remove Old Dialog if exit
+        with(filterDialog) {
+            this?.setOnFilterApplyListener(null)
+            this?.dismiss()
+        }
+
+        //Create New Dialog
+        filterDialog = FilterDialog().apply {
+            setOnFilterApplyListener { filter ->
+                Timber.d("filter applie! $filter")
+            }
+        }
+
+        filterDialog?.show(
+            childFragmentManager,
+            ExpenseLogFilterEnt(Date().time, Date().time, Sorting.DESC)
+        )
+    }
+
+    private fun setupExpenseLogRecyclerview() {
+        adapter = ExpenseLogAdapter(layoutInflater).apply {
+            setOnStateChangeListener { holder, _ ->
+                viewModel.storeState(holder)
+            }
+        }
+        val rvTouchHelper = ItemTouchHelper(SwipeItemCallback())
+        rvTouchHelper.attachToRecyclerView(binding.rvExpense)
+        binding.rvExpense.addItemDecoration(MarginItemDecoration(
+            spaceSide = 0,
+            spaceHeight = requireContext().px(1)
+        ))
+        binding.rvExpense.adapter = adapter
     }
 
     private fun setupViewModel() {
-        observeIsSelectedMode()
-        observeDetailDataSelectEvent()
-        observeDeleteEvent()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        waitAnimationAndObserveExpenseList()
-    }
-
-
-    private fun setupExpenseListAdapter() {
-        //Setup Transaction Recycler View
-        viewBinding.rvExpense.adapter = expenseListAdapter
-        viewBinding.rvExpense.layoutManager = LinearLayoutManager(requireContext())
-        viewBinding.rvExpense.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        )
-
-        expenseListAdapter.setOnItemClickListener {
-            viewModel.selectItemForDetail(it)
+        lifecycle.addObserver(viewModel)
+        viewModel.expenseList.observe(viewLifecycleOwner) {
+            adapter?.submitList(it)
         }
-        expenseListAdapter.setOnItemDeleteListener {
-            viewModel.deleteItemById(it.id)
-        }
+        viewModel.onRestoreSwipeState.observe(viewLifecycleOwner, EventObserver {
+            adapter?.restoreState(it)
+            adapter?.notifyDataSetChanged()
+        })
 
-        val itemHelper = ItemTouchHelper(SwipeItemCallback())
-        itemHelper.attachToRecyclerView(viewBinding.rvExpense)
-    }
-
-    private fun setupRestoreButton(){
-//        viewBinding.btnRestoreDeletion.setOnClickListener {
-//            viewModel.restoreDeletion()
-//        }
-    }
-
-    private fun setupNavigateBackButton() {
-        viewBinding.tbExpense.setNavigationOnClickListener {
-            navigationDrawer?.openDrawer()
-        }
-    }
-
-    private fun observeDeleteEvent() {
-        viewModel.itemDeletedEvent.observe(viewLifecycleOwner, EventObserver {
-            val message = when {
-                it > 0 -> "$it ${getString(R.string.item_deleted)}"
-                else -> "$it ${getString(R.string.multi_item_deleted)}"
+        viewModel.expenseLogMode.observe(viewLifecycleOwner) {
+            when (it) {
+                ExpenseMode.NORMAL -> changeUiDefault()
+                ExpenseMode.SELECTION -> changeUiSelection()
+                else -> Unit
             }
-            mainHost.showSnackMessage(message)
-        })
-    }
-
-    private fun showNoDataLogs(){
-        viewBinding.tvNoData.visibility = View.VISIBLE
-    }
-
-    private fun observeDetailDataSelectEvent() {
-        viewModel.detailDataChanged.observe(viewLifecycleOwner, EventObserver { expenseDetail ->
-            //Remove Old Dialog, If Exist
-            detailDialog?.dismiss()
-            //Show selected Data
-            detailDialog = ExpenseDetailDialog()
-            detailDialog?.setOnEditClickListener { openEntryFragment(expenseDetail.id) }
-            detailDialog?.setOnDeleteClickListener(::onItemDeleted)
-            detailDialog?.showDetail(parentFragmentManager, expenseDetail)
-
-        })
-    }
-
-    private fun onItemDeleted(item: ExpenseDetailsVto){
-        viewModel.deleteItemById(item.id)
-        detailDialog?.dismiss()
-    }
-
-    private fun openEntryFragment(id: Int){
-        val action = ExpenseFragmentDirections
-            .actionDestExpenseToDestExpenseEntry(id)
-        findNavController().navigate(action, topDropNavOption)
-    }
-
-    private fun observeIsSelectedMode() {
-        viewModel.isDeleteMode.observe(viewLifecycleOwner, Observer {
-//            when (it) {
-//                true -> viewBinding.btnRestoreDeletion.visibility = View.VISIBLE
-//                false -> viewBinding.btnRestoreDeletion.visibility = View.INVISIBLE
-//            }
-        })
-    }
-
-    private fun showLoading(){
-//        viewBinding.pbLoading.visibility = View.VISIBLE
-    }
-
-    private fun hideLoading(){
-//        viewBinding.pbLoading.visibility = View.INVISIBLE
-    }
-
-    private fun waitAnimationAndObserveExpenseList(){
-        lifecycleScope.launch(Dispatchers.Main) {
-            val animationDuration = getAnimationDuration().toLong()
-            delay(animationDuration)
-            observeExpenseList()
         }
     }
 
-    private fun observeExpenseList(){
-        viewModel.getExpenseLiveData().observe(viewLifecycleOwner, Observer {
-            expenseListAdapter.submitList(it)
-            hideLoading()
-            if(it.isEmpty()){
-                showNoDataLogs()
-            }else{
-                hideNoDataLogs()
-            }
-        })
+    private fun changeUiDefault() {
+        val appBarElevation = binding.appBar.elevation
+        with(binding.tbExpense) {
+            menu.findItem(R.id.delete)?.isVisible = false
+            menu.findItem(R.id.filter)?.isVisible = true
+            menu.findItem(R.id.select)?.isVisible = true
+            title = getString(R.string.expense_logs)
+            setNavigationIcon(R.drawable.ic_menu)
+            setNavigationOnClickListener(::openNavDrawer)
+        }
+        binding.appBar.elevation = appBarElevation
     }
 
-    private fun hideNoDataLogs(){
-        viewBinding.tvNoData.visibility = View.GONE
+    private fun changeUiSelection() {
+        val appBarElevation = binding.appBar.elevation
+        with(binding.tbExpense) {
+            menu.findItem(R.id.select)?.isVisible = true
+            menu.findItem(R.id.delete)?.isVisible = true
+            menu.findItem(R.id.filter)?.isVisible = false
+            title = "Select"
+            setNavigationIcon(R.drawable.ic_back)
+            setNavigationOnClickListener(::clearSelectedItems)
+        }
+        binding.appBar.elevation = appBarElevation
     }
 
-    private fun getAnimationDuration() =
-        resources.getInteger(R.integer.duration_left_animation)
+    private fun openNavDrawer(v: View) {
+        navigationDrawer.openDrawer()
+    }
+
+    private fun clearSelectedItems(v: View) {
+        viewModel.clearState()
+    }
 
 
 }

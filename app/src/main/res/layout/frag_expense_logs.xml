@@ -13,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?colorSurface"
+        app:liftOnScroll="true"
+        app:liftOnScrollTargetViewId="@id/rv_expense"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
@@ -41,6 +43,7 @@
             android:overScrollMode="never"
             android:paddingBottom="80dp"
             android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
             tools:listitem="@layout/item_expense_log" />
 

@@ -14,6 +14,7 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.single
+import leakcanary.LeakCanary
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
@@ -25,7 +26,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     private val appJob = Job()
-    private val appIOScope = CoroutineScope(Dispatchers.IO + appJob)
 
     override fun onCreate() {
         super.onCreate()
@@ -53,7 +53,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
             super.attachBaseContext(localedContext)
         }
     }
-
 
     override fun onTerminate() {
         super.onTerminate()

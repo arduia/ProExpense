@@ -29,7 +29,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : NavBaseFragment() {
 
-    private lateinit var viewBinding: FragHomeBinding
+    private var _binding: FragHomeBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -48,20 +49,17 @@ class HomeFragment : NavBaseFragment() {
     @Inject
     lateinit var dayNameProvider: DayNameProvider
 
-
-    private lateinit var recentAdapter: RecentListAdapter
+    private var recentAdapter: RecentListAdapter? = null
 
     private var detailDialog: ExpenseDetailDialog? = null
 
-    private val mainHost by lazy {
-        requireActivity() as MainHost
-    }
+    private val mainHost by lazy { requireActivity() as MainHost  }
 
     private val detailDismissListener by lazy {
         return@lazy { mainHost.showAddButton() }
     }
 
-    private lateinit var graphAdapter: ExpenseGraphAdapter
+    private var graphAdapter: ExpenseGraphAdapter? = null
 
     init {
         Timber.d("LIFE Home Init")
@@ -71,10 +69,9 @@ class HomeFragment : NavBaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
-        viewBinding = FragHomeBinding.inflate(layoutInflater, null, false)
-        return viewBinding.root
+    ): View {
+        _binding = FragHomeBinding.inflate(layoutInflater, null, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,6 +79,13 @@ class HomeFragment : NavBaseFragment() {
         setupView()
         setupViewModel()
         restoreViewState(savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        graphAdapter = null
+        recentAdapter = null
+        _binding = null
     }
 
     override fun onResume() {
@@ -97,38 +101,41 @@ class HomeFragment : NavBaseFragment() {
     //    Setup View
     private fun setupView() {
         recentAdapter = RecentListAdapter(layoutInflater)
-        viewBinding.cvExpenseList.rvRecentLists.adapter = recentAdapter
-        viewBinding.cvExpenseList.rvRecentLists.layoutManager =
+        binding.cvExpenseList.rvRecentLists.adapter = recentAdapter
+        binding.cvExpenseList.rvRecentLists.layoutManager =
             LinearLayoutManager(requireContext())
-        viewBinding.cvExpenseList.rvRecentLists.addItemDecoration(
+
+        binding.cvExpenseList.rvRecentLists.addItemDecoration(
             MarginItemDecoration(
                 spaceHeight = requireContext().px(4),
             )
         )
-        viewBinding.scrollHome.isEnabled = false
+
+        binding.scrollHome.isEnabled = false
 
         mainHost.setAddButtonClickListener {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
 
-        viewBinding.toolbar.setNavigationOnClickListener { navigationDrawer?.openDrawer() }
+        binding.toolbar.setNavigationOnClickListener { navigationDrawer?.openDrawer() }
 
-        viewBinding.cvExpenseList.btnMoreLogs.setOnClickListener {
+        binding.cvExpenseList.btnMoreLogs.setOnClickListener {
             navigateToExpenseLogs()
         }
+
         graphAdapter = ExpenseGraphAdapter()
-        viewBinding.cvGraph.expenseGraph.adapter = graphAdapter
 
-        viewBinding.cvGraph.expenseGraph.dayNameProvider = dayNameProvider
+        binding.cvGraph.expenseGraph.adapter = graphAdapter
 
-        recentAdapter.setItemInsertionListener {
-            viewBinding.cvExpenseList.rvRecentLists.smoothScrollToPosition(0)
+        binding.cvGraph.expenseGraph.dayNameProvider = dayNameProvider
+
+        recentAdapter?.setItemInsertionListener {
+            binding.cvExpenseList.rvRecentLists.smoothScrollToPosition(0)
         }
 
-        recentAdapter.setOnItemClickListener {
+        recentAdapter?.setOnItemClickListener {
             viewModel.selectItemForDetail(it)
         }
-        recentAdapter.currentList
     }
 
     private fun setupViewModel() {
@@ -136,7 +143,7 @@ class HomeFragment : NavBaseFragment() {
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
 //            viewBinding.cvExpenseList.root.visibility =
 //                if (it.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
-            recentAdapter.submitList(it)
+            recentAdapter?.submitList(it)
         })
 
         viewModel.detailData.observe(viewLifecycleOwner, EventObserver { expenseDetail ->
@@ -153,9 +160,8 @@ class HomeFragment : NavBaseFragment() {
             mainHost.hideAddButton()
         })
 
-
         viewModel.costRate.observe(viewLifecycleOwner) {
-            graphAdapter.expenseMap = it
+            graphAdapter?.expenseMap = it
         }
 
         viewModel.onExpenseItemDeleted.observe(viewLifecycleOwner, EventObserver {
@@ -163,8 +169,8 @@ class HomeFragment : NavBaseFragment() {
         })
 
         viewModel.currencySymbol.observe(viewLifecycleOwner) {
-            viewBinding.cvExpenseInOut.tvIncomeSymobol.text = it
-            viewBinding.cvExpenseInOut.tvOutcomeSymbol.text = it
+            binding.cvExpenseInOut.tvIncomeSymobol.text = it
+            binding.cvExpenseInOut.tvOutcomeSymbol.text = it
         }
 
         viewModel.onError.observe(viewLifecycleOwner, EventObserver {
@@ -172,17 +178,18 @@ class HomeFragment : NavBaseFragment() {
         })
 
         viewModel.currentWeekDateRange.observe(viewLifecycleOwner) {
-            viewBinding.cvExpenseInOut.tvDateRange.text = it
-            viewBinding.cvGraph.tvDateRange.text = it
+            binding.cvExpenseInOut.tvDateRange.text = it
+            binding.cvGraph.tvDateRange.text = it
         }
 
         viewModel.weekIncome.observe(viewLifecycleOwner) {
-            viewBinding.cvExpenseInOut.tvIncomeValue.text = it
+            binding.cvExpenseInOut.tvIncomeValue.text = it
         }
 
         viewModel.weekOutcome.observe(viewLifecycleOwner) {
-            viewBinding.cvExpenseInOut.tvOutcomeValue.text = it
+            binding.cvExpenseInOut.tvOutcomeValue.text = it
         }
+
     }
 
     private fun navigateToExpenseLogs() {
@@ -200,20 +207,15 @@ class HomeFragment : NavBaseFragment() {
         findNavController().navigate(action, entryNavOption)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(KEY_SCROLL_POSITION, viewBinding.scrollHome.scrollY)
-    }
-
     private fun restoreViewState(instanceState: Bundle?) {
         val scrollPosition = instanceState?.getInt(KEY_SCROLL_POSITION) ?: return
         restoreScrollPosition(scrollPosition)
     }
 
     private fun restoreScrollPosition(positionY: Int) {
-        val height = viewBinding.scrollHome.height
+        val height = binding.scrollHome.height
         if (height <= positionY) {
-            viewBinding.scrollHome.scrollY = positionY
+            binding.scrollHome.scrollY = positionY
         }
     }
 
