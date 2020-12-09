@@ -24,6 +24,11 @@ object DatabaseModule{
             .build()
     }
 
+    @Provides
+    fun provideAccountingDatabaseTracker(db: ProExpenseDatabase): InvalidationTracker{
+        return db.invalidationTracker
+    }
+
 
     @Provides
     @Singleton

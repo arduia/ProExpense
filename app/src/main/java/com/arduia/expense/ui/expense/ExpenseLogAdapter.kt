@@ -16,7 +16,7 @@ import timber.log.Timber
 import java.lang.Exception
 
 class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) :
-    PagedListAdapter<ExpenseLogVo, RecyclerView.ViewHolder>(DIFF_CALLBACK){
+    PagedListAdapter<ExpenseLogVo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     private var onItemClickListener: (ExpenseLogVo.Log) -> Unit = {}
 
@@ -24,8 +24,8 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
 
     private var swipeState = SwipeStateHolder()
 
-    private var onStateChangeListener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log)
-    -> Unit = { _, _-> }
+    private var onStateChangeListener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log?)
+    -> Unit = { _, _ -> }
 
     companion object {
         private const val TYPE_LOG = 0
@@ -53,8 +53,22 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         }
     }
 
-    fun restoreState(state: SwipeStateHolder){
+    fun restoreState(state: SwipeStateHolder) {
         this.swipeState = state
+    }
+
+    fun selectAllItems() {
+        val list = currentList ?: return
+        if (list.isEmpty()) return
+        swipeState.clear()
+        val stateLockStart = SwipeItemState.STATE_LOCK_START
+        list.forEach {
+            if (it is ExpenseLogVo.Log) {
+                swipeState.updateState(it.expenseLog.id, stateLockStart)
+            }
+        }
+        onStateChangeListener.invoke(swipeState, null)
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -94,27 +108,27 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         }
 
         override fun onSelectedChanged(isSelected: Boolean) {
-           onStateChanged(if(isSelected)SwipeItemState.STATE_LOCK_START else SwipeItemState.STATE_IDLE)
+            onStateChanged(if (isSelected) SwipeItemState.STATE_LOCK_START else SwipeItemState.STATE_IDLE)
         }
 
         override fun onPreparedChanged(isPrepared: Boolean) {
-            onStateChanged(if(isPrepared)SwipeItemState.STATE_LOCK_END else SwipeItemState.STATE_IDLE)
+            onStateChanged(if (isPrepared) SwipeItemState.STATE_LOCK_END else SwipeItemState.STATE_IDLE)
         }
 
-        private fun onStateChanged(@SwipeItemState.SwipeState state: Int){
+        private fun onStateChanged(@SwipeItemState.SwipeState state: Int) {
 
-            if(adapterPosition == -1) return
-            val item = getItem(adapterPosition) as? ExpenseLogVo.Log ?:return
+            if (adapterPosition == -1) return
+            val item = getItem(adapterPosition) as? ExpenseLogVo.Log ?: return
 
-            if(state == SwipeItemState.STATE_LOCK_END){
+            if (state == SwipeItemState.STATE_LOCK_END) {
                 swipeState.clear()
                 swipeState.updateState(item.expenseLog.id, state)
-                onStateChangeListener.invoke(swipeState,item)
+                onStateChangeListener.invoke(swipeState, item)
                 notifyDataSetChanged()
                 return
             }
             swipeState.updateState(item.expenseLog.id, state)
-            onStateChangeListener.invoke(swipeState,item)
+            onStateChangeListener.invoke(swipeState, item)
         }
 
         override fun onSwipe(isOnTouch: Boolean, dx: Float) {
@@ -145,7 +159,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         onItemClickListener = listener
     }
 
-    fun setOnStateChangeListener(listener: (holder: SwipeStateHolder,item: ExpenseLogVo.Log) -> Unit){
+    fun setOnStateChangeListener(listener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log?) -> Unit) {
         this.onStateChangeListener = listener
     }
 

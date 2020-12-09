@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "expense")
+@Entity(tableName = ExpenseEnt.TABLE_NAME)
 data class ExpenseEnt(
 
     @PrimaryKey(autoGenerate = true)
@@ -28,5 +28,8 @@ data class ExpenseEnt(
 
     @ColumnInfo(name = "modified_date")
     val modifiedDate: Long
-
-)
+){
+    companion object{
+        const val TABLE_NAME = "expense"
+    }
+}
