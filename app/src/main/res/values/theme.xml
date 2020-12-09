@@ -14,6 +14,9 @@
         <item name="android:statusBarColor">@color/gray_100</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
 
+        <item name="colorPositive">@color/green_500</item>
+        <item name="colorNegative">@color/red_400</item>
+
         <item name="textAppearanceBody1">@style/TextAppearance.ProExpense.Body1</item>
         <item name="textAppearanceBody2">@style/TextAppearance.ProExpense.Body2</item>
         <item name="textAppearanceHeadline6">@style/TextAppearance.ProExpense.H6</item>

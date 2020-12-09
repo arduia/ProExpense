@@ -53,10 +53,10 @@
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginBottom="@dimen/grid_2"
-                app:cardBackgroundColor="#b3e5fc"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/ShapeAppearanceOverlay.ProExpense.Circular"
+                app:cardBackgroundColor="@color/blue_light_100"
+                style="@style/Widget.ProExpense.CircularCardView"
                 app:srcCompat="@drawable/ic_household">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -83,10 +83,10 @@
 
             <TextView
                 android:id="@+id/tv_name_value"
-                style="?attr/textAppearanceBody1"
+                style="?attr/textAppearanceHeadline6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/grid_4"
+                android:layout_marginStart="@dimen/grid_3"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintBottom_toBottomOf="@id/cv_category"
                 app:layout_constraintEnd_toStartOf="@+id/btn_delete"
@@ -107,14 +107,21 @@
 
             <TextView
                 android:id="@+id/tv_amount_value"
-                style="?attr/textAppearanceBody1"
+                style="?textAppearanceCurrencySmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/grid_3"
-                android:textColor="@color/blue_light_500"
                 app:layout_constraintStart_toStartOf="@+id/tv_name_value"
                 app:layout_constraintTop_toBottomOf="@id/cv_category"
                 tools:text=" 35,00" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_currency_symbol"
+                style="?textAppearanceCaption"
+                app:layout_constraintStart_toEndOf="@id/tv_amount_value"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_amount_value"
+                tools:text="Ks"/>
 
             <TextView
                 android:id="@+id/tv_date"
@@ -171,7 +178,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/height_button"
         android:layout_marginStart="@dimen/grid_3"
-        android:layout_marginTop="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_2"
         android:layout_marginEnd="@dimen/grid_3"
         android:layout_marginBottom="@dimen/grid_3"
         android:text="@string/edit"

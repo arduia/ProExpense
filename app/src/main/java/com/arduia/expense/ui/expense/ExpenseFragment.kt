@@ -71,7 +71,6 @@ class ExpenseFragment : NavBaseFragment() {
         binding.tbExpense.setOnMenuItemClickListener listener@{
             when (it.itemId) {
                 R.id.filter -> openFilterDialog()
-                R.id.select -> openFilterDialog()
                 R.id.delete -> viewModel.deleteSelectedItems()
             }
             return@listener true
@@ -108,7 +107,7 @@ class ExpenseFragment : NavBaseFragment() {
         rvTouchHelper.attachToRecyclerView(binding.rvExpense)
         binding.rvExpense.addItemDecoration(MarginItemDecoration(
             spaceSide = 0,
-            spaceHeight = requireContext().px(1)
+            spaceHeight = requireContext().px(0.5f).toInt()
         ))
         binding.rvExpense.adapter = adapter
     }
@@ -137,7 +136,6 @@ class ExpenseFragment : NavBaseFragment() {
         with(binding.tbExpense) {
             menu.findItem(R.id.delete)?.isVisible = false
             menu.findItem(R.id.filter)?.isVisible = true
-            menu.findItem(R.id.select)?.isVisible = true
             title = getString(R.string.expense_logs)
             setNavigationIcon(R.drawable.ic_menu)
             setNavigationOnClickListener(::openNavDrawer)
@@ -148,7 +146,6 @@ class ExpenseFragment : NavBaseFragment() {
     private fun changeUiSelection() {
         val appBarElevation = binding.appBar.elevation
         with(binding.tbExpense) {
-            menu.findItem(R.id.select)?.isVisible = true
             menu.findItem(R.id.delete)?.isVisible = true
             menu.findItem(R.id.filter)?.isVisible = false
             title = "Select"

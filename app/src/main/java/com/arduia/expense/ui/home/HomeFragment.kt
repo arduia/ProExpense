@@ -117,7 +117,7 @@ class HomeFragment : NavBaseFragment() {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
         }
 
-        binding.toolbar.setNavigationOnClickListener { navigationDrawer?.openDrawer() }
+        binding.toolbar.setNavigationOnClickListener { navigationDrawer.openDrawer() }
 
         binding.cvExpenseList.btnMoreLogs.setOnClickListener {
             navigateToExpenseLogs()

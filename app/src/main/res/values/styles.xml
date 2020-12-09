@@ -32,15 +32,13 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-
-
-
     <style name="TextAppearance.ProExpense.CurrencyLarge" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontFamily">@font/poppins</item>
     </style>
 
     <style name="TextAppearance.ProExpense.CurrencySmall" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/poppins</item>
+        <item name="android:alpha">0.8</item>
     </style>
 
     <style name="TextAppearance.ProExpense.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">

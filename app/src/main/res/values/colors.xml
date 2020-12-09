@@ -2,11 +2,13 @@
 <resources>
     <color name="blue_light_500">#039be5</color>
     <color name="blue_light_700">#0288d1</color>
+    <color name="blue_light_100">#b3e5fc</color>
     <color name="red_400">#ef5350</color>
     <color name="gray_200">#eeeeee</color>
     <color name="gray_100">#f5f5f5</color>
     <color name="white">#ffffff</color>
     <color name="dark">#000000</color>
     <color name="green_400">#66bb6a</color>
+    <color name="green_500">#4caf50</color>
     <color name="darker_gray">@android:color/darker_gray</color>
 </resources>
