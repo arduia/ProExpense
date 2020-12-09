@@ -8,12 +8,13 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.ui.expense.filter.ExpenseLogFilterEnt
+import com.arduia.expense.ui.expense.filter.Sorting
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 class ExpenseViewModel @ViewModelInject constructor(
@@ -30,9 +31,14 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _expenseLogMode = BaseLiveData<ExpenseMode>()
     val expenseLogMode get() = _expenseLogMode.asLiveData()
 
+    private var filterEnt = ExpenseLogFilterEnt(0, Long.MAX_VALUE, Sorting.DESC)
+
     private val dataProvider = object : ExpenseLogDataProvider{
         override fun get(offset: Int, limit: Int): List<ExpenseEnt> {
-           return expenseRepo.getExpenseRange(limit, offset).awaitValueOrError()
+            return when(filterEnt.sorting){
+                Sorting.ASC -> expenseRepo.getExpenseRangeAsc(filterEnt.startTime, filterEnt.endTime, offset, limit).awaitValueOrError()
+                else -> expenseRepo.getExpenseRangeDesc(filterEnt.startTime, filterEnt.endTime, offset, limit).awaitValueOrError()
+            }
         }
     }
 
@@ -56,6 +62,10 @@ class ExpenseViewModel @ViewModelInject constructor(
         this.swipeStateHolder?.clear()
         onRestoreState()
         onSwipeStateChanged()
+    }
+
+    fun setFilter(filterEnt: ExpenseLogFilterEnt){
+        this.filterEnt = filterEnt
     }
 
     fun deleteSelectedItems(){

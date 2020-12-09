@@ -33,6 +33,23 @@ class ExpenseRepositoryImpl(
             .catch { ErrorResult(RepositoryException(it)) }
     }
 
+    override fun getExpenseRangeAsc(
+        startTime: Long,
+        endTime: Long,
+        offset: Int,
+        limit: Int
+    ) = expenseDao.getExpenseRangeAsc(startTime, endTime, offset, limit)
+        .map { SuccessResult(it) }
+        .catch { ErrorResult(RepositoryException(it)) }
+
+    override fun getExpenseRangeDesc(
+        startTime: Long,
+        endTime: Long,
+        offset: Int,
+        limit: Int
+    ) = expenseDao.getExpenseRangeDesc(startTime, endTime, offset, limit)
+        .map { SuccessResult(it) }
+        .catch { ErrorResult(RepositoryException(it)) }
     override fun getExpense(id: Int): FlowResult<ExpenseEnt> {
         return expenseDao.getItemExpense(id)
             .map { SuccessResult(it) }

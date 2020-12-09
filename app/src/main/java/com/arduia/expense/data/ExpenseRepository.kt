@@ -26,6 +26,10 @@ interface ExpenseRepository {
 
     fun getExpenseRange(limit: Int, offset: Int): FlowResult<List<ExpenseEnt>>
 
+    fun getExpenseRangeAsc(startTime: Long, endTime: Long, offset: Int, limit: Int): FlowResult<List<ExpenseEnt>>
+
+    fun getExpenseRangeDesc(startTime: Long, endTime: Long, offset: Int, limit: Int): FlowResult<List<ExpenseEnt>>
+
     suspend fun updateExpense(expenseEnt: ExpenseEnt)
 
     suspend fun deleteExpense(expenseEnt: ExpenseEnt)
