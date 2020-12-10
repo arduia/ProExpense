@@ -63,6 +63,8 @@
                     android:id="@+id/imv_category"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:scaleType="centerInside"
+                    app:tint="@color/dark_gray"
                     android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_household" />
@@ -84,7 +86,7 @@
             <TextView
                 android:id="@+id/tv_name_value"
                 style="?attr/textAppearanceHeadline6"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/grid_3"
                 app:layout_constraintHorizontal_bias="0"

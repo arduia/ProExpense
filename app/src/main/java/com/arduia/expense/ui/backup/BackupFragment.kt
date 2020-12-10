@@ -64,10 +64,6 @@ class BackupFragment : NavBaseFragment() {
             openImportFolder()
         }
 
-        backupListAdapter?.setItemClickListener { backupItem ->
-            viewModel.onBackupItemSelect(id = backupItem.id)
-        }
-
         //Setup Recycler View
         binding.rvBackupLogs.adapter = backupListAdapter
         binding.rvBackupLogs.addItemDecoration(

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="Theme.ProExpense" parent="Base.Theme.ProExpense">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blue_light_200</item>
@@ -9,7 +10,9 @@
         <item name="rippleColor">@color/gray_200</item>
         <item name="backgroundColor">@color/dark_gray</item>
         <item name="colorPositive">@color/green_300</item>
+        <item name="colorOnPositive">@color/dark_gray</item>
         <item name="colorNegative">@color/red_300</item>
+        <item name="colorOnNegative">@color/dark_gray</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 

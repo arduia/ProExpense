@@ -2,6 +2,8 @@ package com.arduia.expense.ui.entry
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.ColorStateListDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -187,15 +189,19 @@ class ExpenseEntryFragment : Fragment() {
             //Replace with Drawable State Lists
             when (it) {
                 LockMode.LOCKED -> {
-                    viewBinding.cvLock.backgroundTintList = getColorList(R.color.blue_light_500)
+                    viewBinding.cvLock.backgroundTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
                     viewBinding.imvLock.setImageResource(R.drawable.ic_lock_closed)
-                    viewBinding.imvLock.imageTintList = getColorList(R.color.white)
+                    viewBinding.imvLock.imageTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
                     viewBinding.btnSave.text = getString(R.string.next)
                 }
                 LockMode.UNLOCK -> {
-                    viewBinding.cvLock.backgroundTintList = getColorList(R.color.white)
+                    viewBinding.cvLock.backgroundTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
                     viewBinding.imvLock.setImageResource(R.drawable.ic_lock_open)
-                    viewBinding.imvLock.imageTintList = getColorList(R.color.blue_light_500)
+                    viewBinding.imvLock.imageTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnSurface))
                     viewBinding.btnSave.text = getString(R.string.save)
                 }
             }
