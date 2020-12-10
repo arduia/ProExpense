@@ -46,6 +46,11 @@ object RepositoryModule {
         dao: PreferenceStorageDao
     ): SettingsRepository = SettingsRepositoryImpl(dao)
 
+    @Provides
+    @Singleton
+    fun provideSettingRepoFactory(): SettingsRepository.Factory =
+        SettingRepositoryFactoryImpl
+
     @Singleton
     @Provides
     fun provideBackupRepo(

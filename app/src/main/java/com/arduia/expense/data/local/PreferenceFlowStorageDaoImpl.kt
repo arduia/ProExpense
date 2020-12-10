@@ -31,13 +31,23 @@ class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceSto
     }
 
     override fun getSelectedCurrencyNumber(): Flow<String> {
-        Timber.d("getCurrency Num")
         return flowPref.getString(KEY_SELECTED_CURRENCY_NUM, DEFAULT_SELECTED_CURRENCY_NUM).asFlow()
     }
 
     override suspend fun setSelectedCurrencyNumber(num: String) {
-        Timber.d("selected Currency Number $num")
         pef.edit().putString(KEY_SELECTED_CURRENCY_NUM, num).apply()
+    }
+
+    override suspend fun getSelectedLanguageSync(): String {
+        return pef.getString(KEY_SELECTED_LANGUAGE, DEFAULT_SELECTED_LANGUAGE) ?: DEFAULT_SELECTED_LANGUAGE
+    }
+
+    override suspend fun getFirstUserSync(): Boolean {
+       return pef.getBoolean(KEY_FIRST_USER, DEFAULT_FIRST_USER)
+    }
+
+    override suspend fun getSelectedCurrencyNumberSync(): String {
+       return pef.getString(KEY_SELECTED_CURRENCY_NUM, DEFAULT_SELECTED_CURRENCY_NUM)?: DEFAULT_SELECTED_CURRENCY_NUM
     }
 
     companion object {
