@@ -63,6 +63,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private val viewModel by viewModels<MainViewModel>()
 
+    init {
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+    }
+
     @Inject
     @IntegerDecimal
     lateinit var countFormat: DecimalFormat
@@ -70,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.hashCode()
-        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
         setContentView(viewBinding.root)

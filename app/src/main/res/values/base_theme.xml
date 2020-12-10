@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Base.Theme.ProExpense" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
 
@@ -24,6 +25,5 @@
         <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar.Horizontal</item>
         <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox
         </item>
-
     </style>
 </resources>
