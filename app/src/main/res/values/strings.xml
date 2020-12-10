@@ -115,5 +115,9 @@
     <string name="filter">Filter</string>
     <string name="select_all">Select All</string>
     <string name="delete">Delete</string>
+    <string name="choose_theme">Choose Theme</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="system_default">System Default</string>
 </resources>
 

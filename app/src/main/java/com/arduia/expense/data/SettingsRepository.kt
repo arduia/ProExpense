@@ -25,6 +25,10 @@ interface SettingsRepository{
 
     suspend fun setSelectedCurrencyNumber(num: String)
 
+    suspend fun setSelectedThemeMode(mode: Int)
+
+    suspend fun getSelectedThemeModeSync(): Result<Int>
+
     interface Factory{
         fun create(context: Context): SettingsRepository
     }

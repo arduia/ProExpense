@@ -111,6 +111,35 @@
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/ic_more_next" />
             </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:drawable/divider_horizontal_bright" />
+
+            <FrameLayout
+                android:id="@+id/fl_theme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tv_choose_theme"
+                    style="?textAppearanceBody1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/grid_3"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:text="@string/choose_theme" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="@dimen/grid_4"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/ic_theme" />
+            </FrameLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

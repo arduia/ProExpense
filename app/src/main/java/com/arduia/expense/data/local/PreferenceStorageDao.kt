@@ -1,5 +1,6 @@
 package com.arduia.expense.data.local
 
+import com.arduia.expense.model.Result
 import kotlinx.coroutines.flow.Flow
 
 interface PreferenceStorageDao {
@@ -21,5 +22,9 @@ interface PreferenceStorageDao {
     suspend fun getSelectedCurrencyNumberSync(): String
 
     suspend fun setSelectedCurrencyNumber(num: String)
+
+    suspend fun setSelectedThemeMode(mode: Int)
+
+    suspend fun getSelectedThemeModeSync(): Int
 
 }

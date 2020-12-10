@@ -54,6 +54,14 @@ class SettingsRepositoryImpl(private val dao: PreferenceStorageDao) : SettingsRe
         return getResultSuccessOrError { dao.getSelectedCurrencyNumberSync() }
     }
 
+    override suspend fun setSelectedThemeMode(mode: Int) {
+        dao.setSelectedThemeMode(mode)
+    }
+
+    override suspend fun getSelectedThemeModeSync(): Result<Int> {
+        return getResultSuccessOrError { dao.getSelectedThemeModeSync() }
+    }
+
     private inline fun <T> getResultSuccessOrError(fetch: () -> T): Result<T> {
         return try {
             Result.Success(fetch())

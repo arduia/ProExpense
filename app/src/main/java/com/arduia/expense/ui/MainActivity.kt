@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     private val viewModel by viewModels<MainViewModel>()
 
     init {
-        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+//        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
     }
 
     @Inject
@@ -270,7 +270,9 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     override fun attachBaseContext(newBase: Context?) {
         runBlocking {
             if (newBase == null) return@runBlocking
-            val selectedLanguage  = SettingRepositoryFactoryImpl.create(newBase).getSelectedLanguageSync().getDataOrError()
+            val setting = SettingRepositoryFactoryImpl.create(newBase)
+            val selectedLanguage = setting.getSelectedLanguageSync().getDataOrError()
+            delegate.localNightMode = setting.getSelectedThemeModeSync().getDataOrError()
             val localedContext = newBase.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }

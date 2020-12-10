@@ -113,5 +113,9 @@
     <string name="filter">စစ်ထုတ်ရန်</string>
     <string name="select_all">အားလုံးရွေးချယ်ရန်</string>
     <string name="delete">ဖျက်ရန်</string>
+    <string name="choose_theme">Theme ရွေးချယ်ရန်</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="dark_theme">Light Theme</string>
+    <string name="system_default">System Default</string>
 
 </resources>

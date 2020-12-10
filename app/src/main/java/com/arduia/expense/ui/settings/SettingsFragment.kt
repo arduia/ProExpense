@@ -10,6 +10,8 @@ import androidx.lifecycle.Observer
 import com.arduia.expense.databinding.FragSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.LanguageProvider
+import com.arduia.expense.ui.common.ext.restartActivity
+import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -24,6 +26,9 @@ class SettingsFragment: NavBaseFragment(){
     private val viewModel by viewModels<SettingsViewModel>()
 
     private var currencyDialog: ChooseCurrencyDialog? = null
+
+    private var themeDialog: ChooseThemeDialog? = null
+
 
     @Inject
     lateinit var languageProvider: LanguageProvider
@@ -61,6 +66,9 @@ class SettingsFragment: NavBaseFragment(){
             currencyDialog?.show(childFragmentManager)
         }
 
+        binding.flTheme.setOnClickListener {
+           viewModel.chooseTheme()
+        }
     }
 
     private fun setupViewModel(){
@@ -70,12 +78,26 @@ class SettingsFragment: NavBaseFragment(){
         })
 
         viewModel.currencyValue.observe(viewLifecycleOwner, binding.tvCurrencyValue::setText)
+
+        viewModel.onThemeOpenToChange.observe(viewLifecycleOwner, EventObserver(::chooseTheme))
+
+        viewModel.onThemeChanged.observe(viewLifecycleOwner,EventObserver{
+            restartActivity()
+        })
+    }
+
+    private fun chooseTheme(mode: Int){
+        themeDialog?.dismiss()
+        themeDialog = ChooseThemeDialog(requireContext())
+        themeDialog?.setOnSaveListener(viewModel::setThemeMode)
+        themeDialog?.showData(mode)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         languageChooseDialog = null
         currencyDialog = null
+        themeDialog = null
         _binding = null
 
     }
