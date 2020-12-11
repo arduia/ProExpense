@@ -116,5 +116,10 @@
         tools:layout="@layout/frag_backup"
         android:name="com.arduia.expense.ui.backup.BackupFragment"
         android:label="BackupFragment" />
+    <fragment
+        android:id="@+id/dest_statistics"
+        android:name="com.arduia.expense.ui.statistics.StatisticsFragment"
+        android:label="@string/statistics"
+        tools:layout="@layout/frag_statistic" />
 
 </navigation>

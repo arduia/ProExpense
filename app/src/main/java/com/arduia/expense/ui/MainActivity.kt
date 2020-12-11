@@ -282,6 +282,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         private val TOP_DESTINATIONS = listOf(
             R.id.dest_home,
             R.id.dest_backup,
+            R.id.dest_statistics,
             R.id.dest_feedback,
             R.id.dest_about,
             R.id.dest_settings,

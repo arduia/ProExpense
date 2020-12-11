@@ -7,10 +7,14 @@
             android:id="@+id/dest_home"
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
-        <item android:title="@string/expense_logs"
-            android:icon="@drawable/ic_expense_logs"
+        <item
             android:id="@+id/dest_expense_logs"
-            />
+            android:icon="@drawable/ic_expense_logs"
+            android:title="@string/expense_logs" />
+        <item
+            android:id="@+id/dest_statistics"
+            android:icon="@drawable/ic_statistics"
+            android:title="@string/statistics" />
         <item
             android:id="@+id/dest_backup"
             android:icon="@drawable/ic_export"

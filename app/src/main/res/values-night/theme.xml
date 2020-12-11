@@ -21,4 +21,5 @@
         <item name="android:statusBarColor">@color/blue_light_500</item>
     </style>
 
+    <color name="color_statistic_background">@color/dark_gray</color>
 </resources>
