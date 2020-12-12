@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?backgroundColor">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/ab_statistic"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:liftOnScroll="true"
+        app:liftOnScrollTargetViewId="@id/rv_category_statistics">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tb_statistic"
@@ -37,25 +40,42 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/grid_2"
                 android:layout_marginVertical="@dimen/grid_2">
-                <LinearLayout
-                    android:orientation="vertical"
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_category_statistics"
+                        style="?textAppearanceBody1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/grid_3"
+                        android:layout_marginTop="@dimen/grid_3"
+                        android:text="Category Statistics"
+                        android:layout_toStartOf="@id/tv_category_date_range"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/tv_category_statistics"
-                        android:text="Category Statistics"
-                        android:layout_marginStart="@dimen/grid_3"
-                        style="?textAppearanceBody1"
-                        android:textStyle="bold"
-                        android:layout_marginTop="@dimen/grid_3" />
+                        android:id="@+id/tv_category_date_range"
+                        android:layout_marginStart="@dimen/grid_1"
+                        android:text="Nov 2020"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/grid_3"
+                        android:layout_alignBaseline="@id/tv_category_statistics"
+                        style="?textAppearanceSubtitle1"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_category_statistics"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_below="@id/tv_category_statistics"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginBottom="@dimen/grid_3"
                         android:clipToPadding="false"
                         android:orientation="vertical"
@@ -64,7 +84,7 @@
                         tools:itemCount="7"
                         tools:listitem="@layout/item_category_statistic" />
 
-                </LinearLayout>
+                </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 

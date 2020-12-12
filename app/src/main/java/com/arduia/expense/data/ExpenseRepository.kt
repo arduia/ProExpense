@@ -5,6 +5,7 @@ import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.data.network.ExpenseVersionDto
 import com.arduia.expense.data.network.FeedbackDto
 import com.arduia.expense.model.FlowResult
+import com.arduia.expense.model.Result
 import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
@@ -19,6 +20,8 @@ interface ExpenseRepository {
     fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt>
 
     fun getExpenseAll(): FlowResult<List<ExpenseEnt>>
+
+    suspend fun getExpenseAllSync(): Result<List<ExpenseEnt>>
 
     fun getRecentExpense(): FlowResult<List<ExpenseEnt>>
 

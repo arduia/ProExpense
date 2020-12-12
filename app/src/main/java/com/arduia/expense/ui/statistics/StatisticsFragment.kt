@@ -1,15 +1,16 @@
 package com.arduia.expense.ui.statistics
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.viewModels
-import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragStatisticBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
+import com.arduia.expense.ui.common.filter.DateRangeSortingFilterDialog
+import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
+import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +22,7 @@ class StatisticsFragment : NavBaseFragment() {
     private var categoryAdapter: CategoryStatisticListAdapter? = null
 
     private val viewModel by viewModels<StatisticsViewModel>()
+    private var filterDialog: DateRangeSortingFilterDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,19 +45,46 @@ class StatisticsFragment : NavBaseFragment() {
             navigationDrawer.openDrawer()
         }
         binding.rvCategoryStatistics.adapter = categoryAdapter
-        binding.rvCategoryStatistics.addItemDecoration(MarginItemDecoration(
-            spaceHeight = resources.getDimension(R.dimen.grid_3).toInt()
-        ))
+        binding.rvCategoryStatistics.addItemDecoration(
+            MarginItemDecoration(
+                spaceHeight = resources.getDimension(R.dimen.grid_3).toInt()
+            )
+        )
+        setupCalendarMenu()
+    }
+
+    private fun setupCalendarMenu() {
+        with(binding.tbStatistic.menu.add(0, 1, 0, "Calendar")) {
+            setIcon(R.drawable.ic_filter)
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            setOnMenuItemClickListener listener@{
+                viewModel.onFilterSelected()
+                return@listener true
+            }
+        }
+    }
+
+    private fun shoeDateRangeDialog(range: RangeSortingFilterEnt) {
+        filterDialog?.dismiss()
+        filterDialog = DateRangeSortingFilterDialog(isSortingEnabled = false)
+        filterDialog?.setOnFilterApplyListener(viewModel::setFilter)
+        filterDialog?.show(childFragmentManager, filter = range.filter, limit = range.limit)
     }
 
     private fun setupViewModel() {
         viewModel.categoryStatisticList.observe(viewLifecycleOwner) {
             categoryAdapter?.submitList(it)
         }
+
+        viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver {
+            shoeDateRangeDialog(it)
+        })
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        filterDialog?.dismiss()
+        filterDialog = null
         binding.rvCategoryStatistics.adapter = null
         categoryAdapter = null
         _binding = null

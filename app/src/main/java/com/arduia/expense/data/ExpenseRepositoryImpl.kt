@@ -3,12 +3,14 @@ package com.arduia.expense.data
 
 import androidx.paging.DataSource
 import com.arduia.expense.data.exception.RepositoryException
+import com.arduia.expense.data.ext.getResultSuccessOrError
 import com.arduia.expense.data.local.*
 import com.arduia.expense.data.network.ExpenseNetworkDao
 import com.arduia.expense.data.network.ExpenseVersionDto
 import com.arduia.expense.data.network.FeedbackDto
 import com.arduia.expense.model.ErrorResult
 import com.arduia.expense.model.FlowResult
+import com.arduia.expense.model.Result
 import com.arduia.expense.model.SuccessResult
 import kotlinx.coroutines.flow.*
 import java.util.*
@@ -58,6 +60,10 @@ class ExpenseRepositoryImpl(
 
     override fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt> {
         return expenseDao.getExpenseSourceAll()
+    }
+
+    override suspend fun getExpenseAllSync(): Result<List<ExpenseEnt>> {
+        return getResultSuccessOrError { expenseDao.getExpenseAllSync() }
     }
 
     override fun getRecentExpense(): FlowResult<List<ExpenseEnt>> {

@@ -8,8 +8,8 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.ui.expense.filter.ExpenseLogFilterEnt
-import com.arduia.expense.ui.expense.filter.Sorting
+import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
+import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import com.arduia.mvvm.*
@@ -31,13 +31,13 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _expenseLogMode = BaseLiveData<ExpenseMode>()
     val expenseLogMode get() = _expenseLogMode.asLiveData()
 
-    private var filterEnt = ExpenseLogFilterEnt(0, Long.MAX_VALUE, Sorting.DESC)
+    private var filterEnt = DateRangeSortingEnt(0, Long.MAX_VALUE, Sorting.DESC)
 
     private val dataProvider = object : ExpenseLogDataProvider{
         override fun get(offset: Int, limit: Int): List<ExpenseEnt> {
             return when(filterEnt.sorting){
-                Sorting.ASC -> expenseRepo.getExpenseRangeAsc(filterEnt.startTime, filterEnt.endTime, offset, limit).awaitValueOrError()
-                else -> expenseRepo.getExpenseRangeDesc(filterEnt.startTime, filterEnt.endTime, offset, limit).awaitValueOrError()
+                Sorting.ASC -> expenseRepo.getExpenseRangeAsc(filterEnt.start, filterEnt.end, offset, limit).awaitValueOrError()
+                else -> expenseRepo.getExpenseRangeDesc(filterEnt.start, filterEnt.end, offset, limit).awaitValueOrError()
             }
         }
     }
@@ -64,8 +64,8 @@ class ExpenseViewModel @ViewModelInject constructor(
         onSwipeStateChanged()
     }
 
-    fun setFilter(filterEnt: ExpenseLogFilterEnt){
-        this.filterEnt = filterEnt
+    fun setFilter(dateRangeEnt: DateRangeSortingEnt){
+        this.filterEnt = dateRangeEnt
     }
 
     fun deleteSelectedItems(){

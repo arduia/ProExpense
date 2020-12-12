@@ -12,9 +12,9 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseLogsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.expense.filter.ExpenseLogFilterEnt
-import com.arduia.expense.ui.expense.filter.FilterDialog
-import com.arduia.expense.ui.expense.filter.Sorting
+import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
+import com.arduia.expense.ui.common.filter.DateRangeSortingFilterDialog
+import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.expense.swipe.SwipeItemCallback
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +30,7 @@ class ExpenseFragment : NavBaseFragment() {
 
     private val viewModel by viewModels<ExpenseViewModel>()
 
-    private var filterDialog: FilterDialog? = null
+    private var filterDialog: DateRangeSortingFilterDialog? = null
 
     private var adapter: ExpenseLogAdapter? = null
 
@@ -85,7 +85,7 @@ class ExpenseFragment : NavBaseFragment() {
         }
 
         //Create New Dialog
-        filterDialog = FilterDialog().apply {
+        filterDialog = DateRangeSortingFilterDialog().apply {
             setOnFilterApplyListener { filter ->
                 Timber.d("filter applie! $filter")
             }
@@ -93,7 +93,7 @@ class ExpenseFragment : NavBaseFragment() {
 
         filterDialog?.show(
             childFragmentManager,
-            ExpenseLogFilterEnt(Date().time, Date().time, Sorting.DESC)
+            DateRangeSortingEnt(Date().time, Date().time, Sorting.DESC)
         )
     }
 
