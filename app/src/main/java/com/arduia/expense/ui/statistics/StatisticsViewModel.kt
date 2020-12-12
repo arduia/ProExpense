@@ -9,6 +9,7 @@ import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
+import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.mvvm.BaseLiveData
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.event
@@ -18,11 +19,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class StatisticsViewModel @ViewModelInject constructor(
     private val expenseRepo: ExpenseRepository,
-    private val categoryAnalyzer: CategoryAnalyzer
+    private val categoryAnalyzer: CategoryAnalyzer,
+    private val dateRangeFormatter: DateRangeFormatter
 ) : ViewModel() {
 
     private val _categoryStatisticList = BaseLiveData<List<CategoryStatisticVo>>()
@@ -63,7 +66,7 @@ class StatisticsViewModel @ViewModelInject constructor(
     }
 
     private fun showDateRange() {
-
+        _dateRange post dateRangeFormatter.format(dateRangeFilter.start, dateRangeFilter.end)
     }
 
     private fun configDefaultDateRange() {
@@ -80,9 +83,12 @@ class StatisticsViewModel @ViewModelInject constructor(
 
     private fun updateStatistics(){
         viewModelScope.launch(Dispatchers.IO){
+            Timber.d("updateStatistics")
             val expenses = expenseRepo.getExpenseRangeAsc(dateRangeFilter.start, dateRangeFilter.end,0, Int.MAX_VALUE)
                 .awaitValueOrError()
+            Timber.d("expenses $expenses")
             val statistics = categoryAnalyzer.analyze(expenses)
+            Timber.d("statistics $statistics")
             _categoryStatisticList post statistics
         }
     }

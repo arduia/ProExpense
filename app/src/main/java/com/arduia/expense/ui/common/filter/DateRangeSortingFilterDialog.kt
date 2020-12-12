@@ -133,7 +133,7 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
     private fun openStartTimePicker() {
         datePickerDialog?.dismiss()
         datePickerDialog = createDatePicker(startTimeSelected) {
-            changeStartTime(it)
+            setStartTime(it)
         }
         datePickerDialog?.show()
     }
@@ -141,12 +141,12 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
     private fun openEndTimePicker() {
         datePickerDialog?.dismiss()
         datePickerDialog = createDatePicker(endTimeSelected) {
-            changeEndTime(it)
+            setEndTime(it)
         }
         datePickerDialog?.show()
     }
 
-    private fun changeStartTime(time: Long) {
+    private fun setStartTime(time: Long) {
         this.startTimeSelected = time
         //setEndTime as Start time if less than
         if (endTimeSelected < startTimeSelected) {
@@ -156,7 +156,7 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
         showSelectedStartTime()
     }
 
-    private fun changeEndTime(time: Long) {
+    private fun setEndTime(time: Long) {
         this.endTimeSelected = time
         //end Time should be greater than or equal start time
         if (this.endTimeSelected < this.startTimeSelected) {

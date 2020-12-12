@@ -45,6 +45,7 @@ class StatisticsFragment : NavBaseFragment() {
             navigationDrawer.openDrawer()
         }
         binding.rvCategoryStatistics.adapter = categoryAdapter
+        binding.rvCategoryStatistics.itemAnimator = null
         binding.rvCategoryStatistics.addItemDecoration(
             MarginItemDecoration(
                 spaceHeight = resources.getDimension(R.dimen.grid_3).toInt()
@@ -74,11 +75,25 @@ class StatisticsFragment : NavBaseFragment() {
     private fun setupViewModel() {
         viewModel.categoryStatisticList.observe(viewLifecycleOwner) {
             categoryAdapter?.submitList(it)
+            if(it.isEmpty()) showNoData() else hideNoData()
         }
 
         viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver {
             shoeDateRangeDialog(it)
         })
+
+        viewModel.dateRange.observe(viewLifecycleOwner){
+            binding.tbStatistic.subtitle = it
+        }
+
+    }
+
+    private fun showNoData(){
+        binding.tvNoData.visibility = View.VISIBLE
+    }
+
+    private fun hideNoData(){
+        binding.tvNoData.visibility = View.INVISIBLE
     }
 
     override fun onDestroyView() {

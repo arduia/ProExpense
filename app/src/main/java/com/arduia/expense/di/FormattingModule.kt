@@ -1,5 +1,7 @@
 package com.arduia.expense.di
 
+import com.arduia.expense.ui.common.formatter.DateRangeFormatter
+import com.arduia.expense.ui.common.formatter.StatisticDateRangeFormatter
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,6 +32,8 @@ object FormattingModule{
     @Provides
     fun provideDateFormat(): DateFormat = SimpleDateFormat("d-M-yyyy", Locale.ENGLISH)
 
+    @Provides
+    fun provideStatisticDateRangeFormatter(): DateRangeFormatter = StatisticDateRangeFormatter()
 }
 
 @Qualifier

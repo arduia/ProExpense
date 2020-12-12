@@ -9,6 +9,7 @@ import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
 import com.arduia.expense.model.*
 import com.arduia.expense.ui.common.*
+import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
@@ -29,6 +30,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val expenseDetailMapper: Mapper<ExpenseEnt, ExpenseDetailsVto>,
     private val repo: ExpenseRepository,
     @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
+    private val dateRangeFormatter: DateRangeFormatter,
     calculatorFactory: ExpenseRateCalculator.Factory
 ) : ViewModel() {
 
@@ -189,12 +191,8 @@ class HomeViewModel @ViewModelInject constructor(
     }
 
     private fun getWeekDateRange(): String{
-        val startTime = getWeekStartTime()
-        val endTime = Calendar.getInstance().time
-
-        val startMonthDay = SimpleDateFormat("MMM d", Locale.ENGLISH).format(startTime)
-        val endDay = SimpleDateFormat("d", Locale.ENGLISH).format(endTime)
-
-        return "$startMonthDay - $endDay"
+        val startTime = getWeekStartTime().time
+        val endTime = Calendar.getInstance().timeInMillis
+        return  dateRangeFormatter.format(startTime, endTime)
     }
 }

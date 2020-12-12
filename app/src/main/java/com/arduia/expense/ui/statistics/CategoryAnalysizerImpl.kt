@@ -5,33 +5,34 @@ import com.arduia.expense.ui.common.ExpenseCategoryProvider
 import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider) :
     CategoryAnalyzer {
 
-    private val valueHolderMap = hashMapOf<Int, Double>()
 
     private val decimalFormat = (DecimalFormat.getNumberInstance(Locale.ENGLISH) as DecimalFormat).apply {
         applyPattern("0.0")
     }
+
     override fun analyze(entities: List<ExpenseEnt>): List<CategoryStatisticVo> {
+        val valueHolder = hashMapOf<Int, Double>()
         entities.forEach {
-            if (isNewKey(key = it.category)) {
-                addNewCategoryAndValue(it.category, it.amount)
+            if (isNewKey(valueHolder, key = it.category)) {
+                addNewCategoryAndValue(valueHolder, it.category, it.amount)
             } else {
-                updateCategoryValue(it.category, it.amount)
+                updateCategoryValue(valueHolder, it.category, it.amount)
             }
         }
-        return getStatisticResultsVo()
+        return getStatisticResultsVo(valueHolder)
     }
 
-    private fun getStatisticResultsVo(): List<CategoryStatisticVo> {
-        if (valueHolderMap.isEmpty()) return emptyList()
+    private fun getStatisticResultsVo(valueHolder: HashMap<Int, Double>): List<CategoryStatisticVo> {
+        if (valueHolder.isEmpty()) return emptyList()
 
-        val total: Double = valueHolderMap.values.sum()
-//        val max: Double = valueHolderMap.maxOf { it.value }
+        val total: Double = valueHolder.values.sum()
 
-        return valueHolderMap.map {
+        return valueHolder.map {
             val category = categoryProvider.getCategoryByID(it.key)
             val percentage = calculatePercentage(it.value, total)
             return@map CategoryStatisticVo(category.name, percentage, "${decimalFormat.format(percentage)}%")
@@ -45,16 +46,16 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
         return ((value * 100) / total).toFloat()
     }
 
-    private fun isNewKey(key: Int) = (valueHolderMap[key] == null)
+    private fun isNewKey(valueHolder: HashMap<Int, Double>, key: Int) = (valueHolder[key] == null)
 
-    private fun addNewCategoryAndValue(key: Int, value: Float) {
-        valueHolderMap[key] = value.toDouble()
+    private fun addNewCategoryAndValue(valueHolder: HashMap<Int, Double>,key: Int, value: Float) {
+        valueHolder[key] = value.toDouble()
     }
 
-    private fun updateCategoryValue(key: Int, nextValue: Float) {
-        val old = valueHolderMap[key]
+    private fun updateCategoryValue(valueHolder: HashMap<Int, Double>, key: Int, nextValue: Float) {
+        val old = valueHolder[key]
             ?: throw Exception("Category($key) didn't exit. this should be add as new.")
-        valueHolderMap[key] = old + nextValue
+        valueHolder[key] = old + nextValue
     }
 
 }
