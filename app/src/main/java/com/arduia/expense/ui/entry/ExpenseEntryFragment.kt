@@ -136,7 +136,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupEntryAmountEditText() {
-        viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter(decimalLength = 3))
+        viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter())
     }
 
     private fun setupCategoryListAdapter() {
