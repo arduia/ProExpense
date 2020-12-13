@@ -7,6 +7,8 @@ import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onSuccess
+import com.arduia.expense.ui.common.ext.setDayAsEnd
+import com.arduia.expense.ui.common.ext.setDayAsStart
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
@@ -50,8 +52,10 @@ class StatisticsViewModel @ViewModelInject constructor(
     }
 
     private fun setDefaultDateRange() {
-        val defaultTime = Calendar.getInstance().timeInMillis
-        dateRangeFilter = DateRangeSortingEnt(defaultTime, defaultTime)
+        val defaultTime = Calendar.getInstance()
+        val startTime = defaultTime.setDayAsStart().timeInMillis
+        val endTime = defaultTime.setDayAsEnd().timeInMillis
+        dateRangeFilter = DateRangeSortingEnt(startTime, endTime)
         dateRangeLimit = dateRangeFilter
     }
 
@@ -81,10 +85,15 @@ class StatisticsViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun updateStatistics(){
-        viewModelScope.launch(Dispatchers.IO){
+    private fun updateStatistics() {
+        viewModelScope.launch(Dispatchers.IO) {
             Timber.d("updateStatistics")
-            val expenses = expenseRepo.getExpenseRangeAsc(dateRangeFilter.start, dateRangeFilter.end,0, Int.MAX_VALUE)
+            val expenses = expenseRepo.getExpenseRangeAsc(
+                dateRangeFilter.start,
+                dateRangeFilter.end,
+                0,
+                Int.MAX_VALUE
+            )
                 .awaitValueOrError()
             Timber.d("expenses $expenses")
             val statistics = categoryAnalyzer.analyze(expenses)

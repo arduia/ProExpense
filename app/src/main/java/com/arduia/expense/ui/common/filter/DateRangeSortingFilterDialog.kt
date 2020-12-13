@@ -8,8 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FilterExpenseBinding
+import com.arduia.expense.ui.common.ext.setDayAsEnd
+import com.arduia.expense.ui.common.ext.setDayAsStart
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import timber.log.Timber
 import java.lang.Exception
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,7 +48,6 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         with(binding) {
 
@@ -147,7 +150,16 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
     }
 
     private fun setStartTime(time: Long) {
-        this.startTimeSelected = time
+        val selectedTime = Calendar.getInstance().apply {
+            timeInMillis = time
+        }
+        //At the start of the day
+        selectedTime.setDayAsStart()
+        this.startTimeSelected = selectedTime.timeInMillis
+
+        val formatter = SimpleDateFormat("dd MMM yyy h:mm:s a", Locale.ENGLISH)
+        Timber.d("End dateFormat ${formatter.format(selectedTime.time)}")
+
         //setEndTime as Start time if less than
         if (endTimeSelected < startTimeSelected) {
             this.endTimeSelected = startTimeSelected
@@ -157,6 +169,16 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
     }
 
     private fun setEndTime(time: Long) {
+        val selectedTime = Calendar.getInstance().apply {
+            timeInMillis = time
+        }
+
+        selectedTime.setDayAsEnd()
+        this.startTimeSelected = selectedTime.timeInMillis
+
+        val formatter = SimpleDateFormat("dd MMM yyy h:mm:s a", Locale.ENGLISH)
+        Timber.d("End dateFormat ${formatter.format(selectedTime.time)}")
+
         this.endTimeSelected = time
         //end Time should be greater than or equal start time
         if (this.endTimeSelected < this.startTimeSelected) {
@@ -178,7 +200,6 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
         super.onDestroyView()
         _binding = null
     }
-
 
     fun setOnFilterApplyListener(listener: OnFilterApplyListener?) {
         this.filterApplyListener = listener
