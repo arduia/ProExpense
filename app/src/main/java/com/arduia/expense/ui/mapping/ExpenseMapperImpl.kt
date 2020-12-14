@@ -2,6 +2,7 @@ package com.arduia.expense.ui.mapping
 
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.entry.ExpenseUpdateDataVto
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
@@ -13,7 +14,7 @@ import java.util.*
 
 class ExpenseMapperImpl(
      private val categoryProvider: ExpenseCategoryProvider,
-     private val dateFormatter: DateFormat ,
+     private val dateFormatter: DateFormatter ,
      private val currencyFormatter: NumberFormat
  ): ExpenseMapper{
 

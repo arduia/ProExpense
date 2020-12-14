@@ -10,21 +10,19 @@ abstract class ExpenseDateRangeFormatter: DateRangeFormatter {
         val tmpStart = Calendar.getInstance().apply { timeInMillis = start }
         val tmpEnd = Calendar.getInstance().apply { timeInMillis = end }
 
-        val isSameYear = tmpStart[Calendar.YEAR] == tmpEnd[Calendar.YEAR]
-        val isSameMonth = tmpStart[Calendar.MONTH] == tmpEnd[Calendar.MONTH]
-        val isSameDay = tmpEnd[Calendar.DAY_OF_MONTH] == tmpEnd[Calendar.DAY_OF_MONTH]
+        val isSameYear = (tmpStart[Calendar.YEAR] == tmpEnd[Calendar.YEAR])
+        val isSameMonth = (tmpStart[Calendar.MONTH] == tmpEnd[Calendar.MONTH])
+        val isSameDay = (tmpStart[Calendar.DAY_OF_MONTH] == tmpEnd[Calendar.DAY_OF_MONTH])
 
         //Different Years ->  2019 Dec 12 - 2020 Nov 31
         if(isSameYear.not()){
             return getDateRangeDifferentYears(start, end)
         }
 
-
         //Same Year, Different Month -> 2020 Nov 12 - Dec 12
         if(isSameYear and isSameMonth.not()){
             return getDateRangeSameYearDifferentMonth(start, end)
         }
-
 
         //Same Year, Same Month, Different Day -> 2020 Nov 12 - 14
         if(isSameYear and isSameMonth and isSameDay.not()){

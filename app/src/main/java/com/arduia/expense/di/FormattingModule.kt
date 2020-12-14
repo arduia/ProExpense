@@ -1,12 +1,16 @@
 package com.arduia.expense.di
 
+import android.content.Context
+import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
+import com.arduia.expense.ui.common.formatter.ExpenseRecentDateFormatter
 import com.arduia.expense.ui.common.formatter.StatisticDateRangeFormatter
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.FragmentScoped
 import java.text.*
 import java.util.*
@@ -34,6 +38,11 @@ object FormattingModule{
 
     @Provides
     fun provideStatisticDateRangeFormatter(): DateRangeFormatter = StatisticDateRangeFormatter()
+
+    @Provides
+    fun provideDateFormatter(@ActivityContext context: Context): DateFormatter
+    = ExpenseRecentDateFormatter(context)
+
 }
 
 @Qualifier

@@ -119,5 +119,7 @@
     <string name="light_theme">Light Theme</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="system_default">System Default</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>
 

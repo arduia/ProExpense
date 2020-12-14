@@ -5,9 +5,12 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.expense.ExpenseLogVo
 import com.arduia.expense.ui.expense.mapper.ExpenseLogTransform
 import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapper
+import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactory
+import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactoryImpl
 import com.arduia.expense.ui.mapping.BackupVoMapper
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.mapping.ExpenseMapperImpl
@@ -30,7 +33,7 @@ object MapperModule {
     @Provides
     fun provideExpenseMapper(
         categoryProvider: ExpenseCategoryProvider,
-        dateFormatter: DateFormat,
+        dateFormatter: DateFormatter,
         @CurrencyDecimalFormat decimalFormat: NumberFormat
     ): ExpenseMapper = ExpenseMapperImpl(
         categoryProvider,
@@ -39,9 +42,9 @@ object MapperModule {
     )
 
     @Provides
-    fun provideExpenseVoMapper(
+    fun provideExpenseLogVoMapper(
         categoryProvider: ExpenseCategoryProvider,
-        dateFormatter: DateFormat,
+        dateFormatter: DateFormatter,
         @CurrencyDecimalFormat decimalFormat: NumberFormat,
     ): Mapper<ExpenseEnt, ExpenseLogVo.Log> = ExpenseLogVoMapper(
         categoryProvider,

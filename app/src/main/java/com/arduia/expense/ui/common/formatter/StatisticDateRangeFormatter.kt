@@ -12,14 +12,14 @@ class StatisticDateRangeFormatter : ExpenseDateRangeFormatter() {
     override fun getDateRangeSameYearSameMonth(start: Long, end: Long): String {
         // 2020 Dec 1-4
         endFormatter.applyPattern(PATTERN_DATE_DAY_ONLY)
-        return endFormatter.format(Date(start)) + SPACE_DATE_RANGE + endFormatter.format(Date(end))
+        return startFormatter.format(Date(start)) + SPACE_DATE_RANGE + endFormatter.format(Date(end))
     }
 
     @Synchronized
     override fun getDateRangeSameYearDifferentMonth(start: Long, end: Long): String {
         // 2020 Nov 1- Dec 4
         endFormatter.applyPattern(PATTERN_DATE_MONTH_AND_DAY)
-        return endFormatter.format(Date(start)) + SPACE_DATE_RANGE + endFormatter.format(Date(end))
+        return startFormatter.format(Date(start)) + SPACE_DATE_RANGE + endFormatter.format(Date(end))
     }
 
     @Synchronized
@@ -32,7 +32,7 @@ class StatisticDateRangeFormatter : ExpenseDateRangeFormatter() {
     override fun getDateRangeDifferentYears(start: Long, end: Long): String {
         // 2019 Dec 2 - 2020 Dec 1
         endFormatter.applyPattern(PATTERN_DATE_BASE)
-        return endFormatter.format(Date(start)) + SPACE_DATE_RANGE + endFormatter.format(Date(end))
+        return startFormatter.format(Date(start)) + SPACE_DATE_RANGE + endFormatter.format(Date(end))
     }
 
     companion object {
