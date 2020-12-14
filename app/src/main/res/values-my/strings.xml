@@ -115,7 +115,7 @@
     <string name="delete">ဖျက်ရန်</string>
     <string name="choose_theme">Theme ရွေးချယ်ရန်</string>
     <string name="light_theme">Light Theme</string>
-    <string name="dark_theme">Light Theme</string>
+    <string name="dark_theme">Dark Theme</string>
     <string name="system_default">System Default</string>
     <string name="today">ကနေ့</string>
     <string name="yesterday">မနေ့က</string>

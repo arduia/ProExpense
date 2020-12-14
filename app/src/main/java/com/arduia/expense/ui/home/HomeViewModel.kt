@@ -29,7 +29,7 @@ import java.util.*
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
     private val expenseVoMapperFactory: ExpenseVoMapperFactory,
-    private val expenseDetailMapper: Mapper<ExpenseEnt, ExpenseDetailsVto>,
+    private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
     private val repo: ExpenseRepository,
     @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
     private val dateRangeFormatter: DateRangeFormatter,
@@ -82,7 +82,9 @@ class HomeViewModel @ViewModelInject constructor(
                 is Result.Loading -> Unit
                 is Result.Error -> Unit
                 is Result.Success -> {
-                    val detailData = expenseDetailMapper.map(result.data)
+                    val symbol = currencySymbol.value ?: ""
+                    val mapper = expenseDetailMapperFactory.create{symbol}
+                    val detailData = mapper.map(result.data)
                     _detailData post event(detailData)
                 }
             }

@@ -57,6 +57,7 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
             viewBinding.tvDateValue.text = date
             viewBinding.tvNameValue.text = name
             viewBinding.tvNoteValue.text = note
+            viewBinding.tvCurrencySymbol.text = symbol
             viewBinding.imvCategory.setImageResource(category)
 
             if(note.isEmpty()) hideNoteTextView()

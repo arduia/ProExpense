@@ -6,6 +6,7 @@ import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -15,14 +16,10 @@ import java.util.*
 class ExpenseDetailMapper(
     @CurrencyDecimalFormat
     private val currencyFormatter: NumberFormat,
-    private val dateFormatter: DateFormat,
+    private val dateFormatter: DateFormatter,
     private val categoryProvider: ExpenseCategoryProvider,
-    private val currencyRepository: CurrencyRepository
+    private val currencyProvider: CurrencyProvider
 ) : Mapper<ExpenseEnt, ExpenseDetailsVto> {
-
-    private val symbol by lazy {
-        currencyRepository.getSelectedCacheCurrency().awaitValueOrError().symbol
-    }
 
     override fun map(input: ExpenseEnt): ExpenseDetailsVto {
         return ExpenseDetailsVto(
@@ -33,8 +30,25 @@ class ExpenseDetailMapper(
             finance = "",
             category = categoryProvider.getCategoryDrawableByID(input.category),
             note = input.note ?: "",
-            symbol = symbol
+            symbol = currencyProvider.get()
         )
     }
 
+}
+
+class ExpenseDetailMapperFactoryImpl(
+    @CurrencyDecimalFormat
+    private val currencyFormatter: NumberFormat,
+    private val dateFormatter: DateFormatter,
+    private val categoryProvider: ExpenseCategoryProvider
+): ExpenseDetailMapperFactory{
+    override fun create(currencyProvider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseDetailsVto> {
+        return ExpenseDetailMapper(
+            currencyFormatter, dateFormatter, categoryProvider, currencyProvider
+        )
+    }
+}
+
+interface ExpenseDetailMapperFactory: Mapper.Factory<ExpenseEnt, ExpenseDetailsVto>{
+    fun create(currencyProvider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseDetailsVto>
 }
