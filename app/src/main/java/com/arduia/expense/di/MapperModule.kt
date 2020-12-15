@@ -38,7 +38,7 @@ object MapperModule {
     ): ExpenseMapper = ExpenseMapperImpl(
         categoryProvider,
         dateFormatter = dateFormatter,
-        currencyFormatter = decimalFormat
+        decimalFormat
     )
 
     @Provides

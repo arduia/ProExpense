@@ -15,9 +15,11 @@ import java.util.*
 class ExpenseMapperImpl(
      private val categoryProvider: ExpenseCategoryProvider,
      private val dateFormatter: DateFormatter ,
-     private val currencyFormatter: NumberFormat
+     private val formatter: NumberFormat
  ): ExpenseMapper{
-
+    private val currencyFormatter: NumberFormat = (NumberFormat.getInstance(Locale.ENGLISH) as DecimalFormat).apply {
+        this.applyPattern("#.##")
+    }
      override fun mapToVto(expenseEnt: ExpenseEnt) =
          ExpenseVto(
              id = expenseEnt.expenseId,

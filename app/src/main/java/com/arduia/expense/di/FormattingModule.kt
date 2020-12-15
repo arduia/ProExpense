@@ -12,6 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.FragmentScoped
+import java.math.RoundingMode
 import java.text.*
 import java.util.*
 import javax.inject.Qualifier
@@ -31,6 +32,8 @@ object FormattingModule{
     @Provides
     @CurrencyDecimalFormat
     fun provideCurrencyDecimalFormat(): NumberFormat = DecimalFormat.getInstance(Locale.ENGLISH).apply {
+        maximumFractionDigits = 2
+        roundingMode = RoundingMode.UP
     }
 
     @Provides

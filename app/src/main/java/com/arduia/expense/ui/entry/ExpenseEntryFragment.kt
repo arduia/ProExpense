@@ -188,6 +188,7 @@ class ExpenseEntryFragment : Fragment() {
         viewModel.lockMode.observe(viewLifecycleOwner) {
             //Replace with Drawable State Lists
             when (it) {
+
                 LockMode.LOCKED -> {
                     viewBinding.cvLock.backgroundTintList =
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
@@ -196,6 +197,7 @@ class ExpenseEntryFragment : Fragment() {
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
                     viewBinding.btnSave.text = getString(R.string.next)
                 }
+
                 LockMode.UNLOCK -> {
                     viewBinding.cvLock.backgroundTintList =
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
@@ -204,6 +206,7 @@ class ExpenseEntryFragment : Fragment() {
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnSurface))
                     viewBinding.btnSave.text = getString(R.string.save)
                 }
+
             }
         }
     }

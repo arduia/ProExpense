@@ -2,6 +2,7 @@ package com.arduia.expense.domain
 
 import com.arduia.currencystore.Rate
 import com.arduia.currencystore.Store
+import timber.log.Timber
 import java.lang.Exception
 
 abstract class ExpenseStore(rate: Rate<Int>) : Store<Float, Int>(rate) {
@@ -10,7 +11,7 @@ abstract class ExpenseStore(rate: Rate<Int>) : Store<Float, Int>(rate) {
 
     override fun getActual(): Float {
         validateRateOrError(rate)
-        return storeValue.toFloat() / rate.getRate()
+        return storeValue.toFloat()/ rate.getRate()
     }
 
     override fun getStore() = storeValue

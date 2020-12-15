@@ -8,6 +8,7 @@ import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.ui.common.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.vto.ExpenseVto
+import timber.log.Timber
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.NumberFormat
