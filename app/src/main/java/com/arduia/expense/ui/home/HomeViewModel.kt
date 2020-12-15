@@ -2,28 +2,25 @@ package com.arduia.expense.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
+import com.arduia.expense.domain.Amount
+import com.arduia.expense.domain.times
 import com.arduia.expense.model.*
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
-import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.expense.ui.vto.ExpenseVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.Exception
-import java.text.DecimalFormat
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 class HomeViewModel @ViewModelInject constructor(
@@ -73,6 +70,12 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun getCurrencySymbol(): String{
         Timber.d("getCurrencySymbol ")
+
+        val value = Amount.createFromActual(5.0f)
+        val result = value * value
+        val some = value * 4
+        val storeValue = result.getStore()
+
         return _currencySymbol.value ?: "NULL"
     }
 
@@ -142,12 +145,14 @@ class HomeViewModel @ViewModelInject constructor(
                     }
                 }
             }
-            .map {
-                if(it is SuccessResult) it.data else emptyList()
-            }
-            .combine(_currencySymbol.asFlow()){ recent, symbol->
+            .launchIn(viewModelScope)
+
+        repo.getRecentExpense()
+            .flowOn(Dispatchers.IO)
+            .combine(_currencySymbol.asFlow()){ recent, symbol ->
+                val data = (recent as? SuccessResult)?.data ?: return@combine
                 val mapper = expenseVoMapperFactory.create{symbol}
-                _recentData post recent.map(mapper::map)
+                _recentData post data.map(mapper::map)
             }
             .launchIn(viewModelScope)
     }
@@ -155,13 +160,13 @@ class HomeViewModel @ViewModelInject constructor(
     private fun List<ExpenseEnt>.getTotalOutcomeAsync() = viewModelScope.async {
         this@getTotalOutcomeAsync.filter { expense ->
             expense.category != ExpenseCategory.INCOME
-        }.sumByDouble { expense -> expense.amount.toDouble() }
+        }.sumByDouble { expense -> expense.amount.getActual().toDouble() }
     }
 
     private fun List<ExpenseEnt>.getTotalIncomeAsync() = viewModelScope.async {
         this@getTotalIncomeAsync.filter { expense ->
             expense.category == ExpenseCategory.INCOME
-        }.sumByDouble { expense -> expense.amount.toDouble() }
+        }.sumByDouble { expense -> expense.amount.getActual().toDouble() }
     }
 
     private fun observeRate() {
