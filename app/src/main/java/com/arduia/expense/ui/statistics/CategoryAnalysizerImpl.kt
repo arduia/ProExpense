@@ -19,9 +19,9 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
         val valueHolder = hashMapOf<Int, Double>()
         entities.forEach {
             if (isNewKey(valueHolder, key = it.category)) {
-                addNewCategoryAndValue(valueHolder, it.category, it.amount)
+                addNewCategoryAndValue(valueHolder, it.category, it.amount.getActual())
             } else {
-                updateCategoryValue(valueHolder, it.category, it.amount)
+                updateCategoryValue(valueHolder, it.category, it.amount.getActual())
             }
         }
         return getStatisticResultsVo(valueHolder)

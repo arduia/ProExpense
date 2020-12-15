@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.domain.Amount
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.*
@@ -136,7 +137,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     ) = ExpenseEnt(
         expenseId = vto.id,
         name = vto.name,
-        amount = vto.amount.toFloat(),
+        amount = Amount.createFromActual(vto.amount.toFloat()),
         note = vto.note,
         category = vto.category,
         createdDate = createdDate ?: Date().time,

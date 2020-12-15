@@ -3,6 +3,7 @@ package com.arduia.expense.ui.home
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
@@ -19,7 +20,6 @@ import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.common.themeColor
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
@@ -115,6 +115,9 @@ class HomeFragment : NavBaseFragment() {
         )
 
         binding.scrollHome.isEnabled = false
+        binding.cvExpenseList.rvRecentLists.isNestedScrollingEnabled = false
+        binding.cvExpenseList.rvRecentLists.hasFixedSize()
+
 
         mainHost.setAddButtonClickListener {
             findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)

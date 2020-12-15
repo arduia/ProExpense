@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/backup" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/currencystore" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

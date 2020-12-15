@@ -23,7 +23,7 @@ class ExpenseMapperImpl(
              id = expenseEnt.expenseId,
              name = expenseEnt.name?:"",
              date = dateFormatter.format(expenseEnt.modifiedDate),
-             amount = expenseEnt.amount.formatCostValue(),
+             amount = expenseEnt.amount.getActual().formatCostValue(),
              finance = "",
              category = categoryProvider.getCategoryDrawableByID(expenseEnt.category),
              currencySymbol = ""
@@ -34,7 +34,7 @@ class ExpenseMapperImpl(
              id = expenseEnt.expenseId,
              name = expenseEnt.name?: "",
              date = dateFormatter.format(expenseEnt.modifiedDate),
-             amount = expenseEnt.amount.formatCostValue(),
+             amount = expenseEnt.amount.getActual().formatCostValue(),
              finance = "",
              category = categoryProvider.getCategoryDrawableByID(expenseEnt.category),
              note = expenseEnt.note?:"",
@@ -46,7 +46,7 @@ class ExpenseMapperImpl(
              id = expenseEnt.expenseId,
              name = expenseEnt.name ?: "",
              date = expenseEnt.createdDate,
-             amount = expenseEnt.amount.toString(),
+             amount = expenseEnt.amount.getActual().toString(),
              category = categoryProvider.getCategoryByID(expenseEnt.category) ,
              note = expenseEnt.note ?: ""
          )

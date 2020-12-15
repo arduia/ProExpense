@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "019de6f870d16e1e23f5137dfc4b4c20",
+    "identityHash": "27085a6798a70569f4984067458b86b2",
     "entities": [
       {
         "tableName": "expense",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`expense_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `amount` REAL NOT NULL, `category` INTEGER NOT NULL, `note` TEXT, `created_date` INTEGER NOT NULL, `modified_date` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`expense_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `amount` INTEGER NOT NULL, `category` INTEGER NOT NULL, `note` TEXT, `created_date` INTEGER NOT NULL, `modified_date` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "expenseId",
@@ -23,7 +23,7 @@
           {
             "fieldPath": "amount",
             "columnName": "amount",
-            "affinity": "REAL",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -120,7 +120,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '019de6f870d16e1e23f5137dfc4b4c20')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '27085a6798a70569f4984067458b86b2')"
     ]
   }
 }

@@ -4,13 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import java.lang.Exception
 
 @Database(
     entities = [ExpenseEnt::class, BackupEnt::class],
-    version = 5, exportSchema = true)
+    version = 6, exportSchema = true)
+@TypeConverters(AmountTypeConverter::class)
 abstract class  ProExpenseDatabase : RoomDatabase(){
 
     abstract val expenseDao: ExpenseDao

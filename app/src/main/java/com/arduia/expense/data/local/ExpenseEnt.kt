@@ -1,8 +1,7 @@
 package com.arduia.expense.data.local
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import com.arduia.expense.domain.Amount
 
 @Entity(tableName = ExpenseEnt.TABLE_NAME)
 data class ExpenseEnt(
@@ -14,8 +13,9 @@ data class ExpenseEnt(
     @ColumnInfo(name = "name")
     val name: String?,
 
+    @TypeConverters(AmountTypeConverter::class)
     @ColumnInfo(name = "amount")
-    val amount: Float,
+    val amount: Amount,
 
     @ColumnInfo(name = "category")
     val category: Int,

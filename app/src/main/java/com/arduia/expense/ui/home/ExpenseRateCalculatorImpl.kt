@@ -43,7 +43,7 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
         forEach {
             mCalendar.timeInMillis = it.modifiedDate
             val dayOfWeek = mCalendar[Calendar.DAY_OF_WEEK]
-            amountOfWeek[dayOfWeek] = it.amount + (amountOfWeek[dayOfWeek] ?: 0f)
+            amountOfWeek[dayOfWeek] = it.amount.getActual() + (amountOfWeek[dayOfWeek] ?: 0f)
         }
         return amountOfWeek
     }

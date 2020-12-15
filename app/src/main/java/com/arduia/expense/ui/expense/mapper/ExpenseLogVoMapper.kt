@@ -26,7 +26,7 @@ class ExpenseLogVoMapper(
                 id = input.expenseId,
                 name = input.name ?: "",
                 date = dateFormatter.format(input.modifiedDate),
-                amount = currencyFormatter.format(input.amount),
+                amount = currencyFormatter.format(input.amount.getActual()),
                 finance = "",
                 category = categoryProvider.getCategoryDrawableByID(input.category),
                 currencySymbol = ""

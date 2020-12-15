@@ -3,6 +3,7 @@ package com.arduia.expense.data.backup
 import com.arduia.backup.BackupSheet
 import com.arduia.backup.BackupSource
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.domain.Amount
 import java.util.*
 
 class ExpenseBackupSheet( source: BackupSource<ExpenseEnt>): BackupSheet<ExpenseEnt>(source){
@@ -19,7 +20,7 @@ class ExpenseBackupSheet( source: BackupSource<ExpenseEnt>): BackupSheet<Expense
         val note = row[FIELD_NOTE]
         val date = row[FIELD_DATE]?.toLong() ?: 0
 
-        return ExpenseEnt(0, name, amount, category, note, date, Date().time)
+            return ExpenseEnt(0, name, Amount.createFromActual(amount), category, note, date, Date().time)
     }
 
     override fun mapToSheetDataFromEntity(item: ExpenseEnt): Map<String, String> {

@@ -23,18 +23,19 @@
             app:title="@string/home" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="80dp"
         android:background="?backgroundColor"
         android:clipToPadding="false"
         android:id="@+id/scroll_home"
+        android:overScrollMode="never"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <include
@@ -66,8 +67,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/grid_2"
                 android:layout_marginTop="@dimen/grid_2"
-                android:layout_marginBottom="@dimen/grid_2" />
+                android:layout_marginBottom="@dimen/grid_2"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

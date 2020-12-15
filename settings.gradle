@@ -1,3 +1,4 @@
+include ':currencystore'
 include ':backup'
 include ':core'
 include ':WeeklyCostGraph'
