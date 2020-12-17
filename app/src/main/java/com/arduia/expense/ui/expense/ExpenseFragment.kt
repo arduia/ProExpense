@@ -20,6 +20,7 @@ import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.text.DecimalFormat
 import java.util.*
 
 @AndroidEntryPoint
@@ -33,6 +34,8 @@ class ExpenseFragment : NavBaseFragment() {
     private var filterDialog: DateRangeSortingFilterDialog? = null
 
     private var adapter: ExpenseLogAdapter? = null
+
+    private val itemNumberFormat = DecimalFormat()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,10 +108,12 @@ class ExpenseFragment : NavBaseFragment() {
         }
         val rvTouchHelper = ItemTouchHelper(SwipeItemCallback())
         rvTouchHelper.attachToRecyclerView(binding.rvExpense)
-        binding.rvExpense.addItemDecoration(MarginItemDecoration(
-            spaceSide = 0,
-            spaceHeight = requireContext().px(0.5f).toInt()
-        ))
+        binding.rvExpense.addItemDecoration(
+            MarginItemDecoration(
+                spaceSide = 0,
+                spaceHeight = requireContext().px(0.5f).toInt()
+            )
+        )
         binding.rvExpense.adapter = adapter
     }
 
@@ -129,6 +134,13 @@ class ExpenseFragment : NavBaseFragment() {
                 else -> Unit
             }
         }
+
+        viewModel.selectedCount.observe(viewLifecycleOwner) {
+            binding.tbExpense.title = "${itemNumberFormat.format(it)} ${
+                if (it <= 1) getString(R.string.single_item_suffix) else getString(R.string.multi_item_suffix)
+            }"
+        }
+
     }
 
     private fun changeUiDefault() {
@@ -148,7 +160,7 @@ class ExpenseFragment : NavBaseFragment() {
         with(binding.tbExpense) {
             menu.findItem(R.id.delete)?.isVisible = true
             menu.findItem(R.id.filter)?.isVisible = false
-            title = "Select"
+            title = ""
             setNavigationIcon(R.drawable.ic_back)
             setNavigationOnClickListener(::clearSelectedItems)
         }
