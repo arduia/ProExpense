@@ -19,4 +19,9 @@ data class CurrencyDto(
     @SerializedName("number")
     val number: String
 
-)
+){
+    override fun toString(): String {
+        return "$rank $name $code $symbol $number"
+    }
+
+}

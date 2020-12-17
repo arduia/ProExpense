@@ -3,6 +3,7 @@ package com.arduia.expense.ui.onboarding
 import android.view.View
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
@@ -23,7 +24,7 @@ import java.util.*
 class ChooseCurrencyViewModel @ViewModelInject constructor(
     private val currencyRep: CurrencyRepository,
     private val settingRepo: SettingsRepository,
-    private val currencyMapper: Mapper<CurrencyDto,CurrencyVo>
+    private val currencyMapper: Mapper<CurrencyDto, CurrencyVo>
 ) : ViewModel() {
 
     private val _currencies = BaseLiveData<List<CurrencyVo>>()
@@ -35,7 +36,7 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading.asLiveData()
 
-    private val searchKey = ConflatedBroadcastChannel<String>()
+    private val searchKey = BaseLiveData<String>("")
 
     init {
         observeCurrencyLists()
@@ -45,7 +46,7 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
 
     fun searchCurrency(key: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            searchKey.send(key)
+            searchKey post key
         }
     }
 
@@ -63,11 +64,20 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
                 _isLoading post (it is LoadingResult)
             }
             .combine(searchKey.asFlow()) { currencyResult, search ->
+
                 if (currencyResult is Result.Success) {
                     if (search.isEmpty()) {
                         return@combine currencyResult
                     }
-                    val filterList = currencyResult.data.filter { it.number == search }
+
+                    val filterList = currencyResult.data.filter {
+                        val tmp =
+                            it.toString().toLowerCase(Locale.ENGLISH)
+                                .indexOf(search.toLowerCase(Locale.ENGLISH))
+
+                        return@filter (tmp != -1)
+                    }
+
                     SuccessResult(filterList)
                 } else currencyResult
             }
@@ -77,8 +87,6 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
                 }
             }
             .combine(settingRepo.getSelectedCurrencyNumber()) { currencyResult, selectedNumResult ->
-                
-                Timber.d("onCombine ${currencyResult.data?.size} $selectedNumResult")
                 if (selectedNumResult !is SuccessResult) return@combine listOf<CurrencyVo>()
                 if (currencyResult !is SuccessResult) return@combine listOf<CurrencyVo>()
 

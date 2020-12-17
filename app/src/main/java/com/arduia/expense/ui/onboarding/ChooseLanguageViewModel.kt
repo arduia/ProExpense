@@ -9,6 +9,8 @@ import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.LanguageProvider
 import com.arduia.expense.ui.vto.LanguageVto
 import com.arduia.mvvm.BaseLiveData
+import com.arduia.mvvm.EventLiveData
+import com.arduia.mvvm.EventUnit
 import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -25,9 +27,20 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
     private val _languages = BaseLiveData<List<LanguageVto>>()
     val language get() = _languages.asLiveData()
 
+    private val _isRestartEnable = BaseLiveData<Boolean>(initValue = true)
+    val isRestartEnable get() = _isRestartEnable.asLiveData()
+
+    private val _onRestartAndDismiss = EventLiveData<Unit>()
+    val onRestartAndDismiss get() = _onRestartAndDismiss.asLiveData()
+
+    private val _onDismiss = EventLiveData<Unit>()
+    val onDismiss get() = _onDismiss.asLiveData()
+
     private var selectedId: String? = null
 
     private var searchKey: String = ""
+
+    private var initialSelectedId: String? = null
 
     init {
         observeSelectedLanguage()
@@ -39,7 +52,7 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
     }
 
     fun selectLang(lang: LanguageVto) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             settingRepo.setSelectedLanguage(lang.id)
         }
     }
@@ -49,7 +62,7 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
             _languages post langRep.getAvailableLanguages()
                 .filter {
                     if (searchKey.isEmpty()) return@filter true
-                    it.name.toUpperCase(Locale.ROOT).contains(searchKey.toUpperCase(Locale.ROOT))
+                    it.name.toLowerCase(Locale.ROOT).contains(searchKey.toLowerCase(Locale.ROOT))
                 }
                 .map {
                     if (selectedId == null) return@map it
@@ -65,14 +78,40 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun observeSelectedLanguage(){
+    private fun observeSelectedLanguage() {
         settingRepo.getSelectedLanguage()
             .flowOn(Dispatchers.IO)
             .onEach {
-                selectedId = it.data ?: return@onEach
+                val id = it.data ?: return@onEach
+
+                setInitialIdIfNotExist(id)
+                setSelectedId(id)
                 updateLanguages()
             }
             .launchIn(viewModelScope)
+    }
+
+    fun onRestart() {
+
+        val isEnable = _isRestartEnable.value ?: return
+
+        if (isEnable) {
+            _onRestartAndDismiss post EventUnit
+        } else {
+            _onDismiss post EventUnit
+        }
+
+    }
+
+    private fun setInitialIdIfNotExist(id: String) {
+        if (initialSelectedId == null) {
+            initialSelectedId = id
+        }
+    }
+
+    private fun setSelectedId(id: String) {
+        selectedId = id
+        _isRestartEnable post (selectedId != initialSelectedId)
     }
 
 }

@@ -17,7 +17,7 @@ class ChooseThemeDialog (context: Context): AlertDialog(context) {
 
     init {
         setView(binding.root)
-        setButton(BUTTON_POSITIVE, context.getString(R.string.save)){ _, _ ->
+        setButton(BUTTON_POSITIVE, context.getString(R.string.restart   )){ _, _ ->
             onSaveListener.invoke(currentThemeMode)
         }
         setButton(BUTTON_NEGATIVE, "Cancel"){_,_ ->}
