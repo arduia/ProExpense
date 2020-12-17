@@ -19,7 +19,7 @@
     </style>
 
     <style name="Theme.Splash" parent="Base.Theme.ProExpense">
-        <item name="background">@color/blue_light_500</item>
+        <item name="android:windowBackground">@color/blue_light_500</item>
         <item name="android:statusBarColor">@color/blue_light_500</item>
     </style>
 

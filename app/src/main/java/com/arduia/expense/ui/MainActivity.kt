@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.hashCode()
-
+        setTheme(R.style.Theme_ProExpense)
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
         setContentView(viewBinding.root)
