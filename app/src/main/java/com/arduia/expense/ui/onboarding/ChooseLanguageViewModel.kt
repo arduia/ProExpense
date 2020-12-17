@@ -3,6 +3,7 @@ package com.arduia.expense.ui.onboarding
 import android.view.View
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.model.data
@@ -13,9 +14,7 @@ import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
 import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -36,46 +35,49 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
     private val _onDismiss = EventLiveData<Unit>()
     val onDismiss get() = _onDismiss.asLiveData()
 
-    private var selectedId: String? = null
+    private val selectedId = BaseLiveData<String>()
 
-    private var searchKey: String = ""
+    private val searchKey = BaseLiveData<String>("")
 
     private var initialSelectedId: String? = null
 
     init {
         observeSelectedLanguage()
+        observeAvailableLanguages()
     }
 
     fun searchLang(key: String) {
-        searchKey = key
-        updateLanguages()
+        searchKey post  key
     }
 
     fun selectLang(lang: LanguageVto) {
-        viewModelScope.launch(Dispatchers.IO) {
-            settingRepo.setSelectedLanguage(lang.id)
-        }
+        selectedId post lang.id
     }
 
-    private fun updateLanguages() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _languages post langRep.getAvailableLanguages()
-                .filter {
-                    if (searchKey.isEmpty()) return@filter true
-                    it.name.toLowerCase(Locale.ROOT).contains(searchKey.toLowerCase(Locale.ROOT))
-                }
-                .map {
-                    if (selectedId == null) return@map it
-
-                    if (selectedId == it.id) return@map LanguageVto(
-                        id = it.id,
-                        name = it.name,
-                        flag = it.flag,
-                        isSelectedVisible = View.VISIBLE
-                    )
-                    else it
-                }
-        }
+    private fun observeAvailableLanguages() {
+        selectedId.asFlow()
+            .flowOn(Dispatchers.IO)
+            .onEach { selectedId ->
+                _isRestartEnable post (selectedId != initialSelectedId)
+            }.combine(searchKey.asFlow()) { selectedId, searchKey ->
+                langRep.getAvailableLanguages()
+                    .filter {
+                        if (searchKey.isEmpty()) return@filter true
+                        it.name.toLowerCase(Locale.ROOT)
+                            .contains(searchKey.toLowerCase(Locale.ROOT))
+                    }
+                    .map {
+                        if (selectedId == it.id) return@map LanguageVto(
+                            id = it.id,
+                            name = it.name,
+                            flag = it.flag,
+                            isSelectedVisible = View.VISIBLE
+                        )
+                        else it
+                    }
+            }
+            .onEach(_languages::postValue)
+            .launchIn(viewModelScope)
     }
 
     private fun observeSelectedLanguage() {
@@ -83,13 +85,12 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
             .flowOn(Dispatchers.IO)
             .onEach {
                 val id = it.data ?: return@onEach
-
                 setInitialIdIfNotExist(id)
-                setSelectedId(id)
-                updateLanguages()
+                selectedId post id
             }
             .launchIn(viewModelScope)
     }
+
 
     fun onRestart() {
 
@@ -100,18 +101,12 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
         } else {
             _onDismiss post EventUnit
         }
-
     }
 
     private fun setInitialIdIfNotExist(id: String) {
         if (initialSelectedId == null) {
             initialSelectedId = id
         }
-    }
-
-    private fun setSelectedId(id: String) {
-        selectedId = id
-        _isRestartEnable post (selectedId != initialSelectedId)
     }
 
 }
