@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.Exception
+import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.*
 
@@ -71,7 +72,7 @@ class HomeViewModel @ViewModelInject constructor(
     private fun getCurrencySymbol(): String{
         Timber.d("getCurrencySymbol ")
 
-        val value = Amount.createFromActual(5.0f)
+        val value = Amount.createFromActual(BigDecimal(0.5f.toDouble()))
         val result = value * value
         val some = value * 4
         val storeValue = result.getStore()

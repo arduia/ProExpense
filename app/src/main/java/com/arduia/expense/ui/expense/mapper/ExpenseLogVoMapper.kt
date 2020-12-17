@@ -10,6 +10,7 @@ import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import com.arduia.expense.ui.home.CurrencyProvider
 import com.arduia.expense.ui.vto.ExpenseVto
 import timber.log.Timber
+import java.math.BigDecimal
 import java.text.DateFormat
 import java.text.NumberFormat
 
@@ -26,7 +27,7 @@ class ExpenseLogVoMapper(
                 id = input.expenseId,
                 name = input.name ?: "",
                 date = dateFormatter.format(input.modifiedDate),
-                amount = currencyFormatter.format(input.amount.getActual()),
+                amount = currencyFormatter.format(BigDecimal.valueOf(input.amount.getActual().toDouble())),
                 finance = "",
                 category = categoryProvider.getCategoryDrawableByID(input.category),
                 currencySymbol = ""

@@ -33,7 +33,6 @@ object FormattingModule{
     @CurrencyDecimalFormat
     fun provideCurrencyDecimalFormat(): NumberFormat = DecimalFormat.getInstance(Locale.ENGLISH).apply {
         maximumFractionDigits = 2
-        roundingMode = RoundingMode.UP
     }
 
     @Provides

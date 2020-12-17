@@ -6,12 +6,12 @@ import com.arduia.expense.domain.Amount
 class  AmountTypeConverter {
 
     @TypeConverter
-    fun fromRawAmount(amount: Int): Amount{
+    fun fromRawAmount(amount: Long): Amount{
         return Amount.createFromStore(amount)
     }
 
     @TypeConverter
-    fun toRawAmount(amount: Amount): Int{
+    fun toRawAmount(amount: Amount): Long{
         return amount.getStore()
     }
 }
