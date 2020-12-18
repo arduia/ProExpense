@@ -18,6 +18,8 @@ import com.arduia.expense.di.FloatingDecimal
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
+import com.arduia.expense.ui.common.DeleteConfirmFragment
+import com.arduia.expense.ui.common.DeleteInfoVo
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -55,13 +57,15 @@ class HomeFragment : NavBaseFragment() {
 
     private var detailDialog: ExpenseDetailDialog? = null
 
-    private val mainHost by lazy { requireActivity() as MainHost  }
+    private val mainHost by lazy { requireActivity() as MainHost }
 
     private val detailDismissListener by lazy {
         return@lazy { mainHost.showAddButton() }
     }
 
     private var graphAdapter: ExpenseGraphAdapter? = null
+
+    private var deleteConfirmDialog: DeleteConfirmFragment? = null
 
     init {
         Timber.d("LIFE Home Init")
@@ -158,7 +162,9 @@ class HomeFragment : NavBaseFragment() {
             //Show Selected Dialog
             detailDialog = ExpenseDetailDialog()
             detailDialog?.setDismissListener(detailDismissListener)
-            detailDialog?.setOnDeleteClickListener(::onDeleteExpense)
+            detailDialog?.setOnDeleteClickListener {
+                viewModel.onDeletePrepared(it.id)
+            }
             detailDialog?.setOnEditClickListener {
                 navigateEntryFragment(expenseDetail.id)
             }
@@ -196,16 +202,27 @@ class HomeFragment : NavBaseFragment() {
             binding.cvExpenseInOut.tvOutcomeValue.text = it
         }
 
+        viewModel.onDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
+            detailDialog?.dismiss()
+            showDeleteConfirmDialog(info = it)
+        })
+
+    }
+
+    private fun showDeleteConfirmDialog(info: DeleteInfoVo) {
+        deleteConfirmDialog?.dismiss()
+        deleteConfirmDialog = DeleteConfirmFragment()
+        deleteConfirmDialog?.setOnConfirmListener {
+            viewModel.onDeleteConfirmed()
+        }
+        deleteConfirmDialog?.show(childFragmentManager, info)
+
     }
 
     private fun navigateToExpenseLogs() {
         findNavController().navigate(R.id.dest_expense_logs)
     }
 
-    private fun onDeleteExpense(item: ExpenseDetailsVto) {
-        detailDialog?.dismiss()
-        viewModel.deleteExpense(item.id)
-    }
 
     private fun navigateEntryFragment(id: Int) {
         val action = HomeFragmentDirections

@@ -14,6 +14,7 @@ import com.arduia.expense.model.Result
 import com.arduia.expense.model.SuccessResult
 import kotlinx.coroutines.flow.*
 import java.util.*
+import kotlin.math.exp
 
 class ExpenseRepositoryImpl(
     private val expenseDao: ExpenseDao,
@@ -52,6 +53,25 @@ class ExpenseRepositoryImpl(
     ) = expenseDao.getExpenseRangeDesc(startTime, endTime, offset, limit)
         .map { SuccessResult(it) }
         .catch { ErrorResult(RepositoryException(it)) }
+
+    override fun getExpenseRangeAscSource(
+        startTime: Long,
+        endTime: Long,
+        offset: Int,
+        limit: Int
+    ): DataSource.Factory<Int, ExpenseEnt> {
+        return expenseDao.getExpenseRangeAscSource(startTime, endTime, offset, limit)
+    }
+
+    override fun getExpenseRangeDescSource(
+        startTime: Long,
+        endTime: Long,
+        offset: Int,
+        limit: Int
+    ): DataSource.Factory<Int, ExpenseEnt> {
+        return expenseDao.getExpenseRangeDescSource(startTime, endTime, offset, limit)
+    }
+
     override fun getExpense(id: Int): FlowResult<ExpenseEnt> {
         return expenseDao.getItemExpense(id)
             .map { SuccessResult(it) }
@@ -76,6 +96,22 @@ class ExpenseRepositoryImpl(
         return expenseDao.getExpenseTotalCount()
             .map { SuccessResult(it) }
             .catch { ErrorResult(RepositoryException(it)) }
+    }
+
+    override suspend fun getMostRecentDateSync(): Result<Long> {
+        return try {
+            SuccessResult(expenseDao.getMostRecentDateSync())
+        } catch (e: Exception) {
+            ErrorResult(e)
+        }
+    }
+
+    override suspend fun getMostLatestDateSync(): Result<Long> {
+        return try {
+            SuccessResult(expenseDao.getMostLatestDateSync())
+        } catch (e: Exception) {
+            ErrorResult(e)
+        }
     }
 
     override fun getExpenseRange(limit: Int, offset: Int): FlowResult<List<ExpenseEnt>> {

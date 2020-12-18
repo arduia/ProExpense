@@ -1,6 +1,7 @@
 package com.arduia.expense.data
 
 import androidx.paging.DataSource
+import androidx.room.Query
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.data.network.ExpenseVersionDto
 import com.arduia.expense.data.network.FeedbackDto
@@ -27,11 +28,19 @@ interface ExpenseRepository {
 
     fun getExpenseTotalCount(): FlowResult<Int>
 
+    suspend fun getMostRecentDateSync(): Result<Long>
+
+    suspend fun getMostLatestDateSync(): Result<Long>
+
     fun getExpenseRange(limit: Int, offset: Int): FlowResult<List<ExpenseEnt>>
 
     fun getExpenseRangeAsc(startTime: Long, endTime: Long, offset: Int, limit: Int): FlowResult<List<ExpenseEnt>>
 
     fun getExpenseRangeDesc(startTime: Long, endTime: Long, offset: Int, limit: Int): FlowResult<List<ExpenseEnt>>
+
+    fun getExpenseRangeAscSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
+
+    fun getExpenseRangeDescSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
 
     suspend fun updateExpense(expenseEnt: ExpenseEnt)
 

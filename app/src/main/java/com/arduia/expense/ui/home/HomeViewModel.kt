@@ -61,15 +61,20 @@ class HomeViewModel @ViewModelInject constructor(
     private val _recentData = BaseLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData.asLiveData()
 
+    private val _onDeleteConfirm = EventLiveData<DeleteInfoVo>()
+    val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
+
     private val calculator = calculatorFactory.create(viewModelScope)
 
     private val _isLoading = BaseLiveData<Boolean>()
+
+    private var prepareDeleteExpenseId: Int? = null
 
     init {
         init()
     }
 
-    private fun getCurrencySymbol(): String{
+    private fun getCurrencySymbol(): String {
         Timber.d("getCurrencySymbol ")
 
         val value = Amount.createFromActual(BigDecimal(0.5f.toDouble()))
@@ -87,7 +92,7 @@ class HomeViewModel @ViewModelInject constructor(
                 is Result.Error -> Unit
                 is Result.Success -> {
                     val symbol = currencySymbol.value ?: ""
-                    val mapper = expenseDetailMapperFactory.create{symbol}
+                    val mapper = expenseDetailMapperFactory.create { symbol }
                     val detailData = mapper.map(result.data)
                     _detailData post event(detailData)
                 }
@@ -95,11 +100,18 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
-    fun deleteExpense(id: Int) {
+
+    fun onDeleteConfirmed() {
+        val id = prepareDeleteExpenseId ?: return
         viewModelScope.launch(Dispatchers.IO) {
             repo.deleteExpenseById(id)
             _onExpenseItemDeleted post EventUnit
         }
+    }
+
+    fun onDeletePrepared(id: Int) {
+        this.prepareDeleteExpenseId = id
+        _onDeleteConfirm post event(DeleteInfoVo(0, null))
     }
 
     private fun init() {
@@ -150,9 +162,9 @@ class HomeViewModel @ViewModelInject constructor(
 
         repo.getRecentExpense()
             .flowOn(Dispatchers.IO)
-            .combine(_currencySymbol.asFlow()){ recent, symbol ->
+            .combine(_currencySymbol.asFlow()) { recent, symbol ->
                 val data = (recent as? SuccessResult)?.data ?: return@combine
-                val mapper = expenseVoMapperFactory.create{symbol}
+                val mapper = expenseVoMapperFactory.create { symbol }
                 _recentData post data.map(mapper::map)
             }
             .launchIn(viewModelScope)

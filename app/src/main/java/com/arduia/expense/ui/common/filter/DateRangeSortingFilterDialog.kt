@@ -157,9 +157,6 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
         selectedTime.setDayAsStart()
         this.startTimeSelected = selectedTime.timeInMillis
 
-        val formatter = SimpleDateFormat("dd MMM yyy h:mm:s a", Locale.ENGLISH)
-        Timber.d("End dateFormat ${formatter.format(selectedTime.time)}")
-
         //setEndTime as Start time if less than
         if (endTimeSelected < startTimeSelected) {
             this.endTimeSelected = startTimeSelected
@@ -169,19 +166,17 @@ class DateRangeSortingFilterDialog(private val isSortingEnabled: Boolean = true)
     }
 
     private fun setEndTime(time: Long) {
+
         val selectedTime = Calendar.getInstance().apply {
             timeInMillis = time
         }
 
         selectedTime.setDayAsEnd()
-        this.startTimeSelected = selectedTime.timeInMillis
+        this.endTimeSelected = selectedTime.timeInMillis
 
-        val formatter = SimpleDateFormat("dd MMM yyy h:mm:s a", Locale.ENGLISH)
-        Timber.d("End dateFormat ${formatter.format(selectedTime.time)}")
-
-        this.endTimeSelected = time
         //end Time should be greater than or equal start time
-        if (this.endTimeSelected < this.startTimeSelected) {
+        //if end is lass than start, set start value from end
+        if (endTimeSelected < startTimeSelected) {
             this.startTimeSelected = this.endTimeSelected
             showSelectedStartTime()
         }

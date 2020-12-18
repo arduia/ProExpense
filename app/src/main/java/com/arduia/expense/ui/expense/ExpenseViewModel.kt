@@ -3,25 +3,23 @@ package com.arduia.expense.ui.expense
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.*
-import androidx.room.InvalidationTracker
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
-import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
+import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
 
 
 class ExpenseViewModel @ViewModelInject constructor(
-    logTransform: Mapper<List<ExpenseEnt>, List<ExpenseLogVo>>,
-    private val expenseRepo: ExpenseRepository,
-    invalidationTracker: InvalidationTracker
+    private val expenseEntToLogMapper: Mapper<ExpenseEnt, ExpenseLogVo>,
+    private val expenseRepo: ExpenseRepository
 ) : ViewModel(), LifecycleObserver {
 
     private var swipeStateHolder: SwipeStateHolder? = null
@@ -35,43 +33,50 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _selectedCount = BaseLiveData<Int>()
     val selectedCount get() = _selectedCount.asLiveData()
 
-    private var filterEnt = DateRangeSortingEnt(0, Long.MAX_VALUE, Sorting.DESC)
+    private val _onDeleteConfirm = EventLiveData<Unit>()
+    val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
 
-    private val dataProvider = object : ExpenseLogDataProvider {
-        override fun get(offset: Int, limit: Int): List<ExpenseEnt> {
-            return when (filterEnt.sorting) {
-                Sorting.ASC -> expenseRepo.getExpenseRangeAsc(
-                    filterEnt.start,
-                    filterEnt.end,
-                    offset,
-                    limit
-                ).awaitValueOrError()
-                else -> expenseRepo.getExpenseRangeDesc(
-                    filterEnt.start,
-                    filterEnt.end,
-                    offset,
-                    limit
-                ).awaitValueOrError()
-            }
+    private val _onFilterShow = EventLiveData<RangeSortingFilterEnt>()
+    val onFilterShow get() = _onFilterShow.asLiveData()
+
+    private val filterConstraint = BaseLiveData<DateRangeSortingEnt>()
+    private lateinit var filterLimit: DateRangeSortingEnt
+
+    val expenseList: LiveData<PagedList<ExpenseLogVo>> = filterConstraint.switchMap { filter ->
+        return@switchMap createSourcePagingLiveData(filter)
+    }
+
+    init {
+        _expenseLogMode.value = ExpenseMode.NORMAL
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val dateRecent = expenseRepo.getMostRecentDateSync().getDataOrError()
+            val dateLatest = expenseRepo.getMostLatestDateSync().getDataOrError()
+            filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.ASC)
+            filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
         }
     }
 
-    private val source =
-        ExpenseProxySource(invalidationTracker, dataProvider, logTransform)
-
-    val expenseList: LiveData<PagedList<ExpenseLogVo>>
-
-    init {
-        val factory = ExpenseProxySource.Factory { source }
-        _expenseLogMode.value = ExpenseMode.NORMAL
-        expenseList = factory.toLiveData(
-            config = Config(
-                10,
-                maxSize = 100,
-                enablePlaceholders = false,
-                prefetchDistance = 10
+    private fun createSourcePagingLiveData(filter: DateRangeSortingEnt): LiveData<PagedList<ExpenseLogVo>> {
+        val sourceFactory =
+            if (filter.sorting == Sorting.DESC) expenseRepo.getExpenseRangeDescSource(
+                filter.start,
+                filter.end,
+                0,
+                Int.MAX_VALUE
             )
-        )
+            else expenseRepo.getExpenseRangeAscSource(filter.start, filter.end, 0, Int.MAX_VALUE)
+
+        return sourceFactory
+            .map(expenseEntToLogMapper::map)
+            .toLiveData(
+                config = Config(
+                    50,
+                    maxSize = 100,
+                    enablePlaceholders = false,
+                    prefetchDistance = 10
+                )
+            )
     }
 
     fun storeState(state: SwipeStateHolder) {
@@ -86,13 +91,23 @@ class ExpenseViewModel @ViewModelInject constructor(
     }
 
     fun setFilter(dateRangeEnt: DateRangeSortingEnt) {
-        this.filterEnt = dateRangeEnt
+        this.filterConstraint post dateRangeEnt
     }
 
-    fun deleteSelectedItems() {
+    fun onFilterPrepare() {
+        val constraint = filterConstraint.value ?: return
+        _onFilterShow post event(RangeSortingFilterEnt(filter = constraint, limit = filterLimit))
+    }
+
+    fun onDeletePrepared() {
+        _onDeleteConfirm post EventUnit
+    }
+
+    fun deleteConfirmed() {
         viewModelScope.launch(Dispatchers.IO) {
             val deleteItems = swipeStateHolder?.getSelectIdList() ?: return@launch
             expenseRepo.deleteAllExpense(deleteItems)
+            _expenseLogMode post ExpenseMode.NORMAL
         }
     }
 
@@ -105,7 +120,6 @@ class ExpenseViewModel @ViewModelInject constructor(
             if (_expenseLogMode.value != ExpenseMode.SELECTION) {
                 _expenseLogMode post ExpenseMode.SELECTION
             }
-
             _selectedCount post selectCount
 
         } else _expenseLogMode post ExpenseMode.NORMAL
@@ -122,7 +136,6 @@ class ExpenseViewModel @ViewModelInject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        source.release()
         swipeStateHolder = null
     }
 

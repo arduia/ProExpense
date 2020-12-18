@@ -11,15 +11,15 @@ import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseLogsBinding
 import com.arduia.expense.ui.NavBaseFragment
+import com.arduia.expense.ui.common.DeleteConfirmFragment
+import com.arduia.expense.ui.common.DeleteInfoVo
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.DateRangeSortingFilterDialog
-import com.arduia.expense.ui.common.filter.Sorting
+import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.expense.swipe.SwipeItemCallback
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 
@@ -37,6 +37,8 @@ class ExpenseFragment : NavBaseFragment() {
 
     private val itemNumberFormat = DecimalFormat()
 
+    private var deleteConfirmDialog: DeleteConfirmFragment? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,6 +54,8 @@ class ExpenseFragment : NavBaseFragment() {
     }
 
     private fun clean() {
+        deleteConfirmDialog?.setOnConfirmListener(null)
+        deleteConfirmDialog = null
         filterDialog?.setOnFilterApplyListener(null)
         filterDialog = null
         lifecycle.removeObserver(viewModel)
@@ -73,14 +77,23 @@ class ExpenseFragment : NavBaseFragment() {
     private fun setupToolbar() {
         binding.tbExpense.setOnMenuItemClickListener listener@{
             when (it.itemId) {
-                R.id.filter -> openFilterDialog()
-                R.id.delete -> viewModel.deleteSelectedItems()
+                R.id.filter -> viewModel.onFilterPrepare()
+                R.id.delete -> viewModel.onDeletePrepared()
             }
             return@listener true
         }
     }
 
-    private fun openFilterDialog() {
+    private fun showDeleteConfirmDialog() {
+        deleteConfirmDialog?.dismiss()
+        deleteConfirmDialog = DeleteConfirmFragment()
+        deleteConfirmDialog?.setOnConfirmListener {
+            viewModel.deleteConfirmed()
+        }
+        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(0, null))
+    }
+
+    private fun showFilterDialog(filterEnt: RangeSortingFilterEnt) {
         //Remove Old Dialog if exit
         with(filterDialog) {
             this?.setOnFilterApplyListener(null)
@@ -90,13 +103,14 @@ class ExpenseFragment : NavBaseFragment() {
         //Create New Dialog
         filterDialog = DateRangeSortingFilterDialog().apply {
             setOnFilterApplyListener { filter ->
-                Timber.d("filter applie! $filter")
+                viewModel.setFilter(filter)
             }
         }
 
         filterDialog?.show(
             childFragmentManager,
-            DateRangeSortingEnt(Date().time, Date().time, Sorting.DESC)
+            filter = filterEnt.filter,
+            limit = filterEnt.limit
         )
     }
 
@@ -141,6 +155,13 @@ class ExpenseFragment : NavBaseFragment() {
             }"
         }
 
+        viewModel.onDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
+            showDeleteConfirmDialog()
+        })
+
+        viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver{
+            showFilterDialog(it)
+        })
     }
 
     private fun changeUiDefault() {
