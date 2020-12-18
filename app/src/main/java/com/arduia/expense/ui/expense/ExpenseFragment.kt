@@ -88,9 +88,18 @@ class ExpenseFragment : NavBaseFragment() {
         deleteConfirmDialog?.dismiss()
         deleteConfirmDialog = DeleteConfirmFragment()
         deleteConfirmDialog?.setOnConfirmListener {
-            viewModel.deleteConfirmed()
+            viewModel.onMultiDeleteConfirmed()
         }
         deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(0, null))
+    }
+
+    private fun showSingleDeleteConfirmDialog(){
+        deleteConfirmDialog?.dismiss()
+        deleteConfirmDialog = DeleteConfirmFragment()
+        deleteConfirmDialog?.setOnConfirmListener {
+            viewModel.onSingleItemDeleteConfirmed()
+        }
+        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(1, null))
     }
 
     private fun showFilterDialog(filterEnt: RangeSortingFilterEnt) {
@@ -118,6 +127,9 @@ class ExpenseFragment : NavBaseFragment() {
         adapter = ExpenseLogAdapter(layoutInflater).apply {
             setOnStateChangeListener { holder, _ ->
                 viewModel.storeState(holder)
+            }
+            setOnDeleteListener {
+                viewModel.onSingleDeletePrepared(it.expenseLog.id)
             }
         }
         val rvTouchHelper = ItemTouchHelper(SwipeItemCallback())
@@ -155,8 +167,12 @@ class ExpenseFragment : NavBaseFragment() {
             }"
         }
 
-        viewModel.onDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
+        viewModel.onMultiDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
             showDeleteConfirmDialog()
+        })
+
+        viewModel.onSingleDeleteConfirm.observe(viewLifecycleOwner, EventObserver{
+            showSingleDeleteConfirmDialog()
         })
 
         viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver{

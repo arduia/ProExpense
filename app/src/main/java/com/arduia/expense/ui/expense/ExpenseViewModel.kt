@@ -11,7 +11,6 @@ import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
-import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactory
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapperFactory
@@ -40,8 +39,11 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _selectedCount = BaseLiveData<Int>()
     val selectedCount get() = _selectedCount.asLiveData()
 
-    private val _onDeleteConfirm = EventLiveData<Unit>()
-    val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
+    private val _onMultiDeleteConfirm = EventLiveData<Unit>()
+    val onMultiDeleteConfirm get() = _onMultiDeleteConfirm.asLiveData()
+
+    private val _onSingleDeleteConfirm = EventLiveData<Unit>()
+    val onSingleDeleteConfirm get() = _onSingleDeleteConfirm.asLiveData()
 
     private val _onFilterShow = EventLiveData<RangeSortingFilterEnt>()
     val onFilterShow get() = _onFilterShow.asLiveData()
@@ -56,6 +58,8 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val mapper: Mapper<ExpenseEnt, ExpenseLogVo>
 
     private var currencySymbol = ""
+
+    private var singleDeleteItemId: Int? = null
 
     init {
         observeCurrencySymbol()
@@ -125,14 +129,27 @@ class ExpenseViewModel @ViewModelInject constructor(
     }
 
     fun onDeletePrepared() {
-        _onDeleteConfirm post EventUnit
+        _onMultiDeleteConfirm post EventUnit
     }
 
-    fun deleteConfirmed() {
+    fun onSingleDeletePrepared(id: Int){
+        singleDeleteItemId = id
+        _onSingleDeleteConfirm post EventUnit
+    }
+
+    fun onMultiDeleteConfirmed() {
         viewModelScope.launch(Dispatchers.IO) {
             val deleteItems = swipeStateHolder?.getSelectIdList() ?: return@launch
             expenseRepo.deleteAllExpense(deleteItems)
             _expenseLogMode post ExpenseMode.NORMAL
+        }
+    }
+
+    fun onSingleItemDeleteConfirmed(){
+        val id = singleDeleteItemId ?: return
+        viewModelScope.launch(Dispatchers.IO){
+            expenseRepo.deleteExpenseById(id)
+            singleDeleteItemId = null
         }
     }
 
