@@ -50,7 +50,7 @@ object MapperModule {
         categoryProvider,
         dateFormatter,
         decimalFormat
-    )
+    ) { "" }
 
     @Provides
     fun provideExpenseLogTransform(logMapper: Mapper<ExpenseEnt, ExpenseLogVo.Log>): Mapper<List<ExpenseEnt>, List<ExpenseLogVo>> =

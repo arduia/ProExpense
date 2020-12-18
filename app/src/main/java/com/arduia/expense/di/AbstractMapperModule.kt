@@ -1,9 +1,9 @@
 package com.arduia.expense.di
 
-import com.arduia.core.arch.Mapper
-import com.arduia.expense.data.local.ExpenseEnt
-import com.arduia.expense.ui.expense.ExpenseLogVo
-import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapper
+import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactory
+import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactoryImpl
+import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapper.*;
+import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapperFactory
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,7 +14,10 @@ import dagger.hilt.android.components.ActivityComponent
 abstract class AbstractMapperModule {
 
     @Binds
-    abstract fun bindExpenseEntToLogVoMapper(mapper: ExpenseEntToLogVoMapper):
-            Mapper<ExpenseEnt, ExpenseLogVo>
+    abstract fun bindExpenseLogVoMapperFactory(factory: ExpenseLogVoMapperFactoryImpl):
+            ExpenseLogVoMapperFactory
 
+    @Binds
+    abstract fun bindExpenseEntToLogMapperFactory(factory:  ExpenseEntToLogVoMapperFactoryImpl):
+            ExpenseEntToLogVoMapperFactory
 }

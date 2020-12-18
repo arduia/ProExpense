@@ -4,22 +4,29 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.*
 import com.arduia.core.arch.Mapper
+import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
+import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactory
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
+import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapperFactory
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 
 class ExpenseViewModel @ViewModelInject constructor(
-    private val expenseEntToLogMapper: Mapper<ExpenseEnt, ExpenseLogVo>,
-    private val expenseRepo: ExpenseRepository
+    private val expenseEntToLogMapperFactory: ExpenseEntToLogVoMapperFactory,
+    private val expenseRepo: ExpenseRepository,
+    private val currencyRepo: CurrencyRepository
 ) : ViewModel(), LifecycleObserver {
 
     private var swipeStateHolder: SwipeStateHolder? = null
@@ -46,7 +53,15 @@ class ExpenseViewModel @ViewModelInject constructor(
         return@switchMap createSourcePagingLiveData(filter)
     }
 
+    private val mapper: Mapper<ExpenseEnt, ExpenseLogVo>
+
+    private var currencySymbol = ""
+
     init {
+        observeCurrencySymbol()
+
+        mapper = expenseEntToLogMapperFactory.create{ currencySymbol}
+
         _expenseLogMode.value = ExpenseMode.NORMAL
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -55,6 +70,16 @@ class ExpenseViewModel @ViewModelInject constructor(
             filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.ASC)
             filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
         }
+    }
+
+    private fun observeCurrencySymbol(){
+        currencyRepo.getSelectedCacheCurrency()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                currencySymbol = it.getDataOrError().symbol
+                expenseList.value?.dataSource?.invalidate()
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun createSourcePagingLiveData(filter: DateRangeSortingEnt): LiveData<PagedList<ExpenseLogVo>> {
@@ -68,7 +93,7 @@ class ExpenseViewModel @ViewModelInject constructor(
             else expenseRepo.getExpenseRangeAscSource(filter.start, filter.end, 0, Int.MAX_VALUE)
 
         return sourceFactory
-            .map(expenseEntToLogMapper::map)
+            .map(mapper::map)
             .toLiveData(
                 config = Config(
                     50,
