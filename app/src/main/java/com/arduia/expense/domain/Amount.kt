@@ -48,3 +48,7 @@ operator fun Amount.plus(amount: Amount): Amount{
     setStore(result)
     return this
 }
+
+fun Amount.getActualAsFloat(): Float{
+    return this.getActual().setScale(2, RoundingMode.DOWN).toFloat()
+}
