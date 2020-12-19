@@ -5,23 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.paging.PageKeyedDataSource
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseLogsBinding
+import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.DeleteConfirmFragment
 import com.arduia.expense.ui.common.DeleteInfoVo
+import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.filter.DateRangeSortingFilterDialog
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.expense.swipe.SwipeItemCallback
+import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.text.DecimalFormat
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExpenseFragment : NavBaseFragment() {
@@ -36,8 +42,12 @@ class ExpenseFragment : NavBaseFragment() {
     private var adapter: ExpenseLogAdapter? = null
 
     private val itemNumberFormat = DecimalFormat()
+    @Inject
+    @TopDropNavOption
+    lateinit var entryNavOption: NavOptions
 
     private var deleteConfirmDialog: DeleteConfirmFragment? = null
+    private var detailDialog: ExpenseDetailDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,6 +141,7 @@ class ExpenseFragment : NavBaseFragment() {
             setOnDeleteListener {
                 viewModel.onSingleDeletePrepared(it.expenseLog.id)
             }
+            setOnClickListener(viewModel::onShowItemDetail)
         }
         val rvTouchHelper = ItemTouchHelper(SwipeItemCallback())
         rvTouchHelper.attachToRecyclerView(binding.rvExpense)
@@ -178,6 +189,28 @@ class ExpenseFragment : NavBaseFragment() {
         viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver{
             showFilterDialog(it)
         })
+
+        viewModel.onDetailShow.observe(viewLifecycleOwner, EventObserver{
+            showItemDetail(it)
+        })
+    }
+
+    private fun showItemDetail(detail: ExpenseDetailsVto){
+        detailDialog?.dismiss()
+        //Show Selected Dialog
+        detailDialog = ExpenseDetailDialog()
+        detailDialog?.setOnDeleteClickListener {
+            viewModel.onSingleDeletePrepared(it.id)
+        }
+        detailDialog?.setOnEditClickListener {
+            navigateToExpenseEntryFragment(detail.id)
+        }
+        detailDialog?.showDetail(parentFragmentManager, detail)
+    }
+
+    private fun navigateToExpenseEntryFragment(id: Int){
+        val action = ExpenseFragmentDirections.actionExpenseToEntry(expenseId = id)
+        findNavController().navigate(action,entryNavOption)
     }
 
     private fun changeUiDefault() {

@@ -7,25 +7,30 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
+import com.arduia.expense.ui.home.ExpenseDetailMapperFactory
 import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapperFactory
+import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class ExpenseViewModel @ViewModelInject constructor(
     private val expenseEntToLogMapperFactory: ExpenseEntToLogVoMapperFactory,
     private val expenseRepo: ExpenseRepository,
-    private val currencyRepo: CurrencyRepository
+    private val currencyRepo: CurrencyRepository,
+    private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
 ) : ViewModel() {
 
     private var swipeStateHolder: SwipeStateHolder? = null
@@ -51,6 +56,9 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val filterConstraint = BaseLiveData<DateRangeSortingEnt>()
     private lateinit var filterLimit: DateRangeSortingEnt
 
+    private val _onDetailShow = EventLiveData<ExpenseDetailsVto>()
+    val onDetailShow get() = _onDetailShow.asLiveData()
+
     val expenseList: LiveData<PagedList<ExpenseLogVo>> = filterConstraint.switchMap { filter ->
         return@switchMap createSourcePagingLiveData(filter)
     }
@@ -64,7 +72,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     init {
         observeCurrencySymbol()
 
-        mapper = expenseEntToLogMapperFactory.create{ currencySymbol}
+        mapper = expenseEntToLogMapperFactory.create { currencySymbol }
         _expenseLogMode.value = ExpenseMode.NORMAL
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -75,7 +83,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun observeCurrencySymbol(){
+    private fun observeCurrencySymbol() {
         currencyRepo.getSelectedCacheCurrency()
             .flowOn(Dispatchers.IO)
             .onEach {
@@ -131,7 +139,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         _onMultiDeleteConfirm post EventUnit
     }
 
-    fun onSingleDeletePrepared(id: Int){
+    fun onSingleDeletePrepared(id: Int) {
         singleDeleteItemId = id
         _onSingleDeleteConfirm post EventUnit
     }
@@ -144,9 +152,19 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
 
-    fun onSingleItemDeleteConfirmed(){
+    fun onShowItemDetail(item: ExpenseLogVo) {
+        Timber.d("onShowItemDetail")
+        if (item !is ExpenseLogVo.Log) return
+        viewModelScope.launch(Dispatchers.IO) {
+            val ent = expenseRepo.getExpense(item.expenseLog.id).awaitValueOrError()
+            val mapper = expenseDetailMapperFactory.create { currencySymbol }
+            _onDetailShow post event(mapper.map(ent))
+        }
+    }
+
+    fun onSingleItemDeleteConfirmed() {
         val id = singleDeleteItemId ?: return
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             expenseRepo.deleteExpenseById(id)
             singleDeleteItemId = null
         }

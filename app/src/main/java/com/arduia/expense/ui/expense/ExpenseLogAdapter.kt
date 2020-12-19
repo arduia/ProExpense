@@ -57,19 +57,19 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         this.swipeState = state
     }
 
-    fun selectAllItems() {
-        val list = currentList ?: return
-        if (list.isEmpty()) return
-        swipeState.clear()
-        val stateLockStart = SwipeItemState.STATE_LOCK_START
-        list.forEach {
-            if (it is ExpenseLogVo.Log) {
-                swipeState.updateState(it.expenseLog.id, stateLockStart)
-            }
-        }
-        onStateChangeListener.invoke(swipeState, null)
-        notifyDataSetChanged()
-    }
+//    fun selectAllItems() {
+//        val list = currentList ?: return
+//        if (list.isEmpty()) return
+//        swipeState.clear()
+//        val stateLockStart = SwipeItemState.STATE_LOCK_START
+//        list.forEach {
+//            if (it is ExpenseLogVo.Log) {
+//                swipeState.updateState(it.expenseLog.id, stateLockStart)
+//            }
+//        }
+//        onStateChangeListener.invoke(swipeState, null)
+//        notifyDataSetChanged()
+//    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItemFromPosition(position)
@@ -101,7 +101,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         SwipeFrameLayout.OnSelectedChangedListener, SwipeFrameLayout.OnPrepareChangedListener {
 
         init {
-            binding.cdExpense.setOnClickListener(this)
+            binding.viewBg.setOnClickListener(this)
             binding.root.setOnSelectedChangedListener(this)
             binding.root.setOnPrepareChangedListener(this)
             binding.imvDeleteIcon.setOnClickListener(this)
@@ -138,10 +138,11 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         override fun onClick(v: View?) {
             if (v == null) return
             val item = getItemFromPosition(adapterPosition)
+
             if (item !is ExpenseLogVo.Log) return
 
             when (v.id) {
-                binding.cdExpense.id -> {
+                binding.viewBg.id -> {
                     onItemClickListener(item)
                 }
                 binding.imvDeleteIcon.id -> {

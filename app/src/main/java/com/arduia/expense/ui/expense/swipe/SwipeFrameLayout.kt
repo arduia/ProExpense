@@ -64,7 +64,7 @@ class SwipeFrameLayout @JvmOverloads constructor(
 
         bindState(state)
 
-        binding.cdExpense.setOnLongClickListener(cdLongClickListener)
+        binding.viewBg.setOnLongClickListener(cdLongClickListener)
     }
 
     private fun bindState(state: Int?){

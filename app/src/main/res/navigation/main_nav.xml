@@ -41,7 +41,7 @@
         android:label="ExpenseFragment"
         tools:layout="@layout/frag_expense_logs">
         <action
-            android:id="@+id/action_dest_expense_to_dest_expense_entry"
+            android:id="@+id/action_expense_to_entry"
             app:destination="@id/dest_expense_entry" >
             <argument
                 android:name="expense_id"
