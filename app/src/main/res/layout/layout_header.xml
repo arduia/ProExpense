@@ -20,7 +20,7 @@
         android:src="@drawable/ic_arrow_start" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_taylor"
+        android:id="@+id/imv_app_logo"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_below="@id/btn_close"
@@ -37,10 +37,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ln_app_name"
-        android:layout_alignTop="@id/img_taylor"
-        android:layout_alignBottom="@id/img_taylor"
+        android:layout_alignTop="@id/imv_app_logo"
+        android:layout_alignBottom="@id/imv_app_logo"
         android:layout_marginStart="@dimen/grid_3"
-        android:layout_toEndOf="@id/img_taylor"
+        android:layout_toEndOf="@id/imv_app_logo"
         android:gravity="center_vertical"
         android:orientation="vertical">
 

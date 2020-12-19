@@ -13,13 +13,20 @@ import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.arduia.core.view.asGone
+import com.arduia.core.view.asVisible
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragAboutBinding
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.ui.NavBaseFragment
+import com.arduia.expense.ui.settings.SettingsViewModel
+import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,6 +38,10 @@ class AboutFragment : NavBaseFragment() {
     @Inject
     @LefSideNavOption
     lateinit var slideNavOptions: NavOptions
+
+    private var aboutUpdateDialog: AboutUpdateDialog? = null
+
+    private val settingViewModel by viewModels<SettingsViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +56,7 @@ class AboutFragment : NavBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
+        setupViewModel()
     }
 
     private fun setupView() {
@@ -54,11 +66,14 @@ class AboutFragment : NavBaseFragment() {
         setupOpenSourceClick()
         setupPrivacyClick()
         showAboutDeveloper()
+        binding.lnUpdate.setOnClickListener {
+            settingViewModel.onOpenNewUpdateInfo()
+        }
     }
 
-    private fun setAppVersionName(){
-        binding.tvVersion.text = with(requireActivity()){
-            packageManager.getPackageInfo(packageName,0).versionName
+    private fun setAppVersionName() {
+        binding.tvVersion.text = with(requireActivity()) {
+            packageManager.getPackageInfo(packageName, 0).versionName
         }
     }
 
@@ -90,6 +105,15 @@ class AboutFragment : NavBaseFragment() {
         }
     }
 
+    private fun openAppStoreLink(){
+        val intent = Intent().apply {
+            val url = "https://play.google.com/store/apps/details?id=com.arduia.expense"
+            action = Intent.ACTION_VIEW
+            data = Uri.parse(url)
+        }
+        startActivity(intent)
+    }
+
     private fun showAboutDeveloper() {
         val devString = getString(R.string.developer)
         val devMailString = "\n" + getString(R.string.developer_email)
@@ -117,6 +141,20 @@ class AboutFragment : NavBaseFragment() {
         binding.tvDeveloper.text = devSpanText
     }
 
+    private fun setupViewModel() {
+        settingViewModel.isNewVersionAvailable.observe(viewLifecycleOwner) { isAvailable ->
+            Timber.d("isNewVersionAvailable! $isAvailable")
+            if (isAvailable) {
+                binding.lnUpdate.asVisible()
+            } else {
+                binding.lnUpdate.asGone()
+            }
+        }
+
+        settingViewModel.onShowAboutUpdate.observe(viewLifecycleOwner, EventObserver {
+            showAboutUpdateDialog(it)
+        })
+    }
 
     private fun openGithubLink() {
         val intent = Intent().apply {
@@ -125,6 +163,16 @@ class AboutFragment : NavBaseFragment() {
             data = Uri.parse(url)
         }
         startActivity(intent)
+    }
+
+    private fun showAboutUpdateDialog(data: AboutUpdateUiModel) {
+        aboutUpdateDialog?.dismiss()
+        aboutUpdateDialog = AboutUpdateDialog(requireContext()).apply {
+            setOnInstallClickListener {
+                openAppStoreLink()
+            }
+        }
+        aboutUpdateDialog?.show(data)
     }
 
     private fun navigateToWeb(title: String, url: String) {

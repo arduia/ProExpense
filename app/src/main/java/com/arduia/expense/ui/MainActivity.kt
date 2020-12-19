@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.hashCode()
+        lifecycle.addObserver(viewModel)
         setTheme(R.style.Theme_ProExpense)
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
@@ -264,6 +264,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun onDestroy() {
         super.onDestroy()
+        lifecycle.removeObserver(viewModel)
         itemSelectTask = null
     }
 

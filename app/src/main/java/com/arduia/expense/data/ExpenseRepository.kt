@@ -52,8 +52,6 @@ interface ExpenseRepository {
 
     fun getWeekExpenses(): FlowResult<List<ExpenseEnt>>
 
-    fun postFeedback(comment: FeedbackDto.Request): FlowResult<FeedbackDto.Response>
 
-    fun getVersionStatus(): FlowResult<ExpenseVersionDto>
 
 }

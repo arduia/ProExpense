@@ -119,5 +119,8 @@
     <string name="system_default">System Default</string>
     <string name="today">ကနေ့</string>
     <string name="yesterday">မနေ့က</string>
+    <string name="cancel">Cancel</string>
+    <string name="about_update">About Update</string>
+    <string name="install">Install</string>
 
 </resources>

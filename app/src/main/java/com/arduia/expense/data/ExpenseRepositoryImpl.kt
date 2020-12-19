@@ -17,8 +17,7 @@ import java.util.*
 import kotlin.math.exp
 
 class ExpenseRepositoryImpl(
-    private val expenseDao: ExpenseDao,
-    private val networkDao: ExpenseNetworkDao
+    private val expenseDao: ExpenseDao
 ) : ExpenseRepository {
 
 
@@ -142,22 +141,7 @@ class ExpenseRepositoryImpl(
             .catch { ErrorResult(RepositoryException(it)) }
     }
 
-    override fun postFeedback(comment: FeedbackDto.Request): FlowResult<FeedbackDto.Response> =
-        flow {
-            val comment = networkDao.postFeedback(comment).execute()
-            comment.body()?.let {
-                emit(it)
-            } ?: throw Exception("Network Response Error")
-        }.map { SuccessResult(it) }
-            .catch { e -> ErrorResult(RepositoryException(e)) }
 
-    override fun getVersionStatus(): FlowResult<ExpenseVersionDto> = flow {
-        val version = networkDao.getVersionStatus().execute()
-        version.body()?.let {
-            emit(it)
-        } ?: throw Exception("Network Response Error")
-    }.map { SuccessResult(it) }
-        .catch { e -> ErrorResult(RepositoryException(e)) }
 
 
     private fun getWeekStartTime(): Long {

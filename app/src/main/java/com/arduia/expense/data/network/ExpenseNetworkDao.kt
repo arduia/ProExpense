@@ -14,4 +14,6 @@ interface ExpenseNetworkDao {
     @POST("/api/feedback_submit.json")
     fun postFeedback(@Body feedback: FeedbackDto.Request): Call<FeedbackDto.Response>
 
+    @POST("/api/check_update_info.json")
+    fun getCheckUpdateInfo(@Body deviceInfo: CheckUpdateDto.Request): Call<CheckUpdateDto.Response>
 }
