@@ -26,7 +26,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val expenseEntToLogMapperFactory: ExpenseEntToLogVoMapperFactory,
     private val expenseRepo: ExpenseRepository,
     private val currencyRepo: CurrencyRepository
-) : ViewModel(), LifecycleObserver {
+) : ViewModel() {
 
     private var swipeStateHolder: SwipeStateHolder? = null
 
@@ -65,7 +65,6 @@ class ExpenseViewModel @ViewModelInject constructor(
         observeCurrencySymbol()
 
         mapper = expenseEntToLogMapperFactory.create{ currencySymbol}
-
         _expenseLogMode.value = ExpenseMode.NORMAL
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -141,7 +140,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val deleteItems = swipeStateHolder?.getSelectIdList() ?: return@launch
             expenseRepo.deleteAllExpense(deleteItems)
-            _expenseLogMode post ExpenseMode.NORMAL
+            clearState()
         }
     }
 
@@ -164,12 +163,14 @@ class ExpenseViewModel @ViewModelInject constructor(
             }
             _selectedCount post selectCount
 
-        } else _expenseLogMode post ExpenseMode.NORMAL
+        } else {
+            _expenseLogMode post ExpenseMode.NORMAL
+            _selectedCount post 0
+        }
 
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun onRestoreState() {
+    fun onRestoreState() {
         val state = swipeStateHolder
         if (state != null) {
             _onRestoreSwipeState post event(state)

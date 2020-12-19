@@ -58,7 +58,7 @@ class ExpenseFragment : NavBaseFragment() {
         deleteConfirmDialog = null
         filterDialog?.setOnFilterApplyListener(null)
         filterDialog = null
-        lifecycle.removeObserver(viewModel)
+//        lifecycle.removeObserver(viewModel)
         binding.tbExpense.setOnMenuItemClickListener(null)
         binding.rvExpense.adapter = null
         adapter = null
@@ -67,7 +67,7 @@ class ExpenseFragment : NavBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel.onRestoreState()
         setupToolbar()
         setupExpenseLogRecyclerview()
         setupViewModel()
@@ -144,7 +144,6 @@ class ExpenseFragment : NavBaseFragment() {
     }
 
     private fun setupViewModel() {
-        lifecycle.addObserver(viewModel)
         viewModel.expenseList.observe(viewLifecycleOwner) {
             adapter?.submitList(it)
         }
@@ -162,6 +161,7 @@ class ExpenseFragment : NavBaseFragment() {
         }
 
         viewModel.selectedCount.observe(viewLifecycleOwner) {
+            if( it == 0) return@observe
             binding.tbExpense.title = "${itemNumberFormat.format(it)} ${
                 if (it <= 1) getString(R.string.single_item_suffix) else getString(R.string.multi_item_suffix)
             }"
