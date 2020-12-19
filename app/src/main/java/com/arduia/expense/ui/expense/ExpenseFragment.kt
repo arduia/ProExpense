@@ -193,6 +193,8 @@ class ExpenseFragment : NavBaseFragment() {
         viewModel.onDetailShow.observe(viewLifecycleOwner, EventObserver{
             showItemDetail(it)
         })
+
+        viewModel.filterInfo.observe(viewLifecycleOwner, binding.tbExpense::setSubtitle)
     }
 
     private fun showItemDetail(detail: ExpenseDetailsVto){

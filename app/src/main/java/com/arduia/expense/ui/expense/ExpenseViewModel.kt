@@ -12,6 +12,7 @@ import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
+import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
 import com.arduia.expense.ui.expense.swipe.SwipeStateHolder
 import com.arduia.expense.ui.home.ExpenseDetailMapperFactory
@@ -31,6 +32,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val expenseRepo: ExpenseRepository,
     private val currencyRepo: CurrencyRepository,
     private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
+    private val dateRangeFormatter: DateRangeFormatter
 ) : ViewModel() {
 
     private var swipeStateHolder: SwipeStateHolder? = null
@@ -59,6 +61,10 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _onDetailShow = EventLiveData<ExpenseDetailsVto>()
     val onDetailShow get() = _onDetailShow.asLiveData()
 
+    val filterInfo get() = filterConstraint.switchMap {
+        BaseLiveData(createFilterInfo(it))
+    }
+
     val expenseList: LiveData<PagedList<ExpenseLogVo>> = filterConstraint.switchMap { filter ->
         return@switchMap createSourcePagingLiveData(filter)
     }
@@ -81,6 +87,11 @@ class ExpenseViewModel @ViewModelInject constructor(
             filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.ASC)
             filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
         }
+    }
+
+    private fun createFilterInfo(constraint: DateRangeSortingEnt): String{
+        val dateRange = dateRangeFormatter.format(constraint.start, constraint.end)
+        return "$dateRange . ${constraint.sorting}"
     }
 
     private fun observeCurrencySymbol() {
