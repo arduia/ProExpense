@@ -15,7 +15,6 @@ import com.arduia.expense.ui.onboarding.LangListAdapter
 import com.arduia.mvvm.EventObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ChooseLanguageDialog : BottomSheetDialogFragment() {
@@ -47,6 +46,7 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
     }
 
     private fun setupView() {
+        binding.btnRestart.isEnabled = false
         adapter = LangListAdapter(layoutInflater).apply {
             setOnItemClickListener {
                 viewModel.selectLang(it)
@@ -62,12 +62,13 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
             adapter = this@ChooseLanguageDialog.adapter
         }
         binding.searchBox.setOnSearchTextChangeListener(viewModel::searchLang)
+
         binding.imvDropClose.setOnClickListener {
-            viewModel.onRestart()
+            viewModel.onExit()
         }
+
         binding.btnRestart.setOnClickListener {
-            shouldRestartActivity = true
-            dismiss()
+            viewModel.onRestart()
         }
     }
 
@@ -83,12 +84,10 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
 
         viewModel.onRestartAndDismiss.observe(viewLifecycleOwner, EventObserver {
             shouldRestartActivity = true
-            Timber.d("onRestartAndDismiss")
             dismiss()
         })
 
         viewModel.onDismiss.observe(viewLifecycleOwner, EventObserver {
-            Timber.d("onDismiss")
             shouldRestartActivity = false
             dismiss()
         })

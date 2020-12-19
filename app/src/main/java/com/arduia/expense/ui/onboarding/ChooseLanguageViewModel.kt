@@ -9,10 +9,7 @@ import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.LanguageProvider
 import com.arduia.expense.ui.vto.LanguageVto
-import com.arduia.mvvm.BaseLiveData
-import com.arduia.mvvm.EventLiveData
-import com.arduia.mvvm.EventUnit
-import com.arduia.mvvm.post
+import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -47,7 +44,7 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
     }
 
     fun searchLang(key: String) {
-        searchKey post  key
+        searchKey post key
     }
 
     fun selectLang(lang: LanguageVto) {
@@ -91,15 +88,17 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
     }
 
+    fun onExit() {
+        _onDismiss post EventUnit
+    }
 
     fun onRestart() {
-
-        val isEnable = _isRestartEnable.value ?: return
-
-        if (isEnable) {
+        val selectedLanguageID = selectedId.value
+        viewModelScope.launch(Dispatchers.IO) {
+            if (initialSelectedId != selectedLanguageID && selectedLanguageID != null) {
+                settingRepo.setSelectedLanguage(selectedLanguageID)
+            }
             _onRestartAndDismiss post EventUnit
-        } else {
-            _onDismiss post EventUnit
         }
     }
 
