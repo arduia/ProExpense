@@ -6,6 +6,8 @@
     <attr name="colorOnPositive" format="color"/>
     <attr name="colorOnNegative" format="color"/>
     <attr name="colorNegative" format="color"/>
+    <attr name="colorWarning" format="color"/>
+    <attr name="colorOnWarning" format="color"/>
 
     <declare-styleable name="MaterialSearchBox">
         <attr name="backgroundColor" format="color"/>

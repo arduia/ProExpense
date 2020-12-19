@@ -139,6 +139,7 @@
             android:layout_height="@dimen/standard_icon_size"
             android:layout_marginStart="@dimen/grid_3"
             android:layout_marginEnd="@dimen/grid_3"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/tv_backup_logs"
             app:layout_constraintStart_toEndOf="@+id/tv_backup_logs"
             app:layout_constraintTop_toTopOf="@id/tv_backup_logs"

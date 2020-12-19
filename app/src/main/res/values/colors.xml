@@ -5,6 +5,8 @@
     <color name="blue_light_300">#4fc3f7</color>
     <color name="blue_light_700">#0288d1</color>
     <color name="blue_light_100">#b3e5fc</color>
+    <color name="yellow_500">#ffeb3b</color>
+    <color name="yellow_300">#fff176</color>
     <color name="red_400">#ef5350</color>
     <color name="red_300">#e57373</color>
     <color name="gray_300">#e0e0e0</color>

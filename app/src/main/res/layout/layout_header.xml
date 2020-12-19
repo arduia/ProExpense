@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:theme="@style/Theme.ProExpense"
     tools:background="@color/white"
     tools:context=".ui.MainActivity">
 
@@ -16,8 +17,7 @@
         android:layout_marginTop="@dimen/grid_3"
         android:layout_marginEnd="@dimen/grid_3"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_close" />
+        android:src="@drawable/ic_arrow_start" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_taylor"
@@ -32,9 +32,11 @@
         android:src="@drawable/ic_launcher_foreground"
         android:tint="?colorPrimary" />
 
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/ln_app_name"
         android:layout_alignTop="@id/img_taylor"
         android:layout_alignBottom="@id/img_taylor"
         android:layout_marginStart="@dimen/grid_3"
@@ -47,7 +49,16 @@
             style="?textAppearanceHeadline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"  />
+            android:text="@string/app_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/small_rounded_warning_bg"
+            android:textColor="?colorOnWarning"
+            android:padding="@dimen/grid_1"
+            android:layout_below="@id/ln_app_name"
+            android:text="BETA" />
     </LinearLayout>
 
 </RelativeLayout>
