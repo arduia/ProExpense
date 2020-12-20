@@ -56,7 +56,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="@dimen/grid_3"
                         android:layout_marginTop="@dimen/grid_3"
-                        android:text="Category Statistics"
+                        android:text="@string/category_statistics"
                         android:textStyle="bold" />
 
                     <TextView
@@ -67,7 +67,7 @@
                         android:layout_below="@id/tv_category_statistics"
                         android:layout_centerHorizontal="true"
                         android:layout_marginVertical="@dimen/grid_4"
-                        android:text="No Data"
+                        android:text="@string/no_data"
                         android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView

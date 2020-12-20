@@ -128,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/grid_3"
             android:layout_marginTop="@dimen/grid_4"
-            android:text="Backup Logs"
+            android:text="@string/backup_logs"
             app:layout_constraintStart_toStartOf="@id/rv_backup_logs"
             app:layout_constraintTop_toBottomOf="@id/cv_export" />
 

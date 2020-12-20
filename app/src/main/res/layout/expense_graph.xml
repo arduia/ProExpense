@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -28,7 +29,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="@dimen/grid_3"
             android:gravity="center_vertical"
-            android:text="Jun4-5" />
+            tools:text="Jun4-5" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -38,7 +39,7 @@
             android:layout_below="@id/tv_date_range"
             android:layout_marginStart="@dimen/grid_4"
             android:layout_marginTop="@dimen/grid_2"
-            android:text="Outcome"
+            android:text="@string/outcome_for_week"
             android:textColor="?colorOnSurface" />
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

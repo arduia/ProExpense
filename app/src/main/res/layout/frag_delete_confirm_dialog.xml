@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="@dimen/grid_3"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="Delete Items" />
+        android:text="@string/delete_items" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imv_drop_close"
@@ -49,7 +49,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_margin="@dimen/grid_4"
-            android:text="Items will be Deleted!" />
+            android:text="@string/delete_item_description" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -61,5 +61,5 @@
         android:layout_centerHorizontal="true"
         android:layout_marginHorizontal="@dimen/grid_3"
         android:layout_marginBottom="@dimen/grid_3"
-        android:text="Confirm" />
+        android:text="@string/confirm" />
 </RelativeLayout>

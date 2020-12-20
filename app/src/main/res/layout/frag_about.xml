@@ -57,7 +57,7 @@
                 android:layout_toEndOf="@id/tv_app_name"
                 android:alpha="0.5"
                 android:padding="@dimen/grid_1"
-                android:text="(beta)"
+                android:text="@string/beta_with_parenthness"
                 android:textAllCaps="true" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/grid_2"
                     android:layout_marginEnd="@dimen/grid_3"
-                    android:text="New Version Available!"
+                    android:text="@string/new_version_available"
                     android:textColor="?colorOnWarning" />
 
             </LinearLayout>

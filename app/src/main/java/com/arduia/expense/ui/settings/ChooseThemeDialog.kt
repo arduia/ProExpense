@@ -17,11 +17,11 @@ class ChooseThemeDialog (context: Context): AlertDialog(context) {
 
     init {
         setView(binding.root)
-        setButton(BUTTON_POSITIVE, context.getString(R.string.restart   )){ _, _ ->
+        setButton(BUTTON_POSITIVE, context.getString(R.string.restart)){ _, _ ->
             onSaveListener.invoke(currentThemeMode)
         }
-        setButton(BUTTON_NEGATIVE, "Cancel"){_,_ ->}
-        setTitle("Select Theme")
+        setButton(BUTTON_NEGATIVE, context.getString(R.string.cancel)){_,_ ->}
+        setTitle(context.getString(R.string.choose_theme))
         setIcon(R.drawable.ic_theme)
     }
 

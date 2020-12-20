@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/Theme.ProExpense"
@@ -12,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="Sort by"
+        android:text="@string/sort_by"
         app:layout_constraintStart_toStartOf="@+id/cv_start_date"
         app:layout_constraintTop_toBottomOf="@+id/cv_start_date" />
 
@@ -20,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_from"
-        android:text="From"
+        android:text="@string/from"
         android:layout_marginTop="@dimen/grid_3"
         style="?textAppearanceSubtitle1"
         app:layout_constraintStart_toStartOf="@id/cv_start_date"
@@ -57,7 +58,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/grid_2"
                 android:layout_marginEnd="@dimen/grid_3"
-                android:text="11 Jan 2019" />
+                tools:text="11 Jan 2019" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -65,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_to"
-        android:text="To"
+        android:text="@string/to"
         style="?textAppearanceSubtitle1"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_from"
         app:layout_constraintStart_toStartOf="@id/cv_end_date"/>
@@ -100,7 +101,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/grid_2"
                 android:layout_marginEnd="@dimen/grid_3"
-                android:text="11 Dec 2019" />
+                tools:text="11 Dec 2019" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -112,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/grid_3"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="Filter"
+        android:text="@string/filter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -133,7 +134,7 @@
             android:layout_height="wrap_content"
             android:buttonTint="?colorPrimary"
             android:checked="true"
-            android:text="Ascending" />
+            android:text="@string/ascending" />
 
         <RadioButton
             android:id="@+id/rb_desc"
@@ -141,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/grid_3"
             android:buttonTint="?colorPrimary"
-            android:text="Descending" />
+            android:text="@string/descending" />
     </RadioGroup>
 
     <Button
@@ -151,7 +152,7 @@
         android:layout_marginHorizontal="@dimen/grid_3"
         android:layout_marginTop="@dimen/grid_3"
         android:layout_marginBottom="@dimen/grid_3"
-        android:text="Apply Filter"
+        android:text="@string/apply_filter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
