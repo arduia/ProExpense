@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PageKeyedDataSource
@@ -48,6 +49,10 @@ class ExpenseFragment : NavBaseFragment() {
 
     private var deleteConfirmDialog: DeleteConfirmFragment? = null
     private var detailDialog: ExpenseDetailDialog? = null
+
+    private val filterInfoObserver: Observer<String> = Observer{
+        binding.tbExpense.subtitle = it
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -171,13 +176,6 @@ class ExpenseFragment : NavBaseFragment() {
             }
         }
 
-        viewModel.selectedCount.observe(viewLifecycleOwner) {
-            if( it == 0) return@observe
-            binding.tbExpense.title = "${itemNumberFormat.format(it)} ${
-                if (it <= 1) getString(R.string.single_item_suffix) else getString(R.string.multi_item_suffix)
-            }"
-        }
-
         viewModel.onMultiDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
             showDeleteConfirmDialog()
         })
@@ -194,7 +192,25 @@ class ExpenseFragment : NavBaseFragment() {
             showItemDetail(it)
         })
 
-        viewModel.filterInfo.observe(viewLifecycleOwner, binding.tbExpense::setSubtitle)
+        viewModel.selectedCount.observe(viewLifecycleOwner) observer@{
+            if( it == 0) return@observer
+            binding.tbExpense.title = "${itemNumberFormat.format(it)} ${
+                if (it <= 1) getString(R.string.single_item_suffix) else getString(R.string.multi_item_suffix)
+            }"
+        }
+    }
+
+
+    private fun registerFilterInfoObserver(){
+        viewModel.filterInfo.observe(viewLifecycleOwner, filterInfoObserver)
+    }
+
+    private fun unregisterFilterInfoObserver(){
+        viewModel.filterInfo.removeObserver(filterInfoObserver)
+    }
+
+    private fun setEmptyStringOnToolbarSubtitle(){
+        binding.tbExpense.subtitle = ""
     }
 
     private fun showItemDetail(detail: ExpenseDetailsVto){
@@ -209,6 +225,7 @@ class ExpenseFragment : NavBaseFragment() {
         }
         detailDialog?.showDetail(parentFragmentManager, detail)
     }
+
 
     private fun navigateToExpenseEntryFragment(id: Int){
         val action = ExpenseFragmentDirections.actionExpenseToEntry(expenseId = id)
@@ -225,6 +242,8 @@ class ExpenseFragment : NavBaseFragment() {
             setNavigationOnClickListener(::openNavDrawer)
         }
         binding.appBar.elevation = appBarElevation
+        registerFilterInfoObserver()
+        navigationDrawer.unlockDrawer() // Release from Selection
     }
 
     private fun changeUiSelection() {
@@ -237,6 +256,9 @@ class ExpenseFragment : NavBaseFragment() {
             setNavigationOnClickListener(::clearSelectedItems)
         }
         binding.appBar.elevation = appBarElevation
+        setEmptyStringOnToolbarSubtitle()
+        unregisterFilterInfoObserver()
+        navigationDrawer.lockDrawer()// Focus on Selection, Navigating other UI should'nt be on selection
     }
 
     private fun openNavDrawer(v: View) {
