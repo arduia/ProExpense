@@ -2,6 +2,7 @@ package com.arduia.expense.ui.statistics
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.model.awaitValueOrError
@@ -11,6 +12,7 @@ import com.arduia.expense.ui.common.ext.setDayAsEnd
 import com.arduia.expense.ui.common.ext.setDayAsStart
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
+import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.mvvm.BaseLiveData
 import com.arduia.mvvm.EventLiveData
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 import java.util.*
 
 class StatisticsViewModel @ViewModelInject constructor(
@@ -30,100 +33,63 @@ class StatisticsViewModel @ViewModelInject constructor(
     private val dateRangeFormatter: DateRangeFormatter
 ) : ViewModel() {
 
-    private val _categoryStatisticList = BaseLiveData<List<CategoryStatisticVo>>()
-    val categoryStatisticList get() = _categoryStatisticList.asLiveData()
 
-    private val _dateRange = BaseLiveData<String>()
-    val dateRange get() = _dateRange.asLiveData()
+    private val filterConstraint = BaseLiveData<DateRangeSortingEnt>()
 
     private val _onFilterShow = EventLiveData<RangeSortingFilterEnt>()
     val onFilterShow get() = _onFilterShow.asLiveData()
 
-    private lateinit var dateRangeFilter: DateRangeSortingEnt
-    private lateinit var dateRangeLimit: DateRangeSortingEnt
+    private lateinit var filterLimit: DateRangeSortingEnt
 
-    private var observeExpenseJob: Job? = null
+    val dateRange
+        get() = filterConstraint.switchMap {
+            BaseLiveData(createFilterInfo(it))
+        }
+
+    val categoryStatisticList get() = filterConstraint.switchMap {
+       BaseLiveData( createStatisticsFromFilter(it))
+    }
+
+    private fun createStatisticsFromFilter(filter: DateRangeSortingEnt): List<CategoryStatisticVo>{
+        val expenses = expenseRepo.getExpenseRangeAsc(
+            filter.start,
+            filter.end,
+            0,
+            Int.MAX_VALUE
+        )
+            .awaitValueOrError()
+        return categoryAnalyzer.analyze(expenses)
+    }
+
+    private fun createFilterInfo(constraint: DateRangeSortingEnt): String {
+        return dateRangeFormatter.format(constraint.start, constraint.end)
+    }
 
     init {
         setDefaultDateRange()
-        configDefaultDateRange()
-        showDateRange()
-        updateStatistics()
     }
 
     private fun setDefaultDateRange() {
-        val defaultTime = Calendar.getInstance()
-        val startTime = defaultTime.setDayAsStart().timeInMillis
-        val endTime = defaultTime.setDayAsEnd().timeInMillis
-        dateRangeFilter = DateRangeSortingEnt(startTime, endTime)
-        dateRangeLimit = dateRangeFilter
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val dateRecent = expenseRepo.getMostRecentDateSync().getDataOrError()
+                val dateLatest = expenseRepo.getMostLatestDateSync().getDataOrError()
+                filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.DESC)
+                filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
+            } catch (e: Exception) {
+                filterConstraint post DateRangeSortingEnt(0, 0, Sorting.ASC)
+                filterLimit = DateRangeSortingEnt(0, 0)
+            }
+        }
     }
 
     fun setFilter(filter: DateRangeSortingEnt) {
-        this.dateRangeFilter = filter
-        showDateRange()
-        updateStatistics()
+        this.filterConstraint post filter
     }
 
     fun onFilterSelected() {
-        _onFilterShow post event(RangeSortingFilterEnt(dateRangeFilter, dateRangeLimit))
+        val constraint  = filterConstraint.value?: return
+        _onFilterShow post event(RangeSortingFilterEnt(constraint, filterLimit))
     }
 
-    private fun showDateRange() {
-        _dateRange post dateRangeFormatter.format(dateRangeFilter.start, dateRangeFilter.end)
-    }
-
-    private fun configDefaultDateRange() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val expense = expenseRepo.getExpenseAllSync().getDataOrError()
-            val maxTime = expense.maxOfOrNull { it.modifiedDate }?: return@launch
-            val minTime = expense.maxOfOrNull { it.modifiedDate }?: return@launch
-            dateRangeLimit = DateRangeSortingEnt(minTime, maxTime)
-            dateRangeFilter = dateRangeLimit
-            showDateRange()
-            updateStatistics()
-        }
-    }
-
-    private fun updateStatistics() {
-        viewModelScope.launch(Dispatchers.IO) {
-            Timber.d("updateStatistics")
-            val expenses = expenseRepo.getExpenseRangeAsc(
-                dateRangeFilter.start,
-                dateRangeFilter.end,
-                0,
-                Int.MAX_VALUE
-            )
-                .awaitValueOrError()
-            Timber.d("expenses $expenses")
-            val statistics = categoryAnalyzer.analyze(expenses)
-            Timber.d("statistics $statistics")
-            _categoryStatisticList post statistics
-        }
-    }
-
-//    private fun observeExpenses() {
-//        cleanObserveJob()
-//        observeExpenseJob = expenseRepo.getExpenseRangeAsc(
-//            dateRangeFilter.start,
-//            dateRangeFilter.end,
-//            0,
-//            Int.MAX_VALUE
-//        )
-//            .flowOn(Dispatchers.IO)
-//            .onSuccess {
-//                _categoryStatisticList post categoryAnalyzer.analyze(it)
-//            }
-//            .launchIn(viewModelScope)
-//    }
-
-    private fun cleanObserveJob() {
-        observeExpenseJob?.cancel()
-        observeExpenseJob = null
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        cleanObserveJob()
-    }
 }
