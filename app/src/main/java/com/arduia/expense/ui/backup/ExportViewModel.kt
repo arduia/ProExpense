@@ -11,24 +11,23 @@ import com.arduia.backup.FileNameGenerator
 import com.arduia.expense.data.backup.ExportWorker
 import com.arduia.expense.di.BackupNameGen
 import com.arduia.mvvm.BaseLiveData
+import com.arduia.mvvm.post
 import com.arduia.mvvm.set
 
-class ExportViewModel @ViewModelInject constructor(app: Application,
-                                                   @BackupNameGen
-                                                   private val fileNameGen: FileNameGenerator,
-                                                   private val workManager: WorkManager)
-    : AndroidViewModel(app), LifecycleObserver{
+class ExportViewModel @ViewModelInject constructor(
+    @BackupNameGen
+    private val fileNameGen: FileNameGenerator,
+    private val workManager: WorkManager
+) : ViewModel() {
 
     private val _exportFileName = BaseLiveData<String>()
     val exportFileName = _exportFileName.asLiveData()
 
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun onCreate(){
+    init {
         _exportFileName set fileNameGen.generate()
     }
 
-    fun exportDataTo(fileName:String, fileUri: Uri){
+    fun exportDataTo(fileName: String, fileUri: Uri) {
 
         val inputUriData = Data.Builder()
             .putString(ExportWorker.FILE_URI, fileUri.toString())

@@ -1,110 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:background="@android:color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:elevation="3dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="?backgroundColor">
 
-    <FrameLayout
-        android:id="@+id/tb_entry"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_entry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:liftOnScroll="true">
 
-        <TextView
-            android:id="@+id/tv_entry_title"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start"
-            android:layout_marginStart="@dimen/margin_material"
-            android:text="@string/label_expense_entry" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_entry_close"
-            style="@style/IconButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="@dimen/margin_material"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/ic_close" />
-
-        <View
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="bottom"
-            android:background="@android:drawable/divider_horizontal_bright" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:background="?colorSurface"
+            app:navigationIcon="@drawable/ic_back"
+            app:menu="@menu/menu_entry"
+            app:title="@string/expense_entry"
+            tools:subtitle="Hello">
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:id="@+id/sv_entry"
-        android:background="@color/innerSurfaceColor"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_entry">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        app:layout_constraintWidth_max="@dimen/with_layout_min_margin">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?colorSurface"
+            android:layout_margin="@dimen/grid_2">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="?attr/textInputStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="viewStart"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_small_material"
-                android:layout_marginEnd="@dimen/margin_material">
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:textAlignment="viewStart">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="viewStart"
-                    android:hint="@string/label_name"
+                    android:hint="@string/name"
                     android:imeOptions="actionNext"
                     android:maxLength="20"
                     android:nextFocusDown="@id/edt_amount"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textAlignment="viewStart" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_cost"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_name"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material">
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:hint="@string/amount"
+                android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/label_amount"
+                    android:textAppearance="?textAppearanceCurrencySmall"
                     android:imeOptions="actionNext"
-                    android:nextFocusDown="@id/edt_note"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
+                    android:nextFocusDown="@id/edt_note"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,33 +93,32 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_cost"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/margin_material"
+                android:layout_marginTop="@dimen/grid_3"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
-                android:paddingStart="@dimen/margin_material"
-                android:paddingEnd="@dimen/margin_material"
+                android:paddingStart="@dimen/grid_3"
+                android:paddingEnd="@dimen/grid_3"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="1"
                 tools:listitem="@layout/item_category" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_description"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_below="@id/rv_category"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material">
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_note"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="top"
-                    android:hint="@string/label_note"
+                    android:hint="@string/note"
                     android:maxLength="100"
                     android:nextFocusDown="@id/btn_save"
                     android:singleLine="true" />
@@ -148,16 +126,40 @@
 
             <Button
                 android:id="@+id/btn_save"
-                style="@style/ExpenseButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_description"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:layout_marginEnd="@dimen/margin_material"
-                android:layout_marginBottom="@dimen/margin_material"
-                android:text="@string/label_save" />
+                android:layout_marginStart="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:layout_marginBottom="@dimen/grid_4"
+                android:layout_toStartOf="@id/cv_lock"
+                android:text="@string/save" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_lock"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignTop="@id/btn_save"
+                android:layout_alignBottom="@id/btn_save"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:layout_marginBottom="6dp"
+                app:cardCornerRadius="@dimen/grid_2"
+                android:backgroundTint="?colorSurface"
+                app:cardElevation="2dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imv_lock"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
+                    android:layout_gravity="center"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_lock_open"
+                    app:tint="?colorPrimary" />
+            </com.google.android.material.card.MaterialCardView>
+
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

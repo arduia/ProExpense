@@ -10,7 +10,10 @@ import androidx.work.WorkerParameters
 import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.local.BackupEnt
+import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.model.data
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
 import java.util.*
 
 class ExportWorker @WorkerInject constructor(@Assisted context: Context,
@@ -34,7 +37,7 @@ class ExportWorker @WorkerInject constructor(@Assisted context: Context,
     }
 
     private suspend fun updateBackupLogAsCompleted(itemCount: Int){
-        val oldBackupLog = backupRepo.getBackupByWorkerID(id.toString()).first()
+        val oldBackupLog = backupRepo.getBackupByWorkerID(id.toString()).awaitValueOrError()
         oldBackupLog.isCompleted= true
         oldBackupLog.itemTotal = itemCount
         backupRepo.updateBackup(oldBackupLog)

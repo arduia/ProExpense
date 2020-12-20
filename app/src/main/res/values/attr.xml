@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="proExpenseNavigationViewStyle" format="reference" />
+    <attr name="iconButtonStyle" format="reference" />
+    <attr name="colorPositive" format="color"/>
+    <attr name="colorOnPositive" format="color"/>
+    <attr name="colorOnNegative" format="color"/>
+    <attr name="colorNegative" format="color"/>
+    <attr name="colorWarning" format="color"/>
+    <attr name="colorOnWarning" format="color"/>
+
+    <declare-styleable name="MaterialSearchBox">
+        <attr name="backgroundColor" format="color"/>
+        <attr name="cornerRadius" format="dimension"/>
+        <attr name="hint" format="string"/>
+    </declare-styleable>
+    <attr name="textAppearanceCurrencyLarge" format="reference"/>
+
+    <attr name="textAppearanceCurrencySmall" format="reference"/>
+</resources>

@@ -1,5 +1,6 @@
 package com.arduia.expense.di
 
+import android.content.ContentResolver
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -12,5 +13,5 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 object ContentProviderModule {
 
     @Provides
-    fun provideContentResolver(@ApplicationContext context: Context) = context.contentResolver
+    fun provideContentResolver(@ApplicationContext context: Context): ContentResolver = context.contentResolver
 }

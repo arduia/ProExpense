@@ -1,92 +1,57 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorOnPrimary">@color/onPrimaryColor</item>
-        <item name="rippleColor">@android:color/darker_gray</item>
-        <item name="colorOnSurface">@color/onSurfaceColor</item>
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowBackground">@color/backgroundColor</item>
-        <item name="colorSurface">@color/surfaceColor</item>
-    </style>
-
-    <!--    Splash Screen-->
-    <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@color/primaryColor</item>
-    </style>
-
-    <style name="RoundedShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerSize">@dimen/radius_corner</item>
-    </style>
-
-    <style name="BodyText1" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:alpha">0.70</item>
-    </style>
-
-    <style name="BodyText2" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:alpha">0.70</item>
-    </style>
-
-    <style name="SubText2Regular" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <item name="android:alpha">0.7</item>
-    </style>
-
-    <style name="ItemText" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:alpha">0.7</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="CircleImageView.Overlay" parent="">
+    <style name="ShapeAppearance.ProExpense.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">27.5dp</item>
-        <item name="borderWidth">2dp</item>
+        <item name="cornerSize">4dp</item>
     </style>
 
-    <style name="ImageCard" parent="Widget.MaterialComponents.CardView">
-        <item name="android:bottomLeftRadius">60dp</item>
+    <style name="Widget.ProExpense.NavigationView.Overlay" parent="">
+        <item name="itemTextAppearance">?attr/subtitleTextAppearance</item>
+        <item name="itemTextColor">@color/nav_text_color</item>
+        <item name="itemIconSize">@dimen/size_nav_icon</item>
+        <item name="iconTint">@color/darker_gray</item>
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="itemHorizontalPadding">@dimen/grid_4</item>
     </style>
 
-    <!--    IconButton-->
-    <style name="IconButton" parent="Widget.AppCompat.ImageButton">
-        <item name="tint">@color/iconTintColor</item>
+    <style name="Widget.ProExpense.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cornerSize">0dp</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+
+    </style>
+
+    <style name="Widget.ProExpense.IconButton" parent="Widget.MaterialComponents.Button">
+        <item name="tint">@color/darker_gray</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">center</item>
     </style>
 
-    <style name="ExpenseCategory" parent="ShapeAppearance.MaterialComponents.MediumComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
-    </style>
-
-    <!--    Material Button-->
-    <style name="ExpenseButton" parent="Widget.MaterialComponents.Button">
+    <style name="Widget.ProExpense.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:height">@dimen/height_button</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
 
-    <style name="NavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="itemTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle2</item>
-        <item name="itemTextColor">@color/nav_text</item>
-        <item name="itemIconSize">20dp</item>
-        <item name="android:background">@color/backgroundColor</item>
-        <item name="itemHorizontalPadding">@dimen/margin_large_material</item>
+    <style name="TextAppearance.ProExpense.CurrencyLarge" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/poppins</item>
     </style>
 
-    <!--    Material Tab-->
-    <style name="MaterialTab" parent="Widget.MaterialComponents.TabLayout">
-        <item name="tabIndicatorColor">@color/primaryColor</item>
-        <item name="tabIndicatorFullWidth">false</item>
-        <item name="tabMaxWidth">100dp</item>
-        <item name="tabGravity">center</item>
-        <item name="tabUnboundedRipple">false</item>
-        <item name="android:background">@color/backgroundColor</item>
+    <style name="TextAppearance.ProExpense.CurrencySmall" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/poppins</item>
+        <item name="android:alpha">0.8</item>
     </style>
 
-    <style name="MaterialChip" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="checkedIcon">@drawable/ic_done</item>
-        <item name="checkedIconEnabled">true</item>
-        <item name="checkedIconVisible">true</item>
-        <item name="chipCornerRadius">@dimen/radius_corner</item>
+    <style name="TextAppearance.ProExpense.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">@font/pyidaungsu</item>
+        <item name="android:alpha">0.7</item>
+    </style>
+
+    <style name="Widget.ProExpense.CircularCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="shapeAppearance">@style/ShapeAppearanceOverlay.ProExpense.Circular</item>
+    </style>
+    <style name="ShapeAppearanceOverlay.ProExpense.Circular" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%p</item>
+        <item name="borderWidth">2dp</item>
     </style>
 </resources>

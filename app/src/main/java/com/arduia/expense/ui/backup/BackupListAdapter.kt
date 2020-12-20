@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemBackupBinding
 import com.arduia.expense.ui.vto.BackupVto
 
@@ -13,6 +14,9 @@ class BackupListAdapter(private val layoutInflater: LayoutInflater):
     ListAdapter<BackupVto,BackupListAdapter.VH>(DIFF_UTIL){
 
     private var itemClickListener = {_: BackupVto -> }
+
+    private val itemsSuffix = layoutInflater.context.getString(R.string.single_item_suffix)
+    private val singleItemSuffix = layoutInflater.context.getString(R.string.multi_item_suffix)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val viewBinding = ItemBackupBinding.inflate(layoutInflater)

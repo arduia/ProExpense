@@ -8,11 +8,11 @@
     <fragment
         android:id="@+id/dest_home"
         android:name="com.arduia.expense.ui.home.HomeFragment"
-        android:label="@string/label_home"
+        android:label="@string/home"
         tools:layout="@layout/frag_home">
         <action
             android:id="@+id/action_dest_home_to_dest_expense"
-            app:destination="@id/dest_expense" />
+            app:destination="@id/dest_expense_logs" />
         <action
             android:id="@+id/action_dest_home_to_dest_expense_entry"
             app:destination="@id/dest_expense_entry">
@@ -26,22 +26,22 @@
     <fragment
         android:id="@+id/dest_feedback"
         android:name="com.arduia.expense.ui.feedback.FeedbackFragment"
-        android:label="@string/label_feedback"
+        android:label="@string/feedback"
         tools:layout="@layout/frag_feedback" />
 
     <fragment
         android:id="@+id/dest_settings"
         android:name="com.arduia.expense.ui.settings.SettingsFragment"
-        android:label="@string/label_settings"
+        android:label="@string/settings"
         tools:layout="@layout/frag_settings" />
 
     <fragment
-        android:id="@+id/dest_expense"
+        android:id="@+id/dest_expense_logs"
         android:name="com.arduia.expense.ui.expense.ExpenseFragment"
         android:label="ExpenseFragment"
-        tools:layout="@layout/frag_expense">
+        tools:layout="@layout/frag_expense_logs">
         <action
-            android:id="@+id/action_dest_expense_to_dest_expense_entry"
+            android:id="@+id/action_expense_to_entry"
             app:destination="@id/dest_expense_entry" >
             <argument
                 android:name="expense_id"
@@ -77,7 +77,7 @@
         android:id="@+id/dest_about"
         android:name="com.arduia.expense.ui.about.AboutFragment"
         tools:layout="@layout/frag_about"
-        android:label="@string/label_about" >
+        android:label="@string/about" >
         <action
             android:id="@+id/action_dest_about_to_dest_web"
             app:destination="@id/dest_web">
@@ -108,13 +108,18 @@
     </fragment>
     <fragment
         android:id="@+id/dest_language"
-        android:name="com.arduia.expense.ui.language.LanguageFragment"
-        tools:layout="@layout/frag_language"
+        android:name="com.arduia.expense.ui.onboarding.OnBoardingConfigFragment"
+        tools:layout="@layout/frag_onboard_config"
         android:label="LanguageFragment" />
     <fragment
         android:id="@+id/dest_backup"
         tools:layout="@layout/frag_backup"
         android:name="com.arduia.expense.ui.backup.BackupFragment"
         android:label="BackupFragment" />
+    <fragment
+        android:id="@+id/dest_statistics"
+        android:name="com.arduia.expense.ui.statistics.StatisticsFragment"
+        android:label="@string/statistics"
+        tools:layout="@layout/frag_statistic" />
 
 </navigation>

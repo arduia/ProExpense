@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.R
-import com.arduia.expense.databinding.ItemExpenseBinding
+import com.arduia.expense.databinding.ItemExpenseLogBinding
+import com.arduia.expense.databinding.ItemExpenseRecentBinding
 import com.arduia.expense.ui.vto.ExpenseVto
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
@@ -20,7 +21,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
-        val viewBinding = ItemExpenseBinding.inflate(layoutInflater, parent, false)
+        val viewBinding = ItemExpenseRecentBinding.inflate(layoutInflater, parent, false)
 
         return VH(viewBinding)
     }
@@ -28,14 +29,13 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
     override fun onBindViewHolder(holder: VH, position: Int) {
 
         val item = getItem(position)
-
-        with(holder.binding){
-            tvName.text = item.name
-            tvDate.text = item.date
-            imvCategory.setImageResource(item.category)
+        with(holder.binding) {
             tvAmount.text = item.amount
-       }
-
+            tvCurrencySymbol.text = item.currencySymbol
+            tvDate.text = item.date
+            tvName.text = item.name
+            imvCategory.setImageResource(item.category)
+        }
     }
 
     override fun onCurrentListChanged(previousList: MutableList<ExpenseVto>,
@@ -63,7 +63,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
         this.onItemClickListener = listener
     }
 
-    inner class VH(val binding: ItemExpenseBinding):
+    inner class VH(val binding: ItemExpenseRecentBinding):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
         init { binding.cdExpense.setOnClickListener(this) }

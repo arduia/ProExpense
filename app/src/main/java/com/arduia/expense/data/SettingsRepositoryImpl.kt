@@ -1,80 +1,91 @@
 package com.arduia.expense.data
 
 import android.content.Context
-import android.content.pm.PackageManager
-import androidx.preference.PreferenceManager
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import timber.log.Timber
+import com.arduia.expense.data.exception.RepositoryException
+import com.arduia.expense.data.ext.getResultSuccessOrError
+import com.arduia.expense.data.local.AboutUpdateDataModel
+import com.arduia.expense.data.local.PreferenceFlowStorageDaoImpl
+import com.arduia.expense.data.local.PreferenceStorageDao
+import com.arduia.expense.model.ErrorResult
+import com.arduia.expense.model.FlowResult
+import com.arduia.expense.model.Result
+import com.arduia.expense.model.SuccessResult
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import java.lang.Exception
 
-class SettingsRepositoryImpl(private val context: Context,
-                             private val scope: CoroutineScope): SettingsRepository{
+class SettingsRepositoryImpl(private val dao: PreferenceStorageDao) : SettingsRepository {
 
-    private val preference by lazy {
-        PreferenceManager.getDefaultSharedPreferences(context)
+    override fun getSelectedLanguage(): FlowResult<String> =
+        dao.getSelectedLanguage()
+            .map { SuccessResult(it) }
+            .catch { e -> ErrorResult(RepositoryException(e)) }
+
+    override suspend fun setSelectedLanguage(id: String) {
+        dao.setSelectedLanguage(id)
     }
 
-    @ExperimentalCoroutinesApi
-    private val selectedLangChannel = BroadcastChannel<String>(10)
+    override fun getFirstUser(): FlowResult<Boolean> =
+        dao.getFirstUser()
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
 
-    @ExperimentalCoroutinesApi
-    private val firstUserChannel = BroadcastChannel<Boolean>(10)
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
-    override fun getSelectedLanguage(): Flow<String> {
-
-        scope.launch(Dispatchers.IO){
-            //Update Status
-            val lang = getString(KEY_SELECTED_LANGUAGE, DEFAULT_SELECTED_LANGUAGE)
-            selectedLangChannel.send(lang)
-        }
-
-       return selectedLangChannel.asFlow()
+    override suspend fun setFirstUser(isFirstUser: Boolean) {
+        dao.setFirstUser(isFirstUser)
     }
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
-    override fun setSelectedLanguage(id: String) {
-        scope.launch(Dispatchers.IO){
-            setString(KEY_SELECTED_LANGUAGE, id)
-            //Update Status
-            val lang = getString(KEY_SELECTED_LANGUAGE, DEFAULT_SELECTED_LANGUAGE)
-            selectedLangChannel.send(lang)
-        }
+    override fun getSelectedCurrencyNumber(): FlowResult<String> =
+        dao.getSelectedCurrencyNumber()
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
+
+
+    override suspend fun setSelectedCurrencyNumber(num: String) {
+        dao.setSelectedCurrencyNumber(num)
     }
 
-    @ExperimentalCoroutinesApi
-    @FlowPreview
-    override fun getFirstUser(): Flow<Boolean> {
-        scope.launch (Dispatchers.IO){
-            val isFirstUser = getBoolean(KEY_FIRST_USER, DEFAULT_FIRST_USER)
-            firstUserChannel.send(isFirstUser)
-        }
-        return firstUserChannel.asFlow()
+    override suspend fun getSelectedLanguageSync(): Result<String> {
+        return getResultSuccessOrError { dao.getSelectedLanguageSync() }
     }
 
-    override fun setFirstUser(isFirstUser: Boolean){
-        scope.launch (Dispatchers.IO){
-            setBoolean(KEY_FIRST_USER, isFirstUser)
-        }
+    override suspend fun getFirstUserSync(): Result<Boolean> {
+        return getResultSuccessOrError { dao.getFirstUserSync() }
     }
 
-    private fun getString(key:String, defValue:String) = preference.getString(key, defValue)?:defValue
-    private fun setString(key:String, value:String) = preference.edit().putString(key, value).apply()
+    override suspend fun getSelectedCurrencyNumberSync(): Result<String> {
+        return getResultSuccessOrError { dao.getSelectedCurrencyNumberSync() }
+    }
 
-    private fun getBoolean(key:String, defValue: Boolean) = preference.getBoolean(key, defValue)
-    private fun setBoolean(key:String, defValue: Boolean) = preference.edit().putBoolean(key, defValue).apply()
+    override suspend fun setSelectedThemeMode(mode: Int) {
+        dao.setSelectedThemeMode(mode)
+    }
 
-    companion object{
+    override suspend fun getSelectedThemeModeSync(): Result<Int> {
+        return getResultSuccessOrError { dao.getSelectedThemeModeSync() }
+    }
 
-        private const val KEY_SELECTED_LANGUAGE = "selected_language"
-        private const val DEFAULT_SELECTED_LANGUAGE = "en"
+    override fun getUpdateStatus(): FlowResult<Int> {
+        return dao.getUpdateStatus()
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
+    }
 
-        private const val KEY_FIRST_USER = "isFirstTime"
-        private const val DEFAULT_FIRST_USER = true
+    override suspend fun setUpdateStatus(status: Int) {
+        dao.setUpdateStatus(status)
+    }
 
+    override suspend fun getAboutUpdateSync(): Result<AboutUpdateDataModel> {
+        return getResultSuccessOrError { dao.getAboutUpdateSync() }
+    }
+
+    override suspend fun setAboutUpdate(info: AboutUpdateDataModel) {
+        dao.setAboutUpdate(info)
+    }
+}
+
+object SettingRepositoryFactoryImpl : SettingsRepository.Factory {
+    override fun create(context: Context): SettingsRepository {
+        return SettingsRepositoryImpl(PreferenceFlowStorageDaoImpl(context))
     }
 }

@@ -4,21 +4,27 @@ import android.app.Application
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.BackupRepository
-import com.arduia.expense.ui.mapping.BackupMapper
+import com.arduia.expense.data.ExpenseRepository
+import com.arduia.expense.data.local.BackupEnt
+import com.arduia.expense.model.Result
+import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class BackupViewModel @ViewModelInject constructor(
     app: Application,
-    private val mapper: BackupMapper,
-    private val backupRepo: BackupRepository
-    ): AndroidViewModel(app), LifecycleObserver{
+    private val mapper: Mapper<BackupEnt, BackupVto>,
+    private val backupRepo: BackupRepository,
+    private val expenseRepo: ExpenseRepository
+) : AndroidViewModel(app) {
 
     private val _backupList = BaseLiveData<List<BackupVto>>()
     val backupList = _backupList.asLiveData()
@@ -26,33 +32,48 @@ class BackupViewModel @ViewModelInject constructor(
     private val _backupFilePath = EventLiveData<Uri>()
     val backupFilePath = _backupFilePath.asLiveData()
 
-
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun onCreate(){
-        viewModelScope.launch (Dispatchers.IO){
-
-            backupRepo.getBackupAll().collect {list ->
-
-                val backupVtoList = list.map {  mapper.mapToBackupVto(it) }
-
-                _backupList post backupVtoList
-            }
-
-        }
+    val isEmptyBackupLogs = _backupList.switchMap {
+        BaseLiveData(it.isEmpty())
     }
 
-    fun onBackupItemSelect(id: Int){
-        viewModelScope.launch(Dispatchers.IO){
-            val backupEnt = backupRepo.getBackupByID(id).first()
+    private val _isEmptyExpenseLogs = BaseLiveData<Boolean>()
+    val isEmptyExpenseLogs get() = _isEmptyExpenseLogs.asLiveData()
 
+    init {
+        observeBackupLists()
+        observeExpenseCount()
+    }
+
+    private fun observeExpenseCount(){
+        expenseRepo.getExpenseTotalCount()
+            .flowOn(Dispatchers.IO)
+            .onSuccess {
+                _isEmptyExpenseLogs post (it == 0)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun observeBackupLists() {
+        backupRepo.getBackupAll()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                if(it  is Result.Success){
+                    _backupList post it.data.map(mapper::map)
+                    Timber.d("backupList ${it.data}")
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun onBackupItemSelect(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val backupEnt = backupRepo.getBackupByID(id).awaitValueOrError()
             val backupFileUri = Uri.parse(backupEnt.filePath)
-
             _backupFilePath post event(backupFileUri)
         }
     }
 
-    fun setImportUri(uri: Uri){
+    fun setImportUri(uri: Uri) {
         _backupFilePath post event(uri)
     }
 }

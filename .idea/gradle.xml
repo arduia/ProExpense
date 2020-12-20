@@ -8,7 +8,7 @@
         <option name="disableWrapperSourceDistributionNotification" value="true" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="C:/Gradle/gradle-6.0.1-all" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Gradle/gradle-6.0.1-all" />
         <option name="gradleJvm" value="1.8" />
         <option name="modules">
           <set>
@@ -17,9 +17,11 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/backup" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/currencystore" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
+        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

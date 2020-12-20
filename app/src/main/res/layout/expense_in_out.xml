@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_date_range"
+            style="?textAppearanceBody1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_3"
+            tools:text="Jun 4-5" />
+
+        <TextView
+            android:id="@+id/tv_income"
+            style="?textAppearanceOverline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_date_range"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="@dimen/grid_4"
+            android:layout_marginTop="@dimen/grid_3"
+            android:text="@string/income" />
+
+        <TextView
+            android:id="@+id/tv_income_value"
+            style="?textAppearanceCurrencyLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_income"
+            android:layout_alignStart="@id/tv_income"
+            tools:text="60,000" />
+
+        <TextView
+            android:id="@+id/tv_income_symobol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tv_income_value"
+            android:layout_toEndOf="@id/tv_income_value"
+            tools:text="MMK" />
+
+
+        <TextView
+            android:id="@+id/tv_outcome"
+            style="?textAppearanceOverline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_income_value"
+            android:layout_alignStart="@id/tv_income_value"
+            android:layout_marginTop="@dimen/grid_3"
+            android:text="@string/outcome" />
+
+        <TextView
+            android:id="@+id/tv_outcome_value"
+            style="?textAppearanceCurrencyLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_outcome"
+            android:layout_alignStart="@id/tv_outcome"
+            android:layout_marginBottom="@dimen/grid_4"
+            tools:text="55,500" />
+
+        <TextView
+            android:id="@+id/tv_outcome_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tv_outcome_value"
+            android:layout_toEndOf="@id/tv_outcome_value"
+            tools:text="MMK" />
+
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

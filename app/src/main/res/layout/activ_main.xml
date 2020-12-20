@@ -26,11 +26,11 @@
             android:id="@+id/fb_main_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_material"
+            android:layout_marginEnd="@dimen/grid_3"
             android:layout_marginBottom="32dp"
             android:scaleType="center"
-            android:tint="@android:color/white"
-            app:backgroundTint="@color/primaryColor"
+            android:tint="?colorOnPrimary"
+            app:backgroundTint="?colorPrimary"
             android:layout_gravity="end|bottom"
             app:srcCompat="@drawable/ic_add" />
 
@@ -38,8 +38,8 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nv_main"
-        style="@style/NavTheme"
         android:layout_width="wrap_content"
+        style="?attr/proExpenseNavigationViewStyle"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/layout_header"

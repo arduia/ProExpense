@@ -1,172 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ml_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@android:color/white">
+    android:background="?backgroundColor">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/layout_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_menu_open"
-        style="@style/IconButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="@dimen/margin_material"
-        android:src="@drawable/ic_menu"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_home"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_home"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
-        android:text="@string/label_home"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/btn_menu_open"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="?colorSurface"
+        app:liftOnScroll="true">
 
-    <TextView
-        android:id="@+id/tv_recent"
-        style="@style/ItemText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_material"
-        android:text="@string/label_recent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/rv_recent"
-        app:layout_constraintTop_toBottomOf="@id/cd_value" />
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_more_expenses"
-        style="@style/IconButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ic_nav_next"
-        android:tint="@color/primaryColor"
-        app:layout_constraintBottom_toBottomOf="@id/dv_recent"
-        app:layout_constraintEnd_toEndOf="@id/dv_recent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_recent" />
-
-    <View
-        android:id="@+id/dv_recent"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginEnd="@dimen/margin_material"
-        android:background="@android:drawable/divider_horizontal_bright"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/rv_recent"
-        app:layout_constraintStart_toStartOf="@id/tv_recent"
-        app:layout_constraintTop_toBottomOf="@id/bl_recent"
-        app:layout_constraintVertical_bias="0" />
-
-    <View
-        android:id="@+id/bl_recent"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="@dimen/margin_small_material"
-        android:background="@color/primaryColor"
-        app:layout_constraintEnd_toEndOf="@+id/tv_recent"
-        app:layout_constraintStart_toStartOf="@id/tv_recent"
-        app:layout_constraintTop_toBottomOf="@id/tv_recent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:fadeScrollbars="true"
-        android:overScrollMode="never"
-        android:paddingTop="@dimen/margin_small_material"
-        android:paddingBottom="80dp"
-        android:animateLayoutChanges="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bl_recent"
-        app:layout_constraintWidth_max="@dimen/width_minimum_and_margin"
-        tools:listitem="@layout/item_expense" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cd_value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_material"
-        android:layout_marginTop="@dimen/margin_small_material"
-        android:layout_marginEnd="@dimen/margin_material"
-        android:elevation="3dp"
-        app:cardBackgroundColor="@color/primaryColor"
-        app:cardCornerRadius="@dimen/radius_corner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintWidth_max="@dimen/width_minimum">
-
-        <RelativeLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?colorSurface"
+            app:navigationIcon="@drawable/ic_menu"
+            app:title="@string/home" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-            <TextView
-                android:id="@+id/tv_spent_week"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="@dimen/margin_material"
-                android:layout_marginTop="@dimen/margin_material"
-                android:text="@string/label_outcome_week"
-                android:textColor="@color/onPrimaryColor" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="80dp"
+        android:background="?backgroundColor"
+        android:clipToPadding="false"
+        android:id="@+id/scroll_home"
+        android:overScrollMode="never"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-            <TextView
-                android:id="@+id/tv_total_value"
-                style="@style/TextAppearance.MaterialComponents.Headline4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_spent_week"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/onPrimaryColor" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_currency"
-                style="@style/TextAppearance.MaterialComponents.Overline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/tv_total_value"
-                android:layout_toEndOf="@id/tv_total_value"
-                android:text="@string/label_mm_currency"
-                android:textColor="@android:color/white" />
-
-            <com.arduia.graph.SpendGraph
-                android:id="@+id/img_graph"
+            <include
+                android:id="@+id/cv_expense_in_out"
+                layout="@layout/expense_in_out"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_below="@id/tv_total_value"
-                android:layout_centerHorizontal="true"
-                android:padding="4dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/grid_2"
+                android:layout_marginTop="@dimen/grid_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </RelativeLayout>
-    </com.google.android.material.card.MaterialCardView>
+            <include
+                android:id="@+id/cv_graph"
+                layout="@layout/expense_graph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/grid_2"
+                android:layout_marginTop="@dimen/grid_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_expense_in_out" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                android:id="@+id/cv_expense_list"
+                layout="@layout/recent_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/grid_2"
+                android:layout_marginTop="@dimen/grid_2"
+                android:layout_marginBottom="@dimen/grid_2" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

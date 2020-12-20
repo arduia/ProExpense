@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cd_expense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:translationX="0dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_category"
+        style="@style/Widget.ProExpense.CircularCardView"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_2"
+        android:layout_marginBottom="@dimen/grid_2"
+        app:cardBackgroundColor="#b3e5fc"
+        app:srcCompat="@drawable/ic_household">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imv_category"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center"
+            app:tint="@color/dark_gray"
+            app:srcCompat="@drawable/ic_household" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tv_name"
+        style="?attr/textAppearanceBody1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/cv_category"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginTop="@dimen/grid_2"
+        android:layout_marginEnd="@dimen/grid_2"
+        android:layout_toStartOf="@id/linear_amount"
+        android:layout_toEndOf="@id/cv_category"
+        android:ellipsize="end"
+        android:maxLength="20"
+        android:maxLines="1"
+        android:textAlignment="viewStart"
+        tools:text="Education" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        style="?attr/textAppearanceCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/tv_name"
+        android:layout_alignBottom="@id/cv_category"
+        android:layout_marginBottom="@dimen/grid_2"
+        android:layout_toEndOf="@id/cv_category" />
+
+    <LinearLayout
+        android:id="@+id/linear_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/grid_3"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_amount"
+            style="?textAppearanceCurrencySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLength="15"
+            android:layout_marginEnd="@dimen/grid_1"
+            tools:text="900" />
+
+        <TextView
+            android:id="@+id/tv_currency_symbol"
+            style="?textAppearanceBody2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="top"
+            android:paddingVertical="@dimen/grid_1"
+            tools:text="$" />
+    </LinearLayout>
+</RelativeLayout>

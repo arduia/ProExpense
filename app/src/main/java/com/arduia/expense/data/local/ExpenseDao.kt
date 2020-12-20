@@ -13,22 +13,43 @@ interface ExpenseDao{
     @Insert
     suspend fun insertExpenseAll(expenses: List<ExpenseEnt>)
 
-    @Query ( "SELECT * FROM `expense` ORDER BY created_date DESC" )
+    @Query ( "SELECT * FROM `expense` ORDER BY modified_date DESC" )
     fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt>
 
-    @Query ( "SELECT * FROM `expense` ORDER BY created_date DESC" )
+    @Query ( "SELECT * FROM `expense` ORDER BY modified_date DESC" )
     fun getExpenseAll(): Flow<List<ExpenseEnt>>
+
+    @Query( "SELECT * FROM `expense` ORDER BY modified_date DESC")
+    suspend fun getExpenseAllSync(): List<ExpenseEnt>
+
+    @Query("SELECT * FROM `expense` WHERE modified_date >= :startTime AND modified_date <= :endTime ORDER BY modified_date ASC LIMIT :limit OFFSET :offset")
+    fun getExpenseRangeAsc(startTime: Long, endTime: Long, offset: Int, limit: Int): Flow<List<ExpenseEnt>>
+
+    @Query("SELECT * FROM `expense` WHERE modified_date >= :startTime AND modified_date <= :endTime ORDER BY modified_date DESC LIMIT :limit OFFSET :offset")
+    fun getExpenseRangeDesc(startTime: Long, endTime: Long, offset: Int, limit: Int): Flow<List<ExpenseEnt>>
+
+    @Query("SELECT * FROM `expense` WHERE modified_date >= :startTime AND modified_date <= :endTime ORDER BY modified_date ASC LIMIT :limit OFFSET :offset")
+    fun getExpenseRangeAscSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
+
+    @Query("SELECT * FROM `expense` WHERE modified_date >= :startTime AND modified_date <= :endTime ORDER BY modified_date DESC LIMIT :limit OFFSET :offset")
+    fun getExpenseRangeDescSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
 
     @Query("SELECT * FROM `expense` WHERE expense_id =:id")
     fun getItemExpense(id: Int): Flow<ExpenseEnt>
 
-    @Query( "SELECT * FROM `expense` ORDER BY created_date DESC LIMIT 10")
+    @Query("SELECT `modified_date` FROM `expense` ORDER BY `modified_date` ASC LIMIT 1")
+    suspend fun getMostRecentDateSync(): Long
+
+    @Query("SELECT `modified_date` FROM `expense` ORDER BY `modified_date` DESC LIMIT 1")
+    suspend fun getMostLatestDateSync(): Long
+
+    @Query( "SELECT * FROM `expense` ORDER BY modified_date DESC LIMIT 4")
     fun getRecentExpense(): Flow<List<ExpenseEnt>>
 
     @Query("SELECT COUNT(*) FROM expense")
     fun getExpenseTotalCount(): Flow<Int>
 
-    @Query("SELECT * FROM 'expense' ORDER BY created_date DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM 'expense' ORDER BY modified_date DESC LIMIT :limit OFFSET :offset")
     fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>>
 
     @Update
@@ -43,7 +64,7 @@ interface ExpenseDao{
     @Query( "DELETE FROM `expense` WHERE  expense_id in (:idLists)")
     suspend fun deleteExpenseByIDs(idLists: List<Int>)
 
-    @Query("SELECT * FROM 'expense' WHERE created_date > :startTime ORDER BY created_date DESC")
+    @Query("SELECT * FROM 'expense' WHERE modified_date > :startTime ORDER BY modified_date DESC")
     fun getWeekExpense(startTime: Long): Flow<List<ExpenseEnt>>
 
 }

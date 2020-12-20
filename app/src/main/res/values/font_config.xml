@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextAppearance.ProExpense.H6" parent="TextAppearance.MaterialComponents.Headline6" />
+
+    <style name="TextAppearance.ProExpense.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:alpha">0.70</item>
+    </style>
+
+    <style name="TextAppearance.ProExpense.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:alpha">0.70</item>
+    </style>
+</resources>

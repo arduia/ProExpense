@@ -21,9 +21,7 @@ class CategoryListAdapter(private val layoutInflater: LayoutInflater) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-
         val viewBinding = ItemCategoryBinding.inflate(layoutInflater, parent, false)
-
         return VH(viewBinding)
     }
 

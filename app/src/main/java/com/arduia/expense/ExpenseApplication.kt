@@ -4,11 +4,15 @@ import android.app.Application
 import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import com.arduia.core.lang.updateResource
+import com.arduia.expense.data.SettingRepositoryFactoryImpl
+import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
+import com.arduia.expense.data.local.PreferenceFlowStorageDaoImpl
+import com.arduia.expense.data.local.PreferenceStorageDao
+import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.model.getDataOrError
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -17,6 +21,8 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
+    private val appJob = Job()
 
     override fun onCreate() {
         super.onCreate()
@@ -36,16 +42,16 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
             .build()
 
     override fun attachBaseContext(base: Context?) {
-        if (base == null) return
-        val updatedLocale = updateToLanguageContext(baseContext = base)
-        super.attachBaseContext(updatedLocale)
+        runBlocking {
+            if (base == null) return@runBlocking
+            val selectedLanguage  = SettingRepositoryFactoryImpl.create(base).getSelectedLanguageSync().getDataOrError()
+            val localedContext = base.updateResource(selectedLanguage)
+            super.attachBaseContext(localedContext)
+        }
     }
 
-    private fun updateToLanguageContext(baseContext: Context): Context =
-        runBlocking {
-            val settings = SettingsRepositoryImpl(baseContext, GlobalScope)
-            val selectedLanguage = settings.getSelectedLanguage().first()
-            return@runBlocking baseContext.updateResource(selectedLanguage)
-        }
-
+    override fun onTerminate() {
+        super.onTerminate()
+        appJob.cancel()
+    }
 }

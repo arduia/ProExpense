@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_category_name"
+        style="?textAppearanceBody1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/grid_3"
+        tools:text="Education" />
+
+    <TextView
+        android:id="@+id/tv_progress"
+        style="?textAppearanceSubtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/pv_progress"
+        android:layout_alignBottom="@id/pv_progress"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/grid_3"
+        android:alpha="0.8"
+        tools:text="50%" />
+
+    <com.skydoves.progressview.ProgressView
+        android:id="@+id/pv_progress"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_below="@id/tv_category_name"
+        android:layout_marginStart="@dimen/grid_3"
+        android:layout_marginEnd="@dimen/grid_1"
+        android:layout_toStartOf="@id/tv_progress"
+        app:progressView_autoAnimate="true"
+        app:progressView_colorBackground="@color/color_statistic_background"
+        app:progressView_colorProgress="?colorPrimary"
+        app:progressView_labelSize="@dimen/grid_3"
+        app:progressView_max="100"
+        app:progressView_progress="50"
+        app:progressView_radius="@dimen/grid_3" />
+
+</RelativeLayout>

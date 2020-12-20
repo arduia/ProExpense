@@ -11,10 +11,12 @@ import androidx.work.WorkManager
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.backup.ImportWorker
 import com.arduia.expense.di.IntegerDecimal
+import com.arduia.expense.model.data
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*
 
@@ -54,7 +56,7 @@ class ImportViewModel @ViewModelInject constructor(
 
             loadingOn()
             try {
-                val itemCount = backupRepo.getItemCount(uri).first()
+                val itemCount = backupRepo.getItemCount(uri).first().data?:throw Exception()
                 val isInvalidItem = (itemCount < 0)
 
                 if (isInvalidItem) {

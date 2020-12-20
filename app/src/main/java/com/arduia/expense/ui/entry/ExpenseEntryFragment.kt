@@ -1,6 +1,8 @@
 package com.arduia.expense.ui.entry
 
+import android.app.DatePickerDialog
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
@@ -20,11 +24,11 @@ import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.security.Timestamp
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -44,6 +48,8 @@ class ExpenseEntryFragment : Fragment() {
     @Inject
     lateinit var categoryProvider: ExpenseCategoryProvider
 
+    private lateinit var dateFormat: DateFormat
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,6 +61,7 @@ class ExpenseEntryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dateFormat = SimpleDateFormat("d/M/yyyy h:mm a", Locale.ENGLISH)
         setupView()
         setupViewModel()
         chooseEntryMode()
@@ -69,15 +76,40 @@ class ExpenseEntryFragment : Fragment() {
         setupCategoryListAdapter()
         setupCategoryListView()
         setupEntryCloseButton()
+        setupEntryAmountEditText()
+        setupLockButton()
+    }
+
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                viewModel.selectDateTime(calendar.timeInMillis)
+            },
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]
+        ).show()
+
+    }
+
+    private fun setupLockButton() {
+        viewBinding.cvLock.setOnClickListener {
+            viewModel.invertLockMode()
+        }
     }
 
     private fun setupViewModel() {
-        addLifecycleObserver()
         observeDataInsertedEvent()
         observeDataUpdatedEvent()
         observeEntryModeEvent()
         observeEventExpenseDataState()
         observeSelectedCategoryState()
+        observeOnLockMode()
+        observeOnNext()
+        observeDate()
     }
 
     override fun onDestroyView() {
@@ -94,6 +126,16 @@ class ExpenseEntryFragment : Fragment() {
                 true
             )
         )
+        viewBinding.toolbar.setOnMenuItemClickListener menu@{
+            if (it.itemId == R.id.calendar) {
+                showDatePicker()
+            }
+            return@menu true
+        }
+    }
+
+    private fun setupEntryAmountEditText() {
+        viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter())
     }
 
     private fun setupCategoryListAdapter() {
@@ -104,13 +146,9 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupEntryCloseButton() {
-        viewBinding.btnEntryClose.setOnClickListener {
+        viewBinding.toolbar.setNavigationOnClickListener {
             backToPreviousFragment()
         }
-    }
-
-    private fun addLifecycleObserver() {
-        lifecycle.addObserver(viewModel)
     }
 
     private fun observeSelectedCategoryState() {
@@ -125,11 +163,63 @@ class ExpenseEntryFragment : Fragment() {
         })
     }
 
+    private fun observeOnNext() {
+        viewModel.onNext.observe(viewLifecycleOwner, EventObserver {
+            cleanUi()
+            focusOnName()
+            showItemSaved()
+        })
+    }
+
+    private fun showItemSaved() {
+        mainHost.showSnackMessage("Saved!")
+    }
+
     private fun observeDataUpdatedEvent() {
         viewModel.updatedEvent.observe(viewLifecycleOwner, EventObserver {
             showDataUpdatedMessage()
             backToPreviousFragment()
         })
+    }
+
+
+    private fun observeOnLockMode() {
+        viewModel.lockMode.observe(viewLifecycleOwner) {
+            //Replace with Drawable State Lists
+            when (it) {
+
+                LockMode.LOCKED -> {
+                    viewBinding.cvLock.backgroundTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
+                    viewBinding.imvLock.setImageResource(R.drawable.ic_lock_closed)
+                    viewBinding.imvLock.imageTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
+                    viewBinding.btnSave.text = getString(R.string.next)
+                }
+
+                LockMode.UNLOCK -> {
+                    viewBinding.cvLock.backgroundTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
+                    viewBinding.imvLock.setImageResource(R.drawable.ic_lock_open)
+                    viewBinding.imvLock.imageTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnSurface))
+                    viewBinding.btnSave.text = getString(R.string.save)
+                }
+
+            }
+        }
+    }
+
+    private fun cleanUi() {
+        with(viewBinding) {
+            edtAmount.setText("")
+            edtName.setText("")
+            edtNote.setText("")
+        }
+    }
+
+    private fun focusOnName() {
+        viewBinding.edtName.requestFocus()
     }
 
     private fun observeEntryModeEvent() {
@@ -144,9 +234,14 @@ class ExpenseEntryFragment : Fragment() {
         })
     }
 
+    private fun observeDate() {
+        viewModel.selectedDate.observe(viewLifecycleOwner) {
+            viewBinding.toolbar.subtitle = dateFormat.format(Date(it))
+        }
+    }
+
     private fun chooseEntryMode() {
 
-        Timber.d("chooseMode")
         val argId = args.expenseId
         val isInvalidId = argId < 0
         if (isInvalidId) {
@@ -157,7 +252,6 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeViewToSelectedMode(mode: ExpenseEntryMode) {
-        Timber.d("changeViewToSelectedMode -> $mode")
         when (mode) {
             ExpenseEntryMode.UPDATE -> changeToUpdateMode()
             ExpenseEntryMode.INSERT -> changeToSaveMode()
@@ -173,8 +267,8 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun updateCategoryListAfterAnimation() {
-        MainScope().launch(Dispatchers.Main) {
-            val duration = resources.getInteger(R.integer.entry_pop_up_duration).toLong()
+        lifecycleScope.launch(Dispatchers.Main) {
+            val duration = resources.getInteger(R.integer.duration_entry_pop_up).toLong()
             delay(duration)
             updateCategoryList()
         }
@@ -199,22 +293,24 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeToUpdateMode() = with(viewBinding) {
-        tvEntryTitle.text = getString(R.string.label_update_data)
-        btnSave.text = getString(R.string.label_update)
+        toolbar.title = getString(R.string.update_data)
+        btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
+        viewBinding.cvLock.isEnabled = false
+        viewBinding.imvLock.imageTintList = getColorList(R.color.darker_gray)
     }
 
     private fun changeToSaveMode() = with(viewBinding) {
-        tvEntryTitle.text = getString(R.string.label_expense_entry)
-        btnSave.text = getString(R.string.label_save)
+        toolbar.title = getString(R.string.expense_entry)
+        btnSave.text = getString(R.string.save)
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
         setInitialDefaultCategory()
     }
 
     private fun setInitialDefaultCategory() {
-        val default = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
+        val default = categoryProvider.getCategoryByID(ExpenseCategory.FOOD)
         categoryAdapter.submitList(listOf(default))
         viewModel.selectCategory(default)
     }
@@ -227,7 +323,6 @@ class ExpenseEntryFragment : Fragment() {
             showAmountEmptyError()
             return
         }
-
         viewModel.saveExpenseData(expense)
     }
 
@@ -245,7 +340,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun showAmountEmptyError() {
-        viewBinding.edtAmount.error = getString(R.string.label_cost_empty)
+        viewBinding.edtAmount.error = getString(R.string.empty_cost)
     }
 
     private fun getCurrentExpenseDetail(): ExpenseDetailsVto {
@@ -256,18 +351,19 @@ class ExpenseEntryFragment : Fragment() {
         val category = getSelectedCategory()
         val id = getExpenseId()
 
-            return ExpenseDetailsVto(
-                id = id,
-                name = name,
-                date = "",
-                category = category.id,
-                amount = amount,
-                finance = "",
-                note = note
-            )
+        return ExpenseDetailsVto(
+            id = id,
+            name = name,
+            date = "",
+            category = category.id,
+            amount = amount,
+            finance = "",
+            note = note,
+            symbol = ""
+        )
     }
 
-    private fun getExpenseId(): Int{
+    private fun getExpenseId(): Int {
         val argId = args.expenseId
         val isInvalid = (argId < 0)
         return if (isInvalid) 0
@@ -294,7 +390,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun showDataUpdatedMessage() {
-        mainHost.showSnackMessage(getString(R.string.label_data_updated))
+        mainHost.showSnackMessage(getString(R.string.data_updated))
     }
 
     private fun backToPreviousFragment() {
