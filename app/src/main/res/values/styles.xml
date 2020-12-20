@@ -54,5 +54,4 @@
         <item name="cornerSize">50%p</item>
         <item name="borderWidth">2dp</item>
     </style>
-
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavOptions
@@ -11,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.PageKeyedDataSource
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.arduia.core.extension.px
+import com.arduia.core.view.asInvisible
+import com.arduia.core.view.asVisible
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseLogsBinding
 import com.arduia.expense.di.TopDropNavOption
@@ -160,9 +163,12 @@ class ExpenseFragment : NavBaseFragment() {
     }
 
     private fun setupViewModel() {
+
         viewModel.expenseList.observe(viewLifecycleOwner) {
             adapter?.submitList(it)
+
         }
+
         viewModel.onRestoreSwipeState.observe(viewLifecycleOwner, EventObserver {
             adapter?.restoreState(it)
             adapter?.notifyDataSetChanged()
@@ -198,8 +204,31 @@ class ExpenseFragment : NavBaseFragment() {
                 if (it <= 1) getString(R.string.single_item_suffix) else getString(R.string.multi_item_suffix)
             }"
         }
+
+        viewModel.isEmptyLogs.observe(viewLifecycleOwner){isEmptyLogs ->
+            if(isEmptyLogs){
+                showNoExpenseInfo()
+                disableMenuAction()
+                setEmptyStringOnToolbarSubtitle()
+                unregisterFilterInfoObserver()
+            }else{
+                hideNoExpenseInfo()
+                enableMenuActions()
+                registerFilterInfoObserver()
+            }
+        }
     }
 
+    private fun disableMenuAction(){
+        binding.tbExpense.menu.forEach {
+            it.isEnabled = false
+        }
+    }
+    private fun enableMenuActions(){
+        binding.tbExpense.menu.forEach {
+            it.isEnabled = true
+        }
+    }
 
     private fun registerFilterInfoObserver(){
         viewModel.filterInfo.observe(viewLifecycleOwner, filterInfoObserver)
@@ -259,6 +288,14 @@ class ExpenseFragment : NavBaseFragment() {
         setEmptyStringOnToolbarSubtitle()
         unregisterFilterInfoObserver()
         navigationDrawer.lockDrawer()// Focus on Selection, Navigating other UI should'nt be on selection
+    }
+
+    private fun showNoExpenseInfo(){
+        binding.layoutNoData.root.asVisible()
+    }
+    private fun hideNoExpenseInfo(){
+        binding.layoutNoData.root.asInvisible()
+
     }
 
     private fun openNavDrawer(v: View) {

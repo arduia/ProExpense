@@ -108,6 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_name"
+            android:alpha="0.9"
             android:layout_alignStart="@id/tv_name"
             android:layout_toEndOf="@id/cv_category" />
 
@@ -136,6 +137,7 @@
                 android:layout_marginStart="4dp"
                 android:gravity="top"
                 android:paddingVertical="@dimen/grid_1"
+                android:alpha="0.9"
                 tools:text="$" />
         </LinearLayout>
 

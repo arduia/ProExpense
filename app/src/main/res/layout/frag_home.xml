@@ -23,7 +23,7 @@
             app:title="@string/home" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="80dp"
@@ -67,10 +67,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/grid_2"
                 android:layout_marginTop="@dimen/grid_2"
-                android:layout_marginBottom="@dimen/grid_2"
-                android:focusable="true"
-                android:focusableInTouchMode="true" />
+                android:layout_marginBottom="@dimen/grid_2" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

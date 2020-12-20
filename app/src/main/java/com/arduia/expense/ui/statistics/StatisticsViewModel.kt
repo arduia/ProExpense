@@ -76,8 +76,8 @@ class StatisticsViewModel @ViewModelInject constructor(
     private fun configDefaultDateRange() {
         viewModelScope.launch(Dispatchers.IO) {
             val expense = expenseRepo.getExpenseAllSync().getDataOrError()
-            val maxTime = expense.maxOf { it.modifiedDate }
-            val minTime = expense.minOf { it.modifiedDate }
+            val maxTime = expense.maxOfOrNull { it.modifiedDate }?: return@launch
+            val minTime = expense.maxOfOrNull { it.modifiedDate }?: return@launch
             dateRangeLimit = DateRangeSortingEnt(minTime, maxTime)
             dateRangeFilter = dateRangeLimit
             showDateRange()

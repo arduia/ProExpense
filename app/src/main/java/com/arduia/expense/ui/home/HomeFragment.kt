@@ -11,6 +11,9 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arduia.core.extension.px
+import com.arduia.core.view.asGone
+import com.arduia.core.view.asInvisible
+import com.arduia.core.view.asVisible
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragHomeBinding
@@ -207,6 +210,13 @@ class HomeFragment : NavBaseFragment() {
             showDeleteConfirmDialog(info = it)
         })
 
+        viewModel.isEmptyRecent.observe(viewLifecycleOwner) { isEmptyRecent ->
+            if (isEmptyRecent) {
+                binding.cvExpenseList.root.asGone()
+            } else {
+                binding.cvExpenseList.root.asVisible()
+            }
+        }
     }
 
     private fun showDeleteConfirmDialog(info: DeleteInfoVo) {

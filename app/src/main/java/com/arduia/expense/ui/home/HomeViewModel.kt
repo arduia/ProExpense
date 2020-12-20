@@ -64,6 +64,10 @@ class HomeViewModel @ViewModelInject constructor(
     private val _onDeleteConfirm = EventLiveData<DeleteInfoVo>()
     val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
 
+    val isEmptyRecent = _recentData.switchMap {
+        return@switchMap BaseLiveData(it.isEmpty())
+    }
+
     private val calculator = calculatorFactory.create(viewModelScope)
 
     private val _isLoading = BaseLiveData<Boolean>()

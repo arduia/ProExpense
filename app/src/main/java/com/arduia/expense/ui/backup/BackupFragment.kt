@@ -8,6 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.arduia.core.view.asGone
+import com.arduia.core.view.asInvisible
+import com.arduia.core.view.asVisible
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupBinding
 import com.arduia.expense.ui.MainHost
@@ -82,6 +85,17 @@ class BackupFragment : NavBaseFragment() {
             showImportDialog(uri = fileUri)
         })
 
+        viewModel.isEmptyBackupLogs.observe(viewLifecycleOwner){
+            if(it){
+                binding.tvNoData.asVisible()
+            }else{
+                binding.tvNoData.asGone()
+            }
+        }
+
+        viewModel.isEmptyExpenseLogs.observe(viewLifecycleOwner){
+                binding.cvExport.isEnabled = it.not()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

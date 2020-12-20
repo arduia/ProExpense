@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 
 
 class ExpenseViewModel @ViewModelInject constructor(
@@ -61,12 +62,17 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _onDetailShow = EventLiveData<ExpenseDetailsVto>()
     val onDetailShow get() = _onDetailShow.asLiveData()
 
-    val filterInfo get() = filterConstraint.switchMap {
-        BaseLiveData(createFilterInfo(it))
-    }
+    val filterInfo
+        get() = filterConstraint.switchMap {
+            BaseLiveData(createFilterInfo(it))
+        }
 
     val expenseList: LiveData<PagedList<ExpenseLogVo>> = filterConstraint.switchMap { filter ->
         return@switchMap createSourcePagingLiveData(filter)
+    }
+
+    val isEmptyLogs: LiveData<Boolean> = expenseList.switchMap {
+        BaseLiveData(it.size <= 0)
     }
 
     private val mapper: Mapper<ExpenseEnt, ExpenseLogVo>
@@ -82,14 +88,20 @@ class ExpenseViewModel @ViewModelInject constructor(
         _expenseLogMode.value = ExpenseMode.NORMAL
 
         viewModelScope.launch(Dispatchers.IO) {
-            val dateRecent = expenseRepo.getMostRecentDateSync().getDataOrError()
-            val dateLatest = expenseRepo.getMostLatestDateSync().getDataOrError()
-            filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.ASC)
-            filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
+            try {
+                val dateRecent = expenseRepo.getMostRecentDateSync().getDataOrError()
+                val dateLatest = expenseRepo.getMostLatestDateSync().getDataOrError()
+                filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.ASC)
+                filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
+            } catch (e: Exception) {
+                //On Empty Case
+                filterConstraint post DateRangeSortingEnt(0, 0, Sorting.ASC)
+                filterLimit = DateRangeSortingEnt(0, 0)
+            }
         }
     }
 
-    private fun createFilterInfo(constraint: DateRangeSortingEnt): String{
+    private fun createFilterInfo(constraint: DateRangeSortingEnt): String {
         val dateRange = dateRangeFormatter.format(constraint.start, constraint.end)
         return "$dateRange . ${constraint.sorting}"
     }
