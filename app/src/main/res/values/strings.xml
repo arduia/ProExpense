@@ -141,5 +141,6 @@
     <string name="category_statistics">Category Statistics</string>
     <string name="beta">beta</string>
     <string name="more">More</string>
+    <string name="about_acknowledgement">Thank so much for contributors who opened issues on Github for this app.</string>
 </resources>
 

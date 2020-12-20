@@ -139,5 +139,6 @@
     <string name="no_data">အချက်အလက်မရှိပါ</string>
     <string name="beta">beta</string>
     <string name="more">နောက်ထပ်</string>
+    <string name="about_acknowledgement">Thank so much for contributors who opened issues on Github for this app.</string>
 
 </resources>

@@ -93,7 +93,7 @@
                 android:layout_marginTop="@dimen/grid_3"
                 android:background="@drawable/large_rounded_warning_bg"
                 android:orientation="horizontal"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imv_update"
@@ -257,7 +257,7 @@
                 style="?attr/textAppearanceBody1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/dv_end"
+                android:layout_below="@id/tv_acknowledgement"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="@dimen/grid_4"
@@ -268,7 +268,20 @@
                 android:textAlignment="center"
                 android:textColor="@android:color/darker_gray"
                 android:textColorLink="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/tv_acknowledgement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?textAppearanceBody2"
+                android:layout_below="@id/dv_end"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/grid_4"
+                android:textAlignment="center"
+                android:layout_marginHorizontal="@dimen/grid_3"
+                android:text="@string/about_acknowledgement" />
         </RelativeLayout>
+
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
