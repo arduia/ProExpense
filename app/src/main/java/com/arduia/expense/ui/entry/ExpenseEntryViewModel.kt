@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.domain.Amount
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.*
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.Exception
+import java.math.BigDecimal
 import java.util.*
 
 class ExpenseEntryViewModel @ViewModelInject constructor(
@@ -136,7 +138,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     ) = ExpenseEnt(
         expenseId = vto.id,
         name = vto.name,
-        amount = vto.amount.toFloat(),
+        amount = Amount.createFromActual(BigDecimal(vto.amount)),
         note = vto.note,
         category = vto.category,
         createdDate = createdDate ?: Date().time,

@@ -3,12 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_light_500" >
+    android:theme="@style/Theme.Splash"
+    android:background="@color/blue_light_500">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/icon"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
+        app:tint="@color/white"
         app:srcCompat="@drawable/ic_launcher_foreground" />
 </FrameLayout>

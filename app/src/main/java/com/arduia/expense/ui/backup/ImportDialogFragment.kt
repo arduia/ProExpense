@@ -58,7 +58,6 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
             viewModel.startImportData()
         }
 
-
     }
 
     private fun setupViewModel() {

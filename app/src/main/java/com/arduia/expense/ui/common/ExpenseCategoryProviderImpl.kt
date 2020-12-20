@@ -11,13 +11,13 @@ import com.arduia.expense.ui.common.ExpenseCategory.Companion.FOOD
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.HEALTH_CARE
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.HOUSEHOLD
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.INCOME
-import com.arduia.expense.ui.common.ExpenseCategory.Companion.OUTCOME
+import com.arduia.expense.ui.common.ExpenseCategory.Companion.OTHERS
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.SOCIAL
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.TRANSPORTATION
 import java.lang.Exception
 
-class ExpenseCategoryProviderImpl(private val resource: Resources):
-        ExpenseCategoryProvider{
+class ExpenseCategoryProviderImpl(private val resource: Resources) :
+    ExpenseCategoryProvider {
 
 
     private val categoryList = mutableListOf<ExpenseCategory>()
@@ -31,26 +31,37 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
     }
 
     init {
-    categoryList.addAll(getCategoryData())
-
+        categoryList.addAll(getCategoryData())
     }
 
     private fun getCategoryData() = mutableListOf<ExpenseCategory>().apply {
-        add(ExpenseCategory(OUTCOME, (R.string.outcome).res(), R.drawable.ic_outcome ))
         add(ExpenseCategory(INCOME, (R.string.income).res(), R.drawable.ic_income))
         add(ExpenseCategory(FOOD, (R.string.food).res(), R.drawable.ic_food))
         add(ExpenseCategory(HOUSEHOLD, (R.string.house_hold).res(), R.drawable.ic_household))
         add(ExpenseCategory(SOCIAL, (R.string.social).res(), R.drawable.ic_social))
-        add(ExpenseCategory(ENTERTAINMENT, (R.string.entertainment).res(), R.drawable.ic_entertainment))
-        add(ExpenseCategory(TRANSPORTATION, (R.string.transportation).res(), R.drawable.ic_transportation))
+        add(
+            ExpenseCategory(
+                ENTERTAINMENT,
+                (R.string.entertainment).res(),
+                R.drawable.ic_entertainment
+            )
+        )
+        add(
+            ExpenseCategory(
+                TRANSPORTATION,
+                (R.string.transportation).res(),
+                R.drawable.ic_transportation
+            )
+        )
         add(ExpenseCategory(CLOTHES, (R.string.clothes).res(), R.drawable.ic_clothes))
         add(ExpenseCategory(HEALTH_CARE, (R.string.health_care).res(), R.drawable.ic_healthcare))
         add(ExpenseCategory(EDUCATION, (R.string.education).res(), R.drawable.ic_education))
-        add(ExpenseCategory( DONATION, (R.string.donation).res(), R.drawable.ic_donation))
+        add(ExpenseCategory(DONATION, (R.string.donation).res(), R.drawable.ic_donation))
+        add(ExpenseCategory(OTHERS, (R.string.others).res(), R.drawable.ic_outcome))
     }
 
     override fun getCategoryByID(id: Int): ExpenseCategory {
-        return categoryList.firstOrNull{ it.id == id }?: throw Exception("Category Not Found $id")
+        return categoryList.firstOrNull { it.id == id } ?: throw Exception("Category Not Found $id")
     }
 
     override fun getIndexByCategory(category: ExpenseCategory): Int {
@@ -60,11 +71,13 @@ class ExpenseCategoryProviderImpl(private val resource: Resources):
     private fun Int.res(): String = resource.getString(this)
 }
 
-data class ExpenseCategory(val id: Int,
-                           val name: String,
-                           @DrawableRes val img: Int){
-    companion object{
-        const val OUTCOME = 1
+data class ExpenseCategory(
+    val id: Int,
+    val name: String,
+    @DrawableRes val img: Int
+) {
+    companion object {
+        const val OTHERS = 1
         const val INCOME = 2
         const val FOOD = 3
         const val HOUSEHOLD = 4

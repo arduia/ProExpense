@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:theme="@style/Theme.ProExpense"
+    tools:background="@color/white"
     tools:context=".ui.MainActivity">
 
     <androidx.appcompat.widget.AppCompatImageButton
@@ -15,11 +17,10 @@
         android:layout_marginTop="@dimen/grid_3"
         android:layout_marginEnd="@dimen/grid_3"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_close" />
+        android:src="@drawable/ic_arrow_start" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_taylor"
+        android:id="@+id/imv_app_logo"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_below="@id/btn_close"
@@ -29,25 +30,35 @@
         android:layout_marginBottom="@dimen/grid_3"
         android:scaleType="center"
         android:src="@drawable/ic_launcher_foreground"
-        android:tint="@color/blue_light_500" />
+        android:tint="?colorPrimary" />
+
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/img_taylor"
-        android:layout_alignBottom="@id/img_taylor"
+        android:id="@+id/ln_app_name"
+        android:layout_alignTop="@id/imv_app_logo"
+        android:layout_alignBottom="@id/imv_app_logo"
         android:layout_marginStart="@dimen/grid_3"
-        android:layout_toEndOf="@id/img_taylor"
+        android:layout_toEndOf="@id/imv_app_logo"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_app_name"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            style="?textAppearanceHeadline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/dark" />
+            android:text="@string/app_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/small_rounded_warning_bg"
+            android:textColor="?colorOnWarning"
+            android:padding="@dimen/grid_1"
+            android:textAllCaps="true"
+            android:text="@string/beta" />
     </LinearLayout>
 
 </RelativeLayout>

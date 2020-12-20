@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?backgroundColor"
-    >
+    android:theme="@style/Theme.ProExpense">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/abl_about"
@@ -32,10 +32,10 @@
 
         <RelativeLayout
             android:id="@+id/rl_about"
-            android:background="?colorSurface"
-            android:layout_margin="@dimen/grid_2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/grid_2"
+            android:background="?colorSurface">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imv_app"
@@ -43,10 +43,22 @@
                 android:layout_height="80dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:scaleType="center"
                 android:layout_marginTop="@dimen/grid_2"
+                android:scaleType="center"
                 android:tint="@color/blue_light_500"
                 app:srcCompat="@drawable/ic_launcher_foreground" />
+
+            <TextView
+                style="?textAppearanceCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_app_name"
+                android:layout_marginStart="@dimen/grid_1"
+                android:layout_toEndOf="@id/tv_app_name"
+                android:alpha="0.5"
+                android:padding="@dimen/grid_1"
+                android:text="@string/beta_with_parenthness"
+                android:textAllCaps="true" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_app_name"
@@ -71,12 +83,47 @@
                 android:textStyle="bold"
                 tools:text="version name" />
 
+            <LinearLayout
+                android:id="@+id/ln_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_version"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/grid_2"
+                android:layout_marginTop="@dimen/grid_3"
+                android:background="@drawable/large_rounded_warning_bg"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imv_update"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/ic_update"
+                    app:tint="?colorOnWarning" />
+
+                <TextView
+                    android:id="@+id/tv_update_status"
+                    style="?textAppearanceSubtitle2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/grid_2"
+                    android:layout_marginEnd="@dimen/grid_3"
+                    android:text="@string/new_version_available"
+                    android:textColor="?colorOnWarning" />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/tv_about_description"
                 style="?attr/textAppearanceBody2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tv_version"
+                android:layout_below="@id/ln_update"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
@@ -114,11 +161,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_privacy_open"
-                    android:layout_width="@dimen/standard_icon_size"
-                    android:layout_height="@dimen/standard_icon_size"
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_3"
-                    android:scaleType="center"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_more_next" />
             </FrameLayout>
 
@@ -151,11 +198,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_open_source_open"
-                    android:layout_width="@dimen/standard_icon_size"
-                    android:layout_height="@dimen/standard_icon_size"
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_3"
-                    android:scaleType="center"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_more_next" />
             </FrameLayout>
 
@@ -187,8 +234,8 @@
                     android:text="@string/contribute_app" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/standard_icon_size"
-                    android:layout_height="@dimen/standard_icon_size"
+                    android:layout_width="@dimen/small_icon_size"
+                    android:layout_height="@dimen/small_icon_size"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_3"
                     android:scaleType="center"
@@ -210,10 +257,10 @@
                 style="?attr/textAppearanceBody1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/dv_end"
-                android:layout_marginBottom="@dimen/grid_4"
+                android:layout_below="@id/tv_acknowledgement"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
+                android:layout_marginBottom="@dimen/grid_4"
                 android:clickable="true"
                 android:focusable="true"
                 android:linksClickable="true"
@@ -221,7 +268,20 @@
                 android:textAlignment="center"
                 android:textColor="@android:color/darker_gray"
                 android:textColorLink="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/tv_acknowledgement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?textAppearanceBody2"
+                android:layout_below="@id/dv_end"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/grid_4"
+                android:textAlignment="center"
+                android:layout_marginHorizontal="@dimen/grid_3"
+                android:text="@string/about_acknowledgement" />
         </RelativeLayout>
+
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

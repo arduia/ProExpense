@@ -42,6 +42,11 @@ fun <T> Result<T>.successOr(fallback: T): T {
 val <T> Result<T>.data: T?
     get() = (this as? Result.Success)?.data
 
+fun <T> Result<T>.getDataOrError(): T{
+    if(this is Result.Success) return data
+    else throw Exception("Data not fount in this Result($this)")
+}
+
 inline fun <reified T> Result<T>.updateOnSuccess(liveData: MutableLiveData<T>) {
     if (this is Result.Success) {
         liveData.value = data

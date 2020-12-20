@@ -1,16 +1,13 @@
 package com.arduia.expense.ui.entry
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.DatePicker
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -25,14 +22,10 @@ import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.datepicker.MaterialStyledDatePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -88,11 +81,18 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun showDatePicker() {
-        MaterialDatePicker.Builder.datePicker()
-            .build().apply {
-                addOnPositiveButtonClickListener(viewModel::selectDateTime)
-            }
-            .show(childFragmentManager, "DatePicker")
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                viewModel.selectDateTime(calendar.timeInMillis)
+            },
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]
+        ).show()
+
     }
 
     private fun setupLockButton() {
@@ -135,7 +135,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupEntryAmountEditText() {
-        viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter(decimalLength = 3))
+        viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter())
     }
 
     private fun setupCategoryListAdapter() {
@@ -187,18 +187,25 @@ class ExpenseEntryFragment : Fragment() {
         viewModel.lockMode.observe(viewLifecycleOwner) {
             //Replace with Drawable State Lists
             when (it) {
+
                 LockMode.LOCKED -> {
-                    viewBinding.cvLock.backgroundTintList = getColorList(R.color.blue_light_500)
+                    viewBinding.cvLock.backgroundTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
                     viewBinding.imvLock.setImageResource(R.drawable.ic_lock_closed)
-                    viewBinding.imvLock.imageTintList = getColorList(R.color.white)
+                    viewBinding.imvLock.imageTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
                     viewBinding.btnSave.text = getString(R.string.next)
                 }
+
                 LockMode.UNLOCK -> {
-                    viewBinding.cvLock.backgroundTintList = getColorList(R.color.white)
+                    viewBinding.cvLock.backgroundTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
                     viewBinding.imvLock.setImageResource(R.drawable.ic_lock_open)
-                    viewBinding.imvLock.imageTintList = getColorList(R.color.blue_light_500)
+                    viewBinding.imvLock.imageTintList =
+                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnSurface))
                     viewBinding.btnSave.text = getString(R.string.save)
                 }
+
             }
         }
     }
@@ -303,7 +310,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setInitialDefaultCategory() {
-        val default = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
+        val default = categoryProvider.getCategoryByID(ExpenseCategory.FOOD)
         categoryAdapter.submitList(listOf(default))
         viewModel.selectCategory(default)
     }

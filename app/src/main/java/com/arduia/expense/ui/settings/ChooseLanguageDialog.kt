@@ -12,28 +12,30 @@ import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ext.restartActivity
 import com.arduia.expense.ui.onboarding.ChooseLanguageViewModel
 import com.arduia.expense.ui.onboarding.LangListAdapter
+import com.arduia.mvvm.EventObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChooseLanguageDialog : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragChooseLanguageDialogBinding
+    private var _binding: FragChooseLanguageDialogBinding? = null
+    private val binding get() = _binding!!
 
-    private lateinit var adapter: LangListAdapter
+    private var adapter: LangListAdapter? = null
 
     private val viewModel by viewModels<ChooseLanguageViewModel>()
 
     private var dismissListener: OnDismissListener? = null
 
-    private var isSelected = false
+    private var shouldRestartActivity = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragChooseLanguageDialogBinding.inflate(layoutInflater, container, false)
+    ): View {
+        _binding = FragChooseLanguageDialogBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -44,10 +46,10 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
     }
 
     private fun setupView() {
+        binding.btnRestart.isEnabled = false
         adapter = LangListAdapter(layoutInflater).apply {
             setOnItemClickListener {
                 viewModel.selectLang(it)
-                isSelected = true
             }
         }
         with(binding.rvLanguages) {
@@ -60,23 +62,44 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
             adapter = this@ChooseLanguageDialog.adapter
         }
         binding.searchBox.setOnSearchTextChangeListener(viewModel::searchLang)
-        binding.imvDropClose.setOnClickListener { dismiss() }
+
+        binding.imvDropClose.setOnClickListener {
+            viewModel.onExit()
+        }
+
         binding.btnRestart.setOnClickListener {
-            dismiss()
-            restartActivity()
+            viewModel.onRestart()
         }
     }
 
     private fun setupViewModel() {
-        viewModel.language.observe(viewLifecycleOwner, adapter::submitList)
+
+        viewModel.language.observe(viewLifecycleOwner) {
+            adapter?.submitList(it)
+        }
+
+        viewModel.isRestartEnable.observe(viewLifecycleOwner) {
+            binding.btnRestart.isEnabled = it
+        }
+
+        viewModel.onRestartAndDismiss.observe(viewLifecycleOwner, EventObserver {
+            shouldRestartActivity = true
+            dismiss()
+        })
+
+        viewModel.onDismiss.observe(viewLifecycleOwner, EventObserver {
+            shouldRestartActivity = false
+            dismiss()
+        })
+
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if(isSelected){
+        if (shouldRestartActivity) {
             restartActivity()
         }
-        dismissListener?.onDismiss(isSelected)
+        dismissListener?.onDismiss(shouldRestartActivity)
     }
 
     fun setOnDismissListener(listener: OnDismissListener) {
@@ -85,5 +108,12 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
 
     fun interface OnDismissListener {
         fun onDismiss(isFinished: Boolean)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.rvLanguages.adapter = null
+        adapter = null
+        _binding = null
     }
 }

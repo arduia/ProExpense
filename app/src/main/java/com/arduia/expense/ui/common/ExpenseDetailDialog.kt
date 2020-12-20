@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.arduia.core.view.asInvisible
+import com.arduia.core.view.asVisible
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.databinding.SheetExpenseDetailBinding
 import com.arduia.expense.di.TopDropNavOption
@@ -17,6 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class ExpenseDetailDialog : BottomSheetDialogFragment() {
@@ -34,6 +37,8 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
     private var editOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
 
     private var deleteOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
+
+    private var isDeleteEnabled by Delegates.notNull<Boolean>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +62,7 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
             viewBinding.tvDateValue.text = date
             viewBinding.tvNameValue.text = name
             viewBinding.tvNoteValue.text = note
+            viewBinding.tvCurrencySymbol.text = symbol
             viewBinding.imvCategory.setImageResource(category)
 
             if(note.isEmpty()) hideNoteTextView()
@@ -73,9 +79,10 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
     }
 
 
-    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailsVto) {
+    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailsVto, isDeleteEnabled: Boolean = true) {
         expenseDetail = detail
         show(fragmentManager, TAG)
+        this.isDeleteEnabled = isDeleteEnabled
     }
 
     private fun setupView() {
@@ -88,6 +95,11 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
             dismiss()
         }
         viewBinding.btnDelete.setOnClickListener(::onDeleteClick)
+        if(isDeleteEnabled){
+            viewBinding.btnDelete.asVisible()
+        }else{
+            viewBinding.btnDelete.asInvisible()
+        }
     }
 
     private fun onDeleteClick(view: View){

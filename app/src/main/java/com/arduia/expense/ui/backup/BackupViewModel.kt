@@ -6,9 +6,11 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.BackupRepository
+import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.Result
 import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +22,8 @@ import java.util.*
 class BackupViewModel @ViewModelInject constructor(
     app: Application,
     private val mapper: Mapper<BackupEnt, BackupVto>,
-    private val backupRepo: BackupRepository
+    private val backupRepo: BackupRepository,
+    private val expenseRepo: ExpenseRepository
 ) : AndroidViewModel(app) {
 
     private val _backupList = BaseLiveData<List<BackupVto>>()
@@ -29,8 +32,25 @@ class BackupViewModel @ViewModelInject constructor(
     private val _backupFilePath = EventLiveData<Uri>()
     val backupFilePath = _backupFilePath.asLiveData()
 
+    val isEmptyBackupLogs = _backupList.switchMap {
+        BaseLiveData(it.isEmpty())
+    }
+
+    private val _isEmptyExpenseLogs = BaseLiveData<Boolean>()
+    val isEmptyExpenseLogs get() = _isEmptyExpenseLogs.asLiveData()
+
     init {
         observeBackupLists()
+        observeExpenseCount()
+    }
+
+    private fun observeExpenseCount(){
+        expenseRepo.getExpenseTotalCount()
+            .flowOn(Dispatchers.IO)
+            .onSuccess {
+                _isEmptyExpenseLogs post (it == 0)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeBackupLists() {

@@ -16,7 +16,7 @@
     <string name="free">Free</string>
     <!--    Home-->
     <string name="home">Home</string>
-    <string name="outcome_for_week">Outcome a week</string>
+    <string name="outcome_for_week">Outcome for this week</string>
     <string name="mmk">MMK</string>
     <string name="recents">Recent</string>
 
@@ -38,7 +38,6 @@
     <string name="clothes">Clothes</string>
     <string name="house_hold">HouseHold</string>
     <string name="food">Food</string>
-    <string name="outcome">Outcome</string>
     <string name="donation">Donation</string>
     <string name="entertainment">Entertainment</string>
     <string name="education">Education</string>
@@ -112,5 +111,36 @@
     <string name="continue_home">Continue</string>
     <string name="single_item_suffix"> item</string>
     <string name="multi_item_suffix"> items</string>
+    <string name="filter">Filter</string>
+    <string name="select_all">Select All</string>
+    <string name="delete">Delete</string>
+    <string name="choose_theme">Choose Theme</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="system_default">System Default</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="cancel">Cancel</string>
+    <string name="about_update">About Update</string>
+    <string name="install">Install</string>
+    <string name="others">Others</string>
+    <string name="outcome">Outcome</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="apply_filter">Apply Filter</string>
+    <string name="sort_by">Sort By</string>
+    <string name="beta_with_parenthness">(beta)</string>
+    <string name="new_version_available">New Version Available!</string>
+    <string name="backup_logs">Backup Logs</string>
+    <string name="delete_items">Delete Items</string>
+    <string name="confirm">Confirm</string>
+    <string name="delete_item_description">Items will be deleted!</string>
+    <string name="no_data">No Data</string>
+    <string name="category_statistics">Category Statistics</string>
+    <string name="beta">beta</string>
+    <string name="more">More</string>
+    <string name="about_acknowledgement">Thank so much for contributors who opened issues on Github for this app.</string>
 </resources>
 

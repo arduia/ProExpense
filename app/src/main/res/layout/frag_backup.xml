@@ -128,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/grid_3"
             android:layout_marginTop="@dimen/grid_4"
-            android:text="Backup Logs"
+            android:text="@string/backup_logs"
             app:layout_constraintStart_toStartOf="@id/rv_backup_logs"
             app:layout_constraintTop_toBottomOf="@id/cv_export" />
 
@@ -139,6 +139,7 @@
             android:layout_height="@dimen/standard_icon_size"
             android:layout_marginStart="@dimen/grid_3"
             android:layout_marginEnd="@dimen/grid_3"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/tv_backup_logs"
             app:layout_constraintStart_toEndOf="@+id/tv_backup_logs"
             app:layout_constraintTop_toTopOf="@id/tv_backup_logs"
@@ -157,6 +158,19 @@
             app:layout_constraintWidth_max="@dimen/width_layout_min"
             tools:itemCount="3"
             tools:listitem="@layout/item_backup" />
+
+        <TextView
+            android:id="@+id/tv_no_data"
+            style="?textAppearanceBody1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data"
+            android:layout_marginTop="@dimen/grid_4"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/rv_backup_logs"
+            app:layout_constraintStart_toStartOf="@id/rv_backup_logs"
+            app:layout_constraintTop_toTopOf="@id/rv_backup_logs" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

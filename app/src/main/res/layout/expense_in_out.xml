@@ -48,24 +48,6 @@
             android:layout_toEndOf="@id/tv_income_value"
             tools:text="MMK" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_income_percentage"
-            android:text="50%"
-            style="?textAppearanceCurrencySmall"
-            android:textColor="?colorPrimary"
-            android:layout_alignBaseline="@id/tv_income_symobol"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/grid_4"/>
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:id="@+id/imv_up_arrow"
-            app:srcCompat="@drawable/ic_up_arrrow"
-            app:tint="?colorPrimary"
-            android:layout_toStartOf="@id/tv_income_percentage"
-            android:layout_alignBottom="@id/tv_income_percentage"/>
 
         <TextView
             android:id="@+id/tv_outcome"
@@ -94,25 +76,6 @@
             android:layout_alignBaseline="@id/tv_outcome_value"
             android:layout_toEndOf="@id/tv_outcome_value"
             tools:text="MMK" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_outcome_percentage"
-            android:text="130%"
-            style="?textAppearanceCurrencySmall"
-            android:textColor="@color/red_400"
-            android:layout_alignBaseline="@id/tv_outcome_symbol"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/grid_4"/>
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:id="@+id/imv_down_arrow"
-            app:srcCompat="@drawable/ic_down_arrow"
-            app:tint="?colorPrimary"
-            android:layout_toStartOf="@id/tv_outcome_percentage"
-            android:layout_alignBottom="@id/tv_outcome_percentage"/>
-
 
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

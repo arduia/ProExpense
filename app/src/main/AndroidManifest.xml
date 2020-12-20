@@ -22,9 +22,10 @@
         android:name="com.arduia.expense.ExpenseApplication"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/Theme.Splash"
+        android:theme="@style/Base.Theme.ProExpense"
         android:supportsRtl="true">
         <activity
+            android:theme="@style/Theme.Splash"
             android:name="com.arduia.expense.ui.MainActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

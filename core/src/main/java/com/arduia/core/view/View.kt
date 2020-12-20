@@ -4,11 +4,11 @@ import android.view.View
 
 
 fun View.asVisible() {
-    visibility = View.GONE
+    visibility = View.VISIBLE
 }
 
 fun View.asInvisible(){
-    visibility = View.VISIBLE
+    visibility = View.INVISIBLE
 }
 
 fun View.asGone(){

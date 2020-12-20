@@ -11,10 +11,11 @@ import timber.log.Timber
 
 class FeedbackWorker @WorkerInject constructor(@Assisted context: Context,
                                                @Assisted param: WorkerParameters,
+                                               private val serverRepo: ProExpenseServerRepository,
                                                private val repo: ExpenseRepository): CoroutineWorker(context, param){
     override suspend fun doWork(): Result {
         val request = getFeedbackRequest() ?: return Result.failure()
-        val response = repo.postFeedback(request).first()
+        val response = serverRepo.postFeedback(request).first()
 
         Timber.d("Response -> $response")
         return Result.success()

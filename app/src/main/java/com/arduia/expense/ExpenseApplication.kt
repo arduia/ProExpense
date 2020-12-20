@@ -2,21 +2,19 @@ package com.arduia.expense
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import com.arduia.core.lang.updateResource
+import com.arduia.expense.data.SettingRepositoryFactoryImpl
+import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
+import com.arduia.expense.data.local.PreferenceFlowStorageDaoImpl
 import com.arduia.expense.data.local.PreferenceStorageDao
-import com.arduia.expense.data.local.PreferenceStorageDaoImpl
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.model.data
+import com.arduia.expense.model.getDataOrError
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.system.measureTimeMillis
 
 @HiltAndroidApp
 class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
@@ -25,7 +23,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     private val appJob = Job()
-    private val appIOScope = CoroutineScope(Dispatchers.IO + appJob)
 
     override fun onCreate() {
         super.onCreate()
@@ -47,13 +44,11 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
     override fun attachBaseContext(base: Context?) {
         runBlocking {
             if (base == null) return@runBlocking
-            val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(base, this)
-            val selectedLanguage: String = SettingsRepositoryImpl(prefDao).getSelectedLanguage().awaitValueOrError()
+            val selectedLanguage  = SettingRepositoryFactoryImpl.create(base).getSelectedLanguageSync().getDataOrError()
             val localedContext = base.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }
     }
-
 
     override fun onTerminate() {
         super.onTerminate()

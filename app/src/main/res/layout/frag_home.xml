@@ -2,7 +2,6 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ml_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,13 +27,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="80dp"
+        android:background="?backgroundColor"
         android:clipToPadding="false"
         android:id="@+id/scroll_home"
+        android:overScrollMode="never"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <include

@@ -12,36 +12,29 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?colorSurface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent"
+        app:liftOnScroll="true"
+        app:liftOnScrollTargetViewId="@id/rv_expense">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tb_expense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?colorSurface"
+            app:menu="@menu/menu_expense_log"
             app:navigationIcon="@drawable/ic_menu"
-            app:layout_scrollFlags="scroll"
             app:title="@string/expense_logs" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?backgroundColor"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
-        <ProgressBar
-            android:id="@+id/pb_loading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminateOnly="true"
-            android:indeterminateTint="@color/blue_light_500"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@id/app_bar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/app_bar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_expense"
@@ -51,17 +44,19 @@
             android:overScrollMode="never"
             android:paddingBottom="80dp"
             android:scrollbars="vertical"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
-            tools:listitem="@layout/item_expense" />
+            tools:listitem="@layout/item_expense_log" />
 
-        <TextView
-            android:id="@+id/tv_no_data"
-            style="?textAppearanceBody1"
-            android:layout_width="wrap_content"
+        <include
+            android:layout_marginTop="@dimen/grid_4"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:text="NoData" />
+            android:visibility="invisible"
+            android:id="@+id/layout_no_data"
+            layout="@layout/no_expense_logs" />
+
 
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

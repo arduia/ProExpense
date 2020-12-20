@@ -2,12 +2,12 @@ package com.arduia.expense.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
@@ -16,28 +16,25 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
+import com.arduia.expense.data.SettingRepositoryFactoryImpl
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.data.SettingsRepositoryImpl
+import com.arduia.expense.data.local.PreferenceFlowStorageDaoImpl
 import com.arduia.expense.data.local.PreferenceStorageDao
-import com.arduia.expense.data.local.PreferenceStorageDaoImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.model.data
+import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.backup.BackupMessageViewModel
+import com.arduia.expense.ui.common.themeColor
 import com.arduia.mvvm.EventObserver
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
-import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
-import kotlin.system.measureNanoTime
-import kotlin.system.measureTimeMillis
 
 
 @AndroidEntryPoint
@@ -66,23 +63,25 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private val viewModel by viewModels<MainViewModel>()
 
+    init {
+//        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+    }
+
     @Inject
     @IntegerDecimal
     lateinit var countFormat: DecimalFormat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(viewModel)
         setTheme(R.style.Theme_ProExpense)
-
-        viewModel.hashCode()
-
         viewBinding = ActivMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
-
+        setContentView(viewBinding.root)
         navController = findNavController()
         navOption = createNavOption()
 
-        setContentView(viewBinding.root)
+
         setupView()
         setupViewModel()
     }
@@ -111,7 +110,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private fun setupView() {
 
-        viewBinding.fbMainAdd.setColorFilter(Color.WHITE)
+        viewBinding.fbMainAdd.setColorFilter(this.themeColor(R.attr.colorOnPrimary))
         viewBinding.fbMainAdd.setOnClickListener {
             addBtnClickListener.invoke()
         }
@@ -265,14 +264,16 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override fun onDestroy() {
         super.onDestroy()
+        lifecycle.removeObserver(viewModel)
         itemSelectTask = null
     }
 
     override fun attachBaseContext(newBase: Context?) {
         runBlocking {
             if (newBase == null) return@runBlocking
-            val prefDao: PreferenceStorageDao = PreferenceStorageDaoImpl(newBase, this)
-            val selectedLanguage: String  = SettingsRepositoryImpl(prefDao).getSelectedLanguage().awaitValueOrError()
+            val setting = SettingRepositoryFactoryImpl.create(newBase)
+            val selectedLanguage = setting.getSelectedLanguageSync().getDataOrError()
+            delegate.localNightMode = setting.getSelectedThemeModeSync().getDataOrError()
             val localedContext = newBase.updateResource(selectedLanguage)
             super.attachBaseContext(localedContext)
         }
@@ -282,6 +283,7 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         private val TOP_DESTINATIONS = listOf(
             R.id.dest_home,
             R.id.dest_backup,
+            R.id.dest_statistics,
             R.id.dest_feedback,
             R.id.dest_about,
             R.id.dest_settings,

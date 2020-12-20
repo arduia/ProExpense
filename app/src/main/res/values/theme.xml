@@ -1,48 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.ProExpense" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.ProExpense" parent="Base.Theme.ProExpense">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blue_light_500</item>
-        <item name="colorPrimaryDark">@color/blue_light_700</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorAccent">@color/blue_light_500</item>
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/dark</item>
         <item name="rippleColor">@android:color/darker_gray</item>
         <item name="backgroundColor">@color/gray_200</item>
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:statusBarColor">@color/gray_100</item>
+        <item name="colorPositive">@color/green_500</item>
+        <item name="colorOnPositive">@color/gray_100</item>
+        <item name="colorNegative">@color/red_400</item>
+        <item name="colorOnNegative">@color/gray_100</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-
-        <item name="textAppearanceBody1">@style/TextAppearance.ProExpense.Body1</item>
-        <item name="textAppearanceBody2">@style/TextAppearance.ProExpense.Body2</item>
-
-        <item name="textAppearanceHeadline6">@style/TextAppearance.ProExpense.H6</item>
-
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.ProExpense.Subtitle1</item>
-        <item name="shapeAppearanceMediumComponent">
-            @style/ShapeAppearance.ProExpense.MediumComponent
-        </item>
-        <item name="textAppearanceCurrencyLarge">@style/TextAppearance.ProExpense.CurrencyLarge
-        </item>
-        <item name="textAppearanceCurrencySmall">@style/TextAppearance.ProExpense.CurrencySmall
-        </item>
-
-        <item name="materialButtonStyle">@style/Widget.ProExpense.Button</item>
-        <item name="materialCardViewStyle">@style/Widget.ProExpense.CardView</item>
-        <item name="iconButtonStyle">@style/Widget.ProExpense.IconButton</item>
-        <item name="proExpenseNavigationViewStyle">@style/Widget.ProExpense.NavigationView.Overlay
-        </item>
-        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar.Horizontal</item>
-        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox
-        </item>
-
+        <item name="android:statusBarColor" tools:targetApi="m">@android:color/transparent</item>
+        <item name="colorWarning">@color/yellow_500</item>
+        <item name="colorOnWarning">@color/dark_gray</item>
     </style>
 
-    <style name="Theme.Splash" parent="Theme.ProExpense">
+    <style name="Theme.Splash" parent="Base.Theme.ProExpense">
         <item name="android:windowBackground">@color/blue_light_500</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:statusBarColor">@color/blue_light_500</item>
     </style>
+
+    <color name="color_statistic_background">@color/gray_100</color>
 
 </resources>

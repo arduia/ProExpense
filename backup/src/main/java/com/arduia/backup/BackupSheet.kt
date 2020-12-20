@@ -10,7 +10,7 @@ import java.lang.IndexOutOfBoundsException
 abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
     internal suspend fun import(book: Workbook): Int {
-        var count = -1
+        val count :Int
         val sheet = book.getSheet(sheetName)
         try {
             val sheetData = getDataFromSheet(sheet)
