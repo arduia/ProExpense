@@ -91,7 +91,7 @@ class ExpenseViewModel @ViewModelInject constructor(
             try {
                 val dateRecent = expenseRepo.getMostRecentDateSync().getDataOrError()
                 val dateLatest = expenseRepo.getMostLatestDateSync().getDataOrError()
-                filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.ASC)
+                filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.DESC)
                 filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
             } catch (e: Exception) {
                 //On Empty Case

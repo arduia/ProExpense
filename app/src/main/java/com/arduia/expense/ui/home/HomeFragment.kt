@@ -203,17 +203,17 @@ class HomeFragment : NavBaseFragment() {
 
         viewModel.weekOutcome.observe(viewLifecycleOwner) {
             binding.cvExpenseInOut.tvOutcomeValue.text = it
-        }
+            }
 
-        viewModel.onDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
-            detailDialog?.dismiss()
-            showDeleteConfirmDialog(info = it)
-        })
+            viewModel.onDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
+                detailDialog?.dismiss()
+                showDeleteConfirmDialog(info = it)
+            })
 
-        viewModel.isEmptyRecent.observe(viewLifecycleOwner) { isEmptyRecent ->
-            if (isEmptyRecent) {
-                binding.cvExpenseList.root.asGone()
-            } else {
+            viewModel.isEmptyRecent.observe(viewLifecycleOwner) { isEmptyRecent ->
+                if (isEmptyRecent) {
+                    binding.cvExpenseList.root.asGone()
+                } else {
                 binding.cvExpenseList.root.asVisible()
             }
         }
