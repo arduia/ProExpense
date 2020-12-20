@@ -1,0 +1,9 @@
+Bugs Fixed.
+
+New Features:
+ - Repeat Expense Entry
+ - Light/Dark Mode
+ - Decimal Amount
+ - Different Currencies
+ - Category Statistics
+ and more.

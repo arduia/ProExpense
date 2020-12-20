@@ -8,8 +8,6 @@ def apiProfile = rootProject.file("api.properties")
 def apiProperties = new Properties()
 apiProperties.load(new FileInputStream(apiProfile))
 
-def proExpenseVersionCode = 6
-def proExpenseVersionName = "0.2.0-alpha1"
 
 android {
     compileSdkVersion 30
@@ -20,8 +18,8 @@ android {
         applicationId "com.arduia.expense"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode proExpenseVersionCode
-        versionName proExpenseVersionName
+        versionCode 7
+        versionName "1.0.0-beta01"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -35,6 +33,7 @@ android {
         language{
             enableSplit = false
         }
+
     }
 
     buildTypes {
