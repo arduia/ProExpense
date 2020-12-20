@@ -3,7 +3,6 @@ package com.arduia.expense.ui.entry
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.drawable.ColorStateListDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -311,7 +310,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setInitialDefaultCategory() {
-        val default = categoryProvider.getCategoryByID(ExpenseCategory.OUTCOME)
+        val default = categoryProvider.getCategoryByID(ExpenseCategory.FOOD)
         categoryAdapter.submitList(listOf(default))
         viewModel.selectCategory(default)
     }

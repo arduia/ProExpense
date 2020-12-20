@@ -38,7 +38,6 @@
     <string name="clothes">Clothes</string>
     <string name="house_hold">HouseHold</string>
     <string name="food">Food</string>
-    <string name="outcome">Outcome</string>
     <string name="donation">Donation</string>
     <string name="entertainment">Entertainment</string>
     <string name="education">Education</string>
@@ -124,5 +123,7 @@
     <string name="cancel">Cancel</string>
     <string name="about_update">About Update</string>
     <string name="install">Install</string>
+    <string name="others">Others</string>
+    <string name="outcome">Outcome</string>
 </resources>
 

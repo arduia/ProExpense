@@ -31,7 +31,7 @@
     <string name="clothes">အ၀တ်အစား</string>
     <string name="house_hold">အိမ်သုံး</string>
     <string name="food">အစားအသောက်</string>
-    <string name="outcome">ထွက်ငွေ</string>
+    <string name="others">အထွေထွေသုံး</string>
     <string name="donation">အလှူဒါန</string>
     <string name="entertainment">ဖျော်ဖြေရေး</string>
     <string name="education">ပညာရေး</string>
@@ -122,5 +122,6 @@
     <string name="cancel">Cancel</string>
     <string name="about_update">About Update</string>
     <string name="install">Install</string>
+    <string name="outcome">ထွက်ငွေ</string>
 
 </resources>
