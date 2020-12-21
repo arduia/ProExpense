@@ -5,8 +5,8 @@
         <item name="cornerSize">4dp</item>
     </style>
 
-    <style name="Widget.ProExpense.NavigationView.Overlay" parent="">
-        <item name="itemTextAppearance">?attr/subtitleTextAppearance</item>
+    <style name="Widget.ProExpense.NavigationView.Overlay.Base" parent="">
+
         <item name="itemTextColor">@color/nav_text_color</item>
         <item name="itemIconSize">@dimen/size_nav_icon</item>
         <item name="iconTint">@color/darker_gray</item>
@@ -49,9 +49,11 @@
     <style name="Widget.ProExpense.CircularCardView" parent="Widget.MaterialComponents.CardView">
         <item name="shapeAppearance">@style/ShapeAppearanceOverlay.ProExpense.Circular</item>
     </style>
+
     <style name="ShapeAppearanceOverlay.ProExpense.Circular" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%p</item>
         <item name="borderWidth">2dp</item>
     </style>
+
 </resources>

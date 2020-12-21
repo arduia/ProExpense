@@ -72,6 +72,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
 //    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         val item = getItemFromPosition(position)
         when {
             (holder is LogVH) && (item is ExpenseLogVo.Log) -> {
@@ -137,6 +138,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
 
         override fun onClick(v: View?) {
             if (v == null) return
+            if(adapterPosition == -1) return
             val item = getItemFromPosition(adapterPosition)
 
             if (item !is ExpenseLogVo.Log) return
