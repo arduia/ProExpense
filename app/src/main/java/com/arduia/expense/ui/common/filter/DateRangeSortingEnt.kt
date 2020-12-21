@@ -2,7 +2,7 @@ package com.arduia.expense.ui.common.filter
 
 import com.arduia.expense.ui.common.exception.validateDateRange
 
-data class DateRangeSortingEnt(val start: Long, val end: Long, val sorting: Sorting = Sorting.ASC) {
+data class DateRangeSortingEnt(val start: Long, val end: Long, val sorting: Sorting = Sorting.DESC) {
     init {
         validateDateRange(start = start,end =  end)
     }

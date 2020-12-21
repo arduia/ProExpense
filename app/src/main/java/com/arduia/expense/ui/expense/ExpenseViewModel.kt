@@ -9,6 +9,8 @@ import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.getDataOrError
+import com.arduia.expense.model.onError
+import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.Exception
+import java.sql.Date
 
 
 class ExpenseViewModel @ViewModelInject constructor(
@@ -56,8 +59,9 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _onFilterShow = EventLiveData<RangeSortingFilterEnt>()
     val onFilterShow get() = _onFilterShow.asLiveData()
 
-    private val filterConstraint = BaseLiveData<DateRangeSortingEnt>()
-    private lateinit var filterLimit: DateRangeSortingEnt
+
+    private val filterLimit = BaseLiveData<DateRangeSortingEnt>()
+    private val filterConstraint = MutableLiveData<DateRangeSortingEnt>()
 
     private val _onDetailShow = EventLiveData<ExpenseDetailsVto>()
     val onDetailShow get() = _onDetailShow.asLiveData()
@@ -83,22 +87,43 @@ class ExpenseViewModel @ViewModelInject constructor(
 
     init {
         observeCurrencySymbol()
-
+        observeMaxAndMinDateRange()
         mapper = expenseEntToLogMapperFactory.create { currencySymbol }
         _expenseLogMode.value = ExpenseMode.NORMAL
 
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val dateRecent = expenseRepo.getMostRecentDateSync().getDataOrError()
-                val dateLatest = expenseRepo.getMostLatestDateSync().getDataOrError()
-                filterConstraint post DateRangeSortingEnt(dateRecent, dateLatest, Sorting.DESC)
-                filterLimit = DateRangeSortingEnt(dateRecent, dateLatest)
-            } catch (e: Exception) {
-                //On Empty Case
-                filterConstraint post DateRangeSortingEnt(0, 0, Sorting.ASC)
-                filterLimit = DateRangeSortingEnt(0, 0)
+    }
+
+    private fun observeMaxAndMinDateRange() {
+        expenseRepo.getMaxAndMiniDateRange()
+            .flowOn(Dispatchers.IO)
+            .onSuccess {
+                Timber.d("onSuccess $it")
+                filterLimit post DateRangeSortingEnt(it.minDate, it.maxDate)
+                val constraint = filterConstraint.value
+                if(constraint!=null){
+                    //If Already has Constraint
+                    val minDateConstraint = constraint.start
+                    val maxConstraint = constraint.end
+                    val min = if(minDateConstraint < it.minDate) it.minDate else minDateConstraint
+                    val max = if(maxConstraint > it.maxDate) it.maxDate else maxConstraint
+                    filterConstraint post DateRangeSortingEnt(min, max, constraint.sorting)
+                } else {
+                    //New Constraint
+                    filterConstraint post DateRangeSortingEnt(it.minDate, it.maxDate)
+                }
             }
-        }
+            .onError {
+                Timber.d("onError $it")
+                val defaultDateRange = getDefaultDateRange()
+                filterLimit post defaultDateRange
+                filterConstraint post defaultDateRange
+            }
+            .launchIn(viewModelScope)
+
+    }
+
+    private fun getDefaultDateRange(): DateRangeSortingEnt{
+        return DateRangeSortingEnt(java.util.Date().time, java.util.Date().time)
     }
 
     private fun createFilterInfo(constraint: DateRangeSortingEnt): String {
@@ -155,7 +180,8 @@ class ExpenseViewModel @ViewModelInject constructor(
 
     fun onFilterPrepare() {
         val constraint = filterConstraint.value ?: return
-        _onFilterShow post event(RangeSortingFilterEnt(filter = constraint, limit = filterLimit))
+        val limit = filterLimit.value ?: return
+        _onFilterShow post event(RangeSortingFilterEnt(filter = constraint, limit = limit))
     }
 
     fun onDeletePrepared() {

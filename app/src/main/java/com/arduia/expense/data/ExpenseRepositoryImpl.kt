@@ -113,6 +113,12 @@ class ExpenseRepositoryImpl(
         }
     }
 
+    override fun getMaxAndMiniDateRange(): FlowResult<DateRangeDataModel> {
+        return expenseDao.getMaxAndMiniDateRange()
+            .map { SuccessResult(it) }
+            .catch { ErrorResult(RepositoryException(it)) }
+    }
+
     override fun getExpenseRange(limit: Int, offset: Int): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getExpenseRange(limit, offset)
             .map { SuccessResult(it) }
