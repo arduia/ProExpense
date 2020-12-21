@@ -171,7 +171,7 @@ class HomeFragment : NavBaseFragment() {
             detailDialog?.setOnEditClickListener {
                 navigateEntryFragment(expenseDetail.id)
             }
-            detailDialog?.showDetail(parentFragmentManager, expenseDetail, isDeleteEnabled = false)
+            detailDialog?.showDetail(parentFragmentManager, expenseDetail, isDeleteEnabled = true)
             mainHost.hideAddButton()
         })
 
