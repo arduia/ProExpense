@@ -17,13 +17,13 @@ import com.arduia.core.view.asVisible
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseLogsBinding
 import com.arduia.expense.di.TopDropNavOption
+import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.DeleteConfirmFragment
 import com.arduia.expense.ui.common.DeleteInfoVo
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.common.filter.DateRangeSortingFilterDialog
-import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
+import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
 import com.arduia.expense.ui.expense.swipe.SwipeItemCallback
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
@@ -41,7 +41,7 @@ class ExpenseFragment : NavBaseFragment() {
 
     private val viewModel by viewModels<ExpenseViewModel>()
 
-    private var filterDialog: DateRangeSortingFilterDialog? = null
+    private var filterDialog: ExpenseFilterDialogFragment? = null
 
     private var adapter: ExpenseLogAdapter? = null
 
@@ -120,7 +120,7 @@ class ExpenseFragment : NavBaseFragment() {
         deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(1, null))
     }
 
-    private fun showFilterDialog(filterEnt: RangeSortingFilterEnt) {
+    private fun showFilterDialog(filterEnt: ExpenseLogFilterInfo) {
         //Remove Old Dialog if exit
         with(filterDialog) {
             this?.setOnFilterApplyListener(null)
@@ -128,16 +128,13 @@ class ExpenseFragment : NavBaseFragment() {
         }
 
         //Create New Dialog
-        filterDialog = DateRangeSortingFilterDialog().apply {
-            setOnFilterApplyListener { filter ->
-                viewModel.setFilter(filter)
-            }
+        filterDialog = ExpenseFilterDialogFragment().apply {
+            setOnFilterApplyListener(viewModel::setFilter)
         }
 
         filterDialog?.show(
             childFragmentManager,
-            filter = filterEnt.filter,
-            limit = filterEnt.limit
+            filterEnt
         )
     }
 
@@ -205,15 +202,14 @@ class ExpenseFragment : NavBaseFragment() {
             }"
         }
 
-        viewModel.isEmptyLogs.observe(viewLifecycleOwner){isEmptyLogs ->
+        viewModel.isFilterEmpty.observe(viewLifecycleOwner){ isEmptyLogs ->
             if(isEmptyLogs){
                 showNoExpenseInfo()
-                disableMenuAction()
+
                 setEmptyStringOnToolbarSubtitle()
                 unregisterFilterInfoObserver()
             }else{
                 hideNoExpenseInfo()
-                enableMenuActions()
                 registerFilterInfoObserver()
             }
         }

@@ -54,7 +54,7 @@ class ExpenseEntryFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View  {
         initViewBinding(parent = container)
         return viewBinding.root
     }

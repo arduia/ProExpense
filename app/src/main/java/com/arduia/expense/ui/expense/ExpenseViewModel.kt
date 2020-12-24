@@ -7,12 +7,14 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.domain.filter.DateRange
+import com.arduia.expense.domain.filter.ExpenseDateRange
+import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onError
 import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
-import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.expense.ui.expense.swipe.SwipeItemState
@@ -27,8 +29,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.Exception
-import java.sql.Date
 
 
 class ExpenseViewModel @ViewModelInject constructor(
@@ -56,15 +56,15 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _onSingleDeleteConfirm = EventLiveData<Unit>()
     val onSingleDeleteConfirm get() = _onSingleDeleteConfirm.asLiveData()
 
-    private val _onFilterShow = EventLiveData<RangeSortingFilterEnt>()
+    private val _onFilterShow = EventLiveData<ExpenseLogFilterInfo>()
     val onFilterShow get() = _onFilterShow.asLiveData()
 
-
-    private val filterLimit = BaseLiveData<DateRangeSortingEnt>()
+    private val filterLimit = BaseLiveData<DateRange>()
     private val filterConstraint = MutableLiveData<DateRangeSortingEnt>()
 
     private val _onDetailShow = EventLiveData<ExpenseDetailsVto>()
     val onDetailShow get() = _onDetailShow.asLiveData()
+
 
     val filterInfo
         get() = filterConstraint.switchMap {
@@ -75,7 +75,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         return@switchMap createSourcePagingLiveData(filter)
     }
 
-    val isEmptyLogs: LiveData<Boolean> = expenseList.switchMap {
+    val isFilterEmpty: LiveData<Boolean> = expenseList.switchMap {
         BaseLiveData(it.size <= 0)
     }
 
@@ -98,36 +98,44 @@ class ExpenseViewModel @ViewModelInject constructor(
             .flowOn(Dispatchers.IO)
             .onSuccess {
                 Timber.d("onSuccess $it")
-                filterLimit post DateRangeSortingEnt(it.minDate, it.maxDate)
+                filterLimit post ExpenseDateRange(start = it.minDate, end = it.maxDate)
                 val constraint = filterConstraint.value
-                if(constraint!=null){
+                if (constraint != null) {
                     //If Already has Constraint
-                    val minDateConstraint = constraint.start
-                    val maxConstraint = constraint.end
-                    val min = if(minDateConstraint < it.minDate) it.minDate else minDateConstraint
-                    val max = if(maxConstraint > it.maxDate) it.maxDate else maxConstraint
-                    filterConstraint post DateRangeSortingEnt(min, max, constraint.sorting)
+                    val minDateConstraint = constraint.dateRange.start
+                    val maxConstraint = constraint.dateRange.end
+                    val min = if (minDateConstraint < it.minDate) it.minDate else minDateConstraint
+                    val max = if (maxConstraint > it.maxDate) it.maxDate else maxConstraint
+                    filterConstraint post DateRangeSortingEnt(
+                        ExpenseDateRange(min, max),
+                        constraint.sorting
+                    )
                 } else {
                     //New Constraint
-                    filterConstraint post DateRangeSortingEnt(it.minDate, it.maxDate)
+                    filterConstraint post DateRangeSortingEnt(
+                        ExpenseDateRange(
+                            it.minDate,
+                            it.maxDate
+                        )
+                    )
                 }
             }
             .onError {
-                Timber.d("onError $it")
                 val defaultDateRange = getDefaultDateRange()
                 filterLimit post defaultDateRange
-                filterConstraint post defaultDateRange
+                filterConstraint post DateRangeSortingEnt(dateRange = defaultDateRange)
             }
             .launchIn(viewModelScope)
 
     }
 
-    private fun getDefaultDateRange(): DateRangeSortingEnt{
-        return DateRangeSortingEnt(java.util.Date().time, java.util.Date().time)
+    private fun getDefaultDateRange(): ExpenseDateRange {
+        return ExpenseDateRange(java.util.Date().time, java.util.Date().time)
     }
 
     private fun createFilterInfo(constraint: DateRangeSortingEnt): String {
-        val dateRange = dateRangeFormatter.format(constraint.start, constraint.end)
+        val dateRangeData = constraint.dateRange
+        val dateRange = dateRangeFormatter.format(dateRangeData.start, dateRangeData.end)
         return "$dateRange . ${constraint.sorting}"
     }
 
@@ -144,12 +152,17 @@ class ExpenseViewModel @ViewModelInject constructor(
     private fun createSourcePagingLiveData(filter: DateRangeSortingEnt): LiveData<PagedList<ExpenseLogVo>> {
         val sourceFactory =
             if (filter.sorting == Sorting.DESC) expenseRepo.getExpenseRangeDescSource(
-                filter.start,
-                filter.end,
+                filter.dateRange.start,
+                filter.dateRange.end,
                 0,
                 Int.MAX_VALUE
             )
-            else expenseRepo.getExpenseRangeAscSource(filter.start, filter.end, 0, Int.MAX_VALUE)
+            else expenseRepo.getExpenseRangeAscSource(
+                filter.dateRange.start,
+                filter.dateRange.end,
+                0,
+                Int.MAX_VALUE
+            )
 
         return sourceFactory
             .map(mapper::map)
@@ -174,14 +187,23 @@ class ExpenseViewModel @ViewModelInject constructor(
         onSwipeStateChanged()
     }
 
-    fun setFilter(dateRangeEnt: DateRangeSortingEnt) {
-        this.filterConstraint post dateRangeEnt
+    fun setFilter(dateRangeEnt: ExpenseLogFilterInfo) {
+        this.filterConstraint set DateRangeSortingEnt(
+            dateRangeEnt.dateRangeSelected,
+            dateRangeEnt.sorting
+        )
     }
 
     fun onFilterPrepare() {
         val constraint = filterConstraint.value ?: return
         val limit = filterLimit.value ?: return
-        _onFilterShow post event(RangeSortingFilterEnt(filter = constraint, limit = limit))
+        _onFilterShow post event(
+            ExpenseLogFilterInfo(
+                dateRangeLimit = limit,
+                dateRangeSelected = constraint.dateRange,
+                constraint.sorting
+            )
+        )
     }
 
     fun onDeletePrepared() {
