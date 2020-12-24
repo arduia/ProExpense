@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:theme="@style/Theme.ProExpense"
-    android:background="?colorSurface">
+    android:background="?colorSurface"
+    android:theme="@style/Theme.ProExpense">
 
     <TextView
         android:id="@+id/tv_sorted_by"
@@ -15,17 +15,17 @@
         android:layout_marginTop="@dimen/grid_3"
         android:text="@string/sort_by"
         app:layout_constraintStart_toStartOf="@+id/cv_start_date"
-        app:layout_constraintTop_toBottomOf="@+id/cv_start_date" />
+        app:layout_constraintTop_toBottomOf="@+id/cv_start_time" />
 
     <TextView
+        android:id="@+id/tv_from"
+        style="?textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_from"
-        android:text="@string/from"
         android:layout_marginTop="@dimen/grid_3"
-        style="?textAppearanceSubtitle1"
+        android:text="@string/from"
         app:layout_constraintStart_toStartOf="@id/cv_start_date"
-        app:layout_constraintTop_toBottomOf="@id/tv_filter"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_filter" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_start_date"
@@ -47,8 +47,8 @@
                 android:layout_width="@dimen/standard_icon_size"
                 android:layout_height="@dimen/standard_icon_size"
                 android:layout_marginVertical="@dimen/grid_1"
-                android:layout_marginStart="@dimen/grid_1"
-                android:scaleType="centerInside"
+                android:layout_marginStart="@dimen/grid_2"
+                android:scaleType="center"
                 app:srcCompat="@drawable/ic_date" />
 
             <TextView
@@ -62,14 +62,85 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_start_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/grid_2"
+        app:cardElevation="1dp"
+        app:layout_constraintEnd_toEndOf="@id/cv_start_date"
+        app:layout_constraintStart_toStartOf="@id/cv_start_date"
+        app:layout_constraintTop_toBottomOf="@id/cv_start_date">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/standard_icon_size"
+                android:layout_height="@dimen/standard_icon_size"
+                android:layout_marginVertical="@dimen/grid_1"
+                android:layout_marginStart="@dimen/grid_2"
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_time" />
+
+            <TextView
+                android:id="@+id/tv_start_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/grid_2"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:gravity="center"
+                tools:text="11:00 AM" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_end_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/grid_2"
+        app:cardElevation="1dp"
+        app:layout_constraintEnd_toEndOf="@id/cv_end_date"
+        app:layout_constraintStart_toStartOf="@id/cv_end_date"
+        app:layout_constraintTop_toBottomOf="@id/cv_end_date">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/standard_icon_size"
+                android:layout_height="@dimen/standard_icon_size"
+                android:layout_marginVertical="@dimen/grid_1"
+                android:layout_marginStart="@dimen/grid_2"
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_time" />
+
+            <TextView
+                android:id="@+id/tv_end_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/grid_2"
+                android:layout_marginEnd="@dimen/grid_3"
+                android:gravity="center"
+                tools:text="10:40 PM" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <TextView
+        android:id="@+id/tv_to"
+        style="?textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_to"
         android:text="@string/to"
-        style="?textAppearanceSubtitle1"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_from"
-        app:layout_constraintStart_toStartOf="@id/cv_end_date"/>
+        app:layout_constraintStart_toStartOf="@id/cv_end_date" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_end_date"
         android:layout_width="wrap_content"
@@ -77,8 +148,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cv_start_date"
-        app:layout_constraintTop_toBottomOf="@id/tv_to"
-        >
+        app:layout_constraintTop_toBottomOf="@id/tv_to">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -88,10 +158,9 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/standard_icon_size"
                 android:layout_height="@dimen/standard_icon_size"
-                app:cardElevation="1dp"
                 android:layout_marginVertical="@dimen/grid_1"
                 android:layout_marginStart="@dimen/grid_2"
-                android:scaleType="centerInside"
+                android:scaleType="center"
                 app:srcCompat="@drawable/ic_date" />
 
             <TextView

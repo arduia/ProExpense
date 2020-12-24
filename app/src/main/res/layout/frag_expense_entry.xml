@@ -121,8 +121,7 @@
                     android:gravity="top"
                     android:hint="@string/note"
                     android:maxLength="100"
-                    android:nextFocusDown="@id/btn_save"
-                    android:singleLine="true" />
+                    android:nextFocusDown="@id/btn_save" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
