@@ -10,10 +10,10 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemBackupBinding
 import com.arduia.expense.ui.vto.BackupVto
 
-class BackupListAdapter(private val layoutInflater: LayoutInflater):
-    ListAdapter<BackupVto,BackupListAdapter.VH>(DIFF_UTIL){
+class BackupListAdapter(private val layoutInflater: LayoutInflater) :
+    ListAdapter<BackupVto, BackupListAdapter.VH>(DIFF_UTIL) {
 
-    private var itemClickListener = {_: BackupVto -> }
+    private var itemClickListener = { _: BackupVto -> }
 
     private val itemsSuffix = layoutInflater.context.getString(R.string.single_item_suffix)
     private val singleItemSuffix = layoutInflater.context.getString(R.string.multi_item_suffix)
@@ -25,21 +25,22 @@ class BackupListAdapter(private val layoutInflater: LayoutInflater):
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        with(holder.viewBinding){
+        with(holder.viewBinding) {
             val item = getItem(position)
 
             tvBackupName.text = item.name
             tvDate.text = item.date
             tvItems.text = item.items
-            pbStatus.visibility = if(item.onProgress) View.VISIBLE else View.INVISIBLE
-            imvStatus.visibility = if(item.onProgress) View.INVISIBLE else View.VISIBLE
-
-            cdBackup.setOnClickListener(holder)
+            pbStatus.visibility = if (item.onProgress) View.VISIBLE else View.INVISIBLE
+            imvDelete.visibility = if (item.onProgress) View.INVISIBLE else View.VISIBLE
+            if (item.onProgress.not()) {
+                rlBackup.setOnClickListener(holder)
+            }
         }
     }
 
-    inner class VH(val viewBinding: ItemBackupBinding):
-        RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener{
+    inner class VH(val viewBinding: ItemBackupBinding) :
+        RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener {
 
         override fun onClick(v: View?) {
             val item = getItem(adapterPosition)
@@ -49,21 +50,22 @@ class BackupListAdapter(private val layoutInflater: LayoutInflater):
 
     }
 
-    fun setItemClickListener(listener: (BackupVto) -> Unit ){
+    fun setItemClickListener(listener: (BackupVto) -> Unit) {
         this.itemClickListener = listener
     }
 }
 
-private val DIFF_UTIL get() = object : DiffUtil.ItemCallback<BackupVto>(){
-    override fun areItemsTheSame(oldItem: BackupVto, newItem: BackupVto): Boolean {
-        return oldItem == newItem
-    }
+private val DIFF_UTIL
+    get() = object : DiffUtil.ItemCallback<BackupVto>() {
+        override fun areItemsTheSame(oldItem: BackupVto, newItem: BackupVto): Boolean {
+            return oldItem == newItem
+        }
 
-    override fun areContentsTheSame(oldItem: BackupVto, newItem: BackupVto): Boolean {
-        return (oldItem.date == newItem.date) &&
-                (oldItem.id == newItem.id) &&
-                (oldItem.name == newItem.name) &&
-                (oldItem.onProgress == newItem.onProgress) &&
-                (oldItem.items == newItem.items)
+        override fun areContentsTheSame(oldItem: BackupVto, newItem: BackupVto): Boolean {
+            return (oldItem.date == newItem.date) &&
+                    (oldItem.id == newItem.id) &&
+                    (oldItem.name == newItem.name) &&
+                    (oldItem.onProgress == newItem.onProgress) &&
+                    (oldItem.items == newItem.items)
+        }
     }
-}

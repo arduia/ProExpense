@@ -39,12 +39,15 @@ class BackupViewModel @ViewModelInject constructor(
     private val _isEmptyExpenseLogs = BaseLiveData<Boolean>()
     val isEmptyExpenseLogs get() = _isEmptyExpenseLogs.asLiveData()
 
+    private val _onBackupDelete = EventLiveData<Unit>()
+    val onBackupDelete get() = _onBackupDelete.asLiveData()
+
     init {
         observeBackupLists()
         observeExpenseCount()
     }
 
-    private fun observeExpenseCount(){
+    private fun observeExpenseCount() {
         expenseRepo.getExpenseTotalCount()
             .flowOn(Dispatchers.IO)
             .onSuccess {
@@ -57,7 +60,7 @@ class BackupViewModel @ViewModelInject constructor(
         backupRepo.getBackupAll()
             .flowOn(Dispatchers.IO)
             .onEach {
-                if(it  is Result.Success){
+                if (it is Result.Success) {
                     _backupList post it.data.map(mapper::map)
                     Timber.d("backupList ${it.data}")
                 }
@@ -65,11 +68,9 @@ class BackupViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun onBackupItemSelect(id: Int) {
+    fun onBackupDeleteConfirmed(item: BackupVto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val backupEnt = backupRepo.getBackupByID(id).awaitValueOrError()
-            val backupFileUri = Uri.parse(backupEnt.filePath)
-            _backupFilePath post event(backupFileUri)
+            backupRepo.deleteBackupByID(item.id)
         }
     }
 

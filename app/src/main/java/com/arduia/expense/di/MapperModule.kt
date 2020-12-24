@@ -58,10 +58,4 @@ object MapperModule {
             headerDateFormat = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH),
             logMapper
         )
-
-    @Provides
-    fun privateBackupMapper(
-        @ActivityContext context: Context,
-        dateFormatter: DateFormat
-    ): Mapper<BackupEnt, BackupVto> = BackupVoMapper(context, dateFormatter)
 }
