@@ -2,14 +2,14 @@ package com.arduia.expense.ui.statistics
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragStatisticBinding
+import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
-import com.arduia.expense.ui.common.filter.DateRangeSortingFilterDialog
-import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
+import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +22,7 @@ class StatisticsFragment : NavBaseFragment() {
     private var categoryAdapter: CategoryStatisticListAdapter? = null
 
     private val viewModel by viewModels<StatisticsViewModel>()
-    private var filterDialog: DateRangeSortingFilterDialog? = null
+    private var filterDialog: ExpenseFilterDialogFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,34 +65,37 @@ class StatisticsFragment : NavBaseFragment() {
         }
     }
 
-    private fun shoeDateRangeDialog(range: RangeSortingFilterEnt) {
+    private fun shoeDateRangeDialog(filterInfo: ExpenseLogFilterInfo) {
         filterDialog?.dismiss()
-        filterDialog = DateRangeSortingFilterDialog(isSortingEnabled = false)
+        filterDialog = ExpenseFilterDialogFragment(isSortingEnabled = false)
         filterDialog?.setOnFilterApplyListener(viewModel::setFilter)
-        filterDialog?.show(childFragmentManager, filter = range.filter, limit = range.limit)
+        filterDialog?.show(childFragmentManager, filterInfo)
     }
 
     private fun setupViewModel() {
         viewModel.categoryStatisticList.observe(viewLifecycleOwner) {
             categoryAdapter?.submitList(it)
-            if(it.isEmpty()) showNoData() else hideNoData()
+            if (it.isEmpty()) showNoData() else hideNoData()
         }
 
         viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver {
             shoeDateRangeDialog(it)
         })
 
-        viewModel.dateRange.observe(viewLifecycleOwner){
+        viewModel.dateRange.observe(viewLifecycleOwner) {
             binding.tbStatistic.subtitle = it
         }
 
+        viewModel.filterRestored.observe(viewLifecycleOwner, EventObserver {
+            Toast.makeText(requireContext(), "Filter is Restored", Toast.LENGTH_SHORT).show()
+        })
     }
 
-    private fun showNoData(){
+    private fun showNoData() {
         binding.tvNoData.visibility = View.VISIBLE
     }
 
-    private fun hideNoData(){
+    private fun hideNoData() {
         binding.tvNoData.visibility = View.INVISIBLE
     }
 
