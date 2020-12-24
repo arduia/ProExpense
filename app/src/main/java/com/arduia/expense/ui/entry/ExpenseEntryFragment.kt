@@ -61,7 +61,7 @@ class ExpenseEntryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dateFormat = SimpleDateFormat("d/M/yyyy h:mm a", Locale.ENGLISH)
+        dateFormat = SimpleDateFormat("d MMM yyyy h:mm a", Locale.ENGLISH)
         setupView()
         setupViewModel()
         chooseEntryMode()
