@@ -110,6 +110,11 @@ class ExpenseEntryFragment : Fragment() {
         observeOnLockMode()
         observeOnNext()
         observeDate()
+        observeCurrencySymbol()
+    }
+
+    private fun observeCurrencySymbol(){
+        viewModel.currencySymbol.observe(viewLifecycleOwner, viewBinding.edlAmount::setSuffixText)
     }
 
     override fun onDestroyView() {

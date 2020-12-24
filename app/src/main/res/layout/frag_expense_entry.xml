@@ -65,7 +65,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/edl_cost"
+                android:id="@+id/edl_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edl_name"
@@ -73,6 +73,7 @@
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
                 android:hint="@string/amount"
+                app:suffixTextAppearance="?textAppearanceBody1"
                 android:layout_marginEnd="@dimen/grid_3">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -91,7 +92,7 @@
                 android:id="@+id/rv_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/edl_cost"
+                android:layout_below="@id/edl_amount"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/grid_3"
                 android:clipToPadding="false"

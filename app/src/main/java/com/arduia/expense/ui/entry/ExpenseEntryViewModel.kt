@@ -2,9 +2,11 @@ package com.arduia.expense.ui.entry
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.domain.Amount
+import com.arduia.expense.model.SuccessResult
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.*
@@ -12,6 +14,8 @@ import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -21,7 +25,8 @@ import java.util.*
 
 class ExpenseEntryViewModel @ViewModelInject constructor(
     private val repo: ExpenseRepository,
-    private val mapper: ExpenseMapper
+    private val mapper: ExpenseMapper,
+    private val currencyRepo: CurrencyRepository
 ) : ViewModel() {
 
     private val _insertedEvent = EventLiveData<Unit>()
@@ -50,6 +55,12 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
 
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading
+
+    val currencySymbol: LiveData<String> = currencyRepo.getSelectedCacheCurrency()
+        .flowOn(Dispatchers.IO)
+        .map {
+            if(it is SuccessResult)it.data.code else ""
+        }.asLiveData()
 
     init {
         _lockMode.value = LockMode.UNLOCK
