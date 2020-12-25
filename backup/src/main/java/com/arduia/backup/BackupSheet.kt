@@ -1,5 +1,7 @@
 package com.arduia.backup
 
+import com.arduia.backup.task.BackupCountResult
+import com.arduia.backup.task.BackupResult
 import jxl.Sheet
 import jxl.Workbook
 import jxl.write.Label
@@ -7,25 +9,50 @@ import jxl.write.WritableWorkbook
 import java.lang.IllegalArgumentException
 import java.lang.IndexOutOfBoundsException
 
-abstract class BackupSheet<T>(private val source: BackupSource<T>) {
+abstract class BackupSheet<Entity>(private val source: BackupSource<Entity>) :
+    AbstractBackupSheet<Workbook, WritableWorkbook, Int> {
 
-    internal suspend fun import(book: Workbook): Int {
-        val count :Int
-        val sheet = book.getSheet(sheetName)
+    override suspend fun import(input: Workbook): BackupResult<Int> {
+        val count: Int
+        val sheet = input.getSheet(sheetName)
         try {
             val sheetData = getDataFromSheet(sheet)
-            source.writeAllItem(sheetData)
+            this.source.writeAll(sheetData)
             count = sheetData.size
         } catch (ie: IllegalArgumentException) {
             throw BackupException("Data Type doesn't match", ie)
         }
-        return count
+        return BackupCountResult(count)
     }
 
-    private fun getDataFromSheet(sheet: Sheet): List<T> {
+    override suspend fun export(out: WritableWorkbook, index: Int): BackupResult<Int> {
+        val sheet = out.createSheet(sheetName, index)
+        val fieldNameList = getFieldInfo().keys
+        var itemCount = 0
 
-        val sheetData = mutableListOf<T>()
-        val columnNameList = getSheetFieldNames()
+        fieldNameList.forEachIndexed { column, label ->
+            sheet.addCell(Label(column, 0, label))
+        }
+
+        val sheetItemList = source.readAll()
+
+        sheetItemList.forEachIndexed { rowNo, data ->
+            itemCount++
+            val dataRowNo = rowNo + 1
+            val rawData = mapToSheetRow(data)
+            fieldNameList.forEachIndexed { columnNo, columnName ->
+                val cellContent = rawData[columnName] ?: ""
+                sheet.addCell(Label(columnNo, dataRowNo, cellContent))
+            }
+        }
+        return BackupCountResult(itemCount)
+    }
+
+
+    private fun getDataFromSheet(sheet: Sheet): List<Entity> {
+
+        val sheetData = mutableListOf<Entity>()
+        val columnNameList = getFieldInfo().keys
         val rowCount = sheet.rows
         val rowDataTmp = mutableMapOf<String, String>()
         val rowNoList = (1 until rowCount)
@@ -35,7 +62,7 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
                 val cellContent = sheet.getCell(columnNo, rowNo).contents
                 rowDataTmp[columnName] = cellContent
             }
-            val rowItem = mapToEntityFromSheetData(rowDataTmp)
+            val rowItem = mapToEntity(SheetRow.createFromMap(rowDataTmp))
             sheetData.add(rowItem)
             rowDataTmp.clear()
         }
@@ -43,39 +70,16 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
         return sheetData
     }
 
-    internal suspend fun export(book: WritableWorkbook, index: Int): Int {
-        val sheet = book.createSheet(sheetName, index)
-        val fieldNameList = getSheetFieldNames()
-        var itemCount = 0
-
-        fieldNameList.forEachIndexed { column, label ->
-            sheet.addCell(Label(column, 0, label))
-        }
-
-        val sheetItemList = source.readAllItem()
-
-        sheetItemList.forEachIndexed { rowNo, data ->
-            itemCount++
-            val dataRowNo = rowNo + 1
-            val rawData = mapToSheetDataFromEntity(data)
-            fieldNameList.forEachIndexed { columnNo, columnName ->
-                val cellContent = rawData[columnName] ?: ""
-                sheet.addCell(Label(columnNo, dataRowNo, cellContent))
-            }
-        }
-        return itemCount
-    }
-
-    internal fun itemCounts(book: Workbook): Int {
+    override suspend fun getItemCount(input: Workbook): Int {
         val invalidCount = -1
         val headerRowCount = 1
 
-        val sheet = book.getSheet(sheetName)
+        val sheet = input.getSheet(sheetName)
         val totalRowCount = sheet.rows
         if (totalRowCount == 0) return invalidCount
 
         val headerRow = sheet.getRow(0)
-        val fieldNameList = getSheetFieldNames()
+        val fieldNameList = getFieldInfo().keys
         var isValidSheet = true
 
         try {
@@ -93,10 +97,10 @@ abstract class BackupSheet<T>(private val source: BackupSource<T>) {
 
     protected abstract val sheetName: String
 
-    protected abstract fun getSheetFieldNames(): List<String>
+    protected abstract fun getFieldInfo(): SheetFieldInfo
 
-    protected abstract fun mapToEntityFromSheetData(row: Map<String, String>): T
+    protected abstract fun mapToEntity(row: SheetRow): Entity
 
-    protected abstract fun mapToSheetDataFromEntity(item: T): Map<String, String>
+    protected abstract fun mapToSheetRow(item: Entity): SheetRow
 
 }
