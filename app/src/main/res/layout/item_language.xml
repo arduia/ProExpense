@@ -29,6 +29,8 @@
             android:id="@+id/tv_language_name"
             style="?attr/textAppearanceBody1"
             tools:text="Myanmar(Burmese)"
+            android:layout_toStartOf="@id/imv_checked"
+            android:layout_marginEnd="@dimen/grid_3"
             android:layout_marginTop="@dimen/grid_3"
             android:layout_marginBottom="@dimen/grid_3"
             android:layout_centerVertical="true"
