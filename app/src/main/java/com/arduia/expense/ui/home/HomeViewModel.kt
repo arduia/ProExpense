@@ -196,7 +196,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun getWeekDateRange(): String {
         val startTime = getWeekStartTime().time
-        val endTime = Calendar.getInstance().timeInMillis
+        val endTime = getWeekEndTime().time
         return dateRangeFormatter.format(start = startTime, end = endTime)
     }
 
@@ -212,6 +212,22 @@ class HomeViewModel @ViewModelInject constructor(
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
+
+        return calendar.time
+    }
+
+    private fun getWeekEndTime(): Date{
+        val calendar = Calendar.getInstance()
+
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+
+        val startSunDay = (dayOfYear - dayOfWeek) + 1
+
+        calendar.set(Calendar.DAY_OF_YEAR, startSunDay + 7)
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
 
         return calendar.time
     }
