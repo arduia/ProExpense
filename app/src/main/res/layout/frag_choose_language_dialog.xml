@@ -50,9 +50,9 @@
         android:layout_below="@id/search_box"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/grid_3"
-        android:clipToPadding="false"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/grid_3"
+        android:clipToPadding="false"
+        android:paddingBottom="60dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="3"
         tools:listitem="@layout/item_language" />
