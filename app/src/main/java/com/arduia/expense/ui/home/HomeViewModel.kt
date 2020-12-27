@@ -70,23 +70,13 @@ class HomeViewModel @ViewModelInject constructor(
 
     private val calculator = calculatorFactory.create(viewModelScope)
 
-    private val _isLoading = BaseLiveData<Boolean>()
-
     private var prepareDeleteExpenseId: Int? = null
 
     init {
-        init()
-    }
-
-    private fun getCurrencySymbol(): String {
-        Timber.d("getCurrencySymbol ")
-
-        val value = Amount.createFromActual(BigDecimal(0.5f.toDouble()))
-        val result = value * value
-        val some = value * 4
-        val storeValue = result.getStore()
-
-        return _currencySymbol.value ?: "NULL"
+        observeWeekExpenses()
+        observeRate()
+        updateWeekDateRange()
+        observeCurrencySymbol()
     }
 
     fun selectItemForDetail(selectedItem: ExpenseVto) {
@@ -104,7 +94,6 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
-
     fun onDeleteConfirmed() {
         val id = prepareDeleteExpenseId ?: return
         viewModelScope.launch(Dispatchers.IO) {
@@ -116,13 +105,6 @@ class HomeViewModel @ViewModelInject constructor(
     fun onDeletePrepared(id: Int) {
         this.prepareDeleteExpenseId = id
         _onDeleteConfirm post event(DeleteInfoVo(0, null))
-    }
-
-    private fun init() {
-        observeWeekExpenses()
-        observeRate()
-        updateWeekDateRange()
-        observeCurrencySymbol()
     }
 
     private fun observeCurrencySymbol() {
