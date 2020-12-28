@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.home
 
+import android.os.Bundle
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
@@ -37,26 +38,19 @@ class HomeViewModel @ViewModelInject constructor(
     private val _detailData = EventLiveData<ExpenseDetailsVto>()
     val detailData get() = _detailData.asLiveData()
 
-    private val _costRates = BaseLiveData<Map<Int, Int>>()
-    val costRate get() = _costRates.asLiveData()
-
     private val _onExpenseItemDeleted = EventLiveData<Unit>()
     val onExpenseItemDeleted get() = _onExpenseItemDeleted.asLiveData()
-
-    private val _currencySymbol = BaseLiveData<String>()
-    val currencySymbol get() = _currencySymbol.asLiveData()
 
     private val _onError = EventLiveData<Unit>()
     val onError get() = _onError.asLiveData()
 
-    private val _weekIncome = BaseLiveData<String>()
-    val weekIncome get() = _weekIncome.asLiveData()
-
-    private val _weekOutcome = BaseLiveData<String>()
-    val weekOutcome get() = _weekOutcome.asLiveData()
-
     private val _currentWeekDateRange = BaseLiveData<String>()
-    val currentWeekDateRange get() = this._currentWeekDateRange.asLiveData()
+
+    private val _incomeOutcomeData = BaseLiveData<IncomeOutcomeUiModel>()
+    val incomeOutcomeData get() = _incomeOutcomeData.asLiveData()
+
+    private val _graphUiData = BaseLiveData<WeeklyGraphUiModel>()
+    val graphUiModel get() = _graphUiData.asLiveData()
 
     private val _recentData = BaseLiveData<List<ExpenseVto>>()
     val recentData get() = _recentData.asLiveData()
@@ -64,9 +58,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val _onDeleteConfirm = EventLiveData<DeleteInfoVo>()
     val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
 
-    val isEmptyRecent = _recentData.switchMap {
-        return@switchMap BaseLiveData(it.isEmpty())
-    }
+    private val currencySymbol = BaseLiveData<String>()
 
     private val calculator = calculatorFactory.create(viewModelScope)
 
@@ -111,7 +103,7 @@ class HomeViewModel @ViewModelInject constructor(
         currencyRepository.getSelectedCacheCurrency()
             .flowOn(Dispatchers.IO)
             .onSuccess {
-                _currencySymbol post it.code
+                currencySymbol post it.code
             }
             .launchIn(viewModelScope)
     }
@@ -139,8 +131,17 @@ class HomeViewModel @ViewModelInject constructor(
                         val totalOutcome = weekExpenses.getTotalOutcomeAsync()
                         val totalIncome = weekExpenses.getTotalIncomeAsync()
 
-                        _weekOutcome post currencyFormatter.format(totalOutcome.await())
-                        _weekIncome post currencyFormatter.format(totalIncome.await())
+                        val weekOutcome = currencyFormatter.format(totalOutcome.await())
+                        val weekIncome = currencyFormatter.format(totalIncome.await())
+                        val dateRange = _currentWeekDateRange.value ?: ""
+                        val currencySymbol =
+                            currencyRepository.getSelectedCacheCurrency().awaitValueOrError().symbol
+                        _incomeOutcomeData post IncomeOutcomeUiModel(
+                            weekIncome,
+                            weekOutcome,
+                            currencySymbol,
+                            dateRange
+                        )
                     }
                 }
             }
@@ -148,7 +149,7 @@ class HomeViewModel @ViewModelInject constructor(
 
         repo.getRecentExpense()
             .flowOn(Dispatchers.IO)
-            .combine(_currencySymbol.asFlow()) { recent, symbol ->
+            .combine(currencySymbol.asFlow()) { recent, symbol ->
                 val data = (recent as? SuccessResult)?.data ?: return@combine
                 val mapper = expenseVoMapperFactory.create { symbol }
                 _recentData post data.map(mapper::map)
@@ -171,7 +172,12 @@ class HomeViewModel @ViewModelInject constructor(
     private fun observeRate() {
         calculator.getRates()
             .flowOn(Dispatchers.IO)
-            .onEach(_costRates::postValue)
+            .combine(_currentWeekDateRange.asFlow()) { rate, dateRange ->
+                WeeklyGraphUiModel(dateRange, rate)
+            }
+            .onEach {
+                _graphUiData.postValue(it)
+            }
             .launchIn(viewModelScope)
     }
 
@@ -181,6 +187,7 @@ class HomeViewModel @ViewModelInject constructor(
         val endTime = getWeekEndTime().time
         return dateRangeFormatter.format(start = startTime, end = endTime)
     }
+
 
     private fun getWeekStartTime(): Date {
 
@@ -198,7 +205,7 @@ class HomeViewModel @ViewModelInject constructor(
         return calendar.time
     }
 
-    private fun getWeekEndTime(): Date{
+    private fun getWeekEndTime(): Date {
         val calendar = Calendar.getInstance()
 
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
@@ -213,4 +220,5 @@ class HomeViewModel @ViewModelInject constructor(
 
         return calendar.time
     }
+
 }

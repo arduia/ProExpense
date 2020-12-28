@@ -7,10 +7,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.arduia.core.extension.px
-import com.arduia.core.view.asGone
-import com.arduia.core.view.asVisible
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragHomeBinding
@@ -52,8 +48,6 @@ class HomeFragment : NavBaseFragment() {
     @Inject
     lateinit var dayNameProvider: DayNameProvider
 
-    private var recentAdapter: RecentListAdapter? = null
-
     private var detailDialog: ExpenseDetailDialog? = null
 
     private val mainHost by lazy { requireActivity() as MainHost }
@@ -62,9 +56,17 @@ class HomeFragment : NavBaseFragment() {
         return@lazy { mainHost.showAddButton() }
     }
 
-    private var graphAdapter: ExpenseGraphAdapter? = null
-
     private var deleteConfirmDialog: DeleteConfirmFragment? = null
+    private val homeEpoxyController: HomeEpoxyController by lazy {
+        HomeEpoxyController(
+            onRecentItemClick = {
+                viewModel.selectItemForDetail(it)
+            },
+            onMoreItemClick = {
+                navigateToExpenseLogs()
+            }
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,8 +85,7 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        graphAdapter = null
-        recentAdapter = null
+        binding.rvHome.adapter = null
         _binding = null
     }
 
@@ -98,18 +99,21 @@ class HomeFragment : NavBaseFragment() {
         mainHost.hideAddButton()
     }
 
-    //    Setup View
     private fun setupView() {
-        setupRecentUi()
         setupCommonUi()
-        setupGraphUi()
+        binding.rvHome.adapter = homeEpoxyController.adapter
+        binding.rvHome.addItemDecoration(
+            MarginItemDecoration(
+                spaceHeight = requireContext().resources.getDimension(R.dimen.grid_2).toInt(),
+                spaceSide = requireContext().resources.getDimension(R.dimen.grid_2).toInt()
+            )
+        )
+        homeEpoxyController.requestModelBuild()
     }
 
     private fun setupViewModel() {
-        setupIncomeOutcomeViewModel()
         setupRecentViewModel()
         setupCommonViewModel()
-        setupGraphViewModel()
     }
 
     private fun setupCommonUi() {
@@ -119,83 +123,21 @@ class HomeFragment : NavBaseFragment() {
         binding.toolbar.setNavigationOnClickListener { navigationDrawer.openDrawer() }
     }
 
-    private fun setupGraphUi() {
-        graphAdapter = ExpenseGraphAdapter()
-
-        binding.cvGraph.expenseGraph.adapter = graphAdapter
-
-        binding.cvGraph.expenseGraph.dayNameProvider = dayNameProvider
-
-    }
-
-    private fun setupRecentUi() {
-        recentAdapter = RecentListAdapter(layoutInflater)
-        binding.cvExpenseList.rvRecentLists.adapter = recentAdapter
-        binding.cvExpenseList.rvRecentLists.layoutManager =
-            LinearLayoutManager(requireContext())
-
-        binding.cvExpenseList.rvRecentLists.addItemDecoration(
-            MarginItemDecoration(
-                spaceHeight = requireContext().px(4),
-            )
-        )
-        recentAdapter?.setItemInsertionListener {
-            binding.cvExpenseList.rvRecentLists.smoothScrollToPosition(0)
-        }
-
-        recentAdapter?.setOnItemClickListener {
-            viewModel.selectItemForDetail(it)
-        }
-
-        binding.cvExpenseList.rvRecentLists.isNestedScrollingEnabled = false
-        binding.cvExpenseList.rvRecentLists.hasFixedSize()
-        binding.cvExpenseList.btnMoreLogs.setOnClickListener {
-            navigateToExpenseLogs()
-        }
-    }
-
-    private fun setupIncomeOutcomeViewModel() {
-        viewModel.weekIncome.observe(viewLifecycleOwner) {
-            binding.cvExpenseInOut.tvIncomeValue.text = it
-        }
-
-        viewModel.weekOutcome.observe(viewLifecycleOwner) {
-            binding.cvExpenseInOut.tvOutcomeValue.text = it
-        }
-
-    }
-
-
     private fun setupRecentViewModel() {
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
-//            viewBinding.cvExpenseList.root.visibility =
-//                if (it.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
-            recentAdapter?.submitList(it)
+            homeEpoxyController.updateRecent(RecentUiModel(it))
         })
-        viewModel.isEmptyRecent.observe(viewLifecycleOwner) { isEmptyRecent ->
-            if (isEmptyRecent) {
-                binding.cvExpenseList.root.asGone()
-            } else {
-                binding.cvExpenseList.root.asVisible()
-            }
-        }
+        viewModel.graphUiModel.observe(viewLifecycleOwner, Observer {
+            homeEpoxyController.updateGraphRate(it)
+        })
+
+        viewModel.incomeOutcomeData.observe(viewLifecycleOwner, Observer {
+            homeEpoxyController.updateIncomeOutcome(it)
+        })
 
     }
 
     private fun setupCommonViewModel() {
-        viewModel.currencySymbol.observe(viewLifecycleOwner) {
-            binding.cvExpenseInOut.tvIncomeSymobol.text = it
-            binding.cvExpenseInOut.tvOutcomeSymbol.text = it
-        }
-
-        viewModel.onError.observe(viewLifecycleOwner, EventObserver {
-            mainHost.showSnackMessage("Error")
-        })
-
-        viewModel.currentWeekDateRange.observe(viewLifecycleOwner) {
-            binding.cvExpenseInOut.tvDateRange.text = it
-            binding.cvGraph.tvDateRange.text = it
-        }
         viewModel.detailData.observe(viewLifecycleOwner, EventObserver { expenseDetail ->
             //Remove Old Dialog if double clicked
             detailDialog?.dismiss()
@@ -221,12 +163,6 @@ class HomeFragment : NavBaseFragment() {
             showDeleteConfirmDialog(info = it)
         })
 
-    }
-
-    private fun setupGraphViewModel() {
-        viewModel.costRate.observe(viewLifecycleOwner) {
-            graphAdapter?.expenseMap = it
-        }
     }
 
 

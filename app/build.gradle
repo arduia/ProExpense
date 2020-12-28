@@ -68,7 +68,9 @@ android {
         jvmTarget = "1.8"
         languageVersion = "1.4"
     }
-
+    kapt {
+        correctErrorTypes = true
+    }
 
 }
 
@@ -165,6 +167,12 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
     implementation "com.github.skydoves:progressview:1.1.0"
 
-    def groupie = "2.8.1"
-    implementation "com.xwray:groupie:$groupie"
+    def epoxy = "4.3.1"
+    implementation "com.airbnb.android:epoxy:$epoxy"
+    // Add the annotation processor if you are using Epoxy's annotations (recommended)
+    kapt "com.airbnb.android:epoxy-processor:$epoxy"
+    configurations {
+        all*.exclude group: 'org.jetbrains.kotlin', module: 'kotlin-parcelize-runtime'
+    }
+
 }
