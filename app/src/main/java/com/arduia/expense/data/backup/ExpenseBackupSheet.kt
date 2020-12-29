@@ -19,7 +19,7 @@ class ExpenseBackupSheet(source: BackupSource<ExpenseEnt>) : BackupSheet<Expense
         mutableMap[FIELD_DATE] = "long"
         mutableMap[FIELD_CATEGORY] = "integer"
         mutableMap[FIELD_AMOUNT] = "long"
-        mutableMap[FIELD_NOTE] = "long"
+        mutableMap[FIELD_NOTE] = "string"
         return SheetFieldInfo.createFromMap(mutableMap)
     }
 

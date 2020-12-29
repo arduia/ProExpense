@@ -12,6 +12,8 @@ import java.lang.IndexOutOfBoundsException
 abstract class BackupSheet<Entity>(private val source: BackupSource<Entity>) :
     AbstractBackupSheet<Workbook, WritableWorkbook, Int> {
 
+    protected var isExportCountEnable = true
+
     override suspend fun import(input: Workbook): BackupResult<Int> {
         val count: Int
         val sheet = input.getSheet(sheetName)
@@ -44,6 +46,9 @@ abstract class BackupSheet<Entity>(private val source: BackupSource<Entity>) :
                 val cellContent = rawData[columnName] ?: ""
                 sheet.addCell(Label(columnNo, dataRowNo, cellContent))
             }
+        }
+        if(isExportCountEnable.not()){
+            return BackupCountResult(0)
         }
         return BackupCountResult(itemCount)
     }

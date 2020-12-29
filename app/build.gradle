@@ -77,6 +77,7 @@ android {
 dependencies {
     implementation project(path: ':backup')
     implementation project(path: ':currencystore')
+    implementation project(path: ':expense-backup')
 
 //    Version_Variable
     def fragment_version = "1.2.4"

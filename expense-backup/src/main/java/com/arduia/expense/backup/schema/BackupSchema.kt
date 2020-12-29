@@ -11,13 +11,13 @@ data class BackupSchema(
     val version: Int = Metadata.VERSION_CODE,
 
     @SerializedName("app_version_code")
-    val appVersionCode: Int,
+    val appVersionCode: Long,
 
     @SerializedName("export_date")
     val exportDate: Long = Date().time,
 
     @SerializedName("currency_code")
-    val currencyCode: Int,
+    val currencyCode: String,
 
     @SerializedName("export_tables")
     val exportTables: List<Table>
