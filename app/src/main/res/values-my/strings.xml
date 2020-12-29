@@ -142,8 +142,10 @@
     <string name="about_acknowledgement">Thank so much for contributors who opened issues on Github for this app.</string>
     <string name="calendar">Calendar</string>
     <string name="time">Time</string>
-    <string name="date_order_by">Date Order By</string>
+    <string name="order_date_in">Order by Date in</string>
     <string name="currency">Currency</string>
     <string name="theme_mode">Theme Mode</string>
+    <string name="asc">Asc</string>
+    <string name="desc">Desc</string>
 
 </resources>

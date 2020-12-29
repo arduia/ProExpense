@@ -13,8 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="@string/date_order_by"
-        app:layout_constraintStart_toStartOf="@+id/cv_start_date"
+        android:text="@string/order_date_in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cv_start_date" />
 
     <TextView
@@ -158,33 +159,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <RadioGroup
-        android:id="@+id/rg_order"
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/tg_date_order"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_2"
-        android:orientation="horizontal"
+        app:checkedButton="@id/btn_date_order_asc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sorted_by">
+        app:layout_constraintTop_toBottomOf="@id/tv_sorted_by"
+        app:singleSelection="true">
 
-        <RadioButton
-            android:id="@+id/rb_asc"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_date_order_desc"
+            style="?materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="?colorPrimary"
-            android:checked="true"
-            android:text="@string/ascending" />
+            android:text="@string/desc" />
 
-        <RadioButton
-            android:id="@+id/rb_desc"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_date_order_asc"
+            style="?materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/grid_3"
-            android:buttonTint="?colorPrimary"
-            android:text="@string/descending" />
-    </RadioGroup>
+            android:text="@string/asc" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <Button
         android:id="@+id/btn_apply_filter"
@@ -197,6 +197,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rg_order" />
+        app:layout_constraintTop_toBottomOf="@id/tg_date_order" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

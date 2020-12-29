@@ -65,14 +65,17 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
 
             if (isSortingEnabled.not()) {
                 tvSortedBy.visibility = View.GONE
-                rgOrder.visibility = View.GONE
+                tgDateOrder.visibility = View.GONE
                 return@with
             }
 
-            rgOrder.setOnCheckedChangeListener { _, id ->
-                val sorting = when (id) {
-                    R.id.rb_asc -> Sorting.ASC
-                    R.id.rb_desc -> Sorting.DESC
+            tgDateOrder.addOnButtonCheckedListener { _, checkedId, isChecked ->
+
+                if (isChecked.not()) return@addOnButtonCheckedListener
+
+                val sorting = when (checkedId) {
+                    R.id.btn_date_order_asc -> Sorting.ASC
+                    R.id.btn_date_order_desc -> Sorting.DESC
                     else -> throw Exception("Order must be asc or desc radio buttons")
                 }
                 viewModel.setSorting(sorting)
@@ -101,8 +104,8 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
         })
 
         viewModel.startDate.observe(viewLifecycleOwner) {
-            val dateFormat  = SimpleDateFormat("MMM",Locale.getDefault())
-            with(binding){
+            val dateFormat = SimpleDateFormat("MMM", Locale.ENGLISH)
+            with(binding) {
                 tvStartMonth.text = dateFormat.format(it)
                 dateFormat.applyPattern("d")
                 tvStartDay.text = dateFormat.format(it)
@@ -112,8 +115,8 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
         }
 
         viewModel.endDate.observe(viewLifecycleOwner) {
-            val dateFormat  = SimpleDateFormat("MMM",Locale.getDefault())
-            with(binding){
+            val dateFormat = SimpleDateFormat("MMM", Locale.ENGLISH)
+            with(binding) {
                 tvEndMonth.text = dateFormat.format(it)
                 dateFormat.applyPattern("d")
                 tvEndDay.text = dateFormat.format(it)
@@ -127,33 +130,35 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
             dismiss()
         })
 
-        viewModel.sortingType.observe(viewLifecycleOwner){sorting ->
-            when(sorting){
+        viewModel.sortingType.observe(viewLifecycleOwner) { sorting ->
+            when (sorting) {
                 Sorting.DESC -> {
-                    val isChecked = binding.rbDesc.isChecked
+                    val isChecked = binding.tgDateOrder.checkedButtonId == R.id.btn_date_order_desc
                     Timber.d("isChecked desc $isChecked")
-                    if(isChecked) return@observe //Remove Recursive Checks
+                    if (isChecked) return@observe //Remove Recursive Checks
                     else
-                    binding.rgOrder.check(R.id.rb_desc)
+                        binding.tgDateOrder.check(R.id.btn_date_order_desc)
 
                 }
                 Sorting.ASC -> {
-                    val isChecked = binding.rbAsc.isChecked
+                    val isChecked = binding.tgDateOrder.checkedButtonId == R.id.btn_date_order_asc
                     Timber.d("isChecked asc $isChecked")
-                    if(isChecked) return@observe
+                    if (isChecked) return@observe //Remove Recursive Checks
                     else
-                    binding.rgOrder.check(R.id.rb_asc)
+                        binding.tgDateOrder.check(R.id.btn_date_order_asc)
                 }
                 else -> Unit
             }
         }
 
-        viewModel.onEndChangedAsStart.observe(viewLifecycleOwner, EventObserver{
-            Toast.makeText(requireContext(), "End Date Changed to Start Date!",Toast.LENGTH_SHORT).show()
+        viewModel.onEndChangedAsStart.observe(viewLifecycleOwner, EventObserver {
+            Toast.makeText(requireContext(), "End Date Changed to Start Date!", Toast.LENGTH_SHORT)
+                .show()
         })
 
-        viewModel.onStartChangedAsEnd.observe(viewLifecycleOwner, EventObserver{
-            Toast.makeText(requireContext(), "Start Date Changed to End Date!",Toast.LENGTH_SHORT).show()
+        viewModel.onStartChangedAsEnd.observe(viewLifecycleOwner, EventObserver {
+            Toast.makeText(requireContext(), "Start Date Changed to End Date!", Toast.LENGTH_SHORT)
+                .show()
         })
         viewModel.setFilterInfo(filterInfo)
     }
