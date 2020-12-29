@@ -198,13 +198,9 @@ class ExpenseFragment : NavBaseFragment() {
 
         viewModel.isEmptyExpenseCount.observe(viewLifecycleOwner) {
             if (it) {
-                binding.tbExpense.menu.forEach {
-                    it.isEnabled = false
-                }
+                disableMenuAction()
             } else {
-                binding.tbExpense.menu.forEach {
-                    it.isEnabled = true
-                }
+               enableMenuActions()
             }
         }
 
@@ -215,7 +211,7 @@ class ExpenseFragment : NavBaseFragment() {
             }"
         }
 
-        viewModel.isFilterEmpty.observe(viewLifecycleOwner) { isEmptyLogs ->
+        viewModel.isCurrentListEmpty.observe(viewLifecycleOwner) { isEmptyLogs ->
             if (isEmptyLogs) {
                 showNoExpenseInfo()
 
@@ -262,7 +258,7 @@ class ExpenseFragment : NavBaseFragment() {
         detailDialog?.setOnEditClickListener {
             navigateToExpenseEntryFragment(detail.id)
         }
-        detailDialog?.showDetail(parentFragmentManager, detail)
+        detailDialog?.showDetail(parentFragmentManager, detail,isDeleteEnabled = true)
     }
 
 

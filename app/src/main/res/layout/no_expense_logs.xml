@@ -35,6 +35,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/grid_2"
         android:layout_marginBottom="@dimen/grid_3"
+        android:visibility="invisible"
         android:text="There is no expense logs.\n Please start adding your expense."
         android:textAlignment="center" />
 </RelativeLayout>

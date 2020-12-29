@@ -79,7 +79,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         return@switchMap createSourcePagingLiveData(filter)
     }
 
-    val isFilterEmpty: LiveData<Boolean> = expenseList.switchMap {
+    val isCurrentListEmpty: LiveData<Boolean> = expenseList.switchMap {
         BaseLiveData(it.size <= 0)
     }
 

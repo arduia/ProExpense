@@ -162,7 +162,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     }
 
     private fun updateSelectedDateAsCurrentTime() {
-        _currentEntryTime set Date().time
+        _currentEntryTime post  Date().time
     }
 
     fun saveExpenseData(expense: ExpenseDetailsVto) {
