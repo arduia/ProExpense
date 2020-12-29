@@ -8,7 +8,6 @@ import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.model.SuccessResult
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.mapping.ExpenseMapper
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -16,9 +15,7 @@ import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.Exception
 import java.math.BigDecimal
 import java.util.*
@@ -29,20 +26,20 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private val currencyRepo: CurrencyRepository
 ) : ViewModel() {
 
-    private val _insertedEvent = EventLiveData<Unit>()
-    val insertedEvent get() = _insertedEvent.asLiveData()
+    private val _onDataInserted = EventLiveData<Unit>()
+    val onDataInserted get() = _onDataInserted.asLiveData()
 
     private val _onNext = EventLiveData<Unit>()
     val onNext get() = _onNext.asLiveData()
 
-    private val _updatedEvent = EventLiveData<Unit>()
-    val updatedEvent get() = _updatedEvent.asLiveData()
+    private val _onDataUpdated = EventLiveData<Unit>()
+    val onDataUpdated get() = _onDataUpdated.asLiveData()
 
-    private val _currentModeEvent = EventLiveData<ExpenseEntryMode>()
-    val currentModeEvent get() = _currentModeEvent.asLiveData()
+    private val _onCurrentModeChanged = EventLiveData<ExpenseEntryMode>()
+    val onCurrentModeChanged get() = _onCurrentModeChanged.asLiveData()
 
-    private val _data = BaseLiveData<ExpenseUpdateDataVto>()
-    val data get() = _data.asLiveData()
+    private val _entryData = BaseLiveData<ExpenseUpdateDataVto>()
+    val entryData get() = _entryData.asLiveData()
 
     private val _selectedCategory = BaseLiveData<ExpenseCategory>()
     val selectedCategory get() = _selectedCategory.asLiveData()
@@ -50,8 +47,14 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     private val _lockMode = BaseLiveData<LockMode>()
     val lockMode get() = _lockMode.asLiveData()
 
-    private val _selectedDate = BaseLiveData<Long>()
-    val selectedDate get() = _selectedDate.asLiveData()
+    private val _currentEntryTime = BaseLiveData<Long>()
+    val currentEntryTime get() = _currentEntryTime.asLiveData()
+
+    private val _onChooseTimeShow = EventLiveData<Calendar>()
+    val onChooseTimeShow get() = _onChooseTimeShow.asLiveData()
+
+    private val _onChooseDateShow = EventLiveData<Calendar>()
+    val onChooseDateShow get() = _onChooseDateShow.asLiveData()
 
     private val _isLoading = BaseLiveData<Boolean>()
     val isLoading get() = _isLoading
@@ -59,7 +62,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     val currencySymbol: LiveData<String> = currencyRepo.getSelectedCacheCurrency()
         .flowOn(Dispatchers.IO)
         .map {
-            if(it is SuccessResult)it.data.code else ""
+            if (it is SuccessResult) it.data.code else ""
         }.asLiveData()
 
     init {
@@ -68,15 +71,45 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     }
 
     fun chooseUpdateMode() {
-        _currentModeEvent post event(ExpenseEntryMode.UPDATE)
+        _onCurrentModeChanged post event(ExpenseEntryMode.UPDATE)
     }
 
     fun chooseSaveMode() {
-        _currentModeEvent post event(ExpenseEntryMode.INSERT)
+        _onCurrentModeChanged post event(ExpenseEntryMode.INSERT)
     }
 
     fun selectDateTime(time: Long) {
-        _selectedDate post time
+        _currentEntryTime set time
+    }
+
+    fun onDateSelect() {
+        val date = getCurrentEntryDateTime()
+        _onChooseDateShow set event(date)
+    }
+
+    fun onTimeSelect() {
+        val time = getCurrentEntryDateTime()
+        _onChooseTimeShow set event(time)
+    }
+
+    private fun getCurrentEntryDateTime(): Calendar {
+        val time = _currentEntryTime.value ?: throw Exception("Any Time is Not Selected Yet!")
+        return Calendar.getInstance().apply {
+            timeInMillis = time
+        }
+    }
+
+    fun selectTime(hour: Int, min: Int, milliSec: Int) {
+        val selectedTimeMilli = _currentEntryTime.value ?: throw Exception("time is not selected yet")
+
+        val time = Calendar.getInstance().apply {
+            timeInMillis = selectedTimeMilli
+        }
+        time[Calendar.HOUR_OF_DAY] = hour
+        time[Calendar.MINUTE] = min
+        time[Calendar.MILLISECOND] = milliSec
+
+        _currentEntryTime set time.timeInMillis
     }
 
     private fun loadingOn() {
@@ -93,22 +126,22 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
             _onNext post EventUnit
             updateSelectedDateAsCurrentTime()
         } else {
-            _insertedEvent post EventUnit
+            _onDataInserted post EventUnit
         }
 
     }
 
     private fun onDataUpdated() {
-        _updatedEvent post EventUnit
+        _onDataUpdated post EventUnit
     }
 
     fun invertLockMode() {
         when (lockMode.value ?: return) {
             LockMode.UNLOCK -> {
-                _lockMode post LockMode.LOCKED
+                _lockMode set LockMode.LOCKED
             }
             LockMode.LOCKED -> {
-                _lockMode post LockMode.UNLOCK
+                _lockMode set LockMode.UNLOCK
             }
         }
     }
@@ -116,11 +149,11 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     fun updateExpenseData(expense: ExpenseDetailsVto) {
         viewModelScope.launch(Dispatchers.IO) {
             loadingOn()
-            val oldData = data.value
+            val oldData = entryData.value
             val createdDate = oldData?.date
             val expenseEnt = mapToExpenseEnt(
                 expense,
-                createdDate, modifiedDate = selectedDate.value
+                createdDate, modifiedDate = currentEntryTime.value
             )
             repo.updateExpense(expenseEnt)
             onDataUpdated()
@@ -128,14 +161,14 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun updateSelectedDateAsCurrentTime(){
-        _selectedDate post Calendar.getInstance(Locale.getDefault()).timeInMillis
+    private fun updateSelectedDateAsCurrentTime() {
+        _currentEntryTime set Date().time
     }
 
     fun saveExpenseData(expense: ExpenseDetailsVto) {
         viewModelScope.launch(Dispatchers.IO) {
             loadingOn()
-            val expenseEnt = mapToExpenseEnt(expense, modifiedDate = selectedDate.value)
+            val expenseEnt = mapToExpenseEnt(expense, modifiedDate = currentEntryTime.value)
             repo.insertExpense(expenseEnt)
             onDataInserted()
             loadingOff()
@@ -157,20 +190,20 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
     )
 
     fun setCurrentExpenseId(id: Int) {
-        observeExpenseData(id)
+        updateExpenseData(id)
     }
 
 
-    private fun observeExpenseData(id: Int) {
+    private fun updateExpenseData(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val result = repo.getExpense(id).awaitValueOrError()
-                _selectedDate post result.modifiedDate
+                _currentEntryTime post result.modifiedDate
                 val dataVto = mapper.mapToUpdateDetailVto(result)
-                _data post dataVto
+                _entryData post dataVto
 
             } catch (e: Exception) {
-                Timber.d("Exception ${e.printStackTrace()}")
+                e.printStackTrace()
             }
         }
     }

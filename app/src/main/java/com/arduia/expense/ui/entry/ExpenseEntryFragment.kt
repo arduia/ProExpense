@@ -1,6 +1,7 @@
 package com.arduia.expense.ui.entry
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -34,7 +35,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ExpenseEntryFragment : Fragment() {
 
-    private lateinit var viewBinding: FragExpenseEntryBinding
+    private var _binding: FragExpenseEntryBinding? = null
+    private val binding get() = _binding!!
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
 
@@ -54,9 +56,9 @@ class ExpenseEntryFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View  {
-        initViewBinding(parent = container)
-        return viewBinding.root
+    ): View {
+        _binding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,23 +82,34 @@ class ExpenseEntryFragment : Fragment() {
         setupLockButton()
     }
 
-    private fun showDatePicker() {
-        val calendar = Calendar.getInstance()
+    private fun showTimePickerDialog(calendar: Calendar) {
+        TimePickerDialog(
+            requireContext(),
+            { _, hourOfDay, minute ->
+                viewModel.selectTime(hourOfDay, minute, 0)
+            },
+            calendar[Calendar.HOUR_OF_DAY],
+            calendar[Calendar.MINUTE],
+            false
+        ).show()
+    }
+
+    private fun showDatePicker(time: Calendar) {
         DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
-                calendar.set(year, month, dayOfMonth)
-                viewModel.selectDateTime(calendar.timeInMillis)
+                time.set(year, month, dayOfMonth)
+                viewModel.selectDateTime(time.timeInMillis)
             },
-            calendar[Calendar.YEAR],
-            calendar[Calendar.MONTH],
-            calendar[Calendar.DAY_OF_MONTH]
+            time[Calendar.YEAR],
+            time[Calendar.MONTH],
+            time[Calendar.DAY_OF_MONTH]
         ).show()
 
     }
 
     private fun setupLockButton() {
-        viewBinding.cvLock.setOnClickListener {
+        binding.cvLock.setOnClickListener {
             viewModel.invertLockMode()
         }
     }
@@ -111,10 +124,11 @@ class ExpenseEntryFragment : Fragment() {
         observeOnNext()
         observeDate()
         observeCurrencySymbol()
+        observeDateTimeSelectEvent()
     }
 
-    private fun observeCurrencySymbol(){
-        viewModel.currencySymbol.observe(viewLifecycleOwner, viewBinding.edlAmount::setSuffixText)
+    private fun observeCurrencySymbol() {
+        viewModel.currencySymbol.observe(viewLifecycleOwner, binding.edlAmount::setSuffixText)
     }
 
     override fun onDestroyView() {
@@ -123,24 +137,29 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupCategoryListView() {
-        viewBinding.rvCategory.adapter = categoryAdapter
-        viewBinding.rvCategory.addItemDecoration(
+        binding.rvCategory.adapter = categoryAdapter
+        binding.rvCategory.addItemDecoration(
             MarginItemDecoration(
                 requireContext().px(4),
                 requireContext().px(4),
                 true
             )
         )
-        viewBinding.toolbar.setOnMenuItemClickListener menu@{
-            if (it.itemId == R.id.calendar) {
-                showDatePicker()
+        binding.toolbar.setOnMenuItemClickListener menu@{
+            when (it.itemId) {
+                R.id.calendar -> {
+                    viewModel.onDateSelect()
+                }
+                R.id.time -> {
+                    viewModel.onTimeSelect()
+                }
             }
             return@menu true
         }
     }
 
     private fun setupEntryAmountEditText() {
-        viewBinding.edtAmount.filters = arrayOf(FloatingInputFilter())
+        binding.edtAmount.filters = arrayOf(FloatingInputFilter())
     }
 
     private fun setupCategoryListAdapter() {
@@ -151,9 +170,19 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupEntryCloseButton() {
-        viewBinding.toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             backToPreviousFragment()
         }
+    }
+
+    private fun observeDateTimeSelectEvent() {
+        viewModel.onChooseDateShow.observe(viewLifecycleOwner, EventObserver {
+            showDatePicker(it)
+        })
+
+        viewModel.onChooseTimeShow.observe(viewLifecycleOwner, EventObserver {
+            showTimePickerDialog(it)
+        })
     }
 
     private fun observeSelectedCategoryState() {
@@ -163,7 +192,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun observeDataInsertedEvent() {
-        viewModel.insertedEvent.observe(viewLifecycleOwner, EventObserver {
+        viewModel.onDataInserted.observe(viewLifecycleOwner, EventObserver {
             backToPreviousFragment()
         })
     }
@@ -181,7 +210,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun observeDataUpdatedEvent() {
-        viewModel.updatedEvent.observe(viewLifecycleOwner, EventObserver {
+        viewModel.onDataUpdated.observe(viewLifecycleOwner, EventObserver {
             showDataUpdatedMessage()
             backToPreviousFragment()
         })
@@ -194,21 +223,19 @@ class ExpenseEntryFragment : Fragment() {
             when (it) {
 
                 LockMode.LOCKED -> {
-                    viewBinding.cvLock.backgroundTintList =
+                    binding.cvLock.backgroundTintList =
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
-                    viewBinding.imvLock.setImageResource(R.drawable.ic_lock_closed)
-                    viewBinding.imvLock.imageTintList =
+                    binding.imvLock.imageTintList =
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
-                    viewBinding.btnSave.text = getString(R.string.next)
+                    binding.btnSave.text = getString(R.string.next)
                 }
 
                 LockMode.UNLOCK -> {
-                    viewBinding.cvLock.backgroundTintList =
+                    binding.cvLock.backgroundTintList =
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
-                    viewBinding.imvLock.setImageResource(R.drawable.ic_lock_open)
-                    viewBinding.imvLock.imageTintList =
+                    binding.imvLock.imageTintList =
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnSurface))
-                    viewBinding.btnSave.text = getString(R.string.save)
+                    binding.btnSave.text = getString(R.string.save)
                 }
 
             }
@@ -216,7 +243,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun cleanUi() {
-        with(viewBinding) {
+        with(binding) {
             edtAmount.setText("")
             edtName.setText("")
             edtNote.setText("")
@@ -224,24 +251,24 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun focusOnName() {
-        viewBinding.edtName.requestFocus()
+        binding.edtName.requestFocus()
     }
 
     private fun observeEntryModeEvent() {
-        viewModel.currentModeEvent.observe(viewLifecycleOwner, EventObserver { mode ->
+        viewModel.onCurrentModeChanged.observe(viewLifecycleOwner, EventObserver { mode ->
             changeViewToSelectedMode(mode)
         })
     }
 
     private fun observeEventExpenseDataState() {
-        viewModel.data.observe(viewLifecycleOwner, Observer { data ->
+        viewModel.entryData.observe(viewLifecycleOwner, Observer { data ->
             bindExpenseDetail(data)
         })
     }
 
     private fun observeDate() {
-        viewModel.selectedDate.observe(viewLifecycleOwner) {
-            viewBinding.toolbar.subtitle = dateFormat.format(Date(it))
+        viewModel.currentEntryTime.observe(viewLifecycleOwner) {
+            binding.toolbar.subtitle = dateFormat.format(Date(it))
         }
     }
 
@@ -264,9 +291,9 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun bindExpenseDetail(data: ExpenseUpdateDataVto) {
-        viewBinding.edtName.setText(data.name)
-        viewBinding.edtAmount.setText(data.amount)
-        viewBinding.edtNote.setText(data.note)
+        binding.edtName.setText(data.name)
+        binding.edtAmount.setText(data.amount)
+        binding.edtNote.setText(data.note)
         viewModel.selectCategory(data.category)
         categoryAdapter.submitList(listOf(data.category))
     }
@@ -297,21 +324,22 @@ class ExpenseEntryFragment : Fragment() {
         return categoryProvider.getCategoryList().toMutableList()
     }
 
-    private fun changeToUpdateMode() = with(viewBinding) {
+    private fun changeToUpdateMode() = with(binding) {
         toolbar.title = getString(R.string.update_data)
         btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
-        viewBinding.cvLock.isEnabled = false
-        viewBinding.imvLock.imageTintList = getColorList(R.color.darker_gray)
+        binding.cvLock.isEnabled = false
+        binding.cvLock.visibility = View.GONE
     }
 
-    private fun changeToSaveMode() = with(viewBinding) {
+    private fun changeToSaveMode() = with(binding) {
         toolbar.title = getString(R.string.expense_entry)
         btnSave.text = getString(R.string.save)
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
         setInitialDefaultCategory()
+        binding.cvLock.visibility = View.VISIBLE
     }
 
     private fun setInitialDefaultCategory() {
@@ -340,12 +368,11 @@ class ExpenseEntryFragment : Fragment() {
             showAmountEmptyError()
             return
         }
-
         viewModel.updateExpenseData(expense)
     }
 
     private fun showAmountEmptyError() {
-        viewBinding.edtAmount.error = getString(R.string.empty_cost)
+        binding.edtAmount.error = getString(R.string.empty_cost)
     }
 
     private fun getCurrentExpenseDetail(): ExpenseDetailsVto {
@@ -375,11 +402,11 @@ class ExpenseEntryFragment : Fragment() {
         else argId
     }
 
-    private fun getNameText() = viewBinding.edtName.text.toString()
+    private fun getNameText() = binding.edtName.text.toString()
 
-    private fun getAmountText() = viewBinding.edtAmount.text.toString()
+    private fun getAmountText() = binding.edtAmount.text.toString()
 
-    private fun getNoteText() = viewBinding.edtNote.text.toString()
+    private fun getNoteText() = binding.edtNote.text.toString()
 
     private fun getSelectedCategory() = categoryAdapter.selectedItem
         ?: throw Exception("Category Item is not selected!")
@@ -387,11 +414,7 @@ class ExpenseEntryFragment : Fragment() {
     private fun hideInputKeyboard() {
         val inputMethodManager =
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
-        inputMethodManager?.hideSoftInputFromWindow(viewBinding.edtName.windowToken, 0)
-    }
-
-    private fun initViewBinding(parent: ViewGroup?) {
-        viewBinding = FragExpenseEntryBinding.inflate(layoutInflater, parent, false)
+        inputMethodManager?.hideSoftInputFromWindow(binding.edtName.windowToken, 0)
     }
 
     private fun showDataUpdatedMessage() {

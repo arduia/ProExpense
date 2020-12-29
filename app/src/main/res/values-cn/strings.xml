@@ -142,4 +142,6 @@
     <string name="beta">测试</string>
     <string name="more">更多</string>
     <string name="about_acknowledgement">非常感谢在 Github 上为这个应用程序提出 Issues 的贡献者们。</string>
+    <string name="calendar">Calendar</string>
+    <string name="time">Time</string>
 </resources>
