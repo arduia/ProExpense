@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="@string/sort_by"
+        android:text="@string/date_order_by"
         app:layout_constraintStart_toStartOf="@+id/cv_start_date"
         app:layout_constraintTop_toBottomOf="@+id/cv_start_date" />
 
@@ -29,10 +29,10 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_start_date"
+        style="@style/Widget.ProExpense.CalendarDayCardView"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         app:cardElevation="1dp"
-        style="@style/Widget.ProExpense.CalendarDayCardView"
         app:layout_constraintEnd_toStartOf="@+id/cv_end_date"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
@@ -96,9 +96,9 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_end_date"
+        style="@style/Widget.ProExpense.CalendarDayCardView"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        style="@style/Widget.ProExpense.CalendarDayCardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cv_start_date"

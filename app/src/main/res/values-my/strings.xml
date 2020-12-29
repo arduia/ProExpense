@@ -79,7 +79,7 @@
     <string name="statistics">စာရင်းအင်းများ</string>
     <string name="free">အခမဲ့</string>
     <string name="app_welcome">Hello! Welcome to Pro Expense</string>
-    <string name="choose_language">ဘာသာစကားရွေးချယ်မည်</string>
+    <string name="choose_language">ဘာသာစကားရွေးချယ်ရန်</string>
     <string name="day_mon">တင်္န</string>
     <string name="day_tue">အင်္ဂါ</string>
     <string name="day_wed">ဗုဒ္ဓ</string>
@@ -143,5 +143,7 @@
     <string name="calendar">Calendar</string>
     <string name="time">Time</string>
     <string name="date_order_by">Date Order By</string>
+    <string name="currency">Currency</string>
+    <string name="theme_mode">Theme Mode</string>
 
 </resources>

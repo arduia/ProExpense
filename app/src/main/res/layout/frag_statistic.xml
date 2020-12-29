@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:background="?colorSurface"
             app:navigationIcon="@drawable/ic_menu"
-            app:subtitle="2020 Nov 3-4"
+            app:subtitle=" "
             app:title="@string/statistics" />
     </com.google.android.material.appbar.AppBarLayout>
 

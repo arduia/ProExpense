@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
 
 class ExpenseViewModel @ViewModelInject constructor(
@@ -62,6 +63,9 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val filterLimit = BaseLiveData<DateRange>()
     private val filterConstraint = MutableLiveData<DateRangeSortingEnt>()
 
+    private val _isEmptyExpenseCount = BaseLiveData<Boolean>()
+    val isEmptyExpenseCount get() = _isEmptyExpenseCount.asLiveData()
+
     private val _onDetailShow = EventLiveData<ExpenseDetailsVto>()
     val onDetailShow get() = _onDetailShow.asLiveData()
 
@@ -90,7 +94,15 @@ class ExpenseViewModel @ViewModelInject constructor(
         observeMaxAndMinDateRange()
         mapper = expenseEntToLogMapperFactory.create { currencySymbol }
         _expenseLogMode.value = ExpenseMode.NORMAL
-
+        expenseRepo.getExpenseTotalCount()
+            .flowOn(Dispatchers.IO)
+            .onSuccess {
+                _isEmptyExpenseCount post (it == 0)
+            }
+            .onError {
+                _isEmptyExpenseCount post true
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeMaxAndMinDateRange() {
@@ -106,6 +118,13 @@ class ExpenseViewModel @ViewModelInject constructor(
                     val maxConstraint = constraint.dateRange.end
                     val min = if (minDateConstraint < it.minDate) it.minDate else minDateConstraint
                     val max = if (maxConstraint > it.maxDate) it.maxDate else maxConstraint
+                    if (min == 0L || max == 0L) {
+                        filterConstraint post DateRangeSortingEnt(
+                            ExpenseDateRange(Date().time, Date().time),
+                            Sorting.DESC
+                        )
+                        return@onSuccess
+                    }
                     filterConstraint post DateRangeSortingEnt(
                         ExpenseDateRange(min, max),
                         constraint.sorting

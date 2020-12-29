@@ -196,6 +196,18 @@ class ExpenseFragment : NavBaseFragment() {
             showItemDetail(it)
         })
 
+        viewModel.isEmptyExpenseCount.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.tbExpense.menu.forEach {
+                    it.isEnabled = false
+                }
+            } else {
+                binding.tbExpense.menu.forEach {
+                    it.isEnabled = true
+                }
+            }
+        }
+
         viewModel.selectedCount.observe(viewLifecycleOwner) observer@{
             if (it == 0) return@observer
             binding.tbExpense.title = "${itemNumberFormat.format(it)} ${

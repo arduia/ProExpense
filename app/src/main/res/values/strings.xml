@@ -81,7 +81,7 @@
     <string name="developer">Developed by Arduia</string>
     <string name="developer_email">dev.arduia@gmail.com</string>
     <string name="app_welcome">Hello! Welcome to Pro Expense</string>
-    <string name="choose_language">Choose Language:</string>
+    <string name="choose_language">Choose Language</string>
     <string name="day_sun">SU</string>
     <string name="day_mon">MO</string>
     <string name="day_tue">TU</string>
@@ -105,7 +105,7 @@
     <string name="feedback_status">Feedback Status</string>
     <string name="import_data">Import</string>
 
-    <string name="choose_currency">Choose Currency:</string>
+    <string name="choose_currency">Choose Currency</string>
     <string name="search">Search</string>
     <string name="no_item">No Items</string>
     <string name="continue_home">Continue</string>
@@ -145,5 +145,7 @@
     <string name="calendar">Calendar</string>
     <string name="time">Time</string>
     <string name="date_order_by">Date Order By</string>
+    <string name="currency">Currency</string>
+    <string name="theme_mode">Theme Mode</string>
 </resources>
 

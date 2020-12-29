@@ -33,6 +33,11 @@ abstract class RecentEpoxyModel : EpoxyModelWithHolder<RecentEpoxyModel.VH>() {
 
     override fun bind(holder: VH) {
         super.bind(holder)
+        if(recentData.list.isEmpty()){
+            holder.binding.root.visibility = View.GONE
+        }else{
+            holder.binding.root.visibility = View.VISIBLE
+        }
         holder.adapter?.submitList(recentData.list)
     }
 
