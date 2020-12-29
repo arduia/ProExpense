@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.lang.Exception
+import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
@@ -35,6 +36,7 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
     private var filterApplyListener: OnFilterApplyListener? = null
 
     private lateinit var filterInfo: ExpenseLogFilterInfo
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,14 +63,6 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
                 viewModel.onEndDateSelect()
             }
 
-            cvStartTime.setOnClickListener {
-                viewModel.onStartTimeSelect()
-            }
-
-            cvEndTime.setOnClickListener {
-                viewModel.onEndTimeSelect()
-            }
-
             if (isSortingEnabled.not()) {
                 tvSortedBy.visibility = View.GONE
                 rgOrder.visibility = View.GONE
@@ -89,13 +83,6 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
 
     private fun setupViewModel() {
 
-        viewModel.onStartTimeFilterShow.observe(viewLifecycleOwner, EventObserver {
-            showTimePicker(initialTime = it, onSelect = viewModel::setStartTime)
-        })
-
-        viewModel.onEndTimeFilterShow.observe(viewLifecycleOwner, EventObserver {
-            showTimePicker(initialTime = it, onSelect = viewModel::setEndTime)
-        })
 
         viewModel.onStartDateFilterShow.observe(viewLifecycleOwner, EventObserver {
             showDatePicker(
@@ -112,20 +99,27 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
                 onSelect = viewModel::setEndDate
             )
         })
-        viewModel.starTime.observe(viewLifecycleOwner) {
-            binding.tvStartTime.text = it
-        }
-
-        viewModel.endTime.observe(viewLifecycleOwner) {
-            binding.tvEndTime.text = it
-        }
 
         viewModel.startDate.observe(viewLifecycleOwner) {
-            binding.tvStartDate.text = it
+            val dateFormat  = SimpleDateFormat("MMM",Locale.getDefault())
+            with(binding){
+                tvStartMonth.text = dateFormat.format(it)
+                dateFormat.applyPattern("d")
+                tvStartDay.text = dateFormat.format(it)
+                dateFormat.applyPattern("yyyy")
+                tvStartYear.text = dateFormat.format(it)
+            }
         }
 
         viewModel.endDate.observe(viewLifecycleOwner) {
-            binding.tvEndDate.text = it
+            val dateFormat  = SimpleDateFormat("MMM",Locale.getDefault())
+            with(binding){
+                tvEndMonth.text = dateFormat.format(it)
+                dateFormat.applyPattern("d")
+                tvEndDay.text = dateFormat.format(it)
+                dateFormat.applyPattern("yyyy")
+                tvEndYear.text = dateFormat.format(it)
+            }
         }
 
         viewModel.onResult.observe(viewLifecycleOwner, EventObserver {
@@ -162,19 +156,6 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
             Toast.makeText(requireContext(), "Start Date Changed to End Date!",Toast.LENGTH_SHORT).show()
         })
         viewModel.setFilterInfo(filterInfo)
-    }
-
-    private fun showTimePicker(initialTime: Calendar, onSelect: (Int, Int) -> Unit) {
-        timePicker?.dismiss()
-        timePicker = TimePickerDialog(
-            requireContext(),
-            { _, hour, minute -> onSelect.invoke(hour, minute) },
-            initialTime[Calendar.HOUR_OF_DAY],
-            initialTime[Calendar.MINUTE],
-            false
-        )
-
-        timePicker?.show()
     }
 
     private fun showDatePicker(

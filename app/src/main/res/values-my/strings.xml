@@ -142,5 +142,6 @@
     <string name="about_acknowledgement">Thank so much for contributors who opened issues on Github for this app.</string>
     <string name="calendar">Calendar</string>
     <string name="time">Time</string>
+    <string name="date_order_by">Date Order By</string>
 
 </resources>

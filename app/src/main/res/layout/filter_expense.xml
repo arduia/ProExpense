@@ -15,7 +15,7 @@
         android:layout_marginTop="@dimen/grid_3"
         android:text="@string/sort_by"
         app:layout_constraintStart_toStartOf="@+id/cv_start_date"
-        app:layout_constraintTop_toBottomOf="@+id/cv_start_time" />
+        app:layout_constraintTop_toBottomOf="@+id/cv_start_date" />
 
     <TextView
         android:id="@+id/tv_from"
@@ -29,108 +29,61 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_start_date"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         app:cardElevation="1dp"
+        style="@style/Widget.ProExpense.CalendarDayCardView"
         app:layout_constraintEnd_toStartOf="@+id/cv_end_date"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_from">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/standard_icon_size"
-                android:layout_height="@dimen/standard_icon_size"
-                android:layout_marginVertical="@dimen/grid_1"
-                android:layout_marginStart="@dimen/grid_2"
-                android:scaleType="center"
-                app:srcCompat="@drawable/ic_date" />
-
-            <TextView
-                android:id="@+id/tv_start_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/grid_2"
-                android:layout_marginEnd="@dimen/grid_3"
-                tools:text="11 Jan 2019" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_start_time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/grid_2"
-        app:cardElevation="1dp"
-        app:layout_constraintEnd_toEndOf="@id/cv_start_date"
-        app:layout_constraintStart_toStartOf="@id/cv_start_date"
-        app:layout_constraintTop_toBottomOf="@id/cv_start_date">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/standard_icon_size"
-                android:layout_height="@dimen/standard_icon_size"
-                android:layout_marginVertical="@dimen/grid_1"
-                android:layout_marginStart="@dimen/grid_2"
-                android:scaleType="center"
-                app:srcCompat="@drawable/ic_time" />
+            <TextView
+                android:id="@+id/tv_start_month"
+                style="?textAppearanceHeadline6"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerHorizontal="true"
+                android:background="?colorPrimary"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="?colorOnPrimary"
+                tools:text="Dec" />
 
             <TextView
-                android:id="@+id/tv_start_time"
+                android:id="@+id/tv_start_day"
+                style="?textAppearanceHeadline5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_start_month"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/grid_2"
-                android:layout_marginEnd="@dimen/grid_3"
+                android:layout_marginTop="@dimen/grid_1"
                 android:gravity="center"
-                tools:text="11:00 AM" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_end_time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/grid_2"
-        app:cardElevation="1dp"
-        app:layout_constraintEnd_toEndOf="@id/cv_end_date"
-        app:layout_constraintStart_toStartOf="@id/cv_end_date"
-        app:layout_constraintTop_toBottomOf="@id/cv_end_date">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/standard_icon_size"
-                android:layout_height="@dimen/standard_icon_size"
-                android:layout_marginVertical="@dimen/grid_1"
-                android:layout_marginStart="@dimen/grid_2"
-                android:scaleType="center"
-                app:srcCompat="@drawable/ic_time" />
+                android:textStyle="bold"
+                tools:text="11" />
 
             <TextView
-                android:id="@+id/tv_end_time"
+                android:id="@+id/tv_start_year"
+                style="?textAppearanceCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/grid_2"
-                android:layout_marginEnd="@dimen/grid_3"
+                android:layout_below="@id/tv_start_day"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/grid_1"
                 android:gravity="center"
-                tools:text="10:40 PM" />
-        </LinearLayout>
+                tools:text="2018" />
+
+        </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/tv_to"
@@ -143,36 +96,55 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_end_date"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
+        style="@style/Widget.ProExpense.CalendarDayCardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cv_start_date"
         app:layout_constraintTop_toBottomOf="@id/tv_to">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/standard_icon_size"
-                android:layout_height="@dimen/standard_icon_size"
-                android:layout_marginVertical="@dimen/grid_1"
-                android:layout_marginStart="@dimen/grid_2"
-                android:scaleType="center"
-                app:srcCompat="@drawable/ic_date" />
+            <TextView
+                android:id="@+id/tv_end_month"
+                style="?textAppearanceHeadline6"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerHorizontal="true"
+                android:background="?colorPrimary"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="?colorOnPrimary"
+                tools:text="Feb" />
 
             <TextView
-                android:id="@+id/tv_end_date"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_end_day"
+                style="?textAppearanceHeadline5"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_end_month"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/grid_2"
-                android:layout_marginEnd="@dimen/grid_3"
-                tools:text="11 Dec 2019" />
+                android:layout_marginTop="@dimen/grid_1"
+                android:gravity="center"
+                android:textStyle="bold"
+                tools:text="21" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tv_end_year"
+                style="?textAppearanceCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_end_day"
+                android:layout_marginBottom="@dimen/grid_1"
+                android:gravity="center"
+                tools:text="2011" />
+
+        </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <TextView

@@ -41,6 +41,11 @@
         <item name="android:alpha">0.8</item>
     </style>
 
+    <style name="Widget.ProExpense.CalendarDayCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">0dp</item>
+    </style>
+
+
     <style name="TextAppearance.ProExpense.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="fontFamily">@font/pyidaungsu</item>
         <item name="android:alpha">0.7</item>
