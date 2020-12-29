@@ -136,7 +136,7 @@
     <string name="backup_logs">备份记录</string>
     <string name="delete_items">删除多个项目</string>
     <string name="confirm">确认</string>
-    <string name="delete_item_description">这些项目将被删除！</string>
+    <string name="will_be_deleted">这些项目将被删除！</string>
     <string name="no_data">无数据</string>
     <string name="category_statistics">类别统计数据</string>
     <string name="beta">测试</string>

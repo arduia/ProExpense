@@ -96,7 +96,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun onDeletePrepared(id: Int) {
         this.prepareDeleteExpenseId = id
-        _onDeleteConfirm post event(DeleteInfoVo(0, null))
+        _onDeleteConfirm post event(DeleteInfoVo(1, null))
     }
 
     private fun observeCurrencySymbol() {

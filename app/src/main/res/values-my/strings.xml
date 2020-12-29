@@ -134,7 +134,7 @@
     <string name="backup_logs">သိမ်းဆည်းမှုမှတ်တမ်းများ</string>
     <string name="delete_items">ဖျက်မည်</string>
     <string name="confirm">အတည်ပြုပါသည်</string>
-    <string name="delete_item_description">မှတ်တမ်းများကို ဖျက်ပါမည်</string>
+    <string name="will_be_deleted">ဖျက်မည်</string>
     <string name="category_statistics">အမျိုးအစားအလိုက် စာရင်းများ</string>
     <string name="no_data">အချက်အလက်မရှိပါ</string>
     <string name="beta">beta</string>

@@ -50,7 +50,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _selectedCount = BaseLiveData<Int>()
     val selectedCount get() = _selectedCount.asLiveData()
 
-    private val _onMultiDeleteConfirm = EventLiveData<Unit>()
+    private val _onMultiDeleteConfirm = EventLiveData<Int>()
     val onMultiDeleteConfirm get() = _onMultiDeleteConfirm.asLiveData()
 
     private val _onSingleDeleteConfirm = EventLiveData<Unit>()
@@ -207,7 +207,8 @@ class ExpenseViewModel @ViewModelInject constructor(
     }
 
     fun onDeletePrepared() {
-        _onMultiDeleteConfirm post EventUnit
+        val itemCount = selectedCount.value ?: 0
+        _onMultiDeleteConfirm post event(itemCount)
     }
 
     fun onSingleDeletePrepared(id: Int) {
