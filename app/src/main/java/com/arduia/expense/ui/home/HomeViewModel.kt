@@ -127,7 +127,7 @@ class HomeViewModel @ViewModelInject constructor(
                     is Result.Success -> {
 
                         val weekExpenses = it.data
-                        calculator.setWeekExpenses(weekExpenses)
+                        calculator.setWeekExpenses(weekExpenses.filter { expenseEnt -> expenseEnt.category != ExpenseCategory.INCOME })
 
                         val totalOutcome = weekExpenses.getTotalOutcomeAsync()
                         val totalIncome = weekExpenses.getTotalIncomeAsync()

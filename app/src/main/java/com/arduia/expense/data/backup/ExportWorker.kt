@@ -35,6 +35,7 @@ class ExportWorker @WorkerInject constructor(@Assisted context: Context,
         return Result.success()
     }
 
+
     private suspend fun updateBackupLogAsCompleted(itemCount: Int){
         val oldBackupLog = backupRepo.getBackupByWorkerID(id.toString()).awaitValueOrError()
         oldBackupLog.isCompleted= true
