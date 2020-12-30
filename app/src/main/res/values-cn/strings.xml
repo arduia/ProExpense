@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!--    Base-->
     <string name="app_name">Pro Expense</string>
-    <string name="recent">最近</string>
+    <string name="recent_entry_logs">最近</string>
     <string name="settings">设置</string>
     <string name="expense_logs">开支记录</string>
 
@@ -16,7 +16,7 @@
     <string name="free">Free</string>
     <!--    Home-->
     <string name="home">主页</string>
-    <string name="outcome_for_week">本周结果</string>
+    <string name="expenses_in_this_week">本周结果</string>
     <string name="mmk">缅甸元</string>
     <string name="recents">最近</string>
 
@@ -149,4 +149,6 @@
     <string name="theme_mode">Theme Mode</string>
     <string name="asc">Asc</string>
     <string name="desc">Desc</string>
+    <string name="totals">Total</string>
+    <string name="acknowledgement_title">Acknowledgement</string>
 </resources>

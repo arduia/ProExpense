@@ -3,15 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!--    Base-->
     <string name="app_name">Pro Expense</string>
-    <string name="recent">မှတ်တမ်း</string>
+    <string name="recent_entry_logs">မှတ်တမ်း</string>
     <string name="settings">ချိန်ညှိရန်</string>
     <string name="expense_logs">စာရင်းများ</string>
 
     <!--    Home-->
     <string name="home">မူလစာမျက်နှာ</string>
-    <string name="outcome_for_week">တပတ်အတွင်း ထွက်ငွေ</string>
+    <string name="expenses_in_this_week">ယခုသီတင်းပတ်ရှိအသုံးစရိတ်များ</string>
     <string name="mmk">ကျပ်</string>
-    <string name="recents">မှတ်တမ်းများ</string>
+    <string name="recents">အသုံးစရိတ် မှတ်တမ်းများ</string>
 
     <!--    Expense Detail-->
     <string name="date">နေ့ရက်</string>
@@ -45,11 +45,11 @@
 
     <!--    Feedback-->
     <string name="feedback">အကြံပြုရန်</string>
-    <string name="feedback_description">Pro Expense အက်ပလီကေးရှင်း အသုံးပြုမှုနဲ့ ပတ်သက်ပြီး အဆင်ပြေမှု ရှိမရှိ၊ ‌လိုအပ်ချက်များကို အကြုံပြု ရေးသားပေးပို့နိုင်ပါသည်။</string>
+    <string name="feedback_description">ProExpense အက်ပလီကေးရှင်း အသုံးပြုရာ‌တွင် အဆင်ပြေချော‌မွေ့ မှုရှိမရှိ၊ လိုအပ်ချက်များကို အကြုံပြုရေးသား ပေးပို့နိုင်ပါသည်။</string>
     <string name="email">အီးမေးလ်</string>
     <string name="your_comments">အကြံပြုချက်</string>
     <string name="send_feedback">ပေးပို့မည်</string>
-    <string name="thanks_for_comment">အခုလိုအကြံပြုချက်အတွက် ကျေးဇူးတင်ပါသည်</string>
+    <string name="thanks_for_comment">ယခုလိုပေးပို့‌သောအကြံပြုချက်အတွက် ကျေးဇူးတင်ပါသည်</string>
     <string name="go_home">မူလစာမျက်နှာ သို့</string>
     <!--    Expense-->
 
@@ -61,15 +61,15 @@
     <string name="latest_version">နောက်ဆုံးဗားရှင်း</string>
 
     <!--    About-->
-    <string name="about">အကြောင်း</string>
-    <string name="app_description">နေ့ စဉ် အသုံးစရိတ် နဲ့ပတ်သက်ပြီး လွယ်ကူစွာ စီမံခန့်ခွဲနိုင်ဖို့ အထောက်အကူပြုရန်အတွက် အခမဲ့ သုံးစွဲနိုင်တဲ့ အက်ပလီကေးရှင်းလေး တစ်ခုပါ။</string>
+    <string name="about">ဆော့ဗ်ဝဲအကြောင်း</string>
+    <string name="app_description">နေ့စဉ် အသုံးစရိတ်များကို ရိုးရှင်းလွယ်ကူစွာ မှတ်တမ်းတင်နိုင်ဖို့ရန်အတွက် အထောက်အကူပြုသော အခမဲ့သုံးစွဲနိုင်သည့် အက်ပလီကေးရှင်း တစ်ခုဖြစ်ပါသည်။</string>
     <string name="privacy_policy">Privacy and Policy</string>
     <string name="policy_url">file:///android_asset/privacy_policy.html</string>
     <string name="open_source_url">file:///android_asset/open_source_licenses.html</string>
     <string name="github_link_url">https://github.com/arduia/ProExpense</string>
     <string name="open_source_lib">Opens-Source Libraries</string>
     <string name="contribute_app">Contribute the app</string>
-    <string name="developer">Developed by Arduia</string>
+    <string name="developer">Developed by Arduia and Open-source contributors</string>
     <string name="developer_email">dev.arduia@gmail.com</string>
     <string name="next">နောက်သို့</string>
     <string name="start_now">စတင်မည်</string>
@@ -90,7 +90,7 @@
     <string name="restart">ပြန်လည်စတင်မည်</string>
 
     <string name="backup">သိမ်းဆည်းရန်</string>
-    <string name="export">သိမ်းမည်</string>
+    <string name="export">သိမ်းဆည်းမည်</string>
     <string name="total">စုစုပေါင်း</string>
     <string name="save_as">သိမ်းမည့်နေရာရွေးရန်</string>
     <string name="file_not_exist">ဖိုင်မရှိပါ</string>
@@ -103,7 +103,7 @@
     <string name="invalid_email">အီးမေးလိပ်စာမှားနေပါတ၊်</string>
     <string name="empty_comment">မထည့်ရသေးပါ</string>
     <string name="feedback_status">အကြံပြုရန်</string>
-    <string name="import_data">ယူမည်</string>
+    <string name="import_data">ပြန်ယူမည်</string>
     <string name="choose_currency">ငွေကြေးရွေးချယ်ရန်</string>
     <string name="search">ရှာဖွေမည်</string>
     <string name="no_item">တစ်ခုမှမရှိပါ</string>
@@ -116,8 +116,8 @@
     <string name="choose_theme">အသွင်အပြင် ရွေးချယ်ရန်</string>
     <string name="light_theme">အဖြူရောင်အသွင်အပြင်</string>
     <string name="dark_theme">အနက်ရောင်အသွင်အပြင်</string>
-    <string name="system_default">စက်ရဲ့ရွေးချယ်မှုအတိုင်းပဲ</string>
-    <string name="today">ကနေ့</string>
+    <string name="system_default">စက်၏ရွေးချယ်မှုအတိုင်း</string>
+    <string name="today">ယနေ့</string>
     <string name="yesterday">မနေ့က</string>
     <string name="cancel">ပယ်ဖျက်မည်</string>
     <string name="about_update">ဗားးရှင်းအသစ်အကြောင်း</string>
@@ -132,20 +132,22 @@
     <string name="beta_with_parenthness">(beta)</string>
     <string name="new_version_available">ဗားရှင်းအသစ်ထွက်ပါပြီ</string>
     <string name="backup_logs">သိမ်းဆည်းမှုမှတ်တမ်းများ</string>
-    <string name="delete_items">ဖျက်မည်</string>
+    <string name="delete_items">ဖျက်ရန်</string>
     <string name="confirm">အတည်ပြုပါသည်</string>
     <string name="will_be_deleted">ဖျက်မည်</string>
     <string name="category_statistics">အမျိုးအစားအလိုက် စာရင်းများ</string>
     <string name="no_data">အချက်အလက်မရှိပါ</string>
     <string name="beta">beta</string>
     <string name="more">နောက်ထပ်</string>
-    <string name="about_acknowledgement">Thank so much for contributors who opened issues on Github for this app.</string>
-    <string name="calendar">Calendar</string>
-    <string name="time">Time</string>
+    <string name="about_acknowledgement">Special thanks to contributors who provided valuable feedbacks and opened issues on the Github for this app.</string>
+    <string name="calendar">ပြက္ခဒိန်</string>
+    <string name="time">အချိန်</string>
     <string name="order_date_in">Order by Date in</string>
-    <string name="currency">Currency</string>
-    <string name="theme_mode">Theme Mode</string>
-    <string name="asc">Asc</string>
-    <string name="desc">Desc</string>
+    <string name="currency">ငွေကြေး</string>
+    <string name="theme_mode">အသွင်အပြင်</string>
+    <string name="asc">ငယ်စဉ်ကြီး</string>
+    <string name="desc">ကြီးစဉ်ငယ်</string>
+    <string name="totals">စုစုပေါင်း</string>
+    <string name="acknowledgement_title">Acknowledgement</string>
 
 </resources>

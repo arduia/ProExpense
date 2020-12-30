@@ -41,7 +41,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="@dimen/grid_3"
-            android:text="@string/outcome_for_week"
+            android:text="@string/expenses_in_this_week"
             android:textColor="?colorOnSurface" />
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

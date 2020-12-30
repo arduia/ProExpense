@@ -151,7 +151,7 @@
             android:id="@+id/rv_backup_logs"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
