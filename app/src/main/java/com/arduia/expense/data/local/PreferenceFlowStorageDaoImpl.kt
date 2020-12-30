@@ -99,7 +99,7 @@ class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceSto
         private const val DEFAULT_SELECTED_CURRENCY_NUM = "840"
 
         private const val KEY_THEME_MODE = "theme_mode"
-        private const val DEFAULT_THEME_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        private const val DEFAULT_THEME_MODE = AppCompatDelegate.MODE_NIGHT_YES
 
         private const val KEY_UPDATE_STATUS = "update_status"
         private const val DEFAULT_UPDATE_STATUS = UpdateStatusDataModel.STATUS_NO_UPDATE
