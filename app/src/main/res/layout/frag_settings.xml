@@ -58,7 +58,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imv_language"
-                    android:layout_width="35dp"
+                    android:layout_width="60dp"
                     android:layout_height="25dp"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="@dimen/grid_2"
@@ -91,7 +91,7 @@
                 <TextView
                     android:id="@+id/tv_currency_value"
                     style="?textAppearanceHeadline6"
-                    android:layout_width="35dp"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="@dimen/grid_2"
@@ -121,7 +121,7 @@
                     android:text="@string/theme_mode" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="35dp"
+                    android:layout_width="60dp"
                     android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_2"

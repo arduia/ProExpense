@@ -23,7 +23,7 @@
             app:menu="@menu/menu_entry"
             app:navigationIcon="@drawable/ic_back"
             app:title="@string/expense_entry"
-            tools:subtitle="Hello"></com.google.android.material.appbar.MaterialToolbar>
+            tools:subtitle="Hello"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView

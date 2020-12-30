@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -234,7 +235,7 @@ class ExpenseEntryFragment : Fragment() {
                     binding.cvLock.backgroundTintList =
                         ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
                     binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnSurface))
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.dark_gray))
                     binding.btnSave.text = getString(R.string.save)
                 }
 

@@ -253,6 +253,7 @@ class ExpenseFragment : NavBaseFragment() {
         //Show Selected Dialog
         detailDialog = ExpenseDetailDialog()
         detailDialog?.setOnDeleteClickListener {
+            detailDialog?.dismiss()
             viewModel.onSingleDeletePrepared(it.id)
         }
         detailDialog?.setOnEditClickListener {

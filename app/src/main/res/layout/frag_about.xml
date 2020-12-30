@@ -290,6 +290,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="@dimen/grid_2"
                 android:layout_marginTop="@dimen/grid_2"
+                android:lineSpacingExtra="7sp"
                 android:text="@string/about_acknowledgement"
                 android:textAlignment="center" />
         </RelativeLayout>
