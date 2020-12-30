@@ -149,5 +149,6 @@
     <string name="theme_mode">Theme Mode</string>
     <string name="asc">Asc</string>
     <string name="desc">Desc</string>
+    <string name="totals">Totals</string>
 </resources>
 

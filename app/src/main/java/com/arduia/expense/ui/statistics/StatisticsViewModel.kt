@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.ExpenseRepository
+import com.arduia.expense.di.StatisticDateRange
 import com.arduia.expense.domain.filter.DateRange
 import com.arduia.expense.domain.filter.ExpenseDateRange
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
@@ -32,7 +33,7 @@ import java.util.*
 class StatisticsViewModel @ViewModelInject constructor(
     private val expenseRepo: ExpenseRepository,
     private val categoryAnalyzer: CategoryAnalyzer,
-    private val dateRangeFormatter: DateRangeFormatter
+    @StatisticDateRange private val dateRangeFormatter: DateRangeFormatter
 ) : ViewModel() {
 
 

@@ -22,5 +22,7 @@
     <style name="Widget.ProExpense.NavigationView.Overlay" parent="Widget.ProExpense.NavigationView.Overlay.Base">
         <item name="itemTextAppearance">?textAppearanceBody1</item>
     </style>
-
+    <style name="TextAppearance.ProExpense.MediumTitle" parent="TextAppearance.Base.ProExpense.MediumTitle">
+        <item name="fontFamily">@font/pyidaungsu</item>
+    </style>
 </resources>

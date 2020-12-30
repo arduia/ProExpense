@@ -7,6 +7,7 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
+import com.arduia.expense.di.StatisticDateRange
 import com.arduia.expense.domain.filter.DateRange
 import com.arduia.expense.domain.filter.ExpenseDateRange
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
@@ -37,7 +38,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val expenseRepo: ExpenseRepository,
     private val currencyRepo: CurrencyRepository,
     private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
-    private val dateRangeFormatter: DateRangeFormatter
+    @StatisticDateRange private val dateRangeFormatter: DateRangeFormatter
 ) : ViewModel() {
 
     private var swipeStateHolder: SwipeStateHolder? = null

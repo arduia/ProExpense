@@ -10,6 +10,7 @@
         <item name="textAppearanceHeadline6">@style/TextAppearance.ProExpense.H6</item>
         <item name="textAppearanceSubtitle1">@style/TextAppearance.ProExpense.Subtitle1</item>
         <item name="textAppearanceButton">@style/TextAppearance.ProExpense.Button</item>
+        <item name="textAppearanceMediumTitle">@style/TextAppearance.ProExpense.MediumTitle</item>
         <item name="shapeAppearanceMediumComponent">
             @style/ShapeAppearance.ProExpense.MediumComponent
         </item>

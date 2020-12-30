@@ -7,6 +7,7 @@ import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
+import com.arduia.expense.di.MonthlyDateRange
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.times
 import com.arduia.expense.model.*
@@ -31,7 +32,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
     private val repo: ExpenseRepository,
     @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
-    private val dateRangeFormatter: DateRangeFormatter,
+    @MonthlyDateRange private val dateRangeFormatter: DateRangeFormatter,
     calculatorFactory: ExpenseRateCalculator.Factory
 ) : ViewModel() {
 

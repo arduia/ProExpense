@@ -19,4 +19,9 @@
         <item name="itemTextAppearance">?textAppearanceBody1</item>
     </style>
 
+    <style name="TextAppearance.ProExpense.MediumTitle" parent="TextAppearance.Base.ProExpense.MediumTitle">
+
+
+    </style>
+
 </resources>

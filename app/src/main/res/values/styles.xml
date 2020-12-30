@@ -61,4 +61,12 @@
         <item name="borderWidth">2dp</item>
     </style>
 
+    <style name="TextAppearance.Base.ProExpense.MediumTitle" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:alpha">0.75</item>
+    </style>
+
+
 </resources>
