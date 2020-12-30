@@ -4,8 +4,8 @@
     android:id="@+id/cd_category"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:backgroundTint="@color/category_bg"
     android:checkable="true"
-    app:cardBackgroundColor="@color/category_bg"
     app:cardCornerRadius="@dimen/size_radius"
     app:cardElevation="0dp"
     app:checkedIcon="@android:color/transparent">

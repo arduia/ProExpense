@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     tools:background="@android:color/white">
 
     <TextView
@@ -38,10 +40,10 @@
         android:layout_marginTop="@dimen/grid_3"
         android:layout_marginEnd="@dimen/grid_3"
         android:hint="@string/name"
-        app:layout_constraintWidth_max="@dimen/with_layout_min_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_app_name">
+        app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+        app:layout_constraintWidth_max="@dimen/with_layout_min_margin">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edt_name"
@@ -51,15 +53,15 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_export_now"
-        app:icon="@drawable/ic_save"
-        app:iconSize="@dimen/standard_icon_size"
         style="?attr/materialButtonStyle"
-        app:iconGravity="textStart"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_button"
         android:layout_marginTop="@dimen/grid_4"
         android:layout_marginBottom="@dimen/grid_3"
         android:text="@string/save_as"
+        app:icon="@drawable/ic_save"
+        app:iconGravity="textStart"
+        app:iconSize="@dimen/standard_icon_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tl_name"
         app:layout_constraintHorizontal_bias="0.0"
