@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/calendar"
-        android:title="Calendar"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_calendar"/>
+    <item
+        android:id="@+id/time"
+        android:icon="@drawable/ic_time"
+        android:title="@string/time"
+        app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/calendar"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/calendar"
+        app:showAsAction="ifRoom" />
+    
 </menu>

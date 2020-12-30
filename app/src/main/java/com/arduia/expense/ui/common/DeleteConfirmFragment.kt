@@ -1,10 +1,12 @@
 package com.arduia.expense.ui.common
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import com.arduia.expense.R
 import com.arduia.expense.databinding.FragDeleteConfirmDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -31,7 +33,9 @@ class DeleteConfirmFragment : BottomSheetDialogFragment() {
         setupView()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupView() {
+
         binding.btnConfirm.setOnClickListener {
             this.onConfirmListener?.invoke()
             dismiss()
@@ -40,6 +44,11 @@ class DeleteConfirmFragment : BottomSheetDialogFragment() {
         binding.imvDropClose.setOnClickListener {
             dismiss()
         }
+
+        val total = info?.itemTotal ?: return
+        binding.tvItems.text = if(total == 1){
+            getString(R.string.single_item_suffix)+ " "
+        }else "$total ${getString(R.string.multi_item_suffix)} "
     }
 
     fun setOnConfirmListener(listener: (() -> Unit)?) {

@@ -1,6 +1,6 @@
 <h1 align="center">Pro Expense</h1>
 <p align="center">
-Simple finance note to record daily income and expense for free with no Ads.
+A simple free finance note to sately record daily expense without any Ads.
 </p>
 
 <p align="center">
@@ -15,6 +15,7 @@ Simple finance note to record daily income and expense for free with no Ads.
           <td><img src="https://github.com/arduia/ProExpense/blob/master/previews/screenshot_3.png" width="220"></td>
        </tr>
  </table>
+
  
 ## Download
 <a href="https://play.google.com/store/apps/details?id=com.arduia.expense">
@@ -31,22 +32,33 @@ Simple finance note to record daily income and expense for free with no Ads.
 </a>
 
 ## Libraries
-* [Android Jetpack][support-lib] 
 * [Material Component][material]
-* [Android Architecture Components][arch]
 * [Android View Binding][view-binding]
+* [Paging2][paging]
+* [ProgressView][progress-view]
+* [Kotlin Coroutines, Flow][coroutines-flow]
+* [Navigation][navigation]
 * [Dagger Hilt][dagger-hilt]
+* [WorkManager][workmanager]
+* [MVVM-Core][mvvm-core]
 * [Retrofit][retrofit]
+* [KTX Libraries][ktx]
+* [Leak Carary][leak-carary]
 * [Timber][timber]
 
 
-[support-lib]: https://developer.android.com/topic/libraries/support-library/index.html
-[arch]: https://developer.android.com/arch
-[view-binding]: https://developer.android.com/topic/libraries/view-binding
-[dagger-hilt]: https://dagger.dev/
-[retrofit]: http://square.github.io/retrofit 
-[timber]: https://github.com/JakeWharton/timber 
 [material]: https://github.com/material-components/material-components-android
+[view-binding]: https://developer.android.com/topic/libraries/view-binding
+[paging]: https://developer.android.com/topic/libraries/architecture/paging
+[progress-view]: https://github.com/skydoves/ProgressView
+[coroutines-flow]: https://kotlinlang.org/docs/reference/coroutines/flow.html
+[navigation]: https://developer.android.com/guide/navigation
+[dagger-hilt]: https://dagger.dev/
+[mvvm-core]: https://github.com/arduia/mvvm-core
+[ktx]: https://developer.android.com/kotlin/ktx
+[leak-canary]: https://github.com/square/leakcanary
+[retrofit]: http://square.github.io/retrofit 
+[timber]: https://github.com/JakeWharton/timber
 
 
 # License

@@ -34,7 +34,6 @@ class ExpenseDetailMapper(
             symbol = currencyProvider.get()
         )
     }
-
 }
 
 class ExpenseDetailMapperFactoryImpl(
