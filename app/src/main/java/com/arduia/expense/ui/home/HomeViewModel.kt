@@ -136,7 +136,7 @@ class HomeViewModel @ViewModelInject constructor(
                         val weekIncome = currencyFormatter.format(totalIncome.await())
                         val dateRange = _currentWeekDateRange.value ?: ""
                         val currencySymbol =
-                            currencyRepository.getSelectedCacheCurrency().awaitValueOrError().symbol
+                            currencyRepository.getSelectedCacheCurrency().awaitValueOrError().code
                         _incomeOutcomeData post IncomeOutcomeUiModel(
                             weekIncome,
                             weekOutcome,
