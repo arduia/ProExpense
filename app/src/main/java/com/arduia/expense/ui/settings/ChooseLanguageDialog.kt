@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.arduia.core.extension.px
+import com.arduia.expense.R
 import com.arduia.expense.databinding.FragChooseLanguageDialogBinding
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.common.ext.restartActivity
@@ -55,7 +56,8 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
         with(binding.rvLanguages) {
             addItemDecoration(
                 MarginItemDecoration(
-                    spaceSide = px(4), spaceHeight = px(4)
+                    spaceSide = resources.getDimension(R.dimen.grid_3).toInt(),
+                    spaceHeight = px(4)
                 )
             )
             itemAnimator = null

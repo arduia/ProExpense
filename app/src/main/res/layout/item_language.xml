@@ -5,11 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:elevation="0dp"
     android:id="@+id/cd_language"
-    android:layout_marginStart="@dimen/grid_3"
-    android:layout_marginEnd="@dimen/grid_3"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
-    app:cardCornerRadius="@dimen/size_radius"
     android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
