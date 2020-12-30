@@ -18,8 +18,8 @@ android {
         applicationId "com.arduia.expense"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 7
-        versionName "1.0.0-beta01"
+        versionCode 8
+        versionName "1.0.0-beta02"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -68,13 +68,16 @@ android {
         jvmTarget = "1.8"
         languageVersion = "1.4"
     }
-
+    kapt {
+        correctErrorTypes = true
+    }
 
 }
 
 dependencies {
     implementation project(path: ':backup')
     implementation project(path: ':currencystore')
+    implementation project(path: ':expense-backup')
 
 //    Version_Variable
     def fragment_version = "1.2.4"
@@ -164,4 +167,13 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
     implementation "com.github.skydoves:progressview:1.1.0"
+
+    def epoxy = "4.3.1"
+    implementation "com.airbnb.android:epoxy:$epoxy"
+    // Add the annotation processor if you are using Epoxy's annotations (recommended)
+    kapt "com.airbnb.android:epoxy-processor:$epoxy"
+    configurations {
+        all*.exclude group: 'org.jetbrains.kotlin', module: 'kotlin-parcelize-runtime'
+    }
+
 }

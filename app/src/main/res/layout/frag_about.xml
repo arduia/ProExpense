@@ -259,6 +259,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_acknowledgement"
                 android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="@dimen/grid_3"
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="@dimen/grid_4"
                 android:clickable="true"
@@ -270,16 +271,28 @@
                 android:textColorLink="@android:color/darker_gray" />
 
             <TextView
-                android:id="@+id/tv_acknowledgement"
+                android:id="@+id/tv_acknowledgement_title"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="?textAppearanceBody2"
-                android:layout_below="@id/dv_end"
+                android:layout_below="@id/fl_contribute"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/grid_4"
-                android:textAlignment="center"
-                android:layout_marginHorizontal="@dimen/grid_3"
-                android:text="@string/about_acknowledgement" />
+                android:text="@string/acknowledgement_title"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/tv_acknowledgement"
+                style="?textAppearanceBody2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_acknowledgement_title"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="@dimen/grid_2"
+                android:layout_marginTop="@dimen/grid_2"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/about_acknowledgement"
+                android:textAlignment="center" />
         </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>

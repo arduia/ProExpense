@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:theme="@style/Theme.ProExpense"
-    android:background="?colorSurface">
+    android:background="?colorSurface"
+    android:theme="@style/Theme.ProExpense">
 
     <TextView
         android:id="@+id/tv_sorted_by"
@@ -13,23 +13,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_3"
-        android:text="@string/sort_by"
-        app:layout_constraintStart_toStartOf="@+id/cv_start_date"
+        android:text="@string/order_date_in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cv_start_date" />
 
     <TextView
+        android:id="@+id/tv_from"
+        style="?textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_from"
-        android:text="@string/from"
         android:layout_marginTop="@dimen/grid_3"
-        style="?textAppearanceSubtitle1"
+        android:text="@string/from"
         app:layout_constraintStart_toStartOf="@id/cv_start_date"
-        app:layout_constraintTop_toBottomOf="@id/tv_filter"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_filter" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_start_date"
-        android:layout_width="wrap_content"
+        style="@style/Widget.ProExpense.CalendarDayCardView"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         app:cardElevation="1dp"
         app:layout_constraintEnd_toStartOf="@+id/cv_end_date"
@@ -38,72 +40,112 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_from">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/standard_icon_size"
-                android:layout_height="@dimen/standard_icon_size"
-                android:layout_marginVertical="@dimen/grid_1"
-                android:layout_marginStart="@dimen/grid_1"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_date" />
+            <TextView
+                android:id="@+id/tv_start_month"
+                style="?textAppearanceHeadline6"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerHorizontal="true"
+                android:background="?colorPrimary"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="?colorOnPrimary"
+                tools:text="Dec" />
 
             <TextView
-                android:id="@+id/tv_start_date"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_start_day"
+                style="?textAppearanceHeadline5"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_start_month"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/grid_2"
-                android:layout_marginEnd="@dimen/grid_3"
-                tools:text="11 Jan 2019" />
-        </LinearLayout>
+                android:layout_marginTop="@dimen/grid_1"
+                android:gravity="center"
+                android:textStyle="bold"
+                tools:text="11" />
+
+            <TextView
+                android:id="@+id/tv_start_year"
+                style="?textAppearanceCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_start_day"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/grid_1"
+                android:gravity="center"
+                tools:text="2018" />
+
+        </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
 
+
     <TextView
+        android:id="@+id/tv_to"
+        style="?textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_to"
         android:text="@string/to"
-        style="?textAppearanceSubtitle1"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_from"
-        app:layout_constraintStart_toStartOf="@id/cv_end_date"/>
+        app:layout_constraintStart_toStartOf="@id/cv_end_date" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_end_date"
-        android:layout_width="wrap_content"
+        style="@style/Widget.ProExpense.CalendarDayCardView"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cv_start_date"
-        app:layout_constraintTop_toBottomOf="@id/tv_to"
-        >
+        app:layout_constraintTop_toBottomOf="@id/tv_to">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/standard_icon_size"
-                android:layout_height="@dimen/standard_icon_size"
-                app:cardElevation="1dp"
-                android:layout_marginVertical="@dimen/grid_1"
-                android:layout_marginStart="@dimen/grid_2"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_date" />
+            <TextView
+                android:id="@+id/tv_end_month"
+                style="?textAppearanceHeadline6"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerHorizontal="true"
+                android:background="?colorPrimary"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="?colorOnPrimary"
+                tools:text="Feb" />
 
             <TextView
-                android:id="@+id/tv_end_date"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_end_day"
+                style="?textAppearanceHeadline5"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_end_month"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/grid_2"
-                android:layout_marginEnd="@dimen/grid_3"
-                tools:text="11 Dec 2019" />
+                android:layout_marginTop="@dimen/grid_1"
+                android:gravity="center"
+                android:textStyle="bold"
+                tools:text="21" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tv_end_year"
+                style="?textAppearanceCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_end_day"
+                android:layout_marginBottom="@dimen/grid_1"
+                android:gravity="center"
+                tools:text="2011" />
+
+        </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
@@ -117,33 +159,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <RadioGroup
-        android:id="@+id/rg_order"
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/tg_date_order"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_2"
-        android:orientation="horizontal"
+        app:checkedButton="@id/btn_date_order_asc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sorted_by">
+        app:layout_constraintTop_toBottomOf="@id/tv_sorted_by"
+        app:singleSelection="true">
 
-        <RadioButton
-            android:id="@+id/rb_asc"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_date_order_desc"
+            style="?materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="?colorPrimary"
-            android:checked="true"
-            android:text="@string/ascending" />
+            android:text="@string/desc" />
 
-        <RadioButton
-            android:id="@+id/rb_desc"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_date_order_asc"
+            style="?materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/grid_3"
-            android:buttonTint="?colorPrimary"
-            android:text="@string/descending" />
-    </RadioGroup>
+            android:text="@string/asc" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <Button
         android:id="@+id/btn_apply_filter"
@@ -156,6 +197,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rg_order" />
+        app:layout_constraintTop_toBottomOf="@id/tg_date_order" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

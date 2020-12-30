@@ -1,10 +1,7 @@
 package com.arduia.expense.di
 
 import android.content.Context
-import com.arduia.expense.ui.common.formatter.DateFormatter
-import com.arduia.expense.ui.common.formatter.DateRangeFormatter
-import com.arduia.expense.ui.common.formatter.ExpenseRecentDateFormatter
-import com.arduia.expense.ui.common.formatter.StatisticDateRangeFormatter
+import com.arduia.expense.ui.common.formatter.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -38,14 +35,22 @@ object FormattingModule{
     @Provides
     fun provideDateFormat(): DateFormat = SimpleDateFormat("d-M-yyyy", Locale.ENGLISH)
 
-    @Provides
-    fun provideStatisticDateRangeFormatter(): DateRangeFormatter = StatisticDateRangeFormatter()
 
     @Provides
     fun provideDateFormatter(@ActivityContext context: Context): DateFormatter
     = ExpenseRecentDateFormatter(context)
 
 }
+
+@Qualifier
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+annotation class MonthlyDateRange
+
+@Qualifier
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+annotation class StatisticDateRange
 
 @Qualifier
 @MustBeDocumented

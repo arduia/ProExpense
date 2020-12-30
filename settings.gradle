@@ -1,3 +1,4 @@
+include ':expense-backup'
 include ':currencystore'
 include ':backup'
 include ':core'

@@ -1,5 +1,8 @@
 package com.arduia.backup
 
+import com.arduia.backup.task.BackupCountResult
+import com.arduia.backup.task.BackupResult
+import com.arduia.backup.task.getDataOrError
 import jxl.Workbook
 import jxl.read.biff.BiffException
 import jxl.write.WritableWorkbook
@@ -12,15 +15,16 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
 
 
     @Throws(IOException::class, SecurityException::class)
-    suspend fun export(outputStream: OutputStream): Int {
+    suspend fun export(outputStream: OutputStream): BackupResult<Int> {
         val book = Workbook.createWorkbook(outputStream)
         return exportData(book)
     }
 
-    private suspend fun exportData(book: WritableWorkbook): Int {
-        var totalCount = 0
+    private suspend fun exportData(book: WritableWorkbook): BackupResult<Int> {
+        var totalCount = BackupCountResult.empty()
         sheets.forEachIndexed { index, backupSheet ->
-            totalCount += backupSheet.export(book, index)
+            val count =  backupSheet.export(book, index)
+            totalCount = totalCount.plus(count)
         }
         book.write()
         book.close()
@@ -28,8 +32,8 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
     }
 
     @Throws(IOException::class, SecurityException::class)
-    suspend fun import(inputStream: InputStream):Int {
-        val count:Int
+    suspend fun import(inputStream: InputStream):BackupResult<Int> {
+        val count: BackupResult<Int>
         try {
             val book = Workbook.getWorkbook(inputStream)
             count = importExcelData(book)
@@ -46,8 +50,8 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
         importExcelData(book)
     }
 
-    private suspend fun importExcelData(book: Workbook): Int{
-        var count = -1
+    private suspend fun importExcelData(book: Workbook): BackupResult<Int>{
+        var count = BackupCountResult.empty()
         sheets.forEach { backupSheet ->
             count = backupSheet.import(book)
         }
@@ -56,7 +60,7 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
     }
 
     @Throws(IOException::class, SecurityException::class)
-    fun itemCount(inputStream: InputStream): Int {
+    suspend fun itemCount(inputStream: InputStream): Int {
         try {
             val book = Workbook.getWorkbook(inputStream)
             return itemCount(book)
@@ -65,10 +69,10 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
         }
     }
 
-    private fun itemCount(book: Workbook): Int {
+    private suspend fun itemCount(book: Workbook): Int {
         var itemCount = 0
         sheets.forEach { backupSheet ->
-            itemCount += backupSheet.itemCounts(book)
+            itemCount += backupSheet.getItemCount(book)
         }
         book.close()
         if (itemCount < 0) return -1

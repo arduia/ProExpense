@@ -5,6 +5,6 @@ Records are stored in local device storage.
 
 Statistics
 Weekly expenses are presented as simple Graph.
+Category Statistics
 
-Multi-Language
-Languages can easily be selected.
+Multi-Language support

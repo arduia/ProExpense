@@ -1,6 +1,3 @@
 package com.arduia.backup
 
-interface FileNameGenerator {
-
-    fun generate(): String
-}
+interface FileNameGenerator: NameGenerator

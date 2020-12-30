@@ -1048,5 +1048,12 @@
     "code": "AFN",
     "symbol": "؋",
     "number": "971"
+  },
+  {
+    "rank": 167,
+    "currency_name": "BANGLADESH",
+    "code": "BDT",
+    "symbol": "৳",
+    "number": "050"
   }
 ]

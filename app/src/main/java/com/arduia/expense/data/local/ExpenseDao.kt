@@ -2,6 +2,7 @@ package com.arduia.expense.data.local
 
 import androidx.paging.DataSource
 import androidx.room.*
+import com.arduia.expense.model.Result
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -43,11 +44,17 @@ interface ExpenseDao{
     @Query("SELECT `modified_date` FROM `expense` ORDER BY `modified_date` DESC LIMIT 1")
     suspend fun getMostLatestDateSync(): Long
 
+    @Query("SELECT `modified_date`, MIN(`modified_date`) AS `minDate`, MAX(`modified_date`) AS `maxDate` FROM `expense` LIMIT 1")
+    fun getMaxAndMiniDateRange(): Flow<DateRangeDataModel>
+
     @Query( "SELECT * FROM `expense` ORDER BY modified_date DESC LIMIT 4")
     fun getRecentExpense(): Flow<List<ExpenseEnt>>
 
     @Query("SELECT COUNT(*) FROM expense")
     fun getExpenseTotalCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM expense")
+    suspend fun getExpenseTotalCountSync(): Int
 
     @Query("SELECT * FROM 'expense' ORDER BY modified_date DESC LIMIT :limit OFFSET :offset")
     fun getExpenseRange(limit: Int, offset: Int): Flow<List<ExpenseEnt>>

@@ -37,7 +37,6 @@ class ExportViewModel @ViewModelInject constructor(
         val exportRequest = OneTimeWorkRequestBuilder<ExportWorker>()
             .setInputData(inputUriData)
             .build()
-
         workManager.enqueue(exportRequest)
     }
 
