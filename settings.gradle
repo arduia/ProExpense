@@ -1,5 +1,5 @@
 include ':expense-backup'
-include ':currencystore'
+include ':currency-store'
 include ':backup'
 include ':shared'
 include ':week-expense-graph'

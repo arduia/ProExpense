@@ -15,7 +15,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/backup" />
-            <option value="$PROJECT_DIR$/currencystore" />
+            <option value="$PROJECT_DIR$/currency-store" />
             <option value="$PROJECT_DIR$/expense-backup" />
             <option value="$PROJECT_DIR$/shared" />
             <option value="$PROJECT_DIR$/week-expense-graph" />

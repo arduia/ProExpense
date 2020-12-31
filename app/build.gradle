@@ -76,7 +76,7 @@ android {
 
 dependencies {
     implementation project(path: ':backup')
-    implementation project(path: ':currencystore')
+    implementation project(path: ':currency-store')
     implementation project(path: ':expense-backup')
 
 //    Version_Variable
