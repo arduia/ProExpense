@@ -78,7 +78,7 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
         })
 
         viewModel.backupTaskEvent.observe(viewLifecycleOwner, EventObserver { id ->
-            backupMsgReceiver.addTaskID(id)
+            backupMsgReceiver.registerBackupTaskID(id)
         })
 
         viewModel.loadingEvent.observe(viewLifecycleOwner, EventObserver { isLoading ->
