@@ -17,7 +17,7 @@ A simple free finance note to safely record daily expenses
        </tr>
  </table>
  
- **" Quote**  
+ **Quote**  
  *"Beware of little expenses; a small leak will sink a great ship"* - Benjamin Franklin
 
  
@@ -74,7 +74,7 @@ A simple free finance note to safely record daily expenses
   <li>Maximum expense enty amount is 999,999,999.99.</li>
 </ul>
 
-## Application Architecutre
+## Application Architecture
 <img src="https://developer.android.com/topic/libraries/architecture/images/final-architecture.png" width="800">  
 
 *Image source from d.android.com*
