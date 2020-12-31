@@ -106,7 +106,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation project(path: ':week-expense-graph')
-    implementation project(path: ':core')
+    implementation project(path: ':shared')
 //    AndroidX
     implementation "androidx.core:core-ktx:$androidx_version"
     implementation "androidx.appcompat:appcompat:$app_compat_version"

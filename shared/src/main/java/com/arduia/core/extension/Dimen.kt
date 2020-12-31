@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 
 /**
- * Dimension Convert from Pixel to Density Pixel or reverse.
+ * Dimension Converters from Pixel to Density Pixel or vice-visa.
  */
 fun Context.dp(px: Float) = (px/resources.displayMetrics.density)
 
