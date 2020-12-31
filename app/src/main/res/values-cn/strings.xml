@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Pro Expense</string>
-    <string name="recent_entry_logs">最近条目</string>
+    <string name="recent">最近条目</string>
     <string name="settings">设置</string>
     <string name="expense_logs">开支记录</string>
     <string name="next">下一步</string>
@@ -131,7 +131,6 @@
     <string name="desc">降序</string>
     <string name="totals">总数</string>
     <string name="acknowledgement_title">致谢</string>
-    <string name="recent">Recent Entry</string>
     <string name="outcome_for_week">Expenses in this Week</string>
     <string name="house_hold">Housing</string>
     <string name="delete_item_description">will be deleted!</string>

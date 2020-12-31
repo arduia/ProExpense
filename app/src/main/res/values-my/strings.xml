@@ -2,13 +2,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">Pro Expense</string>
-    <string name="recent_entry_logs">မှတ်တမ်း</string>
     <string name="settings">ချိန်ညှိရန်</string>
     <string name="expense_logs">စာရင်းများ</string>
     <string name="home">မူလစာမျက်နှာ</string>
     <string name="expenses_in_this_week">ယခုသီတင်းပတ်ရှိအသုံးစရိတ်များ</string>
     <string name="mmk">ကျပ်</string>
-    <string name="recents">အသုံးစရိတ် မှတ်တမ်းများ</string>
+    <string name="recent">အသုံးစရိတ် မှတ်တမ်းများ</string>
     <string name="date">နေ့ရက်</string>
     <string name="spend">ထွက်ငွေကျပ်</string>
     <string name="name">အမည်</string>
