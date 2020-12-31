@@ -8,7 +8,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import com.arduia.core.extension.px
+import com.arduia.expense.R
 import com.arduia.expense.databinding.FragChooseLanguageBinding
+import com.arduia.expense.ui.common.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,6 +45,12 @@ class ChooseLanguageFragment : Fragment() {
         binding.searchBox.setOnSearchTextChangeListener {
             viewModel.searchLang(it)
         }
+        binding.rvLanguages. addItemDecoration(
+            MarginItemDecoration(
+                spaceSide = resources.getDimension(R.dimen.grid_3).toInt(),
+                spaceHeight = requireContext().px(4)
+            )
+        )
         adapter.setOnItemClickListener(viewModel::selectLang)
     }
 

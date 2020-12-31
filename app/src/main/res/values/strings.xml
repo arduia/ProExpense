@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!--    Base-->
     <string name="app_name">Pro Expense</string>
-    <string name="recent">Recent</string>
+    <string name="recent_entry_logs">Recent Entry</string>
     <string name="settings">Settings</string>
     <string name="expense_logs">Expense Logs</string>
 
@@ -16,7 +16,7 @@
     <string name="free">Free</string>
     <!--    Home-->
     <string name="home">Home</string>
-    <string name="outcome_for_week">Outcome for this week</string>
+    <string name="expenses_in_this_week">Expenses in this Week</string>
     <string name="mmk">MMK</string>
     <string name="recents">Recent</string>
 
@@ -36,7 +36,7 @@
     <string name="income">Income</string>
     <string name="social">Social</string>
     <string name="clothes">Clothes</string>
-    <string name="house_hold">HouseHold</string>
+    <string name="housing">Housing</string>
     <string name="food">Food</string>
     <string name="donation">Donation</string>
     <string name="entertainment">Entertainment</string>
@@ -71,17 +71,17 @@
 
 <!--    About-->
     <string name="about">About</string>
-    <string name="app_description">It is free and open source for easily manage daily finance.</string>
+    <string name="app_description">Pro Expense is a free and open-source software to simply and safely record daily expenses.</string>
     <string name="privacy_policy">Privacy and Policy</string>
     <string name="policy_url">file:///android_asset/privacy_policy.html</string>
     <string name="open_source_url">file:///android_asset/open_source_licenses.html</string>
     <string name="github_link_url">https://github.com/arduia/ProExpense</string>
     <string name="open_source_lib">Opens-Source Libraries</string>
     <string name="contribute_app">Contribute the app</string>
-    <string name="developer">Developed by Arduia</string>
+    <string name="developer">Developed by Arduia and Open-source contributors</string>
     <string name="developer_email">dev.arduia@gmail.com</string>
     <string name="app_welcome">Hello! Welcome to Pro Expense</string>
-    <string name="choose_language">Choose Language:</string>
+    <string name="choose_language">Choose Language</string>
     <string name="day_sun">SU</string>
     <string name="day_mon">MO</string>
     <string name="day_tue">TU</string>
@@ -105,7 +105,7 @@
     <string name="feedback_status">Feedback Status</string>
     <string name="import_data">Import</string>
 
-    <string name="choose_currency">Choose Currency:</string>
+    <string name="choose_currency">Choose Currency</string>
     <string name="search">Search</string>
     <string name="no_item">No Items</string>
     <string name="continue_home">Continue</string>
@@ -136,11 +136,20 @@
     <string name="backup_logs">Backup Logs</string>
     <string name="delete_items">Delete Items</string>
     <string name="confirm">Confirm</string>
-    <string name="delete_item_description">Items will be deleted!</string>
+    <string name="will_be_deleted">will be deleted!</string>
     <string name="no_data">No Data</string>
     <string name="category_statistics">Category Statistics</string>
     <string name="beta">beta</string>
     <string name="more">More</string>
-    <string name="about_acknowledgement">Thank so much for contributors who opened issues on Github for this app.</string>
+    <string name="about_acknowledgement">Special thanks to contributors who provided valuable feedbacks and opened issues on the Github for this app.</string>
+    <string name="calendar">Calendar</string>
+    <string name="time">Time</string>
+    <string name="order_date_in">Order by Date in</string>
+    <string name="currency">Currency</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="asc">Asc</string>
+    <string name="desc">Desc</string>
+    <string name="totals">Totals</string>
+    <string name="acknowledgement_title">Acknowledgement</string>
 </resources>
 

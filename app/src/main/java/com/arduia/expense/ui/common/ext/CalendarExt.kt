@@ -5,7 +5,7 @@ import java.util.*
 fun Calendar.setDayAsStart(): Calendar {
     this[Calendar.HOUR_OF_DAY] = 0
     this[Calendar.MINUTE] = 0
-    this[Calendar.SECOND] = 0
+    this[Calendar.MILLISECOND] = 0
 
     return this
 }
@@ -13,7 +13,7 @@ fun Calendar.setDayAsStart(): Calendar {
 fun Calendar.setDayAsEnd(): Calendar {
     this[Calendar.HOUR_OF_DAY] = 23
     this[Calendar.MINUTE] = 59
-    this[Calendar.SECOND] = 59
+    this[Calendar.MILLISECOND] = 5900
     return this
 }
 

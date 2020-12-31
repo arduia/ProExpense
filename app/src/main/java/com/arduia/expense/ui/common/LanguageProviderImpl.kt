@@ -23,6 +23,7 @@ class LanguageProviderImpl : LanguageProvider{
     private fun getAllLanguages() = mutableListOf<LanguageVto>().apply {
         add(LanguageVto("my", R.drawable.tmp_myanmar, "Myanmar(Burma)"))
         add(LanguageVto("en", R.drawable.tmp_united_states, "United States(English)"))
+        add(LanguageVto("cn", R.drawable.tmp_china, "China (Chinese)"))
     }
 
     companion object{

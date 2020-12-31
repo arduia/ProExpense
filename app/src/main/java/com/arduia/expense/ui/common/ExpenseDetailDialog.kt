@@ -79,7 +79,7 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
     }
 
 
-    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailsVto, isDeleteEnabled: Boolean = true) {
+    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailsVto, isDeleteEnabled: Boolean = false) {
         expenseDetail = detail
         show(fragmentManager, TAG)
         this.isDeleteEnabled = isDeleteEnabled

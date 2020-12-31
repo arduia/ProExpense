@@ -9,7 +9,7 @@ import com.arduia.expense.ui.common.ExpenseCategory.Companion.EDUCATION
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.ENTERTAINMENT
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.FOOD
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.HEALTH_CARE
-import com.arduia.expense.ui.common.ExpenseCategory.Companion.HOUSEHOLD
+import com.arduia.expense.ui.common.ExpenseCategory.Companion.HOUSING
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.INCOME
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.OTHERS
 import com.arduia.expense.ui.common.ExpenseCategory.Companion.SOCIAL
@@ -37,7 +37,7 @@ class ExpenseCategoryProviderImpl(private val resource: Resources) :
     private fun getCategoryData() = mutableListOf<ExpenseCategory>().apply {
         add(ExpenseCategory(INCOME, (R.string.income).res(), R.drawable.ic_income))
         add(ExpenseCategory(FOOD, (R.string.food).res(), R.drawable.ic_food))
-        add(ExpenseCategory(HOUSEHOLD, (R.string.house_hold).res(), R.drawable.ic_household))
+        add(ExpenseCategory(HOUSING, (R.string.housing).res(), R.drawable.ic_household))
         add(ExpenseCategory(SOCIAL, (R.string.social).res(), R.drawable.ic_social))
         add(
             ExpenseCategory(
@@ -80,7 +80,7 @@ data class ExpenseCategory(
         const val OTHERS = 1
         const val INCOME = 2
         const val FOOD = 3
-        const val HOUSEHOLD = 4
+        const val HOUSING = 4
         const val SOCIAL = 5
         const val ENTERTAINMENT = 6
         const val TRANSPORTATION = 7

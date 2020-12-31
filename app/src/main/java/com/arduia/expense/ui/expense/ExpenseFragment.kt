@@ -17,13 +17,13 @@ import com.arduia.core.view.asVisible
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseLogsBinding
 import com.arduia.expense.di.TopDropNavOption
+import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.DeleteConfirmFragment
 import com.arduia.expense.ui.common.DeleteInfoVo
 import com.arduia.expense.ui.common.ExpenseDetailDialog
 import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.common.filter.DateRangeSortingFilterDialog
-import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
+import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
 import com.arduia.expense.ui.expense.swipe.SwipeItemCallback
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
@@ -41,11 +41,12 @@ class ExpenseFragment : NavBaseFragment() {
 
     private val viewModel by viewModels<ExpenseViewModel>()
 
-    private var filterDialog: DateRangeSortingFilterDialog? = null
+    private var filterDialog: ExpenseFilterDialogFragment? = null
 
     private var adapter: ExpenseLogAdapter? = null
 
     private val itemNumberFormat = DecimalFormat()
+
     @Inject
     @TopDropNavOption
     lateinit var entryNavOption: NavOptions
@@ -53,7 +54,7 @@ class ExpenseFragment : NavBaseFragment() {
     private var deleteConfirmDialog: DeleteConfirmFragment? = null
     private var detailDialog: ExpenseDetailDialog? = null
 
-    private val filterInfoObserver: Observer<String> = Observer{
+    private val filterInfoObserver: Observer<String> = Observer {
         binding.tbExpense.subtitle = it
     }
 
@@ -102,16 +103,16 @@ class ExpenseFragment : NavBaseFragment() {
         }
     }
 
-    private fun showDeleteConfirmDialog() {
+    private fun showDeleteConfirmDialog(countTotal: Int) {
         deleteConfirmDialog?.dismiss()
         deleteConfirmDialog = DeleteConfirmFragment()
         deleteConfirmDialog?.setOnConfirmListener {
             viewModel.onMultiDeleteConfirmed()
         }
-        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(0, null))
+        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(countTotal, null))
     }
 
-    private fun showSingleDeleteConfirmDialog(){
+    private fun showSingleDeleteConfirmDialog() {
         deleteConfirmDialog?.dismiss()
         deleteConfirmDialog = DeleteConfirmFragment()
         deleteConfirmDialog?.setOnConfirmListener {
@@ -120,7 +121,7 @@ class ExpenseFragment : NavBaseFragment() {
         deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(1, null))
     }
 
-    private fun showFilterDialog(filterEnt: RangeSortingFilterEnt) {
+    private fun showFilterDialog(filterEnt: ExpenseLogFilterInfo) {
         //Remove Old Dialog if exit
         with(filterDialog) {
             this?.setOnFilterApplyListener(null)
@@ -128,16 +129,13 @@ class ExpenseFragment : NavBaseFragment() {
         }
 
         //Create New Dialog
-        filterDialog = DateRangeSortingFilterDialog().apply {
-            setOnFilterApplyListener { filter ->
-                viewModel.setFilter(filter)
-            }
+        filterDialog = ExpenseFilterDialogFragment().apply {
+            setOnFilterApplyListener(viewModel::setFilter)
         }
 
         filterDialog?.show(
             childFragmentManager,
-            filter = filterEnt.filter,
-            limit = filterEnt.limit
+            filterEnt
         )
     }
 
@@ -183,82 +181,91 @@ class ExpenseFragment : NavBaseFragment() {
         }
 
         viewModel.onMultiDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
-            showDeleteConfirmDialog()
+            showDeleteConfirmDialog(it)
         })
 
-        viewModel.onSingleDeleteConfirm.observe(viewLifecycleOwner, EventObserver{
+        viewModel.onSingleDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
             showSingleDeleteConfirmDialog()
         })
 
-        viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver{
+        viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver {
             showFilterDialog(it)
         })
 
-        viewModel.onDetailShow.observe(viewLifecycleOwner, EventObserver{
+        viewModel.onDetailShow.observe(viewLifecycleOwner, EventObserver {
             showItemDetail(it)
         })
 
+        viewModel.isEmptyExpenseCount.observe(viewLifecycleOwner) {
+            if (it) {
+                disableMenuAction()
+            } else {
+               enableMenuActions()
+            }
+        }
+
         viewModel.selectedCount.observe(viewLifecycleOwner) observer@{
-            if( it == 0) return@observer
+            if (it == 0) return@observer
             binding.tbExpense.title = "${itemNumberFormat.format(it)} ${
                 if (it <= 1) getString(R.string.single_item_suffix) else getString(R.string.multi_item_suffix)
             }"
         }
 
-        viewModel.isEmptyLogs.observe(viewLifecycleOwner){isEmptyLogs ->
-            if(isEmptyLogs){
+        viewModel.isCurrentListEmpty.observe(viewLifecycleOwner) { isEmptyLogs ->
+            if (isEmptyLogs) {
                 showNoExpenseInfo()
-                disableMenuAction()
+
                 setEmptyStringOnToolbarSubtitle()
                 unregisterFilterInfoObserver()
-            }else{
+            } else {
                 hideNoExpenseInfo()
-                enableMenuActions()
                 registerFilterInfoObserver()
             }
         }
     }
 
-    private fun disableMenuAction(){
+    private fun disableMenuAction() {
         binding.tbExpense.menu.forEach {
             it.isEnabled = false
         }
     }
-    private fun enableMenuActions(){
+
+    private fun enableMenuActions() {
         binding.tbExpense.menu.forEach {
             it.isEnabled = true
         }
     }
 
-    private fun registerFilterInfoObserver(){
+    private fun registerFilterInfoObserver() {
         viewModel.filterInfo.observe(viewLifecycleOwner, filterInfoObserver)
     }
 
-    private fun unregisterFilterInfoObserver(){
+    private fun unregisterFilterInfoObserver() {
         viewModel.filterInfo.removeObserver(filterInfoObserver)
     }
 
-    private fun setEmptyStringOnToolbarSubtitle(){
+    private fun setEmptyStringOnToolbarSubtitle() {
         binding.tbExpense.subtitle = ""
     }
 
-    private fun showItemDetail(detail: ExpenseDetailsVto){
+    private fun showItemDetail(detail: ExpenseDetailsVto) {
         detailDialog?.dismiss()
         //Show Selected Dialog
         detailDialog = ExpenseDetailDialog()
         detailDialog?.setOnDeleteClickListener {
+            detailDialog?.dismiss()
             viewModel.onSingleDeletePrepared(it.id)
         }
         detailDialog?.setOnEditClickListener {
             navigateToExpenseEntryFragment(detail.id)
         }
-        detailDialog?.showDetail(parentFragmentManager, detail)
+        detailDialog?.showDetail(parentFragmentManager, detail,isDeleteEnabled = true)
     }
 
 
-    private fun navigateToExpenseEntryFragment(id: Int){
+    private fun navigateToExpenseEntryFragment(id: Int) {
         val action = ExpenseFragmentDirections.actionExpenseToEntry(expenseId = id)
-        findNavController().navigate(action,entryNavOption)
+        findNavController().navigate(action, entryNavOption)
     }
 
     private fun changeUiDefault() {
@@ -290,10 +297,11 @@ class ExpenseFragment : NavBaseFragment() {
         navigationDrawer.lockDrawer()// Focus on Selection, Navigating other UI should'nt be on selection
     }
 
-    private fun showNoExpenseInfo(){
+    private fun showNoExpenseInfo() {
         binding.layoutNoData.root.asVisible()
     }
-    private fun hideNoExpenseInfo(){
+
+    private fun hideNoExpenseInfo() {
         binding.layoutNoData.root.asInvisible()
 
     }

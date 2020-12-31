@@ -48,7 +48,9 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
     }
 
     fun selectLang(lang: LanguageVto) {
-        selectedId post lang.id
+        viewModelScope.launch {
+            settingRepo.setSelectedLanguage(lang.id)
+        }
     }
 
     private fun observeAvailableLanguages() {

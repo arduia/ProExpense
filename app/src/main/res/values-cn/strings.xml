@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!--    Base-->
     <string name="app_name">Pro Expense</string>
-    <string name="recent">最近</string>
+    <string name="recent_entry_logs">最近</string>
     <string name="settings">设置</string>
     <string name="expense_logs">开支记录</string>
 
@@ -16,7 +16,7 @@
     <string name="free">Free</string>
     <!--    Home-->
     <string name="home">主页</string>
-    <string name="outcome_for_week">本周结果</string>
+    <string name="expenses_in_this_week">本周结果</string>
     <string name="mmk">缅甸元</string>
     <string name="recents">最近</string>
 
@@ -36,7 +36,7 @@
     <string name="income">收入</string>
     <string name="social">社交</string>
     <string name="clothes">服饰</string>
-    <string name="house_hold">家用</string>
+    <string name="housing">家用</string>
     <string name="food">食品</string>
     <string name="donation">捐赠</string>
     <string name="entertainment">娱乐</string>
@@ -136,10 +136,19 @@
     <string name="backup_logs">备份记录</string>
     <string name="delete_items">删除多个项目</string>
     <string name="confirm">确认</string>
-    <string name="delete_item_description">这些项目将被删除！</string>
+    <string name="will_be_deleted">这些项目将被删除！</string>
     <string name="no_data">无数据</string>
     <string name="category_statistics">类别统计数据</string>
     <string name="beta">测试</string>
     <string name="more">更多</string>
     <string name="about_acknowledgement">非常感谢在 Github 上为这个应用程序提出 Issues 的贡献者们。</string>
+    <string name="calendar">Calendar</string>
+    <string name="time">Time</string>
+    <string name="order_date_in">Order by Date in</string>
+    <string name="currency">Currency</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="asc">Asc</string>
+    <string name="desc">Desc</string>
+    <string name="totals">Total</string>
+    <string name="acknowledgement_title">Acknowledgement</string>
 </resources>

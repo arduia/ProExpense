@@ -41,7 +41,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
         android:clipToPadding="false"
-        android:paddingBottom="50dp"
+        android:paddingBottom="60dp"
         tools:listitem="@layout/item_language"
         app:layout_constraintTop_toBottomOf="@id/tv_choose_language"
         app:layout_constraintBottom_toBottomOf="parent"

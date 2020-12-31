@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:background="?colorSurface"
             app:menu="@menu/menu_expense_log"
+            app:subtitle=" "
             app:navigationIcon="@drawable/ic_menu"
             app:title="@string/expense_logs" />
 

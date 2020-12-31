@@ -9,12 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.arduia.core.view.asGone
-import com.arduia.core.view.asInvisible
 import com.arduia.core.view.asVisible
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
+import com.arduia.expense.ui.common.DeleteConfirmFragment
+import com.arduia.expense.ui.common.DeleteInfoVo
 import com.arduia.expense.ui.common.MarginItemDecoration
 import com.arduia.expense.ui.vto.BackupVto
 import com.arduia.mvvm.EventObserver
@@ -35,6 +36,7 @@ class BackupFragment : NavBaseFragment() {
     private var backupListAdapter: BackupListAdapter? = null
     private var backDetailDialog: ImportDialogFragment? = null 
     private var exportDialog: ExportDialogFragment? = null
+    private var deleteDialog: DeleteConfirmFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +76,16 @@ class BackupFragment : NavBaseFragment() {
                 spaceHeight = resources.getDimension(R.dimen.grid_1).toInt()
             )
         )
+        backupListAdapter?.setItemClickListener(::showDeleteConfirmDialog)
+    }
+
+    private fun showDeleteConfirmDialog(backupItem: BackupVto){
+        deleteDialog?.dismiss()
+        deleteDialog = DeleteConfirmFragment()
+        deleteDialog?.setOnConfirmListener {
+            viewModel.onBackupDeleteConfirmed(backupItem)
+        }
+        deleteDialog?.show(childFragmentManager, DeleteInfoVo(1))
     }
 
     private fun setupViewModel() {
@@ -96,6 +108,7 @@ class BackupFragment : NavBaseFragment() {
         viewModel.isEmptyExpenseLogs.observe(viewLifecycleOwner){
                 binding.cvExport.isEnabled = it.not()
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
