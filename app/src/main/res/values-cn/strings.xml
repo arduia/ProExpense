@@ -16,7 +16,7 @@
     <string name="free">Free</string>
     <!--    Home-->
     <string name="home">主页</string>
-    <string name="expenses_in_this_week">本周结果</string>
+    <string name="expenses_in_this_week">本周开支</string>
     <string name="mmk">缅甸元</string>
     <string name="recents">最近</string>
 
@@ -71,14 +71,14 @@
 
 <!--    About-->
     <string name="about">关于</string>
-    <string name="app_description">Pro Expense 是自由开源应用，可以方便地管理日常财务。</string>
+    <string name="app_description">Pro Expense 是一款自由开源应用，可以方便安全地记录日常开支。</string>
     <string name="privacy_policy">隐私和政策</string>
     <string name="policy_url">file:///android_asset/privacy_policy.html</string>
     <string name="open_source_url">file:///android_asset/open_source_licenses.html</string>
     <string name="github_link_url">https://github.com/arduia/ProExpense</string>
     <string name="open_source_lib">开源库</string>
     <string name="contribute_app">为应用做贡献</string>
-    <string name="developer">由 Arduia 开发</string>
+    <string name="developer">由 Arduia 和开源贡献者们开发</string>
     <string name="developer_email">dev.arduia@gmail.com</string>
     <string name="app_welcome">你好！欢迎来到 Pro Expense</string>
     <string name="choose_language">选择语言:</string>
@@ -141,14 +141,14 @@
     <string name="category_statistics">类别统计数据</string>
     <string name="beta">测试</string>
     <string name="more">更多</string>
-    <string name="about_acknowledgement">非常感谢在 Github 上为这个应用程序提出 Issues 的贡献者们。</string>
-    <string name="calendar">Calendar</string>
-    <string name="time">Time</string>
-    <string name="order_date_in">Order by Date in</string>
-    <string name="currency">Currency</string>
-    <string name="theme_mode">Theme Mode</string>
-    <string name="asc">Asc</string>
-    <string name="desc">Desc</string>
-    <string name="totals">Total</string>
-    <string name="acknowledgement_title">Acknowledgement</string>
+    <string name="about_acknowledgement">特别鸣谢那些在 Github 上为这款应用提供了有价值的反馈和提出 Issues 的贡献者们。</string>
+    <string name="calendar">日历</string>
+    <string name="time">时间</string>
+    <string name="order_date_in">日期排序方法</string>
+    <string name="currency">币种</string>
+    <string name="theme_mode">主题模式</string>
+    <string name="asc">升序</string>
+    <string name="desc">降序</string>
+    <string name="totals">总数</string>
+    <string name="acknowledgement_title">致谢</string>
 </resources>
