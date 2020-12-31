@@ -2,6 +2,6 @@ include ':expense-backup'
 include ':currencystore'
 include ':backup'
 include ':core'
-include ':WeeklyCostGraph'
+include ':week-expense-graph'
 include ':app'
 rootProject.name = "ProExpense"

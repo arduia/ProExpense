@@ -105,7 +105,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
-    implementation project(path: ':WeeklyCostGraph')
+    implementation project(path: ':week-expense-graph')
     implementation project(path: ':core')
 //    AndroidX
     implementation "androidx.core:core-ktx:$androidx_version"
