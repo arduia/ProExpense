@@ -3,10 +3,17 @@ package com.arduia.graph
 import java.lang.IllegalArgumentException
 
 
-internal data class SpendPoint(val day: Int, val rate: Float){
+internal data class SpendPoint(val day: Int, val rate: Float) {
     init {
-        if(day !in 1..7) throw IllegalArgumentException(" inserted Date is not Between 1 to 7")
-
-        if(rate !in -1f..1f) throw  IllegalArgumentException(" inserted Rate($rate) is not Between -1 to 1.0 float value")
+        validateDayOfWeek(day)
+        validateSpendPointRate(rate)
     }
+}
+
+internal fun validateDayOfWeek(day: Int) {
+    if (day !in 1..7) throw IllegalArgumentException("Day($day) must be between from 1 to 7")
+}
+
+internal fun validateSpendPointRate(rate: Float) {
+    if (rate !in -1f..1f) throw  IllegalArgumentException("Rate($rate) must be between from -1f to 1f")
 }

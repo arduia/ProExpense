@@ -7,7 +7,6 @@ import android.util.LayoutDirection
 import android.view.View
 import com.arduia.core.extension.px
 import com.arduia.core.extension.pxS
-import java.lang.IllegalArgumentException
 
 class SpendGraph @JvmOverloads constructor(
     context: Context,
@@ -43,11 +42,7 @@ class SpendGraph @JvmOverloads constructor(
     private val linePaint by lazy { createLinePaint() }
     private val labelPaint by lazy { createLabelPaint() }
 
-    var dayNameProvider: DayNameProvider = DayNameProviderImpl(context)
-
-    /**
-     * Interface Fields
-     */
+    var dayNameProvider: DayNameProvider = DefaultDayNameProviderImpl()
 
     var adapter: Adapter? = null
         set(value) {
@@ -55,12 +50,9 @@ class SpendGraph @JvmOverloads constructor(
             adapter?.graphView = this
         }
 
-    /**
-     * Framework Callback Methods
-     */
     init {
 
-        val a = context.obtainStyledAttributes(attrs,R.styleable.SpendGraph,defStyleAttrs, 0)
+        val a = context.obtainStyledAttributes(attrs, R.styleable.SpendGraph, defStyleAttrs, 0)
         val graphColor = a.getColor(R.styleable.SpendGraph_graph_color, Color.GREEN)
         val dayColor = a.getColor(R.styleable.SpendGraph_day_color, Color.GREEN)
         a.recycle()
@@ -69,7 +61,6 @@ class SpendGraph @JvmOverloads constructor(
         linePaint.color = graphColor
         labelPaint.color = graphColor
         linePointPaint.color = dayColor
-
 
     }
 
@@ -86,9 +77,6 @@ class SpendGraph @JvmOverloads constructor(
         initConfig()
     }
 
-    /**
-     * Draw Methods
-     */
     private fun Canvas.drawPointLines() {
 
         val linePath = Path()
@@ -249,10 +237,6 @@ class SpendGraph @JvmOverloads constructor(
         invalidate()
     }
 
-
-    /**
-     * Creation Methods
-     */
     private fun createDayPaint() =
         Paint().apply {
             color = Color.BLUE

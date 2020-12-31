@@ -1,8 +1,12 @@
 package com.arduia.graph
 
+/**
+ * Provide Day Name String for Graph
+ *
+ * To Support Different Language
+ */
 interface DayNameProvider {
 
-    //1..7 day name
     fun getName(day: Int): String
 
 }
