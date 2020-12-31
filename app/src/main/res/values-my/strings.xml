@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    xmlns:tools="http://schemas.android.com/tools">
-    <!--    Base-->
+
     <string name="app_name">Pro Expense</string>
     <string name="recent_entry_logs">မှတ်တမ်း</string>
     <string name="settings">ချိန်ညှိရန်</string>
     <string name="expense_logs">စာရင်းများ</string>
-
-    <!--    Home-->
     <string name="home">မူလစာမျက်နှာ</string>
     <string name="expenses_in_this_week">ယခုသီတင်းပတ်ရှိအသုံးစရိတ်များ</string>
     <string name="mmk">ကျပ်</string>
     <string name="recents">အသုံးစရိတ် မှတ်တမ်းများ</string>
-
-    <!--    Expense Detail-->
     <string name="date">နေ့ရက်</string>
-
-    <!--    Entry Sheet-->
     <string name="spend">ထွက်ငွေကျပ်</string>
     <string name="name">အမည်</string>
     <string name="amount">ပမာဏ</string>
@@ -25,7 +18,6 @@
     <string name="update">ပြန်ပြင်မည်</string>
     <string name="update_data">ပြင်ဆင်ရန်</string>
     <string name="expense_entry">စာရင်းမှတ်ရန်</string>
-
     <string name="income">ဝင်ငွေ</string>
     <string name="social">လူမှုရေး</string>
     <string name="clothes">အ၀တ်အစား</string>
@@ -37,13 +29,10 @@
     <string name="education">ပညာရေး</string>
     <string name="transportation">သွားလာရေး</string>
     <string name="health_care">ကျန်းမာရေး</string>
-
     <string name="item_deleted">ဖျက်ပြီးပါပြီ</string>
     <string name="multi_item_deleted">ဖျက်ပြီးပါပြီ</string>
     <string name="data_updated">ပြုပြင်ပြီးပါပြီ</string>
     <string name="empty_cost">ပမာဏမရှိပါ</string>
-
-    <!--    Feedback-->
     <string name="feedback">အကြံပြုရန်</string>
     <string name="feedback_description">ProExpense အက်ပလီကေးရှင်း အသုံးပြုရာ‌တွင် အဆင်ပြေချော‌မွေ့ မှုရှိမရှိ၊ လိုအပ်ချက်များကို အကြုံပြုရေးသား ပေးပို့နိုင်ပါသည်။</string>
     <string name="email">အီးမေးလ်</string>
@@ -51,16 +40,11 @@
     <string name="send_feedback">ပေးပို့မည်</string>
     <string name="thanks_for_comment">ယခုလိုပေးပို့‌သောအကြံပြုချက်အတွက် ကျေးဇူးတင်ပါသည်</string>
     <string name="go_home">မူလစာမျက်နှာ သို့</string>
-    <!--    Expense-->
-
-    <!--    Settings-->
     <string name="language">ဘာသာစကား</string>
     <string name="mm">MM</string>
     <string name="eng">EN</string>
     <string name="update_status">ဗားရှင်း</string>
     <string name="latest_version">နောက်ဆုံးဗားရှင်း</string>
-
-    <!--    About-->
     <string name="about">ဆော့ဗ်ဝဲအကြောင်း</string>
     <string name="app_description">နေ့စဉ် အသုံးစရိတ်များကို ရိုးရှင်းလွယ်ကူစွာ မှတ်တမ်းတင်နိုင်ဖို့ရန်အတွက် အထောက်အကူပြုသော အခမဲ့သုံးစွဲနိုင်သည့် အက်ပလီကေးရှင်း တစ်ခုဖြစ်ပါသည်။</string>
     <string name="privacy_policy">Privacy and Policy</string>
@@ -88,7 +72,6 @@
     <string name="day_sat">‌စနေ</string>
     <string name="day_sun">‌နွေ</string>
     <string name="restart">ပြန်လည်စတင်မည်</string>
-
     <string name="backup">သိမ်းဆည်းရန်</string>
     <string name="export">သိမ်းဆည်းမည်</string>
     <string name="total">စုစုပေါင်း</string>

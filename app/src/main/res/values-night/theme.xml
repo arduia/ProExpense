@@ -2,7 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.ProExpense" parent="Base.Theme.ProExpense">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blue_light_200</item>
         <item name="colorOnPrimary">@color/dark_gray</item>
         <item name="colorSurface">@color/dark_gray</item>

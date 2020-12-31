@@ -91,7 +91,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/grid_2"
                 android:layout_marginTop="@dimen/grid_3"
-                android:background="@drawable/large_rounded_warning_bg"
+                android:background="@drawable/bg_large_rounded_warning"
                 android:orientation="horizontal"
                 android:visibility="gone">
 

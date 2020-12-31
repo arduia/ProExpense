@@ -54,7 +54,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/small_rounded_warning_bg"
+            android:background="@drawable/bg_small_rounded_warning"
             android:textColor="?colorOnWarning"
             android:padding="@dimen/grid_1"
             android:textAllCaps="true"
