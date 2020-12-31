@@ -4,13 +4,13 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.local.AboutUpdateDataModel
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.ui.about.AboutUpdateUiModel
-import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactory
-import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactoryImpl
-import com.arduia.expense.ui.mapping.AboutUpdateUiToDataMapper
-import com.arduia.expense.ui.mapping.BackupVoMapper
-import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapper.*;
-import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapperFactory
-import com.arduia.expense.ui.vto.BackupVto
+import com.arduia.expense.ui.expenselogs.ExpenseLogVoMapperFactory
+import com.arduia.expense.ui.expenselogs.ExpenseLogVoMapperFactoryImpl
+import com.arduia.expense.ui.about.AboutUpdateUiModelMapper
+import com.arduia.expense.ui.backup.BackupVoMapper
+import com.arduia.expense.ui.expenselogs.ExpenseEntToLogVoMapper.*;
+import com.arduia.expense.ui.expenselogs.ExpenseEntToLogVoMapperFactory
+import com.arduia.expense.ui.backup.BackupVto
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,7 +29,7 @@ abstract class AbstractMapperModule {
             ExpenseEntToLogVoMapperFactory
 
     @Binds
-    abstract fun bindAboutUpdateUiToDataMapper(impl: AboutUpdateUiToDataMapper):
+    abstract fun bindAboutUpdateUiToDataMapper(impl: AboutUpdateUiModelMapper):
             Mapper<AboutUpdateDataModel, AboutUpdateUiModel>
 
     @Binds

@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemLanguageBinding
-import com.arduia.expense.ui.vto.LanguageVto
+import com.arduia.expense.ui.common.language.LanguageVto
 
 class LanguageListAdapter(private val layoutInflater: LayoutInflater) :
     RecyclerView.Adapter<LanguageListAdapter.VH>() {

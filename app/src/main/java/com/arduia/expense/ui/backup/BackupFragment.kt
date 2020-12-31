@@ -14,10 +14,9 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.DeleteConfirmFragment
-import com.arduia.expense.ui.common.DeleteInfoVo
-import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.vto.BackupVto
+import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
+import com.arduia.expense.ui.common.uimodel.DeleteInfoVo
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

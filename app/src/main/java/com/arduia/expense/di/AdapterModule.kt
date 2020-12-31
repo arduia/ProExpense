@@ -3,7 +3,7 @@ package com.arduia.expense.di
 import android.content.Context
 import android.view.LayoutInflater
 import com.arduia.expense.ui.backup.BackupListAdapter
-import com.arduia.expense.ui.expense.ExpenseLogAdapter
+import com.arduia.expense.ui.expenselogs.ExpenseLogAdapter
 import com.arduia.expense.ui.home.RecentListAdapter
 import dagger.Module
 import dagger.Provides

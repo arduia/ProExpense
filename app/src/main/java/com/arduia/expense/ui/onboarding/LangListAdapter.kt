@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemLanguageBinding
-import com.arduia.expense.ui.vto.LanguageVto
+import com.arduia.expense.ui.common.language.LanguageVto
 
 class LangListAdapter(private val layoutInflater: LayoutInflater) :
     ListAdapter<LanguageVto, LangListAdapter.VH>(

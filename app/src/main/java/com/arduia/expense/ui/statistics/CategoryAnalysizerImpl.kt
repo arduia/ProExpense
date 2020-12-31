@@ -1,7 +1,7 @@
 package com.arduia.expense.ui.statistics
 
 import com.arduia.expense.data.local.ExpenseEnt
-import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*

@@ -1,6 +1,6 @@
 package com.arduia.expense.di
 
-import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.statistics.CategoryAnalyzer
 import com.arduia.expense.ui.statistics.CategoryAnalyzerImpl
 import dagger.Module

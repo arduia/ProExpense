@@ -1,6 +1,6 @@
 package com.arduia.expense.ui.entry
 
-import com.arduia.expense.ui.common.ExpenseCategory
+import com.arduia.expense.ui.common.category.ExpenseCategory
 
 class ExpenseUpdateDataVto(val id: Int,
                            val name: String,

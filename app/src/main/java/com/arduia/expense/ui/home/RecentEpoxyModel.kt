@@ -6,7 +6,7 @@ import android.view.View
 import com.airbnb.epoxy.*
 import com.arduia.expense.R
 import com.arduia.expense.databinding.LayoutRecentListsBinding
-import com.arduia.expense.ui.vto.ExpenseVto
+import com.arduia.expense.ui.expenselogs.ExpenseVto
 
 data class RecentUiModel(val list: List<ExpenseVto>)
 

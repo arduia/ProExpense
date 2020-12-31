@@ -7,8 +7,8 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.model.data
-import com.arduia.expense.ui.common.LanguageProvider
-import com.arduia.expense.ui.vto.LanguageVto
+import com.arduia.expense.ui.common.language.LanguageProvider
+import com.arduia.expense.ui.common.language.LanguageVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

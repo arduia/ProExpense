@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemBackupBinding
-import com.arduia.expense.ui.vto.BackupVto
 
 class BackupListAdapter(private val layoutInflater: LayoutInflater) :
     ListAdapter<BackupVto, BackupListAdapter.VH>(DIFF_UTIL) {

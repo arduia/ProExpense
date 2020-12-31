@@ -1,18 +1,12 @@
 package com.arduia.expense.ui.home
 
 import com.arduia.core.arch.Mapper
-import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
-import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.formatter.DateFormatter
-import com.arduia.expense.ui.vto.ExpenseDetailsVto
-import timber.log.Timber
-import java.text.DateFormat
-import java.text.DecimalFormat
+import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
 import java.text.NumberFormat
-import java.util.*
 
 class ExpenseDetailMapper(
     @CurrencyDecimalFormat

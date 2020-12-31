@@ -8,7 +8,6 @@ import com.arduia.backup.ExcelBackup
 import com.arduia.expense.data.*
 import com.arduia.expense.data.local.*
 import com.arduia.expense.data.network.ExpenseNetworkDao
-import com.arduia.expense.ui.expense.DatabaseInvalidateMediator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,15 +29,6 @@ object RepositoryModule {
     fun providePreferenceStorageDao(
         application: Application
     ): PreferenceStorageDao = PreferenceFlowStorageDaoImpl(application.applicationContext)
-
-
-    @Provides
-    @Singleton
-    fun provideExpenseSourceInvalidateMediator(db: InvalidationTracker): DatabaseInvalidateMediator{
-        val invalidator = DatabaseInvalidateMediator()
-        db.addObserver(invalidator)
-        return invalidator
-    }
 
     @Provides
     @Singleton

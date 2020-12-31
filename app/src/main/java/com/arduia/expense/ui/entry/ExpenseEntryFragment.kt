@@ -22,7 +22,10 @@ import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.*
-import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import com.arduia.expense.ui.common.category.ExpenseCategory
+import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
+import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers

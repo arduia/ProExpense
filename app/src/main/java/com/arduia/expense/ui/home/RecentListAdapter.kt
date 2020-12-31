@@ -6,10 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.R
-import com.arduia.expense.databinding.ItemExpenseLogBinding
 import com.arduia.expense.databinding.ItemExpenseRecentBinding
-import com.arduia.expense.ui.vto.ExpenseVto
+import com.arduia.expense.ui.expenselogs.ExpenseVto
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
     ListAdapter<ExpenseVto, RecentListAdapter.VH>(DIFF_CALLBACK){

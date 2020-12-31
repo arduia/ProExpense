@@ -3,7 +3,7 @@ package com.arduia.expense.ui.home
 import android.view.View
 import com.airbnb.epoxy.AutoModel
 import com.airbnb.epoxy.EpoxyController
-import com.arduia.expense.ui.vto.ExpenseVto
+import com.arduia.expense.ui.expenselogs.ExpenseVto
 
 class HomeEpoxyController(
     private val onRecentItemClick: (ExpenseVto) -> Unit,

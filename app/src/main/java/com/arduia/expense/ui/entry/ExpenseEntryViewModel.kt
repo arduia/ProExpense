@@ -2,15 +2,15 @@ package com.arduia.expense.ui.entry
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.model.SuccessResult
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.ui.common.*
-import com.arduia.expense.ui.mapping.ExpenseMapper
-import com.arduia.expense.ui.vto.ExpenseDetailsVto
+import com.arduia.expense.ui.common.category.ExpenseCategory
+import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -22,7 +22,7 @@ import java.util.*
 
 class ExpenseEntryViewModel @ViewModelInject constructor(
     private val repo: ExpenseRepository,
-    private val mapper: ExpenseMapper,
+    private val mapper: Mapper<ExpenseEnt, ExpenseUpdateDataVto>,
     private val currencyRepo: CurrencyRepository
 ) : ViewModel() {
 
@@ -199,7 +199,7 @@ class ExpenseEntryViewModel @ViewModelInject constructor(
             try {
                 val result = repo.getExpense(id).awaitValueOrError()
                 _currentEntryTime post result.modifiedDate
-                val dataVto = mapper.mapToUpdateDetailVto(result)
+                val dataVto = mapper.map(result)
                 _entryData post dataVto
 
             } catch (e: Exception) {
