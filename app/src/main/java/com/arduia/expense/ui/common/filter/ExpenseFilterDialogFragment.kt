@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FilterExpenseBinding
+import com.arduia.expense.databinding.FilterExpenseDialogBinding
 import com.arduia.expense.domain.filter.DateRange
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.mvvm.EventObserver
@@ -25,7 +25,7 @@ import java.util.*
 class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) :
     BottomSheetDialogFragment() {
 
-    private var _binding: FilterExpenseBinding? = null
+    private var _binding: FilterExpenseDialogBinding? = null
     private val binding get() = _binding!!
 
     private var datePickerDialog: DatePickerDialog? = null
@@ -43,7 +43,7 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FilterExpenseBinding.inflate(inflater, container, false)
+        _binding = FilterExpenseDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 

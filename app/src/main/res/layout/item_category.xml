@@ -4,7 +4,7 @@
     android:id="@+id/cd_category"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/category_bg"
+    android:backgroundTint="@color/category_background_color_statelist"
     android:checkable="true"
     app:cardCornerRadius="@dimen/size_radius"
     app:cardElevation="0dp"

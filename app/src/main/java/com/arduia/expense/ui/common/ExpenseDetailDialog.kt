@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.arduia.core.view.asInvisible
 import com.arduia.core.view.asVisible
 import com.arduia.expense.data.local.ExpenseEnt
-import com.arduia.expense.databinding.SheetExpenseDetailBinding
+import com.arduia.expense.databinding.ExpenseDetailDialogBinding
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.home.HomeFragmentDirections
 import com.arduia.expense.ui.vto.ExpenseDetailsVto
@@ -24,7 +24,7 @@ import kotlin.properties.Delegates
 @AndroidEntryPoint
 class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
-    private lateinit var viewBinding : SheetExpenseDetailBinding
+    private lateinit var viewBinding : ExpenseDetailDialogBinding
 
     private var expenseDetail: ExpenseDetailsVto? = null
 
@@ -75,7 +75,7 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
     }
 
     private fun initViewBinding(parent: ViewGroup?){
-        viewBinding = SheetExpenseDetailBinding.inflate(layoutInflater, parent, false)
+        viewBinding = ExpenseDetailDialogBinding.inflate(layoutInflater, parent, false)
     }
 
 

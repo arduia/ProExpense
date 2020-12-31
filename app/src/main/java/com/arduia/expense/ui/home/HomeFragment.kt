@@ -85,7 +85,9 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mainHost.setAddButtonClickListener(null)
         binding.rvHome.adapter = null
+
         _binding = null
     }
 
