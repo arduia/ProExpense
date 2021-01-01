@@ -19,17 +19,4 @@ object AdapterModule{
     fun provideLayoutInflater(@ActivityContext context: Context)
         : LayoutInflater = LayoutInflater.from(context)
 
-    @Provides
-    fun provideExpenseAdapter(layoutInflater: LayoutInflater) =
-        ExpenseLogAdapter(layoutInflater)
-
-    @Provides
-    fun provideRecentListAdapter(layoutInflater: LayoutInflater) =
-        RecentListAdapter(layoutInflater)
-
-    @Provides
-    fun provideBackupListAdapter(layoutInflater: LayoutInflater) =
-        BackupListAdapter(layoutInflater)
-
-
 }
