@@ -10,14 +10,14 @@ import java.util.*
 
 class ExpenseUpdateDataUiModelMapper(
     private val categoryProvider: ExpenseCategoryProvider
-) : Mapper<ExpenseEnt, ExpenseUpdateDataVto> {
+) : Mapper<ExpenseEnt, ExpenseUpdateDataUiModel> {
 
     private val decimalFormat =
         (NumberFormat.getNumberInstance(Locale.ENGLISH) as DecimalFormat).apply {
             isGroupingUsed = false
         }
 
-    override fun map(input: ExpenseEnt) = ExpenseUpdateDataVto(
+    override fun map(input: ExpenseEnt) = ExpenseUpdateDataUiModel(
         id = input.expenseId,
         name = input.name ?: "",
         date = input.createdDate,

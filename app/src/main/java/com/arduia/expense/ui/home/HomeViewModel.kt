@@ -11,9 +11,9 @@ import com.arduia.expense.model.*
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
-import com.arduia.expense.ui.common.uimodel.DeleteInfoVo
-import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
-import com.arduia.expense.ui.expenselogs.ExpenseVto
+import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
+import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
+import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -25,15 +25,15 @@ import java.util.*
 
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
-    private val expenseVoMapperFactory: ExpenseVoMapperFactory,
-    private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
+    private val expenseVoMapperFactory: ExpenseUiModelMapperFactory,
+    private val expenseDetailMapperFactory: ExpenseDetailUiModelMapperFactory,
     private val repo: ExpenseRepository,
     @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
     @MonthlyDateRange private val dateRangeFormatter: DateRangeFormatter,
     calculatorFactory: ExpenseRateCalculator.Factory
 ) : ViewModel() {
 
-    private val _detailData = EventLiveData<ExpenseDetailsVto>()
+    private val _detailData = EventLiveData<ExpenseDetailUiModel>()
     val detailData get() = _detailData.asLiveData()
 
     private val _onExpenseItemDeleted = EventLiveData<Unit>()
@@ -50,10 +50,10 @@ class HomeViewModel @ViewModelInject constructor(
     private val _graphUiData = BaseLiveData<WeeklyGraphUiModel>()
     val graphUiModel get() = _graphUiData.asLiveData()
 
-    private val _recentData = BaseLiveData<List<ExpenseVto>>()
+    private val _recentData = BaseLiveData<List<ExpenseUiModel>>()
     val recentData get() = _recentData.asLiveData()
 
-    private val _onDeleteConfirm = EventLiveData<DeleteInfoVo>()
+    private val _onDeleteConfirm = EventLiveData<DeleteInfoUiModel>()
     val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
 
     private val currencySymbol = BaseLiveData<String>()
@@ -69,7 +69,7 @@ class HomeViewModel @ViewModelInject constructor(
         observeCurrencySymbol()
     }
 
-    fun selectItemForDetail(selectedItem: ExpenseVto) {
+    fun selectItemForDetail(selectedItem: ExpenseUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = repo.getExpense(selectedItem.id).first()) {
                 is Result.Loading -> Unit
@@ -94,7 +94,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun onDeletePrepared(id: Int) {
         this.prepareDeleteExpenseId = id
-        _onDeleteConfirm post event(DeleteInfoVo(1, null))
+        _onDeleteConfirm post event(DeleteInfoUiModel(1, null))
     }
 
     private fun observeCurrencySymbol() {

@@ -6,9 +6,9 @@ import android.view.View
 import com.airbnb.epoxy.*
 import com.arduia.expense.R
 import com.arduia.expense.databinding.LayoutRecentListsBinding
-import com.arduia.expense.ui.expenselogs.ExpenseVto
+import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 
-data class RecentUiModel(val list: List<ExpenseVto>)
+data class RecentUiModel(val list: List<ExpenseUiModel>)
 
 @SuppressLint("NonConstantResourceId")
 @EpoxyModelClass(layout = R.layout.layout_recent_lists)
@@ -18,7 +18,7 @@ abstract class RecentEpoxyModel : EpoxyModelWithHolder<RecentEpoxyModel.VH>() {
     lateinit var moreClickListener: View.OnClickListener
 
     @EpoxyAttribute
-    lateinit var onItemClickListener: (ExpenseVto) -> Unit
+    lateinit var onItemClickListener: (ExpenseUiModel) -> Unit
 
     @EpoxyAttribute
     lateinit var recentData: RecentUiModel

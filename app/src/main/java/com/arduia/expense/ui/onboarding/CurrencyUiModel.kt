@@ -4,7 +4,7 @@ import android.view.View
 import androidx.annotation.IntDef
 import androidx.annotation.IntRange
 
-data class CurrencyVo(
+data class CurrencyUiModel(
     val name: String,
     val symbol: String,
     val number: String,

@@ -5,7 +5,7 @@ import java.lang.Exception
 
 class LanguageProviderImpl : LanguageProvider {
 
-    override fun getLanguageVtoByID(id: String): LanguageVto {
+    override fun getLanguageVtoByID(id: String): LanguageUiModel {
          return languageList.find { it.id  == id} ?:throw Exception("Language id $id not found!")
     }
 
@@ -19,13 +19,13 @@ class LanguageProviderImpl : LanguageProvider {
         languageList = getAllLanguages()
     }
 
-    private fun getAllLanguages() = mutableListOf<LanguageVto>().apply {
-        add(LanguageVto("my", R.drawable.flag_myanmar, "Myanmar(Burma)"))
-        add(LanguageVto("en", R.drawable.flag_united_states, "United States(English)"))
-        add(LanguageVto("cn", R.drawable.flag_china, "China (Chinese)"))
+    private fun getAllLanguages() = mutableListOf<LanguageUiModel>().apply {
+        add(LanguageUiModel("my", R.drawable.flag_myanmar, "Myanmar(Burma)"))
+        add(LanguageUiModel("en", R.drawable.flag_united_states, "United States(English)"))
+        add(LanguageUiModel("cn", R.drawable.flag_china, "China (Chinese)"))
     }
 
     companion object{
-        private var languageList = emptyList<LanguageVto>()
+        private var languageList = emptyList<LanguageUiModel>()
     }
 }

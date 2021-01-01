@@ -10,17 +10,17 @@ import java.math.BigDecimal
 import java.text.NumberFormat
 import javax.inject.Inject
 
-class ExpenseLogVoMapper  constructor(
+class ExpenseLogUiModelMapper  constructor(
     private val categoryProvider: ExpenseCategoryProvider,
     private val dateFormatter: DateFormatter,
     private val currencyFormatter: NumberFormat,
     private val provider: CurrencyProvider
-) : Mapper<ExpenseEnt, ExpenseLogVo.Log> {
+) : Mapper<ExpenseEnt, ExpenseLogUiModel.Log> {
 
-    override fun map(input: ExpenseEnt): ExpenseLogVo.Log {
+    override fun map(input: ExpenseEnt): ExpenseLogUiModel.Log {
 
-        return ExpenseLogVo.Log(
-            ExpenseVto(
+        return ExpenseLogUiModel.Log(
+            ExpenseUiModel(
                 id = input.expenseId,
                 name = input.name ?: "",
                 date = dateFormatter.format(input.modifiedDate),
@@ -38,13 +38,13 @@ class ExpenseLogVoMapper  constructor(
 
 }
 
-class ExpenseLogVoMapperFactoryImpl @Inject constructor(
+class ExpenseUiModelMapperFactoryImpl @Inject constructor(
     private val categoryProvider: ExpenseCategoryProvider,
     private val dateFormatter: DateFormatter,
     @CurrencyDecimalFormat private val currencyFormatter: NumberFormat
-) : ExpenseLogVoMapperFactory {
-    override fun create(provider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseLogVo.Log> {
-        return ExpenseLogVoMapper(
+) : ExpenseUiModelMapperFactory {
+    override fun create(provider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseLogUiModel.Log> {
+        return ExpenseLogUiModelMapper(
             categoryProvider,
             dateFormatter,
             currencyFormatter,
@@ -53,6 +53,6 @@ class ExpenseLogVoMapperFactoryImpl @Inject constructor(
     }
 }
 
-interface ExpenseLogVoMapperFactory : Mapper.Factory<ExpenseEnt, ExpenseLogVo.Log> {
-    fun create(provider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseLogVo.Log>
+interface ExpenseUiModelMapperFactory : Mapper.Factory<ExpenseEnt, ExpenseLogUiModel.Log> {
+    fun create(provider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseLogUiModel.Log>
 }

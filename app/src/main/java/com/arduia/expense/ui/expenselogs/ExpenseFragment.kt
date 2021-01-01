@@ -20,9 +20,9 @@ import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
-import com.arduia.expense.ui.common.uimodel.DeleteInfoVo
+import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.arduia.expense.ui.common.expense.ExpenseDetailDialog
-import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
+import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
 import com.arduia.expense.ui.expenselogs.swipe.SwipeItemCallback
@@ -109,7 +109,7 @@ class ExpenseFragment : NavBaseFragment() {
         deleteConfirmDialog?.setOnConfirmListener {
             viewModel.onMultiDeleteConfirmed()
         }
-        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(countTotal, null))
+        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoUiModel(countTotal, null))
     }
 
     private fun showSingleDeleteConfirmDialog() {
@@ -118,7 +118,7 @@ class ExpenseFragment : NavBaseFragment() {
         deleteConfirmDialog?.setOnConfirmListener {
             viewModel.onSingleItemDeleteConfirmed()
         }
-        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoVo(1, null))
+        deleteConfirmDialog?.show(childFragmentManager, DeleteInfoUiModel(1, null))
     }
 
     private fun showFilterDialog(filterEnt: ExpenseLogFilterInfo) {
@@ -248,7 +248,7 @@ class ExpenseFragment : NavBaseFragment() {
         binding.tbExpense.subtitle = ""
     }
 
-    private fun showItemDetail(detail: ExpenseDetailsVto) {
+    private fun showItemDetail(detail: ExpenseDetailUiModel) {
         detailDialog?.dismiss()
         //Show Selected Dialog
         detailDialog = ExpenseDetailDialog()

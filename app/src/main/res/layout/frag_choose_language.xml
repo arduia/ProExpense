@@ -27,7 +27,7 @@
             android:layout_marginTop="@dimen/grid_3"
             android:text="@string/choose_language" />
 
-        <com.arduia.expense.ui.custom.MaterialSearchBox
+        <com.arduia.expense.ui.common.customview.MaterialSearchBox
             android:id="@+id/search_box"
             android:layout_width="match_parent"
             android:layout_height="50dp"

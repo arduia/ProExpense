@@ -1,6 +1,6 @@
 package com.arduia.expense.ui.backup
 
-data class BackupVto(
+data class BackupUiModel(
     val name: String,
     val id: Int,
     val date: String,

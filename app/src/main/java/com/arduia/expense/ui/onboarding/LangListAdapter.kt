@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemLanguageBinding
-import com.arduia.expense.ui.common.language.LanguageVto
+import com.arduia.expense.ui.common.language.LanguageUiModel
 
 class LangListAdapter(private val layoutInflater: LayoutInflater) :
-    ListAdapter<LanguageVto, LangListAdapter.VH>(
+    ListAdapter<LanguageUiModel, LangListAdapter.VH>(
         DIFFER
     ) {
 
-    private var onItemClickListener: (LanguageVto) -> Unit = {}
+    private var onItemClickListener: (LanguageUiModel) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemLanguageBinding.inflate(layoutInflater, parent, false)
@@ -29,7 +29,7 @@ class LangListAdapter(private val layoutInflater: LayoutInflater) :
         }
     }
 
-    fun setOnItemClickListener(listener: (LanguageVto)->Unit){
+    fun setOnItemClickListener(listener: (LanguageUiModel)->Unit){
         this.onItemClickListener = listener
     }
 
@@ -42,12 +42,12 @@ class LangListAdapter(private val layoutInflater: LayoutInflater) :
     }
 }
 
-private val DIFFER = object : DiffUtil.ItemCallback<LanguageVto>() {
-    override fun areItemsTheSame(oldItem: LanguageVto, newItem: LanguageVto): Boolean {
+private val DIFFER = object : DiffUtil.ItemCallback<LanguageUiModel>() {
+    override fun areItemsTheSame(oldItem: LanguageUiModel, newItem: LanguageUiModel): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: LanguageVto, newItem: LanguageVto): Boolean {
+    override fun areContentsTheSame(oldItem: LanguageUiModel, newItem: LanguageUiModel): Boolean {
         return (oldItem.name == newItem.name) and
                 (oldItem.flag == newItem.flag) and
                 (oldItem.id == newItem.id) and

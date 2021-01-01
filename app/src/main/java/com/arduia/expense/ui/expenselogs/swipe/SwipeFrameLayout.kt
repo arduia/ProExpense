@@ -10,7 +10,7 @@ import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemExpenseLogBinding
 import com.arduia.expense.ui.common.themeColor
-import com.arduia.expense.ui.expenselogs.ExpenseLogVo
+import com.arduia.expense.ui.expenselogs.ExpenseLogUiModel
 import kotlin.math.abs
 
 class SwipeFrameLayout @JvmOverloads constructor(
@@ -51,7 +51,7 @@ class SwipeFrameLayout @JvmOverloads constructor(
         return@OnLongClickListener true
     }
 
-    fun bindData(data: ExpenseLogVo.Log, state: Int? = SwipeItemState.STATE_IDLE) {
+    fun bindData(data: ExpenseLogUiModel.Log, state: Int? = SwipeItemState.STATE_IDLE) {
 
         with(binding) {
             tvAmount.text = data.expenseLog.amount

@@ -25,7 +25,7 @@ import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
-import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
+import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -294,7 +294,7 @@ class ExpenseEntryFragment : Fragment() {
         }
     }
 
-    private fun bindExpenseDetail(data: ExpenseUpdateDataVto) {
+    private fun bindExpenseDetail(data: ExpenseUpdateDataUiModel) {
         binding.edtName.setText(data.name)
         binding.edtAmount.setText(data.amount)
         binding.edtNote.setText(data.note)
@@ -379,7 +379,7 @@ class ExpenseEntryFragment : Fragment() {
         binding.edtAmount.error = getString(R.string.empty_cost)
     }
 
-    private fun getCurrentExpenseDetail(): ExpenseDetailsVto {
+    private fun getCurrentExpenseDetail(): ExpenseDetailUiModel {
 
         val name = getNameText()
         val amount = getAmountText()
@@ -387,7 +387,7 @@ class ExpenseEntryFragment : Fragment() {
         val category = getSelectedCategory()
         val id = getExpenseId()
 
-        return ExpenseDetailsVto(
+        return ExpenseDetailUiModel(
             id = id,
             name = name,
             date = "",

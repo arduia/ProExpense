@@ -18,12 +18,12 @@ import timber.log.Timber
 
 class BackupViewModel @ViewModelInject constructor(
     app: Application,
-    private val mapper: Mapper<BackupEnt, BackupVto>,
+    private val mapper: Mapper<BackupEnt, BackupUiModel>,
     private val backupRepo: BackupRepository,
     private val expenseRepo: ExpenseRepository
 ) : AndroidViewModel(app) {
 
-    private val _backupList = BaseLiveData<List<BackupVto>>()
+    private val _backupList = BaseLiveData<List<BackupUiModel>>()
     val backupList = _backupList.asLiveData()
 
     private val _backupFilePath = EventLiveData<Uri>()
@@ -65,7 +65,7 @@ class BackupViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun onBackupDeleteConfirmed(item: BackupVto) {
+    fun onBackupDeleteConfirmed(item: BackupUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
             backupRepo.deleteBackupByID(item.id)
         }

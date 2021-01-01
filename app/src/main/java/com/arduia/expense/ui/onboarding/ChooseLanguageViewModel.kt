@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.language.LanguageProvider
-import com.arduia.expense.ui.common.language.LanguageVto
+import com.arduia.expense.ui.common.language.LanguageUiModel
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -20,7 +20,7 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
     private val settingRepo: SettingsRepository
 ) : ViewModel() {
 
-    private val _languages = BaseLiveData<List<LanguageVto>>()
+    private val _languages = BaseLiveData<List<LanguageUiModel>>()
     val language get() = _languages.asLiveData()
 
     private val _isRestartEnable = BaseLiveData<Boolean>(initValue = true)
@@ -47,7 +47,7 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
         searchKey post key
     }
 
-    fun selectLang(lang: LanguageVto) {
+    fun selectLang(lang: LanguageUiModel) {
         viewModelScope.launch {
             settingRepo.setSelectedLanguage(lang.id)
         }
@@ -66,7 +66,7 @@ class ChooseLanguageViewModel @ViewModelInject constructor(
                             .contains(searchKey.toLowerCase(Locale.ROOT))
                     }
                     .map {
-                        if (selectedId == it.id) return@map LanguageVto(
+                        if (selectedId == it.id) return@map LanguageUiModel(
                             id = it.id,
                             name = it.name,
                             flag = it.flag,

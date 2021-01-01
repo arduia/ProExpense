@@ -15,7 +15,7 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
         applyPattern("0.0")
     }
 
-    override fun analyze(entities: List<ExpenseEnt>): List<CategoryStatisticVo> {
+    override fun analyze(entities: List<ExpenseEnt>): List<CategoryStatisticUiModel> {
         val valueHolder = hashMapOf<Int, Double>()
         entities.forEach {
             if (isNewKey(valueHolder, key = it.category)) {
@@ -27,7 +27,7 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
         return getStatisticResultsVo(valueHolder)
     }
 
-    private fun getStatisticResultsVo(valueHolder: HashMap<Int, Double>): List<CategoryStatisticVo> {
+    private fun getStatisticResultsVo(valueHolder: HashMap<Int, Double>): List<CategoryStatisticUiModel> {
         if (valueHolder.isEmpty()) return emptyList()
 
         val total: Double = valueHolder.values.sum()
@@ -35,7 +35,7 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
         return valueHolder.map {
             val category = categoryProvider.getCategoryByID(it.key)
             val percentage = calculatePercentage(it.value, total)
-            return@map CategoryStatisticVo(category.name, percentage, "${decimalFormat.format(percentage)}%")
+            return@map CategoryStatisticUiModel(category.name, percentage, "${decimalFormat.format(percentage)}%")
         }.sortedByDescending { it.progress }
     }
 

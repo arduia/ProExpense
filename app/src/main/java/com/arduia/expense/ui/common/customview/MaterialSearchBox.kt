@@ -1,27 +1,17 @@
-package com.arduia.expense.ui.custom
+package com.arduia.expense.ui.common.customview
 
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
 import android.text.InputType
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.cardview.widget.CardView
-import androidx.core.view.GravityCompat
-import androidx.core.view.marginStart
 import androidx.core.widget.addTextChangedListener
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.textfield.TextInputEditText
 
 class MaterialSearchBox @JvmOverloads constructor(
     ctx: Context,

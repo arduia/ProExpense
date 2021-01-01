@@ -2,7 +2,7 @@ package com.arduia.expense.ui.expenselogs
 
 import androidx.annotation.DrawableRes
 
-data class ExpenseVto(
+data class ExpenseUiModel(
     val id: Int,
     val name: String,
     val date: String,

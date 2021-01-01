@@ -14,7 +14,7 @@ import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
-import com.arduia.expense.ui.common.uimodel.DeleteInfoVo
+import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.arduia.expense.ui.common.expense.ExpenseDetailDialog
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.graph.DayNameProvider
@@ -166,7 +166,7 @@ class HomeFragment : NavBaseFragment() {
     }
 
 
-    private fun showDeleteConfirmDialog(info: DeleteInfoVo) {
+    private fun showDeleteConfirmDialog(info: DeleteInfoUiModel) {
         deleteConfirmDialog?.dismiss()
         deleteConfirmDialog = DeleteConfirmFragment()
         deleteConfirmDialog?.setOnConfirmListener {

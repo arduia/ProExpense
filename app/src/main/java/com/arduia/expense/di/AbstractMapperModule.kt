@@ -4,13 +4,13 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.local.AboutUpdateDataModel
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.ui.about.AboutUpdateUiModel
-import com.arduia.expense.ui.expenselogs.ExpenseLogVoMapperFactory
-import com.arduia.expense.ui.expenselogs.ExpenseLogVoMapperFactoryImpl
+import com.arduia.expense.ui.expenselogs.ExpenseUiModelMapperFactory
+import com.arduia.expense.ui.expenselogs.ExpenseUiModelMapperFactoryImpl
 import com.arduia.expense.ui.about.AboutUpdateUiModelMapper
-import com.arduia.expense.ui.backup.BackupVoMapper
+import com.arduia.expense.ui.backup.BackupUiModelMapper
 import com.arduia.expense.ui.expenselogs.ExpenseEntToLogVoMapper.*;
 import com.arduia.expense.ui.expenselogs.ExpenseEntToLogVoMapperFactory
-import com.arduia.expense.ui.backup.BackupVto
+import com.arduia.expense.ui.backup.BackupUiModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,8 +21,8 @@ import dagger.hilt.android.components.ActivityComponent
 abstract class AbstractMapperModule {
 
     @Binds
-    abstract fun bindExpenseLogVoMapperFactory(factory: ExpenseLogVoMapperFactoryImpl):
-            ExpenseLogVoMapperFactory
+    abstract fun bindExpenseLogVoMapperFactory(factory: ExpenseUiModelMapperFactoryImpl):
+            ExpenseUiModelMapperFactory
 
     @Binds
     abstract fun bindExpenseEntToLogMapperFactory(factory:  ExpenseEntToLogVoMapperFactoryImpl):
@@ -33,6 +33,6 @@ abstract class AbstractMapperModule {
             Mapper<AboutUpdateDataModel, AboutUpdateUiModel>
 
     @Binds
-    abstract fun bindBackupVoMapper(impl: BackupVoMapper): Mapper<BackupEnt, BackupVto>
+    abstract fun bindBackupVoMapper(impl: BackupUiModelMapper): Mapper<BackupEnt, BackupUiModel>
 
 }

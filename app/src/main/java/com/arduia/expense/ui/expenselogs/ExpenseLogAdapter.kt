@@ -15,15 +15,15 @@ import com.arduia.expense.ui.expenselogs.swipe.SwipeStateHolder
 import java.lang.Exception
 
 class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) :
-    PagedListAdapter<ExpenseLogVo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+    PagedListAdapter<ExpenseLogUiModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
-    private var onItemClickListener: (ExpenseLogVo.Log) -> Unit = {}
+    private var onItemClickListener: (ExpenseLogUiModel.Log) -> Unit = {}
 
-    private var onItemDeleteListener: (ExpenseLogVo.Log) -> Unit = {}
+    private var onItemDeleteListener: (ExpenseLogUiModel.Log) -> Unit = {}
 
     private var swipeState = SwipeStateHolder()
 
-    private var onStateChangeListener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log?)
+    private var onStateChangeListener: (holder: SwipeStateHolder, item: ExpenseLogUiModel.Log?)
     -> Unit = { _, _ -> }
 
     companion object {
@@ -33,8 +33,8 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
 
     override fun getItemViewType(position: Int): Int {
         return when (getItemFromPosition(position)) {
-            is ExpenseLogVo.Log -> TYPE_LOG
-            is ExpenseLogVo.Header -> TYPE_HEADER
+            is ExpenseLogUiModel.Log -> TYPE_LOG
+            is ExpenseLogUiModel.Header -> TYPE_HEADER
         }
     }
 
@@ -74,20 +74,20 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
 
         val item = getItemFromPosition(position)
         when {
-            (holder is LogVH) && (item is ExpenseLogVo.Log) -> {
+            (holder is LogVH) && (item is ExpenseLogUiModel.Log) -> {
                 bindLogVH(holder.binding, item)
             }
-            (holder is HeaderVH) && (item is ExpenseLogVo.Header) -> {
+            (holder is HeaderVH) && (item is ExpenseLogUiModel.Header) -> {
                 bindHeaderVH(holder.binding, item)
             }
         }
     }
 
-    private fun bindLogVH(binding: ItemExpenseLogBinding, data: ExpenseLogVo.Log) {
+    private fun bindLogVH(binding: ItemExpenseLogBinding, data: ExpenseLogUiModel.Log) {
         binding.root.bindData(data, state = swipeState.getStateOrNull(data.expenseLog.id))
     }
 
-    private fun bindHeaderVH(binding: ItemExpenseDateHeaderBinding, data: ExpenseLogVo.Header) {
+    private fun bindHeaderVH(binding: ItemExpenseDateHeaderBinding, data: ExpenseLogUiModel.Header) {
         binding.tvDate.text = data.date
     }
 
@@ -118,7 +118,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         private fun onStateChanged(@SwipeItemState.SwipeState state: Int) {
 
             if (adapterPosition == -1) return
-            val item = getItem(adapterPosition) as? ExpenseLogVo.Log ?: return
+            val item = getItem(adapterPosition) as? ExpenseLogUiModel.Log ?: return
 
             if (state == SwipeItemState.STATE_LOCK_END) {
                 swipeState.clear()
@@ -140,7 +140,7 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
             if(adapterPosition == -1) return
             val item = getItemFromPosition(adapterPosition)
 
-            if (item !is ExpenseLogVo.Log) return
+            if (item !is ExpenseLogUiModel.Log) return
 
             when (v.id) {
                 binding.viewBg.id -> {
@@ -157,31 +157,31 @@ class ExpenseLogAdapter constructor(private val layoutInflater: LayoutInflater) 
         }
     }
 
-    fun setOnClickListener(listener: (ExpenseLogVo.Log) -> Unit) {
+    fun setOnClickListener(listener: (ExpenseLogUiModel.Log) -> Unit) {
         onItemClickListener = listener
     }
 
-    fun setOnStateChangeListener(listener: (holder: SwipeStateHolder, item: ExpenseLogVo.Log?) -> Unit) {
+    fun setOnStateChangeListener(listener: (holder: SwipeStateHolder, item: ExpenseLogUiModel.Log?) -> Unit) {
         this.onStateChangeListener = listener
     }
 
-    fun setOnDeleteListener(listener: (ExpenseLogVo.Log) -> Unit) {
+    fun setOnDeleteListener(listener: (ExpenseLogUiModel.Log) -> Unit) {
         onItemDeleteListener = listener
     }
 
 }
 
-private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ExpenseLogVo>() {
+private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ExpenseLogUiModel>() {
 
-    override fun areItemsTheSame(oldItem: ExpenseLogVo, newItem: ExpenseLogVo): Boolean {
-        return (oldItem is ExpenseLogVo.Header && newItem is ExpenseLogVo.Header) ||
-                (oldItem is ExpenseLogVo.Log && newItem is ExpenseLogVo.Log)
+    override fun areItemsTheSame(oldItem: ExpenseLogUiModel, newItem: ExpenseLogUiModel): Boolean {
+        return (oldItem is ExpenseLogUiModel.Header && newItem is ExpenseLogUiModel.Header) ||
+                (oldItem is ExpenseLogUiModel.Log && newItem is ExpenseLogUiModel.Log)
     }
 
-    override fun areContentsTheSame(oldItem: ExpenseLogVo, newItem: ExpenseLogVo): Boolean {
+    override fun areContentsTheSame(oldItem: ExpenseLogUiModel, newItem: ExpenseLogUiModel): Boolean {
         return when (oldItem) {
-            is ExpenseLogVo.Log -> if (newItem is ExpenseLogVo.Log) oldItem.expenseLog == newItem.expenseLog else false
-            is ExpenseLogVo.Header -> if (newItem is ExpenseLogVo.Header) oldItem.date == newItem.date else false
+            is ExpenseLogUiModel.Log -> if (newItem is ExpenseLogUiModel.Log) oldItem.expenseLog == newItem.expenseLog else false
+            is ExpenseLogUiModel.Header -> if (newItem is ExpenseLogUiModel.Header) oldItem.date == newItem.date else false
         }
     }
 }

@@ -7,15 +7,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemExpenseRecentBinding
-import com.arduia.expense.ui.expenselogs.ExpenseVto
+import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
-    ListAdapter<ExpenseVto, RecentListAdapter.VH>(DIFF_CALLBACK){
+    ListAdapter<ExpenseUiModel, RecentListAdapter.VH>(DIFF_CALLBACK){
 
     // Mostly unregister, so should be able to be claimed.
     private var onSingleItemInsertListener: ((Unit) -> Unit)? = null
 
-    private var onItemClickListener: (ExpenseVto) -> Unit = {}
+    private var onItemClickListener: (ExpenseUiModel) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
@@ -36,8 +36,8 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
         }
     }
 
-    override fun onCurrentListChanged(previousList: MutableList<ExpenseVto>,
-                                      currentList: MutableList<ExpenseVto>){
+    override fun onCurrentListChanged(previousList: MutableList<ExpenseUiModel>,
+                                      currentList: MutableList<ExpenseUiModel>){
 
         super.onCurrentListChanged(previousList, currentList)
 
@@ -57,7 +57,7 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
         onSingleItemInsertListener = listener
     }
 
-    fun setOnItemClickListener(listener: (ExpenseVto) -> Unit){
+    fun setOnItemClickListener(listener: (ExpenseUiModel) -> Unit){
         this.onItemClickListener = listener
     }
 
@@ -73,13 +73,13 @@ class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):
 
 }
 
-private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ExpenseVto>(){
+private val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ExpenseUiModel>(){
 
-    override fun areItemsTheSame(oldItem: ExpenseVto, newItem: ExpenseVto): Boolean {
+    override fun areItemsTheSame(oldItem: ExpenseUiModel, newItem: ExpenseUiModel): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: ExpenseVto, newItem: ExpenseVto): Boolean {
+    override fun areContentsTheSame(oldItem: ExpenseUiModel, newItem: ExpenseUiModel): Boolean {
         return  oldItem.name == newItem.name &&
             oldItem.category == newItem.category &&
             oldItem.amount == newItem.amount &&

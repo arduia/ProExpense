@@ -6,24 +6,23 @@ import com.arduia.expense.R
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.ui.common.formatter.DateFormatter
-import com.arduia.expense.ui.backup.BackupVto
 import dagger.hilt.android.qualifiers.ActivityContext
 import java.text.DecimalFormat
 import javax.inject.Inject
 
-class BackupVoMapper @Inject constructor(
+class BackupUiModelMapper @Inject constructor(
     @ActivityContext context: Context,
     private val dateFormatter: DateFormatter,
     @IntegerDecimal private val numberFormat: DecimalFormat
 ) :
-    Mapper<BackupEnt, BackupVto> {
+    Mapper<BackupEnt, BackupUiModel> {
 
     private val itemSuffix = context.getString(R.string.single_item_suffix)
     private val multiItemSuffix = context.getString(R.string.multi_item_suffix)
 
 
     override fun map(input: BackupEnt) =
-        BackupVto(
+        BackupUiModel(
             id = input.backupId,
             name = input.name,
             date = dateFormatter.format(input.createdDate),

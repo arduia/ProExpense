@@ -5,8 +5,8 @@ import com.arduia.expense.data.local.CurrencyDto
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.home.*
-import com.arduia.expense.ui.common.mapper.CurrencyMapper
-import com.arduia.expense.ui.onboarding.CurrencyVo
+import com.arduia.expense.ui.common.mapper.CurrencyUiModelMapper
+import com.arduia.expense.ui.onboarding.CurrencyUiModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,22 +18,22 @@ import java.text.NumberFormat
 object VoMapperModule {
 
     @Provides
-    fun provideCurrencyMapper(): Mapper<CurrencyDto, CurrencyVo> = CurrencyMapper()
+    fun provideCurrencyMapper(): Mapper<CurrencyDto, CurrencyUiModel> = CurrencyUiModelMapper()
 
     @Provides
     fun provideExpenseDetailMapper(
         @CurrencyDecimalFormat currencyFormatter: NumberFormat,
         dateFormatter: DateFormatter,
         categoryProvider: ExpenseCategoryProvider
-    ): ExpenseDetailMapperFactory =
-        ExpenseDetailMapperFactoryImpl(currencyFormatter, dateFormatter, categoryProvider)
+    ): ExpenseDetailUiModelMapperFactory =
+        ExpenseDetailUiModelMapperFactoryImpl(currencyFormatter, dateFormatter, categoryProvider)
 
     @Provides
     fun provideExpenseVoMapperFactory(
         @CurrencyDecimalFormat currencyFormatter: NumberFormat,
         dateFormatter: DateFormatter,
         categoryProvider: ExpenseCategoryProvider
-    ): ExpenseVoMapperFactory =
-        ExpenseVoMapper.ExpenseVoMapperFactoryImpl(currencyFormatter, dateFormatter, categoryProvider)
+    ): ExpenseUiModelMapperFactory =
+        ExpenseUiModelMapper.ExpenseUiModelMapperFactoryImpl(currencyFormatter, dateFormatter, categoryProvider)
 
 }

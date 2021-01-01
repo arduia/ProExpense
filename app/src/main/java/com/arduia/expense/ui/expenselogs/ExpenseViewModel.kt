@@ -15,13 +15,13 @@ import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onError
 import com.arduia.expense.model.onSuccess
-import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
+import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.expense.ui.expenselogs.swipe.SwipeItemState
 import com.arduia.expense.ui.expenselogs.swipe.SwipeStateHolder
-import com.arduia.expense.ui.home.ExpenseDetailMapperFactory
+import com.arduia.expense.ui.home.ExpenseDetailUiModelMapperFactory
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -36,7 +36,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val expenseEntToLogMapperFactory: ExpenseEntToLogVoMapperFactory,
     private val expenseRepo: ExpenseRepository,
     private val currencyRepo: CurrencyRepository,
-    private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
+    private val expenseDetailMapperFactory: ExpenseDetailUiModelMapperFactory,
     @StatisticDateRange private val dateRangeFormatter: DateRangeFormatter
 ) : ViewModel() {
 
@@ -66,7 +66,7 @@ class ExpenseViewModel @ViewModelInject constructor(
     private val _isEmptyExpenseCount = BaseLiveData<Boolean>()
     val isEmptyExpenseCount get() = _isEmptyExpenseCount.asLiveData()
 
-    private val _onDetailShow = EventLiveData<ExpenseDetailsVto>()
+    private val _onDetailShow = EventLiveData<ExpenseDetailUiModel>()
     val onDetailShow get() = _onDetailShow.asLiveData()
 
 
@@ -75,7 +75,7 @@ class ExpenseViewModel @ViewModelInject constructor(
             BaseLiveData(createFilterInfo(it))
         }
 
-    val expenseList: LiveData<PagedList<ExpenseLogVo>> = filterConstraint.switchMap { filter ->
+    val expenseList: LiveData<PagedList<ExpenseLogUiModel>> = filterConstraint.switchMap { filter ->
         return@switchMap createSourcePagingLiveData(filter)
     }
 
@@ -83,7 +83,7 @@ class ExpenseViewModel @ViewModelInject constructor(
         BaseLiveData(it.size <= 0)
     }
 
-    private val mapper: Mapper<ExpenseEnt, ExpenseLogVo>
+    private val mapper: Mapper<ExpenseEnt, ExpenseLogUiModel>
 
     private var currencySymbol = ""
 
@@ -168,7 +168,7 @@ class ExpenseViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun createSourcePagingLiveData(filter: DateRangeSortingEnt): LiveData<PagedList<ExpenseLogVo>> {
+    private fun createSourcePagingLiveData(filter: DateRangeSortingEnt): LiveData<PagedList<ExpenseLogUiModel>> {
         val sourceFactory =
             if (filter.sorting == Sorting.DESC) expenseRepo.getExpenseRangeDescSource(
                 filter.dateRange.start,
@@ -243,9 +243,9 @@ class ExpenseViewModel @ViewModelInject constructor(
         }
     }
 
-    fun onShowItemDetail(item: ExpenseLogVo) {
+    fun onShowItemDetail(item: ExpenseLogUiModel) {
         Timber.d("onShowItemDetail")
-        if (item !is ExpenseLogVo.Log) return
+        if (item !is ExpenseLogUiModel.Log) return
         viewModelScope.launch(Dispatchers.IO) {
             val ent = expenseRepo.getExpense(item.expenseLog.id).awaitValueOrError()
             val mapper = expenseDetailMapperFactory.create { currencySymbol }

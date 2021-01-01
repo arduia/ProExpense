@@ -21,7 +21,7 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
     private lateinit var viewBinding : ExpenseDetailDialogBinding
 
-    private var expenseDetail: ExpenseDetailsVto? = null
+    private var expenseDetail: ExpenseDetailUiModel? = null
 
     @Inject
     @TopDropNavOption
@@ -29,9 +29,9 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
     private var dismissListener: (() -> Unit)? = null
 
-    private var editOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
+    private var editOnClickListener: ((ExpenseDetailUiModel)-> Unit)? = null
 
-    private var deleteOnClickListener: ((ExpenseDetailsVto)-> Unit)? = null
+    private var deleteOnClickListener: ((ExpenseDetailUiModel)-> Unit)? = null
 
     private var isDeleteEnabled by Delegates.notNull<Boolean>()
 
@@ -74,7 +74,7 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
     }
 
 
-    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailsVto, isDeleteEnabled: Boolean = false) {
+    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailUiModel, isDeleteEnabled: Boolean = false) {
         expenseDetail = detail
         show(fragmentManager, TAG)
         this.isDeleteEnabled = isDeleteEnabled
@@ -111,11 +111,11 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         dismissListener = listener
     }
 
-    fun setOnEditClickListener(listener: (ExpenseDetailsVto) -> Unit){
+    fun setOnEditClickListener(listener: (ExpenseDetailUiModel) -> Unit){
         editOnClickListener = listener
     }
 
-    fun setOnDeleteClickListener(listener: (ExpenseDetailsVto) -> Unit){
+    fun setOnDeleteClickListener(listener: (ExpenseDetailUiModel) -> Unit){
         deleteOnClickListener = listener
     }
 

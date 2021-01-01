@@ -4,9 +4,9 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.formatter.DateFormatter
-import com.arduia.expense.ui.entry.ExpenseUpdateDataVto
-import com.arduia.expense.ui.expenselogs.ExpenseLogVo
-import com.arduia.expense.ui.expenselogs.ExpenseLogVoMapper
+import com.arduia.expense.ui.entry.ExpenseUpdateDataUiModel
+import com.arduia.expense.ui.expenselogs.ExpenseLogUiModel
+import com.arduia.expense.ui.expenselogs.ExpenseLogUiModelMapper
 import com.arduia.expense.ui.entry.ExpenseUpdateDataUiModelMapper
 import dagger.Module
 import dagger.Provides
@@ -21,7 +21,7 @@ object MapperModule {
     @Provides
     fun provideExpenseMapper(
         categoryProvider: ExpenseCategoryProvider,
-    ): Mapper<ExpenseEnt, ExpenseUpdateDataVto> = ExpenseUpdateDataUiModelMapper(
+    ): Mapper<ExpenseEnt, ExpenseUpdateDataUiModel> = ExpenseUpdateDataUiModelMapper(
         categoryProvider
     )
 
@@ -30,7 +30,7 @@ object MapperModule {
         categoryProvider: ExpenseCategoryProvider,
         dateFormatter: DateFormatter,
         @CurrencyDecimalFormat decimalFormat: NumberFormat,
-    ): Mapper<ExpenseEnt, ExpenseLogVo.Log> = ExpenseLogVoMapper(
+    ): Mapper<ExpenseEnt, ExpenseLogUiModel.Log> = ExpenseLogUiModelMapper(
         categoryProvider,
         dateFormatter,
         decimalFormat

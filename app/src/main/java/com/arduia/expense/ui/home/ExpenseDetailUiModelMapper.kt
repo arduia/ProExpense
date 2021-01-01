@@ -5,19 +5,19 @@ import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.formatter.DateFormatter
-import com.arduia.expense.ui.common.expense.ExpenseDetailsVto
+import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import java.text.NumberFormat
 
-class ExpenseDetailMapper(
+class ExpenseDetailUiModelMapper(
     @CurrencyDecimalFormat
     private val currencyFormatter: NumberFormat,
     private val dateFormatter: DateFormatter,
     private val categoryProvider: ExpenseCategoryProvider,
     private val currencyProvider: CurrencyProvider
-) : Mapper<ExpenseEnt, ExpenseDetailsVto> {
+) : Mapper<ExpenseEnt, ExpenseDetailUiModel> {
 
-    override fun map(input: ExpenseEnt): ExpenseDetailsVto {
-        return ExpenseDetailsVto(
+    override fun map(input: ExpenseEnt): ExpenseDetailUiModel {
+        return ExpenseDetailUiModel(
             id = input.expenseId,
             name = input.name ?: "",
             date = dateFormatter.format(input.modifiedDate),
@@ -30,19 +30,19 @@ class ExpenseDetailMapper(
     }
 }
 
-class ExpenseDetailMapperFactoryImpl(
+class ExpenseDetailUiModelMapperFactoryImpl(
     @CurrencyDecimalFormat
     private val currencyFormatter: NumberFormat,
     private val dateFormatter: DateFormatter,
     private val categoryProvider: ExpenseCategoryProvider
-): ExpenseDetailMapperFactory{
-    override fun create(currencyProvider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseDetailsVto> {
-        return ExpenseDetailMapper(
+): ExpenseDetailUiModelMapperFactory{
+    override fun create(currencyProvider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseDetailUiModel> {
+        return ExpenseDetailUiModelMapper(
             currencyFormatter, dateFormatter, categoryProvider, currencyProvider
         )
     }
 }
 
-interface ExpenseDetailMapperFactory: Mapper.Factory<ExpenseEnt, ExpenseDetailsVto>{
-    fun create(currencyProvider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseDetailsVto>
+interface ExpenseDetailUiModelMapperFactory: Mapper.Factory<ExpenseEnt, ExpenseDetailUiModel>{
+    fun create(currencyProvider: CurrencyProvider): Mapper<ExpenseEnt, ExpenseDetailUiModel>
 }

@@ -2,8 +2,8 @@ package com.arduia.expense.ui.common.language
 
 interface LanguageProvider {
 
-    fun getLanguageVtoByID(id: String): LanguageVto
+    fun getLanguageVtoByID(id: String): LanguageUiModel
 
-    fun getAvailableLanguages(): List<LanguageVto>
+    fun getAvailableLanguages(): List<LanguageUiModel>
 
 }
