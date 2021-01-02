@@ -1,0 +1,155 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--    Base-->
+    <string name="app_name">প্রো এক্সপেন্স</string>
+    <string name="recent_entry_logs">অধুনা যুক্ত</string>
+    <string name="settings">সেটিংস</string>
+    <string name="expense_logs">খরচের লগ</string>
+
+<!--    Onboarding  Screen-->
+    <string name="next">পরবর্তী</string>
+    <string name="start_now">শুরু করুন</string>
+    <string name="skip">এড়িয়ে যান</string>
+
+    <string name="record">রেকর্ড করুন</string>
+    <string name="record_description">Easily Manage you Finances by recording incomes and expenses</string>
+    <string name="statistics">পরিসংখ্যান</string>
+    <string name="free">মুক্ত</string>
+    <!--    Home-->
+    <string name="home">Home</string>
+    <string name="expenses_in_this_week">Expenses in this Week</string>
+    <string name="mmk">MMK</string>
+    <string name="recents">অধুনা</string>
+
+    <!--    Expense Detail-->
+    <string name="date">তারিখ</string>
+
+    <!--    Entry Sheet-->
+    <string name="spend">খরচ</string>
+    <string name="name">বিবরণ</string>
+    <string name="amount">পরিমাণ</string>
+    <string name="save">সংরক্ষণ</string>
+    <string name="note">নোট</string>
+    <string name="update">হালনাগাদ</string>
+    <string name="update_data">তথ্য হালনাগাদ</string>
+    <string name="expense_entry">খরচের এন্ট্রি</string>
+
+    <string name="income">আয়</string>
+    <string name="social">সামাজিক</string>
+    <string name="clothes">জামাকাপড়</string>
+    <string name="housing">বাসাবাড়ি</string>
+    <string name="food">খাবার</string>
+    <string name="donation">দান-খয়রাত</string>
+    <string name="entertainment">বিনোদন</string>
+    <string name="education">পড়াশোনা</string>
+    <string name="transportation">যাতায়াত</string>
+    <string name="health_care">স্বাস্থ্যসেবা</string>
+
+    <string name="item_deleted">মুছে ফেলা হয়েছে</string>
+    <string name="multi_item_deleted">মুছে ফেলা হয়েছে</string>
+    <string name="data_updated">তথ্য হালনাগাদকৃত!</string>
+    <string name="empty_cost">খরচের ঘর খালি</string>
+
+    <!--    Feedback-->
+    <string name="feedback">মতামত</string>
+    <string name="feedback_description">We went to know what you thought of your experience at Pro Expense app so we\'d love to hear you feedback.</string>
+    <string name="email">ইমেইল</string>
+    <string name="your_comments">Your Comments*</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="empty_comment">Empty Comment</string>
+    <string name="invalid_email">Invalid Email Address</string>
+    <string name="thanks_for_comment">Thanks for your Comment.\n It will be delivered soon.</string>
+    <string name="go_home">Go Home</string>
+
+    <!--    Expense-->
+
+    <!--    Settings-->
+    <string name="language">ভাষা</string>
+    <string name="mm">MM</string>
+    <string name="eng">EN</string>
+    <string name="update_status">হালনাদের অবস্থা</string>
+    <string name="latest_version">সর্বশেষ সংস্করণ!</string>
+
+<!--    About-->
+    <string name="about">সম্পর্কে</string>
+    <string name="app_description">Pro Expense is a free and open-source software to simply and safely record daily expenses.</string>
+    <string name="privacy_policy">গোপনীয়তা এবং নীতি</string>
+    <string name="policy_url">file:///android_asset/privacy_policy.html</string>
+    <string name="open_source_url">file:///android_asset/open_source_licenses.html</string>
+    <string name="github_link_url">https://github.com/arduia/ProExpense</string>
+    <string name="open_source_lib">ওপেন সোর্স লাইব্রেরি</string>
+    <string name="contribute_app">অবদান রাখুন</string>
+    <string name="developer">আরডুয়া এবং ওপেন-সোর্স অবদানকারীদের সম্মিলিত প্রচেষ্টা</string>
+    <string name="developer_email">dev.arduia@gmail.com</string>
+    <string name="app_welcome">হ্যালো! প্রো এক্সপেন্সে স্বাগতম</string>
+    <string name="choose_language">Choose Language</string>
+    <string name="day_sun">রবি</string>
+    <string name="day_mon">সোম</string>
+    <string name="day_tue">মঙ্গল</string>
+    <string name="day_wed">বুধ</string>
+    <string name="day_thu">বৃহঃ</string>
+    <string name="day_fri">শুক্র</string>
+    <string name="day_sat">শনি</string>
+    <string name="restart">পুনরায় চালু</string>
+<!--    Backup-->
+    <string name="backup">ব্যাকআপ</string>
+    <string name="export">এক্সপোর্ট</string>
+    <string name="total">সর্বমোট</string>
+    <string name="save_as">সংরক্ষণ করুন</string>
+    <string name="file_not_exist">ফাইলটি নেই</string>
+    <string name="item_imported">আইটেম ইমপোর্ট হয়েছে!</string>
+    <string name="multi_items_imported">আইটেমগুলো ইমপোর্ট হয়েছে</string>
+    <string name="backup_details">ব্যাকআপ বিবরণ</string>
+    <string name="expnese_detail">খরচের বিবরণ</string>
+    <string name="edit">সম্পাদনা</string>
+    <string name="mail_to_developer">mailto: dev.arduia@gmail.com</string>
+    <string name="feedback_status">মতামতের অবস্থা</string>
+    <string name="import_data">ইমপোর্ট</string>
+
+    <string name="choose_currency">মূদ্রা নির্বাচন করুন</string>
+    <string name="search">অনুসন্ধান</string>
+    <string name="no_item">কিছু নেই</string>
+    <string name="continue_home">বহাল রাখুন</string>
+    <string name="single_item_suffix"> আইটেম</string>
+    <string name="multi_item_suffix"> আইটেমগুলো</string>
+    <string name="filter">ফিল্টার</string>
+    <string name="select_all">সমস্ত নির্বাচন</string>
+    <string name="delete">মুছুন</string>
+    <string name="choose_theme">থিম নির্বাচন করুন</string>
+    <string name="light_theme">উজ্জ্বল থিম</string>
+    <string name="dark_theme">কালো থিম</string>
+    <string name="system_default">সিস্টেম ডিফল্ট</string>
+    <string name="today">আজ</string>
+    <string name="yesterday">গতকাল</string>
+    <string name="cancel">বাতিল</string>
+    <string name="about_update">হালনাগাদ সম্পর্কে</string>
+    <string name="install">ইন্সটল</string>
+    <string name="others">অন্যান্য</string>
+    <string name="outcome">ফলাফল</string>
+    <string name="from">প্রেরক</string>
+    <string name="to">প্রাপক</string>
+    <string name="ascending">আরোহী</string>
+    <string name="descending">অবরোহী</string>
+    <string name="apply_filter">ফিল্টার অ্যাপ্লাই</string>
+    <string name="sort_by">ক্রমানুসার</string>
+    <string name="beta_with_parenthness">(বেটা)</string>
+    <string name="new_version_available">নতুন সংস্করণ আছে!</string>
+    <string name="backup_logs">ব্যাকআপ লগ</string>
+    <string name="delete_items">মুছুন</string>
+    <string name="confirm">নিশ্চিতকরণ</string>
+    <string name="will_be_deleted">মুছে যাবে!</string>
+    <string name="no_data">তথ্যশূন্য</string>
+    <string name="category_statistics">বিষয়ভিত্তিক পরিসংখ্যান</string>
+    <string name="beta">বেটা</string>
+    <string name="more">আরও</string>
+    <string name="about_acknowledgement">এই অ্যাপ্লিকেশনটার গিটহাবে মূল্যবান ফিডব্যাক সরবরাহ এবং সমস্যাগুলি দেখিয়ে দেয়ার জন্য অবদানকারীদের বিশেষ ধন্যবাদ।</string>
+    <string name="calendar">পঞ্জিকা</string>
+    <string name="time">সময়</string>
+    <string name="order_date_in">Order by Date in</string>
+    <string name="currency">মূদ্রা</string>
+    <string name="theme_mode">থিম মোড</string>
+    <string name="asc">আরোহী</string>
+    <string name="desc">অবরোহী</string>
+    <string name="totals">সর্বমোট</string>
+    <string name="acknowledgement_title">স্বীকৃতি</string>
+</resources>
+
