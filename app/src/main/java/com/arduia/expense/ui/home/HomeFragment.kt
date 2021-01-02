@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.ui.MainHost
@@ -14,14 +13,13 @@ import com.arduia.expense.di.FloatingDecimal
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.DeleteConfirmFragment
-import com.arduia.expense.ui.common.DeleteInfoVo
-import com.arduia.expense.ui.common.ExpenseDetailDialog
-import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
+import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
+import com.arduia.expense.ui.common.expense.ExpenseDetailDialog
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.text.DecimalFormat
 import javax.inject.Inject
 
@@ -85,7 +83,9 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mainHost.setAddButtonClickListener(null)
         binding.rvHome.adapter = null
+
         _binding = null
     }
 
@@ -166,7 +166,7 @@ class HomeFragment : NavBaseFragment() {
     }
 
 
-    private fun showDeleteConfirmDialog(info: DeleteInfoVo) {
+    private fun showDeleteConfirmDialog(info: DeleteInfoUiModel) {
         deleteConfirmDialog?.dismiss()
         deleteConfirmDialog = DeleteConfirmFragment()
         deleteConfirmDialog?.setOnConfirmListener {

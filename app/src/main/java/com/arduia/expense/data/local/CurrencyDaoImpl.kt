@@ -5,8 +5,9 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.lang.RuntimeException
+import javax.inject.Inject
 
-class CurrencyDaoImpl(private val assetManager: AssetManager) : CurrencyDao {
+class CurrencyDaoImpl @Inject constructor(private val assetManager: AssetManager) : CurrencyDao {
 
     override fun getCurrencies(): Flow<List<CurrencyDto>> = flow{
         try {

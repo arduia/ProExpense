@@ -29,7 +29,6 @@ object DatabaseModule{
         return db.invalidationTracker
     }
 
-
     @Provides
     @Singleton
     fun provideAccDao(accDb: ProExpenseDatabase): ExpenseDao = accDb.expenseDao

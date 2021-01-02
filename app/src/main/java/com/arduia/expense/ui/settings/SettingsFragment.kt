@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.arduia.expense.databinding.FragSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.LanguageProvider
+import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.expense.ui.common.ext.restartActivity
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint

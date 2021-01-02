@@ -5,24 +5,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemLanguageBinding
-import com.arduia.expense.ui.vto.LanguageVto
+import com.arduia.expense.ui.common.language.LanguageUiModel
 
 class LanguageListAdapter(private val layoutInflater: LayoutInflater) :
     RecyclerView.Adapter<LanguageListAdapter.VH>() {
 
-    var languageLists = listOf<LanguageVto>()
+    var languageLists = listOf<LanguageUiModel>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    var selectedLanguage: LanguageVto? = null
+    var selectedLanguage: LanguageUiModel? = null
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    private var itemClickListener: (LanguageVto) -> Unit = {}
+    private var itemClickListener: (LanguageUiModel) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
 
@@ -50,7 +50,7 @@ class LanguageListAdapter(private val layoutInflater: LayoutInflater) :
         }
     }
 
-    fun setOnItemClickListener(listener: (LanguageVto) -> Unit) {
+    fun setOnItemClickListener(listener: (LanguageUiModel) -> Unit) {
         this.itemClickListener = listener
     }
 

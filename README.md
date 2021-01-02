@@ -1,20 +1,24 @@
 <h1 align="center">Pro Expense</h1>
 <p align="center">
-A simple free finance note to sately record daily expense without any Ads.
+A simple free finance note to safely record daily expenses
 </p>
 
 <p align="center">
   <a href="https://www.gnu.org/licenses/gpl-3.0"><img alt="LICENSE" src="https://img.shields.io/badge/License-GPLv3-blue.svg"/></a>
   <a href="https://android-arsenal.com/api?level=21"><img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen"/></a> 
+  <a href="https://github.com/arduia/ProExpense/releases"><img alt="API" src="https://img.shields.io/github/v/release/arduia/ProExpense"/></a> 
 </p> <br>
 
 <table align="center">
        <tr>
-          <td><img src="https://github.com/arduia/ProExpense/blob/master/previews/screenshot_1.png" width="220"></td>
-          <td><img src="https://github.com/arduia/ProExpense/blob/master/previews/screenshot_2.png" width="220"></td>
-          <td><img src="https://github.com/arduia/ProExpense/blob/master/previews/screenshot_3.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="220"></td>
        </tr>
  </table>
+ 
+ **Quote**  
+ *"Beware of little expenses; a small leak will sink a great ship"* - Benjamin Franklin
 
  
 ## Download
@@ -31,6 +35,61 @@ A simple free finance note to sately record daily expense without any Ads.
 <img src="https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-appstore-badge-english-black.png"  width="160" >
 </a>
 
+## Key priorities
+**Behaviour**  
+<ul>
+  <li>Integrity</li> 
+  <li>User Data Privacy</li>
+  <li>Security</li>
+  <li>Usefulness</li>
+  <li>Performance</li>
+  <li>Simplicity</li> 
+  <li>UI/UX</li>
+</ul> 
+
+**Development**  
+<ul>
+  <li>Architecture</li>
+  <li>Maintainability</li>
+  <li>Scalability</li>
+  <li>Code Quality</li> 
+</ul>  
+
+## Why Pro Expense?
+<ul>
+  <li>Free and Open-source</li>  
+  <li>Hight priority on privacy</li>
+  <li>Simple and Pretty UI Design</li> 
+  <li>Good Performance</li>
+  <li>Multi-language support</li> 
+  <li>Statistics</li> 
+  <li>No Advertisements</li>
+</ul> 
+
+## Limitations
+<ul>
+  <li>Multiple user accounts are not supported yet.</li>  
+  <li>Currency exchange and different currency expense items are also no longer exist together.</li>  
+  <li>Cloud backup will not be supported.</li>
+  <li>Maximum expense enty amount is 999,999,999.99.</li>
+</ul>
+
+## Application Architecture
+<img src="https://developer.android.com/topic/libraries/architecture/images/final-architecture.png" width="800">  
+
+*Image source from d.android.com*
+
+## Inspiration
+Inspired from [Wallet](https://play.google.com/store/apps/details?id=com.droid4you.application.wallet), [My Expense](https://play.google.com/store/apps/details?id=com.nominalista.expenses) apps.
+
+## Permission Use
+> android.permission.INTERNET  
+> *Feedback submittions, update version status*   
+
+> android.permission.WAKE_LOCK  
+> android.permission.READ_PHONE_STATE    
+> *Backup, updating version status in app background*  
+
 ## Libraries
 * [Material Component][material]
 * [Android View Binding][view-binding]
@@ -43,9 +102,8 @@ A simple free finance note to sately record daily expense without any Ads.
 * [MVVM-Core][mvvm-core]
 * [Retrofit][retrofit]
 * [KTX Libraries][ktx]
-* [Leak Carary][leak-carary]
+* [Leak Canary][leak-canary]
 * [Timber][timber]
-
 
 [material]: https://github.com/material-components/material-components-android
 [view-binding]: https://developer.android.com/topic/libraries/view-binding
@@ -54,12 +112,14 @@ A simple free finance note to sately record daily expense without any Ads.
 [coroutines-flow]: https://kotlinlang.org/docs/reference/coroutines/flow.html
 [navigation]: https://developer.android.com/guide/navigation
 [dagger-hilt]: https://dagger.dev/
+[workmanager]: https://developer.android.com/topic/libraries/architecture/workmanager
 [mvvm-core]: https://github.com/arduia/mvvm-core
 [ktx]: https://developer.android.com/kotlin/ktx
 [leak-canary]: https://github.com/square/leakcanary
 [retrofit]: http://square.github.io/retrofit 
 [timber]: https://github.com/JakeWharton/timber
 
+*Contribution Welcome*
 
 # License
 ```xml

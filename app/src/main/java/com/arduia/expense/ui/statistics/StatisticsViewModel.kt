@@ -10,24 +10,14 @@ import com.arduia.expense.domain.filter.DateRange
 import com.arduia.expense.domain.filter.ExpenseDateRange
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onError
 import com.arduia.expense.model.onSuccess
-import com.arduia.expense.ui.common.ext.setDayAsEnd
-import com.arduia.expense.ui.common.ext.setDayAsStart
-import com.arduia.expense.ui.common.filter.DateRangeSortingEnt
-import com.arduia.expense.ui.common.filter.RangeSortingFilterEnt
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
-import com.arduia.expense.ui.common.formatter.ExpenseDateRangeFormatter
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.lang.Exception
 import java.util.*
 
 class StatisticsViewModel @ViewModelInject constructor(
@@ -56,7 +46,7 @@ class StatisticsViewModel @ViewModelInject constructor(
             BaseLiveData(createStatisticsFromFilter(it))
         }
 
-    private fun createStatisticsFromFilter(filter: DateRange): List<CategoryStatisticVo> {
+    private fun createStatisticsFromFilter(filter: DateRange): List<CategoryStatisticUiModel> {
         val expenses = expenseRepo.getExpenseRangeAsc(
             filter.start,
             filter.end,

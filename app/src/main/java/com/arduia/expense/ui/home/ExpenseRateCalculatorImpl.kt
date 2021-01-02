@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import java.util.*
+import javax.inject.Inject
 
 class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRateCalculator {
 
@@ -54,7 +55,7 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
 
 }
 
-class ExpenseRateCalculatorFactory: ExpenseRateCalculator.Factory{
+class ExpenseRateCalculatorFactory @Inject constructor(): ExpenseRateCalculator.Factory{
     override fun create(scope: CoroutineScope): ExpenseRateCalculator {
         return ExpenseRateCalculatorImpl(scope)
     }

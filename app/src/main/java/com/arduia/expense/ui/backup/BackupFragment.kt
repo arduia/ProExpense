@@ -14,10 +14,9 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.DeleteConfirmFragment
-import com.arduia.expense.ui.common.DeleteInfoVo
-import com.arduia.expense.ui.common.MarginItemDecoration
-import com.arduia.expense.ui.vto.BackupVto
+import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
+import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -79,13 +78,13 @@ class BackupFragment : NavBaseFragment() {
         backupListAdapter?.setItemClickListener(::showDeleteConfirmDialog)
     }
 
-    private fun showDeleteConfirmDialog(backupItem: BackupVto){
+    private fun showDeleteConfirmDialog(backupItem: BackupUiModel){
         deleteDialog?.dismiss()
         deleteDialog = DeleteConfirmFragment()
         deleteDialog?.setOnConfirmListener {
             viewModel.onBackupDeleteConfirmed(backupItem)
         }
-        deleteDialog?.show(childFragmentManager, DeleteInfoVo(1))
+        deleteDialog?.show(childFragmentManager, DeleteInfoUiModel(1))
     }
 
     private fun setupViewModel() {
@@ -146,7 +145,7 @@ class BackupFragment : NavBaseFragment() {
         binding.cvExport.visibility = View.VISIBLE
     }
 
-    private fun showBackupList(list: List<BackupVto>) {
+    private fun showBackupList(list: List<BackupUiModel>) {
         backupListAdapter?.submitList(list)
     }
 

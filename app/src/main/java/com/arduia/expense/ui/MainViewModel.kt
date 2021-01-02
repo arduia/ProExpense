@@ -29,21 +29,16 @@ class MainViewModel @ViewModelInject constructor(
         settingRepo.getSelectedCurrencyNumber()
             .flowOn(Dispatchers.IO)
             .onEach {
-                if(it is Result.Success){
-                    saveCurrencyData(it.data)
+                if (it is Result.Success) {
+                    currencyRepo.setSelectedCacheCurrency(it.data)
                 }
             }
             .launchIn(viewModelScope)
     }
 
-    private fun saveCurrencyData(data: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            currencyRepo.setSelectedCacheCurrency(data)
-        }
-    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun startCheckAboutUpdateWork(){
+    private fun startCheckAboutUpdateWork() {
         val checkVersionRequest = OneTimeWorkRequestBuilder<CheckAboutUpdateWorker>()
             .build()
         workManager.enqueue(checkVersionRequest)

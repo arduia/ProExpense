@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:visibility="invisible"
             android:id="@+id/layout_no_data"
-            layout="@layout/no_expense_logs" />
+            layout="@layout/layout_no_expense_logs" />
 
 
     </FrameLayout>

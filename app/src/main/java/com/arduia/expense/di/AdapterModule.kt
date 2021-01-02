@@ -3,7 +3,7 @@ package com.arduia.expense.di
 import android.content.Context
 import android.view.LayoutInflater
 import com.arduia.expense.ui.backup.BackupListAdapter
-import com.arduia.expense.ui.expense.ExpenseLogAdapter
+import com.arduia.expense.ui.expenselogs.ExpenseLogAdapter
 import com.arduia.expense.ui.home.RecentListAdapter
 import dagger.Module
 import dagger.Provides
@@ -18,18 +18,5 @@ object AdapterModule{
     @Provides
     fun provideLayoutInflater(@ActivityContext context: Context)
         : LayoutInflater = LayoutInflater.from(context)
-
-    @Provides
-    fun provideExpenseAdapter(layoutInflater: LayoutInflater) =
-        ExpenseLogAdapter(layoutInflater)
-
-    @Provides
-    fun provideRecentListAdapter(layoutInflater: LayoutInflater) =
-        RecentListAdapter(layoutInflater)
-
-    @Provides
-    fun provideBackupListAdapter(layoutInflater: LayoutInflater) =
-        BackupListAdapter(layoutInflater)
-
 
 }
