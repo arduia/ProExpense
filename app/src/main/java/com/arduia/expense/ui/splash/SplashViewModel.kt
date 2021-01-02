@@ -37,7 +37,7 @@ constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val isFirstTimeUser = settingsRepository.getFirstUser().awaitValueOrError()
             delay(splashDuration)
-            if (isFirstTimeUser) { 
+            if (isFirstTimeUser) {
                 _firstTimeEvent post EventUnit
             } else {
                 _normalUserEvent post EventUnit
