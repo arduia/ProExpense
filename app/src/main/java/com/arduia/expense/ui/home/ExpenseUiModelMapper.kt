@@ -7,6 +7,7 @@ import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 import java.text.NumberFormat
+import javax.inject.Inject
 import javax.inject.Provider
 
 class ExpenseUiModelMapper(
@@ -28,7 +29,7 @@ class ExpenseUiModelMapper(
             currencySymbol = currencyProvider.get()
         )
 
-    class ExpenseUiModelMapperFactoryImpl(
+    class ExpenseUiModelMapperFactoryImpl @Inject constructor(
         @CurrencyDecimalFormat
         private val currencyFormatter: NumberFormat,
         private val dateFormatter: DateFormatter,

@@ -9,8 +9,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
-class CurrencyRepositoryImpl(
+class CurrencyRepositoryImpl @Inject constructor(
     dao: CurrencyDao
 ) : CurrencyRepository {
 

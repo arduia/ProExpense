@@ -10,11 +10,11 @@ import java.math.BigDecimal
 import java.text.NumberFormat
 import javax.inject.Inject
 
-class ExpenseLogUiModelMapper  constructor(
+class ExpenseLogUiModelMapper  @Inject constructor(
     private val categoryProvider: ExpenseCategoryProvider,
     private val dateFormatter: DateFormatter,
-    private val currencyFormatter: NumberFormat,
-    private val provider: CurrencyProvider
+    @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
+    private val provider: CurrencyProvider = CurrencyProvider{""}
 ) : Mapper<ExpenseEnt, ExpenseLogUiModel.Log> {
 
     override fun map(input: ExpenseEnt): ExpenseLogUiModel.Log {

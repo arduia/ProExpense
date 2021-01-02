@@ -23,6 +23,7 @@ class HomeEpoxyController(
     lateinit var weeklyGraph: WeeklyGraphEpoxyModel_
 
     private var incomeOutcome = IncomeOutcomeUiModel("", "", "", "")
+
     private var weekGraph = WeeklyGraphUiModel("", mapOf())
 
     override fun buildModels() {

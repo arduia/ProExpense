@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.common.category
 
+import android.content.Context
 import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import com.arduia.expense.R
@@ -14,11 +15,14 @@ import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.INCOME
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.OTHERS
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.SOCIAL
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.TRANSPORTATION
+import dagger.hilt.android.qualifiers.ActivityContext
 import java.lang.Exception
+import javax.inject.Inject
 
-class ExpenseCategoryProviderImpl(private val resource: Resources) :
+class ExpenseCategoryProviderImpl @Inject constructor(@ActivityContext private val context: Context) :
     ExpenseCategoryProvider {
 
+    private val resource = context.resources
 
     private val categoryList = mutableListOf<ExpenseCategory>()
 

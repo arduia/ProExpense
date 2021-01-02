@@ -21,11 +21,11 @@ import dagger.hilt.android.components.ActivityComponent
 abstract class AbstractMapperModule {
 
     @Binds
-    abstract fun bindExpenseLogVoMapperFactory(factory: ExpenseUiModelMapperFactoryImpl):
+    abstract fun bindExpenseLogVoMapperFactory(impl: ExpenseUiModelMapperFactoryImpl):
             ExpenseUiModelMapperFactory
 
     @Binds
-    abstract fun bindExpenseEntToLogMapperFactory(factory:  ExpenseEntToLogVoMapperFactoryImpl):
+    abstract fun bindExpenseEntToLogMapperFactory(impl:  ExpenseEntToLogVoMapperFactoryImpl):
             ExpenseEntToLogVoMapperFactory
 
     @Binds

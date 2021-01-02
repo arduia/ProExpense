@@ -9,6 +9,7 @@ import com.arduia.expense.ui.home.ExpenseDayNameProvider
 import com.arduia.expense.ui.home.ExpenseRateCalculator
 import com.arduia.expense.ui.home.ExpenseRateCalculatorFactory
 import com.arduia.graph.DayNameProvider
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,25 +19,22 @@ import dagger.hilt.android.scopes.ActivityScoped
 
 @Module
 @InstallIn(ActivityComponent::class)
-object ExpenseProviderModule {
+abstract class AbstractExpenseModule {
 
-    @Provides
+    @Binds
     @ActivityScoped
-    fun provideExpenseCategory(@ActivityContext context: Context): ExpenseCategoryProvider =
-        ExpenseCategoryProviderImpl(context.resources)
+    abstract fun provideExpenseCategory(impl: ExpenseCategoryProviderImpl): ExpenseCategoryProvider
 
-    @Provides
+    @Binds
     @ActivityScoped
-    fun provideLanguage(): LanguageProvider =
-        LanguageProviderImpl()
+    abstract fun provideLanguage(impl: LanguageProviderImpl): LanguageProvider
 
-    @Provides
+    @Binds
     @ActivityScoped
-    fun provideExpenseCalculator(): ExpenseRateCalculator.Factory =
-        ExpenseRateCalculatorFactory()
+    abstract fun provideExpenseCalculator(impl: ExpenseRateCalculatorFactory): ExpenseRateCalculator.Factory
 
-    @Provides
+    @Binds
     @ActivityScoped
-    fun provideDataNames(@ActivityContext context: Context): DayNameProvider =
-        ExpenseDayNameProvider(context)
+    abstract fun provideDataNames(impl: ExpenseDayNameProvider): DayNameProvider
+
 }

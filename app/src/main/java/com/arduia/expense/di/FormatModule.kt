@@ -36,9 +36,7 @@ object FormattingModule{
     fun provideDateFormat(): DateFormat = SimpleDateFormat("d-M-yyyy", Locale.ENGLISH)
 
 
-    @Provides
-    fun provideDateFormatter(@ActivityContext context: Context): DateFormatter
-    = ExpenseRecentDateFormatter(context)
+
 
 }
 

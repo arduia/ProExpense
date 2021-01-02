@@ -14,9 +14,10 @@ import com.arduia.expense.model.Result
 import com.arduia.expense.model.SuccessResult
 import kotlinx.coroutines.flow.*
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.exp
 
-class ExpenseRepositoryImpl(
+class ExpenseRepositoryImpl @Inject constructor(
     private val expenseDao: ExpenseDao
 ) : ExpenseRepository {
 

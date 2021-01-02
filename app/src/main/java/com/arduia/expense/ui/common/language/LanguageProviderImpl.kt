@@ -2,8 +2,9 @@ package com.arduia.expense.ui.common.language
 
 import com.arduia.expense.R
 import java.lang.Exception
+import javax.inject.Inject
 
-class LanguageProviderImpl : LanguageProvider {
+class LanguageProviderImpl @Inject constructor(): LanguageProvider {
 
     override fun getLanguageVtoByID(id: String): LanguageUiModel {
          return languageList.find { it.id  == id} ?:throw Exception("Language id $id not found!")

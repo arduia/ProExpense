@@ -7,8 +7,9 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
+import javax.inject.Inject
 
-class ExpenseUpdateDataUiModelMapper(
+class ExpenseUpdateDataUiModelMapper @Inject constructor(
     private val categoryProvider: ExpenseCategoryProvider
 ) : Mapper<ExpenseEnt, ExpenseUpdateDataUiModel> {
 
