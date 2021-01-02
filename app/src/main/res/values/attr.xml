@@ -3,6 +3,7 @@
 
     <attr name="proExpenseNavigationViewStyle" format="reference" />
     <attr name="iconButtonStyle" format="reference" />
+
     <attr name="colorPositive" format="color" />
     <attr name="colorOnPositive" format="color" />
     <attr name="colorOnNegative" format="color" />
@@ -19,7 +20,6 @@
     </declare-styleable>
 
     <attr name="textAppearanceCurrencyLarge" format="reference" />
-
     <attr name="textAppearanceCurrencySmall" format="reference" />
 
 </resources>

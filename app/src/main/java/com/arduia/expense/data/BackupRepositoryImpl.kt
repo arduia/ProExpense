@@ -8,12 +8,14 @@ import com.arduia.expense.data.exception.RepositoryException
 import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.*
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import java.lang.Exception
+import javax.inject.Inject
 
 
-class BackupRepositoryImpl(
-    private val appContext: Context,
+class BackupRepositoryImpl @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val dao: BackupDao,
     private val backup: ExcelBackup
 ) : BackupRepository {

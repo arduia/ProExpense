@@ -5,6 +5,10 @@ import com.arduia.expense.backup.schema.table.Table
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
+/**
+ * Backup Schema for every backup logs
+ * to get backward compatibility for future versions
+ */
 data class BackupSchema(
 
     @SerializedName("version")

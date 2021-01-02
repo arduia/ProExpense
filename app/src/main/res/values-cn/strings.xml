@@ -1,29 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!--    Base-->
     <string name="app_name">Pro Expense</string>
-    <string name="recent_entry_logs">最近</string>
+    <string name="recent">最近条目</string>
     <string name="settings">设置</string>
     <string name="expense_logs">开支记录</string>
-
-<!--    Onboarding  Screen-->
     <string name="next">下一步</string>
     <string name="start_now">现在开始</string>
     <string name="skip">跳过</string>
-
     <string name="record">记录</string>
     <string name="record_description">通过记录收支轻松管理你的财务</string>
     <string name="statistics">统计数据</string>
     <string name="free">Free</string>
-    <!--    Home-->
     <string name="home">主页</string>
-    <string name="expenses_in_this_week">本周结果</string>
+    <string name="expenses_in_this_week">本周开支</string>
     <string name="mmk">缅甸元</string>
     <string name="recents">最近</string>
-
-    <!--    Expense Detail-->
     <string name="date">日期</string>
-
-    <!--    Entry Sheet-->
     <string name="spend">开支</string>
     <string name="name">名称</string>
     <string name="amount">数额</string>
@@ -32,7 +23,6 @@
     <string name="update">更新</string>
     <string name="update_data">更新数据</string>
     <string name="expense_entry">开支项</string>
-
     <string name="income">收入</string>
     <string name="social">社交</string>
     <string name="clothes">服饰</string>
@@ -48,8 +38,6 @@
     <string name="multi_item_deleted">多个项目被删除</string>
     <string name="data_updated">数据已更新！</string>
     <string name="empty_cost">费用为空</string>
-
-    <!--    Feedback-->
     <string name="feedback">反馈</string>
     <string name="feedback_description">我们想知道你对你在 Pro Expense 应用的体验有什么看法，所以我们希望听到你的反馈。</string>
     <string name="email">电子邮件</string>
@@ -59,26 +47,20 @@
     <string name="invalid_email">无效的电子邮件地址</string>
     <string name="thanks_for_comment">谢谢你的评论。\n 它不久就会被送达。</string>
     <string name="go_home">回到主页</string>
-
-    <!--    Expense-->
-
-    <!--    Settings-->
     <string name="language">语言</string>
     <string name="mm">缅甸语</string>
     <string name="eng">英语</string>
     <string name="update_status">更新状态</string>
     <string name="latest_version">最新版本！</string>
-
-<!--    About-->
     <string name="about">关于</string>
-    <string name="app_description">Pro Expense 是自由开源应用，可以方便地管理日常财务。</string>
+    <string name="app_description">Pro Expense 是一款自由开源应用，可以方便安全地记录日常开支。</string>
     <string name="privacy_policy">隐私和政策</string>
     <string name="policy_url">file:///android_asset/privacy_policy.html</string>
     <string name="open_source_url">file:///android_asset/open_source_licenses.html</string>
     <string name="github_link_url">https://github.com/arduia/ProExpense</string>
     <string name="open_source_lib">开源库</string>
     <string name="contribute_app">为应用做贡献</string>
-    <string name="developer">由 Arduia 开发</string>
+    <string name="developer">由 Arduia 和开源贡献者们开发</string>
     <string name="developer_email">dev.arduia@gmail.com</string>
     <string name="app_welcome">你好！欢迎来到 Pro Expense</string>
     <string name="choose_language">选择语言:</string>
@@ -90,7 +72,6 @@
     <string name="day_fri">周五</string>
     <string name="day_sat">周六</string>
     <string name="restart">重启</string>
-<!--    Backup-->
     <string name="backup">备份</string>
     <string name="export">导出</string>
     <string name="total">总数</string>
@@ -104,7 +85,6 @@
     <string name="mail_to_developer">mailto: dev.arduia@gmail.com</string>
     <string name="feedback_status">反馈状态</string>
     <string name="import_data">导入</string>
-
     <string name="choose_currency">选择币种：</string>
     <string name="search">搜索</string>
     <string name="no_item">无项目</string>
@@ -141,14 +121,18 @@
     <string name="category_statistics">类别统计数据</string>
     <string name="beta">测试</string>
     <string name="more">更多</string>
-    <string name="about_acknowledgement">非常感谢在 Github 上为这个应用程序提出 Issues 的贡献者们。</string>
-    <string name="calendar">Calendar</string>
-    <string name="time">Time</string>
-    <string name="order_date_in">Order by Date in</string>
-    <string name="currency">Currency</string>
-    <string name="theme_mode">Theme Mode</string>
-    <string name="asc">Asc</string>
-    <string name="desc">Desc</string>
-    <string name="totals">Total</string>
-    <string name="acknowledgement_title">Acknowledgement</string>
+    <string name="about_acknowledgement">特别鸣谢那些在 Github 上为这款应用提供了有价值的反馈和提出 Issues 的贡献者们。</string>
+    <string name="calendar">日历</string>
+    <string name="time">时间</string>
+    <string name="order_date_in">日期排序方法</string>
+    <string name="currency">币种</string>
+    <string name="theme_mode">主题模式</string>
+    <string name="asc">升序</string>
+    <string name="desc">降序</string>
+    <string name="totals">总数</string>
+    <string name="acknowledgement_title">致谢</string>
+    <string name="outcome_for_week">Expenses in this Week</string>
+    <string name="house_hold">Housing</string>
+    <string name="delete_item_description">will be deleted!</string>
+
 </resources>

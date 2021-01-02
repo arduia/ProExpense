@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemCurrencyBinding
 
 class CurrencyListAdapter(private val layoutInflater: LayoutInflater) :
-    ListAdapter<CurrencyVo, CurrencyListAdapter.VH>(
+    ListAdapter<CurrencyUiModel, CurrencyListAdapter.VH>(
         DIFF_CALLBACK
     ) {
 
-    private var onItemClickListener: (CurrencyVo) -> Unit = {}
+    private var onItemClickListener: (CurrencyUiModel) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemCurrencyBinding.inflate(layoutInflater, parent, false)
@@ -28,7 +28,7 @@ class CurrencyListAdapter(private val layoutInflater: LayoutInflater) :
         }
     }
 
-    fun setOnItemClickListener(listener: (CurrencyVo) -> Unit) {
+    fun setOnItemClickListener(listener: (CurrencyUiModel) -> Unit) {
         this.onItemClickListener = listener
     }
 
@@ -42,12 +42,12 @@ class CurrencyListAdapter(private val layoutInflater: LayoutInflater) :
 }
 
 private val DIFF_CALLBACK
-    get() = object : DiffUtil.ItemCallback<CurrencyVo>() {
-        override fun areItemsTheSame(oldItem: CurrencyVo, newItem: CurrencyVo): Boolean {
+    get() = object : DiffUtil.ItemCallback<CurrencyUiModel>() {
+        override fun areItemsTheSame(oldItem: CurrencyUiModel, newItem: CurrencyUiModel): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: CurrencyVo, newItem: CurrencyVo): Boolean {
+        override fun areContentsTheSame(oldItem: CurrencyUiModel, newItem: CurrencyUiModel): Boolean {
             return (oldItem.name == newItem.name) and
                     (oldItem.number == newItem.number) and
                     (oldItem.symbol == newItem.symbol) and

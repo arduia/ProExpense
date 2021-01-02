@@ -3,10 +3,10 @@ package com.arduia.expense.ui.home
 import android.view.View
 import com.airbnb.epoxy.AutoModel
 import com.airbnb.epoxy.EpoxyController
-import com.arduia.expense.ui.vto.ExpenseVto
+import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 
 class HomeEpoxyController(
-    private val onRecentItemClick: (ExpenseVto) -> Unit,
+    private val onRecentItemClick: (ExpenseUiModel) -> Unit,
     private val onMoreItemClick: View.OnClickListener
 ) :
     EpoxyController() {
@@ -23,6 +23,7 @@ class HomeEpoxyController(
     lateinit var weeklyGraph: WeeklyGraphEpoxyModel_
 
     private var incomeOutcome = IncomeOutcomeUiModel("", "", "", "")
+
     private var weekGraph = WeeklyGraphUiModel("", mapOf())
 
     override fun buildModels() {

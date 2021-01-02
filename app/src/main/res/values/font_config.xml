@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TextAppearance.ProExpense.H6" parent="TextAppearance.MaterialComponents.Headline6" />
+    <style name="TextAppearance.ProExpense.Headline6" parent="TextAppearance.MaterialComponents.Headline6" />
 
     <style name="TextAppearance.ProExpense.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:alpha">0.70</item>
@@ -19,7 +19,7 @@
         <item name="itemTextAppearance">?textAppearanceBody1</item>
     </style>
 
-    <style name="TextAppearance.ProExpense.MediumTitle" parent="TextAppearance.Base.ProExpense.MediumTitle">
+    <style name="TextAppearance.ProExpense.MediumTitle" parent="Base.TextAppearance.ProExpense.MediumTitle">
 
 
     </style>

@@ -4,13 +4,13 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.local.AboutUpdateDataModel
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.ui.about.AboutUpdateUiModel
-import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactory
-import com.arduia.expense.ui.expense.mapper.ExpenseLogVoMapperFactoryImpl
-import com.arduia.expense.ui.mapping.AboutUpdateUiToDataMapper
-import com.arduia.expense.ui.mapping.BackupVoMapper
-import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapper.*;
-import com.arduia.expense.ui.mapping.ExpenseEntToLogVoMapperFactory
-import com.arduia.expense.ui.vto.BackupVto
+import com.arduia.expense.ui.expenselogs.ExpenseUiModelMapperFactory
+import com.arduia.expense.ui.expenselogs.ExpenseUiModelMapperFactoryImpl
+import com.arduia.expense.ui.about.AboutUpdateUiModelMapper
+import com.arduia.expense.ui.backup.BackupUiModelMapper
+import com.arduia.expense.ui.expenselogs.ExpenseEntToLogVoMapper.*;
+import com.arduia.expense.ui.expenselogs.ExpenseEntToLogVoMapperFactory
+import com.arduia.expense.ui.backup.BackupUiModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,18 +21,18 @@ import dagger.hilt.android.components.ActivityComponent
 abstract class AbstractMapperModule {
 
     @Binds
-    abstract fun bindExpenseLogVoMapperFactory(factory: ExpenseLogVoMapperFactoryImpl):
-            ExpenseLogVoMapperFactory
+    abstract fun bindExpenseLogVoMapperFactory(impl: ExpenseUiModelMapperFactoryImpl):
+            ExpenseUiModelMapperFactory
 
     @Binds
-    abstract fun bindExpenseEntToLogMapperFactory(factory:  ExpenseEntToLogVoMapperFactoryImpl):
+    abstract fun bindExpenseEntToLogMapperFactory(impl:  ExpenseEntToLogVoMapperFactoryImpl):
             ExpenseEntToLogVoMapperFactory
 
     @Binds
-    abstract fun bindAboutUpdateUiToDataMapper(impl: AboutUpdateUiToDataMapper):
+    abstract fun bindAboutUpdateUiToDataMapper(impl: AboutUpdateUiModelMapper):
             Mapper<AboutUpdateDataModel, AboutUpdateUiModel>
 
     @Binds
-    abstract fun bindBackupVoMapper(impl: BackupVoMapper): Mapper<BackupEnt, BackupVto>
+    abstract fun bindBackupVoMapper(impl: BackupUiModelMapper): Mapper<BackupEnt, BackupUiModel>
 
 }

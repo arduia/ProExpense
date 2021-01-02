@@ -15,19 +15,17 @@ import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.event
 import com.arduia.mvvm.post
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 
 class ChooseCurrencyViewModel @ViewModelInject constructor(
     private val currencyRep: CurrencyRepository,
     private val settingRepo: SettingsRepository,
-    private val currencyMapper: Mapper<CurrencyDto, CurrencyVo>
+    private val currencyMapper: Mapper<CurrencyDto, CurrencyUiModel>
 ) : ViewModel() {
 
-    private val _currencies = BaseLiveData<List<CurrencyVo>>()
+    private val _currencies = BaseLiveData<List<CurrencyUiModel>>()
     val currencies get() = _currencies.asLiveData()
 
     private val _onError = EventLiveData<String>()
@@ -50,7 +48,7 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
         }
     }
 
-    fun selectCurrency(currency: CurrencyVo) {
+    fun selectCurrency(currency: CurrencyUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
             settingRepo.setSelectedCurrencyNumber(currency.number)
         }
@@ -87,14 +85,14 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
                 }
             }
             .combine(settingRepo.getSelectedCurrencyNumber()) { currencyResult, selectedNumResult ->
-                if (selectedNumResult !is SuccessResult) return@combine listOf<CurrencyVo>()
-                if (currencyResult !is SuccessResult) return@combine listOf<CurrencyVo>()
+                if (selectedNumResult !is SuccessResult) return@combine listOf<CurrencyUiModel>()
+                if (currencyResult !is SuccessResult) return@combine listOf<CurrencyUiModel>()
 
                 val selectedNumber = selectedNumResult.data
                 currencyResult.data.map(currencyMapper::map)
                     .map { vo ->
                         if (vo.number == selectedNumber) {
-                            return@map CurrencyVo(
+                            return@map CurrencyUiModel(
                                 vo.name,
                                 vo.symbol,
                                 vo.number,

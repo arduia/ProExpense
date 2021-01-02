@@ -6,8 +6,8 @@
       <module name="GraphAnnotationProcessor" target="1.7" />
       <module name="ProExpense.app" target="1.8" />
       <module name="ProExpense.backup" target="1.8" />
-      <module name="ProExpense.core" target="1.8" />
       <module name="ProExpense.expense-backup" target="1.8" />
+      <module name="ProExpense.shared" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -5,21 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import com.airbnb.epoxy.*
 import com.arduia.expense.R
-import com.arduia.expense.databinding.RecentListBinding
-import com.arduia.expense.ui.vto.ExpenseVto
-import timber.log.Timber
+import com.arduia.expense.databinding.LayoutRecentListsBinding
+import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 
-data class RecentUiModel(val list: List<ExpenseVto>)
+data class RecentUiModel(val list: List<ExpenseUiModel>)
 
 @SuppressLint("NonConstantResourceId")
-@EpoxyModelClass(layout = R.layout.recent_list)
+@EpoxyModelClass(layout = R.layout.layout_recent_lists)
 abstract class RecentEpoxyModel : EpoxyModelWithHolder<RecentEpoxyModel.VH>() {
 
     @EpoxyAttribute
     lateinit var moreClickListener: View.OnClickListener
 
     @EpoxyAttribute
-    lateinit var onItemClickListener: (ExpenseVto) -> Unit
+    lateinit var onItemClickListener: (ExpenseUiModel) -> Unit
 
     @EpoxyAttribute
     lateinit var recentData: RecentUiModel
@@ -42,11 +41,11 @@ abstract class RecentEpoxyModel : EpoxyModelWithHolder<RecentEpoxyModel.VH>() {
     }
 
     inner class VH : EpoxyHolder() {
-        lateinit var binding: RecentListBinding
+        lateinit var binding: LayoutRecentListsBinding
         var adapter: RecentListAdapter? = null
 
         override fun bindView(itemView: View) {
-            binding = RecentListBinding.bind(itemView)
+            binding = LayoutRecentListsBinding.bind(itemView)
             adapter = RecentListAdapter(LayoutInflater.from(itemView.context)).apply {
                 setOnItemClickListener(onItemClickListener)
             }

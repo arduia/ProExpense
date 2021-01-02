@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import android.view.View
 import com.airbnb.epoxy.*
 import com.arduia.expense.R
-import com.arduia.expense.databinding.ExpenseInOutBinding
-import timber.log.Timber
+import com.arduia.expense.databinding.LayoutExpenseInOutBinding
 
 data class IncomeOutcomeUiModel(
     val incomeValue: String,
@@ -15,7 +14,7 @@ data class IncomeOutcomeUiModel(
 )
 
 @SuppressLint("NonConstantResourceId")
-@EpoxyModelClass(layout = R.layout.expense_in_out)
+@EpoxyModelClass(layout = R.layout.layout_expense_in_out)
 abstract class IncomeOutcomeEpoxyModel : EpoxyModelWithHolder<IncomeOutcomeEpoxyModel.VH>() {
 
     @EpoxyAttribute
@@ -32,9 +31,9 @@ abstract class IncomeOutcomeEpoxyModel : EpoxyModelWithHolder<IncomeOutcomeEpoxy
     }
 
     inner class VH : EpoxyHolder() {
-        lateinit var binding: ExpenseInOutBinding
+        lateinit var binding: LayoutExpenseInOutBinding
         override fun bindView(itemView: View) {
-            binding = ExpenseInOutBinding.bind(itemView)
+            binding = LayoutExpenseInOutBinding.bind(itemView)
         }
     }
 }

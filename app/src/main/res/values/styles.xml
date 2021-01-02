@@ -7,7 +7,7 @@
 
     <style name="Widget.ProExpense.NavigationView.Overlay.Base" parent="">
 
-        <item name="itemTextColor">@color/nav_text_color</item>
+        <item name="itemTextColor">@color/navigation_menu_text_color</item>
         <item name="itemIconSize">@dimen/size_nav_icon</item>
         <item name="iconTint">@color/darker_gray</item>
         <item name="android:background">?attr/colorSurface</item>
@@ -61,7 +61,7 @@
         <item name="borderWidth">2dp</item>
     </style>
 
-    <style name="TextAppearance.Base.ProExpense.MediumTitle" parent="TextAppearance.MaterialComponents.Headline5">
+    <style name="Base.TextAppearance.ProExpense.MediumTitle" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textSize">18sp</item>

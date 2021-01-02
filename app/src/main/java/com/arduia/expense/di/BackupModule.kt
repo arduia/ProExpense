@@ -23,19 +23,13 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 object BackupModule {
 
-    @Provides
-    @Singleton
-    fun provideExpenseSheet(source: ExpenseBackupSource): BackupSheet<ExpenseEnt>  =
-        ExpenseBackupSheet(source)
 
     @Provides
     @Singleton
-    fun provideExpenseSource(repo: ExpenseRepository) =
-        ExpenseBackupSource(repo)
-
-    @Provides
-    @Singleton
-    fun provideExcelBackup(expenseSheet: BackupSheet<ExpenseEnt>, schemaSheet: BackupSheet<BackupSchema>) =
+    fun provideExcelBackup(
+        expenseSheet: BackupSheet<ExpenseEnt>,
+        schemaSheet: BackupSheet<BackupSchema>
+    ) =
         ExcelBackup.Builder()
             .addBackupSheet(expenseSheet)
             .addBackupSheet(schemaSheet)

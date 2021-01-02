@@ -21,9 +21,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
-
-    private val appJob = Job()
-
     override fun onCreate() {
         super.onCreate()
         setupLogging()
@@ -42,16 +39,15 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
             .build()
 
     override fun attachBaseContext(base: Context?) {
-        runBlocking {
-            if (base == null) return@runBlocking
-            val selectedLanguage  = SettingRepositoryFactoryImpl.create(base).getSelectedLanguageSync().getDataOrError()
-            val localedContext = base.updateResource(selectedLanguage)
-            super.attachBaseContext(localedContext)
-        }
+        val localedContext = getLocaleContext(base)
+        super.attachBaseContext(localedContext)
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-        appJob.cancel()
-    }
+    private fun getLocaleContext(base: Context?): Context? =
+        runBlocking {
+            if (base == null) return@runBlocking base
+            val selectedLanguage =
+                SettingRepositoryFactoryImpl.create(base).getSelectedLanguageSync().getDataOrError()
+            return@runBlocking base.updateResource(selectedLanguage)
+        }
 }

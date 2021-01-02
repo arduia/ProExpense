@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragChooseLanguageDialogBinding
-import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.ext.restartActivity
 import com.arduia.expense.ui.onboarding.ChooseLanguageViewModel
 import com.arduia.expense.ui.onboarding.LangListAdapter

@@ -11,7 +11,7 @@ import androidx.lifecycle.observe
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragChooseCurrencyDialogBinding
-import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.onboarding.ChooseCurrencyViewModel
 import com.arduia.expense.ui.onboarding.CurrencyListAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

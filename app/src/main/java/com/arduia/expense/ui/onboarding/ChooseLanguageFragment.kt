@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragChooseLanguageBinding
-import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -8,7 +8,7 @@ import com.arduia.expense.R
 import com.arduia.expense.databinding.FragStatisticBinding
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.MarginItemDecoration
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
