@@ -50,10 +50,6 @@ class HomeFragment : NavBaseFragment() {
 
     private val mainHost by lazy { requireActivity() as MainHost }
 
-    private val detailDismissListener by lazy {
-        return@lazy { mainHost.showAddButton() }
-    }
-
     private var deleteConfirmDialog: DeleteConfirmFragment? = null
     private val homeEpoxyController: HomeEpoxyController by lazy {
         HomeEpoxyController(
@@ -87,16 +83,6 @@ class HomeFragment : NavBaseFragment() {
         binding.rvHome.adapter = null
 
         _binding = null
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mainHost.showAddButton()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mainHost.hideAddButton()
     }
 
     private fun setupView() {
@@ -143,12 +129,14 @@ class HomeFragment : NavBaseFragment() {
             detailDialog?.dismiss()
             //Show Selected Dialog
             detailDialog = ExpenseDetailDialog()
-            detailDialog?.setDismissListener(detailDismissListener)
             detailDialog?.setOnDeleteClickListener {
                 viewModel.onDeletePrepared(it.id)
             }
             detailDialog?.setOnEditClickListener {
                 navigateEntryFragment(expenseDetail.id)
+            }
+            detailDialog?.setDismissListener {
+                showAddButtonIfCurrentIsHomeDestination()
             }
             detailDialog?.showDetail(parentFragmentManager, expenseDetail, isDeleteEnabled = true)
             mainHost.hideAddButton()
@@ -165,6 +153,11 @@ class HomeFragment : NavBaseFragment() {
 
     }
 
+    private fun showAddButtonIfCurrentIsHomeDestination() {
+        if (findNavController().currentDestination?.id == R.id.dest_home) {
+            mainHost.showAddButtonInstantly()
+        }
+    }
 
     private fun showDeleteConfirmDialog(info: DeleteInfoUiModel) {
         deleteConfirmDialog?.dismiss()

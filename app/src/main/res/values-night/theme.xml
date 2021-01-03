@@ -5,13 +5,14 @@
         <item name="colorPrimary">@color/blue_light_200</item>
         <item name="colorOnPrimary">@color/dark_gray</item>
         <item name="colorSurface">@color/dark_gray</item>
+        <item name="colorAccent">@color/blue_light_200</item>
         <item name="colorOnSurface">@color/gray_100</item>
         <item name="rippleColor">@color/gray_200</item>
         <item name="backgroundColor">@color/dark_gray</item>
         <item name="colorPositive">@color/green_300</item>
         <item name="colorOnPositive">@color/dark_gray</item>
         <item name="colorNegative">@color/red_300</item>
-        <item name="colorOnNegative">@color/dark_gray</item>
+        <item name="colorOnNegative">@color/gray_100</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="colorWarning">@color/yellow_300</item>
         <item name="colorOnWarning">@color/dark_gray</item>

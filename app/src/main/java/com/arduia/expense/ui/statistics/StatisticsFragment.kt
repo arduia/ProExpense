@@ -3,7 +3,9 @@ package com.arduia.expense.ui.statistics
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragStatisticBinding
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
@@ -23,6 +25,8 @@ class StatisticsFragment : NavBaseFragment() {
 
     private val viewModel by viewModels<StatisticsViewModel>()
     private var filterDialog: ExpenseFilterDialogFragment? = null
+
+    private val dateRangeListener by lazy { Observer<String>(binding.tbStatistic::setSubtitle) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,6 +76,7 @@ class StatisticsFragment : NavBaseFragment() {
         filterDialog?.show(childFragmentManager, filterInfo)
     }
 
+
     private fun setupViewModel() {
         viewModel.categoryStatisticList.observe(viewLifecycleOwner) {
             categoryAdapter?.submitList(it)
@@ -82,13 +87,45 @@ class StatisticsFragment : NavBaseFragment() {
             shoeDateRangeDialog(it)
         })
 
-        viewModel.dateRange.observe(viewLifecycleOwner) {
-            binding.tbStatistic.subtitle = it
+        viewModel.isEmptyExpenseData.observe(viewLifecycleOwner) { isEmptyData ->
+            if (isEmptyData) {
+                disableMenuActions()
+                hideFilterDate()
+            } else {
+                enableMenuActions()
+                showFilterDate()
+            }
         }
+    }
 
-        viewModel.filterRestored.observe(viewLifecycleOwner, EventObserver {
-            Toast.makeText(requireContext(), "Filter is Restored", Toast.LENGTH_SHORT).show()
-        })
+    private fun hideFilterDate() {
+        binding.tbStatistic.subtitle = ""
+        unregisterDateRangeObserver()
+    }
+
+    private fun showFilterDate() {
+        binding.tbStatistic.subtitle = ""
+        registerDateRangeObserver()
+    }
+
+    private fun registerDateRangeObserver() {
+        viewModel.dateRange.observe(viewLifecycleOwner, dateRangeListener)
+    }
+
+    private fun unregisterDateRangeObserver() {
+        viewModel.dateRange.removeObserver(dateRangeListener)
+    }
+
+    private fun disableMenuActions() {
+        binding.tbStatistic.menu.forEach {
+            it.isEnabled = false
+        }
+    }
+
+    private fun enableMenuActions() {
+        binding.tbStatistic.menu.forEach {
+            it.isEnabled = true
+        }
     }
 
     private fun showNoData() {
