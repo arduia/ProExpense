@@ -128,5 +128,5 @@
     <string name="desc">降序</string>
     <string name="totals">总数</string>
     <string name="acknowledgement_title">致谢</string>
-	<string name="recent">最近</string>
+    <string name="recent">最近</string>
 </resources>
