@@ -89,16 +89,6 @@ class HomeFragment : NavBaseFragment() {
         _binding = null
     }
 
-    override fun onResume() {
-        super.onResume()
-        mainHost.showAddButton()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mainHost.hideAddButton()
-    }
-
     private fun setupView() {
         setupCommonUi()
         binding.rvHome.adapter = homeEpoxyController.adapter
