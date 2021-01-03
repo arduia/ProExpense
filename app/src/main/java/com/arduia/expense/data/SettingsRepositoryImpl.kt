@@ -13,8 +13,10 @@ import com.arduia.expense.model.SuccessResult
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.lang.Exception
+import javax.inject.Inject
 
-class SettingsRepositoryImpl(private val dao: PreferenceStorageDao) : SettingsRepository {
+class SettingsRepositoryImpl @Inject constructor(private val dao: PreferenceStorageDao) :
+    SettingsRepository {
 
     override fun getSelectedLanguage(): FlowResult<String> =
         dao.getSelectedLanguage()
@@ -84,7 +86,7 @@ class SettingsRepositoryImpl(private val dao: PreferenceStorageDao) : SettingsRe
     }
 }
 
-object SettingRepositoryFactoryImpl : SettingsRepository.Factory {
+object SettingRepositoryFactoryImpl  : SettingsRepository.Factory {
     override fun create(context: Context): SettingsRepository {
         return SettingsRepositoryImpl(PreferenceFlowStorageDaoImpl(context))
     }

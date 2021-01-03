@@ -13,12 +13,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/WeeklyCostGraph" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/backup" />
-            <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/currencystore" />
+            <option value="$PROJECT_DIR$/currency-store" />
             <option value="$PROJECT_DIR$/expense-backup" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/week-expense-graph" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

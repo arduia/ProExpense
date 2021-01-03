@@ -38,11 +38,11 @@ class CheckAboutUpdateWorker @WorkerInject constructor(
                     else UpdateStatusDataModel.STATUS_NORMAL_UPDATE
 
                 val info = status.info
-                return if(info == null){
+                return if (info == null) {
                     settingRepo.setUpdateStatus(UpdateStatusDataModel.STATUS_NO_UPDATE)
                     Timber.d("no info $info")
                     Result.success()
-                }else{
+                } else {
                     settingRepo.setAboutUpdate(info)
                     settingRepo.setUpdateStatus(updateStatusLevel)
                     Timber.d("has Info $info $updateStatusLevel")

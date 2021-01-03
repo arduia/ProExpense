@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
@@ -17,14 +16,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
 import com.arduia.expense.data.SettingRepositoryFactoryImpl
-import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.data.SettingsRepositoryImpl
-import com.arduia.expense.data.local.PreferenceFlowStorageDaoImpl
-import com.arduia.expense.data.local.PreferenceStorageDao
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
-import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.backup.BackupMessageViewModel
 import com.arduia.expense.ui.common.themeColor
@@ -41,7 +35,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), NavigationDrawer,
     MainHost, BackupMessageReceiver {
 
-    private lateinit var viewBinding: ActivMainBinding
+    private lateinit var binding: ActivMainBinding
 
     private lateinit var headerBinding: LayoutHeaderBinding
 
@@ -55,17 +49,13 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     override val defaultSnackBarDuration: Int by lazy { resources.getInteger(R.integer.duration_short_snack) }
 
-    private var addBtnClickListener: () -> Unit = {}
+    private var addBtnClickListener: (() -> Unit)? = {}
 
-    private var lastSnackBar: Snackbar? = null
+    private var snackBarMessage: Snackbar? = null
 
     private var addFabShowTask: (() -> Unit)? = null
 
     private val viewModel by viewModels<MainViewModel>()
-
-    init {
-//        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-    }
 
     @Inject
     @IntegerDecimal
@@ -75,13 +65,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         setTheme(R.style.Theme_ProExpense)
-        viewBinding = ActivMainBinding.inflate(layoutInflater)
-        headerBinding = LayoutHeaderBinding.bind(viewBinding.nvMain.getHeaderView(0))
-        setContentView(viewBinding.root)
+        binding = ActivMainBinding.inflate(layoutInflater)
+        headerBinding = LayoutHeaderBinding.bind(binding.nvMain.getHeaderView(0))
+        setContentView(binding.root)
         navController = findNavController()
         navOption = createNavOption()
-
-
         setupView()
         setupViewModel()
     }
@@ -110,24 +98,25 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
     private fun setupView() {
 
-        viewBinding.fbMainAdd.setColorFilter(this.themeColor(R.attr.colorOnPrimary))
-        viewBinding.fbMainAdd.setOnClickListener {
-            addBtnClickListener.invoke()
+        binding.fbMainAdd.setColorFilter(this.themeColor(R.attr.colorOnPrimary))
+        binding.fbMainAdd.setOnClickListener {
+            addBtnClickListener?.invoke()
         }
 
-        viewBinding.fbMainAdd.hide()
+        binding.fbMainAdd.hide()
 
-        viewBinding.nvMain.setupWithNavController(navController)
+        binding.nvMain.setupWithNavController(navController)
 
-        viewBinding.nvMain.setNavigationItemSelectedListener listener@{ menuItem ->
+        binding.nvMain.setNavigationItemSelectedListener listener@{ menuItem ->
 
             itemSelectTask = { selectPage(selectedMenuItem = menuItem) }
-            viewBinding.dlMain.closeDrawer(GravityCompat.START)
+
+            binding.dlMain.closeDrawer(GravityCompat.START)
 
             return@listener true
         }
 
-        viewBinding.dlMain.addDrawerListener(object : DrawerLayout.DrawerListener {
+        binding.dlMain.addDrawerListener(object : DrawerLayout.DrawerListener {
 
             override fun onDrawerStateChanged(newState: Int) {}
 
@@ -144,10 +133,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
         navController.addOnDestinationChangedListener { _, dest, _ ->
 
             if (TOP_DESTINATIONS.contains(dest.id)) {
-                viewBinding.dlMain.setDrawerLockMode(
+                binding.dlMain.setDrawerLockMode(
                     DrawerLayout.LOCK_MODE_UNLOCKED
                 )
-            } else viewBinding.dlMain.setDrawerLockMode(
+            } else binding.dlMain.setDrawerLockMode(
                 DrawerLayout.LOCK_MODE_LOCKED_CLOSED
             )
         }
@@ -159,38 +148,40 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     private fun selectPage(selectedMenuItem: MenuItem) {
-        val isHomePage = (selectedMenuItem.itemId == R.id.dest_home)
-        if (isHomePage) {
+        val isHome = (selectedMenuItem.itemId == R.id.dest_home)
+
+        if (isHome) {
             navController.popBackStack(R.id.dest_home, false)
         }
+
         navController.navigate(selectedMenuItem.itemId, null, navOption)
     }
 
-    override fun addTaskID(id: UUID) {
+    override fun registerBackupTaskID(id: UUID) {
         backupViewModel.addTaskID(id)
     }
 
-    override fun removeTaskID(id: UUID) {
+    override fun unregisterBackupTaskID(id: UUID) {
         backupViewModel.removeTaskID(id)
     }
 
     override fun openDrawer() {
-        viewBinding.dlMain.openDrawer(GravityCompat.START)
+        binding.dlMain.openDrawer(GravityCompat.START)
     }
 
     override fun closeDrawer() {
-        viewBinding.dlMain.closeDrawer(GravityCompat.START)
+        binding.dlMain.closeDrawer(GravityCompat.START)
     }
 
     override fun lockDrawer() {
-        with(viewBinding.dlMain) {
+        with(binding.dlMain) {
             closeDrawer(GravityCompat.START)
             setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
     }
 
     override fun unlockDrawer() {
-        viewBinding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        binding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 
     override fun navigateUpTo(upIntent: Intent?): Boolean {
@@ -198,15 +189,15 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun onBackPressed() {
-        if (drawerClosure()) {
+        if (doDrawerClosure()) {
             super.onBackPressed()
         }
     }
 
-    private fun drawerClosure(): Boolean {
-        val isDrawerOpen = viewBinding.dlMain.isDrawerOpen(GravityCompat.START)
+    private fun doDrawerClosure(): Boolean {
+        val isDrawerOpen = binding.dlMain.isDrawerOpen(GravityCompat.START)
         if (isDrawerOpen) {
-            viewBinding.dlMain.closeDrawer(GravityCompat.START)
+            binding.dlMain.closeDrawer(GravityCompat.START)
             return false
         }
         return true
@@ -216,11 +207,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
         addFabShowTask = { showAddFab() }
 
-        when (lastSnackBar?.isShown) {
+        when (snackBarMessage?.isShown) {
             true -> {
                 lifecycleScope.launch {
                     val delayDuration =
-                        (lastSnackBar?.duration ?: 0) + 300 //Extra 100 for animation
+                        (snackBarMessage?.duration ?: 0) + 300 //Extra 100 for animation
                     delay(delayDuration.toLong())
                     addFabShowTask?.invoke()
                 }
@@ -237,23 +228,23 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
 
 
     private fun showAddFab() {
-        viewBinding.fbMainAdd.show()
-        viewBinding.fbMainAdd.isClickable = true
+        binding.fbMainAdd.show()
+        binding.fbMainAdd.isClickable = true
     }
 
     override fun hideAddButton() {
         addFabShowTask = null
-        viewBinding.fbMainAdd.isClickable = false
-        viewBinding.fbMainAdd.hide()
+        binding.fbMainAdd.isClickable = false
+        binding.fbMainAdd.hide()
     }
 
     override fun showSnackMessage(message: String, duration: Int) {
-        lastSnackBar = Snackbar.make(viewBinding.clMain, message, duration).apply {
+        snackBarMessage = Snackbar.make(binding.clMain, message, duration).apply {
             show()
         }
     }
 
-    override fun setAddButtonClickListener(listener: () -> Unit) {
+    override fun setAddButtonClickListener(listener: (() -> Unit)?) {
         addBtnClickListener = listener
     }
 
@@ -269,14 +260,16 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     }
 
     override fun attachBaseContext(newBase: Context?) {
-        runBlocking {
-            if (newBase == null) return@runBlocking
-            val setting = SettingRepositoryFactoryImpl.create(newBase)
-            val selectedLanguage = setting.getSelectedLanguageSync().getDataOrError()
-            delegate.localNightMode = setting.getSelectedThemeModeSync().getDataOrError()
-            val localedContext = newBase.updateResource(selectedLanguage)
-            super.attachBaseContext(localedContext)
-        }
+        val localedContext = setUiModeAndGetLocaleContext(newBase)
+        super.attachBaseContext(localedContext)
+    }
+
+    private fun setUiModeAndGetLocaleContext(base: Context?): Context? = runBlocking {
+        if (base == null) return@runBlocking base
+        val setting = SettingRepositoryFactoryImpl.create(base)
+        val selectedLanguage = setting.getSelectedLanguageSync().getDataOrError()
+        delegate.localNightMode = setting.getSelectedThemeModeSync().getDataOrError()
+        return@runBlocking base.updateResource(selectedLanguage)
     }
 
     companion object {

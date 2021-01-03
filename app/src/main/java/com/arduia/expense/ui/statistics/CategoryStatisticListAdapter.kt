@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.databinding.ItemCategoryStatisticBinding
 
 class CategoryStatisticListAdapter(private val layoutInflater: LayoutInflater) :
-    ListAdapter<CategoryStatisticVo, CategoryStatisticListAdapter.VH>(
+    ListAdapter<CategoryStatisticUiModel, CategoryStatisticListAdapter.VH>(
         DIFFER
     ) {
 
@@ -32,17 +32,17 @@ class CategoryStatisticListAdapter(private val layoutInflater: LayoutInflater) :
 }
 
 private val DIFFER
-    get() = object : DiffUtil.ItemCallback<CategoryStatisticVo>() {
+    get() = object : DiffUtil.ItemCallback<CategoryStatisticUiModel>() {
         override fun areItemsTheSame(
-            oldItem: CategoryStatisticVo,
-            newItem: CategoryStatisticVo
+            oldItem: CategoryStatisticUiModel,
+            newItem: CategoryStatisticUiModel
         ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: CategoryStatisticVo,
-            newItem: CategoryStatisticVo
+            oldItem: CategoryStatisticUiModel,
+            newItem: CategoryStatisticUiModel
         ): Boolean {
             return (oldItem.name == newItem.name) and
                     (oldItem.progress == newItem.progress) and

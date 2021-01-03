@@ -8,12 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.expense.R
 import com.arduia.expense.databinding.ItemBackupBinding
-import com.arduia.expense.ui.vto.BackupVto
 
 class BackupListAdapter(private val layoutInflater: LayoutInflater) :
-    ListAdapter<BackupVto, BackupListAdapter.VH>(DIFF_UTIL) {
+    ListAdapter<BackupUiModel, BackupListAdapter.VH>(DIFF_UTIL) {
 
-    private var itemClickListener = { _: BackupVto -> }
+    private var itemClickListener = { _: BackupUiModel -> }
 
     private val itemsSuffix = layoutInflater.context.getString(R.string.single_item_suffix)
     private val singleItemSuffix = layoutInflater.context.getString(R.string.multi_item_suffix)
@@ -50,18 +49,18 @@ class BackupListAdapter(private val layoutInflater: LayoutInflater) :
 
     }
 
-    fun setItemClickListener(listener: (BackupVto) -> Unit) {
+    fun setItemClickListener(listener: (BackupUiModel) -> Unit) {
         this.itemClickListener = listener
     }
 }
 
 private val DIFF_UTIL
-    get() = object : DiffUtil.ItemCallback<BackupVto>() {
-        override fun areItemsTheSame(oldItem: BackupVto, newItem: BackupVto): Boolean {
+    get() = object : DiffUtil.ItemCallback<BackupUiModel>() {
+        override fun areItemsTheSame(oldItem: BackupUiModel, newItem: BackupUiModel): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: BackupVto, newItem: BackupVto): Boolean {
+        override fun areContentsTheSame(oldItem: BackupUiModel, newItem: BackupUiModel): Boolean {
             return (oldItem.date == newItem.date) &&
                     (oldItem.id == newItem.id) &&
                     (oldItem.name == newItem.name) &&

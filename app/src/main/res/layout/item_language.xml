@@ -5,11 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:elevation="0dp"
     android:id="@+id/cd_language"
-    android:layout_marginStart="@dimen/grid_3"
-    android:layout_marginEnd="@dimen/grid_3"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
-    app:cardCornerRadius="@dimen/size_radius"
     android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,7 +14,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:id="@+id/imv_flag"
-            tools:src="@drawable/tmp_myanmar"
+            tools:src="@drawable/flag_myanmar"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/grid_3" />
@@ -29,6 +24,8 @@
             android:id="@+id/tv_language_name"
             style="?attr/textAppearanceBody1"
             tools:text="Myanmar(Burmese)"
+            android:layout_toStartOf="@id/imv_checked"
+            android:layout_marginEnd="@dimen/grid_3"
             android:layout_marginTop="@dimen/grid_3"
             android:layout_marginBottom="@dimen/grid_3"
             android:layout_centerVertical="true"

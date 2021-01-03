@@ -7,14 +7,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import java.lang.Exception
 
-abstract class NavBaseFragment : Fragment(){
+/**
+ * Base class for Fragment which use drawer navigation
+ */
+abstract class NavBaseFragment : Fragment() {
 
     private var _navDrawer: NavigationDrawer? = null
     protected val navigationDrawer get() = _navDrawer!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _navDrawer = (requireActivity() as? NavigationDrawer) ?: throw Exception("Fragment's Activity has no NavDrawer")
+        _navDrawer = (requireActivity() as? NavigationDrawer)
+            ?: throw Exception("Fragment's host Activity must implement NavigationDrawer interface!")
     }
 
     override fun onDestroyView() {

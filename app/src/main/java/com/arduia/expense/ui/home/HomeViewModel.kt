@@ -6,90 +6,70 @@ import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
-import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.times
+import com.arduia.expense.di.MonthlyDateRange
 import com.arduia.expense.model.*
 import com.arduia.expense.ui.common.*
+import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
-import com.arduia.expense.ui.vto.ExpenseDetailsVto
-import com.arduia.expense.ui.vto.ExpenseVto
+import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
+import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
+import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 import com.arduia.mvvm.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.Exception
-import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.*
 
 class HomeViewModel @ViewModelInject constructor(
     private val currencyRepository: CurrencyRepository,
-    private val expenseVoMapperFactory: ExpenseVoMapperFactory,
-    private val expenseDetailMapperFactory: ExpenseDetailMapperFactory,
+    private val expenseVoMapperFactory: ExpenseUiModelMapperFactory,
+    private val expenseDetailMapperFactory: ExpenseDetailUiModelMapperFactory,
     private val repo: ExpenseRepository,
     @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
-    private val dateRangeFormatter: DateRangeFormatter,
+    @MonthlyDateRange private val dateRangeFormatter: DateRangeFormatter,
     calculatorFactory: ExpenseRateCalculator.Factory
 ) : ViewModel() {
 
-    private val _detailData = EventLiveData<ExpenseDetailsVto>()
+    private val _detailData = EventLiveData<ExpenseDetailUiModel>()
     val detailData get() = _detailData.asLiveData()
-
-    private val _costRates = BaseLiveData<Map<Int, Int>>()
-    val costRate get() = _costRates.asLiveData()
 
     private val _onExpenseItemDeleted = EventLiveData<Unit>()
     val onExpenseItemDeleted get() = _onExpenseItemDeleted.asLiveData()
 
-    private val _currencySymbol = BaseLiveData<String>()
-    val currencySymbol get() = _currencySymbol.asLiveData()
-
     private val _onError = EventLiveData<Unit>()
     val onError get() = _onError.asLiveData()
 
-    private val _weekIncome = BaseLiveData<String>()
-    val weekIncome get() = _weekIncome.asLiveData()
-
-    private val _weekOutcome = BaseLiveData<String>()
-    val weekOutcome get() = _weekOutcome.asLiveData()
-
     private val _currentWeekDateRange = BaseLiveData<String>()
-    val currentWeekDateRange get() = this._currentWeekDateRange.asLiveData()
 
-    private val _recentData = BaseLiveData<List<ExpenseVto>>()
+    private val _incomeOutcomeData = BaseLiveData<IncomeOutcomeUiModel>()
+    val incomeOutcomeData get() = _incomeOutcomeData.asLiveData()
+
+    private val _graphUiData = BaseLiveData<WeeklyGraphUiModel>()
+    val graphUiModel get() = _graphUiData.asLiveData()
+
+    private val _recentData = BaseLiveData<List<ExpenseUiModel>>()
     val recentData get() = _recentData.asLiveData()
 
-    private val _onDeleteConfirm = EventLiveData<DeleteInfoVo>()
+    private val _onDeleteConfirm = EventLiveData<DeleteInfoUiModel>()
     val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
 
-    val isEmptyRecent = _recentData.switchMap {
-        return@switchMap BaseLiveData(it.isEmpty())
-    }
+    private val currencySymbol = BaseLiveData<String>()
 
     private val calculator = calculatorFactory.create(viewModelScope)
-
-    private val _isLoading = BaseLiveData<Boolean>()
 
     private var prepareDeleteExpenseId: Int? = null
 
     init {
-        init()
+        observeWeekExpenses()
+        observeRate()
+        updateWeekDateRange()
+        observeCurrencySymbol()
     }
 
-    private fun getCurrencySymbol(): String {
-        Timber.d("getCurrencySymbol ")
-
-        val value = Amount.createFromActual(BigDecimal(0.5f.toDouble()))
-        val result = value * value
-        val some = value * 4
-        val storeValue = result.getStore()
-
-        return _currencySymbol.value ?: "NULL"
-    }
-
-    fun selectItemForDetail(selectedItem: ExpenseVto) {
+    fun selectItemForDetail(selectedItem: ExpenseUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = repo.getExpense(selectedItem.id).first()) {
                 is Result.Loading -> Unit
@@ -104,7 +84,6 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
-
     fun onDeleteConfirmed() {
         val id = prepareDeleteExpenseId ?: return
         viewModelScope.launch(Dispatchers.IO) {
@@ -115,21 +94,14 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun onDeletePrepared(id: Int) {
         this.prepareDeleteExpenseId = id
-        _onDeleteConfirm post event(DeleteInfoVo(0, null))
-    }
-
-    private fun init() {
-        observeWeekExpenses()
-        observeRate()
-        updateWeekDateRange()
-        observeCurrencySymbol()
+        _onDeleteConfirm post event(DeleteInfoUiModel(1, null))
     }
 
     private fun observeCurrencySymbol() {
         currencyRepository.getSelectedCacheCurrency()
             .flowOn(Dispatchers.IO)
             .onSuccess {
-                _currencySymbol post it.code
+                currencySymbol post it.code
             }
             .launchIn(viewModelScope)
     }
@@ -152,13 +124,22 @@ class HomeViewModel @ViewModelInject constructor(
                     is Result.Success -> {
 
                         val weekExpenses = it.data
-                        calculator.setWeekExpenses(weekExpenses)
+                        calculator.setWeekExpenses(weekExpenses.filter { expenseEnt -> expenseEnt.category != ExpenseCategory.INCOME })
 
                         val totalOutcome = weekExpenses.getTotalOutcomeAsync()
                         val totalIncome = weekExpenses.getTotalIncomeAsync()
 
-                        _weekOutcome post currencyFormatter.format(totalOutcome.await())
-                        _weekIncome post currencyFormatter.format(totalIncome.await())
+                        val weekOutcome = currencyFormatter.format(totalOutcome.await())
+                        val weekIncome = currencyFormatter.format(totalIncome.await())
+                        val dateRange = _currentWeekDateRange.value ?: ""
+                        val currencySymbol =
+                            currencyRepository.getSelectedCacheCurrency().awaitValueOrError().code
+                        _incomeOutcomeData post IncomeOutcomeUiModel(
+                            weekIncome,
+                            weekOutcome,
+                            currencySymbol,
+                            dateRange
+                        )
                     }
                 }
             }
@@ -166,7 +147,7 @@ class HomeViewModel @ViewModelInject constructor(
 
         repo.getRecentExpense()
             .flowOn(Dispatchers.IO)
-            .combine(_currencySymbol.asFlow()) { recent, symbol ->
+            .combine(currencySymbol.asFlow()) { recent, symbol ->
                 val data = (recent as? SuccessResult)?.data ?: return@combine
                 val mapper = expenseVoMapperFactory.create { symbol }
                 _recentData post data.map(mapper::map)
@@ -189,16 +170,22 @@ class HomeViewModel @ViewModelInject constructor(
     private fun observeRate() {
         calculator.getRates()
             .flowOn(Dispatchers.IO)
-            .onEach(_costRates::postValue)
+            .combine(_currentWeekDateRange.asFlow()) { rate, dateRange ->
+                WeeklyGraphUiModel(dateRange, rate)
+            }
+            .onEach {
+                _graphUiData.postValue(it)
+            }
             .launchIn(viewModelScope)
     }
 
 
     private fun getWeekDateRange(): String {
         val startTime = getWeekStartTime().time
-        val endTime = Calendar.getInstance().timeInMillis
+        val endTime = getWeekEndTime().time
         return dateRangeFormatter.format(start = startTime, end = endTime)
     }
+
 
     private fun getWeekStartTime(): Date {
 
@@ -215,4 +202,21 @@ class HomeViewModel @ViewModelInject constructor(
 
         return calendar.time
     }
+
+    private fun getWeekEndTime(): Date {
+        val calendar = Calendar.getInstance()
+
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+
+        val startSunDay = (dayOfYear - dayOfWeek) + 1
+
+        calendar.set(Calendar.DAY_OF_YEAR, startSunDay + 7)
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+
+        return calendar.time
+    }
+
 }

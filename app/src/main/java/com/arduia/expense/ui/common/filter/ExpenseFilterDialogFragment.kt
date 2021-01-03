@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FilterExpenseBinding
+import com.arduia.expense.databinding.FilterExpenseDialogBinding
 import com.arduia.expense.domain.filter.DateRange
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.mvvm.EventObserver
@@ -18,13 +18,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.lang.Exception
+import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
 class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) :
     BottomSheetDialogFragment() {
 
-    private var _binding: FilterExpenseBinding? = null
+    private var _binding: FilterExpenseDialogBinding? = null
     private val binding get() = _binding!!
 
     private var datePickerDialog: DatePickerDialog? = null
@@ -36,12 +37,13 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
 
     private lateinit var filterInfo: ExpenseLogFilterInfo
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FilterExpenseBinding.inflate(inflater, container, false)
+        _binding = FilterExpenseDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -61,24 +63,19 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
                 viewModel.onEndDateSelect()
             }
 
-            cvStartTime.setOnClickListener {
-                viewModel.onStartTimeSelect()
-            }
-
-            cvEndTime.setOnClickListener {
-                viewModel.onEndTimeSelect()
-            }
-
             if (isSortingEnabled.not()) {
                 tvSortedBy.visibility = View.GONE
-                rgOrder.visibility = View.GONE
+                tgDateOrder.visibility = View.GONE
                 return@with
             }
 
-            rgOrder.setOnCheckedChangeListener { _, id ->
-                val sorting = when (id) {
-                    R.id.rb_asc -> Sorting.ASC
-                    R.id.rb_desc -> Sorting.DESC
+            tgDateOrder.addOnButtonCheckedListener { _, checkedId, isChecked ->
+
+                if (isChecked.not()) return@addOnButtonCheckedListener
+
+                val sorting = when (checkedId) {
+                    R.id.btn_date_order_asc -> Sorting.ASC
+                    R.id.btn_date_order_desc -> Sorting.DESC
                     else -> throw Exception("Order must be asc or desc radio buttons")
                 }
                 viewModel.setSorting(sorting)
@@ -89,13 +86,6 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
 
     private fun setupViewModel() {
 
-        viewModel.onStartTimeFilterShow.observe(viewLifecycleOwner, EventObserver {
-            showTimePicker(initialTime = it, onSelect = viewModel::setStartTime)
-        })
-
-        viewModel.onEndTimeFilterShow.observe(viewLifecycleOwner, EventObserver {
-            showTimePicker(initialTime = it, onSelect = viewModel::setEndTime)
-        })
 
         viewModel.onStartDateFilterShow.observe(viewLifecycleOwner, EventObserver {
             showDatePicker(
@@ -112,20 +102,27 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
                 onSelect = viewModel::setEndDate
             )
         })
-        viewModel.starTime.observe(viewLifecycleOwner) {
-            binding.tvStartTime.text = it
-        }
-
-        viewModel.endTime.observe(viewLifecycleOwner) {
-            binding.tvEndTime.text = it
-        }
 
         viewModel.startDate.observe(viewLifecycleOwner) {
-            binding.tvStartDate.text = it
+            val dateFormat = SimpleDateFormat("MMM", Locale.ENGLISH)
+            with(binding) {
+                tvStartMonth.text = dateFormat.format(it)
+                dateFormat.applyPattern("d")
+                tvStartDay.text = dateFormat.format(it)
+                dateFormat.applyPattern("yyyy")
+                tvStartYear.text = dateFormat.format(it)
+            }
         }
 
         viewModel.endDate.observe(viewLifecycleOwner) {
-            binding.tvEndDate.text = it
+            val dateFormat = SimpleDateFormat("MMM", Locale.ENGLISH)
+            with(binding) {
+                tvEndMonth.text = dateFormat.format(it)
+                dateFormat.applyPattern("d")
+                tvEndDay.text = dateFormat.format(it)
+                dateFormat.applyPattern("yyyy")
+                tvEndYear.text = dateFormat.format(it)
+            }
         }
 
         viewModel.onResult.observe(viewLifecycleOwner, EventObserver {
@@ -133,48 +130,37 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
             dismiss()
         })
 
-        viewModel.sortingType.observe(viewLifecycleOwner){sorting ->
-            when(sorting){
+        viewModel.sortingType.observe(viewLifecycleOwner) { sorting ->
+            when (sorting) {
                 Sorting.DESC -> {
-                    val isChecked = binding.rbDesc.isChecked
+                    val isChecked = binding.tgDateOrder.checkedButtonId == R.id.btn_date_order_desc
                     Timber.d("isChecked desc $isChecked")
-                    if(isChecked) return@observe //Remove Recursive Checks
+                    if (isChecked) return@observe //Remove Recursive Checks
                     else
-                    binding.rgOrder.check(R.id.rb_desc)
+                        binding.tgDateOrder.check(R.id.btn_date_order_desc)
 
                 }
                 Sorting.ASC -> {
-                    val isChecked = binding.rbAsc.isChecked
+                    val isChecked = binding.tgDateOrder.checkedButtonId == R.id.btn_date_order_asc
                     Timber.d("isChecked asc $isChecked")
-                    if(isChecked) return@observe
+                    if (isChecked) return@observe //Remove Recursive Checks
                     else
-                    binding.rgOrder.check(R.id.rb_asc)
+                        binding.tgDateOrder.check(R.id.btn_date_order_asc)
                 }
                 else -> Unit
             }
         }
 
-        viewModel.onEndChangedAsStart.observe(viewLifecycleOwner, EventObserver{
-            Toast.makeText(requireContext(), "End Date Changed to Start Date!",Toast.LENGTH_SHORT).show()
+        viewModel.onEndChangedAsStart.observe(viewLifecycleOwner, EventObserver {
+            Toast.makeText(requireContext(), "End Date Changed to Start Date!", Toast.LENGTH_SHORT)
+                .show()
         })
 
-        viewModel.onStartChangedAsEnd.observe(viewLifecycleOwner, EventObserver{
-            Toast.makeText(requireContext(), "Start Date Changed to End Date!",Toast.LENGTH_SHORT).show()
+        viewModel.onStartChangedAsEnd.observe(viewLifecycleOwner, EventObserver {
+            Toast.makeText(requireContext(), "Start Date Changed to End Date!", Toast.LENGTH_SHORT)
+                .show()
         })
         viewModel.setFilterInfo(filterInfo)
-    }
-
-    private fun showTimePicker(initialTime: Calendar, onSelect: (Int, Int) -> Unit) {
-        timePicker?.dismiss()
-        timePicker = TimePickerDialog(
-            requireContext(),
-            { _, hour, minute -> onSelect.invoke(hour, minute) },
-            initialTime[Calendar.HOUR_OF_DAY],
-            initialTime[Calendar.MINUTE],
-            false
-        )
-
-        timePicker?.show()
     }
 
     private fun showDatePicker(

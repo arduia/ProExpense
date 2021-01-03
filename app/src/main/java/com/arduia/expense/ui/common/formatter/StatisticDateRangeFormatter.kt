@@ -2,10 +2,11 @@ package com.arduia.expense.ui.common.formatter
 
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class StatisticDateRangeFormatter : ExpenseDateRangeFormatter() {
+open class StatisticDateRangeFormatter @Inject constructor() : ExpenseDateRangeFormatter() {
 
-    private val startFormatter = SimpleDateFormat(PATTERN_DATE_BASE, Locale.ENGLISH)
+    protected open val startFormatter = SimpleDateFormat(PATTERN_DATE_BASE, Locale.ENGLISH)
     private val endFormatter = SimpleDateFormat("", Locale.ENGLISH)
 
     @Synchronized

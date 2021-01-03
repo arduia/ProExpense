@@ -12,6 +12,7 @@ import com.arduia.backup.task.getDataOrError
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.awaitValueOrError
+import java.lang.Exception
 import java.util.*
 
 class ExportWorker @WorkerInject constructor(@Assisted context: Context,
@@ -34,11 +35,13 @@ class ExportWorker @WorkerInject constructor(@Assisted context: Context,
         return Result.success()
     }
 
+
     private suspend fun updateBackupLogAsCompleted(itemCount: Int){
         val oldBackupLog = backupRepo.getBackupByWorkerID(id.toString()).awaitValueOrError()
         oldBackupLog.isCompleted= true
         oldBackupLog.itemTotal = itemCount
         backupRepo.updateBackup(oldBackupLog)
+
     }
 
     private fun createBackupEntityForExportWork(exportName: String, exportUri: String)=

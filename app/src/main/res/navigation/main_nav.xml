@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/dest_expense_logs"
-        android:name="com.arduia.expense.ui.expense.ExpenseFragment"
+        android:name="com.arduia.expense.ui.expenselogs.ExpenseFragment"
         android:label="ExpenseFragment"
         tools:layout="@layout/frag_expense_logs">
         <action

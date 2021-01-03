@@ -58,20 +58,14 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imv_language"
-                    android:layout_width="25dp"
+                    android:layout_width="60dp"
                     android:layout_height="25dp"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="50dp"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/tmp_myanmar" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/small_icon_size"
-                    android:layout_height="@dimen/small_icon_size"
-                    android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="@dimen/grid_2"
+                    android:gravity="center_horizontal"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/ic_more_next" />
+                    app:srcCompat="@drawable/flag_myanmar" />
+
             </FrameLayout>
 
             <View
@@ -92,24 +86,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/grid_3"
                     android:layout_marginStart="@dimen/grid_2"
-                    android:text="@string/choose_currency" />
+                    android:text="@string/currency" />
 
                 <TextView
                     android:id="@+id/tv_currency_value"
                     style="?textAppearanceHeadline6"
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="50dp"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    android:gravity="center_horizontal"
                     tools:text="$" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/small_icon_size"
-                    android:layout_height="@dimen/small_icon_size"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginEnd="@dimen/grid_2"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/ic_more_next" />
             </FrameLayout>
 
             <View
@@ -130,13 +118,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/grid_3"
                     android:layout_marginStart="@dimen/grid_2"
-                    android:text="@string/choose_theme" />
+                    android:text="@string/theme_mode" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_width="60dp"
                     android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center_vertical|end"
-                    android:layout_marginEnd="@dimen/grid_4"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    android:gravity="center_horizontal"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/ic_theme" />
             </FrameLayout>

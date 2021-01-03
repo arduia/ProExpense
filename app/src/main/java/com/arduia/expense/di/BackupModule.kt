@@ -5,6 +5,7 @@ import com.arduia.backup.BackupSheet
 import com.arduia.backup.ExcelBackup
 import com.arduia.backup.FileNameGenerator
 import com.arduia.backup.generator.BackupNameGenerator
+import com.arduia.expense.backup.schema.BackupSchema
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.backup.ExpenseBackupSheet
 import com.arduia.expense.data.backup.ExpenseBackupSource
@@ -22,21 +23,16 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 object BackupModule {
 
-    @Provides
-    @Singleton
-    fun provideExpenseSheet(source: ExpenseBackupSource): BackupSheet<ExpenseEnt>  =
-        ExpenseBackupSheet(source)
 
     @Provides
     @Singleton
-    fun provideExpenseSource(repo: ExpenseRepository) =
-        ExpenseBackupSource(repo)
-
-    @Provides
-    @Singleton
-    fun provideExcelBackup(expenseSheet: BackupSheet<ExpenseEnt>) =
+    fun provideExcelBackup(
+        expenseSheet: BackupSheet<ExpenseEnt>,
+        schemaSheet: BackupSheet<BackupSchema>
+    ) =
         ExcelBackup.Builder()
             .addBackupSheet(expenseSheet)
+            .addBackupSheet(schemaSheet)
             .build()
 
     @Provides

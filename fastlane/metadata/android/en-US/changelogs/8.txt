@@ -1,0 +1,4 @@
+-Some Bugs Fixed.
+-UI improvements.
+-Chinese Language is available now!
+-Export Backup Log with Metadata

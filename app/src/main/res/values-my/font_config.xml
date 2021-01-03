@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TextAppearance.ProExpense.H6" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="TextAppearance.ProExpense.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontFamily">@font/pyidaungsu</item>
     </style>
 
@@ -23,4 +23,7 @@
         <item name="itemTextAppearance">?textAppearanceBody1</item>
     </style>
 
+    <style name="TextAppearance.ProExpense.MediumTitle" parent="Base.TextAppearance.ProExpense.MediumTitle">
+        <item name="fontFamily">@font/pyidaungsu</item>
+    </style>
 </resources>

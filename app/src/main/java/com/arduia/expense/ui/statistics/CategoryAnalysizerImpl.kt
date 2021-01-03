@@ -1,21 +1,23 @@
 package com.arduia.expense.ui.statistics
 
 import com.arduia.expense.data.local.ExpenseEnt
-import com.arduia.expense.ui.common.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.HashMap
 
-class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider) :
+class CategoryAnalyzerImpl @Inject constructor(private val categoryProvider: ExpenseCategoryProvider) :
     CategoryAnalyzer {
 
 
-    private val decimalFormat = (DecimalFormat.getNumberInstance(Locale.ENGLISH) as DecimalFormat).apply {
-        applyPattern("0.0")
-    }
+    private val decimalFormat =
+        (DecimalFormat.getNumberInstance(Locale.ENGLISH) as DecimalFormat).apply {
+            applyPattern("0.0")
+        }
 
-    override fun analyze(entities: List<ExpenseEnt>): List<CategoryStatisticVo> {
+    override fun analyze(entities: List<ExpenseEnt>): List<CategoryStatisticUiModel> {
         val valueHolder = hashMapOf<Int, Double>()
         entities.forEach {
             if (isNewKey(valueHolder, key = it.category)) {
@@ -27,7 +29,7 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
         return getStatisticResultsVo(valueHolder)
     }
 
-    private fun getStatisticResultsVo(valueHolder: HashMap<Int, Double>): List<CategoryStatisticVo> {
+    private fun getStatisticResultsVo(valueHolder: HashMap<Int, Double>): List<CategoryStatisticUiModel> {
         if (valueHolder.isEmpty()) return emptyList()
 
         val total: Double = valueHolder.values.sum()
@@ -35,7 +37,11 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
         return valueHolder.map {
             val category = categoryProvider.getCategoryByID(it.key)
             val percentage = calculatePercentage(it.value, total)
-            return@map CategoryStatisticVo(category.name, percentage, "${decimalFormat.format(percentage)}%")
+            return@map CategoryStatisticUiModel(
+                category.name,
+                percentage,
+                "${decimalFormat.format(percentage)}%"
+            )
         }.sortedByDescending { it.progress }
     }
 
@@ -48,7 +54,7 @@ class CategoryAnalyzerImpl(private val categoryProvider: ExpenseCategoryProvider
 
     private fun isNewKey(valueHolder: HashMap<Int, Double>, key: Int) = (valueHolder[key] == null)
 
-    private fun addNewCategoryAndValue(valueHolder: HashMap<Int, Double>,key: Int, value: Float) {
+    private fun addNewCategoryAndValue(valueHolder: HashMap<Int, Double>, key: Int, value: Float) {
         valueHolder[key] = value.toDouble()
     }
 

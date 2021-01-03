@@ -9,8 +9,9 @@ import com.arduia.expense.model.getDataOrError
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.single
 import java.lang.Exception
+import javax.inject.Inject
 
-class ExpenseBackupSource (private val repo: ExpenseRepository): BackupSource<ExpenseEnt>{
+class ExpenseBackupSource  @Inject constructor (private val repo: ExpenseRepository): BackupSource<ExpenseEnt>{
     override suspend fun write(item: ExpenseEnt) {
         repo.insertExpense(item)
     }

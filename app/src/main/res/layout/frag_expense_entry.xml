@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?backgroundColor"
     android:elevation="3dp"
-    android:orientation="vertical"
-    android:background="?backgroundColor">
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/abl_entry"
@@ -20,11 +20,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?colorSurface"
-            app:navigationIcon="@drawable/ic_back"
             app:menu="@menu/menu_entry"
+            app:navigationIcon="@drawable/ic_back"
             app:title="@string/expense_entry"
-            tools:subtitle="Hello">
-        </com.google.android.material.appbar.MaterialToolbar>
+            tools:subtitle="Hello"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -37,8 +36,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?colorSurface"
-            android:layout_margin="@dimen/grid_2">
+            android:layout_margin="@dimen/grid_2"
+            android:background="?colorSurface">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/edl_name"
@@ -72,20 +71,20 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
+                android:layout_marginEnd="@dimen/grid_3"
                 android:hint="@string/amount"
-                app:suffixTextAppearance="?textAppearanceBody1"
-                android:layout_marginEnd="@dimen/grid_3">
+                app:suffixTextAppearance="?textAppearanceBody1">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?textAppearanceCurrencySmall"
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:nextFocusDown="@id/edt_note"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textAppearance="?textAppearanceCurrencySmall" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -146,8 +145,8 @@
                 android:layout_marginTop="6dp"
                 android:layout_marginEnd="@dimen/grid_3"
                 android:layout_marginBottom="6dp"
-                app:cardCornerRadius="@dimen/grid_2"
                 android:backgroundTint="?colorSurface"
+                app:cardCornerRadius="@dimen/grid_2"
                 app:cardElevation="2dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -156,7 +155,7 @@
                     android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/ic_lock_open"
+                    app:srcCompat="@drawable/ic_loop"
                     app:tint="?colorPrimary" />
             </com.google.android.material.card.MaterialCardView>
 

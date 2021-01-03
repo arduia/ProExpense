@@ -7,7 +7,7 @@
 
     <style name="Widget.ProExpense.NavigationView.Overlay.Base" parent="">
 
-        <item name="itemTextColor">@color/nav_text_color</item>
+        <item name="itemTextColor">@color/navigation_menu_text_color</item>
         <item name="itemIconSize">@dimen/size_nav_icon</item>
         <item name="iconTint">@color/darker_gray</item>
         <item name="android:background">?attr/colorSurface</item>
@@ -41,6 +41,11 @@
         <item name="android:alpha">0.8</item>
     </style>
 
+    <style name="Widget.ProExpense.CalendarDayCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">0dp</item>
+    </style>
+
+
     <style name="TextAppearance.ProExpense.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="fontFamily">@font/pyidaungsu</item>
         <item name="android:alpha">0.7</item>
@@ -55,5 +60,13 @@
         <item name="cornerSize">50%p</item>
         <item name="borderWidth">2dp</item>
     </style>
+
+    <style name="Base.TextAppearance.ProExpense.MediumTitle" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:alpha">0.75</item>
+    </style>
+
 
 </resources>

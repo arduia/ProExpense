@@ -8,11 +8,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragOnboardConfigBinding
-import com.arduia.expense.ui.common.LanguageProvider
+import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi

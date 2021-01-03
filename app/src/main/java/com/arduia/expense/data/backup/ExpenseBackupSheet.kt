@@ -8,8 +8,9 @@ import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.domain.Amount
 import java.math.BigDecimal
 import java.util.*
+import javax.inject.Inject
 
-class ExpenseBackupSheet(source: BackupSource<ExpenseEnt>) : BackupSheet<ExpenseEnt>(source) {
+class ExpenseBackupSheet @Inject constructor(source: BackupSource<ExpenseEnt>) : BackupSheet<ExpenseEnt>(source) {
 
     override val sheetName = "expense"
 
@@ -19,7 +20,7 @@ class ExpenseBackupSheet(source: BackupSource<ExpenseEnt>) : BackupSheet<Expense
         mutableMap[FIELD_DATE] = "long"
         mutableMap[FIELD_CATEGORY] = "integer"
         mutableMap[FIELD_AMOUNT] = "long"
-        mutableMap[FIELD_NOTE] = "long"
+        mutableMap[FIELD_NOTE] = "string"
         return SheetFieldInfo.createFromMap(mutableMap)
     }
 

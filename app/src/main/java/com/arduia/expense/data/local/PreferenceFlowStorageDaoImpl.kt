@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.tfcporciuncula.flow.FlowSharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceStorageDao {
+class PreferenceFlowStorageDaoImpl @Inject constructor(@ApplicationContext private val context: Context) :
+    PreferenceStorageDao {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -78,8 +81,8 @@ class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceSto
     }
 
     override suspend fun setAboutUpdate(info: AboutUpdateDataModel) {
-      val (name, code, log ) = info
-        with(preferences.edit()){
+        val (name, code, log) = info
+        with(preferences.edit()) {
             putString(KEY_ABOUT_UPDATE_NAME, name)
             putLong(KEY_ABOUT_UPDATE_CODE, code)
             putString(KEY_ABOUT_UPDATE_LOG, log)
@@ -99,7 +102,7 @@ class PreferenceFlowStorageDaoImpl(private val context: Context) : PreferenceSto
         private const val DEFAULT_SELECTED_CURRENCY_NUM = "840"
 
         private const val KEY_THEME_MODE = "theme_mode"
-        private const val DEFAULT_THEME_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        private const val DEFAULT_THEME_MODE = AppCompatDelegate.MODE_NIGHT_YES
 
         private const val KEY_UPDATE_STATUS = "update_status"
         private const val DEFAULT_UPDATE_STATUS = UpdateStatusDataModel.STATUS_NO_UPDATE

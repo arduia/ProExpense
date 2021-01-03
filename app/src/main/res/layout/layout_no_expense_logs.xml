@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/Theme.ProExpense"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imv_no_expense"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/grid_3"
+        app:tint="?colorPrimary"
+        app:srcCompat="@drawable/ic_info" />
+
+    <TextView
+        android:id="@+id/tv_no_expense_logs"
+        style="?textAppearanceBody1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/imv_no_expense"
+        android:layout_marginTop="@dimen/grid_3"
+        android:text="No Expense Logs"
+        android:textAllCaps="true" />
+
+    <TextView
+        android:id="@+id/tv_no_expense_description"
+        style="?textAppearanceBody1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_no_expense_logs"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/grid_2"
+        android:layout_marginBottom="@dimen/grid_3"
+        android:visibility="invisible"
+        android:text="There is no expense logs.\n Please start adding your expense."
+        android:textAlignment="center" />
+</RelativeLayout>
