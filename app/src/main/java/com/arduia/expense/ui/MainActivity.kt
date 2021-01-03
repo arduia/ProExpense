@@ -19,6 +19,7 @@ import com.arduia.expense.data.SettingRepositoryFactoryImpl
 import com.arduia.expense.databinding.ActivMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
+import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.ui.backup.BackupMessageViewModel
 import com.arduia.expense.ui.common.themeColor
@@ -60,6 +61,10 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
     @Inject
     @IntegerDecimal
     lateinit var countFormat: DecimalFormat
+
+    @Inject
+    @TopDropNavOption
+    lateinit var entryNavOption: NavOptions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,9 +145,12 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
                 DrawerLayout.LOCK_MODE_LOCKED_CLOSED
             )
 
-            if(dest.id == R.id.dest_home){
+            if (dest.id == R.id.dest_home) {
+                setAddButtonClickListener {
+                    navController.navigate(R.id.dest_expense_entry, null, entryNavOption)
+                }
                 showAddButton()
-            }else hideAddButton()
+            } else hideAddButton()
 
         }
 
