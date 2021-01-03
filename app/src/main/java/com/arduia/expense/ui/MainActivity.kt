@@ -139,6 +139,11 @@ class MainActivity : AppCompatActivity(), NavigationDrawer,
             } else binding.dlMain.setDrawerLockMode(
                 DrawerLayout.LOCK_MODE_LOCKED_CLOSED
             )
+
+            if(dest.id == R.id.dest_home){
+                showAddButton()
+            }else hideAddButton()
+
         }
 
         headerBinding.btnClose.setOnClickListener {
