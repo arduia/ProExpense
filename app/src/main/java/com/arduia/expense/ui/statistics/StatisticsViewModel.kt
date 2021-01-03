@@ -41,6 +41,10 @@ class StatisticsViewModel @ViewModelInject constructor(
             BaseLiveData(createFilterInfo(it))
         }
 
+    private val _isEmptyExpenseData = BaseLiveData<Boolean>()
+    val isEmptyExpenseData get() = _isEmptyExpenseData.asLiveData()
+
+
     val categoryStatisticList
         get() = filterConstraint.switchMap {
             BaseLiveData(createStatisticsFromFilter(it))
@@ -63,6 +67,20 @@ class StatisticsViewModel @ViewModelInject constructor(
 
     init {
         observeDateRangeInfo()
+        observeIsEmptyData()
+    }
+
+    private fun observeIsEmptyData() {
+        expenseRepo.getExpenseTotalCount()
+            .flowOn(Dispatchers.IO)
+            .onSuccess {
+                if (it <= 0) {
+                    _isEmptyExpenseData post true
+                } else {
+                    _isEmptyExpenseData post false
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeDateRangeInfo() {
@@ -70,9 +88,6 @@ class StatisticsViewModel @ViewModelInject constructor(
             .flowOn(Dispatchers.IO)
             .onSuccess {
                 val dateRange = ExpenseDateRange(it.minDate, it.maxDate)
-                if(filterConstraint.value != null){
-                    _filterRestored post EventUnit
-                }
                 filterConstraint post dateRange
                 filterLimit post dateRange
             }
