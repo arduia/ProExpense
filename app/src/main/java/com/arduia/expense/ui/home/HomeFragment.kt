@@ -79,9 +79,7 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mainHost.setAddButtonClickListener(null)
         binding.rvHome.adapter = null
-
         _binding = null
     }
 
@@ -103,9 +101,6 @@ class HomeFragment : NavBaseFragment() {
     }
 
     private fun setupCommonUi() {
-        mainHost.setAddButtonClickListener {
-            findNavController().navigate(R.id.dest_expense_entry, null, entryNavOption)
-        }
         binding.toolbar.setNavigationOnClickListener { navigationDrawer.openDrawer() }
     }
 
