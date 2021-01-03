@@ -109,9 +109,9 @@ class ExpenseViewModel @ViewModelInject constructor(
         expenseRepo.getMaxAndMiniDateRange()
             .flowOn(Dispatchers.IO)
             .onSuccess {
-                Timber.d("onSuccess $it")
                 filterLimit post ExpenseDateRange(start = it.minDate, end = it.maxDate)
                 val constraint = filterConstraint.value
+
                 if (constraint != null) {
                     //If Already has Constraint
                     val minDateConstraint = constraint.dateRange.start
