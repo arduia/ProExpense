@@ -1,6 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Pro Expense</string>
-    <string name="recent">最近条目</string>
     <string name="settings">设置</string>
     <string name="expense_logs">开支记录</string>
     <string name="next">下一步</string>
@@ -13,7 +12,6 @@
     <string name="home">主页</string>
     <string name="expenses_in_this_week">本周开支</string>
     <string name="mmk">缅甸元</string>
-    <string name="recents">最近</string>
     <string name="date">日期</string>
     <string name="spend">开支</string>
     <string name="name">名称</string>
@@ -33,7 +31,6 @@
     <string name="education">教育</string>
     <string name="transportation">交通</string>
     <string name="health_care">医疗保健</string>
-
     <string name="item_deleted">项目被删除</string>
     <string name="multi_item_deleted">多个项目被删除</string>
     <string name="data_updated">数据已更新！</string>
@@ -131,8 +128,5 @@
     <string name="desc">降序</string>
     <string name="totals">总数</string>
     <string name="acknowledgement_title">致谢</string>
-    <string name="outcome_for_week">Expenses in this Week</string>
-    <string name="house_hold">Housing</string>
-    <string name="delete_item_description">will be deleted!</string>
-
+	<string name="recent">最近</string>
 </resources>
