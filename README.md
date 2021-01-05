@@ -58,7 +58,7 @@ A simple free finance note to safely record daily expenses
 ## Why Pro Expense?
 <ul>
   <li>Free and Open-source</li>  
-  <li>Hight priority on privacy</li>
+  <li>High priority on privacy</li>
   <li>Simple and Pretty UI Design</li> 
   <li>Good Performance</li>
   <li>Multi-language support</li> 
