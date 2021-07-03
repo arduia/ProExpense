@@ -21,9 +21,14 @@ class LanguageProviderImpl @Inject constructor(): LanguageProvider {
     }
 
     private fun getAllLanguages() = mutableListOf<LanguageUiModel>().apply {
-        add(LanguageUiModel("my", R.drawable.flag_myanmar, "Myanmar(Burma)"))
-        add(LanguageUiModel("en", R.drawable.flag_united_states, "United States(English)"))
-        add(LanguageUiModel("cn", R.drawable.flag_china, "China (Chinese)"))
+        add(LanguageUiModel("my", R.drawable.flag_myanmar, "Burmese"))
+        add(LanguageUiModel("cn", R.drawable.flag_china, "Chinese (China)"))
+        add(LanguageUiModel("de", R.drawable.flag_china, "German (Germany)"))
+        add(LanguageUiModel("en", R.drawable.flag_united_states, "English (United States)"))
+        add(LanguageUiModel("ja", R.drawable.flag_japan, "Japanese"))
+        add(LanguageUiModel("pt-br", R.drawable.flag_brazil, "Portuguese (Brazil)"))
+        add(LanguageUiModel("ru", R.drawable.flag_russia, "Russian"))
+ 
     }
 
     companion object{

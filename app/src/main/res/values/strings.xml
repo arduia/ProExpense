@@ -6,11 +6,11 @@
     <string name="start_now">Start Now</string>
     <string name="skip">Skip</string>
     <string name="record">Record</string>
-    <string name="record_description">Easily Manage you Finances by recording incomes and expenses</string>
+    <string name="record_description">Easily manage your finances by recording your income and expenses</string>
     <string name="statistics">Statistics</string>
     <string name="free">Free</string>
     <string name="home">Home</string>
-    <string name="expenses_in_this_week">Expenses in this Week</string>
+    <string name="expenses_in_this_week">Expenses this Week</string>
     <string name="mmk">MMK</string>
     <string name="date">Date</string>
     <string name="spend">Spend</string>
@@ -34,9 +34,9 @@
     <string name="item_deleted">Item Deleted</string>
     <string name="multi_item_deleted">Items Deleted</string>
     <string name="data_updated">Data Updated!</string>
-    <string name="empty_cost">Cost is Empty</string>
+    <string name="empty_cost">Amount is Empty</string>
     <string name="feedback">Feedback</string>
-    <string name="feedback_description">We went to know what you thought of your experience at Pro Expense app so we\'d love to hear you feedback.</string>
+    <string name="feedback_description">We went to know what you thought of your experience at Pro Expense app, so we\'d love to hear your feedback.</string>
     <string name="email">Email</string>
     <string name="your_comments">Your Comments*</string>
     <string name="send_feedback">Send Feedback</string>
@@ -51,13 +51,13 @@
     <string name="latest_version">Latest Version!</string>
     <string name="about">About</string>
     <string name="app_description">Pro Expense is a free and open-source software to simply and safely record daily expenses.</string>
-    <string name="privacy_policy">Privacy and Policy</string>
+    <string name="privacy_policy">Privacy Policy</string>
     <string name="policy_url">file:///android_asset/privacy_policy.html</string>
     <string name="open_source_url">file:///android_asset/open_source_licenses.html</string>
     <string name="github_link_url">https://github.com/arduia/ProExpense</string>
-    <string name="open_source_lib">Opens-Source Libraries</string>
-    <string name="contribute_app">Contribute the app</string>
-    <string name="developer">Developed by Arduia and Open-source contributors</string>
+    <string name="open_source_lib">Open-Source Libraries</string>
+    <string name="contribute_app">Contribute to the app</string>
+    <string name="developer">Developed by Arduia and open-source contributors</string>
     <string name="developer_email">dev.arduia@gmail.com</string>
     <string name="app_welcome">Hello! Welcome to Pro Expense</string>
     <string name="choose_language">Choose Language</string>
@@ -101,7 +101,7 @@
     <string name="about_update">About Update</string>
     <string name="install">Install</string>
     <string name="others">Others</string>
-    <string name="outcome">Outcome</string>
+    <string name="outcome">Outgoings</string>
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="ascending">Ascending</string>
@@ -118,7 +118,7 @@
     <string name="category_statistics">Category Statistics</string>
     <string name="beta">beta</string>
     <string name="more">More</string>
-    <string name="about_acknowledgement">Special thanks to contributors who provided valuable feedbacks and opened issues on the Github for this app.</string>
+    <string name="about_acknowledgement">Special thanks to contributors who provided valuable feedback and opened issues on the Github page for this app.</string>
     <string name="calendar">Calendar</string>
     <string name="time">Time</string>
     <string name="order_date_in">Order by Date in</string>
@@ -127,7 +127,6 @@
     <string name="asc">Asc</string>
     <string name="desc">Desc</string>
     <string name="totals">Totals</string>
-    <string name="acknowledgement_title">Acknowledgement</string>
+    <string name="acknowledgement_title">Acknowledgements</string>
     <string name="recent">Recent</string>
 </resources>
-
