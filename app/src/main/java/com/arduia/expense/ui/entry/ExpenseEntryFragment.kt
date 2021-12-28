@@ -3,8 +3,10 @@ package com.arduia.expense.ui.entry
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
 import com.arduia.expense.ui.MainHost
-import com.arduia.expense.R
 import com.arduia.expense.databinding.FragExpenseEntryBinding
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.common.category.ExpenseCategory
@@ -35,6 +36,14 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import android.R
+
+import android.widget.EditText
+
+import android.content.Context.MODE_PRIVATE
+
+
+
 
 @AndroidEntryPoint
 class ExpenseEntryFragment : Fragment() {
@@ -63,6 +72,38 @@ class ExpenseEntryFragment : Fragment() {
     ): View {
         _binding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
         return binding.root
+    }
+
+    private var spGen: SharedPreferences? = null
+
+    private var isSubmit = false
+
+    override fun onPause() {
+        super.onPause()
+        val spGenEditor = spGen!!.edit()
+        if (isSubmit) {
+            spGenEditor.putString("editName", "")
+            spGenEditor.putString("editAmount", "")
+            spGenEditor.putString("editNote", "")
+        } else {
+            with(binding) {
+                spGenEditor.putString("editName", edtName.text.toString())
+                spGenEditor.putString("editAmount", edtAmount.text.toString())
+                spGenEditor.putString("editNote", edtNote.text.toString())
+            }
+        }
+        spGenEditor.commit()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        spGen = activity?.getSharedPreferences("ExpenseEntryFragment", MODE_PRIVATE)
+        with(binding){
+            edtName.setText(spGen?.getString("editName", ""))
+            edtAmount.setText(spGen?.getString("editAmount", ""))
+            edtNote.setText(spGen?.getString("editNote", ""))
+        }
+        isSubmit = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -151,10 +192,10 @@ class ExpenseEntryFragment : Fragment() {
         )
         binding.toolbar.setOnMenuItemClickListener menu@{
             when (it.itemId) {
-                R.id.calendar -> {
+                com.arduia.expense.R.id.calendar -> {
                     viewModel.onDateSelect()
                 }
-                R.id.time -> {
+                com.arduia.expense.R.id.time -> {
                     viewModel.onTimeSelect()
                 }
             }
@@ -211,6 +252,7 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun showItemSaved() {
         mainHost.showSnackMessage("Saved!")
+        isSubmit = true
     }
 
     private fun observeDataUpdatedEvent() {
@@ -228,18 +270,18 @@ class ExpenseEntryFragment : Fragment() {
 
                 LockMode.LOCKED -> {
                     binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
+                        ColorStateList.valueOf(requireContext().themeColor(com.arduia.expense.R.attr.colorPrimary))
                     binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
-                    binding.btnSave.text = getString(R.string.next)
+                        ColorStateList.valueOf(requireContext().themeColor(com.arduia.expense.R.attr.colorOnPrimary))
+                    binding.btnSave.text = getString(com.arduia.expense.R.string.next)
                 }
 
                 LockMode.UNLOCK -> {
                     binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
+                        ColorStateList.valueOf(requireContext().themeColor(com.arduia.expense.R.attr.colorSurface))
                     binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.dark_gray))
-                    binding.btnSave.text = getString(R.string.save)
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), com.arduia.expense.R.color.dark_gray))
+                    binding.btnSave.text = getString(com.arduia.expense.R.string.save)
                 }
 
             }
@@ -304,7 +346,7 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun updateCategoryListAfterAnimation() {
         lifecycleScope.launch(Dispatchers.Main) {
-            val duration = resources.getInteger(R.integer.duration_entry_pop_up).toLong()
+            val duration = resources.getInteger(com.arduia.expense.R.integer.duration_entry_pop_up).toLong()
             delay(duration)
             updateCategoryList()
         }
@@ -329,8 +371,8 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeToUpdateMode() = with(binding) {
-        toolbar.title = getString(R.string.update_data)
-        btnSave.text = getString(R.string.update)
+        toolbar.title = getString(com.arduia.expense.R.string.update_data)
+        btnSave.text = getString(com.arduia.expense.R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
         binding.cvLock.isEnabled = false
@@ -338,8 +380,8 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun changeToSaveMode() = with(binding) {
-        toolbar.title = getString(R.string.expense_entry)
-        btnSave.text = getString(R.string.save)
+        toolbar.title = getString(com.arduia.expense.R.string.expense_entry)
+        btnSave.text = getString(com.arduia.expense.R.string.save)
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
         setInitialDefaultCategory()
@@ -376,7 +418,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun showAmountEmptyError() {
-        binding.edtAmount.error = getString(R.string.empty_cost)
+        binding.edtAmount.error = getString(com.arduia.expense.R.string.empty_cost)
     }
 
     private fun getCurrentExpenseDetail(): ExpenseDetailUiModel {
@@ -422,7 +464,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun showDataUpdatedMessage() {
-        mainHost.showSnackMessage(getString(R.string.data_updated))
+        mainHost.showSnackMessage(getString(com.arduia.expense.R.string.data_updated))
     }
 
     private fun backToPreviousFragment() {
