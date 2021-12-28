@@ -252,7 +252,6 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun showItemSaved() {
         mainHost.showSnackMessage("Saved!")
-        isSubmit = true
     }
 
     private fun observeDataUpdatedEvent() {
@@ -402,6 +401,7 @@ class ExpenseEntryFragment : Fragment() {
             showAmountEmptyError()
             return
         }
+        isSubmit = true
         viewModel.saveExpenseData(expense)
     }
 
