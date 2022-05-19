@@ -10,14 +10,14 @@ apiProperties.load(new FileInputStream(apiProfile))
 
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "29.0.3"
+    compileSdkVersion rootProject.compileSdk
+    buildToolsVersion rootProject.buildToolVersion
 
     defaultConfig {
 
         applicationId "com.arduia.expense"
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
         versionCode 11
         versionName "1.0.0-beta05"
 
