@@ -10,18 +10,20 @@ import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.Result
 import com.arduia.expense.model.onSuccess
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@HiltViewModel
 class BackupViewModel @Inject constructor(
-    app: Application,
     private val mapper: Mapper<BackupEnt, BackupUiModel>,
     private val backupRepo: BackupRepository,
     private val expenseRepo: ExpenseRepository
-) : AndroidViewModel(app) {
+) : ViewModel(){
 
     private val _backupList = BaseLiveData<List<BackupUiModel>>()
     val backupList = _backupList.asLiveData()
