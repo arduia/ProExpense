@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.expenselogs
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.*
 import com.arduia.core.arch.Mapper
@@ -23,6 +22,7 @@ import com.arduia.expense.ui.expenselogs.swipe.SwipeItemState
 import com.arduia.expense.ui.expenselogs.swipe.SwipeStateHolder
 import com.arduia.expense.ui.home.ExpenseDetailUiModelMapperFactory
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -30,9 +30,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
 
-class ExpenseViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ExpenseViewModel @Inject constructor(
     private val expenseEntToLogMapperFactory: ExpenseEntToLogVoMapperFactory,
     private val expenseRepo: ExpenseRepository,
     private val currencyRepo: CurrencyRepository,

@@ -16,25 +16,22 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class AbstractExpenseModule {
 
     @Binds
-    @ActivityScoped
     abstract fun provideExpenseCategory(impl: ExpenseCategoryProviderImpl): ExpenseCategoryProvider
 
     @Binds
-    @ActivityScoped
     abstract fun provideLanguage(impl: LanguageProviderImpl): LanguageProvider
 
     @Binds
-    @ActivityScoped
     abstract fun provideExpenseCalculator(impl: ExpenseRateCalculatorFactory): ExpenseRateCalculator.Factory
 
     @Binds
-    @ActivityScoped
     abstract fun provideDataNames(impl: ExpenseDayNameProvider): DayNameProvider
 
 }

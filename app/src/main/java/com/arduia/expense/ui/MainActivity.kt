@@ -33,7 +33,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavigationDrawer,
+class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
     MainHost, BackupMessageReceiver {
 
     private lateinit var binding: ActivMainBinding

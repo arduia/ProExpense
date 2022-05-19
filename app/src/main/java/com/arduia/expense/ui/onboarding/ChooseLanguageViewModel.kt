@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.onboarding
 
 import android.view.View
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
@@ -10,12 +9,15 @@ import com.arduia.expense.model.data
 import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.expense.ui.common.language.LanguageUiModel
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class ChooseLanguageViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ChooseLanguageViewModel @Inject constructor(
     private val langRep: LanguageProvider,
     private val settingRepo: SettingsRepository
 ) : ViewModel() {

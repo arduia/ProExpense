@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.onboarding
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.SettingsRepository
@@ -11,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class OnBoardingConfigViewModel @ViewModelInject constructor(private val settingRepo: SettingsRepository) :
+class OnBoardingConfigViewModel @Inject constructor(private val settingRepo: SettingsRepository) :
     ViewModel(){
 
     private val _onRestart = EventLiveData<Unit>()

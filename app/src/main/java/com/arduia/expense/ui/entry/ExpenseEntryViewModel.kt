@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.entry
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
@@ -19,8 +18,9 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.math.BigDecimal
 import java.util.*
+import javax.inject.Inject
 
-class ExpenseEntryViewModel @ViewModelInject constructor(
+class ExpenseEntryViewModel @Inject constructor(
     private val repo: ExpenseRepository,
     private val mapper: Mapper<ExpenseEnt, ExpenseUpdateDataUiModel>,
     private val currencyRepo: CurrencyRepository

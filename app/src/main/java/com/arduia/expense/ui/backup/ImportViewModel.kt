@@ -3,7 +3,6 @@ package com.arduia.expense.ui.backup
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -19,8 +18,9 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*
+import javax.inject.Inject
 
-class ImportViewModel @ViewModelInject constructor(
+class ImportViewModel @Inject constructor(
     private val backupRepo: BackupRepository,
     private val contentResolver: ContentResolver,
     @IntegerDecimal

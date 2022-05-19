@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.backup
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
@@ -10,14 +9,17 @@ import com.arduia.expense.data.backup.ImportWorker
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.event
 import com.arduia.mvvm.post
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
-class BackupMessageViewModel @ViewModelInject constructor(private val workManager: WorkManager)
+@HiltViewModel
+class BackupMessageViewModel @Inject constructor(private val workManager: WorkManager)
     : ViewModel(){
 
     private val _finishedEvent = EventLiveData<Int>()

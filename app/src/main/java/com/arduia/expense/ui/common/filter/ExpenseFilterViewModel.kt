@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.common.filter
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.arduia.expense.domain.filter.DateRange
@@ -9,12 +8,15 @@ import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.common.ext.setDayAsEnd
 import com.arduia.expense.ui.common.ext.setDayAsStart
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class ExpenseFilterViewModel @ViewModelInject constructor() : ViewModel() {
+@HiltViewModel
+class ExpenseFilterViewModel @Inject constructor() : ViewModel() {
 
     private val _startDateTime = BaseLiveData<Calendar>()
 

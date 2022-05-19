@@ -3,8 +3,6 @@ package com.arduia.expense.data.backup
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.arduia.backup.ExcelBackup
@@ -12,14 +10,17 @@ import com.arduia.backup.task.getDataOrError
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.awaitValueOrError
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import java.lang.Exception
 import java.util.*
+import javax.inject.Inject
 
-class ExportWorker @WorkerInject constructor(@Assisted context: Context,
-                                             @Assisted param: WorkerParameters,
-                                             private val contentResolver: ContentResolver,
-                                             private val backupRepo: BackupRepository,
-                                             private val excelBackup: ExcelBackup): CoroutineWorker(context, param){
+class ExportWorker @AssistedInject constructor(@Assisted context: Context,
+                                                   @Assisted param: WorkerParameters,
+                                                   private val contentResolver: ContentResolver,
+                                                   private val backupRepo: BackupRepository,
+                                                   private val excelBackup: ExcelBackup): CoroutineWorker(context, param){
     override suspend fun doWork(): Result {
 
         val inputFileUri = inputData.getString(FILE_URI)?: return Result.failure()

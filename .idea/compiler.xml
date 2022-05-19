@@ -4,10 +4,10 @@
     <bytecodeTargetLevel target="1.7">
       <module name="GraphAnnotation" target="1.7" />
       <module name="GraphAnnotationProcessor" target="1.7" />
-      <module name="ProExpense.app" target="1.8" />
-      <module name="ProExpense.backup" target="1.8" />
-      <module name="ProExpense.expense-backup" target="1.8" />
-      <module name="ProExpense.shared" target="1.8" />
+      <module name="ProExpense.app" target="11" />
+      <module name="ProExpense.backup" target="11" />
+      <module name="ProExpense.expense-backup" target="11" />
+      <module name="ProExpense.shared" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

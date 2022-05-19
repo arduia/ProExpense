@@ -1,6 +1,5 @@
 package com.arduia.expense.ui
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -14,8 +13,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class MainViewModel @ViewModelInject constructor(
+class MainViewModel @Inject constructor(
     private val settingRepo: SettingsRepository,
     private val currencyRepo: CurrencyRepository,
     private val workManager: WorkManager

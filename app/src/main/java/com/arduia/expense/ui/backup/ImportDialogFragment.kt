@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragBackupDetailBinding
 import com.arduia.expense.ui.BackupMessageReceiver
+import com.arduia.expense.ui.MainActivity
 import com.arduia.expense.ui.MainHost
 import com.arduia.mvvm.EventObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -29,7 +30,6 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
     @Inject
     lateinit var mainHost: MainHost
 
-    @Inject
     lateinit var backupMsgReceiver: BackupMessageReceiver
 
     override fun onCreateView(
@@ -45,6 +45,7 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        backupMsgReceiver = requireActivity() as MainActivity
         setupView()
         setupViewModel()
     }

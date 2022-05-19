@@ -15,7 +15,6 @@ import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class StatisticsFragment : NavBaseFragment() {
 
     private var _binding: FragStatisticBinding? = null

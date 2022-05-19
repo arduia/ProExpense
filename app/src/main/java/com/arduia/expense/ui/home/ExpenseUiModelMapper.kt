@@ -4,6 +4,7 @@ import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
+import com.arduia.expense.ui.common.category.ExpenseCategoryProviderImpl
 import com.arduia.expense.ui.common.formatter.DateFormatter
 import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 import java.text.NumberFormat

@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.home
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
@@ -15,6 +14,7 @@ import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
@@ -22,8 +22,10 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.text.NumberFormat
 import java.util.*
+import javax.inject.Inject
 
-class HomeViewModel @ViewModelInject constructor(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val currencyRepository: CurrencyRepository,
     private val expenseVoMapperFactory: ExpenseUiModelMapperFactory,
     private val expenseDetailMapperFactory: ExpenseDetailUiModelMapperFactory,

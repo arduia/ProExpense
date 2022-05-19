@@ -2,7 +2,6 @@ package com.arduia.expense.ui.backup
 
 import android.app.Application
 import android.net.Uri
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.BackupRepository
@@ -15,8 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class BackupViewModel @ViewModelInject constructor(
+class BackupViewModel @Inject constructor(
     app: Application,
     private val mapper: Mapper<BackupEnt, BackupUiModel>,
     private val backupRepo: BackupRepository,
