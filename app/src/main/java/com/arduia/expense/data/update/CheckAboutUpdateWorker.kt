@@ -11,12 +11,13 @@ import com.arduia.expense.data.network.CheckUpdateDto
 import com.arduia.expense.model.getDataOrError
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import java.lang.Exception
 import javax.inject.Inject
 
 class CheckAboutUpdateWorker @AssistedInject constructor(
-    @Assisted private val context: Context,
+    @ApplicationContext private val context: Context,
     @Assisted param: WorkerParameters,
     private val settingRepo: SettingsRepository,
     private val serverRepository: ProExpenseServerRepository

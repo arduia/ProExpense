@@ -6,10 +6,12 @@ import com.arduia.expense.data.SettingsRepository
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
 import com.arduia.mvvm.post
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class OnBoardingConfigViewModel @Inject constructor(private val settingRepo: SettingsRepository) :
     ViewModel(){
 

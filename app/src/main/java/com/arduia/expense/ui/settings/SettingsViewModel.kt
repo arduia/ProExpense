@@ -11,6 +11,7 @@ import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.about.AboutUpdateUiModel
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+@HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val currencyRepo: CurrencyRepository,
