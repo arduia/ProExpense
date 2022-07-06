@@ -24,6 +24,7 @@ class LanguageProviderImpl @Inject constructor(): LanguageProvider {
         add(LanguageUiModel("my", R.drawable.flag_myanmar, "Myanmar(Burma)"))
         add(LanguageUiModel("en", R.drawable.flag_united_states, "United States(English)"))
         add(LanguageUiModel("cn", R.drawable.flag_china, "China (Chinese)"))
+        add(LanguageUiModel("ger", R.drawable.flag_austria, "Austria (German)"))
     }
 
     companion object{
