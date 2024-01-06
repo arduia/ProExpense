@@ -198,6 +198,7 @@ class ExpenseEntryFragment : Fragment() {
     private fun observeDataInsertedEvent() {
         viewModel.onDataInserted.observe(viewLifecycleOwner, EventObserver {
             backToPreviousFragment()
+            hideInputKeyboard()
         })
     }
 
