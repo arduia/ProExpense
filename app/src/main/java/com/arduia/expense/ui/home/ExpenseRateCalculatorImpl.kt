@@ -34,7 +34,7 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
                     val rateOfDay = (costOfDay.toDouble() / maxCost) * 100
                     result[count] = rateOfDay.toInt()
                 }
-                ratesMapCH.offer(result)
+                ratesMapCH.trySend(result)
             }
             .launchIn(scope)
     }
@@ -50,7 +50,7 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
     }
 
     override suspend fun setWeekExpenses(list: List<ExpenseEnt>) {
-        expenseListCH.offer(list)
+        expenseListCH.trySend(list)
     }
 
 }
