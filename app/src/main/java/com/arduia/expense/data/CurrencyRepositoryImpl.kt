@@ -41,6 +41,6 @@ class CurrencyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun setSelectedCacheCurrency(num: String) {
-        cacheNumberCH.offer(num)
+        cacheNumberCH.trySend(num)
     }
 }

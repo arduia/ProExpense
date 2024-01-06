@@ -12,7 +12,9 @@ import com.arduia.mvvm.post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -55,7 +57,7 @@ class BackupMessageViewModel @Inject constructor(private val workManager: WorkMa
 
     private fun collectTaskMessageFlow(flow: Flow<WorkInfo>){
         viewModelScope.launch(Dispatchers.IO){
-            flow.collect(workInfoListener)
+            flow.collectLatest(workInfoListener)
         }
     }
 
