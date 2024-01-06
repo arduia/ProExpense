@@ -18,8 +18,8 @@ android {
         applicationId "com.arduia.expense"
         minSdkVersion rootProject.minSdk
         targetSdkVersion rootProject.targetSdk
-        versionCode 11
-        versionName "1.0.0-beta05"
+        versionCode 12
+        versionName "1.0.0-beta06"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
