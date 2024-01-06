@@ -64,12 +64,10 @@ class SpendGraph @JvmOverloads constructor(
 
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.let {
-            it.drawDayNames()
-            it.drawPointLines()
-        }
+        canvas.drawDayNames()
+        canvas.drawPointLines()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
