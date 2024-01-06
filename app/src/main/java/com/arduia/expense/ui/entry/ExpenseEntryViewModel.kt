@@ -11,6 +11,7 @@ import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -20,6 +21,7 @@ import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
 
+@HiltViewModel
 class ExpenseEntryViewModel @Inject constructor(
     private val repo: ExpenseRepository,
     private val mapper: Mapper<ExpenseEnt, ExpenseUpdateDataUiModel>,
