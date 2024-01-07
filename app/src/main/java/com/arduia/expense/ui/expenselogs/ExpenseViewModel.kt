@@ -127,10 +127,17 @@ class ExpenseViewModel @Inject constructor(
                         )
                         return@onSuccess
                     }
-                    filterConstraint post DateRangeSortingEnt(
-                        ExpenseDateRange(min, max),
-                        constraint.sorting
-                    )
+                    if(min < max){
+                        filterConstraint post DateRangeSortingEnt(
+                            ExpenseDateRange(min, max),
+                            constraint.sorting
+                        )
+                    }else{
+                        filterConstraint post DateRangeSortingEnt(
+                            ExpenseDateRange(0, max),
+                            constraint.sorting
+                        )
+                    }
                 } else {
                     //New Constraint
                     filterConstraint post DateRangeSortingEnt(
