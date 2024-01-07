@@ -1,6 +1,7 @@
 package com.arduia.expense.data.update
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.arduia.expense.data.ProExpenseServerRepository
@@ -16,8 +17,10 @@ import timber.log.Timber
 import java.lang.Exception
 import javax.inject.Inject
 
+@HiltWorker
 class CheckAboutUpdateWorker @AssistedInject constructor(
-    @ApplicationContext private val context: Context,
+    @Assisted
+    private val context: Context,
     @Assisted param: WorkerParameters,
     private val settingRepo: SettingsRepository,
     private val serverRepository: ProExpenseServerRepository

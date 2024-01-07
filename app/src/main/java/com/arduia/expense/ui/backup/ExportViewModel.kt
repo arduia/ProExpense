@@ -12,8 +12,10 @@ import com.arduia.expense.di.BackupNameGen
 import com.arduia.mvvm.BaseLiveData
 import com.arduia.mvvm.post
 import com.arduia.mvvm.set
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class ExportViewModel @Inject constructor(
     @BackupNameGen
     private val fileNameGen: FileNameGenerator,

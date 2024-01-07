@@ -1,6 +1,7 @@
 package com.arduia.expense.data
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.arduia.expense.data.network.FeedbackDto
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import javax.inject.Inject
 
+@HiltWorker
 class FeedbackWorker @AssistedInject constructor(@Assisted context: Context,
                                                      @Assisted param: WorkerParameters,
                                                      private val serverRepo: ProExpenseServerRepository,
