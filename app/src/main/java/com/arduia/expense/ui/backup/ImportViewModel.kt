@@ -12,6 +12,7 @@ import com.arduia.expense.data.backup.ImportWorker
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.model.data
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
+@HiltViewModel
 class ImportViewModel @Inject constructor(
     private val backupRepo: BackupRepository,
     private val contentResolver: ContentResolver,

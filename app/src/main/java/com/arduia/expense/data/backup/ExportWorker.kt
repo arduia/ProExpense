@@ -3,6 +3,7 @@ package com.arduia.expense.data.backup
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.arduia.backup.ExcelBackup
@@ -16,6 +17,7 @@ import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 
+@HiltWorker
 class ExportWorker @AssistedInject constructor(@Assisted context: Context,
                                                    @Assisted param: WorkerParameters,
                                                    private val contentResolver: ContentResolver,
