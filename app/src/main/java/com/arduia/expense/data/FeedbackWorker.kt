@@ -1,18 +1,21 @@
 package com.arduia.expense.data
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.arduia.expense.data.network.FeedbackDto
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
+import javax.inject.Inject
 
-class FeedbackWorker @WorkerInject constructor(@Assisted context: Context,
-                                               @Assisted param: WorkerParameters,
-                                               private val serverRepo: ProExpenseServerRepository,
-                                               private val repo: ExpenseRepository): CoroutineWorker(context, param){
+@HiltWorker
+class FeedbackWorker @AssistedInject constructor(@Assisted context: Context,
+                                                     @Assisted param: WorkerParameters,
+                                                     private val serverRepo: ProExpenseServerRepository,
+                                                     private val repo: ExpenseRepository): CoroutineWorker(context, param){
     override suspend fun doWork(): Result {
         val request = getFeedbackRequest() ?: return Result.failure()
         val response = serverRepo.postFeedback(request).first()

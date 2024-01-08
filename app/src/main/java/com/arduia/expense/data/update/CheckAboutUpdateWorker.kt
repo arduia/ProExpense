@@ -1,8 +1,7 @@
 package com.arduia.expense.data.update
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.arduia.expense.data.ProExpenseServerRepository
@@ -11,11 +10,17 @@ import com.arduia.expense.data.ext.getAppVersionCode
 import com.arduia.expense.data.local.UpdateStatusDataModel
 import com.arduia.expense.data.network.CheckUpdateDto
 import com.arduia.expense.model.getDataOrError
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import java.lang.Exception
+import javax.inject.Inject
 
-class CheckAboutUpdateWorker @WorkerInject constructor(
-    @Assisted private val context: Context,
+@HiltWorker
+class CheckAboutUpdateWorker @AssistedInject constructor(
+    @Assisted
+    private val context: Context,
     @Assisted param: WorkerParameters,
     private val settingRepo: SettingsRepository,
     private val serverRepository: ProExpenseServerRepository

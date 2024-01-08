@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.settings
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
@@ -12,14 +11,17 @@ import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.about.AboutUpdateUiModel
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class SettingsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val currencyRepo: CurrencyRepository,
     private val aboutUpdateUiDataMapper: Mapper<AboutUpdateDataModel, AboutUpdateUiModel>

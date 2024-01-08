@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.statistics
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
@@ -15,12 +14,15 @@ import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import java.util.*
+import javax.inject.Inject
 
-class StatisticsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class StatisticsViewModel @Inject constructor(
     private val expenseRepo: ExpenseRepository,
     private val categoryAnalyzer: CategoryAnalyzer,
     @StatisticDateRange private val dateRangeFormatter: DateRangeFormatter

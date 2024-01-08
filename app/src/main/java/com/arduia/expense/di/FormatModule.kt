@@ -9,13 +9,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.FragmentScoped
+import dagger.hilt.components.SingletonComponent
 import java.math.RoundingMode
 import java.text.*
 import java.util.*
 import javax.inject.Qualifier
 
 @Module
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 object FormattingModule{
 
     @Provides

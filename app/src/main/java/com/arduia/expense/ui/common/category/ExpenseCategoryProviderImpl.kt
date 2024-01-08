@@ -16,10 +16,11 @@ import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.OTHERS
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.SOCIAL
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.TRANSPORTATION
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Exception
 import javax.inject.Inject
 
-class ExpenseCategoryProviderImpl @Inject constructor(@ActivityContext private val context: Context) :
+class ExpenseCategoryProviderImpl @Inject constructor(@ApplicationContext private val context: Context) :
     ExpenseCategoryProvider {
 
     private val resource = context.resources

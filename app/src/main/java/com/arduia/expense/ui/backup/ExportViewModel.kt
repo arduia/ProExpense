@@ -2,7 +2,6 @@ package com.arduia.expense.ui.backup
 
 import android.app.Application
 import android.net.Uri
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -13,8 +12,11 @@ import com.arduia.expense.di.BackupNameGen
 import com.arduia.mvvm.BaseLiveData
 import com.arduia.mvvm.post
 import com.arduia.mvvm.set
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ExportViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ExportViewModel @Inject constructor(
     @BackupNameGen
     private val fileNameGen: FileNameGenerator,
     private val workManager: WorkManager

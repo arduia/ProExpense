@@ -7,13 +7,12 @@ import retrofit2.http.POST
 
 
 interface ExpenseNetworkDao {
-
     @GET("/api/version_status.json")
-    fun getVersionStatus(): Call<ExpenseVersionDto>
+    suspend fun getVersionStatus(): ExpenseVersionDto
 
     @POST("/api/feedback_submit.json")
-    fun postFeedback(@Body feedback: FeedbackDto.Request): Call<FeedbackDto.Response>
+    suspend fun postFeedback(@Body feedback: FeedbackDto.Request): FeedbackDto.Response
 
     @POST("/api/check_update_info.json")
-    fun getCheckUpdateInfo(@Body deviceInfo: CheckUpdateDto.Request): Call<CheckUpdateDto.Response>
+    suspend fun getCheckUpdateInfo(@Body deviceInfo: CheckUpdateDto.Request): CheckUpdateDto.Response
 }

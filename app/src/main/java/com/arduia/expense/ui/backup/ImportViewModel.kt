@@ -3,7 +3,6 @@ package com.arduia.expense.ui.backup
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -13,14 +12,17 @@ import com.arduia.expense.data.backup.ImportWorker
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.model.data
 import com.arduia.mvvm.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*
+import javax.inject.Inject
 
-class ImportViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ImportViewModel @Inject constructor(
     private val backupRepo: BackupRepository,
     private val contentResolver: ContentResolver,
     @IntegerDecimal

@@ -7,11 +7,12 @@ import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.ui.common.formatter.DateFormatter
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DecimalFormat
 import javax.inject.Inject
 
 class BackupUiModelMapper @Inject constructor(
-    @ActivityContext context: Context,
+    @ApplicationContext context: Context,
     private val dateFormatter: DateFormatter,
     @IntegerDecimal private val numberFormat: DecimalFormat
 ) :

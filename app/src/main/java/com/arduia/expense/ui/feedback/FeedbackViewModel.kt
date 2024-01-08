@@ -1,14 +1,16 @@
 package com.arduia.expense.ui.feedback
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.work.*
 import com.arduia.expense.data.FeedbackWorker
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
 import com.arduia.mvvm.post
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class FeedbackViewModel @ViewModelInject constructor(private val workManager: WorkManager)
+@HiltViewModel
+class FeedbackViewModel @Inject constructor(private val workManager: WorkManager)
     : ViewModel(){
 
     private val _feedbackSubmittedEvent = EventLiveData<Unit>()

@@ -5,10 +5,11 @@ import androidx.annotation.StringRes
 import com.arduia.expense.R
 import com.arduia.graph.DayNameProvider
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
-class ExpenseDayNameProvider @Inject constructor(@ActivityContext val context: Context): DayNameProvider {
+class ExpenseDayNameProvider @Inject constructor(@ApplicationContext val context: Context): DayNameProvider {
     override fun getName(day: Int): String  =
         when (day) {
             1 -> getString(R.string.day_sun)

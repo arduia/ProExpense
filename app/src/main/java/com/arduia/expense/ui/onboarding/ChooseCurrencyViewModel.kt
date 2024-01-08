@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.onboarding
 
 import android.view.View
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
@@ -14,12 +13,15 @@ import com.arduia.mvvm.BaseLiveData
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.event
 import com.arduia.mvvm.post
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class ChooseCurrencyViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ChooseCurrencyViewModel @Inject constructor(
     private val currencyRep: CurrencyRepository,
     private val settingRepo: SettingsRepository,
     private val currencyMapper: Mapper<CurrencyDto, CurrencyUiModel>
