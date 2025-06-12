@@ -1,0 +1,7 @@
+include(":expense-backup")
+include(":currency-store")
+include(":backup")
+include(":shared")
+include(":week-expense-graph")
+include(":app")
+rootProject.name = "ProExpense" 
