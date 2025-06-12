@@ -2,11 +2,11 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
-    id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.navigation.safe.args)
 }
 
 val apiProfile = rootProject.file("api.properties")
@@ -15,15 +15,16 @@ val apiProperties = Properties().apply {
 }
 
 android {
-    compileSdk = rootProject.extra["compileSdk"] as Int
-    buildToolsVersion = rootProject.extra["buildToolVersion"] as String
+    namespace = "com.arduia.expense"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.buildToolVersion.get()
 
     defaultConfig {
         applicationId = "com.arduia.expense"
-        minSdk = rootProject.extra["minSdk"] as Int
-        targetSdk = rootProject.extra["targetSdk"] as Int
-        versionCode = 12
-        versionName = "1.0.0-beta06"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = 1
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -74,9 +75,50 @@ android {
 }
 
 dependencies {
-    implementation(project(":backup"))
-    implementation(project(":currency-store"))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.espresso.core)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
+
+    // Coroutines
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
+
+    // Lifecycle
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+
+    // Navigation
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+
+    // Epoxy
+    implementation(libs.epoxy)
+    kapt(libs.epoxy.processor)
+
+    // Timber
+    implementation(libs.timber)
+
+    // Project modules
     implementation(project(":expense-backup"))
+    implementation(project(":currency-store"))
+    implementation(project(":backup"))
+    implementation(project(":shared"))
+    implementation(project(":week-expense-graph"))
 
     val fragmentVersion = "1.2.5"
     val androidxVersion = "1.3.0"
@@ -90,7 +132,6 @@ dependencies {
     val espressoVersion = "3.2.0"
     val materialVersion = "1.2.0-beta01"
     val diggerHiltVersion = "2.42"
-    val roomVersion = "2.5.0"
     val pagingVersion = "2.1.2"
     val recyclerVersion = "1.1.0"
     val recyclerSelectionView = "1.1.0-rc03"
@@ -101,15 +142,9 @@ dependencies {
     val gsonVersion = "2.8.6"
     val retrofitVersion = "2.9.0"
 
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlin_version"]}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
-    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
-    implementation(project(":week-expense-graph"))
-    implementation(project(":shared"))
     implementation("androidx.core:core-ktx:$androidxVersion")
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
+    implementation("com.google.android.material:material:$materialVersion")
     implementation("androidx.constraintlayout:constraintlayout:$constraintVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:$lifecycleVersion")
@@ -122,15 +157,6 @@ dependencies {
     testImplementation("junit:junit:$junitVersion")
     androidTestImplementation("androidx.test.ext:junit:$androidxTestingVersion")
     androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
-    implementation("com.google.android.material:material:$materialVersion")
-    implementation("com.mikhaellopez:circularimageview:4.3.1")
-    implementation("com.google.dagger:hilt-android:$diggerHiltVersion")
-    kapt("com.google.dagger:hilt-android-compiler:$diggerHiltVersion")
-    implementation("androidx.hilt:hilt-common:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.room:room-runtime:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
     implementation("androidx.preference:preference-ktx:$preferenceVersion")
     implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
     implementation("com.jakewharton.timber:timber:$timberVersion")
@@ -138,8 +164,6 @@ dependencies {
     implementation("androidx.work:work-runtime:$workVersion")
     implementation("androidx.work:work-runtime-ktx:$workVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
-    implementation("androidx.hilt:hilt-work:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
     implementation("com.github.tfcporciuncula.flow-preferences:flow-preferences:1.3.3")
@@ -147,6 +171,10 @@ dependencies {
     implementation("com.github.skydoves:progressview:1.1.0")
     implementation("com.airbnb.android:epoxy:$epoxy")
     kapt("com.airbnb.android:epoxy-processor:$epoxy")
+
+    // Hilt WorkManager
+    implementation(libs.hilt.work)
+    kapt(libs.hilt.work.compiler)
 
     configurations.all {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-parcelize-runtime")

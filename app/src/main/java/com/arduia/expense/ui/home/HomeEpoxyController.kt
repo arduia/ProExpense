@@ -8,10 +8,11 @@ import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 class HomeEpoxyController(
     private val onRecentItemClick: (ExpenseUiModel) -> Unit,
     private val onMoreItemClick: View.OnClickListener
-) :
-    EpoxyController() {
+) : EpoxyController() {
 
     private var recentUiModel = RecentUiModel(listOf())
+    private var incomeOutcome = IncomeOutcomeUiModel("", "", "", "")
+    private var weekGraph = WeeklyGraphUiModel("", mapOf())
 
     @AutoModel
     lateinit var recent: RecentEpoxyModel_
@@ -22,27 +23,18 @@ class HomeEpoxyController(
     @AutoModel
     lateinit var weeklyGraph: WeeklyGraphEpoxyModel_
 
-    private var incomeOutcome = IncomeOutcomeUiModel("", "", "", "")
-
-    private var weekGraph = WeeklyGraphUiModel("", mapOf())
-
     override fun buildModels() {
-        incomeOutcome {
-            id("incomeOutcome", 1)
-            data(incomeOutcome)
-        }
 
-        weeklyGraph {
-            id("graph", 2)
-            data(weekGraph)
-        }
+        incomeOutcomeModel.data(incomeOutcome)
+        add(incomeOutcomeModel)
 
-        recent {
-            id(3)
-            moreClickListener(onMoreItemClick)
-            recentData(recentUiModel)
-            onItemClickListener(onRecentItemClick)
-        }
+        weeklyGraph.data(weekGraph)
+        add(weeklyGraph)
+
+        recent.moreClickListener(onMoreItemClick)
+        recent.recentData(recentUiModel)
+        recent.onItemClickListener(onRecentItemClick)
+        add(recent)
     }
 
     fun updateRecent(data: RecentUiModel) {
