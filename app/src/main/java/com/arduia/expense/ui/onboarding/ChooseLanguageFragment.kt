@@ -9,14 +9,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.arduia.core.extension.px
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragChooseLanguageBinding
+import com.arduia.expense.databinding.FragmentChooseLanguageBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChooseLanguageFragment : Fragment() {
 
-    private lateinit var binding: FragChooseLanguageBinding
+    private var _binding: FragmentChooseLanguageBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: ChooseLanguageViewModel by viewModels()
 
@@ -27,7 +28,7 @@ class ChooseLanguageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragChooseLanguageBinding.inflate(layoutInflater)
+        _binding = FragmentChooseLanguageBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -57,4 +58,8 @@ class ChooseLanguageFragment : Fragment() {
         viewModel.language.observe(viewLifecycleOwner, adapter::submitList)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

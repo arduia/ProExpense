@@ -8,7 +8,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragHomeBinding
+import com.arduia.expense.databinding.FragmentHomeBinding
 import com.arduia.expense.di.FloatingDecimal
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.TopDropNavOption
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : NavBaseFragment() {
 
-    private var _binding: FragHomeBinding? = null
+    private var _binding: FragmentHomeBinding? = null // keep as is, layout is still frag_home.xml
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<HomeViewModel>()
@@ -67,7 +67,7 @@ class HomeFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragHomeBinding.inflate(layoutInflater, null, false)
+        _binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -79,7 +79,6 @@ class HomeFragment : NavBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.rvHome.adapter = null
         _binding = null
     }
 

@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragDeleteConfirmDialogBinding
+import com.arduia.expense.databinding.FragmentDeleteConfirmDialogBinding
 import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class DeleteConfirmFragment : BottomSheetDialogFragment() {
 
-    private var _binding: FragDeleteConfirmDialogBinding? = null
+    private var _binding: FragmentDeleteConfirmDialogBinding? = null
     private val binding get() = _binding!!
 
     private var info: DeleteInfoUiModel? = null
@@ -25,7 +25,7 @@ class DeleteConfirmFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragDeleteConfirmDialogBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDeleteConfirmDialogBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -64,8 +64,6 @@ class DeleteConfirmFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        info = null
-        onConfirmListener = null
     }
 
 }

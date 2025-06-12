@@ -13,7 +13,7 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.arduia.expense.databinding.FragWebBinding
+import com.arduia.expense.databinding.FragmentWebBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WebFragment : Fragment(){
 
-    private lateinit var viewBinding: FragWebBinding
+    private lateinit var viewBinding: FragmentWebBinding
 
     private val args: WebFragmentArgs by navArgs()
 
@@ -39,8 +39,7 @@ class WebFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = FragWebBinding.inflate(layoutInflater)
-
+        viewBinding = FragmentWebBinding.inflate(inflater, container, false)
         return viewBinding.root
     }
 

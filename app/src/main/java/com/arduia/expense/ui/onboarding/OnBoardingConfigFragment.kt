@@ -9,7 +9,7 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragOnboardConfigBinding
+import com.arduia.expense.databinding.FragmentOnboardConfigBinding
 import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +20,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class OnBoardingConfigFragment : Fragment() {
 
-    private lateinit var binding: FragOnboardConfigBinding
+    private var _binding: FragmentOnboardConfigBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var languageProvider: LanguageProvider
@@ -34,8 +35,7 @@ class OnBoardingConfigFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragOnboardConfigBinding.inflate(layoutInflater, container, false)
-
+        _binding = FragmentOnboardConfigBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -86,6 +86,11 @@ class OnBoardingConfigFragment : Fragment() {
                 R.anim.expense_enter_left, android.R.anim.fade_out
             ).toBundle()
         startActivity(intent, animationBundle)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

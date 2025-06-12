@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragBackupDetailBinding
+import com.arduia.expense.databinding.FragmentBackupDetailBinding
 import com.arduia.expense.ui.BackupMessageReceiver
 import com.arduia.expense.ui.MainActivity
 import com.arduia.expense.ui.MainHost
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ImportDialogFragment : BottomSheetDialogFragment() {
 
-    private lateinit var viewBinding: FragBackupDetailBinding
+    private lateinit var viewBinding: FragmentBackupDetailBinding
 
     private var fileUri: Uri? = null
 
@@ -37,7 +37,7 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = FragBackupDetailBinding.inflate(layoutInflater, container, false)
+        viewBinding = FragmentBackupDetailBinding.inflate(layoutInflater, container, false)
 
         return viewBinding.root
     }

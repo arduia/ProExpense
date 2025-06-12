@@ -15,7 +15,7 @@ import com.arduia.core.extension.px
 import com.arduia.core.view.asInvisible
 import com.arduia.core.view.asVisible
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragExpenseLogsBinding
+import com.arduia.expense.databinding.FragmentExpenseLogsBinding
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
@@ -36,7 +36,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ExpenseFragment : NavBaseFragment() {
 
-    private var _binding: FragExpenseLogsBinding? = null
+    private var _binding: FragmentExpenseLogsBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<ExpenseViewModel>()
@@ -63,13 +63,13 @@ class ExpenseFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragExpenseLogsBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentExpenseLogsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onDestroyView() {
-        clean()
         super.onDestroyView()
+        _binding = null
     }
 
     private fun clean() {

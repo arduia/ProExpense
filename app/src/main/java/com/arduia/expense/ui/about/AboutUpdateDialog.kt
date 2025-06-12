@@ -3,11 +3,11 @@ package com.arduia.expense.ui.about
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragAboutUpdateDialogBinding
+import com.arduia.expense.databinding.FragmentAboutUpdateDialogBinding
 
 class AboutUpdateDialog(ctx: Context): AlertDialog(ctx) {
 
-    private var _binding: FragAboutUpdateDialogBinding? = null
+    private var _binding: FragmentAboutUpdateDialogBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var data: AboutUpdateUiModel
@@ -15,7 +15,7 @@ class AboutUpdateDialog(ctx: Context): AlertDialog(ctx) {
     private var onInstallClickListener: (()-> Unit )? = null
 
     init {
-        _binding = FragAboutUpdateDialogBinding.inflate(layoutInflater)
+        _binding = FragmentAboutUpdateDialogBinding.inflate(layoutInflater)
         setView(binding.root)
         setButton(BUTTON_POSITIVE, context.getString(R.string.install)){ _, _ ->
             onInstallClickListener?.invoke()

@@ -10,7 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import com.arduia.core.extension.px
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragChooseCurrencyDialogBinding
+import com.arduia.expense.databinding.FragmentChooseCurrencyBinding
+import com.arduia.expense.databinding.FragmentChooseCurrencyDialogBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.onboarding.ChooseCurrencyViewModel
 import com.arduia.expense.ui.onboarding.CurrencyListAdapter
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ChooseCurrencyDialog : BottomSheetDialogFragment() {
 
-    private var _binding: FragChooseCurrencyDialogBinding? = null
+    private var _binding: FragmentChooseCurrencyDialogBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<ChooseCurrencyViewModel>()
@@ -38,7 +39,7 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View  {
-        _binding = FragChooseCurrencyDialogBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentChooseCurrencyDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -100,8 +101,6 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.rvCurrencies.adapter = null
-        adapter = null
         _binding = null
     }
 }

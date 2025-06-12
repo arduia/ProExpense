@@ -16,7 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
 import com.arduia.expense.data.SettingRepositoryFactoryImpl
-import com.arduia.expense.databinding.ActivMainBinding
+import com.arduia.expense.databinding.ActivityMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.di.TopDropNavOption
@@ -36,7 +36,7 @@ import javax.inject.Inject
 class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
     MainHost, BackupMessageReceiver {
 
-    private lateinit var binding: ActivMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var headerBinding: LayoutHeaderBinding
 
@@ -70,7 +70,7 @@ class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         setTheme(R.style.Theme_ProExpense)
-        binding = ActivMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(binding.nvMain.getHeaderView(0))
         setContentView(binding.root)
         navController = findNavController()

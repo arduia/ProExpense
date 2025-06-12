@@ -20,7 +20,7 @@ import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragExpenseEntryBinding
+import com.arduia.expense.databinding.FragmentExpenseEntryBinding
 import com.arduia.expense.ui.common.*
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
@@ -39,7 +39,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ExpenseEntryFragment : Fragment() {
 
-    private var _binding: FragExpenseEntryBinding? = null
+    private var _binding: FragmentExpenseEntryBinding? = null
     private val binding get() = _binding!!
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
@@ -60,8 +60,8 @@ class ExpenseEntryFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
+    ): View? {
+        _binding = FragmentExpenseEntryBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -137,7 +137,7 @@ class ExpenseEntryFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        hideInputKeyboard()
+        _binding = null
     }
 
     private fun setupCategoryListView() {

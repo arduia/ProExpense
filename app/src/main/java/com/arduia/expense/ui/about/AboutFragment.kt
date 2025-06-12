@@ -20,7 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.arduia.core.view.asGone
 import com.arduia.core.view.asVisible
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragAboutBinding
+import com.arduia.expense.databinding.FragmentAboutBinding
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.settings.SettingsViewModel
@@ -32,7 +32,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AboutFragment : NavBaseFragment() {
 
-    private var _binding: FragAboutBinding? = null
+    private var _binding: FragmentAboutBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -48,7 +48,7 @@ class AboutFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragAboutBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentAboutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
