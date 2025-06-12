@@ -26,6 +26,18 @@ lifecycle = "2.5.1"
 navigation = "2.5.3"
 epoxy = "4.6.4"
 timber = "4.7.1"
+fragment = "1.2.5"
+androidx = "1.3.0"
+preference = "1.1.1"
+paging = "2.1.2"
+recyclerview = "1.1.0"
+recyclerview-selection = "1.1.0-rc03"
+work = "2.8.0"
+retrofit = "2.9.0"
+leakcanary = "2.9.1"
+progressview = "1.1.0"
+flow-preferences = "1.3.3"
+mvvm-core = "0.0.3"
 
 [libraries]
 # Android
@@ -60,6 +72,8 @@ coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycle-livedata-core-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-core-ktx", version.ref = "lifecycle" }
+lifecycle-reactivestreams-ktx = { group = "androidx.lifecycle", name = "lifecycle-reactivestreams-ktx", version.ref = "lifecycle" }
 
 # Navigation
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
@@ -75,6 +89,33 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 # Hilt WorkManager
 hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-work" }
 hilt-work-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-work" }
+
+# Fragment
+fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
+
+# Preference
+preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preference" }
+
+# Paging
+paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
+
+# RecyclerView
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+recyclerview-selection = { group = "androidx.recyclerview", name = "recyclerview-selection", version.ref = "recyclerview-selection" }
+
+# Work
+work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "work" }
+work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+
+# Retrofit
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+
+# Other
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
+progressview = { group = "com.github.skydoves", name = "progressview", version.ref = "progressview" }
+flow-preferences = { group = "com.github.tfcporciuncula.flow-preferences", name = "flow-preferences", version.ref = "flow-preferences" }
+mvvm-core = { group = "com.github.arduia", name = "mvvm-core", version.ref = "mvvm-core" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "7.4.2" }

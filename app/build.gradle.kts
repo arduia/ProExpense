@@ -101,6 +101,8 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.livedata.core.ktx)
+    implementation(libs.lifecycle.reactivestreams.ktx)
 
     // Navigation
     implementation(libs.navigation.fragment.ktx)
@@ -120,57 +122,32 @@ dependencies {
     implementation(project(":shared"))
     implementation(project(":week-expense-graph"))
 
-    val fragmentVersion = "1.2.5"
-    val androidxVersion = "1.3.0"
-    val preferenceVersion = "1.1.1"
-    val navigationVersion = "2.3.2"
-    val appCompatVersion = "1.1.0"
-    val constraintVersion = "2.0.0-beta7"
-    val lifecycleVersion = "2.5.0"
-    val junitVersion = "4.13.1"
-    val androidxTestingVersion = "1.1.1"
-    val espressoVersion = "3.2.0"
-    val materialVersion = "1.2.0-beta01"
-    val diggerHiltVersion = "2.42"
-    val pagingVersion = "2.1.2"
-    val recyclerVersion = "1.1.0"
-    val recyclerSelectionView = "1.1.0-rc03"
-    val timberVersion = "4.7.1"
-    val coroutinesVersion = "1.3.7"
-    val workVersion = "2.8.0"
-    val epoxy = "4.3.1"
-    val gsonVersion = "2.8.6"
-    val retrofitVersion = "2.9.0"
+    // Fragment
+    implementation(libs.fragment.ktx)
 
-    implementation("androidx.core:core-ktx:$androidxVersion")
-    implementation("androidx.appcompat:appcompat:$appCompatVersion")
-    implementation("com.google.android.material:material:$materialVersion")
-    implementation("androidx.constraintlayout:constraintlayout:$constraintVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
-    implementation("androidx.fragment:fragment-ktx:$fragmentVersion")
-    implementation("androidx.recyclerview:recyclerview:$recyclerVersion")
-    implementation("androidx.recyclerview:recyclerview-selection:$recyclerSelectionView")
-    testImplementation("junit:junit:$junitVersion")
-    androidTestImplementation("androidx.test.ext:junit:$androidxTestingVersion")
-    androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
-    implementation("androidx.preference:preference-ktx:$preferenceVersion")
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    implementation("com.jakewharton.timber:timber:$timberVersion")
-    implementation("com.github.arduia:mvvm-core:0.0.3")
-    implementation("androidx.work:work-runtime:$workVersion")
-    implementation("androidx.work:work-runtime-ktx:$workVersion")
-    implementation("com.google.code.gson:gson:$gsonVersion")
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
-    implementation("com.github.tfcporciuncula.flow-preferences:flow-preferences:1.3.3")
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.9.1")
-    implementation("com.github.skydoves:progressview:1.1.0")
-    implementation("com.airbnb.android:epoxy:$epoxy")
-    kapt("com.airbnb.android:epoxy-processor:$epoxy")
+    // RecyclerView
+    implementation(libs.recyclerview)
+    implementation(libs.recyclerview.selection)
+
+    // Preference
+    implementation(libs.preference.ktx)
+
+    // Paging
+    implementation(libs.paging.runtime.ktx)
+
+    // Work
+    implementation(libs.work.runtime)
+    implementation(libs.work.runtime.ktx)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
+    // Other
+    implementation(libs.mvvm.core)
+    implementation(libs.flow.preferences)
+    debugImplementation(libs.leakcanary.android)
+    implementation(libs.progressview)
 
     // Hilt WorkManager
     implementation(libs.hilt.work)
