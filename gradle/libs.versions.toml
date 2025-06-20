@@ -18,6 +18,10 @@ androidx-test-ext = "1.1.2"
 espresso-core = "3.3.0"
 mockito = "4.11.0"
 mockito-kotlin = "4.1.0"
+androidx-test-core = "1.4.0"
+androidx-test-runner = "1.4.0"
+androidx-arch-core-testing = "2.1.0"
+coroutines-test = "1.6.4"
 
 # Libraries
 gson = "2.8.6"
@@ -55,6 +59,10 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test-core" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test-runner" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidx-arch-core-testing" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
 
 # Libraries
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
