@@ -16,6 +16,8 @@ room = "2.5.2"
 junit = "4.13.1"
 androidx-test-ext = "1.1.2"
 espresso-core = "3.3.0"
+mockito = "4.11.0"
+mockito-kotlin = "4.1.0"
 
 # Libraries
 gson = "2.8.6"
@@ -50,6 +52,9 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 
 # Libraries
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
