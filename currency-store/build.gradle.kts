@@ -5,6 +5,7 @@ plugins {
 
 android {
     namespace = "com.arduia.currency.store"
+    testNamespace = "com.arduia.currency.store.test"
     compileSdk = libs.versions.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.buildToolVersion.get()
 
