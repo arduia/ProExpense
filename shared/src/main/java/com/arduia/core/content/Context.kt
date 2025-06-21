@@ -14,5 +14,5 @@ fun Context.getApplicationVersionCode(): Long {
 }
 
 fun Context.getApplicationVersionName(): String{
-    return packageManager.getPackageInfo(packageName, 0).versionName
+    return packageManager.getPackageInfo(packageName, 0).versionName ?: "Unknown"
 }

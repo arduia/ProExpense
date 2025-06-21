@@ -17,7 +17,6 @@ val apiProperties = Properties().apply {
 android {
     namespace = "com.arduia.expense"
     compileSdk = libs.versions.compileSdk.get().toInt()
-    buildToolsVersion = libs.versions.buildToolVersion.get()
 
     defaultConfig {
         applicationId = "com.arduia.expense"
@@ -57,16 +56,21 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
+        buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
-        languageVersion = "1.6"
+        jvmTarget = "11"
     }
 
     kapt {
@@ -76,10 +80,38 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    
+    // Android Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
+    
+    // Compose BOM
+    val composeBom = platform(libs.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Core Compose libraries
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.animation)
+    
+    // Activity and Navigation
+    implementation(libs.activity.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
+    
+    // Hilt integration
+    implementation(libs.hilt.navigation.compose)
+    
+    // Tooling (debug only)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
+    
+    // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
@@ -90,6 +122,7 @@ dependencies {
     testImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.compose.ui.test.junit4)
 
     // Hilt
     implementation(libs.hilt.android)
@@ -115,9 +148,9 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
 
-    // Epoxy
-    implementation(libs.epoxy)
-    kapt(libs.epoxy.processor)
+    // Epoxy (temporarily disabled due to KAPT issues)
+    // implementation(libs.epoxy)
+    // kapt(libs.epoxy.processor)
 
     // Timber
     implementation(libs.timber)
