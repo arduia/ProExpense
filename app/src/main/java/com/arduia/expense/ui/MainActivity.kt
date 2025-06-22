@@ -30,6 +30,7 @@ import kotlinx.coroutines.*
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import androidx.core.content.ContextCompat
 
 
 @AndroidEntryPoint
@@ -103,7 +104,7 @@ class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
 
     private fun setupView() {
 
-        binding.fbMainAdd.setColorFilter(this.themeColor(R.attr.colorOnPrimary))
+        binding.fbMainAdd.setColorFilter(ContextCompat.getColor(this, R.color.white))
         binding.fbMainAdd.setOnClickListener {
             addBtnClickListener?.invoke()
         }

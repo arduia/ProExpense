@@ -229,15 +229,15 @@ class ExpenseEntryFragment : Fragment() {
 
                 LockMode.LOCKED -> {
                     binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue_light_500))
                     binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     binding.btnSave.text = getString(R.string.next)
                 }
 
                 LockMode.UNLOCK -> {
                     binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                     binding.imvLock.imageTintList =
                         ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.dark_gray))
                     binding.btnSave.text = getString(R.string.save)

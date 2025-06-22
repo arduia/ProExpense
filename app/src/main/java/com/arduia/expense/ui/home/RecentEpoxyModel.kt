@@ -11,7 +11,7 @@ import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 data class RecentUiModel(val list: List<ExpenseUiModel>)
 
 @SuppressLint("NonConstantResourceId")
-@EpoxyModelClass(layout = R.layout.layout_recent_lists)
+@EpoxyModelClass
 abstract class RecentEpoxyModel : EpoxyModelWithHolder<RecentEpoxyModel.VH>() {
 
     @EpoxyAttribute
@@ -22,6 +22,8 @@ abstract class RecentEpoxyModel : EpoxyModelWithHolder<RecentEpoxyModel.VH>() {
 
     @EpoxyAttribute
     lateinit var recentData: RecentUiModel
+
+    override fun getDefaultLayout(): Int = R.layout.layout_recent_lists
 
     override fun unbind(holder: VH) {
         super.unbind(holder)

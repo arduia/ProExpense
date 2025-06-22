@@ -12,7 +12,7 @@ import com.arduia.expense.databinding.LayoutExpenseGraphBinding
 data class WeeklyGraphUiModel(val dateRange: String, val rate: Map<Int, Int>)
 
 @SuppressLint("NonConstantResourceId")
-@EpoxyModelClass(layout = R.layout.layout_expense_graph)
+@EpoxyModelClass
 abstract class WeeklyGraphEpoxyModel : EpoxyModelWithHolder<WeeklyGraphEpoxyModel.VH>() {
 
     @EpoxyAttribute
@@ -38,4 +38,6 @@ abstract class WeeklyGraphEpoxyModel : EpoxyModelWithHolder<WeeklyGraphEpoxyMode
     override fun unbind(holder: VH) {
         holder.binding.expenseGraph.adapter = null
     }
+
+    override fun getDefaultLayout(): Int = R.layout.layout_expense_graph
 }

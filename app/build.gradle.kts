@@ -74,7 +74,7 @@ android {
     }
 
     kapt {
-        correctErrorTypes = true
+        correctErrorTypes = false
     }
 }
 
@@ -148,9 +148,9 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
 
-    // Epoxy (temporarily disabled due to KAPT issues)
-    // implementation(libs.epoxy)
-    // kapt(libs.epoxy.processor)
+    // Epoxy
+    implementation(libs.epoxy)
+    kapt(libs.epoxy.processor)
 
     // Timber
     implementation(libs.timber)

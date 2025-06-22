@@ -7,16 +7,16 @@ import kotlinx.coroutines.flow.Flow
 interface BackupDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBackup(item: BackupEnt)
+    fun insertBackup(item: BackupEnt): Long
 
     @Delete
-    suspend fun deleteBackup(item: BackupEnt)
+    fun deleteBackup(item: BackupEnt): Int
+
+    @Update
+    fun updateBackup(item: BackupEnt): Int
 
     @Query("DELETE FROM backup WHERE backup_id =:id")
     fun deleteBackupByID(id: Int)
-
-    @Update
-    suspend fun updateBackup(item: BackupEnt)
 
     @Query("SELECT * FROM backup WHERE backup_id =:id ")
     fun getBackupByID(id: Int): Flow<BackupEnt>
@@ -26,6 +26,5 @@ interface BackupDao {
 
     @Query("SELECT * FROM backup ORDER BY created_date DESC")
     fun getBackupAll(): Flow<List<BackupEnt>>
-
 
 }

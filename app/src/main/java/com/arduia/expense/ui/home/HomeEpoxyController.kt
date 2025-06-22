@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.home
 
 import android.view.View
-import com.airbnb.epoxy.AutoModel
 import com.airbnb.epoxy.EpoxyController
 import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 
@@ -14,27 +13,23 @@ class HomeEpoxyController(
     private var incomeOutcome = IncomeOutcomeUiModel("", "", "", "")
     private var weekGraph = WeeklyGraphUiModel("", mapOf())
 
-    @AutoModel
-    lateinit var recent: RecentEpoxyModel_
-
-    @AutoModel
-    lateinit var incomeOutcomeModel: IncomeOutcomeEpoxyModel_
-
-    @AutoModel
-    lateinit var weeklyGraph: WeeklyGraphEpoxyModel_
-
     override fun buildModels() {
+        IncomeOutcomeEpoxyModel_()
+            .id("income_outcome")
+            .data(incomeOutcome)
+            .addTo(this)
 
-        incomeOutcomeModel.data(incomeOutcome)
-        add(incomeOutcomeModel)
+        WeeklyGraphEpoxyModel_()
+            .id("weekly_graph")
+            .data(weekGraph)
+            .addTo(this)
 
-        weeklyGraph.data(weekGraph)
-        add(weeklyGraph)
-
-        recent.moreClickListener(onMoreItemClick)
-        recent.recentData(recentUiModel)
-        recent.onItemClickListener(onRecentItemClick)
-        add(recent)
+        RecentEpoxyModel_()
+            .id("recent")
+            .moreClickListener(onMoreItemClick)
+            .recentData(recentUiModel)
+            .onItemClickListener(onRecentItemClick)
+            .addTo(this)
     }
 
     fun updateRecent(data: RecentUiModel) {

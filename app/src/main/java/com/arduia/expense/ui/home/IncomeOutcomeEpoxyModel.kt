@@ -14,11 +14,13 @@ data class IncomeOutcomeUiModel(
 )
 
 @SuppressLint("NonConstantResourceId")
-@EpoxyModelClass(layout = R.layout.layout_expense_in_out)
+@EpoxyModelClass
 abstract class IncomeOutcomeEpoxyModel : EpoxyModelWithHolder<IncomeOutcomeEpoxyModel.VH>() {
 
     @EpoxyAttribute
     lateinit var data: IncomeOutcomeUiModel
+
+    override fun getDefaultLayout(): Int = R.layout.layout_expense_in_out
 
     override fun bind(holder: VH) {
         with(holder.binding) {
