@@ -19,7 +19,7 @@ import kotlin.properties.Delegates
 @AndroidEntryPoint
 class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
-    private lateinit var viewBinding : ExpenseDetailDialogBinding
+    private lateinit var viewBinding: ExpenseDetailDialogBinding
 
     private var expenseDetail: ExpenseDetailUiModel? = null
 
@@ -29,9 +29,9 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
 
     private var dismissListener: (() -> Unit)? = null
 
-    private var editOnClickListener: ((ExpenseDetailUiModel)-> Unit)? = null
+    private var editOnClickListener: ((ExpenseDetailUiModel) -> Unit)? = null
 
-    private var deleteOnClickListener: ((ExpenseDetailUiModel)-> Unit)? = null
+    private var deleteOnClickListener: ((ExpenseDetailUiModel) -> Unit)? = null
 
     private var isDeleteEnabled by Delegates.notNull<Boolean>()
 
@@ -50,9 +50,9 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         showDetailData()
     }
 
-    private fun showDetailData(){
+    private fun showDetailData() {
 
-        with(expenseDetail ?: return){
+        with(expenseDetail ?: return) {
             viewBinding.tvAmountValue.text = amount
             viewBinding.tvDateValue.text = date
             viewBinding.tvNameValue.text = name
@@ -60,45 +60,49 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
             viewBinding.tvCurrencySymbol.text = symbol
             viewBinding.imvCategory.setImageResource(category)
 
-            if(note.isEmpty()) hideNoteTextView()
+            if (note.isEmpty()) hideNoteTextView()
         }
     }
 
-    private fun hideNoteTextView(){
+    private fun hideNoteTextView() {
         viewBinding.tvNote.visibility = View.INVISIBLE
         viewBinding.tvNoteValue.visibility = View.INVISIBLE
     }
 
-    private fun initViewBinding(parent: ViewGroup?){
+    private fun initViewBinding(parent: ViewGroup?) {
         viewBinding = ExpenseDetailDialogBinding.inflate(layoutInflater, parent, false)
     }
 
 
-    fun showDetail(fragmentManager: FragmentManager, detail: ExpenseDetailUiModel, isDeleteEnabled: Boolean = false) {
+    fun showDetail(
+        fragmentManager: FragmentManager,
+        detail: ExpenseDetailUiModel,
+        isDeleteEnabled: Boolean = false
+    ) {
         expenseDetail = detail
         show(fragmentManager, TAG)
         this.isDeleteEnabled = isDeleteEnabled
     }
 
     private fun setupView() {
-        viewBinding.btnClose.setOnClickListener {
-            dismiss()
-        }
         viewBinding.btnEdit.setOnClickListener {
-           val detail = expenseDetail ?: return@setOnClickListener
+            val detail = expenseDetail ?: return@setOnClickListener
             editOnClickListener?.invoke(detail)
             dismiss()
         }
         viewBinding.btnDelete.setOnClickListener(::onDeleteClick)
-        if(isDeleteEnabled){
-            viewBinding.btnDelete.asVisible()
-        }else{
-            viewBinding.btnDelete.asInvisible()
+        if (isDeleteEnabled) {
+            viewBinding.flDelete.asVisible()
+        } else {
+            viewBinding.flDelete.asInvisible()
+        }
+        viewBinding.btnOkay.setOnClickListener {
+            dismiss()
         }
     }
 
-    private fun onDeleteClick(view: View){
-        val item = expenseDetail?:return
+    private fun onDeleteClick(view: View) {
+        val item = expenseDetail ?: return
         deleteOnClickListener?.invoke(item)
     }
 
@@ -111,11 +115,11 @@ class ExpenseDetailDialog : BottomSheetDialogFragment() {
         dismissListener = listener
     }
 
-    fun setOnEditClickListener(listener: (ExpenseDetailUiModel) -> Unit){
+    fun setOnEditClickListener(listener: (ExpenseDetailUiModel) -> Unit) {
         editOnClickListener = listener
     }
 
-    fun setOnDeleteClickListener(listener: (ExpenseDetailUiModel) -> Unit){
+    fun setOnDeleteClickListener(listener: (ExpenseDetailUiModel) -> Unit) {
         deleteOnClickListener = listener
     }
 

@@ -16,19 +16,47 @@
         android:layout_marginTop="@dimen/grid_3"
         android:alpha="0.7"
         android:text="@string/expnese_detail"
+        app:layout_constraintEnd_toStartOf="@id/fl_edit"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_close"
-        style="?attr/iconButtonStyle"
-        android:layout_width="@dimen/standard_icon_size"
-        android:layout_height="@dimen/standard_icon_size"
-        android:layout_marginEnd="@dimen/grid_3"
+    <FrameLayout
+        android:id="@+id/fl_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/grid_2"
+        android:padding="@dimen/grid_2"
         app:layout_constraintBottom_toBottomOf="@id/tv_expense_detail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_expense_detail"
-        app:srcCompat="@drawable/ic_drop_down" />
+        app:layout_constraintTop_toTopOf="@id/tv_expense_detail">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_delete"
+            style="?iconButtonStyle"
+            android:layout_width="@dimen/standard_icon_size"
+            android:layout_height="@dimen/standard_icon_size"
+            app:srcCompat="@drawable/ic_delete" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/grid_1"
+        android:padding="@dimen/grid_2"
+        app:layout_constraintBottom_toBottomOf="@id/fl_delete"
+        app:layout_constraintEnd_toStartOf="@id/fl_delete"
+        app:layout_constraintTop_toTopOf="@id/fl_delete">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_edit"
+            style="?iconButtonStyle"
+            android:layout_width="@dimen/standard_icon_size"
+            android:layout_height="@dimen/standard_icon_size"
+            app:srcCompat="@drawable/ic_edit" />
+
+    </FrameLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cd_info"
@@ -47,60 +75,48 @@
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                android:id="@+id/barrier_name"
-                app:constraint_referenced_ids="tv_name_value,btn_delete,cv_category"
+                app:constraint_referenced_ids="tv_name_value,cv_category"
                 tools:layout_editor_absoluteY="0dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_category"
+                style="@style/Widget.ProExpense.CircularCardView"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:layout_marginStart="@dimen/grid_3"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginBottom="@dimen/grid_2"
+                app:cardBackgroundColor="@color/blue_light_100"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:cardBackgroundColor="@color/blue_light_100"
-                style="@style/Widget.ProExpense.CircularCardView"
                 app:srcCompat="@drawable/ic_household">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imv_category"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:scaleType="centerInside"
-                    app:tint="@color/dark_gray"
                     android:layout_alignParentStart="true"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_household" />
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/ic_household"
+                    app:tint="@color/dark_gray" />
 
             </com.google.android.material.card.MaterialCardView>
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btn_delete"
-                android:layout_width="@dimen/standard_icon_size"
-                android:layout_height="@dimen/standard_icon_size"
-                android:layout_marginEnd="@dimen/grid_2"
-                style="?iconButtonStyle"
-                app:layout_constraintBottom_toBottomOf="@id/tv_name_value"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_name_value"
-                app:srcCompat="@drawable/ic_delete" />
-
 
             <TextView
                 android:id="@+id/tv_name_value"
                 style="?attr/textAppearanceHeadline6"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/grid_2"
                 android:layout_marginStart="@dimen/grid_3"
-                app:layout_constraintHorizontal_bias="0"
+                android:layout_marginEnd="@dimen/grid_2"
                 app:layout_constraintBottom_toBottomOf="@id/cv_category"
-                app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@id/cv_category"
                 app:layout_constraintTop_toTopOf="@id/cv_category"
                 tools:text="Suger" />
@@ -131,10 +147,10 @@
                 style="?textAppearanceCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/grid_2"
                 app:layout_constraintBaseline_toBaselineOf="@id/tv_amount_value"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
-                android:layout_marginEnd="@dimen/grid_2"
                 app:layout_constraintStart_toEndOf="@id/tv_amount_value"
                 tools:text="Ks" />
 
@@ -178,11 +194,11 @@
                 style="?attr/textAppearanceBody1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginEnd="@dimen/grid_2"
                 android:layout_marginBottom="@dimen/grid_4"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_date_value"
                 app:layout_constraintTop_toBottomOf="@id/tv_date_value"
                 tools:text="Somethings.." />
@@ -190,7 +206,7 @@
     </com.google.android.material.card.MaterialCardView>
 
     <Button
-        android:id="@+id/btn_edit"
+        android:id="@+id/btn_okay"
         style="@style/Widget.ProExpense.Button"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_button"
@@ -198,8 +214,7 @@
         android:layout_marginTop="@dimen/grid_2"
         android:layout_marginEnd="@dimen/grid_3"
         android:layout_marginBottom="@dimen/grid_3"
-        android:text="@string/edit"
-        app:icon="@drawable/ic_edit"
+        android:text="@string/okay"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
