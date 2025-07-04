@@ -130,4 +130,5 @@
     <string name="acknowledgement_title">Благодарность</string>
     <string name="recent">Недавние</string>
     <string name="okay">Хорошо</string>
+    <string name="repeat_entry">Повторить запись</string>
 </resources>

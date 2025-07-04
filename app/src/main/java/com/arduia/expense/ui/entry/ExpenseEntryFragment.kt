@@ -331,6 +331,7 @@ class ExpenseEntryFragment : Fragment() {
         viewModel.setCurrentExpenseId(args.expenseId)
         binding.switchRepeat.isChecked = false
         binding.switchRepeat.visibility = View.GONE
+        binding.tvRepeat.visibility = View.GONE
     }
 
     private fun changeToSaveMode() = with(binding) {
@@ -340,6 +341,7 @@ class ExpenseEntryFragment : Fragment() {
         edtName.requestFocus()
         setInitialDefaultCategory()
         binding.switchRepeat.visibility = View.VISIBLE
+        binding.tvRepeat.visibility = View.VISIBLE
     }
 
     private fun setInitialDefaultCategory() {

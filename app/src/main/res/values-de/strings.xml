@@ -130,4 +130,5 @@
     <string name="acknowledgement_title">Anerkennung</string>
     <string name="recent">Neuste</string>
     <string name="okay">Okay</string>
+    <string name="repeat_entry">Eintrag wiederholen</string>
 </resources>
