@@ -186,15 +186,12 @@
                 app:layout_constraintStart_toStartOf="@id/tv_date_value"
                 app:layout_constraintTop_toBottomOf="@id/tv_date_value"
                 tools:text="Somethings.." />
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/btn_edit"
-        style="?attr/materialButtonStyle"
+        style="@style/Widget.ProExpense.Button"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_button"
         android:layout_marginStart="@dimen/grid_3"
