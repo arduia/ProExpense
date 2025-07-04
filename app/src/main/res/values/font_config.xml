@@ -12,7 +12,8 @@
     </style>
 
     <style name="TextAppearance.ProExpense.Button" parent="TextAppearance.MaterialComponents.Button">
-
+        <item name="fontFamily">@font/poppins</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="Widget.ProExpense.NavigationView.Overlay" parent="Widget.ProExpense.NavigationView.Overlay.Base">

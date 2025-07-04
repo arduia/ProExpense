@@ -113,8 +113,11 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupLockButton() {
-        binding.cvLock.setOnClickListener {
-            viewModel.invertLockMode()
+        binding.switchRepeat.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setLockMode(isChecked)
+        }
+        binding.rlRepeat.setOnClickListener {
+            viewModel.setLockMode(!binding.switchRepeat.isChecked)
         }
     }
 
@@ -154,6 +157,7 @@ class ExpenseEntryFragment : Fragment() {
                 R.id.calendar -> {
                     viewModel.onDateSelect()
                 }
+
                 R.id.time -> {
                     viewModel.onTimeSelect()
                 }
@@ -224,25 +228,16 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun observeOnLockMode() {
         viewModel.lockMode.observe(viewLifecycleOwner) {
-            //Replace with Drawable State Lists
             when (it) {
-
                 LockMode.LOCKED -> {
-                    binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue_light_500))
-                    binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                    binding.switchRepeat.isChecked = true
                     binding.btnSave.text = getString(R.string.next)
                 }
 
                 LockMode.UNLOCK -> {
-                    binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                    binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.dark_gray))
+                    binding.switchRepeat.isChecked = false
                     binding.btnSave.text = getString(R.string.save)
                 }
-
             }
         }
     }
@@ -334,8 +329,8 @@ class ExpenseEntryFragment : Fragment() {
         btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
-        binding.cvLock.isEnabled = false
-        binding.cvLock.visibility = View.GONE
+        binding.switchRepeat.isChecked = false
+        binding.switchRepeat.visibility = View.GONE
     }
 
     private fun changeToSaveMode() = with(binding) {
@@ -344,7 +339,7 @@ class ExpenseEntryFragment : Fragment() {
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
         setInitialDefaultCategory()
-        binding.cvLock.visibility = View.VISIBLE
+        binding.switchRepeat.visibility = View.VISIBLE
     }
 
     private fun setInitialDefaultCategory() {

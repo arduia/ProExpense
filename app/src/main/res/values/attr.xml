@@ -10,6 +10,7 @@
     <attr name="colorNegative" format="color" />
     <attr name="colorWarning" format="color" />
     <attr name="colorOnWarning" format="color" />
+    <attr name="dividerColor" format="color"/>
 
     <attr name="textAppearanceMediumTitle" format="reference"/>
 

@@ -16,6 +16,7 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="colorWarning">@color/yellow_300</item>
         <item name="colorOnWarning">@color/dark_gray</item>
+        <item name="dividerColor">@color/dark_gray</item>
     </style>
 
     <style name="Theme.Splash" parent="Base.Theme.ProExpense">

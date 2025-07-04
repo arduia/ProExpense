@@ -6,7 +6,7 @@
     <dimen name="grid_4">32dp</dimen>
 
     <dimen name="size_radius">2dp</dimen>
-    <dimen name="height_button">56dp</dimen>
+    <dimen name="height_button">65dp</dimen>
 
     <dimen name="width_layout_min">450dp</dimen>
     <dimen name="with_layout_min_margin">482dp</dimen>
