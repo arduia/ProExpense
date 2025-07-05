@@ -21,7 +21,7 @@
     </style>
 
     <style name="Widget.ProExpense.IconButton" parent="Widget.MaterialComponents.Button">
-        <item name="tint">@color/dark_gray</item>
+        <item name="tint">?iconColor</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">center</item>
     </style>

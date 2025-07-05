@@ -18,6 +18,8 @@
         <item name="colorWarning">@color/yellow_500</item>
         <item name="colorOnWarning">@color/dark_gray</item>
         <item name="dividerColor">@color/gray_300</item>
+        <item name="iconColor">@color/dark_gray</item>
+
     </style>
 
     <style name="Theme.Splash" parent="Base.Theme.ProExpense">
