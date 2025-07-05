@@ -1,3 +1,10 @@
 package com.arduia.expense.ui.statistics
 
-data class CategoryStatisticUiModel(val name: String, val progress: Float, val progressText: String)
+import androidx.annotation.StringRes
+
+data class CategoryStatisticUiModel(
+    @StringRes
+    val nameId: Int,
+    val progress: Float,
+    val progressText: String
+)

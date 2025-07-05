@@ -15,10 +15,10 @@ class CategoryListAdapter(private val layoutInflater: LayoutInflater) :
     private var itemClickListener: (ExpenseCategory) -> Unit = {}
 
     var selectedItem: ExpenseCategory? = null
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val viewBinding = ItemCategoryBinding.inflate(layoutInflater, parent, false)
@@ -29,7 +29,7 @@ class CategoryListAdapter(private val layoutInflater: LayoutInflater) :
 
         with(holder.viewBinding) {
             val item = getItem(position)
-            tvName.text = item.name
+            tvName.setText(item.nameId)
             when (item.id == selectedItem?.id) {
                 true -> {
                     cdCategory.isChecked = true
@@ -72,7 +72,7 @@ private val DIFF_CALLBACK
             oldItem: ExpenseCategory,
             newItem: ExpenseCategory
         ): Boolean {
-            return (oldItem.name == newItem.name) &&
+            return (oldItem.nameId == newItem.nameId) &&
                     (oldItem.id == newItem.id) &&
                     (oldItem.img == newItem.img)
         }
