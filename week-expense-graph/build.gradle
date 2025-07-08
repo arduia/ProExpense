@@ -6,6 +6,7 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 android {
+    namespace 'com.arduia.graph'
     compileSdkVersion rootProject.compileSdk
     buildToolsVersion rootProject.buildToolVersion
 

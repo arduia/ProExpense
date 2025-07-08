@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    namespace 'com.arduia.expense.backup'
     compileSdkVersion rootProject.compileSdk
     buildToolsVersion rootProject.buildToolVersion
 
