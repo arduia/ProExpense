@@ -29,6 +29,10 @@ androidx-test-core = "1.4.0"
 androidx-test-runner = "1.4.0"
 androidx-arch-core-testing = "2.1.0"
 coroutines-test = "1.6.4"
+fragment-testing = "1.6.2"
+navigation-testing = "2.7.5"
+mockk = "1.13.8"
+hilt-testing = "2.48"
 
 # Libraries
 gson = "2.8.6"
@@ -96,6 +100,17 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test-runner" }
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidx-arch-core-testing" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
+
+# Fragment Testing
+fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragment-testing" }
+navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation-testing" }
+
+# MockK
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+
+# Hilt Testing
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-testing" }
 
 # Libraries
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }

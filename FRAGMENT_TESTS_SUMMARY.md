@@ -209,19 +209,41 @@ This document summarizes all the fragment test cases that have been added to pro
 
 ## Test Dependencies Added
 
+**Version Catalog (gradle/libs.versions.toml):**
+```toml
+[versions]
+fragment-testing = "1.6.2"
+navigation-testing = "2.7.5"
+mockk = "1.13.8"
+hilt-testing = "2.48"
+
+[libraries]
+# Fragment Testing
+fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragment-testing" }
+navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation-testing" }
+
+# MockK
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+
+# Hilt Testing
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-testing" }
+```
+
+**Build Configuration (app/build.gradle.kts):**
 ```kotlin
 // Fragment Testing
-debugImplementation("androidx.fragment:fragment-testing:1.6.2")
-testImplementation("androidx.fragment:fragment-testing:1.6.2")
-testImplementation("androidx.navigation:navigation-testing:2.7.5")
-testImplementation("io.mockk:mockk:1.13.8")
-testImplementation("io.mockk:mockk-android:1.13.8")
+debugImplementation(libs.fragment.testing)
+testImplementation(libs.fragment.testing)
+testImplementation(libs.navigation.testing)
+testImplementation(libs.mockk)
+testImplementation(libs.mockk.android)
 
 // Hilt Testing
-testImplementation("com.google.dagger:hilt-android-testing:2.48")
-kaptTest("com.google.dagger:hilt-android-compiler:2.48")
-androidTestImplementation("com.google.dagger:hilt-android-testing:2.48")
-kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48")
+testImplementation(libs.hilt.android.testing)
+kaptTest(libs.hilt.compiler)
+androidTestImplementation(libs.hilt.android.testing)
+kaptAndroidTest(libs.hilt.compiler)
 ```
 
 ## Coverage Statistics
