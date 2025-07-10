@@ -33,6 +33,13 @@ android {
         }
     }
 
+    // Test options
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     bundle {
         language {
             enableSplit = false
@@ -121,6 +128,7 @@ dependencies {
     testImplementation(libs.androidx.test.runner)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.androidx.test.ext)
+    testImplementation(libs.espresso.core)
     
     // Fragment Testing
     debugImplementation(libs.fragment.testing)
@@ -128,6 +136,9 @@ dependencies {
     testImplementation(libs.navigation.testing)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.android)
+    
+    // Robolectric for unit tests
+    testImplementation("org.robolectric:robolectric:4.10.3")
     
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
