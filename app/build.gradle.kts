@@ -131,8 +131,6 @@ dependencies {
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
     kaptTest(libs.hilt.compiler)
-    androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.compiler)
     
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.espresso.core)
