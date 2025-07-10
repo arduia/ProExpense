@@ -120,6 +120,7 @@ dependencies {
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.runner)
     testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.androidx.test.ext)
     
     // Fragment Testing
     debugImplementation(libs.fragment.testing)
