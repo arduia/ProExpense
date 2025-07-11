@@ -89,9 +89,9 @@ class ExpenseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getExpenseAllSync(): Result<List<ExpenseEnt>> {
-        // Temporarily commented out due to KAPT/Room compatibility issues
-        // return getResultSuccessOrError { expenseDao.getExpenseAllSync() }
-        return SuccessResult(emptyList())
+        return withContext(Dispatchers.IO) {
+            getResultSuccessOrError { expenseDao.getExpenseAllSync() }
+        }
     }
 
     override fun getRecentExpense(): FlowResult<List<ExpenseEnt>> {
@@ -107,33 +107,35 @@ class ExpenseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getExpenseTotalCountSync(): Result<Int> {
-        // Temporarily commented out due to KAPT/Room compatibility issues
-        // return try {
-        //     SuccessResult(expenseDao.getExpenseTotalCountSync())
-        // } catch (e: Exception) {
-        //     ErrorResult(e)
-        // }
-        return SuccessResult(0)
+        return withContext(Dispatchers.IO) {
+            try {
+                SuccessResult(expenseDao.getExpenseTotalCountSync())
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
+        }
     }
 
     override suspend fun getMostRecentDateSync(): Result<Long> {
-        // Temporarily commented out due to KAPT/Room compatibility issues
-        // return try {
-        //     SuccessResult(expenseDao.getMostRecentDateSync())
-        // } catch (e: Exception) {
-        //     ErrorResult(e)
-        // }
-        return SuccessResult(System.currentTimeMillis())
+        return withContext(Dispatchers.IO) {
+            try {
+                val date = expenseDao.getMostRecentDateSync()
+                SuccessResult(date ?: System.currentTimeMillis())
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
+        }
     }
 
     override suspend fun getMostLatestDateSync(): Result<Long> {
-        // Temporarily commented out due to KAPT/Room compatibility issues
-        // return try {
-        //     SuccessResult(expenseDao.getMostLatestDateSync())
-        // } catch (e: Exception) {
-        //     ErrorResult(e)
-        // }
-        return SuccessResult(System.currentTimeMillis())
+        return withContext(Dispatchers.IO) {
+            try {
+                val date = expenseDao.getMostLatestDateSync()
+                SuccessResult(date ?: System.currentTimeMillis())
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
+        }
     }
 
     override fun getMaxAndMiniDateRange(): FlowResult<DateRangeDataModel> {
@@ -161,13 +163,15 @@ class ExpenseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteExpenseById(id: Int) {
-        // Temporarily commented out due to KAPT/Room compatibility issues
-        // expenseDao.deleteExpenseRowById(id)
+        withContext(Dispatchers.IO) {
+            expenseDao.deleteExpenseRowById(id)
+        }
     }
 
     override suspend fun deleteAllExpense(list: List<Int>) {
-        // Temporarily commented out due to KAPT/Room compatibility issues
-        // expenseDao.deleteExpenseByIDs(list)
+        withContext(Dispatchers.IO) {
+            expenseDao.deleteExpenseByIDs(list)
+        }
     }
 
     override fun getWeekExpenses(): FlowResult<List<ExpenseEnt>> {

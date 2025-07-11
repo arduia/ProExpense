@@ -273,55 +273,123 @@ class ExpenseRepositoryTest {
     }
 
     @Test
-    fun `getExpenseAllSync should return empty list due to temporary implementation`() = runTest {
+    fun `getExpenseAllSync should return success result when dao succeeds`() = runTest {
+        // Given
+        val expenses = listOf(createTestExpense())
+        every { mockExpenseDao.getExpenseAllSync() } returns expenses
+
         // When
         val result = repository.getExpenseAllSync()
 
         // Then
         assertTrue(result is SuccessResult)
-        assertEquals(emptyList<ExpenseEnt>(), (result as SuccessResult).data)
+        assertEquals(expenses, (result as SuccessResult).data)
+        verify { mockExpenseDao.getExpenseAllSync() }
     }
 
     @Test
-    fun `getExpenseTotalCountSync should return zero due to temporary implementation`() = runTest {
+    fun `getExpenseTotalCountSync should return success result when dao succeeds`() = runTest {
+        // Given
+        val totalCount = 42
+        every { mockExpenseDao.getExpenseTotalCountSync() } returns totalCount
+
         // When
         val result = repository.getExpenseTotalCountSync()
 
         // Then
         assertTrue(result is SuccessResult)
-        assertEquals(0, (result as SuccessResult).data)
+        assertEquals(totalCount, (result as SuccessResult).data)
+        verify { mockExpenseDao.getExpenseTotalCountSync() }
     }
 
     @Test
-    fun `getMostRecentDateSync should return current time`() = runTest {
+    fun `getMostRecentDateSync should return success result when dao returns valid date`() = runTest {
+        // Given
+        val recentDate = 1234567890L
+        every { mockExpenseDao.getMostRecentDateSync() } returns recentDate
+
         // When
         val result = repository.getMostRecentDateSync()
 
         // Then
         assertTrue(result is SuccessResult)
-        assertTrue((result as SuccessResult).data > 0)
+        assertEquals(recentDate, (result as SuccessResult).data)
+        verify { mockExpenseDao.getMostRecentDateSync() }
     }
 
     @Test
-    fun `getMostLatestDateSync should return current time`() = runTest {
+    fun `getMostRecentDateSync should return current time when dao returns null`() = runTest {
+        // Given
+        every { mockExpenseDao.getMostRecentDateSync() } returns null
+
+        // When
+        val result = repository.getMostRecentDateSync()
+        val currentTime = System.currentTimeMillis()
+
+        // Then
+        assertTrue(result is SuccessResult)
+        val resultData = (result as SuccessResult).data
+        assertTrue("Result should be close to current time", 
+            Math.abs(resultData - currentTime) < 1000) // within 1 second
+        verify { mockExpenseDao.getMostRecentDateSync() }
+    }
+
+    @Test
+    fun `getMostLatestDateSync should return success result when dao returns valid date`() = runTest {
+        // Given
+        val latestDate = 9876543210L
+        every { mockExpenseDao.getMostLatestDateSync() } returns latestDate
+
         // When
         val result = repository.getMostLatestDateSync()
 
         // Then
         assertTrue(result is SuccessResult)
-        assertTrue((result as SuccessResult).data > 0)
+        assertEquals(latestDate, (result as SuccessResult).data)
+        verify { mockExpenseDao.getMostLatestDateSync() }
     }
 
     @Test
-    fun `deleteExpenseById should not throw exception`() = runTest {
-        // When & Then (should not throw)
-        repository.deleteExpenseById(1)
+    fun `getMostLatestDateSync should return current time when dao returns null`() = runTest {
+        // Given
+        every { mockExpenseDao.getMostLatestDateSync() } returns null
+
+        // When
+        val result = repository.getMostLatestDateSync()
+        val currentTime = System.currentTimeMillis()
+
+        // Then
+        assertTrue(result is SuccessResult)
+        val resultData = (result as SuccessResult).data
+        assertTrue("Result should be close to current time", 
+            Math.abs(resultData - currentTime) < 1000) // within 1 second
+        verify { mockExpenseDao.getMostLatestDateSync() }
     }
 
     @Test
-    fun `deleteAllExpense should not throw exception`() = runTest {
-        // When & Then (should not throw)
-        repository.deleteAllExpense(listOf(1, 2, 3))
+    fun `deleteExpenseById should call dao deleteExpenseRowById`() = runTest {
+        // Given
+        val expenseId = 1
+        every { mockExpenseDao.deleteExpenseRowById(expenseId) } returns 1
+
+        // When
+        repository.deleteExpenseById(expenseId)
+
+        // Then
+        verify { mockExpenseDao.deleteExpenseRowById(expenseId) }
+    }
+
+    @Test
+    fun `deleteAllExpense should call dao deleteExpenseByIDs`() = runTest {
+        // Given
+        val expenseIds = listOf(1, 2, 3)
+        every { mockExpenseDao.deleteExpenseByIDs(expenseIds) } returns 3
+
+        // When
+        repository.deleteAllExpense(expenseIds)
+
+        // Then
+        verify { mockExpenseDao.deleteExpenseByIDs(expenseIds) }
     }
 
     @Test
