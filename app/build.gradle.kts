@@ -14,9 +14,17 @@ val apiProperties = Properties().apply {
     load(FileInputStream(apiProfile))
 }
 
-android {
-    namespace = "com.arduia.expense"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    android {
+        namespace = "com.arduia.expense"
+        compileSdk = libs.versions.compileSdk.get().toInt()
+        
+        packaging {
+            resources {
+                excludes += "/META-INF/{AL2.0,LGPL2.1}"
+                excludes += "META-INF/LICENSE.md"
+                excludes += "META-INF/LICENSE-notice.md"
+            }
+        }
 
     defaultConfig {
         applicationId = "com.arduia.expense"
@@ -220,4 +228,11 @@ dependencies {
     configurations.all {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-parcelize-runtime")
     }
+
+    androidTestImplementation(libs.navigation.testing)
+    androidTestImplementation(libs.fragment.testing)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.3.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
 } 
