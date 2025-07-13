@@ -14,9 +14,17 @@ val apiProperties = Properties().apply {
     load(FileInputStream(apiProfile))
 }
 
-android {
-    namespace = "com.arduia.expense"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    android {
+        namespace = "com.arduia.expense"
+        compileSdk = libs.versions.compileSdk.get().toInt()
+        
+        packaging {
+            resources {
+                excludes += "/META-INF/{AL2.0,LGPL2.1}"
+                excludes += "META-INF/LICENSE.md"
+                excludes += "META-INF/LICENSE-notice.md"
+            }
+        }
 
     defaultConfig {
         applicationId = "com.arduia.expense"
@@ -30,6 +38,13 @@ android {
             annotationProcessorOptions {
                 arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
             }
+        }
+    }
+
+    // Test options
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
         }
     }
 
@@ -120,6 +135,23 @@ dependencies {
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.runner)
     testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.androidx.test.ext)
+    testImplementation(libs.espresso.core)
+    
+    // Fragment Testing
+    debugImplementation(libs.fragment.testing)
+    testImplementation(libs.fragment.testing)
+    testImplementation(libs.navigation.testing)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.android)
+    
+    // Robolectric for unit tests
+    testImplementation("org.robolectric:robolectric:4.10.3")
+    
+    // Hilt Testing
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.compiler)
+    
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.compose.ui.test.junit4)
@@ -196,4 +228,16 @@ dependencies {
     configurations.all {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-parcelize-runtime")
     }
+
+    androidTestImplementation(libs.navigation.testing)
+    androidTestImplementation(libs.fragment.testing)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
+    
+    // Hilt Testing for Android Tests
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.compiler)
 } 

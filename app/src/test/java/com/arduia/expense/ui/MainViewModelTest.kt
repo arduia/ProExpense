@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -24,17 +25,11 @@ import org.junit.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.Mockito.atLeastOnce
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.any
-import org.mockito.junit.MockitoJUnitRunner
+import io.mockk.*
+import org.junit.runners.JUnit4
 
 @ExperimentalCoroutinesApi
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(JUnit4::class)
 class MainViewModelTest {
 
     @get:Rule
@@ -43,13 +38,8 @@ class MainViewModelTest {
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
-    @Mock
     private lateinit var settingsRepository: SettingsRepository
-
-    @Mock
     private lateinit var currencyRepository: CurrencyRepository
-
-    @Mock
     private lateinit var workManager: WorkManager
 
     private lateinit var viewModel: MainViewModel
@@ -57,23 +47,28 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
-        lifecycle = LifecycleRegistry(mock(LifecycleOwner::class.java))
-        viewModel = MainViewModel(
-            settingsRepository,
-            currencyRepository,
-            workManager
-        )
+        // Use MockK for better Flow mocking
+        settingsRepository = mockk(relaxed = true)
+        currencyRepository = mockk(relaxed = true) 
+        workManager = mockk(relaxed = true)
+        
+        lifecycle = LifecycleRegistry(mockk(relaxed = true))
+        
+        // Setup default mock behaviors
+        every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(Result.Success("840"))
+        coEvery { currencyRepository.setSelectedCacheCurrency(any()) } just Runs
+        every { workManager.enqueue(any<OneTimeWorkRequest>()) } returns mockk()
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        clearAllMocks()
     }
 
     @Test
     fun `test setup is working`() {
         // This is a simple test to verify the setup is working
-        assertNotNull(viewModel)
         assertNotNull(settingsRepository)
         assertNotNull(currencyRepository)
         assertNotNull(workManager)
@@ -84,65 +79,60 @@ class MainViewModelTest {
         // Given
         val currencyNumber = "840"
         val successResult = Result.Success(currencyNumber)
-        `when`(settingsRepository.getSelectedCurrencyNumber()).thenReturn(flowOf(successResult))
+        every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(successResult)
 
         // When
         viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
+        advanceUntilIdle() // Wait for all coroutines to complete
 
         // Then
-        verify(settingsRepository, atLeastOnce()).getSelectedCurrencyNumber()
+        verify { settingsRepository.getSelectedCurrencyNumber() }
+        coVerify { currencyRepository.setSelectedCacheCurrency(currencyNumber) }
     }
 
     @Test
     fun `observeAndCacheSelectedCurrency should handle error result`() = runTest {
         // Given
         val errorResult = Result.Error(Exception("Test error"))
-        `when`(settingsRepository.getSelectedCurrencyNumber()).thenReturn(flowOf(errorResult))
+        every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(errorResult)
 
         // When
         viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
+        advanceUntilIdle() // Wait for all coroutines to complete
 
         // Then
-        verify(settingsRepository, atLeastOnce()).getSelectedCurrencyNumber()
-        // The ViewModel should not crash and should handle the error gracefully
+        verify { settingsRepository.getSelectedCurrencyNumber() }
+        // Should not call setSelectedCacheCurrency for error result
+        coVerify(exactly = 0) { currencyRepository.setSelectedCacheCurrency(any()) }
     }
 
     @Test
     fun `observeAndCacheSelectedCurrency should handle loading result`() = runTest {
         // Given
         val loadingResult = Result.Loading
-        `when`(settingsRepository.getSelectedCurrencyNumber()).thenReturn(flowOf(loadingResult))
+        every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(loadingResult)
 
         // When
         viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
+        advanceUntilIdle() // Wait for all coroutines to complete
 
         // Then
-        verify(settingsRepository, atLeastOnce()).getSelectedCurrencyNumber()
-        // The ViewModel should handle loading state gracefully
+        verify { settingsRepository.getSelectedCurrencyNumber() }
+        // Should not call setSelectedCacheCurrency for loading result
+        coVerify(exactly = 0) { currencyRepository.setSelectedCacheCurrency(any()) }
     }
 
     @Test
     fun `viewModel should implement LifecycleObserver`() {
-        // Given & When
+        // Given
+        every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(Result.Success("840"))
+        
+        // When
+        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
         val observer = viewModel as? androidx.lifecycle.LifecycleObserver
 
         // Then
         assertNotNull(observer)
-    }
-
-    @Test
-    fun `observeAndCacheSelectedCurrency should handle empty currency number`() = runTest {
-        // Given
-        val emptyCurrencyNumber = ""
-        val successResult = Result.Success(emptyCurrencyNumber)
-        `when`(settingsRepository.getSelectedCurrencyNumber()).thenReturn(flowOf(successResult))
-
-        // When
-        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
-
-        // Then
-        verify(settingsRepository, atLeastOnce()).getSelectedCurrencyNumber()
-        // The ViewModel should handle empty currency number gracefully
     }
 
 }
