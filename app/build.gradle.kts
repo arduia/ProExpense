@@ -30,8 +30,8 @@ val apiProperties = Properties().apply {
         applicationId = "com.arduia.expense"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 13
+        versionName = "1.0.0-beta07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -146,7 +146,7 @@ dependencies {
     testImplementation(libs.mockk.android)
     
     // Robolectric for unit tests
-    testImplementation("org.robolectric:robolectric:4.10.3")
+    testImplementation(libs.robolectric)
     
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
@@ -233,9 +233,9 @@ dependencies {
     androidTestImplementation(libs.fragment.testing)
     androidTestImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
-    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
+    androidTestImplementation(libs.espresso.intents)
+    androidTestImplementation(libs.espresso.contrib)
+    androidTestImplementation(libs.uiautomator)
     
     // Hilt Testing for Android Tests
     androidTestImplementation(libs.hilt.android.testing)
