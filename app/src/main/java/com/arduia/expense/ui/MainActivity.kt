@@ -70,7 +70,6 @@ class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         lifecycle.addObserver(viewModel)
         setTheme(R.style.Theme_ProExpense)
         binding = ActivityMainBinding.inflate(layoutInflater)
