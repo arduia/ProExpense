@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.navigation.safe.args)
 }
@@ -88,8 +89,9 @@ val apiProperties = Properties().apply {
         jvmTarget = "11"
     }
 
-    kapt {
-        correctErrorTypes = false
+    // KSP configuration
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
     }
 }
 
@@ -150,7 +152,7 @@ dependencies {
     
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
-    kaptTest(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
     
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.espresso.core)
@@ -158,12 +160,12 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // Coroutines
     implementation(libs.coroutines.core)
@@ -223,7 +225,7 @@ dependencies {
 
     // Hilt WorkManager
     implementation(libs.hilt.work)
-    kapt(libs.hilt.work.compiler)
+    ksp(libs.hilt.work.compiler)
 
     configurations.all {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-parcelize-runtime")
@@ -239,5 +241,5 @@ dependencies {
     
     // Hilt Testing for Android Tests
     androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.compiler)
+    kspAndroidTest(libs.hilt.compiler)
 } 
