@@ -27,6 +27,8 @@ interface ExpenseRepository {
 
     fun getRecentExpense(): FlowResult<List<ExpenseEnt>>
 
+    suspend fun getRecentExpenseSync(): Result<List<ExpenseEnt>>
+
     fun getExpenseTotalCount(): FlowResult<Int>
 
     suspend fun getExpenseTotalCountSync(): Result<Int>

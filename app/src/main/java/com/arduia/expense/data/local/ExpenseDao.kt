@@ -50,6 +50,9 @@ interface ExpenseDao{
     @Query( "SELECT * FROM `expense` ORDER BY modified_date DESC LIMIT 4")
     fun getRecentExpense(): Flow<List<ExpenseEnt>>
 
+    @Query( "SELECT * FROM `expense` ORDER BY modified_date DESC LIMIT 4")
+    fun getRecentExpenseSync(): List<ExpenseEnt>
+
     @Query("SELECT COUNT(*) FROM expense")
     fun getExpenseTotalCount(): Flow<Int>
 

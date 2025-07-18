@@ -3,29 +3,25 @@ package com.arduia.expense.ui.entry
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
-import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentExpenseEntryBinding
-import com.arduia.expense.ui.common.*
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
-import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +29,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -210,6 +208,7 @@ class ExpenseEntryFragment : Fragment() {
         viewModel.onNext.observe(viewLifecycleOwner, EventObserver {
             cleanUi()
             focusOnName()
+            selectFirstCategory()
             showItemSaved()
         })
     }
@@ -252,6 +251,14 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun focusOnName() {
         binding.edtName.requestFocus()
+    }
+
+    private fun selectFirstCategory(){
+        val categoryList = categoryProvider.getCategoryList()
+        if(categoryList.isEmpty()) return
+        viewModel.selectCategory(
+            categoryList.first()
+        )
     }
 
     private fun observeEntryModeEvent() {

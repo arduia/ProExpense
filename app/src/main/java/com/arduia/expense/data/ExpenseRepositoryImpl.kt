@@ -100,6 +100,12 @@ class ExpenseRepositoryImpl @Inject constructor(
             .catch { ErrorResult(RepositoryException(it)) }
     }
 
+    override suspend fun getRecentExpenseSync(): Result<List<ExpenseEnt>> {
+        return withContext(Dispatchers.IO) {
+            getResultSuccessOrError { expenseDao.getRecentExpenseSync() }
+        }
+    }
+
     override fun getExpenseTotalCount(): FlowResult<Int> {
         return expenseDao.getExpenseTotalCount()
             .map { SuccessResult(it) }

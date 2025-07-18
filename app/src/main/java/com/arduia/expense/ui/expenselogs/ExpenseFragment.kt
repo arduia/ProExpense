@@ -20,17 +20,15 @@ import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
-import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.arduia.expense.ui.common.expense.ExpenseDetailDialog
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
-import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
+import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.arduia.expense.ui.expenselogs.swipe.SwipeItemCallback
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import java.text.DecimalFormat
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
