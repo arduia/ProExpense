@@ -212,6 +212,9 @@ dependencies {
     // Work
     implementation(libs.work.runtime)
     implementation(libs.work.runtime.ktx)
+    
+    // WorkManager Testing
+    testImplementation("androidx.work:work-testing:2.8.0")
 
     // Retrofit
     implementation(libs.retrofit)
