@@ -182,10 +182,6 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
 
-    // Epoxy
-    implementation(libs.epoxy)
-    kapt(libs.epoxy.processor)
-
     // Timber
     implementation(libs.timber)
 
