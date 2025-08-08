@@ -59,6 +59,8 @@ interface ExpenseRepository {
 
     fun getWeekExpenses(): FlowResult<List<ExpenseEnt>>
 
+    suspend fun getWeekExpensesSync(): Result<List<ExpenseEnt>>
+
 
 
 }

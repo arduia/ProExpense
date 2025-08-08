@@ -77,4 +77,7 @@ interface ExpenseDao{
     @Query("SELECT * FROM 'expense' WHERE modified_date > :startTime ORDER BY modified_date DESC")
     fun getWeekExpense(startTime: Long): Flow<List<ExpenseEnt>>
 
+    @Query("SELECT * FROM 'expense' WHERE modified_date > :startTime ORDER BY modified_date DESC")
+    fun getWeekExpenseSync(startTime: Long): List<ExpenseEnt>
+
 }

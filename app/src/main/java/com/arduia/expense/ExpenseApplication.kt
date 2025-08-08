@@ -3,6 +3,7 @@ package com.arduia.expense
 import android.app.Application
 import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.data.SettingRepositoryFactoryImpl
 import com.arduia.expense.data.SettingsRepository
@@ -17,10 +18,17 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
+class ExpenseApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
+    override val workManagerConfiguration: Configuration
+        get(): Configuration =
+            Configuration.Builder()
+                .setWorkerFactory(workerFactory)
+                .build()
+
     override fun onCreate() {
         super.onCreate()
         setupLogging()
@@ -33,10 +41,6 @@ class ExpenseApplication : Application(), androidx.work.Configuration.Provider {
         }
     }
 
-    override fun getWorkManagerConfiguration(): androidx.work.Configuration =
-        androidx.work.Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
 
     override fun attachBaseContext(base: Context?) {
         val localedContext = getLocaleContext(base)

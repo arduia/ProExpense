@@ -12,6 +12,7 @@ import com.arduia.backup.ExcelBackup
 import com.arduia.backup.task.getDataOrError
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -29,6 +30,7 @@ class ImportWorker  @AssistedInject constructor(@Assisted context: Context,
 
         return try {
             val count =  excelBackup.import(fileInputStream).getDataOrError()
+            Timber.d("Import: count $count")
             val data = getProgressData(count = count)
             Result.success(data)
         }catch (e: BackupException){
