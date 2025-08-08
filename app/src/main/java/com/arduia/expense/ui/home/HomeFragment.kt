@@ -110,6 +110,11 @@ class HomeFragment : NavBaseFragment() {
     private fun setupRecentViewModel() {
         viewModel.recentData.observe(viewLifecycleOwner, Observer {
             recentListAdapter?.submitList(it)
+            if(it == null || it.isEmpty()){
+                binding.layoutRecentLists.root.visibility = View.GONE
+            }else{
+                binding.layoutRecentLists.root.visibility = View.VISIBLE
+            }
         })
 
         viewModel.graphUiModel.observe(viewLifecycleOwner, Observer {
