@@ -20,6 +20,7 @@ import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.graph.DayNameProvider
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.text.DecimalFormat
 import javax.inject.Inject
 import kotlin.math.exp
@@ -123,6 +124,7 @@ class HomeFragment : NavBaseFragment() {
                 tvOutcomeSymbol.text = it.currencySymbol
                 tvIncomeSymobol.text = it.currencySymbol
                 tvDateRange.text = it.dateRange
+                Timber.d("Home: $it")
             }
         })
 

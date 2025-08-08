@@ -180,12 +180,24 @@ class ExpenseRepositoryImpl @Inject constructor(
         }
     }
 
+
+
     override fun getWeekExpenses(): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getWeekExpense(getWeekStartTime())
             .map { SuccessResult(it) }
             .catch { ErrorResult(RepositoryException(it)) }
     }
 
+    override suspend fun getWeekExpensesSync(): Result<List<ExpenseEnt>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val date = expenseDao.getWeekExpenseSync(getWeekStartTime())
+                SuccessResult(date)
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
+        }
+    }
 
     private fun getWeekStartTime(): Long {
 

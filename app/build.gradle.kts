@@ -15,17 +15,17 @@ val apiProperties = Properties().apply {
     load(FileInputStream(apiProfile))
 }
 
-    android {
-        namespace = "com.arduia.expense"
-        compileSdk = libs.versions.compileSdk.get().toInt()
-        
-        packaging {
-            resources {
-                excludes += "/META-INF/{AL2.0,LGPL2.1}"
-                excludes += "META-INF/LICENSE.md"
-                excludes += "META-INF/LICENSE-notice.md"
-            }
+android {
+    namespace = "com.arduia.expense"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
         }
+    }
 
     defaultConfig {
         applicationId = "com.arduia.expense"
@@ -60,13 +60,19 @@ val apiProperties = Properties().apply {
             isMinifyEnabled = false
             isShrinkResources = false
             buildConfigField("String", "BASE_URL", apiProperties["main_url"] as String)
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", apiProperties["main_url"] as String)
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -93,17 +99,20 @@ val apiProperties = Properties().apply {
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    
+
     // Android Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
-    
+
     // Compose BOM
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
@@ -115,19 +124,19 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.foundation)
     implementation(libs.compose.animation)
-    
+
     // Activity and Navigation
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
     implementation(libs.lifecycle.viewmodel.compose)
-    
+
     // Hilt integration
     implementation(libs.hilt.navigation.compose)
-    
+
     // Tooling (debug only)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
-    
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
@@ -139,21 +148,21 @@ dependencies {
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.androidx.test.ext)
     testImplementation(libs.espresso.core)
-    
+
     // Fragment Testing
     debugImplementation(libs.fragment.testing)
     testImplementation(libs.fragment.testing)
     testImplementation(libs.navigation.testing)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.android)
-    
+
     // Robolectric for unit tests
     testImplementation(libs.robolectric)
-    
+
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.compiler)
-    
+
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.compose.ui.test.junit4)
@@ -234,7 +243,7 @@ dependencies {
     androidTestImplementation(libs.espresso.intents)
     androidTestImplementation(libs.espresso.contrib)
     androidTestImplementation(libs.uiautomator)
-    
+
     // Hilt Testing for Android Tests
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
