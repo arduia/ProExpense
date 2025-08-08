@@ -113,6 +113,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.constraintlayout)
 
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     // Compose BOM
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
