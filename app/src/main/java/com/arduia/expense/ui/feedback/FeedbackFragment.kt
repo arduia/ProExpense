@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragFeedbackBinding
+import com.arduia.expense.databinding.FragmentFeedbackBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.NavigationDrawer
 import com.arduia.mvvm.EventObserver
@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FeedbackFragment : NavBaseFragment() {
 
-    private var _binding: FragFeedbackBinding? =null
+    private var _binding: FragmentFeedbackBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<FeedbackViewModel>()
@@ -26,7 +26,7 @@ class FeedbackFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragFeedbackBinding.inflate(layoutInflater)
+        _binding = FragmentFeedbackBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -111,6 +111,5 @@ class FeedbackFragment : NavBaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
     }
 }

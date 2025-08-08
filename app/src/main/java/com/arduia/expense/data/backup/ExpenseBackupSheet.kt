@@ -14,6 +14,10 @@ class ExpenseBackupSheet @Inject constructor(source: BackupSource<ExpenseEnt>) :
 
     override val sheetName = "expense"
 
+    init {
+        isExportCountEnable = true;
+    }
+
     override fun getFieldInfo(): SheetFieldInfo {
          val mutableMap = mutableMapOf<String, String>()
         mutableMap[FIELD_NAME] = "string"

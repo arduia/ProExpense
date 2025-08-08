@@ -137,14 +137,13 @@ class ExpenseEntryViewModel @Inject constructor(
         _onDataUpdated post EventUnit
     }
 
-    fun invertLockMode() {
-        when (lockMode.value ?: return) {
-            LockMode.UNLOCK -> {
-                _lockMode set LockMode.LOCKED
-            }
-            LockMode.LOCKED -> {
-                _lockMode set LockMode.UNLOCK
-            }
+    fun setLockMode(
+        isLocked: Boolean
+    ){
+        if(isLocked){
+            _lockMode set LockMode.LOCKED
+        }else{
+            _lockMode set LockMode.UNLOCK
         }
     }
 

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.arduia.core.extension.px
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragChooseLanguageDialogBinding
+import com.arduia.expense.databinding.FragmentChooseLanguageDialogBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.ext.restartActivity
 import com.arduia.expense.ui.onboarding.ChooseLanguageViewModel
@@ -20,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ChooseLanguageDialog : BottomSheetDialogFragment() {
 
-    private var _binding: FragChooseLanguageDialogBinding? = null
+    private var _binding: FragmentChooseLanguageDialogBinding? = null
     private val binding get() = _binding!!
 
     private var adapter: LangListAdapter? = null
@@ -36,7 +36,7 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragChooseLanguageDialogBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentChooseLanguageDialogBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

@@ -9,6 +9,8 @@ import com.arduia.expense.data.local.BackupDao
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.*
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.*
 import java.lang.Exception
 import javax.inject.Inject
@@ -21,15 +23,21 @@ class BackupRepositoryImpl @Inject constructor(
 ) : BackupRepository {
 
     override suspend fun insertBackup(item: BackupEnt) {
-        dao.insertBackup(item)
+        withContext(Dispatchers.IO) {
+            dao.insertBackup(item)
+        }
     }
 
     override suspend fun updateBackup(item: BackupEnt) {
-        dao.updateBackup(item)
+        withContext(Dispatchers.IO) {
+            dao.updateBackup(item)
+        }
     }
 
     override suspend fun deleteBackup(item: BackupEnt) {
-        dao.deleteBackup(item)
+        withContext(Dispatchers.IO) {
+            dao.deleteBackup(item)
+        }
     }
 
     override suspend fun deleteBackupByID(id: Int) {

@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import com.arduia.core.view.asGone
 import com.arduia.core.view.asVisible
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragBackupBinding
+import com.arduia.expense.databinding.FragmentBackupBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BackupFragment : NavBaseFragment() {
 
-    private var _binding: FragBackupBinding? = null
+    private var _binding: FragmentBackupBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<BackupViewModel>()
@@ -42,7 +42,7 @@ class BackupFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragBackupBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentBackupBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

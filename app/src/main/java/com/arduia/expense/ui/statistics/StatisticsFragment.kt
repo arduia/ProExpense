@@ -7,7 +7,7 @@ import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragStatisticBinding
+import com.arduia.expense.databinding.FragmentStatisticBinding
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class StatisticsFragment : NavBaseFragment() {
 
-    private var _binding: FragStatisticBinding? = null
+    private var _binding: FragmentStatisticBinding? = null
     private val binding get() = _binding!!
 
     private var categoryAdapter: CategoryStatisticListAdapter? = null
@@ -33,7 +33,7 @@ class StatisticsFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragStatisticBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentStatisticBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

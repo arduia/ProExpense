@@ -71,7 +71,7 @@ class SchemaBackupSource @Inject constructor(
     }
 
     override suspend fun totalCountAll(): Int {
-        return 1
+        return 0
     }
 
     private fun getCurrentTable(): Table {

@@ -51,9 +51,9 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/btn_export_now"
-        style="?attr/materialButtonStyle"
+        style="@style/Widget.ProExpense.Button"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_button"
         android:layout_marginTop="@dimen/grid_4"
@@ -70,4 +70,3 @@
         app:layout_constraintVertical_bias="0.0"
         app:layout_goneMarginTop="@dimen/grid_3" />
 </androidx.constraintlayout.widget.ConstraintLayout>
-

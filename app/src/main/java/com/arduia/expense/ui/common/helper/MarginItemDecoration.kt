@@ -20,6 +20,7 @@ class MarginItemDecoration( private val spaceHeight: Int = 0,
              if(parent.getChildAdapterPosition(view) == 0){
                 when(isHorizontal){
                     false ->  top = spaceHeight
+                    true -> left = spaceHeight
                 }
              }
 

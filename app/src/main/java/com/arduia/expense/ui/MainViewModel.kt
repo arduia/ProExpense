@@ -1,5 +1,6 @@
 package com.arduia.expense.ui
 
+import android.icu.text.TimeZoneNames
 import androidx.lifecycle.*
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -43,6 +44,7 @@ class MainViewModel @Inject constructor(
     private fun startCheckAboutUpdateWork() {
         val checkVersionRequest = OneTimeWorkRequestBuilder<CheckAboutUpdateWorker>()
             .build()
+        Timber.d("Hilt Config: ${workManager.configuration.workerFactory}")
         workManager.enqueue(checkVersionRequest)
         Timber.d("startCheckUpdate")
     }

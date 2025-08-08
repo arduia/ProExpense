@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.arduia.expense.databinding.FragExportDialogBinding
+import com.arduia.expense.databinding.FragmentExportDialogBinding
 import com.arduia.expense.ui.MainHost
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ExportDialogFragment : BottomSheetDialogFragment(){
 
-    private lateinit var viewBinding: FragExportDialogBinding
+    private lateinit var viewBinding: FragmentExportDialogBinding
 
     @Inject
     lateinit var mainHost: MainHost
@@ -30,7 +30,7 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewBinding = FragExportDialogBinding.inflate(layoutInflater, container, false)
+        viewBinding = FragmentExportDialogBinding.inflate(layoutInflater, container, false)
 
         return viewBinding.root
     }

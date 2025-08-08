@@ -18,11 +18,10 @@
         <item name="cornerSize">0dp</item>
         <item name="cardCornerRadius">0dp</item>
         <item name="cardBackgroundColor">?attr/colorSurface</item>
-
     </style>
 
     <style name="Widget.ProExpense.IconButton" parent="Widget.MaterialComponents.Button">
-        <item name="tint">@color/darker_gray</item>
+        <item name="tint">?iconColor</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">center</item>
     </style>
@@ -30,6 +29,7 @@
     <style name="Widget.ProExpense.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:height">@dimen/height_button</item>
         <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textAppearance">@style/TextAppearance.ProExpense.Button</item>
     </style>
 
     <style name="TextAppearance.ProExpense.CurrencyLarge" parent="TextAppearance.MaterialComponents.Headline6">
@@ -67,6 +67,5 @@
         <item name="android:textSize">18sp</item>
         <item name="android:alpha">0.75</item>
     </style>
-
 
 </resources>

@@ -53,7 +53,7 @@ class ExcelBackup private constructor(private val sheets: List<BackupSheet<*>>) 
     private suspend fun importExcelData(book: Workbook): BackupResult<Int>{
         var count = BackupCountResult.empty()
         sheets.forEach { backupSheet ->
-            count = backupSheet.import(book)
+            count += backupSheet.import(book)
         }
         book.close()
         return count

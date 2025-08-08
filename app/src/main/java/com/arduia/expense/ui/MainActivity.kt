@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -16,7 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.arduia.core.lang.updateResource
 import com.arduia.expense.R
 import com.arduia.expense.data.SettingRepositoryFactoryImpl
-import com.arduia.expense.databinding.ActivMainBinding
+import com.arduia.expense.databinding.ActivityMainBinding
 import com.arduia.expense.databinding.LayoutHeaderBinding
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.di.TopDropNavOption
@@ -30,13 +31,14 @@ import kotlinx.coroutines.*
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import androidx.core.content.ContextCompat
 
 
 @AndroidEntryPoint
 class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
     MainHost, BackupMessageReceiver {
 
-    private lateinit var binding: ActivMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var headerBinding: LayoutHeaderBinding
 
@@ -70,7 +72,7 @@ class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(viewModel)
         setTheme(R.style.Theme_ProExpense)
-        binding = ActivMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         headerBinding = LayoutHeaderBinding.bind(binding.nvMain.getHeaderView(0))
         setContentView(binding.root)
         navController = findNavController()
@@ -103,7 +105,7 @@ class MainActivity @Inject constructor(): AppCompatActivity(), NavigationDrawer,
 
     private fun setupView() {
 
-        binding.fbMainAdd.setColorFilter(this.themeColor(R.attr.colorOnPrimary))
+        binding.fbMainAdd.setColorFilter(ContextCompat.getColor(this, R.color.white))
         binding.fbMainAdd.setOnClickListener {
             addBtnClickListener?.invoke()
         }
