@@ -24,7 +24,11 @@ abstract class BackupSheet<Entity>(private val source: BackupSource<Entity>) :
         } catch (ie: IllegalArgumentException) {
             throw BackupException("Data Type doesn't match", ie)
         }
-        return BackupCountResult(count)
+        return if(isExportCountEnable){
+            BackupCountResult(count)
+        }else{
+            BackupCountResult(0)
+        }
     }
 
     override suspend fun export(out: WritableWorkbook, index: Int): BackupResult<Int> {
@@ -76,28 +80,32 @@ abstract class BackupSheet<Entity>(private val source: BackupSource<Entity>) :
     }
 
     override suspend fun getItemCount(input: Workbook): Int {
-        val invalidCount = -1
-        val headerRowCount = 1
+        if(isExportCountEnable){
+            val invalidCount = -1
+            val headerRowCount = 1
 
-        val sheet = input.getSheet(sheetName)
-        val totalRowCount = sheet.rows
-        if (totalRowCount == 0) return invalidCount
+            val sheet = input.getSheet(sheetName)
+            val totalRowCount = sheet.rows
+            if (totalRowCount == 0) return invalidCount
 
-        val headerRow = sheet.getRow(0)
-        val fieldNameList = getFieldInfo().keys
-        var isValidSheet = true
+            val headerRow = sheet.getRow(0)
+            val fieldNameList = getFieldInfo().keys
+            var isValidSheet = true
 
-        try {
-            fieldNameList.forEachIndexed { position, fieldName ->
-                val labelCell = headerRow[position]
-                val isValidFieldName = (labelCell.contents == fieldName)
-                isValidSheet = isValidSheet && isValidFieldName
+            try {
+                fieldNameList.forEachIndexed { position, fieldName ->
+                    val labelCell = headerRow[position]
+                    val isValidFieldName = (labelCell.contents == fieldName)
+                    isValidSheet = isValidSheet && isValidFieldName
+                }
+            } catch (e: IndexOutOfBoundsException) {
+                return invalidCount
             }
-        } catch (e: IndexOutOfBoundsException) {
-            return invalidCount
+            if (isValidSheet.not()) return invalidCount
+            return (totalRowCount - headerRowCount)
+        }else{
+            return 0
         }
-        if (isValidSheet.not()) return invalidCount
-        return (totalRowCount - headerRowCount)
     }
 
     protected abstract val sheetName: String

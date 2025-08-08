@@ -1,8 +1,8 @@
 package com.arduia.expense.ui.common.category
 
 import android.content.Context
-import android.content.res.Resources
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.arduia.expense.R
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.CLOTHES
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.DONATION
@@ -15,9 +15,7 @@ import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.INCOME
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.OTHERS
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.SOCIAL
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.TRANSPORTATION
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.lang.Exception
 import javax.inject.Inject
 
 class ExpenseCategoryProviderImpl @Inject constructor(@ApplicationContext private val context: Context) :
@@ -40,29 +38,29 @@ class ExpenseCategoryProviderImpl @Inject constructor(@ApplicationContext privat
     }
 
     private fun getCategoryData() = mutableListOf<ExpenseCategory>().apply {
-        add(ExpenseCategory(INCOME, (R.string.income).res(), R.drawable.ic_income))
-        add(ExpenseCategory(FOOD, (R.string.food).res(), R.drawable.ic_food))
-        add(ExpenseCategory(HOUSING, (R.string.housing).res(), R.drawable.ic_household))
-        add(ExpenseCategory(SOCIAL, (R.string.social).res(), R.drawable.ic_social))
+        add(ExpenseCategory(INCOME, R.string.income, R.drawable.ic_income))
+        add(ExpenseCategory(FOOD, R.string.food, R.drawable.ic_food))
+        add(ExpenseCategory(HOUSING, R.string.housing, R.drawable.ic_household))
+        add(ExpenseCategory(SOCIAL, R.string.social, R.drawable.ic_social))
         add(
             ExpenseCategory(
                 ENTERTAINMENT,
-                (R.string.entertainment).res(),
+                R.string.entertainment,
                 R.drawable.ic_entertainment
             )
         )
         add(
             ExpenseCategory(
                 TRANSPORTATION,
-                (R.string.transportation).res(),
+                R.string.transportation,
                 R.drawable.ic_transportation
             )
         )
-        add(ExpenseCategory(CLOTHES, (R.string.clothes).res(), R.drawable.ic_clothes))
-        add(ExpenseCategory(HEALTH_CARE, (R.string.health_care).res(), R.drawable.ic_healthcare))
-        add(ExpenseCategory(EDUCATION, (R.string.education).res(), R.drawable.ic_education))
-        add(ExpenseCategory(DONATION, (R.string.donation).res(), R.drawable.ic_donation))
-        add(ExpenseCategory(OTHERS, (R.string.others).res(), R.drawable.ic_outcome))
+        add(ExpenseCategory(CLOTHES, R.string.clothes, R.drawable.ic_clothes))
+        add(ExpenseCategory(HEALTH_CARE, R.string.health_care, R.drawable.ic_healthcare))
+        add(ExpenseCategory(EDUCATION, R.string.education, R.drawable.ic_education))
+        add(ExpenseCategory(DONATION, R.string.donation, R.drawable.ic_donation))
+        add(ExpenseCategory(OTHERS, R.string.others, R.drawable.ic_outcome))
     }
 
     override fun getCategoryByID(id: Int): ExpenseCategory {
@@ -78,7 +76,8 @@ class ExpenseCategoryProviderImpl @Inject constructor(@ApplicationContext privat
 
 data class ExpenseCategory(
     val id: Int,
-    val name: String,
+    @StringRes
+    val nameId: Int,
     @DrawableRes val img: Int
 ) {
     companion object {

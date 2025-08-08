@@ -39,7 +39,7 @@ class CategoryAnalyzerImpl @Inject constructor(private val categoryProvider: Exp
             val category = categoryProvider.getCategoryByID(it.key)
             val percentage = calculatePercentage(it.value, total)
             return@map CategoryStatisticUiModel(
-                category.name,
+                category.nameId,
                 percentage,
                 "${decimalFormat.format(percentage)}%"
             )

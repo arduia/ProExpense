@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragFeedbackStatusDialogBinding
+import com.arduia.expense.databinding.FragmentFeedbackStatusDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class FeedbackStatusDialog : BottomSheetDialogFragment() {
 
-    private var _binding: FragFeedbackStatusDialogBinding? = null
+    private var _binding: FragmentFeedbackStatusDialogBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -19,7 +19,7 @@ class FeedbackStatusDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragFeedbackStatusDialogBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentFeedbackStatusDialogBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

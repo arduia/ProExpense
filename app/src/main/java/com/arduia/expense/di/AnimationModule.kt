@@ -20,8 +20,8 @@ object AnimationModule {
             .setEnterAnim(R.anim.expense_enter_left)
             .setPopExitAnim(R.anim.expense_exit_right)
             //For Home Fragment
-            .setExitAnim(R.anim.nav_default_exit_anim)
-            .setPopEnterAnim(R.anim.nav_default_enter_anim)
+            .setExitAnim(android.R.anim.fade_out)
+            .setPopEnterAnim(android.R.anim.fade_in)
             .setLaunchSingleTop(true)
             .build()
 
@@ -34,7 +34,7 @@ object AnimationModule {
             .setPopExitAnim(R.anim.pop_up_down)
             //For Home Fragment
             .setExitAnim(android.R.anim.fade_out)
-            .setPopEnterAnim(R.anim.nav_default_enter_anim)
+            .setPopEnterAnim(android.R.anim.fade_in)
             .setLaunchSingleTop(true)
             .build()
 

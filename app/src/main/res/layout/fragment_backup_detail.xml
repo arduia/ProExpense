@@ -86,9 +86,10 @@
         android:layout_marginStart="@dimen/grid_3"
         tools:text="100"/>
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/btn_import"
         app:icon="@drawable/ic_import"
+        style="@style/Widget.ProExpense.Button"
         app:iconGravity="textStart"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_button"

@@ -17,7 +17,7 @@
         android:layout_marginTop="@dimen/grid_3"
         android:layout_marginEnd="@dimen/grid_3"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_arrow_start" />
+        android:src="@drawable/ic_left" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imv_app_logo"

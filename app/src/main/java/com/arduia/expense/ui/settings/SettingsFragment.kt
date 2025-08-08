@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.arduia.expense.databinding.FragSettingsBinding
+import com.arduia.expense.databinding.FragmentSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.expense.ui.common.ext.restartActivity
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SettingsFragment: NavBaseFragment(){
 
-    private var _binding: FragSettingsBinding? = null
+    private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
     private var languageChooseDialog: ChooseLanguageDialog? = null
@@ -38,7 +38,7 @@ class SettingsFragment: NavBaseFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View  {
-        _binding =  FragSettingsBinding.inflate(layoutInflater, container, false)
+        _binding =  FragmentSettingsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -95,10 +95,6 @@ class SettingsFragment: NavBaseFragment(){
 
     override fun onDestroyView() {
         super.onDestroyView()
-        languageChooseDialog = null
-        currencyDialog = null
-        themeDialog = null
         _binding = null
-
     }
 }

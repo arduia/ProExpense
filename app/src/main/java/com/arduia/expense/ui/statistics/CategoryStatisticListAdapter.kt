@@ -20,7 +20,7 @@ class CategoryStatisticListAdapter(private val layoutInflater: LayoutInflater) :
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position)
         with(holder.binding) {
-            tvCategoryName.text = item.name
+            tvCategoryName.setText(item.nameId)
             tvProgress.text = item.progressText
             pvProgress.progress = item.progress
         }
@@ -44,7 +44,7 @@ private val DIFFER
             oldItem: CategoryStatisticUiModel,
             newItem: CategoryStatisticUiModel
         ): Boolean {
-            return (oldItem.name == newItem.name) and
+            return (oldItem.nameId == newItem.nameId) and
                     (oldItem.progress == newItem.progress) and
                     (oldItem.progressText == newItem.progressText)
         }

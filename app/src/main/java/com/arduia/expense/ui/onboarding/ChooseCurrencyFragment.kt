@@ -9,14 +9,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.arduia.core.extension.px
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragChooseCurrencyBinding
+import com.arduia.expense.databinding.FragmentChooseCurrencyBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChooseCurrencyFragment : Fragment() {
 
-    private lateinit var binding: FragChooseCurrencyBinding
+    private var _binding: FragmentChooseCurrencyBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: ChooseCurrencyViewModel by viewModels()
 
@@ -27,7 +28,7 @@ class ChooseCurrencyFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragChooseCurrencyBinding.inflate(layoutInflater)
+        _binding = FragmentChooseCurrencyBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -59,6 +60,11 @@ class ChooseCurrencyFragment : Fragment() {
             adapter.submitList(it)
             binding.tvNoItem.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

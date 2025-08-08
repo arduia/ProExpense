@@ -19,6 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-dontobfuscate
+-keep class com.arduia.expense.data.local.** { *; }
+
 -keepnames class androidx.lifecycle.ViewModel
 -keepclassmembers public class * extends androidx.lifecycle.ViewModel { public <init>(...); }
 -keepclassmembers class * { public <init>(...); }

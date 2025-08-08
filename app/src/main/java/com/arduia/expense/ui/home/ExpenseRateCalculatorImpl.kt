@@ -3,7 +3,6 @@ package com.arduia.expense.ui.home
 import com.arduia.expense.data.local.ExpenseEnt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
@@ -12,19 +11,18 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
 
     private val mCalendar = Calendar.getInstance()
 
-    private val expenseListCH = ConflatedBroadcastChannel<List<ExpenseEnt>>()
+    private val expenseListFlow = MutableStateFlow<List<ExpenseEnt>>(emptyList())
 
-    private val ratesMapCH = ConflatedBroadcastChannel<Map<Int, Int>>()
+    private val ratesMapFlow = MutableStateFlow<Map<Int, Int>>(emptyMap())
 
-    override fun getRates(): Flow<Map<Int, Int>> = ratesMapCH.asFlow()
+    override fun getRates(): Flow<Map<Int, Int>> = ratesMapFlow.asStateFlow()
 
     init {
         observeExpenseList()
     }
 
     private fun observeExpenseList() {
-        expenseListCH.asFlow()
-            .flowOn(Dispatchers.IO)
+        expenseListFlow.asStateFlow()
             .onEach {
                 val dailyCosts = it.getDailyCosts()
                 val maxCost = dailyCosts.maxOfOrNull { cost -> cost.value }?: 0f
@@ -34,7 +32,7 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
                     val rateOfDay = (costOfDay.toDouble() / maxCost) * 100
                     result[count] = rateOfDay.toInt()
                 }
-                ratesMapCH.trySend(result)
+                ratesMapFlow.value = result
             }
             .launchIn(scope)
     }
@@ -50,7 +48,7 @@ class ExpenseRateCalculatorImpl(private val scope: CoroutineScope) : ExpenseRate
     }
 
     override suspend fun setWeekExpenses(list: List<ExpenseEnt>) {
-        expenseListCH.trySend(list)
+        expenseListFlow.value = list
     }
 
 }

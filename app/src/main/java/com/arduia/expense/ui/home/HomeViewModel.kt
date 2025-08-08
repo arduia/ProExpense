@@ -1,27 +1,41 @@
 package com.arduia.expense.ui.home
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.di.CurrencyDecimalFormat
 import com.arduia.expense.di.MonthlyDateRange
-import com.arduia.expense.model.*
-import com.arduia.expense.ui.common.*
+import com.arduia.expense.model.Result
+import com.arduia.expense.model.SuccessResult
+import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.common.category.ExpenseCategory
+import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
-import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.expense.ui.expenselogs.ExpenseUiModel
-import com.arduia.mvvm.*
+import com.arduia.mvvm.BaseLiveData
+import com.arduia.mvvm.EventLiveData
+import com.arduia.mvvm.EventUnit
+import com.arduia.mvvm.event
+import com.arduia.mvvm.post
+import com.arduia.mvvm.set
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import timber.log.Timber
 import java.text.NumberFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -120,28 +134,12 @@ class HomeViewModel @Inject constructor(
         repo.getWeekExpenses()
             .flowOn(Dispatchers.IO)
             .onEach {
+                Timber.d("Home, expenses: $it")
                 when (it) {
                     is Result.Loading -> Unit
                     is Result.Error -> _onError post EventUnit
                     is Result.Success -> {
-
-                        val weekExpenses = it.data
-                        calculator.setWeekExpenses(weekExpenses.filter { expenseEnt -> expenseEnt.category != ExpenseCategory.INCOME })
-
-                        val totalOutcome = weekExpenses.getTotalOutcomeAsync()
-                        val totalIncome = weekExpenses.getTotalIncomeAsync()
-
-                        val weekOutcome = currencyFormatter.format(totalOutcome.await())
-                        val weekIncome = currencyFormatter.format(totalIncome.await())
-                        val dateRange = _currentWeekDateRange.value ?: ""
-                        val currencySymbol =
-                            currencyRepository.getSelectedCacheCurrency().awaitValueOrError().code
-                        _incomeOutcomeData post IncomeOutcomeUiModel(
-                            weekIncome,
-                            weekOutcome,
-                            currencySymbol,
-                            dateRange
-                        )
+                        updateIncomeOutcome(it.data)
                     }
                 }
             }
@@ -155,6 +153,44 @@ class HomeViewModel @Inject constructor(
                 _recentData post data.map(mapper::map)
             }
             .launchIn(viewModelScope)
+    }
+
+    private suspend fun updateIncomeOutcome(weekExpenses: List<ExpenseEnt>){
+        calculator.setWeekExpenses(weekExpenses.filter {
+                expenseEnt -> expenseEnt.category != ExpenseCategory.INCOME
+        })
+
+        val totalOutcome = weekExpenses.getTotalOutcomeAsync()
+        val totalIncome = weekExpenses.getTotalIncomeAsync()
+
+        val weekOutcome = currencyFormatter.format(totalOutcome.await())
+        val weekIncome = currencyFormatter.format(totalIncome.await())
+        val dateRange = _currentWeekDateRange.value ?: ""
+        val currencySymbol =
+            currencyRepository.getSelectedCacheCurrency().awaitValueOrError().code
+
+        _incomeOutcomeData post IncomeOutcomeUiModel(
+            weekIncome,
+            weekOutcome,
+            currencySymbol,
+            dateRange
+        )
+    }
+
+    fun updateRecentData(){
+        viewModelScope.launch(Dispatchers.IO){
+            val data = (repo.getRecentExpenseSync() as? SuccessResult)?.data ?: return@launch
+            val mapper = expenseVoMapperFactory.create {
+                currencySymbol.value ?: ""
+            }
+            _recentData post data.map(mapper::map)
+        }
+
+        viewModelScope.launch(Dispatchers.IO){
+            val data = (repo.getWeekExpensesSync() as? SuccessResult)?.data ?: return@launch
+            updateIncomeOutcome(data)
+        }
+
     }
 
     private fun List<ExpenseEnt>.getTotalOutcomeAsync() = viewModelScope.async {

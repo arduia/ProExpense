@@ -55,23 +55,25 @@ class BackupMessageViewModel @Inject constructor(private val workManager: WorkMa
         }
     }
 
-    private fun collectTaskMessageFlow(flow: Flow<WorkInfo>){
+    private fun collectTaskMessageFlow(flow: Flow<WorkInfo?>){
         viewModelScope.launch(Dispatchers.IO){
             flow.collectLatest(workInfoListener)
         }
     }
 
-    private val workInfoListener: suspend (WorkInfo) -> Unit = {
+    private val workInfoListener: suspend (WorkInfo?) -> Unit = {
+        if(it != null){
 
-        val isFinished = isWorkFinished(it)
-        Timber.d("isFinished $isFinished $it")
-        if(isFinished){
-            val count = getTotalItemCount(it)
-            val isValidCount = (count > -1)
-            if(isValidCount){
-                _finishedEvent post event(count)
+            val isFinished = isWorkFinished(it)
+            Timber.d("isFinished $isFinished $it")
+            if(isFinished){
+                val count = getTotalItemCount(it)
+                val isValidCount = (count > -1)
+                if(isValidCount){
+                    _finishedEvent post event(count)
+                }
+                removeTaskID(it.id)
             }
-            removeTaskID(it.id)
         }
 
     }

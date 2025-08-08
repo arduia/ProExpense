@@ -131,5 +131,7 @@
     <string name="desc">ကြီးစဉ်ငယ်</string>
     <string name="totals">စုစုပေါင်း</string>
     <string name="acknowledgement_title">Acknowledgement</string>
+    <string name="okay">အိုကေ</string>
+    <string name="repeat_entry">နောက်ထပ်ထည့်မည်</string>
 
 </resources>

@@ -129,5 +129,7 @@
     <string name="totals">Totals</string>
     <string name="acknowledgement_title">Acknowledgement</string>
     <string name="recent">Recent</string>
+    <string name="okay">Okay</string>
+    <string name="repeat_entry">Repeat Entry</string>
 </resources>
 

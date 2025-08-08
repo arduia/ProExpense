@@ -3,29 +3,25 @@ package com.arduia.expense.ui.entry
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
-import com.arduia.expense.ui.MainHost
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragExpenseEntryBinding
-import com.arduia.expense.ui.common.*
+import com.arduia.expense.databinding.FragmentExpenseEntryBinding
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
-import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
+import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -33,13 +29,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExpenseEntryFragment : Fragment() {
 
-    private var _binding: FragExpenseEntryBinding? = null
+    private var _binding: FragmentExpenseEntryBinding? = null
     private val binding get() = _binding!!
 
     private val args: ExpenseEntryFragmentArgs by navArgs()
@@ -60,8 +58,8 @@ class ExpenseEntryFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragExpenseEntryBinding.inflate(layoutInflater, container, false)
+    ): View? {
+        _binding = FragmentExpenseEntryBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -113,8 +111,11 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun setupLockButton() {
-        binding.cvLock.setOnClickListener {
-            viewModel.invertLockMode()
+        binding.switchRepeat.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setLockMode(isChecked)
+        }
+        binding.rlRepeat.setOnClickListener {
+            viewModel.setLockMode(!binding.switchRepeat.isChecked)
         }
     }
 
@@ -137,7 +138,7 @@ class ExpenseEntryFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        hideInputKeyboard()
+        _binding = null
     }
 
     private fun setupCategoryListView() {
@@ -154,6 +155,7 @@ class ExpenseEntryFragment : Fragment() {
                 R.id.calendar -> {
                     viewModel.onDateSelect()
                 }
+
                 R.id.time -> {
                     viewModel.onTimeSelect()
                 }
@@ -206,6 +208,7 @@ class ExpenseEntryFragment : Fragment() {
         viewModel.onNext.observe(viewLifecycleOwner, EventObserver {
             cleanUi()
             focusOnName()
+            selectFirstCategory()
             showItemSaved()
         })
     }
@@ -224,25 +227,16 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun observeOnLockMode() {
         viewModel.lockMode.observe(viewLifecycleOwner) {
-            //Replace with Drawable State Lists
             when (it) {
-
                 LockMode.LOCKED -> {
-                    binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorPrimary))
-                    binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorOnPrimary))
+                    binding.switchRepeat.isChecked = true
                     binding.btnSave.text = getString(R.string.next)
                 }
 
                 LockMode.UNLOCK -> {
-                    binding.cvLock.backgroundTintList =
-                        ColorStateList.valueOf(requireContext().themeColor(R.attr.colorSurface))
-                    binding.imvLock.imageTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.dark_gray))
+                    binding.switchRepeat.isChecked = false
                     binding.btnSave.text = getString(R.string.save)
                 }
-
             }
         }
     }
@@ -257,6 +251,14 @@ class ExpenseEntryFragment : Fragment() {
 
     private fun focusOnName() {
         binding.edtName.requestFocus()
+    }
+
+    private fun selectFirstCategory(){
+        val categoryList = categoryProvider.getCategoryList()
+        if(categoryList.isEmpty()) return
+        viewModel.selectCategory(
+            categoryList.first()
+        )
     }
 
     private fun observeEntryModeEvent() {
@@ -334,8 +336,9 @@ class ExpenseEntryFragment : Fragment() {
         btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
         viewModel.setCurrentExpenseId(args.expenseId)
-        binding.cvLock.isEnabled = false
-        binding.cvLock.visibility = View.GONE
+        binding.switchRepeat.isChecked = false
+        binding.switchRepeat.visibility = View.GONE
+        binding.tvRepeat.visibility = View.GONE
     }
 
     private fun changeToSaveMode() = with(binding) {
@@ -344,7 +347,8 @@ class ExpenseEntryFragment : Fragment() {
         btnSave.setOnClickListener { saveData() }
         edtName.requestFocus()
         setInitialDefaultCategory()
-        binding.cvLock.visibility = View.VISIBLE
+        binding.switchRepeat.visibility = View.VISIBLE
+        binding.tvRepeat.visibility = View.VISIBLE
     }
 
     private fun setInitialDefaultCategory() {

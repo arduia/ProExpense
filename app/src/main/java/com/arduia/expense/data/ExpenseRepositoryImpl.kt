@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.exp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ExpenseRepositoryImpl @Inject constructor(
     private val expenseDao: ExpenseDao
@@ -23,11 +25,15 @@ class ExpenseRepositoryImpl @Inject constructor(
 
 
     override suspend fun insertExpense(expenseEnt: ExpenseEnt) {
-        expenseDao.insertExpense(expenseEnt)
+        withContext(Dispatchers.IO) {
+            expenseDao.insertExpense(expenseEnt)
+        }
     }
 
     override suspend fun insertExpenseAll(expenses: List<ExpenseEnt>) {
-        expenseDao.insertExpenseAll(expenses)
+        withContext(Dispatchers.IO) {
+            expenseDao.insertExpenseAll(expenses)
+        }
     }
 
     override fun getExpenseAll(): FlowResult<List<ExpenseEnt>> {
@@ -83,13 +89,21 @@ class ExpenseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getExpenseAllSync(): Result<List<ExpenseEnt>> {
-        return getResultSuccessOrError { expenseDao.getExpenseAllSync() }
+        return withContext(Dispatchers.IO) {
+            getResultSuccessOrError { expenseDao.getExpenseAllSync() }
+        }
     }
 
     override fun getRecentExpense(): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getRecentExpense()
             .map { SuccessResult(it) }
             .catch { ErrorResult(RepositoryException(it)) }
+    }
+
+    override suspend fun getRecentExpenseSync(): Result<List<ExpenseEnt>> {
+        return withContext(Dispatchers.IO) {
+            getResultSuccessOrError { expenseDao.getRecentExpenseSync() }
+        }
     }
 
     override fun getExpenseTotalCount(): FlowResult<Int> {
@@ -99,26 +113,34 @@ class ExpenseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getExpenseTotalCountSync(): Result<Int> {
-        return try {
-            SuccessResult(expenseDao.getExpenseTotalCountSync())
-        } catch (e: Exception) {
-            ErrorResult(e)
+        return withContext(Dispatchers.IO) {
+            try {
+                SuccessResult(expenseDao.getExpenseTotalCountSync())
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
         }
     }
 
     override suspend fun getMostRecentDateSync(): Result<Long> {
-        return try {
-            SuccessResult(expenseDao.getMostRecentDateSync())
-        } catch (e: Exception) {
-            ErrorResult(e)
+        return withContext(Dispatchers.IO) {
+            try {
+                val date = expenseDao.getMostRecentDateSync()
+                SuccessResult(date ?: System.currentTimeMillis())
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
         }
     }
 
     override suspend fun getMostLatestDateSync(): Result<Long> {
-        return try {
-            SuccessResult(expenseDao.getMostLatestDateSync())
-        } catch (e: Exception) {
-            ErrorResult(e)
+        return withContext(Dispatchers.IO) {
+            try {
+                val date = expenseDao.getMostLatestDateSync()
+                SuccessResult(date ?: System.currentTimeMillis())
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
         }
     }
 
@@ -135,20 +157,30 @@ class ExpenseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateExpense(expenseEnt: ExpenseEnt) {
-        expenseDao.updateExpense(expenseEnt)
+        withContext(Dispatchers.IO) {
+            expenseDao.updateExpense(expenseEnt)
+        }
     }
 
     override suspend fun deleteExpense(expenseEnt: ExpenseEnt) {
-        expenseDao.deleteExpense(expenseEnt)
+        withContext(Dispatchers.IO) {
+            expenseDao.deleteExpense(expenseEnt)
+        }
     }
 
     override suspend fun deleteExpenseById(id: Int) {
-        expenseDao.deleteExpenseRowById(id)
+        withContext(Dispatchers.IO) {
+            expenseDao.deleteExpenseRowById(id)
+        }
     }
 
     override suspend fun deleteAllExpense(list: List<Int>) {
-        expenseDao.deleteExpenseByIDs(list)
+        withContext(Dispatchers.IO) {
+            expenseDao.deleteExpenseByIDs(list)
+        }
     }
+
+
 
     override fun getWeekExpenses(): FlowResult<List<ExpenseEnt>> {
         return expenseDao.getWeekExpense(getWeekStartTime())
@@ -156,6 +188,16 @@ class ExpenseRepositoryImpl @Inject constructor(
             .catch { ErrorResult(RepositoryException(it)) }
     }
 
+    override suspend fun getWeekExpensesSync(): Result<List<ExpenseEnt>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val date = expenseDao.getWeekExpenseSync(getWeekStartTime())
+                SuccessResult(date)
+            } catch (e: Exception) {
+                ErrorResult(e)
+            }
+        }
+    }
 
     private fun getWeekStartTime(): Long {
 

@@ -16,7 +16,7 @@ import com.google.android.material.card.MaterialCardView
 class MaterialSearchBox @JvmOverloads constructor(
     ctx: Context,
     attrs: AttributeSet? = null,
-    defStyleRes: Int = R.attr.materialCardViewStyle
+    defStyleRes: Int = com.google.android.material.R.attr.materialCardViewStyle
 ) : MaterialCardView(ctx, attrs, defStyleRes) {
 
     private val searchBoxMargin = px(16)
