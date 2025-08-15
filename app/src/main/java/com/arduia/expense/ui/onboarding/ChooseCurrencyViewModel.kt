@@ -72,8 +72,8 @@ class ChooseCurrencyViewModel @Inject constructor(
 
                     val filterList = currencyResult.data.filter {
                         val tmp =
-                            it.toString().toLowerCase(Locale.ENGLISH)
-                                .indexOf(search.toLowerCase(Locale.ENGLISH))
+                            it.toString().lowercase(Locale.ENGLISH)
+                                .indexOf(search.lowercase(Locale.ENGLISH))
 
                         return@filter (tmp != -1)
                     }

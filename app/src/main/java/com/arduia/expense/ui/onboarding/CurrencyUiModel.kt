@@ -8,7 +8,7 @@ data class CurrencyUiModel(
     val name: String,
     val symbol: String,
     val number: String,
-    @IntVisibility
+    @param:IntVisibility
     val isSelectionVisible: Int
 )
 

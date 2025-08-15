@@ -64,8 +64,8 @@ class ChooseLanguageViewModel @Inject constructor(
                 langRep.getAvailableLanguages()
                     .filter {
                         if (searchKey.isEmpty()) return@filter true
-                        it.name.toLowerCase(Locale.ROOT)
-                            .contains(searchKey.toLowerCase(Locale.ROOT))
+                        it.name.lowercase(Locale.ROOT)
+                            .contains(searchKey.lowercase(Locale.ROOT))
                     }
                     .map {
                         if (selectedId == it.id) return@map LanguageUiModel(

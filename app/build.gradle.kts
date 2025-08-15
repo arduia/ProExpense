@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByName
 import java.util.Properties
 import java.io.FileInputStream
 
@@ -7,7 +10,10 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.navigation.safe.args)
+    alias(libs.plugins.google.service.plugin)
+    alias(libs.plugins.firebase.analytics)
 }
 
 val apiProfile = rootProject.file("api.properties")
@@ -73,6 +79,20 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+    flavorDimensions += "environment"
+
+    productFlavors {
+
+        create("dev") {
+            dimension = "environment"
+            applicationId = "com.arduia.expense.dev"
+        }
+
+        create("production") {
+            dimension = "environment"
+            applicationId = "com.arduia.expense"
         }
     }
 
@@ -150,6 +170,11 @@ dependencies {
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.androidx.test.ext)
     testImplementation(libs.espresso.core)
+
+    //Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     // Fragment Testing
     debugImplementation(libs.fragment.testing)

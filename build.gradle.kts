@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.navigation.safe.args) apply false
+    alias(libs.plugins.google.service.plugin) apply false
+    alias(libs.plugins.firebase.analytics) apply false
 }
 
 tasks.register("clean", Delete::class) {
