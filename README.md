@@ -11,9 +11,9 @@ A simple free finance note to safely record daily expenses
 
 <table align="center">
        <tr>
-          <td><img src="https://github.com/arduia/ProExpense/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="220"></td>
-          <td><img src="https://github.com/arduia/ProExpense/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="220"></td>
-          <td><img src="https://github.com/arduia/ProExpense/blob/master/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="220"></td>
+          <td><img src="https://github.com/arduia/ProExpense/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="220"></td>
        </tr>
  </table>
  
@@ -25,14 +25,11 @@ A simple free finance note to safely record daily expenses
 <a href="https://play.google.com/store/apps/details?id=com.arduia.expense">
 <img src="https://cdn.jsdelivr.net/gh/steverichey/google-play-badge-svg/img/en_get.svg"  width="170">
 </a> 
-<a href="https://appgallery.huawei.com/#/app/C102892875">
-<img src="https://huaweimobileservices.com/wp-content/uploads/2019/12/AppGallery_DownlaodBadge_ENG.png"  width="170">
-</a> 
 <a href="https://f-droid.org/en/packages/com.arduia.expense">
-<img src="https://gitlab.com/fdroid/artwork/-/raw/master/badge/get-it-on.png"  width="160" >
+<img src="https://f-droid.org/badge/get-it-on.png"  width="170" >
 </a>
 <a href="https://www.amazon.com/dp/B08HZFQQ3L">
-<img src="https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-appstore-badge-english-black.png"  width="160" >
+<img src="https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-appstore-badge-english-black.png"  width="150" >
 </a>
 
 ## Key priorities
