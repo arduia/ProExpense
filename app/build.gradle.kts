@@ -148,6 +148,9 @@ dependencies {
     // Hilt integration
     implementation(libs.hilt.navigation.compose)
 
+    // Design System
+    implementation(project(":design-system"))
+
     // Tooling (debug only)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
