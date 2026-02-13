@@ -73,3 +73,9 @@ val expensePurple = Color(0xFF9C27B0)
 val expenseTeal = Color(0xFF009688)
 val expensePink = Color(0xFFE91E63)
 val expenseIndigo = Color(0xFF3F51B5)
+
+// UI Component specific colors
+val category_icon_background = Color(0xFFB3E5FC)
+val category_icon_tint = Color(0xFF424242)
+val statistic_progress_blue = Color(0xFF03A9F4)
+val divider_color = Color(0x14000000) // 8% Black

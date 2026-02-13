@@ -86,9 +86,26 @@ Most screens follow a standard **CoordinatorLayout** pattern:
     - Background: `@color/gray_200`.
     - Corner Radius: `@dimen/grid_2` (or similar).
 
-## 🛠 Custom Views
+## 🛠 Custom Views (Legacy to be Migrated)
 | Component | Class | XML Usage | Notes |
 |-----------|-------|-----------|-------|
 | **Swipe Layout** | `SwipeFrameLayout` | `<com.arduia...SwipeFrameLayout>` | Handles swipe gestures for list items. |
 | **Spend Graph** | `SpendGraph` | `<com.arduia.graph.SpendGraph>` | Draws weekly expense charts. |
 | **Search Box** | `MaterialSearchBox` | `<com.arduia...MaterialSearchBox>` | Encapsulated search UI logic. |
+
+## 🚀 Reusable Jetpack Compose Components (Created)
+
+| Component | File | XML Equivalent |
+| :--- | :--- | :--- |
+| **StandardCard** | `StandardCard.kt` | `MaterialCardView` |
+| **CategoryIcon** | `CategoryIcon.kt` | `MaterialCardView` (Circular) |
+| **ProSearchBox** | `ProSearchBox.kt` | `layout_search_box.xml` |
+| **ExpenseLogItem** | `ExpenseLogItem.kt` | `item_expense_log.xml` |
+| **IncomeOutcomeCard** | `IncomeOutcomeCard.kt` | `layout_expense_in_out.xml` |
+| **CategoryGridItem** | `CategoryGridItem.kt` | `item_category.xml` |
+| **CategoryStatisticItem** | `CategoryStatisticItem.kt` | `item_category_statistic.xml` |
+| **BackupItem** | `BackupItem.kt` | `item_backup.xml` |
+| **SettingsItem** | `SettingsItem.kt` | `fragment_settings.xml` (row) |
+| **SelectionItem** | `SelectionItem.kt` | `item_language.xml`, `item_currency.xml` |
+| **DateHeader** | `DateHeader.kt` | `item_expense_date_header.xml` |
+| **EmptyState** | `EmptyState.kt` | `layout_no_expense_logs.xml` |
