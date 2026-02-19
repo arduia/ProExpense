@@ -49,7 +49,6 @@ import com.arduia.expense.R
 import com.arduia.expense.ui.about.molecule.AboutEvent
 import com.arduia.expense.ui.about.molecule.AboutState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.TextButton
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -151,7 +150,7 @@ fun AboutScreen(
                 // Update Status
                 if (state.isNewVersionAvailable) {
                      AboutListItem(
-                        text = stringResource(id = R.string.new_version_available),
+                        text = stringResource(id = R.string.update_available),
                         onClick = { onEvent(AboutEvent.OpenUpdateInfo) }
                     )
                 }
@@ -183,7 +182,7 @@ fun AboutScreen(
                     onClick = onContributeClick
                 )
                 
-                HorizontalDivider(color = Color.LightGray.copy(alpha = 0.2f))
+                Divider(color = Color.LightGray.copy(alpha = 0.5f))
 
                 // Acknowledgement Title
                 Text(
@@ -225,7 +224,7 @@ fun AboutListItem(
             .fillMaxWidth()
             .clickable(onClick = onClick)
     ) {
-        HorizontalDivider(color = Color.LightGray.copy(alpha = 0.2f))
+        Divider(color = Color.LightGray.copy(alpha = 0.5f))
         Row(
             modifier = Modifier
                 .fillMaxWidth()

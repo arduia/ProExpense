@@ -13,7 +13,7 @@ abstract class MoleculeViewModel<Event, State> : ViewModel() {
     private val events = Channel<Event>(Channel.UNLIMITED)
 
     val state: StateFlow<State> by lazy {
-        viewModelScope.launchMolecule(mode = RecompositionMode.ContextClock) {
+        viewModelScope.launchMolecule(mode = RecompositionMode.Immediate) {
             present(events.receiveAsFlow())
         }
     }

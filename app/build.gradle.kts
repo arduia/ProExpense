@@ -170,6 +170,8 @@ dependencies {
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.androidx.test.ext)
     testImplementation(libs.espresso.core)
+    testImplementation(libs.turbine)
+    testImplementation(libs.truth)
 
     //Firebase
     implementation(platform(libs.firebase.bom))
@@ -276,4 +278,5 @@ dependencies {
     // Hilt Testing for Android Tests
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.mockito.kotlin)
 } 

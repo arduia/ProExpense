@@ -1,7 +1,7 @@
 [versions]
 # Android
 compileSdk = "36"
-targetSdk = "36"
+targetSdk = "33"
 minSdk = "24"
 kotlin = "2.2.0"
 core-ktx = "1.17.0"
@@ -38,6 +38,8 @@ navigation-testing = "2.7.5"
 mockk = "1.13.8"
 hilt-testing = "2.48"
 molecule = "2.0.0"
+turbine = "1.0.0"
+truth = "1.1.5"
 
 # Libraries
 gson = "2.8.6"
@@ -98,7 +100,6 @@ compose-material3-window-size = { group = "androidx.compose.material3", name = "
 
 # Foundation and Animation
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 compose-animation = { group = "androidx.compose.animation", name = "animation" }
 
 # Molecule
@@ -135,6 +136,8 @@ navigation-testing = { group = "androidx.navigation", name = "navigation-testing
 # MockK
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 
 # Hilt Testing
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-testing" }

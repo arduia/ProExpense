@@ -41,6 +41,7 @@ class MainViewModelTest {
     private lateinit var settingsRepository: SettingsRepository
     private lateinit var currencyRepository: CurrencyRepository
     private lateinit var workManager: WorkManager
+    private lateinit var mapper: com.arduia.core.arch.Mapper<com.arduia.expense.data.local.AboutUpdateDataModel, com.arduia.expense.ui.about.AboutUpdateUiModel>
 
     private lateinit var viewModel: MainViewModel
     private lateinit var lifecycle: LifecycleRegistry
@@ -56,8 +57,12 @@ class MainViewModelTest {
         
         // Setup default mock behaviors
         every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(Result.Success("840"))
+        // Fix: Mock getUpdateStatus which is called in init
+        every { settingsRepository.getUpdateStatus() } returns flowOf(Result.Success(com.arduia.expense.data.local.UpdateStatusDataModel.STATUS_NO_UPDATE))
         coEvery { currencyRepository.setSelectedCacheCurrency(any()) } just Runs
         every { workManager.enqueue(any<OneTimeWorkRequest>()) } returns mockk()
+        
+        mapper = mockk(relaxed = true)
     }
 
     @After
@@ -82,7 +87,9 @@ class MainViewModelTest {
         every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(successResult)
 
         // When
-        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
+        // When
+        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager, mapper)
+        advanceUntilIdle() // Wait for all coroutines to complete
         advanceUntilIdle() // Wait for all coroutines to complete
 
         // Then
@@ -97,7 +104,9 @@ class MainViewModelTest {
         every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(errorResult)
 
         // When
-        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
+        // When
+        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager, mapper)
+        advanceUntilIdle() // Wait for all coroutines to complete
         advanceUntilIdle() // Wait for all coroutines to complete
 
         // Then
@@ -113,7 +122,9 @@ class MainViewModelTest {
         every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(loadingResult)
 
         // When
-        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
+        // When
+        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager, mapper)
+        advanceUntilIdle() // Wait for all coroutines to complete
         advanceUntilIdle() // Wait for all coroutines to complete
 
         // Then
@@ -128,7 +139,8 @@ class MainViewModelTest {
         every { settingsRepository.getSelectedCurrencyNumber() } returns flowOf(Result.Success("840"))
         
         // When
-        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager)
+        // When
+        viewModel = MainViewModel(settingsRepository, currencyRepository, workManager, mapper)
         val observer = viewModel as? androidx.lifecycle.LifecycleObserver
 
         // Then
