@@ -141,6 +141,9 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.compose.animation)
 
+    // Molecule
+    implementation(libs.molecule.runtime)
+
     // Activity and Navigation
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)

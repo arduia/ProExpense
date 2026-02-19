@@ -37,6 +37,7 @@ fragment-testing = "1.6.2"
 navigation-testing = "2.7.5"
 mockk = "1.13.8"
 hilt-testing = "2.48"
+molecule = "2.0.0"
 
 # Libraries
 gson = "2.8.6"
@@ -97,7 +98,11 @@ compose-material3-window-size = { group = "androidx.compose.material3", name = "
 
 # Foundation and Animation
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 compose-animation = { group = "androidx.compose.animation", name = "animation" }
+
+# Molecule
+molecule-runtime = { group = "app.cash.molecule", name = "molecule-runtime", version.ref = "molecule" }
 
 # Activity and Navigation
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
