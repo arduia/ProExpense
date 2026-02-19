@@ -63,6 +63,7 @@ firebasePlugin = "4.4.3"
 firebase-bom = "31.3.0"
 firebaseFireStore = "24.11.0"
 firebaseCrashlytics = "3.0.2"
+runtimeLivedata = "1.10.2"
 
 [libraries]
 # Android
@@ -194,6 +195,7 @@ leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-and
 progressview = { group = "com.github.skydoves", name = "progressview", version.ref = "progressview" }
 flow-preferences = { group = "com.github.tfcporciuncula.flow-preferences", name = "flow-preferences", version.ref = "flow-preferences" }
 mvvm-core = { group = "com.github.arduia", name = "mvvm-core", version.ref = "mvvm-core" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.12.0" }

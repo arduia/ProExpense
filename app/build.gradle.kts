@@ -125,6 +125,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
+    implementation(libs.androidx.runtime.livedata)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
