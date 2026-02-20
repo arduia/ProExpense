@@ -209,6 +209,7 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+    implementation(libs.room.paging)
 
     // Coroutines
     implementation(libs.coroutines.core)
@@ -247,6 +248,7 @@ dependencies {
 
     // Paging
     implementation(libs.paging.runtime.ktx)
+    implementation(libs.paging.compose)
 
     // Work
     implementation(libs.work.runtime)

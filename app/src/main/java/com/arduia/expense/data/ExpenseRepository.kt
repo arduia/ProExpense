@@ -1,7 +1,6 @@
 package com.arduia.expense.data
 
-import androidx.paging.DataSource
-import androidx.room.Query
+import androidx.paging.PagingSource
 import com.arduia.expense.data.local.DateRangeDataModel
 import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.data.network.ExpenseVersionDto
@@ -19,7 +18,7 @@ interface ExpenseRepository {
 
     fun getExpense(id: Int): FlowResult<ExpenseEnt>
 
-    fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt>
+    fun getExpenseSourceAll(): PagingSource<Int, ExpenseEnt>
 
     fun getExpenseAll(): FlowResult<List<ExpenseEnt>>
 
@@ -45,9 +44,9 @@ interface ExpenseRepository {
 
     fun getExpenseRangeDesc(startTime: Long, endTime: Long, offset: Int, limit: Int): FlowResult<List<ExpenseEnt>>
 
-    fun getExpenseRangeAscSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
+    fun getExpenseRangeAscSource(startTime: Long, endTime: Long, offset: Int, limit: Int): PagingSource<Int, ExpenseEnt>
 
-    fun getExpenseRangeDescSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
+    fun getExpenseRangeDescSource(startTime: Long, endTime: Long, offset: Int, limit: Int): PagingSource<Int, ExpenseEnt>
 
     suspend fun updateExpense(expenseEnt: ExpenseEnt)
 

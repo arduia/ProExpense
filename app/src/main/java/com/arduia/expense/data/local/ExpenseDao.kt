@@ -1,6 +1,6 @@
 package com.arduia.expense.data.local
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.arduia.expense.model.Result
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +15,7 @@ interface ExpenseDao{
     fun insertExpenseAll(expenses: List<ExpenseEnt>): List<Long>
 
     @Query ( "SELECT * FROM `expense` ORDER BY modified_date DESC" )
-    fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt>
+    fun getExpenseSourceAll(): PagingSource<Int, ExpenseEnt>
 
     @Query ( "SELECT * FROM `expense` ORDER BY modified_date DESC" )
     fun getExpenseAll(): Flow<List<ExpenseEnt>>
@@ -30,10 +30,10 @@ interface ExpenseDao{
     fun getExpenseRangeDesc(startTime: Long, endTime: Long, offset: Int, limit: Int): Flow<List<ExpenseEnt>>
 
     @Query("SELECT * FROM `expense` WHERE modified_date >= :startTime AND modified_date <= :endTime ORDER BY modified_date ASC LIMIT :limit OFFSET :offset")
-    fun getExpenseRangeAscSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
+    fun getExpenseRangeAscSource(startTime: Long, endTime: Long, offset: Int, limit: Int): PagingSource<Int, ExpenseEnt>
 
     @Query("SELECT * FROM `expense` WHERE modified_date >= :startTime AND modified_date <= :endTime ORDER BY modified_date DESC LIMIT :limit OFFSET :offset")
-    fun getExpenseRangeDescSource(startTime: Long, endTime: Long, offset: Int, limit: Int): DataSource.Factory<Int, ExpenseEnt>
+    fun getExpenseRangeDescSource(startTime: Long, endTime: Long, offset: Int, limit: Int): PagingSource<Int, ExpenseEnt>
 
     @Query("SELECT * FROM `expense` WHERE expense_id =:id")
     fun getItemExpense(id: Int): Flow<ExpenseEnt>

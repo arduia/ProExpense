@@ -1,7 +1,7 @@
 package com.arduia.expense.data
 
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import com.arduia.expense.data.exception.RepositoryException
 import com.arduia.expense.data.ext.getResultSuccessOrError
 import com.arduia.expense.data.local.*
@@ -64,7 +64,7 @@ class ExpenseRepositoryImpl @Inject constructor(
         endTime: Long,
         offset: Int,
         limit: Int
-    ): DataSource.Factory<Int, ExpenseEnt> {
+    ): PagingSource<Int, ExpenseEnt> {
         return expenseDao.getExpenseRangeAscSource(startTime, endTime, offset, limit)
     }
 
@@ -73,7 +73,7 @@ class ExpenseRepositoryImpl @Inject constructor(
         endTime: Long,
         offset: Int,
         limit: Int
-    ): DataSource.Factory<Int, ExpenseEnt> {
+    ): PagingSource<Int, ExpenseEnt> {
         return expenseDao.getExpenseRangeDescSource(startTime, endTime, offset, limit)
     }
 
@@ -83,7 +83,7 @@ class ExpenseRepositoryImpl @Inject constructor(
             .catch { ErrorResult(RepositoryException(it)) }
     }
 
-    override fun getExpenseSourceAll(): DataSource.Factory<Int, ExpenseEnt> {
+    override fun getExpenseSourceAll(): PagingSource<Int, ExpenseEnt> {
         return expenseDao.getExpenseSourceAll()
     }
 

@@ -1,7 +1,7 @@
 package com.arduia.expense.data
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import com.arduia.expense.data.local.DateRangeDataModel
 import com.arduia.expense.data.local.ExpenseDao
 import com.arduia.expense.data.local.ExpenseEnt
@@ -159,16 +159,16 @@ class ExpenseRepositoryTest {
     }
 
     @Test
-    fun `getExpenseSourceAll should return DataSource Factory`() {
+    fun `getExpenseSourceAll should return PagingSource`() {
         // Given
-        val mockDataSource = mockk<DataSource.Factory<Int, ExpenseEnt>>()
-        every { mockExpenseDao.getExpenseSourceAll() } returns mockDataSource
+        val mockPagingSource = mockk<PagingSource<Int, ExpenseEnt>>()
+        every { mockExpenseDao.getExpenseSourceAll() } returns mockPagingSource
 
         // When
         val result = repository.getExpenseSourceAll()
 
         // Then
-        assertEquals(mockDataSource, result)
+        assertEquals(mockPagingSource, result)
         verify { mockExpenseDao.getExpenseSourceAll() }
     }
 
@@ -393,42 +393,42 @@ class ExpenseRepositoryTest {
     }
 
     @Test
-    fun `getExpenseRangeAscSource should return DataSource Factory`() {
+    fun `getExpenseRangeAscSource should return PagingSource`() {
         // Given
         val startTime = 1000L
         val endTime = 2000L
         val offset = 0
         val limit = 10
-        val mockDataSource = mockk<DataSource.Factory<Int, ExpenseEnt>>()
+        val mockPagingSource = mockk<PagingSource<Int, ExpenseEnt>>()
         every { 
             mockExpenseDao.getExpenseRangeAscSource(startTime, endTime, offset, limit) 
-        } returns mockDataSource
+        } returns mockPagingSource
 
         // When
         val result = repository.getExpenseRangeAscSource(startTime, endTime, offset, limit)
 
         // Then
-        assertEquals(mockDataSource, result)
+        assertEquals(mockPagingSource, result)
         verify { mockExpenseDao.getExpenseRangeAscSource(startTime, endTime, offset, limit) }
     }
 
     @Test
-    fun `getExpenseRangeDescSource should return DataSource Factory`() {
+    fun `getExpenseRangeDescSource should return PagingSource`() {
         // Given
         val startTime = 1000L
         val endTime = 2000L
         val offset = 0
         val limit = 10
-        val mockDataSource = mockk<DataSource.Factory<Int, ExpenseEnt>>()
+        val mockPagingSource = mockk<PagingSource<Int, ExpenseEnt>>()
         every { 
             mockExpenseDao.getExpenseRangeDescSource(startTime, endTime, offset, limit) 
-        } returns mockDataSource
+        } returns mockPagingSource
 
         // When
         val result = repository.getExpenseRangeDescSource(startTime, endTime, offset, limit)
 
         // Then
-        assertEquals(mockDataSource, result)
+        assertEquals(mockPagingSource, result)
         verify { mockExpenseDao.getExpenseRangeDescSource(startTime, endTime, offset, limit) }
     }
 
