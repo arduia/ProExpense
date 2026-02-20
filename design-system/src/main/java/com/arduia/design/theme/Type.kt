@@ -19,7 +19,7 @@ val Pyidaungsu = FontFamily(
 )
 
 // Set of Material typography styles to start with
-val Typography = Typography(
+val EnglishTypography = Typography(
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
@@ -35,7 +35,7 @@ val Typography = Typography(
         letterSpacing = 0.15.sp
     ),
     titleSmall = TextStyle(
-        fontFamily = Pyidaungsu, 
+        fontFamily = FontFamily.SansSerif, 
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp, // Subtitle1 16sp approx
         lineHeight = 24.sp,
@@ -62,8 +62,74 @@ val Typography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp
     ),
+    labelLarge = TextStyle( // Button text
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.1.sp
+    ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.5.sp
+    )
+)
+
+val BurmeseTypography = Typography(
+    titleLarge = TextStyle(
+        fontFamily = Pyidaungsu,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.sp
+    ),
+    titleMedium = TextStyle(
+        fontFamily = Pyidaungsu,
+        fontWeight = FontWeight.Medium,
+        fontSize = 18.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.15.sp
+    ),
+    titleSmall = TextStyle(
+        fontFamily = Pyidaungsu,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.15.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = Pyidaungsu,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = Pyidaungsu,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.25.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = Pyidaungsu,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.4.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = Pyidaungsu,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.1.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = Pyidaungsu,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,

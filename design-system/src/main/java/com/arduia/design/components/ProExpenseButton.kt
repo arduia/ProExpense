@@ -35,7 +35,7 @@ fun ProExpenseButton(
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     height: Dp = 56.dp, // Legacy height_button
-    textStyle: TextStyle = MaterialTheme.typography.titleMedium
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge
 ) {
     Button(
         onClick = onClick,

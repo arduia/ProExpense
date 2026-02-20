@@ -1,5 +1,6 @@
 package com.arduia.design.theme
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,7 +14,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.os.ConfigurationCompat
 import androidx.core.view.WindowCompat
+import java.util.Locale
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -79,6 +82,7 @@ private val DarkColorScheme = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+@SuppressLint("LocalContextConfigurationRead")
 @Composable
 fun ProExpenseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -106,9 +110,19 @@ fun ProExpenseTheme(
         }
     }
 
+    val context = LocalContext.current
+    val locales = ConfigurationCompat.getLocales(context.resources.configuration)
+    val language = if (!locales.isEmpty) locales.get(0)?.language
+    else Locale.getDefault().language
+    val typography = if (language == "my") {
+        BurmeseTypography
+    } else {
+        EnglishTypography
+    }
+
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         shapes = ProExpenseShapes,
         content = content
     )
