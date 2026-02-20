@@ -131,13 +131,6 @@ class MainActivity @Inject constructor() : AppCompatActivity(), NavigationDrawer
 
     private fun setupView() {
 
-        binding.fbMainAdd.setColorFilter(ContextCompat.getColor(this, R.color.white))
-        binding.fbMainAdd.setOnClickListener {
-            addBtnClickListener?.invoke()
-        }
-
-        binding.fbMainAdd.hide()
-
         binding.nvMain.setupWithNavController(navController)
 
         binding.nvMain.setNavigationItemSelectedListener listener@{ menuItem ->
@@ -270,14 +263,11 @@ class MainActivity @Inject constructor() : AppCompatActivity(), NavigationDrawer
 
 
     private fun showAddFab() {
-        binding.fbMainAdd.show()
-        binding.fbMainAdd.isClickable = true
+        // Now handled by Compose screens
     }
 
     override fun hideAddButton() {
         addFabShowTask = null
-        binding.fbMainAdd.isClickable = false
-        binding.fbMainAdd.hide()
     }
 
     override fun showSnackMessage(message: String, duration: Int) {

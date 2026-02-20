@@ -1,35 +1,32 @@
 package com.arduia.expense.ui.home
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.arduia.expense.ui.MainHost
+import com.arduia.design.theme.ProExpenseTheme
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentHomeBinding
-import com.arduia.expense.di.FloatingDecimal
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.TopDropNavOption
+import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
-import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
-import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
+import com.arduia.expense.ui.common.DeleteConfirmDialogScreen
+import androidx.compose.ui.window.Dialog
 import com.arduia.expense.ui.common.expense.ExpenseDetailDialog
-import com.arduia.expense.ui.common.helper.MarginItemDecoration
-import com.arduia.graph.DayNameProvider
-import com.arduia.mvvm.EventObserver
+import com.arduia.expense.ui.home.compose.HomeScreen
+import com.arduia.expense.ui.home.molecule.HomeEvent
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
-import java.text.DecimalFormat
 import javax.inject.Inject
-import kotlin.math.exp
 
 @AndroidEntryPoint
 class HomeFragment : NavBaseFragment() {
-
-    private var _binding: FragmentHomeBinding? = null // keep as is, layout is still frag_home.xml
-    private val binding get() = _binding!!
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -41,128 +38,114 @@ class HomeFragment : NavBaseFragment() {
     @LefSideNavOption
     lateinit var moreRecentNavOption: NavOptions
 
-    @Inject
-    @FloatingDecimal
-    lateinit var totalCostFormat: DecimalFormat
-
-    @Inject
-    lateinit var dayNameProvider: DayNameProvider
-
     private var detailDialog: ExpenseDetailDialog? = null
 
     private val mainHost by lazy { requireActivity() as MainHost }
-
-    private var deleteConfirmDialog: DeleteConfirmFragment? = null
-
-    private var recentListAdapter: RecentListAdapter? = null
-    private var expenseGraphAdapter: ExpenseGraphAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                ProExpenseTheme {
+                    val state by viewModel.state.collectAsState()
+
+                    // Handle Lifecycle events
+                    LaunchedEffect(Unit) {
+                        viewModel.take(HomeEvent.LifecycleOnResume)
+                    }
+
+                    // Native Navigation Events
+                    LaunchedEffect(state.openDrawer) {
+                        if (state.openDrawer) {
+                            navigationDrawer.openDrawer()
+                            viewModel.take(HomeEvent.NavigationHandled)
+                        }
+                    }
+
+                    LaunchedEffect(state.navigateToLogs) {
+                        if (state.navigateToLogs) {
+                            navigateToExpenseLogs()
+                            viewModel.take(HomeEvent.NavigationHandled)
+                        }
+                    }
+
+                    LaunchedEffect(state.navigateToEntryId) {
+                        state.navigateToEntryId?.let { id ->
+                            navigateEntryFragment(id)
+                            viewModel.take(HomeEvent.NavigationHandled)
+                        }
+                    }
+
+                    // Dialog visibility
+                    LaunchedEffect(state.showDetailDialogFor) {
+                        state.showDetailDialogFor?.let { detail ->
+                            detailDialog?.dismiss()
+                            detailDialog = ExpenseDetailDialog().apply {
+                                setOnDeleteClickListener {
+                                    viewModel.take(HomeEvent.DeleteExpensePrepared(it.id))
+                                }
+                                setOnEditClickListener {
+                                    viewModel.take(HomeEvent.EditExpenseClicked(it.id))
+                                }
+                                setDismissListener {
+                                    viewModel.take(HomeEvent.DetailDialogDismissed)
+                                    showAddButtonIfCurrentIsHomeDestination()
+                                }
+                            }
+                            detailDialog?.showDetail(
+                                parentFragmentManager,
+                                detail,
+                                isDeleteEnabled = state.isDeleteEnabledOnDetail
+                            )
+                            mainHost.hideAddButton()
+                        } ?: run {
+                            detailDialog?.dismiss()
+                        }
+                    }
+
+                    // Delete Confirm Dialog in Compose
+                    if (state.showDeleteConfirmFor != null) {
+                        Dialog(onDismissRequest = { viewModel.take(HomeEvent.DeleteDialogDismissed) }) {
+                            DeleteConfirmDialogScreen(
+                                itemCount = state.showDeleteConfirmFor!!.itemTotal,
+                                onConfirmClick = { viewModel.take(HomeEvent.DeleteExpenseConfirmed) },
+                                onCloseClick = { viewModel.take(HomeEvent.DeleteDialogDismissed) }
+                            )
+                        }
+                    }
+
+                    // Snackbars
+                    LaunchedEffect(state.showSnackbar) {
+                        state.showSnackbar?.let { msg ->
+                            mainHost.showSnackMessage(msg)
+                            viewModel.take(HomeEvent.SnackbarShown)
+                        }
+                    }
+
+                    // Main Compose UI
+                    HomeScreen(
+                        incomeOutcomeData = state.incomeOutcomeData,
+                        graphData = state.graphUiModel,
+                        recentData = state.recentData,
+                        onMenuClick = { viewModel.take(HomeEvent.NavIconClicked) },
+                        onMoreLogsClick = { viewModel.take(HomeEvent.MoreLogsClicked) },
+                        onRecentItemClick = { viewModel.take(HomeEvent.RecentItemClicked(it)) },
+                        onAddClick = {
+                            viewModel.take(HomeEvent.AddExpenseClicked)
+                        }
+                    )
+                }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.updateRecentData()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupView()
-        setupViewModel()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun setupView() {
-        setupCommonUi()
-        recentListAdapter = RecentListAdapter(layoutInflater)
-        recentListAdapter?.setOnItemClickListener {
-            viewModel.selectItemForDetail(it)
-        }
-        binding.layoutRecentLists.rvRecentLists.adapter = recentListAdapter
-
-        expenseGraphAdapter = ExpenseGraphAdapter()
-        binding.layoutExpenseGraph.expenseGraph.adapter = expenseGraphAdapter
-
-        binding.layoutRecentLists.btnMoreLogs.setOnClickListener {
-            navigateToExpenseLogs()
-        }
-    }
-
-    private fun setupViewModel() {
-        setupRecentViewModel()
-        setupCommonViewModel()
-    }
-
-    private fun setupCommonUi() {
-        binding.toolbar.setNavigationOnClickListener { navigationDrawer.openDrawer() }
-    }
-
-    private fun setupRecentViewModel() {
-        viewModel.recentData.observe(viewLifecycleOwner, Observer {
-            recentListAdapter?.submitList(it)
-            if(it == null || it.isEmpty()){
-                binding.layoutRecentLists.root.visibility = View.GONE
-            }else{
-                binding.layoutRecentLists.root.visibility = View.VISIBLE
-            }
-        })
-
-        viewModel.graphUiModel.observe(viewLifecycleOwner, Observer {
-            expenseGraphAdapter?.expenseMap = it.rate
-            binding.layoutExpenseGraph.tvDateRange.text = it.dateRange
-        })
-
-        viewModel.incomeOutcomeData.observe(viewLifecycleOwner, Observer {
-            with(binding.layoutInOut) {
-                tvIncomeValue.text = it.incomeValue
-                tvOutcomeValue.text = it.outComeValue
-                tvOutcomeSymbol.text = it.currencySymbol
-                tvIncomeSymobol.text = it.currencySymbol
-                tvDateRange.text = it.dateRange
-                Timber.d("Home: $it")
-            }
-        })
-
-    }
-
-    private fun setupCommonViewModel() {
-        viewModel.detailData.observe(viewLifecycleOwner, EventObserver { expenseDetail ->
-            //Remove Old Dialog if double clicked
-            detailDialog?.dismiss()
-            //Show Selected Dialog
-            detailDialog = ExpenseDetailDialog()
-            detailDialog?.setOnDeleteClickListener {
-                viewModel.onDeletePrepared(it.id)
-            }
-            detailDialog?.setOnEditClickListener {
-                navigateEntryFragment(expenseDetail.id)
-            }
-            detailDialog?.setDismissListener {
-                showAddButtonIfCurrentIsHomeDestination()
-            }
-            detailDialog?.showDetail(parentFragmentManager, expenseDetail, isDeleteEnabled = true)
-            mainHost.hideAddButton()
-        })
-
-        viewModel.onExpenseItemDeleted.observe(viewLifecycleOwner, EventObserver {
-            mainHost.showSnackMessage(getString(R.string.item_deleted))
-        })
-
-        viewModel.onDeleteConfirm.observe(viewLifecycleOwner, EventObserver {
-            detailDialog?.dismiss()
-            showDeleteConfirmDialog(info = it)
-        })
-
+        // Ensure data stays fresh when returning to the fragment
+        viewModel.take(HomeEvent.LifecycleOnResume)
     }
 
     private fun showAddButtonIfCurrentIsHomeDestination() {
@@ -171,29 +154,22 @@ class HomeFragment : NavBaseFragment() {
         }
     }
 
-    private fun showDeleteConfirmDialog(info: DeleteInfoUiModel) {
-        deleteConfirmDialog?.dismiss()
-        deleteConfirmDialog = DeleteConfirmFragment()
-        deleteConfirmDialog?.setOnConfirmListener {
-            viewModel.onDeleteConfirmed()
-        }
-        deleteConfirmDialog?.show(childFragmentManager, info)
-
-    }
-
     private fun navigateToExpenseLogs() {
         findNavController().navigate(R.id.dest_expense_logs)
     }
 
-    private fun navigateEntryFragment(id: Int) {
-        val action = HomeFragmentDirections
-            .actionDestHomeToDestExpenseEntry(expenseId = id)
+    private fun navigateEntryFragment(id: Int?) {
+        val action = if (id == null || id == -1) {
+            HomeFragmentDirections
+                .actionDestHomeToDestExpenseEntry()
+        } else {
+            HomeFragmentDirections
+                .actionDestHomeToDestExpenseEntry(expenseId = id)
+        }
         findNavController().navigate(action, entryNavOption)
     }
 
     companion object {
         private const val TAG = "MY_HomeFragment"
-        private const val KEY_SCROLL_POSITION = "scroll_position"
     }
-
 }

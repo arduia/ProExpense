@@ -19,20 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="true"
-            tools:layout="@layout/frag_home"
             app:navGraph="@navigation/main_nav" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fb_main_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/grid_3"
-            android:layout_marginBottom="32dp"
-            android:scaleType="center"
-            android:tint="?colorOnPrimary"
-            app:backgroundTint="?colorPrimary"
-            android:layout_gravity="end|bottom"
-            app:srcCompat="@drawable/ic_add" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

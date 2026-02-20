@@ -1,42 +1,77 @@
 package com.arduia.expense.ui.home
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import org.junit.*
+import android.content.Context
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.arduia.expense.R
+import com.arduia.expense.launchFragmentInHiltContainer
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
+import org.robolectric.shadows.ShadowLooper
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.robolectric.annotation.Config
 
-@RunWith(JUnit4::class)
+@HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
+@Config(application = HiltTestApplication::class, sdk = [33], instrumentedPackages = ["androidx.loader.content"])
 class HomeFragmentTest {
 
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    @get:Rule(order = 0)
+    var hiltRule = HiltAndroidRule(this)
 
-    @Test
-    fun `fragment class should exist and be instantiable`() {
-        // When
-        val fragment = HomeFragment()
+    @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
 
-        // Then
-        Assert.assertNotNull(fragment)
+    private lateinit var mockNavController: NavController
+    private lateinit var context: Context
+
+    @Before
+    fun setup() {
+        hiltRule.inject()
+        context = ApplicationProvider.getApplicationContext()
+        mockNavController = mockk(relaxed = true)
     }
 
     @Test
-    fun `fragment should have proper class structure`() {
-        // When
-        val fragmentClass = HomeFragment::class.java
+    fun homeFragment_launches_and_displays_home_title() {
+        launchFragmentInHiltContainer<HomeFragment> {
+            Navigation.setViewNavController(requireView(), mockNavController)
+        }
 
-        // Then
-        Assert.assertNotNull(fragmentClass)
-        Assert.assertTrue(fragmentClass.superclass.name.contains("Fragment"))
+        composeTestRule.onNodeWithText("Home", ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Totals", ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Expenses In This Week", ignoreCase = true).assertIsDisplayed()
     }
 
     @Test
-    fun `fragment should be a valid Android Fragment`() {
-        // Given
-        val fragment = HomeFragment()
+    fun homeFragment_click_add_navigates_to_expense_entry() {
+        launchFragmentInHiltContainer<HomeFragment> {
+            Navigation.setViewNavController(requireView(), mockNavController)
+        }
 
-        // When & Then - Should not crash on instantiation
-        Assert.assertNotNull(fragment)
-        Assert.assertNotNull(fragment.javaClass)
+        // Wait for Compose to settle
+        composeTestRule.waitForIdle()
+
+        // Click on Add Expense FAB
+        composeTestRule.onNodeWithContentDescription("Add Expense").performClick()
+
+        // Wait for Coroutines / Looper
+        composeTestRule.waitForIdle()
+        ShadowLooper.idleMainLooper()
+
+        // Verify the navigation interaction
+        verify(timeout = 3000) {
+            mockNavController.navigate(any<androidx.navigation.NavDirections>(), any<androidx.navigation.NavOptions>())
+        }
     }
 }

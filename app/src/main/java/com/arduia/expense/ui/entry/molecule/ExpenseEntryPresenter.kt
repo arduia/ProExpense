@@ -16,6 +16,7 @@ import com.arduia.expense.ui.entry.ExpenseEntryMode
 import com.arduia.expense.ui.entry.ExpenseUpdateDataUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.util.*
@@ -83,7 +84,8 @@ class ExpenseEntryPresenter(
                         // Load existing data
                         try {
                             val ent = withContext(Dispatchers.IO) {
-                                expenseRepo.getExpense(event.expenseId).awaitValueOrError()
+                                val result = expenseRepo.getExpense(event.expenseId).first()
+                                if (result is com.arduia.expense.model.Result.Success) result.data else throw Exception("Expense Not Found")
                             }
                             entryDateTimeMillis = ent.modifiedDate
                             entryCreatedDate = ent.createdDate
