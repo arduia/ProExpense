@@ -76,7 +76,12 @@ fun AboutScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.about)) },
+                title = {
+                    Text(
+                        style = MaterialTheme.typography.titleLarge,
+                        text = stringResource(id = R.string.about)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigationIconClick) {
                         Icon(
@@ -150,21 +155,21 @@ fun AboutScreen(
 
                 // Update Status
                 if (state.isNewVersionAvailable) {
-                     AboutListItem(
+                    AboutListItem(
                         text = stringResource(id = R.string.new_version_available),
                         onClick = { onEvent(AboutEvent.OpenUpdateInfo) }
                     )
                 }
-                
+
                 // Description
                 Text(
                     text = stringResource(id = R.string.app_description),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Start, // XML says centerHorizontal parent but textAlignment not set strict
                     modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                    color = MaterialTheme.colorScheme.onSurface 
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                
+
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // List Items
@@ -172,17 +177,17 @@ fun AboutScreen(
                     text = stringResource(id = R.string.privacy_policy),
                     onClick = onPrivacyClick
                 )
-                
+
                 AboutListItem(
                     text = stringResource(id = R.string.open_source_lib),
                     onClick = onOpenSourceClick
                 )
-                
+
                 AboutListItem(
                     text = stringResource(id = R.string.contribute_app),
                     onClick = onContributeClick
                 )
-                
+
                 HorizontalDivider(color = Color.LightGray.copy(alpha = 0.2f))
 
                 // Acknowledgement Title
@@ -200,7 +205,7 @@ fun AboutScreen(
                     modifier = Modifier.padding(top = 8.dp)
                 )
 
-                 // Developer
+                // Developer
                 Text(
                     text = stringResource(id = R.string.developer),
                     style = MaterialTheme.typography.bodyLarge,
@@ -256,9 +261,14 @@ fun AboutUpdateDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(id = R.string.about_update)) },
-        icon = { Icon(painter = painterResource(id = R.drawable.ic_update), contentDescription = null) },
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_update),
+                contentDescription = null
+            )
+        },
         text = {
-             Column {
+            Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = data.versionName,
@@ -276,7 +286,7 @@ fun AboutUpdateDialog(
                     text = data.changeLogs,
                     style = MaterialTheme.typography.bodyLarge
                 )
-             }
+            }
         },
         confirmButton = {
             TextButton(onClick = {
@@ -310,7 +320,7 @@ fun AboutScreenPreview() {
 fun AboutScreenDarkPreview() {
     ProExpenseTheme(darkTheme = true) {
         AboutScreen(
-             state = AboutState(),
+            state = AboutState(),
             onEvent = {}
         )
     }
