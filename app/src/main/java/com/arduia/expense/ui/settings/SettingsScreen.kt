@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -98,17 +102,26 @@ fun SettingsScreen(
                     title = stringResource(id = R.string.language),
                     onClick = onLanguageClick,
                     trailingContent = {
+                        val flagRes = when (state.selectedLanguageId) {
+                            "my" -> R.drawable.flag_myanmar
+                            "cn" -> R.drawable.flag_china
+                            else -> R.drawable.flag_united_states
+                        }
                         Image(
-                            painter = painterResource(id = R.drawable.flag_myanmar),
-                            contentDescription = "Language",
+                            painter = painterResource(id = flagRes),
+                            contentDescription = "Language Flag ${state.selectedLanguageId}",
                             modifier = Modifier
                                 .width(60.dp)
                                 .height(25.dp)
+                                .semantics { testTag = "language_flag" }
                         )
                     }
                 )
 
-                Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    color = Color.LightGray.copy(alpha = 0.2f)
+                )
 
                 // Currency Item
                 SettingsItem(
@@ -124,7 +137,10 @@ fun SettingsScreen(
                     }
                 )
 
-                Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    color = Color.LightGray.copy(alpha = 0.2f)
+                )
 
                 // Theme Item
                 SettingsItem(

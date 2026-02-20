@@ -71,4 +71,49 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText("Theme Mode").performClick()
         assertTrue(clicked)
     }
+
+    @Test
+    fun verifyLanguageFlagShowsMyanmarWhenSelectedLanguageIsMy() {
+        val state = SettingsState(selectedLanguageId = "my")
+
+        composeTestRule.setContent {
+            ProExpenseTheme {
+                SettingsScreen(state = state, onEvent = {})
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Language Flag my").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Language Flag en").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Language Flag cn").assertDoesNotExist()
+    }
+
+    @Test
+    fun verifyLanguageFlagShowsUnitedStatesWhenSelectedLanguageIsEn() {
+        val state = SettingsState(selectedLanguageId = "en")
+
+        composeTestRule.setContent {
+            ProExpenseTheme {
+                SettingsScreen(state = state, onEvent = {})
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Language Flag en").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Language Flag my").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Language Flag cn").assertDoesNotExist()
+    }
+
+    @Test
+    fun verifyLanguageFlagShowsChinaWhenSelectedLanguageIsCn() {
+        val state = SettingsState(selectedLanguageId = "cn")
+
+        composeTestRule.setContent {
+            ProExpenseTheme {
+                SettingsScreen(state = state, onEvent = {})
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Language Flag cn").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Language Flag my").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Language Flag en").assertDoesNotExist()
+    }
 }
