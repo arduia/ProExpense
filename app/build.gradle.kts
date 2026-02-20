@@ -170,8 +170,10 @@ dependencies {
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.androidx.test.ext)
     testImplementation(libs.espresso.core)
+    testImplementation(libs.espresso.intents)
     testImplementation(libs.turbine)
     testImplementation(libs.truth)
+    testImplementation(libs.compose.ui.test.junit4)
 
     //Firebase
     implementation(platform(libs.firebase.bom))
