@@ -61,6 +61,17 @@ class DeleteConfirmFragment : BottomSheetDialogFragment() {
         show(fm, "DeleteConfirmFragment")
     }
 
+    private var onDismissListener: (() -> Unit)? = null
+
+    fun setOnDismissListener(listener: (() -> Unit)?) {
+        this.onDismissListener = listener
+    }
+
+    override fun onDismiss(dialog: android.content.DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.invoke()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

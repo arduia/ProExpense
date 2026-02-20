@@ -43,12 +43,15 @@ import androidx.compose.ui.unit.dp
 import com.arduia.design.components.ProExpenseCard
 import com.arduia.design.theme.ProExpenseTheme
 import com.arduia.expense.R
+import com.arduia.expense.ui.statistics.molecule.StatisticEvent
+import com.arduia.expense.ui.statistics.molecule.StatisticState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticScreen(
-    onNavigationIconClick: () -> Unit = {},
-    categoryStatistics: List<CategoryStatisticUiModel> = emptyList()
+    state: StatisticState,
+    onEvent: (StatisticEvent) -> Unit,
+    onNavigationIconClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -62,10 +65,22 @@ fun StatisticScreen(
                         )
                     }
                 },
+                actions = {
+                    IconButton(
+                        onClick = { onEvent(StatisticEvent.FilterIconClicked) },
+                        enabled = !state.isEmptyExpenseData
+                    ) {
+                        Icon(
+                            painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_calendar),
+                            contentDescription = "Filter"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                     titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -94,10 +109,21 @@ fun StatisticScreen(
                         Text(
                             text = stringResource(id = R.string.category_statistics),
                             style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 16.dp)
+                            modifier = Modifier.padding(bottom = 4.dp)
                         )
+                        
+                        if (!state.isEmptyExpenseData && state.dateRangeInfo.isNotEmpty()) {
+                            Text(
+                                text = state.dateRangeInfo,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
 
-                        if (categoryStatistics.isEmpty()) {
+                        if (state.categoryStatisticList.isEmpty()) {
                             Text(
                                 text = stringResource(id = R.string.no_data),
                                 style = MaterialTheme.typography.bodyLarge, // Body1
@@ -107,7 +133,7 @@ fun StatisticScreen(
                                     .padding(vertical = 32.dp)
                             )
                         } else {
-                            categoryStatistics.forEach { item ->
+                            state.categoryStatisticList.forEach { item ->
                                 CategoryStatisticItem(
                                     name = stringResource(id = item.nameId),
                                     progress = item.progress,
@@ -181,7 +207,7 @@ fun StatisticScreenPreview() {
         CategoryStatisticUiModel(R.string.transportation, 0.25f, "25%")
     )
     ProExpenseTheme {
-        StatisticScreen(categoryStatistics = mockData)
+        StatisticScreen(state = StatisticState(categoryStatisticList = mockData, isEmptyExpenseData = false, dateRangeInfo = "01 Aug 2023 - 31 Aug 2023"), onEvent = {})
     }
 }
 
@@ -189,7 +215,7 @@ fun StatisticScreenPreview() {
 @Composable
 fun StatisticScreenEmptyPreview() {
     ProExpenseTheme {
-        StatisticScreen(categoryStatistics = emptyList())
+        StatisticScreen(state = StatisticState(categoryStatisticList = emptyList(), isEmptyExpenseData = true), onEvent = {})
     }
 }
 
@@ -200,7 +226,7 @@ fun StatisticScreenDarkPreview() {
         CategoryStatisticUiModel(R.string.food, 0.75f, "75%")
     )
     ProExpenseTheme(darkTheme = true) {
-        StatisticScreen(categoryStatistics = mockData)
+        StatisticScreen(state = StatisticState(categoryStatisticList = mockData, isEmptyExpenseData = false, dateRangeInfo = "01 Aug 2023 - 31 Aug 2023"), onEvent = {})
     }
 }
 @Preview(showBackground = true)

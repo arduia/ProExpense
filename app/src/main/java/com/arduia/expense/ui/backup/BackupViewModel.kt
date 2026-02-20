@@ -1,79 +1,25 @@
 package com.arduia.expense.ui.backup
 
-import android.app.Application
-import android.net.Uri
-import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.BackupEnt
-import com.arduia.expense.model.Result
-import com.arduia.expense.model.onSuccess
-import com.arduia.mvvm.*
+import com.arduia.expense.ui.backup.molecule.BackupEvent
+import com.arduia.expense.ui.backup.molecule.BackupPresenter
+import com.arduia.expense.ui.backup.molecule.BackupState
+import com.arduia.expense.ui.common.molecule.MoleculeViewModel
+import com.arduia.expense.ui.common.molecule.Presenter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class BackupViewModel @Inject constructor(
-    private val mapper: Mapper<BackupEnt, BackupUiModel>,
-    private val backupRepo: BackupRepository,
-    private val expenseRepo: ExpenseRepository
-) : ViewModel(){
+    mapper: Mapper<BackupEnt, BackupUiModel>,
+    backupRepo: BackupRepository,
+    expenseRepo: ExpenseRepository
+) : MoleculeViewModel<BackupEvent, BackupState>(){
 
-    private val _backupList = BaseLiveData<List<BackupUiModel>>()
-    val backupList = _backupList.asLiveData()
+    override val presenter: Presenter<BackupEvent, BackupState> =
+        BackupPresenter(mapper, backupRepo, expenseRepo)
 
-    private val _backupFilePath = EventLiveData<Uri>()
-    val backupFilePath = _backupFilePath.asLiveData()
-
-    val isEmptyBackupLogs = _backupList.switchMap {
-        BaseLiveData(it.isEmpty())
-    }
-
-    private val _isEmptyExpenseLogs = BaseLiveData<Boolean>()
-    val isEmptyExpenseLogs get() = _isEmptyExpenseLogs.asLiveData()
-
-    private val _onBackupDelete = EventLiveData<Unit>()
-    val onBackupDelete get() = _onBackupDelete.asLiveData()
-
-    init {
-        observeBackupLists()
-        observeExpenseCount()
-    }
-
-    private fun observeExpenseCount() {
-        expenseRepo.getExpenseTotalCount()
-            .flowOn(Dispatchers.IO)
-            .onSuccess {
-                _isEmptyExpenseLogs post (it == 0)
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun observeBackupLists() {
-        backupRepo.getBackupAll()
-            .flowOn(Dispatchers.IO)
-            .onEach {
-                if (it is Result.Success) {
-                    _backupList post it.data.map(mapper::map)
-                    Timber.d("backupList ${it.data}")
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    fun onBackupDeleteConfirmed(item: BackupUiModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            backupRepo.deleteBackupByID(item.id)
-        }
-    }
-
-    fun setImportUri(uri: Uri) {
-        _backupFilePath post event(uri)
-    }
 }

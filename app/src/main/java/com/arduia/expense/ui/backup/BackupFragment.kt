@@ -2,37 +2,32 @@ package com.arduia.expense.ui.backup
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import com.arduia.core.view.asGone
-import com.arduia.core.view.asVisible
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentBackupBinding
+import com.arduia.design.theme.ProExpenseTheme
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
+import com.arduia.expense.ui.backup.molecule.BackupEvent
 import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
 import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
-import com.arduia.expense.ui.common.helper.MarginItemDecoration
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BackupFragment : NavBaseFragment() {
 
-    private var _binding: FragmentBackupBinding? = null
-    private val binding get() = _binding!!
-
     private val viewModel by viewModels<BackupViewModel>()
 
     @Inject
     lateinit var mainHost: MainHost
 
-    private var backupListAdapter: BackupListAdapter? = null
     private var backDetailDialog: ImportDialogFragment? = null 
     private var exportDialog: ExportDialogFragment? = null
     private var deleteDialog: DeleteConfirmFragment? = null
@@ -42,72 +37,57 @@ class BackupFragment : NavBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentBackupBinding.inflate(layoutInflater, container, false)
-        return binding.root
-    }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                ProExpenseTheme {
+                    val state by viewModel.state.collectAsState()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+                    LaunchedEffect(state.showExportDialog) {
+                        if (state.showExportDialog) {
+                            showExportDialog()
+                            viewModel.take(BackupEvent.ExportDialogDismissed)
+                        }
+                    }
 
-        setupView()
-        setupViewModel()
-    }
+                    LaunchedEffect(state.importUri) {
+                        state.importUri?.let { uri ->
+                            showImportDialog(uri)
+                            viewModel.take(BackupEvent.ImportDialogDismissed)
+                        }
+                    }
+                    
+                    LaunchedEffect(state.showDeleteConfirmFor) {
+                        state.showDeleteConfirmFor?.let { item ->
+                            showDeleteConfirmDialog(item)
+                            viewModel.take(BackupEvent.DeleteConfirmDismissed)
+                        }
+                    }
 
-    private fun setupView() {
-
-        backupListAdapter = BackupListAdapter(layoutInflater)
-
-        binding.cvExport.setOnClickListener {
-            showExportDialog()
+                    BackupScreen(
+                        state = state,
+                        onEvent = { event ->
+                            if (event is BackupEvent.ImportClicked) {
+                                openImportFolder()
+                            } else {
+                                viewModel.take(event)
+                            }
+                        },
+                        onNavigationIconClick = {
+                            navigationDrawer?.openDrawer()
+                        }
+                    )
+                }
+            }
         }
-
-        binding.toolbar.setNavigationOnClickListener {
-            navigationDrawer?.openDrawer()
-        }
-        binding.cvImport.setOnClickListener {
-            openImportFolder()
-        }
-
-        //Setup Recycler View
-        binding.rvBackupLogs.adapter = backupListAdapter
-        binding.rvBackupLogs.addItemDecoration(
-            MarginItemDecoration(
-                spaceHeight = resources.getDimension(R.dimen.grid_1).toInt()
-            )
-        )
-        backupListAdapter?.setItemClickListener(::showDeleteConfirmDialog)
     }
 
     private fun showDeleteConfirmDialog(backupItem: BackupUiModel){
         deleteDialog?.dismiss()
         deleteDialog = DeleteConfirmFragment()
         deleteDialog?.setOnConfirmListener {
-            viewModel.onBackupDeleteConfirmed(backupItem)
+            viewModel.take(BackupEvent.DeleteConfirmed(backupItem))
         }
         deleteDialog?.show(childFragmentManager, DeleteInfoUiModel(1))
-    }
-
-    private fun setupViewModel() {
-        viewModel.backupList.observe(viewLifecycleOwner, { list ->
-            showBackupList(list)
-        })
-
-        viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver { fileUri ->
-            showImportDialog(uri = fileUri)
-        })
-
-        viewModel.isEmptyBackupLogs.observe(viewLifecycleOwner){
-            if(it){
-                binding.tvNoData.asVisible()
-            }else{
-                binding.tvNoData.asGone()
-            }
-        }
-
-        viewModel.isEmptyExpenseLogs.observe(viewLifecycleOwner){
-                binding.cvExport.isEnabled = it.not()
-        }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -117,7 +97,7 @@ class BackupFragment : NavBaseFragment() {
 
         if (isDocResult) {
             val resultUri = data?.data ?: return
-            viewModel.setImportUri(uri = resultUri)
+            viewModel.take(BackupEvent.ImportUriReceived(resultUri))
         }
     }
 
@@ -136,28 +116,13 @@ class BackupFragment : NavBaseFragment() {
         }
     }
 
-
-    private fun hideExportButton() {
-        binding.cvExport.visibility = View.INVISIBLE
-    }
-
-    private fun showExportButton() {
-        binding.cvExport.visibility = View.VISIBLE
-    }
-
-    private fun showBackupList(list: List<BackupUiModel>) {
-        backupListAdapter?.submitList(list)
-    }
-
     private fun showExportDialog() {
-        //Close Old Detail Dialog
         exportDialog?.dismiss()
         exportDialog = ExportDialogFragment()
         exportDialog?.show(parentFragmentManager, ExportDialogFragment.TAG)
     }
 
-    private fun showImportDialog(uri: Uri) {
-        //Close Old Detail Dialog
+    private fun showImportDialog(uri: android.net.Uri) {
         backDetailDialog?.dismiss()
         backDetailDialog = ImportDialogFragment()
         backDetailDialog?.showDialog(parentFragmentManager, uri)
@@ -173,10 +138,9 @@ class BackupFragment : NavBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.rvBackupLogs.adapter = null
-        backupListAdapter = null
         backDetailDialog = null
-        _binding = null
+        exportDialog = null
+        deleteDialog = null
     }
 
     companion object {

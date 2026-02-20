@@ -21,7 +21,14 @@ import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.expense.ui.expenselogs.swipe.SwipeItemState
 import com.arduia.expense.ui.expenselogs.swipe.SwipeStateHolder
 import com.arduia.expense.ui.home.ExpenseDetailUiModelMapperFactory
-import com.arduia.mvvm.*
+import com.arduia.expense.ui.expenselogs.molecule.ExpenseLogsEvent
+import com.arduia.expense.ui.expenselogs.molecule.ExpenseLogsPresenter
+import com.arduia.expense.ui.expenselogs.molecule.ExpenseLogsState
+import com.arduia.expense.ui.common.molecule.MoleculeViewModel
+import com.arduia.expense.ui.common.molecule.Presenter
+import com.arduia.mvvm.EventLiveData
+import com.arduia.mvvm.Event
+import com.arduia.mvvm.BaseLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -32,50 +39,25 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-
 @HiltViewModel
 class ExpenseViewModel @Inject constructor(
     private val expenseEntToLogMapperFactory: ExpenseEntToLogVoMapperFactory,
     private val expenseRepo: ExpenseRepository,
     private val currencyRepo: CurrencyRepository,
     private val expenseDetailMapperFactory: ExpenseDetailUiModelMapperFactory,
-    @StatisticDateRange private val dateRangeFormatter: DateRangeFormatter
-) : ViewModel() {
+    @com.arduia.expense.di.StatisticDateRange private val dateRangeFormatter: DateRangeFormatter
+) : MoleculeViewModel<ExpenseLogsEvent, ExpenseLogsState>() {
+
+    override val presenter = ExpenseLogsPresenter(expenseRepo, dateRangeFormatter) { constraint ->
+        filterConstraint.postValue(constraint)
+    }
 
     private var swipeStateHolder: SwipeStateHolder? = null
 
     private val _onRestoreSwipeState = EventLiveData<SwipeStateHolder>()
     val onRestoreSwipeState get() = _onRestoreSwipeState.asLiveData()
 
-    private val _expenseLogMode = BaseLiveData<ExpenseMode>()
-    val expenseLogMode get() = _expenseLogMode.asLiveData()
-
-    private val _selectedCount = BaseLiveData<Int>()
-    val selectedCount get() = _selectedCount.asLiveData()
-
-    private val _onMultiDeleteConfirm = EventLiveData<Int>()
-    val onMultiDeleteConfirm get() = _onMultiDeleteConfirm.asLiveData()
-
-    private val _onSingleDeleteConfirm = EventLiveData<Unit>()
-    val onSingleDeleteConfirm get() = _onSingleDeleteConfirm.asLiveData()
-
-    private val _onFilterShow = EventLiveData<ExpenseLogFilterInfo>()
-    val onFilterShow get() = _onFilterShow.asLiveData()
-
-    private val filterLimit = BaseLiveData<DateRange>()
     private val filterConstraint = MutableLiveData<DateRangeSortingEnt>()
-
-    private val _isEmptyExpenseCount = BaseLiveData<Boolean>()
-    val isEmptyExpenseCount get() = _isEmptyExpenseCount.asLiveData()
-
-    private val _onDetailShow = EventLiveData<ExpenseDetailUiModel>()
-    val onDetailShow get() = _onDetailShow.asLiveData()
-
-
-    val filterInfo
-        get() = filterConstraint.switchMap {
-            BaseLiveData(createFilterInfo(it))
-        }
 
     val expenseList: LiveData<PagedList<ExpenseLogUiModel>> = filterConstraint.switchMap { filter ->
         return@switchMap createSourcePagingLiveData(filter)
@@ -89,82 +71,9 @@ class ExpenseViewModel @Inject constructor(
 
     private var currencySymbol = ""
 
-    private var singleDeleteItemId: Int? = null
-
     init {
         observeCurrencySymbol()
-        observeMaxAndMinDateRange()
         mapper = expenseEntToLogMapperFactory.create { currencySymbol }
-        _expenseLogMode.value = ExpenseMode.NORMAL
-        expenseRepo.getExpenseTotalCount()
-            .flowOn(Dispatchers.IO)
-            .onSuccess {
-                _isEmptyExpenseCount post (it == 0)
-            }
-            .onError {
-                _isEmptyExpenseCount post true
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun observeMaxAndMinDateRange() {
-        expenseRepo.getMaxAndMiniDateRange()
-            .flowOn(Dispatchers.IO)
-            .onSuccess {
-                filterLimit post ExpenseDateRange(start = it.minDate, end = it.maxDate)
-                val constraint = filterConstraint.value
-
-                if (constraint != null) {
-                    //If Already has Constraint
-                    val minDateConstraint = constraint.dateRange.start
-                    val maxConstraint = constraint.dateRange.end
-                    val min = if (minDateConstraint < it.minDate) it.minDate else minDateConstraint
-                    val max = if (maxConstraint > it.maxDate) it.maxDate else maxConstraint
-                    if (min == 0L || max == 0L) {
-                        filterConstraint post DateRangeSortingEnt(
-                            ExpenseDateRange(Date().time, Date().time),
-                            Sorting.DESC
-                        )
-                        return@onSuccess
-                    }
-                    if(min < max){
-                        filterConstraint post DateRangeSortingEnt(
-                            ExpenseDateRange(min, max),
-                            constraint.sorting
-                        )
-                    }else{
-                        filterConstraint post DateRangeSortingEnt(
-                            ExpenseDateRange(0, max),
-                            constraint.sorting
-                        )
-                    }
-                } else {
-                    //New Constraint
-                    filterConstraint post DateRangeSortingEnt(
-                        ExpenseDateRange(
-                            it.minDate,
-                            it.maxDate
-                        )
-                    )
-                }
-            }
-            .onError {
-                val defaultDateRange = getDefaultDateRange()
-                filterLimit post defaultDateRange
-                filterConstraint post DateRangeSortingEnt(dateRange = defaultDateRange)
-            }
-            .launchIn(viewModelScope)
-
-    }
-
-    private fun getDefaultDateRange(): ExpenseDateRange {
-        return ExpenseDateRange(java.util.Date().time, java.util.Date().time)
-    }
-
-    private fun createFilterInfo(constraint: DateRangeSortingEnt): String {
-        val dateRangeData = constraint.dateRange
-        val dateRange = dateRangeFormatter.format(dateRangeData.start, dateRangeData.end)
-        return "$dateRange . ${constraint.sorting}"
     }
 
     private fun observeCurrencySymbol() {
@@ -176,6 +85,8 @@ class ExpenseViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
     }
+
+
 
     private fun createSourcePagingLiveData(filter: DateRangeSortingEnt): LiveData<PagedList<ExpenseLogUiModel>> {
         val sourceFactory =
@@ -206,42 +117,14 @@ class ExpenseViewModel @Inject constructor(
 
     fun storeState(state: SwipeStateHolder) {
         this.swipeStateHolder = state
-        onSwipeStateChanged()
+        val selectCount = swipeStateHolder?.getCount(SwipeItemState.STATE_LOCK_START) ?: return
+        take(ExpenseLogsEvent.SwipeSelectionCountChanged(selectCount))
     }
 
     fun clearState() {
         this.swipeStateHolder?.clear()
         onRestoreState()
-        onSwipeStateChanged()
-    }
-
-    fun setFilter(dateRangeEnt: ExpenseLogFilterInfo) {
-        this.filterConstraint set DateRangeSortingEnt(
-            dateRangeEnt.dateRangeSelected,
-            dateRangeEnt.sorting
-        )
-    }
-
-    fun onFilterPrepare() {
-        val constraint = filterConstraint.value ?: return
-        val limit = filterLimit.value ?: return
-        _onFilterShow post event(
-            ExpenseLogFilterInfo(
-                dateRangeLimit = limit,
-                dateRangeSelected = constraint.dateRange,
-                constraint.sorting
-            )
-        )
-    }
-
-    fun onDeletePrepared() {
-        val itemCount = selectedCount.value ?: 0
-        _onMultiDeleteConfirm post event(itemCount)
-    }
-
-    fun onSingleDeletePrepared(id: Int) {
-        singleDeleteItemId = id
-        _onSingleDeleteConfirm post EventUnit
+        take(ExpenseLogsEvent.SwipeSelectionCountChanged(0))
     }
 
     fun onMultiDeleteConfirmed() {
@@ -249,6 +132,7 @@ class ExpenseViewModel @Inject constructor(
             val deleteItems = swipeStateHolder?.getSelectIdList() ?: return@launch
             expenseRepo.deleteAllExpense(deleteItems)
             clearState()
+            take(ExpenseLogsEvent.MultiDeleteConfirmed)
         }
     }
 
@@ -258,40 +142,21 @@ class ExpenseViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val ent = expenseRepo.getExpense(item.expenseLog.id).awaitValueOrError()
             val mapper = expenseDetailMapperFactory.create { currencySymbol }
-            _onDetailShow post event(mapper.map(ent))
+            take(ExpenseLogsEvent.ShowDetailDialog(mapper.map(ent)))
         }
     }
 
-    fun onSingleItemDeleteConfirmed() {
-        val id = singleDeleteItemId ?: return
+    fun onSingleItemDeleteConfirmed(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             expenseRepo.deleteExpenseById(id)
-            singleDeleteItemId = null
+            take(ExpenseLogsEvent.SingleDeleteConfirmed)
         }
-    }
-
-    private fun onSwipeStateChanged() {
-
-        val selectCount = swipeStateHolder?.getCount(SwipeItemState.STATE_LOCK_START) ?: return
-
-        if (selectCount > 0) {
-
-            if (_expenseLogMode.value != ExpenseMode.SELECTION) {
-                _expenseLogMode post ExpenseMode.SELECTION
-            }
-            _selectedCount post selectCount
-
-        } else {
-            _expenseLogMode post ExpenseMode.NORMAL
-            _selectedCount post 0
-        }
-
     }
 
     fun onRestoreState() {
         val state = swipeStateHolder
         if (state != null) {
-            _onRestoreSwipeState post event(state)
+            _onRestoreSwipeState.postValue(Event(state))
         }
     }
 

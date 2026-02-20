@@ -41,17 +41,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.arduia.design.theme.ProExpenseTheme
 import com.arduia.expense.R
+import com.arduia.expense.ui.settings.molecule.SettingsEvent
+import com.arduia.expense.ui.settings.molecule.SettingsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    state: SettingsState,
+    onEvent: (SettingsEvent) -> Unit,
     onNavigationIconClick: () -> Unit = {},
     onLanguageClick: () -> Unit = {},
     onCurrencyClick: () -> Unit = {},
-    onThemeClick: () -> Unit = {},
-    currencySymbol: String = "$"
+    onOpenUpdateInfoClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -112,7 +116,7 @@ fun SettingsScreen(
                     onClick = onCurrencyClick,
                     trailingContent = {
                         Text(
-                            text = currencySymbol,
+                            text = state.currencyValue,
                             style = MaterialTheme.typography.titleLarge, // Headline6 approx
                             modifier = Modifier.width(60.dp),
                             textAlign = TextAlign.Center
@@ -125,7 +129,7 @@ fun SettingsScreen(
                 // Theme Item
                 SettingsItem(
                     title = stringResource(id = R.string.theme_mode),
-                    onClick = onThemeClick,
+                    onClick = { onEvent(SettingsEvent.ChooseThemeClicked) },
                     trailingContent = {
                         Image(
                             painter = painterResource(id = R.drawable.ic_theme),
@@ -137,6 +141,32 @@ fun SettingsScreen(
                             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                         )
                     }
+                )
+
+                if (state.isNewVersionAvailable) {
+                    Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                    SettingsItem(
+                        title = stringResource(id = R.string.about_update),
+                        onClick = onOpenUpdateInfoClick,
+                        trailingContent = {
+                            Text(
+                                text = "New",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
+        if (state.showThemeDialogForMode != null) {
+            Dialog(onDismissRequest = { onEvent(SettingsEvent.ThemeDialogDismissed) }) {
+                ChooseThemeDialogScreen(
+                    currentMode = state.showThemeDialogForMode,
+                    onModeSelected = { mode -> onEvent(SettingsEvent.ThemeSelected(mode)) },
+                    onDismiss = { onEvent(SettingsEvent.ThemeDialogDismissed) }
                 )
             }
         }
@@ -171,7 +201,10 @@ fun SettingsItem(
 @Composable
 fun SettingsScreenPreview() {
     ProExpenseTheme {
-        SettingsScreen()
+        SettingsScreen(
+            state = SettingsState(currencyValue = "$"),
+            onEvent = {}
+        )
     }
 }
 
@@ -179,7 +212,10 @@ fun SettingsScreenPreview() {
 @Composable
 fun SettingsScreenDarkPreview() {
     ProExpenseTheme(darkTheme = true) {
-        SettingsScreen()
+        SettingsScreen(
+            state = SettingsState(currencyValue = "$"),
+            onEvent = {}
+        )
     }
 }
 
@@ -187,6 +223,9 @@ fun SettingsScreenDarkPreview() {
 @Composable
 fun SettingsScreenBurmesePreview() {
     ProExpenseTheme {
-        SettingsScreen()
+        SettingsScreen(
+            state = SettingsState(currencyValue = "Ks"),
+            onEvent = {}
+        )
     }
 }

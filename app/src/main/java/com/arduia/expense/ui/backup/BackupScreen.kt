@@ -46,14 +46,15 @@ import com.arduia.design.components.ProExpenseCard
 import com.arduia.design.theme.ProExpenseTheme
 import com.arduia.expense.R
 
+import com.arduia.expense.ui.backup.molecule.BackupState
+import com.arduia.expense.ui.backup.molecule.BackupEvent
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackupScreen(
-    onNavigationIconClick: () -> Unit = {},
-    onExportClick: () -> Unit = {},
-    onImportClick: () -> Unit = {},
-    onDeleteClick: (BackupUiModel) -> Unit = {},
-    backupLogs: List<BackupUiModel> = emptyList()
+    state: BackupState,
+    onEvent: (BackupEvent) -> Unit,
+    onNavigationIconClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -91,7 +92,7 @@ fun BackupScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp), // @dimen/grid_2
+                        .padding(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     // Export Card
@@ -99,7 +100,8 @@ fun BackupScreen(
                         modifier = Modifier.weight(1f),
                         iconRes = R.drawable.ic_export,
                         text = stringResource(id = R.string.export),
-                        onClick = onExportClick
+                        onClick = { onEvent(BackupEvent.ExportClicked) },
+                        enabled = !state.isEmptyExpenseLogs
                     )
 
                     // Import Card
@@ -107,7 +109,8 @@ fun BackupScreen(
                         modifier = Modifier.weight(1f),
                         iconRes = R.drawable.ic_import,
                         text = stringResource(id = R.string.import_data),
-                        onClick = onImportClick
+                        onClick = { onEvent(BackupEvent.ImportClicked) },
+                        enabled = true
                     )
                 }
 
@@ -119,7 +122,7 @@ fun BackupScreen(
                         .padding(start = 16.dp, top = 32.dp, bottom = 4.dp) // @dimen/grid_3, grid_4, grid_1
                 )
 
-                if (backupLogs.isEmpty()) {
+                if (state.isEmptyBackupLogs) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -136,10 +139,10 @@ fun BackupScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(bottom = 16.dp)
                     ) {
-                        items(backupLogs) { backup ->
+                        items(state.backupList) { backup ->
                             BackupLogItem(
                                 backup = backup,
-                                onDeleteClick = { onDeleteClick(backup) }
+                                onDeleteClick = { onEvent(BackupEvent.DeleteIconClicked(backup)) }
                             )
                         }
                     }
@@ -154,12 +157,14 @@ fun BackupActionCard(
     modifier: Modifier = Modifier,
     @DrawableRes iconRes: Int,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
+    val alpha = if (enabled) 1f else 0.5f
     ProExpenseCard(
         modifier = modifier
             .height(130.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick, enabled = enabled),
         containerColor = MaterialTheme.colorScheme.surface
     ) {
         Box(
@@ -176,10 +181,7 @@ fun BackupActionCard(
                     contentDescription = null,
                     modifier = Modifier.size(30.dp),
                     contentScale = androidx.compose.ui.layout.ContentScale.Fit,
-                    // XML srcCompat doesn't have tint, so use original colors or default. 
-                    // However, usually these icons adapt to theme. Assuming vector assets without specific tint in XML (except background tint which is surface).
-                    // XML layout didn't specify tint on ImageView, but theme might. Let's assume onSurface for now or original.
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp)) // @dimen/grid_3
@@ -187,7 +189,8 @@ fun BackupActionCard(
                 // Text
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.bodyLarge // Body1
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha)
                 )
             }
         }
@@ -275,7 +278,7 @@ fun BackupScreenPreview() {
         BackupUiModel("Backup_2023_08_01.csv", 3, "01 Aug 2023", "90 items", false)
     )
     ProExpenseTheme {
-        BackupScreen(backupLogs = mockData)
+        BackupScreen(state = BackupState(backupList = mockData, isEmptyBackupLogs = false), onEvent = {})
     }
 }
 
@@ -287,7 +290,7 @@ fun BackupScreenDarkPreview() {
         BackupUiModel("Backup_2023_09_15.csv", 2, "15 Sep 2023", "120 items", true)
     )
     ProExpenseTheme(darkTheme = true) {
-        BackupScreen(backupLogs = mockData)
+        BackupScreen(state = BackupState(backupList = mockData, isEmptyBackupLogs = false), onEvent = {})
     }
 }
 
@@ -298,6 +301,6 @@ fun BackupScreenBurmesePreview() {
         BackupUiModel("Backup_2023_10_27.csv", 1, "27 Oct 2023", "150 items", false)
     )
     ProExpenseTheme {
-        BackupScreen(backupLogs = mockData)
+        BackupScreen(state = BackupState(backupList = mockData, isEmptyBackupLogs = false), onEvent = {})
     }
 }
