@@ -1,10 +1,10 @@
 package com.arduia.expense.ui.settings
 
 import android.content.res.Configuration
+import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,15 +30,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.design.components.ProExpenseCard
-import com.arduia.design.components.ProExpenseTextField
+import com.arduia.design.components.ProExpenseSearchField
 import com.arduia.design.theme.ProExpenseTheme
 import com.arduia.expense.R
+import com.arduia.expense.ui.common.language.LanguageUiModel
+
+// grid_3 = 16dp, grid_2 = 8dp (from Shape.kt comment)
+private val GRID_3 = 16.dp
+private val GRID_2 = 8.dp
 
 @Composable
 fun ChooseLanguageScreen(
-    languages: List<String> = emptyList(), // Replace with proper model later
-    selectedLanguage: String = "",
-    onLanguageSelected: (String) -> Unit = {}
+    languages: List<LanguageUiModel> = emptyList(),
+    onLanguageSelected: (LanguageUiModel) -> Unit = {},
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
@@ -47,40 +52,43 @@ fun ChooseLanguageScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Search Header
+        // Search header — ?colorSurface background matching XML linear_search
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
+                .padding(GRID_3)
         ) {
             Text(
                 text = stringResource(id = R.string.choose_language),
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = GRID_3)
             )
 
-            ProExpenseTextField(
+            ProExpenseSearchField(
                 value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = stringResource(id = R.string.search), // Assuming string.search exists or use hint
+                onValueChange = {
+                    searchQuery = it
+                    onSearchQueryChange(it)
+                },
+                hint = stringResource(id = R.string.search),
                 modifier = Modifier.fillMaxWidth()
             )
         }
 
-        // List
+        // Language list — ?backgroundColor matching XML rv_languages
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(horizontal = GRID_3)
+                .padding(bottom = GRID_3)
         ) {
-            items(languages) { language ->
+            items(languages) { model ->
                 LanguageItem(
-                    name = language,
-                    isSelected = language == selectedLanguage,
-                    onClick = { onLanguageSelected(language) }
+                    model = model,
+                    onClick = { onLanguageSelected(model) },
+                    modifier = Modifier.padding(top = GRID_2)
                 )
-                Spacer(modifier = Modifier.padding(bottom = 8.dp))
             }
         }
     }
@@ -88,12 +96,12 @@ fun ChooseLanguageScreen(
 
 @Composable
 fun LanguageItem(
-    name: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
+    model: LanguageUiModel,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     ProExpenseCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         containerColor = MaterialTheme.colorScheme.surface,
@@ -102,31 +110,34 @@ fun LanguageItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = GRID_3, vertical = GRID_3),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Flag Placeholder
+            // Flag — 25dp x 25dp matching item_language.xml imv_flag
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground), // Placeholder
+                painter = painterResource(id = model.flag),
                 contentDescription = null,
                 modifier = Modifier.size(25.dp)
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(GRID_3))
 
             Text(
-                text = name,
+                text = model.name,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
 
-            if (isSelected) {
+            // Check icon — 30dp x 30dp, tinted primary (= blue_light_500) matching XML imv_checked
+            if (model.isSelectedVisible == View.VISIBLE) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_done),
-                    contentDescription = "Selected",
-                    modifier = Modifier.size(24.dp),
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                 )
+            } else {
+                Spacer(modifier = Modifier.size(30.dp))
             }
         }
     }
@@ -134,22 +145,26 @@ fun LanguageItem(
 
 @Preview(showBackground = true)
 @Composable
-fun ChooseLanguageScreenPreview() {
+private fun ChooseLanguageScreenPreview() {
     ProExpenseTheme {
         ChooseLanguageScreen(
-            languages = listOf("English", "Myanmar (Burmese)"),
-            selectedLanguage = "English"
+            languages = listOf(
+                LanguageUiModel(id = "en", flag = R.drawable.flag_united_states, name = "English", isSelectedVisible = View.VISIBLE),
+                LanguageUiModel(id = "my", flag = R.drawable.flag_myanmar, name = "Myanmar (Burmese)")
+            )
         )
     }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
-fun ChooseLanguageScreenDarkPreview() {
+private fun ChooseLanguageScreenDarkPreview() {
     ProExpenseTheme(darkTheme = true) {
         ChooseLanguageScreen(
-            languages = listOf("English", "Myanmar (Burmese)"),
-            selectedLanguage = "English"
+            languages = listOf(
+                LanguageUiModel(id = "en", flag = R.drawable.flag_united_states, name = "English", isSelectedVisible = View.VISIBLE),
+                LanguageUiModel(id = "my", flag = R.drawable.flag_myanmar, name = "Myanmar (Burmese)")
+            )
         )
     }
 }

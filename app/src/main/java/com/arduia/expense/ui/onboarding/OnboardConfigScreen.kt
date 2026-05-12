@@ -19,7 +19,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +36,6 @@ fun OnboardConfigScreen(
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -80,14 +78,8 @@ fun OnboardConfigScreen(
                 userScrollEnabled = false // XML says binding.vpConfig.isUserInputEnabled = false
             ) { page ->
                 when (page) {
-                    0 -> ChooseLanguageScreen(
-                        languages = listOf("English", "Myanmar (Burmese)"),
-                        selectedLanguage = "English"
-                    )
-                    1 -> ChooseCurrencyScreen(
-                        currencies = listOf("United State Dollar", "Myanmar Kyat"),
-                        selectedCurrency = "United State Dollar"
-                    )
+                    0 -> ChooseLanguageScreen()
+                    1 -> ChooseCurrencyScreen()
                 }
             }
 

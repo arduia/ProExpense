@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.design.components.ProExpenseButton
 import com.arduia.design.components.ProExpenseCard
+import com.arduia.design.components.ProExpenseSearchField
 import com.arduia.design.components.ProExpenseTextField
 import com.arduia.design.theme.ProExpenseTheme
 
@@ -55,6 +56,13 @@ fun DesignSystemShowcase() {
             onValueChange = {},
             label = "Label",
             placeholder = "Placeholder",
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        ProExpenseSearchField(
+            value = "",
+            onValueChange = {},
+            hint = "Search",
             modifier = Modifier.fillMaxWidth()
         )
         

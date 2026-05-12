@@ -101,7 +101,7 @@ class MainActivity @Inject constructor() : AppCompatActivity(), NavigationDrawer
                     drawerState = drawerState,
                     currentDestinationId = currentDestId,
                     onItemClick = { destinationId ->
-                        val controller = findNavController()
+                        val controller = navController
                         if (destinationId == R.id.dest_home) {
                             controller.popBackStack(R.id.dest_home, false)
                         }
