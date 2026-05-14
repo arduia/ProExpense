@@ -13,6 +13,7 @@ room = "2.7.2"
 
 # Compose
 compose-bom = "2025.08.00"
+
 compose-compiler = "1.5.15"
 activity-compose = "1.10.1"
 navigation-compose = "2.9.3"
