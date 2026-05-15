@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.navigation.safe.args)
     alias(libs.plugins.google.service.plugin)
     alias(libs.plugins.firebase.analytics)
@@ -150,6 +151,10 @@ dependencies {
 
     // Responsive layouts
     implementation(libs.compose.material3.window.size)
+
+    // Material Icons (core subset used in screens + extended for full icon set)
+    implementation(libs.compose.material.icons.core)
+    implementation(libs.compose.material.icons.extended)
 
     // Tooling (debug only)
     debugImplementation(libs.compose.ui.tooling)

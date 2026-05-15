@@ -8,11 +8,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.R
 
+// Only poppins_light.ttf and poppins_medium.ttf are bundled in the project.
+// Android resolves other weights to the nearest available file automatically.
 val PoppinsFamily = FontFamily(
-    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.poppins_light, FontWeight.Light),
+    Font(R.font.poppins_light, FontWeight.Normal),
     Font(R.font.poppins_medium, FontWeight.Medium),
-    Font(R.font.poppins_semi_bold, FontWeight.SemiBold),
-    Font(R.font.poppins_bold, FontWeight.Bold),
+    Font(R.font.poppins_medium, FontWeight.SemiBold),
+    Font(R.font.poppins_medium, FontWeight.Bold),
 )
 
 val ProExpenseTypography = Typography(
