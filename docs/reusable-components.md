@@ -1,6 +1,6 @@
 # Reusable UI Components
 
-This document lists all reusable UI patterns extracted from the existing XML layouts. Each entry maps the current XML implementation to its proposed Compose equivalent and notes which screens use it. Use this as the component backlog for the Compose migration.
+This document lists all reusable UI patterns extracted from the existing XML layouts, cross-referenced with their usage in fragments, activities, adapters, and ViewModels. Each entry documents the possible UI states, the events it emits, and the proposed Compose equivalent.
 
 ---
 
@@ -9,87 +9,137 @@ This document lists all reusable UI patterns extracted from the existing XML lay
 ### 1. `ProExpenseTopBar`
 A scrollable `AppBarLayout` + `MaterialToolbar` with `liftOnScroll=true`.
 
-**XML pattern**: `CoordinatorLayout` > `AppBarLayout` > `MaterialToolbar` (or `Toolbar`) with `app:layout_behavior=AppBarLayout$ScrollingViewBehavior` on the scrollable content.
+**XML pattern**: `CoordinatorLayout` > `AppBarLayout` > `MaterialToolbar` + `AppBarLayout$ScrollingViewBehavior` on the scrollable child.
 
-**Variants**:
-- Drawer icon (`ic_menu`) — Home, Logs, Statistics, Settings, Backup
-- Back icon (`ic_back`) — Entry, Feedback, About
-- With menu (`app:menu`) — Entry (`menu_entry`), Logs (`menu_expense_log`), Home (`menu_home`)
-- With subtitle slot — Logs
+**UI States**:
 
-**Used in**: All 8 main screens.
+| State | Description | Trigger |
+|---|---|---|
+| `Drawer` | `ic_menu` navigation icon, unlocks drawer | Top-level destination |
+| `Back` | `ic_back` navigation icon, locks drawer | Detail/entry destination |
+| `SelectionMode` | Back icon + "N selected" title + delete menu icon shown, filter hidden | `expenseLogMode = SELECTION` (Logs) |
+| `NormalMode` | Menu icon + screen title + filter icon shown, delete hidden | `expenseLogMode = NORMAL` (Logs) |
+| `MenuDisabled` | Menu items (`filter`, `delete`) greyed out | `isEmptyExpenseCount = true` (Logs) or `isEmptyExpenseData = true` (Stats) |
+| `WithSubtitle` | Secondary subtitle row visible | `filterInfo` set (Logs), `dateRange` set (Stats), datetime set (Entry) |
 
-**Compose**: `TopAppBar` / `CenterAlignedTopAppBar` from Material3 with `TopAppBarScrollBehavior`.
+**Events**: navigation icon click (open drawer or pop back), menu item clicks (filter, delete, calendar).
+
+**Used in**: Home, Expense Logs, Statistics, Settings, Backup, Entry, Feedback, About, Web (9 screens).
+
+**Compose**: `TopAppBar` (Material3) with `TopAppBarScrollBehavior`. Pass `navigationIcon`, `actions`, and optional `subtitle` slot.
 
 ---
 
 ### 2. `DrawerHeader`
-Navigation drawer header showing app logo, name, and Beta badge.
+Navigation drawer header with app logo, name, and Beta badge.
 
-**XML**: `layout_header.xml` included via `app:headerLayout` on `NavigationView`.
+**XML**: `layout_header.xml` included via `NavigationView.app:headerLayout`.
 
-**Contents**: Close `IconButton` (top-end) · 60dp app logo (tinted `?colorPrimary`) · App name (`Headline6`) · "BETA" badge (`bg_small_rounded_warning`, `?colorWarning` fill, `?colorOnWarning` text, uppercase).
+**UI States**:
+
+| State | Description |
+|---|---|
+| `Default` | Logo (60dp, `?colorPrimary` tint) + "Pro Expense" name + "BETA" badge always visible |
+
+No dynamic states — entirely static. Close `IconButton` dismisses drawer.
+
+**Events**: close button click → `MainActivity.closeDrawer()`.
 
 **Used in**: `activity_main.xml`.
 
-**Compose**: Custom `@Composable` header passed to `ModalDrawerSheet`.
+**Compose**: Custom header `@Composable` passed into `ModalDrawerSheet`.
 
 ---
 
 ### 3. `FloatingAddButton`
-Global FAB visible only on the Home screen, managed by `MainActivity`.
+Global FAB shown only on the Home destination.
 
-**XML**: `FloatingActionButton` in `activity_main.xml`, bottom-end gravity, 32dp bottom margin, `?colorPrimary` bg, `?colorOnPrimary` tint, `ic_add` icon.
+**XML**: `FloatingActionButton` in `activity_main.xml`.
 
-**Used in**: `activity_main.xml`.
+**UI States**:
 
-**Compose**: Pass as `floatingActionButton` slot of `Scaffold` on the Home screen only.
+| State | Description | Trigger |
+|---|---|---|
+| `Hidden` | FAB invisible and not clickable (default) | Any non-Home destination |
+| `Visible` | FAB visible and clickable | `dest_home` active |
+| `DelayedShow` | FAB held back while Snackbar is displayed, then shown after its duration + 300ms | `showSnackMessage()` active |
+
+**Events**: click → navigate to `dest_expense_entry` with `@TopDropNavOption` (pop-down animation).
+
+**Used in**: `activity_main.xml`, controlled via `MainHost` interface from all fragments.
+
+**Compose**: Pass as `floatingActionButton` slot of the Home screen's `Scaffold`.
 
 ---
 
 ## Cards & Containers
 
 ### 4. `DashboardCard`
-Full-width surface card with a section title, an optional subtitle (date range), and a main content slot.
+Full-width surface card with a section title, optional date-range subtitle, and a content slot.
 
-**XML pattern**: `MaterialCardView` > `RelativeLayout` with `tv_title` (`?textAppearanceMediumTitle`) + `tv_date_range` (`?textAppearanceSubtitle1`, `textAllCaps`) above the content area.
+**XML pattern**: `MaterialCardView` > `RelativeLayout` with `tv_title` (`?textAppearanceMediumTitle`) + `tv_date_range` (`?textAppearanceSubtitle1`, `textAllCaps`) above content.
 
-**Used in**: `layout_expense_in_out.xml` (Totals card), `layout_expense_graph.xml` (Graph card), `layout_recent_lists.xml` (Recent card).
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Loading` | Content area empty / placeholder | ViewModel data not yet emitted |
+| `Populated` | Title + date range + content visible | `graphUiModel` / `incomeOutcomeData` emitted |
+
+**Events**: none — container only. Child content handles interactions.
+
+**Used in**: `layout_expense_in_out.xml` (Totals), `layout_expense_graph.xml` (Graph), `layout_recent_lists.xml` (Recent) — all on Home.
 
 **Compose**:
 ```kotlin
 @Composable
-fun DashboardCard(title: String, dateRange: String?, content: @Composable () -> Unit)
+fun DashboardCard(title: String, dateRange: String? = null, content: @Composable () -> Unit)
 ```
 
 ---
 
 ### 5. `CircularCategoryBadge`
-Circular card containing a single centered icon, color-coded per category.
+Circular card containing a centered category icon, color-coded per category.
 
-**XML**: `MaterialCardView` with `Widget.ProExpense.CircularCardView` style (50% corner radius, 2dp border) at 50–55dp, containing a 30dp `AppCompatImageView` with `dark_gray` tint. Background color currently hardcoded as `#b3e5fc` (`blue_light_100`) in most places.
+**XML**: `MaterialCardView` with `Widget.ProExpense.CircularCardView` style (50% corner radius) at 50–55dp, containing a 30dp `AppCompatImageView`. Background currently hardcoded `#b3e5fc` (`blue_light_100`) in most places.
+
+**UI States**:
+
+| State | Description |
+|---|---|
+| `Default` | Icon + background tint for the given category |
+| `Selected` *(future)* | Highlighted border or elevated state in selection mode |
+
+Background color is set per-item from `categoryProvider.getCategoryDrawableByID(category)`. No runtime state changes on this view itself.
 
 **Used in**: `item_expense_log.xml`, `item_expense_recent.xml`, `expense_detail_dialog.xml`.
 
 **Compose**:
 ```kotlin
 @Composable
-fun CategoryBadge(icon: ImageVector, backgroundColor: Color, size: Dp = 50.dp)
+fun CategoryBadge(icon: ImageVector, backgroundColor: Color, modifier: Modifier = Modifier, size: Dp = 50.dp)
 ```
 
 ---
 
 ### 6. `InfoCard`
-A `MaterialCardView` presenting label+value field pairs in a vertical list.
+A `MaterialCardView` presenting aligned label+value field pairs.
 
-**XML pattern**: `MaterialCardView` > `ConstraintLayout` with `Barrier` for alignment. Each field is a label `TextView` (`?textAppearanceBody2`, 70% alpha) paired with a value `TextView` (`?textAppearanceBody1` or `CurrencySmall`).
+**XML**: `MaterialCardView` > `ConstraintLayout` with `Barrier`. Each field is a `Body2` label (70% alpha) paired with a `Body1` or `CurrencySmall` value.
+
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `NoteVisible` | Note row displayed | `note` is non-empty |
+| `NoteHidden` | Note row visibility = `INVISIBLE` | `note` is null or blank — set in `ExpenseDetailDialog.setDetail()` |
 
 **Used in**: `expense_detail_dialog.xml` (Amount, Date, Note fields).
 
 **Compose**:
 ```kotlin
 @Composable
-fun InfoCard(fields: List<Pair<String, String>>)
+fun InfoCard(amount: String, currency: String, date: String, note: String?)
 ```
 
 ---
@@ -97,94 +147,179 @@ fun InfoCard(fields: List<Pair<String, String>>)
 ## List Items
 
 ### 7. `ExpenseRow`
-The core expense list item: category badge + name + date on the left, amount + currency symbol on the right.
+Core expense item: category badge + name + date + amount + currency.
 
-**XML**: `item_expense_recent.xml` is the base. `item_expense_log.xml` reuses the same foreground layer inside `SwipeFrameLayout`.
+**XML**: `item_expense_recent.xml` is the base. The same foreground layer appears in `item_expense_log.xml` inside `SwipeFrameLayout`.
 
-**Key views**: `cv_category` (55dp badge) · `tv_name` (`Body1`, max 20 chars, ellipsize) · `tv_date` (`Caption`) · `tv_amount` (`CurrencySmall`) · `tv_currency_symbol` (`Body2`).
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Default` | All fields populated, normal background | Standard list display |
+| `EmptyName` | Name shows empty string | `expense.name` is null → mapped to `""` in `ExpenseUiModelMapper` |
+
+Amount is always formatted with `@CurrencyDecimalFormat` — never raw. Date is formatted by `DateFormatter`.
+
+**Events**: item click → `onItemClickListener.invoke(item)` → ViewModel opens detail dialog.
 
 **Used in**: `layout_recent_lists.xml` (Home), `item_expense_log.xml` (Expense Logs).
 
 **Compose**:
 ```kotlin
 @Composable
-fun ExpenseRow(item: ExpenseUiModel, onClick: () -> Unit)
+fun ExpenseRow(item: ExpenseUiModel, onClick: () -> Unit, modifier: Modifier = Modifier)
 ```
 
 ---
 
 ### 8. `SwipeableExpenseRow`
-`ExpenseRow` wrapped in swipe-to-delete behaviour with a red back layer.
+`ExpenseRow` wrapped in swipe-to-reveal with a red delete back-layer.
 
-**XML**: Root is `SwipeFrameLayout` (custom `FrameLayout`). Back layer is a red (`red_400`) `FrameLayout` containing a delete icon+label on the end and a confirm checkmark on the start. Front layer is the `ExpenseRow`.
+**XML**: Root is `SwipeFrameLayout`. Back layer: red `FrameLayout` with delete icon+label (end) and confirm checkmark (start). Front layer: `ExpenseRow` content.
 
-**Used in**: `item_expense_log.xml`.
+**UI States** (driven by `SwipeFrameLayout.currentState`):
 
-**Compose**: `SwipeToDismiss` (Material3) wrapping `ExpenseRow`, with a `DismissBackground` showing the red delete content.
+| State | Constant | Visual | Event emitted |
+|---|---|---|---|
+| `Idle` | `STATE_IDLE` | Front layer centred, no back visible | — |
+| `StartLocked` | `STATE_START_LOCKED` | Front slides right, green confirm visible on left | `OnSelectedChangedListener(true)` → item selected for multi-delete |
+| `EndLocked` | `STATE_END_LOCKED` | Front slides left, red delete area revealed on right | `OnPrepareChangedListener(true)` → `viewModel.onSingleDeletePrepared(id)` |
+
+Swipe gesture activated by long-press. Animation uses `ValueAnimator` + `LinearOutSlowInInterpolator`. Lock margins: 46dp start, 80dp end. State is persisted per-item in `SwipeStateHolder` and restored via `onRestoreSwipeState` event from ViewModel.
+
+**Events**:
+- `EndLocked` confirmed → delete icon tap → `onItemDeleteListener(item)`
+- `StartLocked` → item enters selection mode, `expenseLogMode → SELECTION`
+
+**Used in**: `item_expense_log.xml` (Expense Logs only).
+
+**Compose**: `SwipeToDismiss` (Material3) with a `DismissBackground` composable showing the red delete content.
 
 ---
 
 ### 9. `DateSectionHeader`
-A simple date label used as a grouped section separator in lists.
+A date label used as a grouped section separator between expense items.
 
-**XML**: `item_expense_date_header.xml` — `FrameLayout` (`?backgroundColor`) with a single `TextView` at 20dp start margin.
+**XML**: `item_expense_date_header.xml` — `FrameLayout` (`?backgroundColor`) with single `TextView`, 20dp start margin.
 
-**Used in**: Expense Logs list (mixed with `ExpenseRow` items via multi-type adapter).
+**UI States**:
 
-**Compose**: `Text` composable with `backgroundColor` surface modifier, passed as a `stickyHeader` in `LazyColumn`.
+| State | Description |
+|---|---|
+| `Default` | Date string populated from `ExpenseLogUiModel.Header.date` |
+
+No dynamic state — content-only.
+
+**Used in**: Expense Logs mixed-type list (`TYPE_HEADER` in `ExpenseLogAdapter`).
+
+**Compose**: Plain `Text` with `Modifier.background(MaterialTheme.colorScheme.background)`, used as `stickyHeader` in `LazyColumn`.
 
 ---
 
 ### 10. `CategoryChip`
-A checkable chip for selecting an expense category.
+Checkable chip for selecting an expense category in the entry form.
 
-**XML**: `item_category.xml` — checkable `MaterialCardView` with `category_background_color_statelist` background (26% `colorPrimary` when checked, 11% `colorOnSurface` when unchecked), 2dp corner, 0dp elevation, `?textAppearanceSubtitle1` label.
+**XML**: `item_category.xml` — checkable `MaterialCardView` with `category_background_color_statelist` (26% `colorPrimary` when checked, 11% `colorOnSurface` when unchecked), 2dp corner, `?textAppearanceSubtitle1` label.
 
-**Used in**: `fragment_expense_entry.xml` (horizontal category picker row).
+**UI States**:
 
-**Compose**: `FilterChip` or custom `Card` with `toggleable` modifier and `animateColorAsState`.
+| State | Description | Trigger |
+|---|---|---|
+| `Unchecked` | Faint surface tint | Not selected |
+| `Checked` | Primary-tinted background | `viewModel.selectCategory(category)` called; adapter moves selected item to index 0 post-animation |
+
+Selection is single-choice; the adapter updates via `selectedCategory` LiveData.
+
+**Events**: click → `viewModel.selectCategory(ExpenseCategory)`.
+
+**Used in**: `fragment_expense_entry.xml` (horizontal `CategoryPicker` RecyclerView).
+
+**Compose**: `FilterChip` or custom `Card` with `toggleable` modifier + `animateColorAsState`.
 
 ---
 
 ### 11. `CategoryStatisticRow`
-A statistics row showing a category's share of total expenses.
+Statistics row showing a category's share of total expenses.
 
-**XML**: `item_category_statistic.xml` — category name (`Body1`) on the left, animated `ProgressView` (skydoves) filling the middle, percentage label (`Subtitle2`, 80% alpha) on the right.
+**XML**: `item_category_statistic.xml` — category name (`Body1`) + animated `ProgressView` (skydoves, `autoAnimate=true`) + percentage label (`Subtitle2`, 80% alpha).
 
-**Used in**: `fragment_statistic.xml`.
+**UI States**:
 
-**Compose**: `Row` with `LinearProgressIndicator` (animated via `animateFloatAsState`) and `Text` percentage label.
+| State | Description | Trigger |
+|---|---|---|
+| `Loading` | No data shown | `categoryStatisticList` not yet emitted |
+| `Populated` | Name, progress value (0–100), percentage string | `categoryStatisticList` emitted from ViewModel |
+| `AnimatingIn` | ProgressView animates from 0 to target value | `autoAnimate=true` on `ProgressView` whenever bound |
+
+Progress bar uses `?colorPrimary` fill and `color_statistic_background` track.
+
+**Used in**: `fragment_statistic.xml` RecyclerView.
+
+**Compose**: `Row` with `LinearProgressIndicator(progress = animateFloatAsState(target))` and `Text` labels.
 
 ---
 
 ### 12. `BackupRow`
-A backup file record row with a delete action.
+A backup file record with filename, metadata, and a delete action.
 
-**XML**: `item_backup.xml` — filename (ellipsized) + date + item count on the start; delete `IconButton` on the end; `ProgressBar` shown while the worker is running.
+**XML**: `item_backup.xml` — filename (ellipsized, `Body1`) + created date + item count; delete `IconButton` on the end; `ProgressBar` shown while the WorkManager task is running.
 
-**Used in**: `fragment_backup.xml`.
+**UI States**:
 
-**Compose**: `ListItem` or custom `Row` with trailing `IconButton` and conditional `CircularProgressIndicator`.
+| State | Description | Trigger |
+|---|---|---|
+| `InProgress` | `ProgressBar` visible, delete icon hidden | `BackupEnt.isCompleted = false` |
+| `Completed` | `ProgressBar` gone, delete icon visible | `BackupEnt.isCompleted = true` |
+
+The `BackupMessageViewModel` monitors WorkManager task UUIDs and emits `finishedEvent` when work completes.
+
+**Events**: click → opens delete confirmation dialog; delete icon click → `viewModel.onBackupDeleteConfirmed(item)`.
+
+**Used in**: `fragment_backup.xml` RecyclerView.
+
+**Compose**: `ListItem` with `trailingContent` switching between `IconButton` and `CircularProgressIndicator`.
 
 ---
 
 ### 13. `CurrencyRow`
-A selectable currency list item with symbol, name, and check indicator.
+A selectable currency list item.
 
-**XML**: `item_currency.xml` — `MaterialCardView` > `ConstraintLayout` with a `Guideline` at 25% for the symbol column; currency name fills remaining width; `ic_checked` icon visible when selected.
+**XML**: `item_currency.xml` — `MaterialCardView` > `ConstraintLayout` with a `Guideline` at 25% for the symbol column; name fills remaining width; `ic_checked` visible when selected.
 
-**Used in**: Currency selector dialog and `fragment_choose_currency.xml`.
+**UI States**:
 
-**Compose**: `ListItem` with `leadingContent` (symbol) and `trailingContent` (checkmark).
+| State | Description |
+|---|---|
+| `Unselected` | Check icon invisible |
+| `Selected` | Check icon (`ic_checked`) visible |
+
+Selection driven by matching the item's currency code against the stored preference.
+
+**Events**: click → saves selected currency, updates `currencyValue` LiveData in `SettingsViewModel`.
+
+**Used in**: Currency selector dialog (`fragment_choose_currency_dialog.xml`) and `fragment_choose_currency.xml`.
+
+**Compose**: `ListItem` with `leadingContent` (symbol `Text`) and `trailingContent` (conditional `Icon`).
 
 ---
 
 ### 14. `LanguageRow`
-A selectable language list item with flag, name, and check indicator.
+A selectable language list item with flag.
 
-**XML**: `item_language.xml` — `MaterialCardView` > `RelativeLayout`: 25dp flag image on the start, ellipsized language name in the middle, `ic_checked` icon (invisible until selected) on the end.
+**XML**: `item_language.xml` — `MaterialCardView` > `RelativeLayout`: 25dp flag image (start), ellipsized language name (middle), `ic_checked` (end, `invisible` by default).
 
-**Used in**: Language selector dialog and `fragment_choose_language.xml`.
+**UI States**:
+
+| State | Description |
+|---|---|
+| `Unselected` | Checkmark invisible |
+| `Selected` | Checkmark visible |
+
+Selection driven by matching item's language code against `selectedLanguage` from `SettingsViewModel`.
+
+**Events**: click → saves selected language; triggers `onRestart` event in `OnBoardingConfigFragment` or activity recreation.
+
+**Used in**: Language selector dialog (`fragment_choose_language_dialog.xml`) and `fragment_choose_language.xml`.
 
 **Compose**: `ListItem` with `leadingContent` (flag `Image`) and `trailingContent` (conditional checkmark icon).
 
@@ -195,55 +330,109 @@ A selectable language list item with flag, name, and check indicator.
 ### 15. `LabeledTextField`
 An outlined `TextInputLayout` + `TextInputEditText` pair.
 
-**XML**: `TextInputLayout` with `style="?attr/textInputStyle"` (OutlinedBox) wrapping `TextInputEditText`. Variants: single-line (name, amount), multi-line/fixed height (note, feedback comment).
+**XML**: `TextInputLayout` with `style="?attr/textInputStyle"` (OutlinedBox) wrapping `TextInputEditText`.
+
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Empty` | Hint shown, no value | Field is blank |
+| `Filled` | User input shown | User typing |
+| `Error` | Error message shown below field, outline turns red | Validation failure on save (amount empty, email invalid, comment empty) |
+| `WithSuffix` | Currency symbol shown as suffix text | `currencySymbol` LiveData emitted (Amount field only) |
+| `Focused` | Outline highlighted | Field has input focus |
+| `Disabled` *(amount)* | Amount field restricted via `FloatingInputFilter` | Input filter rejects non-decimal characters |
+
+Validation errors are set via `textInputLayout.error = "message"` on the save/send button click. Amount field uses `FloatingInputFilter` to restrict input to valid decimal values.
+
+**Events**: text change → picked up on save/update button click; ime action (Next/Done) moves focus.
 
 **Used in**: `fragment_expense_entry.xml` (name, amount, note), `fragment_feedback.xml` (name, email, comment), `fragment_export_dialog.xml` (filename).
 
-**Compose**: `OutlinedTextField` with `label`, `keyboardOptions`, and `maxLines`.
+**Compose**: `OutlinedTextField` with `isError`, `supportingText`, `suffix`, `keyboardOptions`, and `maxLines`.
 
 ---
 
 ### 16. `CategoryPicker`
-A horizontally scrolling row of `CategoryChip` items for selecting an expense category.
+Horizontal scrolling row of `CategoryChip` items for selecting a category.
 
 **XML**: `RecyclerView` with `android:orientation="horizontal"`, `LinearLayoutManager`, items: `item_category.xml`.
 
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Default` | All categories shown, last-used or first category checked | On screen open |
+| `CategorySelected` | Tapped chip becomes checked; selected item animated to index 0 | `viewModel.selectCategory()` → `selectedCategory` LiveData |
+
+**Events**: chip click → `viewModel.selectCategory(ExpenseCategory)`.
+
 **Used in**: `fragment_expense_entry.xml`.
 
-**Compose**: `LazyRow` of `CategoryChip` composables.
+**Compose**: `LazyRow` of `CategoryChip` composables with `selectedCategory` state.
 
 ---
 
 ### 17. `SearchBox`
-A rounded search input field with a trailing search icon.
+Rounded search input field with a trailing search icon.
 
-**XML**: `layout_search_box.xml` — `MaterialCardView` (50dp height, `gray_200` bg, 8dp radius, 0dp elevation) containing `TextInputEditText` and a trailing `ic_search` `ImageView`.
+**XML**: `layout_search_box.xml` — `MaterialCardView` (50dp height, `gray_200` bg, 8dp corner, 0 elevation) with `TextInputEditText` and trailing `ic_search` `ImageView`.
 
-**Custom view**: `MaterialSearchBox.kt` wraps this layout with `backgroundColor`, `cornerRadius`, and `hint` styleable attributes.
+**Custom view**: `MaterialSearchBox.kt` wraps this layout; accepts `backgroundColor`, `cornerRadius`, `hint` styled attributes.
+
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Empty` | Hint text shown, search icon visible | No input |
+| `Typing` | User text shown, icon still visible | User typing |
+
+Text changes emitted via `SearchTextChangeListener.onChanged(String)` → filters the currency/language adapter list in real time.
 
 **Used in**: `fragment_choose_currency.xml`, `fragment_choose_language.xml`, currency/language dialogs.
 
-**Compose**: `OutlinedTextField` or `TextField` with `trailingIcon = { Icon(Icons.Default.Search) }` and a rounded `shape`.
+**Compose**: `TextField` or `OutlinedTextField` with `trailingIcon = { Icon(Icons.Default.Search) }` and rounded `shape`.
 
 ---
 
 ### 18. `SettingsRow`
-A tappable preference row with a label on the start and a value/icon on the end, with a bottom divider.
+A tappable preference row with a label, a trailing value/icon, and a bottom divider.
 
-**XML**: `FrameLayout` with `?selectableItemBackground`, `TextView` (start) and an `ImageView` or `TextView` (end, 60dp), followed by a `1dp` `View` divider with `@android:drawable/divider_horizontal_bright`.
+**XML**: `FrameLayout` (`?selectableItemBackground`) with start `TextView` and end `ImageView`/`TextView`, followed by a 1dp `View` divider.
 
-**Used in**: `fragment_settings.xml` — Language row, Currency row, Theme row.
+**UI States**:
 
-**Compose**: `ListItem` with `trailingContent` slot, or custom `Row` with `Divider` below.
+| Row | Trailing content | State |
+|---|---|---|
+| Language | `ImageView` (flag drawable) | Updates to flag of `selectedLanguage` from SettingsViewModel |
+| Currency | `TextView` (`Headline6`) | Updates to currency symbol string from `currencyValue` LiveData |
+| Theme | `ImageView` (`ic_theme`, static) | No runtime update |
+
+**Events**: click → opens corresponding dialog (language, currency, or theme chooser).
+
+**Used in**: `fragment_settings.xml` (3 rows).
+
+**Compose**: `ListItem` with `trailingContent` slot, `Divider` below each row.
 
 ---
 
 ## Dialogs
 
 ### 19. `DialogTitleBar`
-Reusable dialog header: title text on the start, close / edit / delete icon buttons on the end.
+Reusable dialog header: title on the start, close and optional action icon buttons on the end.
 
-**XML pattern**: `TextView` (`?textAppearanceHeadline6`) constrained to start; one or more `FrameLayout`-wrapped `IconButton`s constrained to end. Appears identically in 6 dialogs.
+**XML pattern**: `TextView` (`?textAppearanceHeadline6`) + one or more `FrameLayout`-wrapped `IconButton`s constrained to the end.
+
+**UI States**:
+
+| State | Description | Where |
+|---|---|---|
+| `CloseOnly` | Only close `IconButton` visible | Export, Currency, Language, Feedback Status dialogs |
+| `CloseWithActions` | Close + edit + delete icon buttons | Expense Detail dialog (`isDeleteEnabled` controls delete visibility) |
+
+Delete button frame visibility: `VISIBLE` if `isDeleteEnabled = true` (set from `HomeFragment`/`ExpenseFragment` call site), `INVISIBLE` otherwise.
+
+**Events**: close → dismiss; edit → `editOnClickListener(item)`; delete → `deleteOnClickListener(item)`.
 
 **Used in**: `expense_detail_dialog.xml`, `fragment_delete_confirm_dialog.xml`, `fragment_export_dialog.xml`, `fragment_choose_currency_dialog.xml`, `fragment_choose_language_dialog.xml`, `fragment_feedback_status_dialog.xml`.
 
@@ -256,44 +445,88 @@ fun DialogTitleBar(title: String, onClose: () -> Unit, actions: @Composable RowS
 ---
 
 ### 20. `ExpenseDetailDialog`
-Full expense detail bottom sheet: title bar + category + name + info card (amount, date, note) + OK button.
+Full expense detail bottom sheet shown on item tap.
 
-**XML**: `expense_detail_dialog.xml` — `ConstraintLayout` with `DialogTitleBar`, `CircularCategoryBadge`, `InfoCard`, and `Widget.ProExpense.Button`.
+**XML**: `expense_detail_dialog.xml` — `DialogTitleBar` + `CircularCategoryBadge` + `InfoCard` (amount, date, note) + OK `Button`.
 
-**Used in**: Home recent list and Expense Logs on item tap.
+**UI States**:
 
-**Compose**: `ModalBottomSheet` or `AlertDialog` composable.
+| State | Description | Trigger |
+|---|---|---|
+| `NoteHidden` | Note row visibility = `INVISIBLE` | `detail.note` is null or blank |
+| `NoteVisible` | Note row shown | `detail.note` non-empty |
+| `DeleteEnabled` | Delete `IconButton` visible | `isDeleteEnabled = true` passed from call site |
+| `DeleteHidden` | Delete `IconButton` invisible | `isDeleteEnabled = false` (e.g. read-only contexts) |
+
+**Events**: edit click → navigate to `dest_expense_entry` with `expense_id`; delete click → opens `DeleteConfirmFragment`; OK → dismiss; dismiss → `dismissListener()`.
+
+**Used in**: `HomeFragment` (recent list tap), `ExpenseFragment` (log list tap).
+
+**Compose**: `ModalBottomSheet` or `AlertDialog` composable containing `InfoCard` and action buttons.
 
 ---
 
 ### 21. `DeleteConfirmDialog`
-Confirmation dialog before deleting an expense or backup entry.
+Confirmation dialog before destructive deletion.
 
-**XML**: `fragment_delete_confirm_dialog.xml` — `DialogTitleBar` + description card + red delete `Button` (`?colorNegative`).
+**XML**: `fragment_delete_confirm_dialog.xml` — `DialogTitleBar` + description card + red delete `Button`.
 
-**Used in**: Expense Logs, Backup.
+**UI States**:
 
-**Compose**: `AlertDialog` with `confirmButton` styled in `colorError`.
+| State | Description | Trigger |
+|---|---|---|
+| `Singular` | "1 item will be deleted" | `DeleteInfoUiModel.itemTotal == 1` |
+| `Plural` | "N items will be deleted" | `DeleteInfoUiModel.itemTotal > 1` |
+
+**Events**: confirm → `onConfirmListener()` → ViewModel executes delete; close → dismiss only.
+
+**Used in**: `ExpenseFragment` (single swipe-delete and multi-select delete), `BackupFragment` (backup record delete).
+
+**Compose**: `AlertDialog` with dynamic message text and `confirmButton` styled in `colorError`.
 
 ---
 
 ### 22. `ChooseThemeDialog`
 Theme mode picker: Light / Dark / System Default.
 
-**XML**: `choose_theme_dialog.xml` — `RadioGroup` with 3 `RadioButton` items, `grid_3` horizontal padding.
+**XML**: `choose_theme_dialog.xml` — `RadioGroup` with 3 `RadioButton` items.
 
-**Used in**: `fragment_settings.xml` (on Theme row tap).
+**UI States**:
 
-**Compose**: `AlertDialog` with a `Column` of `RadioButton` + `Text` rows.
+| State | Description | Trigger |
+|---|---|---|
+| `LightSelected` | Light radio checked | Current theme = `MODE_NIGHT_NO` |
+| `DarkSelected` | Dark radio checked | Current theme = `MODE_NIGHT_YES` |
+| `SystemSelected` | System default radio checked | Current theme = `MODE_NIGHT_FOLLOW_SYSTEM` |
+
+Initial selection passed via `onThemeOpenToChange` event from `SettingsViewModel`. On save → `viewModel.onThemeChanged()` → triggers activity recreation via `onThemeChanged` EventLiveData.
+
+**Events**: radio selection + save → persists theme mode, triggers `onThemeChanged` event.
+
+**Used in**: `fragment_settings.xml` (Theme row tap).
+
+**Compose**: `AlertDialog` with `Column` of `RadioButton` + `Text` rows.
 
 ---
 
 ### 23. `FilterDialog`
-Date-range filter + sort order toggle for the expense log.
+Date-range filter and sort-order toggle for the expense log and statistics screens.
 
-**XML**: `filter_expense_dialog.xml` — title + two date-range calendar cards (start/end, each showing month/day/year vertically, `CalendarDayCardView` style) + `MaterialButtonToggleGroup` (ASC/DESC, `singleSelection`) + Apply button.
+**XML**: `filter_expense_dialog.xml` — title + two `CalendarDayCardView` date cards (start/end, each showing month/day/year) + `MaterialButtonToggleGroup` (ASC/DESC, `singleSelection`) + Apply button.
 
-**Used in**: `fragment_expense_logs.xml`.
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `StartDateSelected` | Start date card shows selected date | Date picker confirms start date |
+| `EndDateSelected` | End date card shows selected date | Date picker confirms end date |
+| `AscSelected` | ASC button toggled | User taps ASC |
+| `DescSelected` | DESC button toggled (default) | User taps DESC |
+| `Populated` | Pre-filled from current `filterInfo` | `onFilterShow` event carries `ExpenseLogFilterInfo` |
+
+**Events**: Apply → `viewModel.setFilter(filter)`; date card tap → opens `DatePickerDialog`.
+
+**Used in**: `fragment_expense_logs.xml` (filter menu tap), `fragment_statistic.xml` (calendar icon tap).
 
 **Compose**: `AlertDialog` with a date range picker and `SegmentedButton` for sort order.
 
@@ -304,56 +537,107 @@ Filename entry dialog before exporting a backup.
 
 **XML**: `fragment_export_dialog.xml` — `DialogTitleBar` + `LabeledTextField` (filename) + Save `Button` with icon.
 
-**Used in**: `fragment_backup.xml`.
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Idle` | Empty filename field, Save enabled | Dialog opens |
+| `Exporting` | WorkManager task enqueued; dialog closes optimistically | Save tapped with valid filename |
+
+**Events**: Save → triggers WorkManager export task via `BackupFragment`; close → dismiss.
+
+**Used in**: `fragment_backup.xml` (Export card tap).
 
 **Compose**: `AlertDialog` with `OutlinedTextField` and `confirmButton`.
 
 ---
 
 ### 25. `FeedbackStatusDialog`
-Post-submission success/failure status screen.
+Post-submission status screen shown after feedback is sent.
 
 **XML**: `fragment_feedback_status_dialog.xml` — close button + title + 55dp `ic_done_circle` icon + status message (`Body1`, centered) + "Go Home" `Button`.
 
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Success` | Done icon shown, positive status message | `feedbackSubmittedEvent` emitted |
+
+Only one state is shown (the dialog appears only on success). The WorkManager task is enqueued with a `CONNECTED` network constraint; the UI updates optimistically.
+
+**Events**: "Go Home" → `navController.popBackStack(dest_home)`; close → dismiss.
+
 **Used in**: `fragment_feedback.xml`.
 
-**Compose**: Full-screen `Dialog` or `AlertDialog` with a success icon composable.
+**Compose**: `Dialog` with centered success icon and action button.
 
 ---
 
 ## Specialist / Custom
 
 ### 26. `SpendGraph`
-A custom Canvas-drawn 7-day expense line graph.
+Canvas-drawn 7-day expense line graph with day labels and a peak marker.
 
-**Module**: `:week-expense-graph` (`com.arduia.graph.SpendGraph`)
+**Module**: `:week-expense-graph` (`com.arduia.graph.SpendGraph`).
 
 **XML usage**: `layout_expense_graph.xml` — 160dp height, `app:graph_color="?colorPrimary"`, `app:day_color="?colorPrimary"`.
 
-**Internals**: Draws day labels (Mon–Sun), a connecting line between `SpendPoint` values, circle markers, and a dashed vertical line with a `%` label at the peak. Uses an `Adapter` pattern for data binding.
+**UI States**:
 
-**Used in**: Home screen graph card.
+| State | Description | Trigger |
+|---|---|---|
+| `Empty` | Graph draws no line; day labels still shown | `adapter.getRate(day)` returns value outside 0–100 → stored as `rate = -1f` |
+| `Populated` | Line graph drawn between data points | `adapter.notifyDataChanged()` called with valid rates |
+| `Animating` | View invalidated and redrawn | `notifyDataChanged()` / `notifyPointChanged()` |
 
-**Compose**: Reimplement using `Canvas {}` in Compose with `drawPath`, `drawCircle`, and `drawText`. Accept a `List<SpendPoint>` as state. Colors from `MaterialTheme.colorScheme.primary`.
+The adapter pattern: `SpendGraph.Adapter.getRate(day: Int): Int` returns 0–100 per day. Rates outside this range are treated as no-data (skipped in drawing). The highest-rate point gets a dashed vertical line and `%` label — omitted if it would overflow the canvas edge.
+
+Colors come from `app:graph_color` and `app:day_color` XML attributes (both bound to `?colorPrimary` in the layout).
+
+**Events**: none — display-only. Data is pushed via `Adapter.notifyDataChanged()`.
+
+**Used in**: Home screen graph card (`layout_expense_graph.xml`).
+
+**Compose**: Reimplement using Compose `Canvas {}` with `drawPath`, `drawCircle`, `drawText`. Accept `List<SpendPoint>` as a parameter. Colors from `MaterialTheme.colorScheme.primary`.
 
 ---
 
 ### 27. `NoDataPlaceholder`
-An empty-state message shown when a list has no items.
+Empty-state message shown when a list has no items.
 
-**XML**: `layout_no_expense_logs.xml` — included in Expense Logs and Backup screens, toggled between `visible` / `invisible`.
+**XML**: `layout_no_expense_logs.xml` — included in screens, toggled between `VISIBLE` / `INVISIBLE`.
+
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `Hidden` | `visibility = INVISIBLE` | `isCurrentListEmpty = false` (Logs) / `isEmptyBackupLogs = false` (Backup) |
+| `Visible` | `visibility = VISIBLE` | `isCurrentListEmpty = true` or `isEmptyBackupLogs = true` |
+
+Note: uses `INVISIBLE` (not `GONE`) so the layout still occupies space and doesn't cause a reflow when the list populates.
 
 **Used in**: `fragment_expense_logs.xml`, `fragment_backup.xml`.
 
-**Compose**: `Box(contentAlignment = Center)` with a `Text` composable, shown conditionally via `AnimatedVisibility`.
+**Compose**: `AnimatedVisibility` wrapping a centred `Text`, shown conditionally via `isListEmpty` state.
 
 ---
 
 ### 28. `ToggleButtonGroup`
-A two-option single-selection toggle (e.g. ASC / DESC sort).
+Two-option single-selection toggle (e.g. ASC / DESC sort order).
 
 **XML**: `MaterialButtonToggleGroup` with `app:singleSelection="true"` and two `MaterialButton` children.
 
+**UI States**:
+
+| State | Description | Trigger |
+|---|---|---|
+| `AscSelected` | ASC button filled/checked | User taps ASC |
+| `DescSelected` | DESC button filled/checked (pre-populated from `filterInfo.sortType`) | User taps DESC or dialog opens with existing filter |
+
+Initial state pre-filled from `ExpenseLogFilterInfo.sortType` when `onFilterShow` event fires.
+
+**Events**: selection change → updates local filter state; Apply button commits via `viewModel.setFilter()`.
+
 **Used in**: `filter_expense_dialog.xml`.
 
-**Compose**: `SegmentedButton` (Material3) or a custom `Row` of `OutlinedButton` with toggled border/fill state.
+**Compose**: `SegmentedButton` (Material3) or custom `Row` of `OutlinedButton` with toggled fill state.
