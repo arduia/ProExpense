@@ -2,6 +2,7 @@ package com.arduia.expense.designsystem.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.ui.graphics.Color
 
 val LightColorScheme = lightColorScheme(
     primary = Green500,

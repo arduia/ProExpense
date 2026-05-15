@@ -9,6 +9,7 @@ import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.Result
 import com.arduia.expense.model.onSuccess
+import com.arduia.expense.ui.component.backup.BackupRowUiModel
 import com.arduia.mvvm.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,6 +41,27 @@ class BackupViewModel @Inject constructor(
 
     private val _onBackupDelete = EventLiveData<Unit>()
     val onBackupDelete get() = _onBackupDelete.asLiveData()
+
+    val uiState: StateFlow<BackupUiState> = combine(
+        _backupList.asFlow(),
+        flow { emit(false) },
+        flow { emit(false) },
+        flow { emit(false) }
+    ) { backupFiles, isImporting, isExporting, showExportDialog ->
+        BackupUiState(
+            backupFiles = backupFiles.map {
+                BackupRowUiModel(
+                    id = it.id.toLong(),
+                    name = it.name,
+                    date = it.date,
+                    isInProgress = it.onProgress
+                )
+            },
+            isImporting = isImporting,
+            isExporting = isExporting,
+            showExportDialog = showExportDialog
+        )
+    }.stateIn(viewModelScope, SharingStarted.Lazily, BackupUiState())
 
     init {
         observeBackupLists()
@@ -76,4 +98,10 @@ class BackupViewModel @Inject constructor(
     fun setImportUri(uri: Uri) {
         _backupFilePath post event(uri)
     }
+
+    fun onImportClick() {}
+    fun onExportClick() {}
+    fun onExportRangeSelect(range: String) {}
+    fun onExportConfirm() {}
+    fun onExportDialogDismiss() {}
 }

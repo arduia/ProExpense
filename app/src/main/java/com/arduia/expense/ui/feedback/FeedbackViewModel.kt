@@ -1,12 +1,17 @@
 package com.arduia.expense.ui.feedback
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.work.*
 import com.arduia.expense.data.FeedbackWorker
 import com.arduia.mvvm.EventLiveData
 import com.arduia.mvvm.EventUnit
 import com.arduia.mvvm.post
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,6 +20,9 @@ class FeedbackViewModel @Inject constructor(private val workManager: WorkManager
 
     private val _feedbackSubmittedEvent = EventLiveData<Unit>()
     val feedbackSubmittedEvent = _feedbackSubmittedEvent.asLiveData()
+
+    val uiState: StateFlow<FeedbackUiState> = flowOf(FeedbackUiState())
+        .stateIn(viewModelScope, SharingStarted.Lazily, FeedbackUiState())
 
     fun sendFeedback(name: String, email: String, comment: String){
         val data = createInputDataForWorker(name, email, comment)
@@ -52,4 +60,9 @@ class FeedbackViewModel @Inject constructor(private val workManager: WorkManager
     private fun getWorkConstraint() = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
+
+    fun onFeedbackChange(text: String) {}
+    fun onEmailChange(email: String) {}
+    fun onSend() {}
+    fun onSuccessDismiss() {}
 }

@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+enum class SplashDestination { Home, Onboarding }
+
 @HiltViewModel
 class SplashViewModel @Inject
 constructor(
@@ -28,6 +30,9 @@ constructor(
     private val _normalUserEvent = EventLiveData<Unit>()
     val normalUserEvent = _normalUserEvent.asLiveData()
 
+    private val _destination = MutableStateFlow<SplashDestination?>(null)
+    val destination: StateFlow<SplashDestination?> = _destination.asStateFlow()
+
     private val splashDuration = 1000L
 
     init {
@@ -39,8 +44,10 @@ constructor(
             val isFirstTimeUser = settingsRepository.getFirstUser().awaitValueOrError()
             delay(splashDuration)
             if (isFirstTimeUser) {
+                _destination.value = SplashDestination.Onboarding
                 _firstTimeEvent post EventUnit
             } else {
+                _destination.value = SplashDestination.Home
                 _normalUserEvent post EventUnit
             }
         }

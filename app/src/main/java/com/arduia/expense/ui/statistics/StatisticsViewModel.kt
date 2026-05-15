@@ -18,6 +18,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOf
 import java.util.*
 import javax.inject.Inject
 
@@ -51,6 +56,9 @@ class StatisticsViewModel @Inject constructor(
         get() = filterConstraint.switchMap {
             BaseLiveData(createStatisticsFromFilter(it))
         }
+
+    val uiState: StateFlow<StatisticsUiState> = flowOf(StatisticsUiState())
+        .stateIn(viewModelScope, SharingStarted.Lazily, StatisticsUiState())
 
     private fun createStatisticsFromFilter(filter: DateRange): List<CategoryStatisticUiModel> {
         val expenses = expenseRepo.getExpenseRangeAsc(
@@ -116,4 +124,5 @@ class StatisticsViewModel @Inject constructor(
         )
     }
 
+    fun onRangeSelect(range: String) {}
 }

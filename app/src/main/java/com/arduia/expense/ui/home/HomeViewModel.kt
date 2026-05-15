@@ -31,6 +31,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.NumberFormat
@@ -77,6 +80,22 @@ class HomeViewModel @Inject constructor(
     private val calculator = calculatorFactory.create(viewModelScope)
 
     private var prepareDeleteExpenseId: Int? = null
+
+    val uiState: StateFlow<HomeUiState> = combine(
+        _incomeOutcomeData.asFlow(),
+        _graphUiData.asFlow(),
+        _recentData.asFlow()
+    ) { incomeOutcome, graph, recent ->
+        HomeUiState(
+            totalExpense = incomeOutcome.outComeValue,
+            totalIncome = incomeOutcome.incomeValue,
+            totalBalance = incomeOutcome.outComeValue,
+            currencySymbol = incomeOutcome.currencySymbol,
+            recentExpenses = emptyList(),
+            weeklyGraphData = graph.rate.values.map { it.toFloat() },
+            isLoading = false
+        )
+    }.stateIn(viewModelScope, SharingStarted.Lazily, HomeUiState())
 
     init {
         observeWeekExpenses()

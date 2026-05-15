@@ -10,12 +10,17 @@ import com.arduia.expense.model.Result
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.about.AboutUpdateUiModel
+import com.arduia.expense.ui.component.dialog.AppTheme
 import com.arduia.mvvm.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -44,6 +49,18 @@ class SettingsViewModel @Inject constructor(
 
     private val _onShowAboutUpdate = EventLiveData<AboutUpdateUiModel>()
     val onShowAboutUpdate get() = _onShowAboutUpdate.asLiveData()
+
+    val uiState: StateFlow<SettingsUiState> = combine(
+        _currencyValue.asFlow(),
+        _selectedLanguage.asFlow()
+    ) { currency, language ->
+        SettingsUiState(
+            currentCurrency = currency,
+            currentLanguage = language,
+            currentTheme = AppTheme.System,
+            appVersion = ""
+        )
+    }.stateIn(viewModelScope, SharingStarted.Lazily, SettingsUiState())
 
     init {
         observeSelectedLanguage()
@@ -116,4 +133,5 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun onThemeClick() {}
 }

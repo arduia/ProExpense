@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs cat)",
+      "Bash(find /Users/aungyehtet/StudioProjects/ProExpense/app/src/main/res/drawable* -name \"ic_search*\" -o -name \"flag_*\")",
+      "Bash(find /Users/aungyehtet/StudioProjects/ProExpense/app/src/main/res/drawable* -name \"flag_*\")",
+      "mcp__claude_ai_Figma__use_figma",
+      "mcp__claude_ai_Figma__get_screenshot",
+      "Bash(grep -E \"\\\\.\\(xml\\)$\")",
+      "Bash(./gradlew build *)",
+      "Bash(tee build.log)",
+      "Bash(./gradlew compileDevDebugKotlin)",
+      "Bash(./gradlew assembleDevDebug)"
+    ]
+  }
+}

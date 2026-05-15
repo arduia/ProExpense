@@ -15,6 +15,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.math.BigDecimal
@@ -66,6 +70,28 @@ class ExpenseEntryViewModel @Inject constructor(
         .map {
             if (it is SuccessResult) it.data.code else ""
         }.asLiveData()
+
+    val uiState: StateFlow<ExpenseEntryUiState> = combine(
+        _entryData.asFlow(),
+        _selectedCategory.asFlow(),
+        _currentEntryTime.asFlow(),
+        currencySymbol.asFlow()
+    ) { entryData, selectedCategory, time, symbol ->
+        ExpenseEntryUiState(
+            expenseId = entryData.id.toLong(),
+            isEditMode = entryData.id > 0,
+            name = entryData.name,
+            amount = entryData.amount.toString(),
+            note = entryData.note,
+            selectedCategoryId = selectedCategory.id,
+            categories = emptyList(),
+            currencySymbol = symbol,
+            date = "",
+            nameError = null,
+            amountError = null,
+            isSaving = false
+        )
+    }.stateIn(viewModelScope, SharingStarted.Lazily, ExpenseEntryUiState())
 
     init {
         _lockMode.value = LockMode.UNLOCK
@@ -213,4 +239,9 @@ class ExpenseEntryViewModel @Inject constructor(
         _selectedCategory post category
     }
 
+    fun onNameChange(name: String) {}
+    fun onAmountChange(amount: String) {}
+    fun onNoteChange(note: String) {}
+    fun onCategorySelect(categoryId: Int) {}
+    fun onSave() {}
 }

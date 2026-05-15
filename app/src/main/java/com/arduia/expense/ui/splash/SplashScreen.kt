@@ -45,8 +45,6 @@ private fun SplashContent(modifier: Modifier = Modifier) {
     }
 }
 
-enum class SplashDestination { Home, Onboarding }
-
 @Preview
 @Composable
 private fun PreviewSplashContent() {
