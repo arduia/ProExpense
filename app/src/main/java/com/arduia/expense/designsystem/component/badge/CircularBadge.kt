@@ -14,7 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.designsystem.theme.ColorNegative
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
+import com.arduia.expense.designsystem.theme.White
 
 @Composable
 fun CircularBadge(
@@ -39,10 +42,26 @@ fun CircularBadge(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewCircularBadge() {
-    ProExpenseTheme {
-        CircularBadge(label = "F")
-    }
+private fun PreviewCircularBadgeDefault() {
+    ProExpenseTheme { CircularBadge(label = "F") }
+}
+
+@Preview(name = "Small 24dp")
+@Composable
+private fun PreviewCircularBadgeSmall() {
+    ProExpenseTheme { CircularBadge(label = "T", size = 24.dp) }
+}
+
+@Preview(name = "Large 56dp")
+@Composable
+private fun PreviewCircularBadgeLarge() {
+    ProExpenseTheme { CircularBadge(label = "S", size = 56.dp) }
+}
+
+@Preview(name = "Negative color")
+@Composable
+private fun PreviewCircularBadgeNegative() {
+    ProExpenseTheme { CircularBadge(label = "H", backgroundColor = ColorNegative, contentColor = White) }
 }

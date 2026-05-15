@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,21 +81,30 @@ fun SwipeableExpenseRow(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewSwipeableExpenseRow() {
     ProExpenseTheme {
         SwipeableExpenseRow(
             item = ExpenseRowUiModel(
-                id = 1L,
-                categoryInitial = "F",
-                name = "Food & Drink",
-                date = "Today, 10:30 AM",
-                amount = "- $12.50",
-                isExpense = true,
+                id = 1L, categoryInitial = "F", name = "Food & Drink",
+                date = "Today, 10:30 AM", amount = "- $12.50", isExpense = true,
             ),
-            onDelete = {},
-            onEdit = {},
+            onDelete = {}, onEdit = {},
+        )
+    }
+}
+
+@Preview(name = "Income item")
+@Composable
+private fun PreviewSwipeableIncomeRow() {
+    ProExpenseTheme {
+        SwipeableExpenseRow(
+            item = ExpenseRowUiModel(
+                id = 2L, categoryInitial = "S", name = "Salary",
+                date = "May 1, 2026", amount = "+ $3,200.00", isExpense = false,
+            ),
+            onDelete = {}, onEdit = {},
         )
     }
 }

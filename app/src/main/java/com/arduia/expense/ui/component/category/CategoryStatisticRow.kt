@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 data class CategoryStatisticUiModel(
     val name: String,
@@ -59,16 +60,20 @@ fun CategoryStatisticRow(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewCategoryStatisticRow() {
-    ProExpenseTheme {
-        CategoryStatisticRow(
-            item = CategoryStatisticUiModel(
-                name = "Food & Drink",
-                amount = "$320.00",
-                percentage = 0.65f,
-            ),
-        )
-    }
+private fun PreviewCategoryStatisticRowMid() {
+    ProExpenseTheme { CategoryStatisticRow(item = CategoryStatisticUiModel("Food & Drink", "$320.00", 0.65f)) }
+}
+
+@Preview(name = "Low percentage")
+@Composable
+private fun PreviewCategoryStatisticRowLow() {
+    ProExpenseTheme { CategoryStatisticRow(item = CategoryStatisticUiModel("Transport", "$18.00", 0.08f)) }
+}
+
+@Preview(name = "Full 100%")
+@Composable
+private fun PreviewCategoryStatisticRowFull() {
+    ProExpenseTheme { CategoryStatisticRow(item = CategoryStatisticUiModel("Rent", "$1,200.00", 1.0f)) }
 }

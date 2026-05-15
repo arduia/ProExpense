@@ -8,9 +8,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 sealed interface TopBarNavIcon {
     data object Drawer : TopBarNavIcon
@@ -54,7 +57,7 @@ fun ProExpenseTopBar(
     )
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewDrawer() {
     ProExpenseTheme {
@@ -62,10 +65,37 @@ private fun PreviewDrawer() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewBack() {
     ProExpenseTheme {
         ProExpenseTopBar(title = "Add Expense", navIcon = TopBarNavIcon.Back)
+    }
+}
+
+@Preview(name = "No nav icon")
+@Composable
+private fun PreviewNone() {
+    ProExpenseTheme {
+        ProExpenseTopBar(title = "Detail", navIcon = TopBarNavIcon.None)
+    }
+}
+
+@Preview(name = "With actions")
+@Composable
+private fun PreviewWithActions() {
+    ProExpenseTheme {
+        ProExpenseTopBar(
+            title = "Expense Log",
+            navIcon = TopBarNavIcon.Drawer,
+            actions = {
+                IconButton(onClick = {}) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_backup),
+                        contentDescription = "Export",
+                    )
+                }
+            },
+        )
     }
 }

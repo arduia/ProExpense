@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun SearchBox(
@@ -35,10 +36,18 @@ fun SearchBox(
     )
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewSearchBox() {
+private fun PreviewSearchBoxEmpty() {
     ProExpenseTheme {
         SearchBox(query = "", onQueryChange = {})
+    }
+}
+
+@Preview(name = "With text")
+@Composable
+private fun PreviewSearchBoxFilled() {
+    ProExpenseTheme {
+        SearchBox(query = "Grocery", onQueryChange = {})
     }
 }

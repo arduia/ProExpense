@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.component.card.DashboardCard
 import com.arduia.expense.designsystem.component.state.NoDataPlaceholder
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 import com.arduia.expense.ui.component.expense.ExpenseRow
 import com.arduia.expense.ui.component.expense.ExpenseRowUiModel
 
@@ -54,31 +55,24 @@ fun RecentListCard(
     }
 }
 
-@Preview
+private val previewExpenses = listOf(
+    ExpenseRowUiModel(id = 1L, categoryInitial = "F", name = "Grocery", date = "Today", amount = "- $45.00", isExpense = true),
+    ExpenseRowUiModel(id = 2L, categoryInitial = "T", name = "Bus Fare", date = "Yesterday", amount = "- $2.50", isExpense = true),
+    ExpenseRowUiModel(id = 3L, categoryInitial = "S", name = "Salary", date = "May 1", amount = "+ $3,200.00", isExpense = false),
+)
+
+@ThemePreviews
 @Composable
-private fun PreviewRecentListCard() {
+private fun PreviewRecentListCardFilled() {
     ProExpenseTheme {
-        RecentListCard(
-            expenses = listOf(
-                ExpenseRowUiModel(
-                    id = 1L,
-                    categoryInitial = "F",
-                    name = "Grocery",
-                    date = "Today",
-                    amount = "- $45.00",
-                    isExpense = true,
-                ),
-                ExpenseRowUiModel(
-                    id = 2L,
-                    categoryInitial = "T",
-                    name = "Bus Fare",
-                    date = "Yesterday",
-                    amount = "- $2.50",
-                    isExpense = true,
-                ),
-            ),
-            onSeeAllClick = {},
-            onExpenseClick = {},
-        )
+        RecentListCard(expenses = previewExpenses, onSeeAllClick = {}, onExpenseClick = {})
+    }
+}
+
+@Preview(name = "Empty state")
+@Composable
+private fun PreviewRecentListCardEmpty() {
+    ProExpenseTheme {
+        RecentListCard(expenses = emptyList(), onSeeAllClick = {}, onExpenseClick = {})
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun LabeledTextField(
@@ -55,9 +56,9 @@ fun LabeledTextField(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewLabeledTextField() {
+private fun PreviewLabeledTextFieldFilled() {
     ProExpenseTheme {
         LabeledTextField(
             label = "Amount",
@@ -69,7 +70,15 @@ private fun PreviewLabeledTextField() {
     }
 }
 
-@Preview
+@Preview(name = "Empty")
+@Composable
+private fun PreviewLabeledTextFieldEmpty() {
+    ProExpenseTheme {
+        LabeledTextField(label = "Name", value = "", onValueChange = {}, placeholder = "e.g. Grocery")
+    }
+}
+
+@Preview(name = "Error")
 @Composable
 private fun PreviewLabeledTextFieldError() {
     ProExpenseTheme {
@@ -79,6 +88,27 @@ private fun PreviewLabeledTextFieldError() {
             onValueChange = {},
             isError = true,
             errorMessage = "Amount is required",
+        )
+    }
+}
+
+@Preview(name = "Disabled")
+@Composable
+private fun PreviewLabeledTextFieldDisabled() {
+    ProExpenseTheme {
+        LabeledTextField(label = "Date", value = "May 15, 2026", onValueChange = {}, enabled = false)
+    }
+}
+
+@Preview(name = "Multiline")
+@Composable
+private fun PreviewLabeledTextFieldMultiline() {
+    ProExpenseTheme {
+        LabeledTextField(
+            label = "Note",
+            value = "Weekly grocery shopping\nat the supermarket",
+            onValueChange = {},
+            singleLine = false,
         )
     }
 }

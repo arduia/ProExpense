@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.Switch
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun SettingsRow(
@@ -58,14 +60,34 @@ fun SettingsRow(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewSettingsRow() {
+private fun PreviewSettingsRowWithSubtitle() {
     ProExpenseTheme {
-        SettingsRow(
-            title = "Currency",
-            subtitle = "USD – US Dollar",
-            onClick = {},
-        )
+        SettingsRow(title = "Currency", subtitle = "USD – US Dollar", onClick = {})
+    }
+}
+
+@Preview(name = "Title only")
+@Composable
+private fun PreviewSettingsRowTitleOnly() {
+    ProExpenseTheme {
+        SettingsRow(title = "Feedback", onClick = {})
+    }
+}
+
+@Preview(name = "No divider")
+@Composable
+private fun PreviewSettingsRowNoDivider() {
+    ProExpenseTheme {
+        SettingsRow(title = "Privacy Policy", showDivider = false, onClick = {})
+    }
+}
+
+@Preview(name = "With trailing switch")
+@Composable
+private fun PreviewSettingsRowTrailing() {
+    ProExpenseTheme {
+        SettingsRow(title = "Notifications", trailing = { Switch(checked = true, onCheckedChange = {}) })
     }
 }

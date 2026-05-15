@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun NoDataPlaceholder(
@@ -49,10 +50,21 @@ fun NoDataPlaceholder(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewNoDataPlaceholder() {
+private fun PreviewNoDataPlaceholderTextOnly() {
     ProExpenseTheme {
         NoDataPlaceholder(message = "No expenses yet.\nAdd your first expense!")
+    }
+}
+
+@Preview(name = "With icon")
+@Composable
+private fun PreviewNoDataPlaceholderWithIcon() {
+    ProExpenseTheme {
+        NoDataPlaceholder(
+            message = "No backup files yet",
+            icon = painterResource(R.drawable.ic_backup),
+        )
     }
 }

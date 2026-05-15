@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.component.badge.CircularBadge
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 data class ExpenseRowUiModel(
     val id: Long,
@@ -60,18 +61,40 @@ fun ExpenseRow(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewExpenseRow() {
     ProExpenseTheme {
         ExpenseRow(
             item = ExpenseRowUiModel(
-                id = 1L,
-                categoryInitial = "F",
-                name = "Food & Drink",
-                date = "Today, 10:30 AM",
-                amount = "- $12.50",
-                isExpense = true,
+                id = 1L, categoryInitial = "F", name = "Food & Drink",
+                date = "Today, 10:30 AM", amount = "- $12.50", isExpense = true,
+            ),
+        )
+    }
+}
+
+@Preview(name = "Income row")
+@Composable
+private fun PreviewIncomeRow() {
+    ProExpenseTheme {
+        ExpenseRow(
+            item = ExpenseRowUiModel(
+                id = 2L, categoryInitial = "S", name = "Salary",
+                date = "May 1, 2026", amount = "+ $3,200.00", isExpense = false,
+            ),
+        )
+    }
+}
+
+@Preview(name = "Long name")
+@Composable
+private fun PreviewExpenseRowLongName() {
+    ProExpenseTheme {
+        ExpenseRow(
+            item = ExpenseRowUiModel(
+                id = 3L, categoryInitial = "H", name = "Annual health insurance premium payment",
+                date = "Yesterday", amount = "- $1,200.00", isExpense = true,
             ),
         )
     }

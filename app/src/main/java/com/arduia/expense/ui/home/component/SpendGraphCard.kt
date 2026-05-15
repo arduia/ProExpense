@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.designsystem.component.card.DashboardCard
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun SpendGraphCard(
@@ -59,10 +60,34 @@ fun SpendGraph(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewSpendGraphCard() {
     ProExpenseTheme {
         SpendGraphCard(weeklyData = listOf(100f, 250f, 80f, 320f, 150f, 200f, 90f))
+    }
+}
+
+@Preview(name = "All zero (empty week)")
+@Composable
+private fun PreviewSpendGraphCardZero() {
+    ProExpenseTheme {
+        SpendGraphCard(weeklyData = listOf(0f, 0f, 0f, 0f, 0f, 0f, 0f))
+    }
+}
+
+@Preview(name = "Flat / all same")
+@Composable
+private fun PreviewSpendGraphCardFlat() {
+    ProExpenseTheme {
+        SpendGraphCard(weeklyData = listOf(200f, 200f, 200f, 200f, 200f, 200f, 200f))
+    }
+}
+
+@Preview(name = "SpendGraph standalone")
+@Composable
+private fun PreviewSpendGraph() {
+    ProExpenseTheme {
+        SpendGraph(data = listOf(300f, 50f, 420f, 180f, 95f, 360f, 240f))
     }
 }

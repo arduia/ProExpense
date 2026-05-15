@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 data class CurrencyUiModel(
     val code: String,
@@ -53,14 +54,18 @@ fun CurrencyRow(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewCurrencyRow() {
+private fun PreviewCurrencyRowSelected() {
     ProExpenseTheme {
-        CurrencyRow(
-            currency = CurrencyUiModel(code = "USD", name = "US Dollar", symbol = "$"),
-            selected = true,
-            onSelect = {},
-        )
+        CurrencyRow(currency = CurrencyUiModel(code = "USD", name = "US Dollar", symbol = "$"), selected = true, onSelect = {})
+    }
+}
+
+@Preview(name = "Unselected")
+@Composable
+private fun PreviewCurrencyRowUnselected() {
+    ProExpenseTheme {
+        CurrencyRow(currency = CurrencyUiModel(code = "EUR", name = "Euro", symbol = "€"), selected = false, onSelect = {})
     }
 }

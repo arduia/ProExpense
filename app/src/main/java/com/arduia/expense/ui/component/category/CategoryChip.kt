@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 data class CategoryUiModel(
     val id: Int,
@@ -28,14 +29,18 @@ fun CategoryChip(
     )
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewCategoryChip() {
+private fun PreviewCategoryChipSelected() {
     ProExpenseTheme {
-        CategoryChip(
-            category = CategoryUiModel(id = 1, name = "Food & Drink"),
-            selected = true,
-            onSelect = {},
-        )
+        CategoryChip(category = CategoryUiModel(id = 1, name = "Food & Drink"), selected = true, onSelect = {})
+    }
+}
+
+@Preview(name = "Unselected")
+@Composable
+private fun PreviewCategoryChipUnselected() {
+    ProExpenseTheme {
+        CategoryChip(category = CategoryUiModel(id = 2, name = "Transport"), selected = false, onSelect = {})
     }
 }

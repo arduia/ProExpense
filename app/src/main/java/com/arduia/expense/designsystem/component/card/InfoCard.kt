@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun InfoCard(
@@ -43,7 +44,7 @@ fun InfoCard(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewInfoCard() {
     ProExpenseTheme {

@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 data class LanguageUiModel(
     val code: String,
@@ -53,14 +54,18 @@ fun LanguageRow(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewLanguageRow() {
+private fun PreviewLanguageRowSelected() {
     ProExpenseTheme {
-        LanguageRow(
-            language = LanguageUiModel(code = "en", nativeName = "English", englishName = "English"),
-            selected = true,
-            onSelect = {},
-        )
+        LanguageRow(language = LanguageUiModel("en", "English", "English"), selected = true, onSelect = {})
+    }
+}
+
+@Preview(name = "Unselected")
+@Composable
+private fun PreviewLanguageRowUnselected() {
+    ProExpenseTheme {
+        LanguageRow(language = LanguageUiModel("my", "မြန်မာ", "Burmese"), selected = false, onSelect = {})
     }
 }

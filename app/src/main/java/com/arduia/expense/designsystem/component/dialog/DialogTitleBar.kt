@@ -9,8 +9,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun DialogTitleBar(
@@ -37,10 +42,25 @@ fun DialogTitleBar(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewDialogTitleBar() {
     ProExpenseTheme {
         DialogTitleBar(title = "Expense Detail")
+    }
+}
+
+@Preview(name = "With action icon")
+@Composable
+private fun PreviewDialogTitleBarWithAction() {
+    ProExpenseTheme {
+        DialogTitleBar(
+            title = "Expense Detail",
+            actions = {
+                IconButton(onClick = {}) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
+                }
+            },
+        )
     }
 }

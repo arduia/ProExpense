@@ -8,8 +8,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun DashboardCard(
@@ -28,5 +30,15 @@ fun DashboardCard(
             modifier = Modifier.padding(ProExpenseTheme.spacing.grid3),
             content = content,
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun PreviewDashboardCard() {
+    ProExpenseTheme {
+        DashboardCard {
+            Text(text = "Dashboard card content", style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }

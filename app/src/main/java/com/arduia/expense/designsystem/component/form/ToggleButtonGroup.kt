@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun <T> ToggleButtonGroup(
@@ -27,15 +28,26 @@ fun <T> ToggleButtonGroup(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
-private fun PreviewToggleButtonGroup() {
+private fun PreviewToggleButtonGroupMiddle() {
     ProExpenseTheme {
-        ToggleButtonGroup(
-            options = listOf("Week", "Month", "Year"),
-            selected = "Month",
-            onSelect = {},
-            label = { it },
-        )
+        ToggleButtonGroup(options = listOf("Week", "Month", "Year"), selected = "Month", onSelect = {}, label = { it })
+    }
+}
+
+@Preview(name = "First selected")
+@Composable
+private fun PreviewToggleButtonGroupFirst() {
+    ProExpenseTheme {
+        ToggleButtonGroup(options = listOf("Week", "Month", "Year"), selected = "Week", onSelect = {}, label = { it })
+    }
+}
+
+@Preview(name = "Last selected")
+@Composable
+private fun PreviewToggleButtonGroupLast() {
+    ProExpenseTheme {
+        ToggleButtonGroup(options = listOf("Week", "Month", "Year"), selected = "Year", onSelect = {}, label = { it })
     }
 }

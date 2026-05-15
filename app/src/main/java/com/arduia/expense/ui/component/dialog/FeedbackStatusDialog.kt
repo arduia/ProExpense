@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.designsystem.theme.ProExpenseTheme
+import com.arduia.expense.designsystem.theme.ThemePreviews
 
 @Composable
 fun FeedbackStatusDialog(
@@ -62,7 +63,7 @@ fun FeedbackStatusDialog(
     )
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun PreviewFeedbackStatusDialogSuccess() {
     ProExpenseTheme {
@@ -70,6 +71,19 @@ private fun PreviewFeedbackStatusDialogSuccess() {
             title = "Feedback Sent",
             message = "Thank you! Your feedback has been received.",
             isSuccess = true,
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(name = "Error state")
+@Composable
+private fun PreviewFeedbackStatusDialogError() {
+    ProExpenseTheme {
+        FeedbackStatusDialog(
+            title = "Failed to Send",
+            message = "Please check your internet connection and try again.",
+            isSuccess = false,
             onDismiss = {},
         )
     }
