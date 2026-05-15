@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.navigation.safe.args)
     alias(libs.plugins.google.service.plugin)
     alias(libs.plugins.firebase.analytics)
@@ -100,6 +99,10 @@ android {
         buildConfig = true
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -145,17 +148,6 @@ dependencies {
     // Hilt integration
     implementation(libs.hilt.navigation.compose)
 
-    // Lifecycle-aware state collection + LiveData bridge
-    implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.compose.runtime.livedata)
-
-    // Responsive layouts
-    implementation(libs.compose.material3.window.size)
-
-    // Material Icons (core subset used in screens + extended for full icon set)
-    implementation(libs.compose.material.icons.core)
-    implementation(libs.compose.material.icons.extended)
-
     // Tooling (debug only)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
@@ -188,9 +180,6 @@ dependencies {
 
     // Robolectric for unit tests
     testImplementation(libs.robolectric)
-
-    // Compose UI tests under Robolectric
-    testImplementation(libs.compose.ui.test.junit4)
 
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
@@ -244,9 +233,8 @@ dependencies {
     // Preference
     implementation(libs.preference.ktx)
 
-    // Paging 3
-    implementation(libs.paging.runtime3)
-    implementation(libs.paging.compose)
+    // Paging
+    implementation(libs.paging.runtime.ktx)
 
     // Work
     implementation(libs.work.runtime)
