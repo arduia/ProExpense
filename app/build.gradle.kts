@@ -99,10 +99,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -148,6 +144,13 @@ dependencies {
     // Hilt integration
     implementation(libs.hilt.navigation.compose)
 
+    // Lifecycle-aware state collection + LiveData bridge
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.compose.runtime.livedata)
+
+    // Responsive layouts
+    implementation(libs.compose.material3.window.size)
+
     // Tooling (debug only)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
@@ -180,6 +183,9 @@ dependencies {
 
     // Robolectric for unit tests
     testImplementation(libs.robolectric)
+
+    // Compose UI tests under Robolectric
+    testImplementation(libs.compose.ui.test.junit4)
 
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
@@ -233,8 +239,9 @@ dependencies {
     // Preference
     implementation(libs.preference.ktx)
 
-    // Paging
-    implementation(libs.paging.runtime.ktx)
+    // Paging 3
+    implementation(libs.paging.runtime3)
+    implementation(libs.paging.compose)
 
     // Work
     implementation(libs.work.runtime)
