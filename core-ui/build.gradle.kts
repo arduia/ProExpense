@@ -36,7 +36,7 @@ dependencies {
     implementation(libs.fragment.ktx)
     implementation(libs.recyclerview)
     implementation(libs.material)
-    implementation(libs.mvvm.core)
+    api(libs.mvvm.core)
     implementation(libs.timber)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

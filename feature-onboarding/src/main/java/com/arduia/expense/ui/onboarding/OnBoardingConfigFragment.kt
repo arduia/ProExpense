@@ -11,8 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentOnboardConfigBinding
+import com.arduia.expense.feature.onboarding.R
+import com.arduia.expense.feature.onboarding.databinding.FragmentOnboardConfigBinding
 import com.arduia.expense.ui.common.language.LanguageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

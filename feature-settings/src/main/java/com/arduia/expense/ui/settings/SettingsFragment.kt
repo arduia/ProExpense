@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.arduia.expense.databinding.FragmentSettingsBinding
+import com.arduia.expense.feature.settings.databinding.FragmentSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.expense.ui.common.ext.restartActivity

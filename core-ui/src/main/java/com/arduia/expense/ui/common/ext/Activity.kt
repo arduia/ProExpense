@@ -2,7 +2,7 @@ package com.arduia.expense.ui.common.ext
 
 import android.app.ActivityOptions
 import androidx.fragment.app.Fragment
-import com.arduia.expense.R
+import com.arduia.expense.ui.core.R
 
 fun Fragment.restartActivity() {
     val currentActivity = requireActivity()

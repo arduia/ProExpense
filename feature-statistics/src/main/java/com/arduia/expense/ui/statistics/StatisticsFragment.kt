@@ -8,8 +8,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentStatisticBinding
+import com.arduia.expense.feature.statistics.R
+import com.arduia.expense.feature.statistics.databinding.FragmentStatisticBinding
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
@@ -163,5 +163,3 @@ class StatisticsFragment : NavBaseFragment() {
         _binding = null
 
     }
-
-}

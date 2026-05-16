@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.databinding.ItemExpenseRecentBinding
+import com.arduia.expense.ui.core.databinding.ItemExpenseRecentBinding
 import com.arduia.expense.ui.expenselogs.ExpenseUiModel
 
 class RecentListAdapter constructor(private val layoutInflater: LayoutInflater):

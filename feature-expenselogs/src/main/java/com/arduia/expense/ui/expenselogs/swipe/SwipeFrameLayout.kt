@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.arduia.core.extension.px
-import com.arduia.expense.R
-import com.arduia.expense.databinding.ItemExpenseLogBinding
+import com.arduia.expense.feature.expenselogs.R
+import com.arduia.expense.ui.core.databinding.ItemExpenseLogBinding
 import com.arduia.expense.ui.common.themeColor
 import com.arduia.expense.ui.expenselogs.ExpenseLogUiModel
 import kotlin.math.abs
@@ -277,4 +277,3 @@ class SwipeFrameLayout @JvmOverloads constructor(
         private const val DIRECTION_START_TO_END = 1
         private const val DIRECTION_END_TO_START = 2
     }
-}

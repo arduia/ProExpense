@@ -14,10 +14,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentExpenseEntryBinding
+import com.arduia.expense.feature.entry.R
+import com.arduia.expense.feature.entry.databinding.FragmentExpenseEntryBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
@@ -40,7 +39,7 @@ class ExpenseEntryFragment : Fragment() {
     private var _binding: FragmentExpenseEntryBinding? = null
     private val binding get() = _binding!!
 
-    private val args: ExpenseEntryFragmentArgs by navArgs()
+    private val expenseId: Int get() = arguments?.getInt("expense_id", -100) ?: -100
 
     private val viewModel by viewModels<ExpenseEntryViewModel>()
 
@@ -237,7 +236,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun chooseEntryMode() {
-        val argId = args.expenseId
+        val argId = expenseId
         val isInvalidId = argId < 0
         if (isInvalidId) {
             viewModel.chooseSaveMode()
@@ -283,7 +282,7 @@ class ExpenseEntryFragment : Fragment() {
         toolbar.title = getString(R.string.update_data)
         btnSave.text = getString(R.string.update)
         btnSave.setOnClickListener { updateData() }
-        viewModel.setCurrentExpenseId(args.expenseId)
+        viewModel.setCurrentExpenseId(expenseId)
         binding.switchRepeat.isChecked = false
         binding.switchRepeat.visibility = View.GONE
         binding.tvRepeat.visibility = View.GONE
@@ -353,7 +352,7 @@ class ExpenseEntryFragment : Fragment() {
     }
 
     private fun getExpenseId(): Int {
-        val argId = args.expenseId
+        val argId = expenseId
         val isInvalid = (argId < 0)
         return if (isInvalid) 0
         else argId

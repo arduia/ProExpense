@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavOptions
 import com.arduia.core.view.asInvisible
 import com.arduia.core.view.asVisible
-import com.arduia.expense.databinding.ExpenseDetailDialogBinding
+import com.arduia.expense.ui.core.databinding.ExpenseDetailDialogBinding
 import com.arduia.expense.di.TopDropNavOption
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint

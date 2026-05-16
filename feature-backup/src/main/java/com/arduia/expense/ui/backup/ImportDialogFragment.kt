@@ -10,8 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentBackupDetailBinding
+import com.arduia.expense.feature.backup.R
+import com.arduia.expense.feature.backup.databinding.FragmentBackupDetailBinding
 import com.arduia.expense.ui.BackupMessageReceiver
 import com.arduia.expense.ui.MainActivity
 import com.arduia.expense.ui.MainHost

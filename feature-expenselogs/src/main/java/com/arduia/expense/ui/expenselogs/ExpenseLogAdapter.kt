@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.databinding.ItemExpenseDateHeaderBinding
-import com.arduia.expense.databinding.ItemExpenseLogBinding
+import com.arduia.expense.ui.core.databinding.ItemExpenseDateHeaderBinding
+import com.arduia.expense.ui.core.databinding.ItemExpenseLogBinding
 import com.arduia.expense.ui.expenselogs.swipe.SwipeFrameLayout
 import com.arduia.expense.ui.expenselogs.swipe.SwipeItemState
 import com.arduia.expense.ui.expenselogs.swipe.SwipeListenerVH
@@ -185,4 +185,3 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ExpenseLogUiModel>() 
         }
     }
 }
-

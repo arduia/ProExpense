@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.arduia.core.extension.px
 import com.arduia.core.view.asInvisible
 import com.arduia.core.view.asVisible
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentExpenseLogsBinding
+import com.arduia.expense.feature.expenselogs.R
+import com.arduia.expense.feature.expenselogs.databinding.FragmentExpenseLogsBinding
 import com.arduia.expense.di.TopDropNavOption
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment

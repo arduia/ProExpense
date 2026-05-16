@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.databinding.ItemCurrencyBinding
+import com.arduia.expense.ui.core.databinding.ItemCurrencyBinding
 
 class CurrencyListAdapter(private val layoutInflater: LayoutInflater) :
     ListAdapter<CurrencyUiModel, CurrencyListAdapter.VH>(
@@ -53,4 +53,3 @@ private val DIFF_CALLBACK
                     (oldItem.symbol == newItem.symbol) and
                     (oldItem.isSelectionVisible == newItem.isSelectionVisible)
         }
-    }

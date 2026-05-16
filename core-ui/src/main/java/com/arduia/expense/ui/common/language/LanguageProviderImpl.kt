@@ -1,6 +1,6 @@
 package com.arduia.expense.ui.common.language
 
-import com.arduia.expense.R
+import com.arduia.expense.ui.core.R
 import java.lang.Exception
 import javax.inject.Inject
 

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.databinding.ItemCategoryStatisticBinding
+import com.arduia.expense.ui.core.databinding.ItemCategoryStatisticBinding
 
 class CategoryStatisticListAdapter(private val layoutInflater: LayoutInflater) :
     ListAdapter<CategoryStatisticUiModel, CategoryStatisticListAdapter.VH>(
@@ -48,4 +48,3 @@ private val DIFFER
                     (oldItem.progress == newItem.progress) and
                     (oldItem.progressText == newItem.progressText)
         }
-    }

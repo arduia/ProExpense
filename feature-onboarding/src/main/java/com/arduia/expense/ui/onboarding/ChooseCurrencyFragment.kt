@@ -10,8 +10,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.extension.px
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentChooseCurrencyBinding
+import com.arduia.expense.feature.onboarding.R
+import com.arduia.expense.feature.onboarding.databinding.FragmentChooseCurrencyBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -73,4 +73,3 @@ class ChooseCurrencyFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-}

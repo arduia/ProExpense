@@ -1,7 +1,7 @@
 package com.arduia.expense.ui.common.formatter
 
 import android.content.Context
-import com.arduia.expense.R
+import com.arduia.expense.ui.core.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.SimpleDateFormat
 import java.util.*

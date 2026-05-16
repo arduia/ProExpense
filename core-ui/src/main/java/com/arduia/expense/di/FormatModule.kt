@@ -66,3 +66,13 @@ annotation class IntegerDecimal
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 annotation class CurrencyDecimalFormat
+
+@Qualifier
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+annotation class TopDropNavOption
+
+@Qualifier
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+annotation class LefSideNavOption

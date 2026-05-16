@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.databinding.ItemLanguageBinding
+import com.arduia.expense.ui.core.databinding.ItemLanguageBinding
 import com.arduia.expense.ui.common.language.LanguageUiModel
 
 class LanguageListAdapter(private val layoutInflater: LayoutInflater) :
@@ -64,4 +64,3 @@ class LanguageListAdapter(private val layoutInflater: LayoutInflater) :
             itemClickListener.invoke(languageLists[adapterPosition])
         }
     }
-}

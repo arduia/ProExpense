@@ -2,7 +2,7 @@ package com.arduia.expense.ui.home
 
 import android.content.Context
 import androidx.annotation.StringRes
-import com.arduia.expense.R
+import com.arduia.expense.ui.core.R
 import com.arduia.graph.DayNameProvider
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext

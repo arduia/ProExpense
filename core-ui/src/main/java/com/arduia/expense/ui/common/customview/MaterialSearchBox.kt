@@ -10,7 +10,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.widget.addTextChangedListener
 import com.arduia.core.extension.px
-import com.arduia.expense.R
+import com.arduia.expense.ui.core.R
 import com.google.android.material.card.MaterialCardView
 
 class MaterialSearchBox @JvmOverloads constructor(

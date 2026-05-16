@@ -9,8 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentFeedbackBinding
+import com.arduia.expense.feature.feedback.R
+import com.arduia.expense.feature.feedback.databinding.FragmentFeedbackBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.NavigationDrawer
 import dagger.hilt.android.AndroidEntryPoint

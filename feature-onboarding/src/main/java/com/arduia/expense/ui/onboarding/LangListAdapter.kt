@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.databinding.ItemLanguageBinding
+import com.arduia.expense.ui.core.databinding.ItemLanguageBinding
 import com.arduia.expense.ui.common.language.LanguageUiModel
 
 class LangListAdapter(private val layoutInflater: LayoutInflater) :
@@ -53,4 +53,3 @@ private val DIFFER = object : DiffUtil.ItemCallback<LanguageUiModel>() {
                 (oldItem.id == newItem.id) and
                 (oldItem.isSelectedVisible == newItem.isSelectedVisible)
     }
-}

@@ -3,7 +3,7 @@ package com.arduia.expense.ui.common.category
 import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.arduia.expense.R
+import com.arduia.expense.ui.core.R
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.CLOTHES
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.DONATION
 import com.arduia.expense.ui.common.category.ExpenseCategory.Companion.EDUCATION

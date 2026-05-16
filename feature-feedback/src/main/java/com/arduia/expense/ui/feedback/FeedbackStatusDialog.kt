@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentFeedbackStatusDialogBinding
+import com.arduia.expense.feature.feedback.R
+import com.arduia.expense.feature.feedback.databinding.FragmentFeedbackStatusDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class FeedbackStatusDialog : BottomSheetDialogFragment() {

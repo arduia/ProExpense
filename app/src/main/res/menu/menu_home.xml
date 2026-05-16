@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
-        android:id="@+id/gp_navigation"
+        android:id="@id/gp_navigation"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/dest_home"
+            android:id="@id/dest_home"
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
         <item
-            android:id="@+id/dest_expense_logs"
+            android:id="@id/dest_expense_logs"
             android:icon="@drawable/ic_expense_logs"
             android:title="@string/expense_logs" />
         <item
-            android:id="@+id/dest_statistics"
+            android:id="@id/dest_statistics"
             android:icon="@drawable/ic_statistics"
             android:title="@string/statistics" />
         <item
-            android:id="@+id/dest_backup"
+            android:id="@id/dest_backup"
             android:icon="@drawable/ic_export"
             android:title="@string/backup" />
         <item
-            android:id="@+id/dest_feedback"
+            android:id="@id/dest_feedback"
             android:icon="@drawable/ic_feedback"
             android:title="@string/feedback" />
         <item
-            android:id="@+id/dest_about"
+            android:id="@id/dest_about"
             android:icon="@drawable/ic_info"
             android:title="@string/about" />
         <item
-            android:id="@+id/dest_settings"
+            android:id="@id/dest_settings"
             android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
 

@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.R
-import com.arduia.expense.databinding.ItemBackupBinding
+import com.arduia.expense.feature.backup.R
+import com.arduia.expense.feature.backup.databinding.ItemBackupBinding
 
 class BackupListAdapter(private val layoutInflater: LayoutInflater) :
     ListAdapter<BackupUiModel, BackupListAdapter.VH>(DIFF_UTIL) {
@@ -67,4 +67,3 @@ private val DIFF_UTIL
                     (oldItem.onProgress == newItem.onProgress) &&
                     (oldItem.items == newItem.items)
         }
-    }

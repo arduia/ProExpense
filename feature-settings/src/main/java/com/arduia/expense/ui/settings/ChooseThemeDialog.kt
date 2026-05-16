@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
-import com.arduia.expense.R
-import com.arduia.expense.databinding.ChooseThemeDialogBinding
+import com.arduia.expense.feature.settings.R
+import com.arduia.expense.feature.settings.databinding.ChooseThemeDialogBinding
 
 class ChooseThemeDialog (context: Context): AlertDialog(context) {
 
@@ -61,5 +61,3 @@ class ChooseThemeDialog (context: Context): AlertDialog(context) {
             }
         }
     }
-
-}

@@ -10,8 +10,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.extension.px
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentChooseCurrencyDialogBinding
+import com.arduia.expense.feature.settings.R
+import com.arduia.expense.feature.settings.databinding.FragmentChooseCurrencyDialogBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.onboarding.ChooseCurrencyViewModel
 import com.arduia.expense.ui.onboarding.CurrencyListAdapter

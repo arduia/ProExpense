@@ -21,8 +21,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.arduia.core.view.asGone
 import com.arduia.core.view.asVisible
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentAboutBinding
+import com.arduia.expense.feature.about.R
+import com.arduia.expense.feature.about.databinding.FragmentAboutBinding
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.settings.SettingsViewModel

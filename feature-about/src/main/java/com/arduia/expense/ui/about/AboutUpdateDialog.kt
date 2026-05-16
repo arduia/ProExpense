@@ -2,8 +2,8 @@ package com.arduia.expense.ui.about
 
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentAboutUpdateDialogBinding
+import com.arduia.expense.feature.about.R
+import com.arduia.expense.feature.about.databinding.FragmentAboutUpdateDialogBinding
 
 class AboutUpdateDialog(ctx: Context): AlertDialog(ctx) {
 
@@ -47,5 +47,3 @@ class AboutUpdateDialog(ctx: Context): AlertDialog(ctx) {
         super.onDetachedFromWindow()
         _binding = null
     }
-
-}

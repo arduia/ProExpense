@@ -13,8 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.view.asGone
 import com.arduia.core.view.asVisible
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentBackupBinding
+import com.arduia.expense.feature.backup.R
+import com.arduia.expense.feature.backup.databinding.FragmentBackupBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.delete.DeleteConfirmFragment

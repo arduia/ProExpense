@@ -9,8 +9,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.arduia.expense.ui.MainHost
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentHomeBinding
+import com.arduia.expense.feature.home.R
+import com.arduia.expense.feature.home.databinding.FragmentHomeBinding
 import com.arduia.expense.di.FloatingDecimal
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.di.TopDropNavOption

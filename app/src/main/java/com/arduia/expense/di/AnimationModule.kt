@@ -6,8 +6,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
-
 @Module
 @InstallIn(SingletonComponent::class)
 object AnimationModule {
@@ -39,13 +37,3 @@ object AnimationModule {
             .build()
 
 }
-
-@Qualifier
-@MustBeDocumented
-@Retention(AnnotationRetention.BINARY)
-annotation class TopDropNavOption
-
-@Qualifier
-@MustBeDocumented
-@Retention(AnnotationRetention.BINARY)
-annotation class LefSideNavOption

@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FilterExpenseDialogBinding
+import com.arduia.expense.ui.core.R
+import com.arduia.expense.ui.core.databinding.FilterExpenseDialogBinding
 import com.arduia.expense.domain.filter.DateRange
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.mvvm.EventObserver
@@ -202,5 +202,3 @@ class ExpenseFilterDialogFragment(private val isSortingEnabled: Boolean = true) 
     fun interface OnFilterApplyListener {
         fun onApply(result: ExpenseLogFilterInfo)
     }
-
-}

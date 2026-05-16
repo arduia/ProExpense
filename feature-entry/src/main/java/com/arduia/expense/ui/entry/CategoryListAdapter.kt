@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.arduia.expense.databinding.ItemCategoryBinding
+import com.arduia.expense.ui.core.databinding.ItemCategoryBinding
 import com.arduia.expense.ui.common.category.ExpenseCategory
 
 class CategoryListAdapter(private val layoutInflater: LayoutInflater) :

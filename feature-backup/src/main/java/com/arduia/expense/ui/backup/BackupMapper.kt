@@ -2,7 +2,7 @@ package com.arduia.expense.ui.backup
 
 import android.content.Context
 import com.arduia.core.arch.Mapper
-import com.arduia.expense.R
+import com.arduia.expense.feature.backup.R
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.ui.common.formatter.DateFormatter

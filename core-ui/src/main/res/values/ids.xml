@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Navigation group IDs -->
+    <item name="gp_navigation" type="id"/>
+
+    <!-- Navigation destination IDs shared across feature modules -->
+    <item name="main_nav" type="id"/>
+    <item name="splashFragment" type="id"/>
+    <item name="dest_home" type="id"/>
+    <item name="dest_about" type="id"/>
+    <item name="dest_backup" type="id"/>
+    <item name="dest_expense_entry" type="id"/>
+    <item name="dest_expense_logs" type="id"/>
+    <item name="dest_feedback" type="id"/>
+    <item name="dest_language" type="id"/>
+    <item name="dest_settings" type="id"/>
+    <item name="dest_statistics" type="id"/>
+    <item name="dest_web" type="id"/>
+
+    <!-- Navigation action IDs -->
+    <item name="action_dest_about_to_dest_web" type="id"/>
+    <item name="action_dest_home_to_dest_expense" type="id"/>
+    <item name="action_dest_home_to_dest_expense_entry" type="id"/>
+    <item name="action_expense_to_entry" type="id"/>
+    <item name="action_splashFragment_to_dest_home" type="id"/>
+    <item name="action_splashFragment_to_languageFragment" type="id"/>
+</resources>

@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentDeleteConfirmDialogBinding
+import com.arduia.expense.ui.core.R
+import com.arduia.expense.ui.core.databinding.FragmentDeleteConfirmDialogBinding
 import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -65,5 +65,3 @@ class DeleteConfirmFragment : BottomSheetDialogFragment() {
         super.onDestroyView()
         _binding = null
     }
-
-}

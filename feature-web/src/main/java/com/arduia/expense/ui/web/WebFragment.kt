@@ -12,8 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import com.arduia.expense.databinding.FragmentWebBinding
+import com.arduia.expense.feature.web.databinding.FragmentWebBinding
 import com.arduia.expense.ui.MainHost
 import com.arduia.expense.ui.NavigationDrawer
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +23,8 @@ class WebFragment : Fragment(){
 
     private lateinit var viewBinding: FragmentWebBinding
 
-    private val args: WebFragmentArgs by navArgs()
+    private val argUrl: String get() = arguments?.getString("url", "") ?: ""
+    private val argTitle: String get() = arguments?.getString("title", "WebView") ?: "WebView"
 
     private val navDrawer by lazy {
         requireActivity() as NavigationDrawer
@@ -51,7 +51,7 @@ class WebFragment : Fragment(){
 
     private fun setupView(){
 
-        val currentWebUrl = args.url
+        val currentWebUrl = argUrl
 
         if(currentWebUrl.isEmpty()){
             mainHost.showSnackMessage("No URL found!")
@@ -59,7 +59,7 @@ class WebFragment : Fragment(){
             return
         }
 
-        val pageTitleText = args.title
+        val pageTitleText = argTitle
 
         viewBinding.tvWebTitle.text = pageTitleText
         viewBinding.wvMain.loadUrl(currentWebUrl)
@@ -92,7 +92,7 @@ class WebFragment : Fragment(){
 
             val requestUrl = request?.url ?: return shouldNotOverload
 
-            val isCurrentUrl = (requestUrl.path == args.url)
+            val isCurrentUrl = (requestUrl.path == argUrl)
 
             if(isCurrentUrl.not()){
                 openUrlToExternalBrowser(url = requestUrl)

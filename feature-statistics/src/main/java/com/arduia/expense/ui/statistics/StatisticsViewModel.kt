@@ -13,7 +13,7 @@ import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.base.BaseViewModel
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
-import com.arduia.mvvm.BaseLiveData
+import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
@@ -37,14 +37,14 @@ class StatisticsViewModel @Inject constructor(
     @StatisticDateRange private val dateRangeFormatter: DateRangeFormatter
 ) : BaseViewModel<StatisticsUiState, StatisticsUiEffect>(StatisticsUiState()) {
 
-    private val filterLimit = BaseLiveData<DateRange>()
-    private val filterConstraint = BaseLiveData<DateRange>()
+    private val filterLimit = MutableLiveData<DateRange>()
+    private val filterConstraint = MutableLiveData<DateRange>()
 
     val dateRange
-        get() = filterConstraint.switchMap { BaseLiveData(createFilterInfo(it)) }
+        get() = filterConstraint.switchMap { MutableLiveData(createFilterInfo(it)) }
 
     val categoryStatisticList
-        get() = filterConstraint.switchMap { BaseLiveData(createStatisticsFromFilter(it)) }
+        get() = filterConstraint.switchMap { MutableLiveData(createStatisticsFromFilter(it)) }
 
     init {
         observeDateRangeInfo()
