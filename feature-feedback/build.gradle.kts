@@ -28,6 +28,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
+    implementation(libs.work.runtime.ktx)
 
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.fragment.ktx)
