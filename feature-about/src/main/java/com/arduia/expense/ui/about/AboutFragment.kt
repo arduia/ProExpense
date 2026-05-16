@@ -13,6 +13,7 @@ import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -44,7 +45,7 @@ class AboutFragment : NavBaseFragment() {
 
     private var aboutUpdateDialog: AboutUpdateDialog? = null
 
-    private val settingViewModel by viewModels<SettingsViewModel>()
+    private val settingViewModel by activityViewModels<SettingsViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
