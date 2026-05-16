@@ -7,3 +7,7 @@
 .cxx
 /.gradle/
 /.idea/
+
+# Roborazzi - track baseline PNGs, ignore diff/compare outputs
+*_compare.png
+*_actual.png

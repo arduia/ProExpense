@@ -19,6 +19,9 @@ navigation-compose = "2.9.3"
 lifecycle-viewmodel-compose = "2.9.2"
 hilt-navigation-compose = "1.2.0"
 
+# Screenshot testing
+roborazzi = "1.26.0"
+
 # Testing
 junit = "4.13.2"
 androidx-test-ext = "1.3.0"
@@ -133,6 +136,11 @@ mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "moc
 # Hilt Testing
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-testing" }
 
+# Roborazzi screenshot testing
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
+
 # Libraries
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
@@ -206,3 +214,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin", version = "2.5.3" }
 google-service-plugin = { id = "com.google.gms.google-services", version.ref = "firebasePlugin" }
 firebase-analytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }

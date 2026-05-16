@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.navigation.safe.args)
     alias(libs.plugins.google.service.plugin)
     alias(libs.plugins.firebase.analytics)
+    alias(libs.plugins.roborazzi)
 }
 
 val apiProfile = rootProject.file("api.properties")
@@ -180,6 +181,11 @@ dependencies {
 
     // Robolectric for unit tests
     testImplementation(libs.robolectric)
+
+    // Roborazzi screenshot testing
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.roborazzi.junit.rule)
 
     // Hilt Testing
     testImplementation(libs.hilt.android.testing)
