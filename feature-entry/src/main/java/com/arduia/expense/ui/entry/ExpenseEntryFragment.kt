@@ -10,8 +10,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.arduia.core.extension.px
@@ -22,7 +23,6 @@ import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.category.ExpenseCategoryProvider
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -67,12 +67,9 @@ class ExpenseEntryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         dateFormat = SimpleDateFormat("d MMM yyyy h:mm a", Locale.ENGLISH)
         setupView()
-        setupViewModel()
+        collectState()
+        collectEffects()
         chooseEntryMode()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         updateCategoryListAfterAnimation()
     }
 
@@ -107,7 +104,6 @@ class ExpenseEntryFragment : Fragment() {
             time[Calendar.MONTH],
             time[Calendar.DAY_OF_MONTH]
         ).show()
-
     }
 
     private fun setupLockButton() {
@@ -119,21 +115,67 @@ class ExpenseEntryFragment : Fragment() {
         }
     }
 
-    private fun setupViewModel() {
-        observeDataInsertedEvent()
-        observeDataUpdatedEvent()
-        observeEntryModeEvent()
-        observeEventExpenseDataState()
-        observeSelectedCategoryState()
-        observeOnLockMode()
-        observeOnNext()
-        observeDate()
-        observeCurrencySymbol()
-        observeDateTimeSelectEvent()
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.edlAmount.suffixText = state.currencySymbol
+                    binding.toolbar.subtitle = dateFormat.format(Date(state.currentEntryTime))
+
+                    state.selectedCategory?.let { setSelectedItem(it) }
+
+                    state.entryData?.let { data ->
+                        binding.edtName.setText(data.name)
+                        binding.edtAmount.setText(data.amount)
+                        binding.edtNote.setText(data.note)
+                        viewModel.selectCategory(data.category)
+                        categoryAdapter.submitList(listOf(data.category))
+                    }
+
+                    when (state.lockMode) {
+                        LockMode.LOCKED -> {
+                            binding.switchRepeat.isChecked = true
+                            binding.btnSave.text = getString(R.string.next)
+                        }
+                        LockMode.UNLOCK -> {
+                            binding.switchRepeat.isChecked = false
+                            binding.btnSave.text = getString(R.string.save)
+                        }
+                    }
+
+                    state.entryMode?.let { mode ->
+                        changeViewToSelectedMode(mode)
+                    }
+                }
+            }
+        }
     }
 
-    private fun observeCurrencySymbol() {
-        viewModel.currencySymbol.observe(viewLifecycleOwner, binding.edlAmount::setSuffixText)
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is ExpenseEntryUiEffect.DataInserted -> {
+                            backToPreviousFragment()
+                            hideInputKeyboard()
+                        }
+                        is ExpenseEntryUiEffect.DataUpdated -> {
+                            showDataUpdatedMessage()
+                            backToPreviousFragment()
+                        }
+                        is ExpenseEntryUiEffect.Next -> {
+                            cleanUi()
+                            focusOnName()
+                            selectFirstCategory()
+                            mainHost.showSnackMessage("Saved!")
+                        }
+                        is ExpenseEntryUiEffect.ShowDatePicker -> showDatePicker(effect.calendar)
+                        is ExpenseEntryUiEffect.ShowTimePicker -> showTimePickerDialog(effect.calendar)
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -152,13 +194,8 @@ class ExpenseEntryFragment : Fragment() {
         )
         binding.toolbar.setOnMenuItemClickListener menu@{
             when (it.itemId) {
-                R.id.calendar -> {
-                    viewModel.onDateSelect()
-                }
-
-                R.id.time -> {
-                    viewModel.onTimeSelect()
-                }
+                R.id.calendar -> viewModel.onDateSelect()
+                R.id.time -> viewModel.onTimeSelect()
             }
             return@menu true
         }
@@ -181,66 +218,6 @@ class ExpenseEntryFragment : Fragment() {
         }
     }
 
-    private fun observeDateTimeSelectEvent() {
-        viewModel.onChooseDateShow.observe(viewLifecycleOwner, EventObserver {
-            showDatePicker(it)
-        })
-
-        viewModel.onChooseTimeShow.observe(viewLifecycleOwner, EventObserver {
-            showTimePickerDialog(it)
-        })
-    }
-
-    private fun observeSelectedCategoryState() {
-        viewModel.selectedCategory.observe(viewLifecycleOwner, Observer { item ->
-            setSelectedItem(item)
-        })
-    }
-
-    private fun observeDataInsertedEvent() {
-        viewModel.onDataInserted.observe(viewLifecycleOwner, EventObserver {
-            backToPreviousFragment()
-            hideInputKeyboard()
-        })
-    }
-
-    private fun observeOnNext() {
-        viewModel.onNext.observe(viewLifecycleOwner, EventObserver {
-            cleanUi()
-            focusOnName()
-            selectFirstCategory()
-            showItemSaved()
-        })
-    }
-
-    private fun showItemSaved() {
-        mainHost.showSnackMessage("Saved!")
-    }
-
-    private fun observeDataUpdatedEvent() {
-        viewModel.onDataUpdated.observe(viewLifecycleOwner, EventObserver {
-            showDataUpdatedMessage()
-            backToPreviousFragment()
-        })
-    }
-
-
-    private fun observeOnLockMode() {
-        viewModel.lockMode.observe(viewLifecycleOwner) {
-            when (it) {
-                LockMode.LOCKED -> {
-                    binding.switchRepeat.isChecked = true
-                    binding.btnSave.text = getString(R.string.next)
-                }
-
-                LockMode.UNLOCK -> {
-                    binding.switchRepeat.isChecked = false
-                    binding.btnSave.text = getString(R.string.save)
-                }
-            }
-        }
-    }
-
     private fun cleanUi() {
         with(binding) {
             edtAmount.setText("")
@@ -253,34 +230,13 @@ class ExpenseEntryFragment : Fragment() {
         binding.edtName.requestFocus()
     }
 
-    private fun selectFirstCategory(){
+    private fun selectFirstCategory() {
         val categoryList = categoryProvider.getCategoryList()
-        if(categoryList.isEmpty()) return
-        viewModel.selectCategory(
-            categoryList.first()
-        )
-    }
-
-    private fun observeEntryModeEvent() {
-        viewModel.onCurrentModeChanged.observe(viewLifecycleOwner, EventObserver { mode ->
-            changeViewToSelectedMode(mode)
-        })
-    }
-
-    private fun observeEventExpenseDataState() {
-        viewModel.entryData.observe(viewLifecycleOwner, Observer { data ->
-            bindExpenseDetail(data)
-        })
-    }
-
-    private fun observeDate() {
-        viewModel.currentEntryTime.observe(viewLifecycleOwner) {
-            binding.toolbar.subtitle = dateFormat.format(Date(it))
-        }
+        if (categoryList.isEmpty()) return
+        viewModel.selectCategory(categoryList.first())
     }
 
     private fun chooseEntryMode() {
-
         val argId = args.expenseId
         val isInvalidId = argId < 0
         if (isInvalidId) {
@@ -295,14 +251,6 @@ class ExpenseEntryFragment : Fragment() {
             ExpenseEntryMode.UPDATE -> changeToUpdateMode()
             ExpenseEntryMode.INSERT -> changeToSaveMode()
         }
-    }
-
-    private fun bindExpenseDetail(data: ExpenseUpdateDataUiModel) {
-        binding.edtName.setText(data.name)
-        binding.edtAmount.setText(data.amount)
-        binding.edtNote.setText(data.note)
-        viewModel.selectCategory(data.category)
-        categoryAdapter.submitList(listOf(data.category))
     }
 
     private fun updateCategoryListAfterAnimation() {

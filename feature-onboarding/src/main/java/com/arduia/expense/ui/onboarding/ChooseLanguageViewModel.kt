@@ -1,14 +1,11 @@
 package com.arduia.expense.ui.onboarding
 
 import android.view.View
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.SettingsRepository
 import com.arduia.expense.model.data
+import com.arduia.expense.ui.base.BaseViewModel
 import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.expense.ui.common.language.LanguageUiModel
-import com.arduia.mvvm.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -16,28 +13,24 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
+data class ChooseLanguageUiState(
+    val languages: List<LanguageUiModel> = emptyList(),
+    val isRestartEnabled: Boolean = true
+)
+
+sealed class ChooseLanguageUiEffect {
+    object Dismiss : ChooseLanguageUiEffect()
+    object RestartAndDismiss : ChooseLanguageUiEffect()
+}
+
 @HiltViewModel
 class ChooseLanguageViewModel @Inject constructor(
     private val langRep: LanguageProvider,
     private val settingRepo: SettingsRepository
-) : ViewModel() {
+) : BaseViewModel<ChooseLanguageUiState, ChooseLanguageUiEffect>(ChooseLanguageUiState()) {
 
-    private val _languages = BaseLiveData<List<LanguageUiModel>>()
-    val language get() = _languages.asLiveData()
-
-    private val _isRestartEnable = BaseLiveData<Boolean>(initValue = true)
-    val isRestartEnable get() = _isRestartEnable.asLiveData()
-
-    private val _onRestartAndDismiss = EventLiveData<Unit>()
-    val onRestartAndDismiss get() = _onRestartAndDismiss.asLiveData()
-
-    private val _onDismiss = EventLiveData<Unit>()
-    val onDismiss get() = _onDismiss.asLiveData()
-
-    private val selectedId = BaseLiveData<String>()
-
-    private val searchKey = BaseLiveData<String>("")
-
+    private val selectedId = MutableStateFlow<String?>(null)
+    private val searchKey = MutableStateFlow("")
     private var initialSelectedId: String? = null
 
     init {
@@ -46,7 +39,7 @@ class ChooseLanguageViewModel @Inject constructor(
     }
 
     fun searchLang(key: String) {
-        searchKey post key
+        searchKey.value = key
     }
 
     fun selectLang(lang: LanguageUiModel) {
@@ -56,28 +49,23 @@ class ChooseLanguageViewModel @Inject constructor(
     }
 
     private fun observeAvailableLanguages() {
-        selectedId.asFlow()
+        selectedId
+            .filterNotNull()
             .flowOn(Dispatchers.IO)
-            .onEach { selectedId ->
-                _isRestartEnable post (selectedId != initialSelectedId)
-            }.combine(searchKey.asFlow()) { selectedId, searchKey ->
+            .onEach { id ->
+                setState { copy(isRestartEnabled = id != initialSelectedId) }
+            }.combine(searchKey) { id, search ->
                 langRep.getAvailableLanguages()
                     .filter {
-                        if (searchKey.isEmpty()) return@filter true
-                        it.name.lowercase(Locale.ROOT)
-                            .contains(searchKey.lowercase(Locale.ROOT))
+                        if (search.isEmpty()) return@filter true
+                        it.name.lowercase(Locale.ROOT).contains(search.lowercase(Locale.ROOT))
                     }
                     .map {
-                        if (selectedId == it.id) return@map LanguageUiModel(
-                            id = it.id,
-                            name = it.name,
-                            flag = it.flag,
-                            isSelectedVisible = View.VISIBLE
-                        )
+                        if (id == it.id) LanguageUiModel(id = it.id, name = it.name, flag = it.flag, isSelectedVisible = View.VISIBLE)
                         else it
                     }
             }
-            .onEach(_languages::postValue)
+            .onEach { languages -> setState { copy(languages = languages) } }
             .launchIn(viewModelScope)
     }
 
@@ -87,22 +75,22 @@ class ChooseLanguageViewModel @Inject constructor(
             .onEach {
                 val id = it.data ?: return@onEach
                 setInitialIdIfNotExist(id)
-                selectedId post id
+                selectedId.value = id
             }
             .launchIn(viewModelScope)
     }
 
     fun onExit() {
-        _onDismiss post EventUnit
+        sendEffect(ChooseLanguageUiEffect.Dismiss)
     }
 
     fun onRestart() {
-        val selectedLanguageID = selectedId.value
+        val currentSelectedId = selectedId.value
         viewModelScope.launch(Dispatchers.IO) {
-            if (initialSelectedId != selectedLanguageID && selectedLanguageID != null) {
-                settingRepo.setSelectedLanguage(selectedLanguageID)
+            if (initialSelectedId != currentSelectedId && currentSelectedId != null) {
+                settingRepo.setSelectedLanguage(currentSelectedId)
             }
-            _onRestartAndDismiss post EventUnit
+            sendEffect(ChooseLanguageUiEffect.RestartAndDismiss)
         }
     }
 
@@ -111,5 +99,4 @@ class ChooseLanguageViewModel @Inject constructor(
             initialSelectedId = id
         }
     }
-
 }

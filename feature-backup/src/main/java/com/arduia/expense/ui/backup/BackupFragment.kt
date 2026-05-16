@@ -8,6 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.view.asGone
 import com.arduia.core.view.asVisible
 import com.arduia.expense.R
@@ -17,8 +20,8 @@ import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.delete.DeleteConfirmFragment
 import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -33,7 +36,7 @@ class BackupFragment : NavBaseFragment() {
     lateinit var mainHost: MainHost
 
     private var backupListAdapter: BackupListAdapter? = null
-    private var backDetailDialog: ImportDialogFragment? = null 
+    private var backDetailDialog: ImportDialogFragment? = null
     private var exportDialog: ExportDialogFragment? = null
     private var deleteDialog: DeleteConfirmFragment? = null
 
@@ -48,13 +51,12 @@ class BackupFragment : NavBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupView()
-        setupViewModel()
+        collectState()
+        collectEffects()
     }
 
     private fun setupView() {
-
         backupListAdapter = BackupListAdapter(layoutInflater)
 
         binding.cvExport.setOnClickListener {
@@ -68,7 +70,6 @@ class BackupFragment : NavBaseFragment() {
             openImportFolder()
         }
 
-        //Setup Recycler View
         binding.rvBackupLogs.adapter = backupListAdapter
         binding.rvBackupLogs.addItemDecoration(
             MarginItemDecoration(
@@ -78,7 +79,7 @@ class BackupFragment : NavBaseFragment() {
         backupListAdapter?.setItemClickListener(::showDeleteConfirmDialog)
     }
 
-    private fun showDeleteConfirmDialog(backupItem: BackupUiModel){
+    private fun showDeleteConfirmDialog(backupItem: BackupUiModel) {
         deleteDialog?.dismiss()
         deleteDialog = DeleteConfirmFragment()
         deleteDialog?.setOnConfirmListener {
@@ -87,27 +88,34 @@ class BackupFragment : NavBaseFragment() {
         deleteDialog?.show(childFragmentManager, DeleteInfoUiModel(1))
     }
 
-    private fun setupViewModel() {
-        viewModel.backupList.observe(viewLifecycleOwner, { list ->
-            showBackupList(list)
-        })
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    backupListAdapter?.submitList(state.backupList)
 
-        viewModel.backupFilePath.observe(viewLifecycleOwner, EventObserver { fileUri ->
-            showImportDialog(uri = fileUri)
-        })
+                    if (state.isEmptyBackupLogs) {
+                        binding.tvNoData.asVisible()
+                    } else {
+                        binding.tvNoData.asGone()
+                    }
 
-        viewModel.isEmptyBackupLogs.observe(viewLifecycleOwner){
-            if(it){
-                binding.tvNoData.asVisible()
-            }else{
-                binding.tvNoData.asGone()
+                    binding.cvExport.isEnabled = state.isEmptyExpenseLogs.not()
+                }
             }
         }
+    }
 
-        viewModel.isEmptyExpenseLogs.observe(viewLifecycleOwner){
-                binding.cvExport.isEnabled = it.not()
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is BackupUiEffect.ShowImportDialog -> showImportDialog(effect.uri)
+                    }
+                }
+            }
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -136,28 +144,13 @@ class BackupFragment : NavBaseFragment() {
         }
     }
 
-
-    private fun hideExportButton() {
-        binding.cvExport.visibility = View.INVISIBLE
-    }
-
-    private fun showExportButton() {
-        binding.cvExport.visibility = View.VISIBLE
-    }
-
-    private fun showBackupList(list: List<BackupUiModel>) {
-        backupListAdapter?.submitList(list)
-    }
-
     private fun showExportDialog() {
-        //Close Old Detail Dialog
         exportDialog?.dismiss()
         exportDialog = ExportDialogFragment()
         exportDialog?.show(parentFragmentManager, ExportDialogFragment.TAG)
     }
 
     private fun showImportDialog(uri: Uri) {
-        //Close Old Detail Dialog
         backDetailDialog?.dismiss()
         backDetailDialog = ImportDialogFragment()
         backDetailDialog?.showDialog(parentFragmentManager, uri)

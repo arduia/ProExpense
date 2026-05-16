@@ -1,8 +1,5 @@
 package com.arduia.expense.ui.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.ExpenseEnt
@@ -12,34 +9,45 @@ import com.arduia.expense.model.Result
 import com.arduia.expense.model.SuccessResult
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.onSuccess
+import com.arduia.expense.ui.base.BaseViewModel
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
 import com.arduia.expense.ui.common.uimodel.DeleteInfoUiModel
 import com.arduia.expense.ui.expenselogs.ExpenseUiModel
-import com.arduia.mvvm.BaseLiveData
-import com.arduia.mvvm.EventLiveData
-import com.arduia.mvvm.EventUnit
-import com.arduia.mvvm.event
-import com.arduia.mvvm.post
-import com.arduia.mvvm.set
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.NumberFormat
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
+
+data class HomeUiState(
+    val isLoading: Boolean = false,
+    val totalIncome: String = "",
+    val totalExpense: String = "",
+    val totalBalance: String = "",
+    val currencySymbol: String = "",
+    val dateRange: String = "",
+    val recentExpenses: List<ExpenseUiModel> = emptyList(),
+    val weeklyGraphData: Map<Int, Float> = emptyMap()
+)
+
+sealed class HomeUiEffect {
+    data class ShowDetail(val detail: ExpenseDetailUiModel) : HomeUiEffect()
+    data class ShowDeleteConfirm(val info: DeleteInfoUiModel) : HomeUiEffect()
+    object ShowItemDeleted : HomeUiEffect()
+    object ShowError : HomeUiEffect()
+}
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -50,52 +58,12 @@ class HomeViewModel @Inject constructor(
     @CurrencyDecimalFormat private val currencyFormatter: NumberFormat,
     @MonthlyDateRange private val dateRangeFormatter: DateRangeFormatter,
     calculatorFactory: ExpenseRateCalculator.Factory
-) : ViewModel() {
+) : BaseViewModel<HomeUiState, HomeUiEffect>(HomeUiState()) {
 
-    private val _detailData = EventLiveData<ExpenseDetailUiModel>()
-    val detailData get() = _detailData.asLiveData()
-
-    private val _onExpenseItemDeleted = EventLiveData<Unit>()
-    val onExpenseItemDeleted get() = _onExpenseItemDeleted.asLiveData()
-
-    private val _onError = EventLiveData<Unit>()
-    val onError get() = _onError.asLiveData()
-
-    private val _currentWeekDateRange = BaseLiveData<String>()
-
-    private val _incomeOutcomeData = BaseLiveData<IncomeOutcomeUiModel>()
-    val incomeOutcomeData get() = _incomeOutcomeData.asLiveData()
-
-    private val _graphUiData = BaseLiveData<WeeklyGraphUiModel>()
-    val graphUiModel get() = _graphUiData.asLiveData()
-
-    private val _recentData = BaseLiveData<List<ExpenseUiModel>>()
-    val recentData get() = _recentData.asLiveData()
-
-    private val _onDeleteConfirm = EventLiveData<DeleteInfoUiModel>()
-    val onDeleteConfirm get() = _onDeleteConfirm.asLiveData()
-
-    private val currencySymbol = BaseLiveData<String>()
-
+    private val currencySymbol = MutableStateFlow("")
+    private val currentWeekDateRange = MutableStateFlow("")
     private val calculator = calculatorFactory.create(viewModelScope)
-
     private var prepareDeleteExpenseId: Int? = null
-
-    val uiState: StateFlow<HomeUiState> = combine(
-        _incomeOutcomeData.asFlow(),
-        _graphUiData.asFlow(),
-        _recentData.asFlow()
-    ) { incomeOutcome, graph, recent ->
-        HomeUiState(
-            totalExpense = incomeOutcome.outComeValue,
-            totalIncome = incomeOutcome.incomeValue,
-            totalBalance = incomeOutcome.outComeValue,
-            currencySymbol = incomeOutcome.currencySymbol,
-            recentExpenses = emptyList(),
-            weeklyGraphData = graph.rate.values.map { it.toFloat() },
-            isLoading = false
-        )
-    }.stateIn(viewModelScope, SharingStarted.Lazily, HomeUiState())
 
     init {
         observeWeekExpenses()
@@ -110,10 +78,10 @@ class HomeViewModel @Inject constructor(
                 is Result.Loading -> Unit
                 is Result.Error -> Unit
                 is Result.Success -> {
-                    val symbol = currencySymbol.value ?: ""
+                    val symbol = currencySymbol.value
                     val mapper = expenseDetailMapperFactory.create { symbol }
-                    val detailData = mapper.map(result.data)
-                    _detailData post event(detailData)
+                    val detail = mapper.map(result.data)
+                    sendEffect(HomeUiEffect.ShowDetail(detail))
                 }
             }
         }
@@ -123,30 +91,26 @@ class HomeViewModel @Inject constructor(
         val id = prepareDeleteExpenseId ?: return
         viewModelScope.launch(Dispatchers.IO) {
             repo.deleteExpenseById(id)
-            _onExpenseItemDeleted post EventUnit
+            sendEffect(HomeUiEffect.ShowItemDeleted)
         }
     }
 
     fun onDeletePrepared(id: Int) {
         this.prepareDeleteExpenseId = id
-        _onDeleteConfirm post event(DeleteInfoUiModel(1, null))
+        sendEffect(HomeUiEffect.ShowDeleteConfirm(DeleteInfoUiModel(1, null)))
     }
 
     private fun observeCurrencySymbol() {
         currencyRepository.getSelectedCacheCurrency()
             .flowOn(Dispatchers.IO)
-            .onSuccess {
-                currencySymbol post it.code
+            .onSuccess { currency ->
+                currencySymbol.value = currency.code
             }
             .launchIn(viewModelScope)
     }
 
     private fun updateWeekDateRange() {
-        _currentWeekDateRange set getWeekDateRange()
-    }
-
-    private fun onErrorResult(e: Exception) {
-        _onError post EventUnit
+        currentWeekDateRange.value = getWeekDateRange()
     }
 
     private fun observeWeekExpenses() {
@@ -156,86 +120,77 @@ class HomeViewModel @Inject constructor(
                 Timber.d("Home, expenses: $it")
                 when (it) {
                     is Result.Loading -> Unit
-                    is Result.Error -> _onError post EventUnit
-                    is Result.Success -> {
-                        updateIncomeOutcome(it.data)
-                    }
+                    is Result.Error -> sendEffect(HomeUiEffect.ShowError)
+                    is Result.Success -> updateIncomeOutcome(it.data)
                 }
             }
             .launchIn(viewModelScope)
 
         repo.getRecentExpense()
             .flowOn(Dispatchers.IO)
-            .combine(currencySymbol.asFlow()) { recent, symbol ->
+            .combine(currencySymbol) { recent, symbol ->
                 val data = (recent as? SuccessResult)?.data ?: return@combine
                 val mapper = expenseVoMapperFactory.create { symbol }
-                _recentData post data.map(mapper::map)
+                setState { copy(recentExpenses = data.map(mapper::map)) }
             }
             .launchIn(viewModelScope)
     }
 
-    private suspend fun updateIncomeOutcome(weekExpenses: List<ExpenseEnt>){
-        calculator.setWeekExpenses(weekExpenses.filter {
-                expenseEnt -> expenseEnt.category != ExpenseCategory.INCOME
-        })
+    private suspend fun updateIncomeOutcome(weekExpenses: List<ExpenseEnt>) {
+        calculator.setWeekExpenses(weekExpenses.filter { it.category != ExpenseCategory.INCOME })
 
         val totalOutcome = weekExpenses.getTotalOutcomeAsync()
         val totalIncome = weekExpenses.getTotalIncomeAsync()
 
         val weekOutcome = currencyFormatter.format(totalOutcome.await())
         val weekIncome = currencyFormatter.format(totalIncome.await())
-        val dateRange = _currentWeekDateRange.value ?: ""
-        val currencySymbol =
-            currencyRepository.getSelectedCacheCurrency().awaitValueOrError().code
+        val dateRange = currentWeekDateRange.value
+        val symbol = currencyRepository.getSelectedCacheCurrency().awaitValueOrError().code
 
-        _incomeOutcomeData post IncomeOutcomeUiModel(
-            weekIncome,
-            weekOutcome,
-            currencySymbol,
-            dateRange
-        )
+        setState {
+            copy(
+                totalIncome = weekIncome,
+                totalExpense = weekOutcome,
+                totalBalance = weekOutcome,
+                currencySymbol = symbol,
+                dateRange = dateRange
+            )
+        }
     }
 
-    fun updateRecentData(){
-        viewModelScope.launch(Dispatchers.IO){
+    fun updateRecentData() {
+        viewModelScope.launch(Dispatchers.IO) {
             val data = (repo.getRecentExpenseSync() as? SuccessResult)?.data ?: return@launch
-            val mapper = expenseVoMapperFactory.create {
-                currencySymbol.value ?: ""
-            }
-            _recentData post data.map(mapper::map)
+            val mapper = expenseVoMapperFactory.create { currencySymbol.value }
+            setState { copy(recentExpenses = data.map(mapper::map)) }
         }
-
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             val data = (repo.getWeekExpensesSync() as? SuccessResult)?.data ?: return@launch
             updateIncomeOutcome(data)
         }
-
     }
 
     private fun List<ExpenseEnt>.getTotalOutcomeAsync() = viewModelScope.async {
-        this@getTotalOutcomeAsync.filter { expense ->
-            expense.category != ExpenseCategory.INCOME
-        }.sumByDouble { expense -> expense.amount.getActual().toDouble() }
+        filter { it.category != ExpenseCategory.INCOME }
+            .sumByDouble { it.amount.getActual().toDouble() }
     }
 
     private fun List<ExpenseEnt>.getTotalIncomeAsync() = viewModelScope.async {
-        this@getTotalIncomeAsync.filter { expense ->
-            expense.category == ExpenseCategory.INCOME
-        }.sumByDouble { expense -> expense.amount.getActual().toDouble() }
+        filter { it.category == ExpenseCategory.INCOME }
+            .sumByDouble { it.amount.getActual().toDouble() }
     }
 
     private fun observeRate() {
         calculator.getRates()
             .flowOn(Dispatchers.IO)
-            .combine(_currentWeekDateRange.asFlow()) { rate, dateRange ->
+            .combine(currentWeekDateRange) { rate, dateRange ->
                 WeeklyGraphUiModel(dateRange, rate)
             }
-            .onEach {
-                _graphUiData.postValue(it)
+            .onEach { graphData ->
+                setState { copy(weeklyGraphData = graphData.rate.mapValues { it.value.toFloat() }) }
             }
             .launchIn(viewModelScope)
     }
-
 
     private fun getWeekDateRange(): String {
         val startTime = getWeekStartTime().time
@@ -243,37 +198,27 @@ class HomeViewModel @Inject constructor(
         return dateRangeFormatter.format(start = startTime, end = endTime)
     }
 
-
     private fun getWeekStartTime(): Date {
-
         val calendar = Calendar.getInstance()
-
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
         val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
         val startSunDay = (dayOfYear - dayOfWeek) + 1
-
         calendar.set(Calendar.DAY_OF_YEAR, startSunDay)
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
-
         return calendar.time
     }
 
     private fun getWeekEndTime(): Date {
         val calendar = Calendar.getInstance()
-
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
         val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
-
         val startSunDay = (dayOfYear - dayOfWeek) + 1
-
         calendar.set(Calendar.DAY_OF_YEAR, startSunDay + 7)
         calendar.set(Calendar.HOUR_OF_DAY, 23)
         calendar.set(Calendar.MINUTE, 59)
         calendar.set(Calendar.SECOND, 59)
-
         return calendar.time
     }
-
 }

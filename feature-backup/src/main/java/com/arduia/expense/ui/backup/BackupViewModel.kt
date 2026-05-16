@@ -1,67 +1,38 @@
 package com.arduia.expense.ui.backup
 
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.data.local.BackupEnt
 import com.arduia.expense.model.Result
 import com.arduia.expense.model.onSuccess
-import com.arduia.expense.ui.component.backup.BackupRowUiModel
-import com.arduia.mvvm.*
+import com.arduia.expense.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+
+data class BackupUiState(
+    val backupList: List<BackupUiModel> = emptyList(),
+    val isEmptyBackupLogs: Boolean = true,
+    val isEmptyExpenseLogs: Boolean = false
+)
+
+sealed class BackupUiEffect {
+    data class ShowImportDialog(val uri: Uri) : BackupUiEffect()
+}
 
 @HiltViewModel
 class BackupViewModel @Inject constructor(
     private val mapper: Mapper<BackupEnt, BackupUiModel>,
     private val backupRepo: BackupRepository,
     private val expenseRepo: ExpenseRepository
-) : ViewModel(){
-
-    private val _backupList = BaseLiveData<List<BackupUiModel>>()
-    val backupList = _backupList.asLiveData()
-
-    private val _backupFilePath = EventLiveData<Uri>()
-    val backupFilePath = _backupFilePath.asLiveData()
-
-    val isEmptyBackupLogs = _backupList.switchMap {
-        BaseLiveData(it.isEmpty())
-    }
-
-    private val _isEmptyExpenseLogs = BaseLiveData<Boolean>()
-    val isEmptyExpenseLogs get() = _isEmptyExpenseLogs.asLiveData()
-
-    private val _onBackupDelete = EventLiveData<Unit>()
-    val onBackupDelete get() = _onBackupDelete.asLiveData()
-
-    val uiState: StateFlow<BackupUiState> = combine(
-        _backupList.asFlow(),
-        flow { emit(false) },
-        flow { emit(false) },
-        flow { emit(false) }
-    ) { backupFiles, isImporting, isExporting, showExportDialog ->
-        BackupUiState(
-            backupFiles = backupFiles.map {
-                BackupRowUiModel(
-                    id = it.id.toLong(),
-                    name = it.name,
-                    date = it.date,
-                    isInProgress = it.onProgress
-                )
-            },
-            isImporting = isImporting,
-            isExporting = isExporting,
-            showExportDialog = showExportDialog
-        )
-    }.stateIn(viewModelScope, SharingStarted.Lazily, BackupUiState())
+) : BaseViewModel<BackupUiState, BackupUiEffect>(BackupUiState()) {
 
     init {
         observeBackupLists()
@@ -71,8 +42,8 @@ class BackupViewModel @Inject constructor(
     private fun observeExpenseCount() {
         expenseRepo.getExpenseTotalCount()
             .flowOn(Dispatchers.IO)
-            .onSuccess {
-                _isEmptyExpenseLogs post (it == 0)
+            .onSuccess { count ->
+                setState { copy(isEmptyExpenseLogs = count == 0) }
             }
             .launchIn(viewModelScope)
     }
@@ -82,8 +53,9 @@ class BackupViewModel @Inject constructor(
             .flowOn(Dispatchers.IO)
             .onEach {
                 if (it is Result.Success) {
-                    _backupList post it.data.map(mapper::map)
+                    val list = it.data.map(mapper::map)
                     Timber.d("backupList ${it.data}")
+                    setState { copy(backupList = list, isEmptyBackupLogs = list.isEmpty()) }
                 }
             }
             .launchIn(viewModelScope)
@@ -96,7 +68,7 @@ class BackupViewModel @Inject constructor(
     }
 
     fun setImportUri(uri: Uri) {
-        _backupFilePath post event(uri)
+        sendEffect(BackupUiEffect.ShowImportDialog(uri))
     }
 
     fun onImportClick() {}

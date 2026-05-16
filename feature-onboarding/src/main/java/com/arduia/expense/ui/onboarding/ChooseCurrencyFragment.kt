@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentChooseCurrencyBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChooseCurrencyFragment : Fragment() {
@@ -35,7 +38,7 @@ class ChooseCurrencyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectState()
     }
 
     private fun setupView() {
@@ -55,10 +58,14 @@ class ChooseCurrencyFragment : Fragment() {
         }
     }
 
-    private fun setupViewModel() {
-        viewModel.currencies.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-            binding.tvNoItem.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    adapter.submitList(state.currencies)
+                    binding.tvNoItem.visibility = if (state.currencies.isEmpty()) View.VISIBLE else View.INVISIBLE
+                }
+            }
         }
     }
 
@@ -66,5 +73,4 @@ class ChooseCurrencyFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

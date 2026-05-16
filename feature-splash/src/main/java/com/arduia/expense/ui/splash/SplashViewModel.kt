@@ -1,37 +1,27 @@
 package com.arduia.expense.ui.splash
 
-
-import androidx.lifecycle.*
-import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.SettingsRepository
-import com.arduia.expense.model.Result
 import com.arduia.expense.model.awaitValueOrError
-import com.arduia.mvvm.EventLiveData
-import com.arduia.mvvm.EventUnit
-import com.arduia.mvvm.post
+import com.arduia.expense.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class SplashDestination { Home, Onboarding }
+data class SplashUiState(
+    val isLoading: Boolean = true
+)
+
+sealed class SplashUiEffect {
+    object NavigateToHome : SplashUiEffect()
+    object NavigateToOnboarding : SplashUiEffect()
+}
 
 @HiltViewModel
-class SplashViewModel @Inject
-constructor(
+class SplashViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
-) : ViewModel() {
-
-    private val _firstTimeEvent = EventLiveData<Unit>()
-    val firstTimeEvent = _firstTimeEvent.asLiveData()
-
-    private val _normalUserEvent = EventLiveData<Unit>()
-    val normalUserEvent = _normalUserEvent.asLiveData()
-
-    private val _destination = MutableStateFlow<SplashDestination?>(null)
-    val destination: StateFlow<SplashDestination?> = _destination.asStateFlow()
+) : BaseViewModel<SplashUiState, SplashUiEffect>(SplashUiState()) {
 
     private val splashDuration = 1000L
 
@@ -44,13 +34,10 @@ constructor(
             val isFirstTimeUser = settingsRepository.getFirstUser().awaitValueOrError()
             delay(splashDuration)
             if (isFirstTimeUser) {
-                _destination.value = SplashDestination.Onboarding
-                _firstTimeEvent post EventUnit
+                sendEffect(SplashUiEffect.NavigateToOnboarding)
             } else {
-                _destination.value = SplashDestination.Home
-                _normalUserEvent post EventUnit
+                sendEffect(SplashUiEffect.NavigateToHome)
             }
         }
     }
-
 }

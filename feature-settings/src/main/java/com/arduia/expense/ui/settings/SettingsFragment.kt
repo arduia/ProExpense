@@ -1,22 +1,23 @@
 package com.arduia.expense.ui.settings
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.expense.databinding.FragmentSettingsBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.language.LanguageProvider
 import com.arduia.expense.ui.common.ext.restartActivity
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SettingsFragment: NavBaseFragment(){
+class SettingsFragment : NavBaseFragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
@@ -29,7 +30,6 @@ class SettingsFragment: NavBaseFragment(){
 
     private var themeDialog: ChooseThemeDialog? = null
 
-
     @Inject
     lateinit var languageProvider: LanguageProvider
 
@@ -37,19 +37,19 @@ class SettingsFragment: NavBaseFragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View  {
-        _binding =  FragmentSettingsBinding.inflate(layoutInflater, container, false)
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectState()
+        collectEffects()
     }
 
-    private fun setupView(){
-
+    private fun setupView() {
         binding.tbSettings.setNavigationOnClickListener {
             navigationDrawer.openDrawer()
         }
@@ -67,26 +67,41 @@ class SettingsFragment: NavBaseFragment(){
         }
 
         binding.flTheme.setOnClickListener {
-           viewModel.chooseTheme()
+            viewModel.chooseTheme()
         }
     }
 
-    private fun setupViewModel(){
-        viewModel.selectedLanguage.observe(viewLifecycleOwner, Observer {
-            val languageVto = languageProvider.getLanguageVtoByID(it)
-            binding.imvLanguage.setImageResource(languageVto.flag)
-        })
-
-        viewModel.currencyValue.observe(viewLifecycleOwner, binding.tvCurrencyValue::setText)
-
-        viewModel.onThemeOpenToChange.observe(viewLifecycleOwner, EventObserver(::chooseTheme))
-
-        viewModel.onThemeChanged.observe(viewLifecycleOwner,EventObserver{
-            restartActivity()
-        })
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.currentLanguage.isNotEmpty()) {
+                        val languageVto = languageProvider.getLanguageVtoByID(state.currentLanguage)
+                        binding.imvLanguage.setImageResource(languageVto.flag)
+                    }
+                    if (state.currentCurrency.isNotEmpty()) {
+                        binding.tvCurrencyValue.text = state.currentCurrency
+                    }
+                }
+            }
+        }
     }
 
-    private fun chooseTheme(mode: Int){
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is SettingsUiEffect.OpenThemeChooser -> chooseTheme(effect.mode)
+                        is SettingsUiEffect.ThemeChanged -> restartActivity()
+                        is SettingsUiEffect.ShowAboutUpdate -> { /* handled in AboutFragment */ }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun chooseTheme(mode: Int) {
         themeDialog?.dismiss()
         themeDialog = ChooseThemeDialog(requireContext())
         themeDialog?.setOnSaveListener(viewModel::setThemeMode)

@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.settings
 
-import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.SettingsRepository
@@ -10,57 +9,37 @@ import com.arduia.expense.model.Result
 import com.arduia.expense.model.getDataOrError
 import com.arduia.expense.model.onSuccess
 import com.arduia.expense.ui.about.AboutUpdateUiModel
+import com.arduia.expense.ui.base.BaseViewModel
 import com.arduia.expense.ui.component.dialog.AppTheme
-import com.arduia.mvvm.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+
+data class SettingsUiState(
+    val currentCurrency: String = "",
+    val currentLanguage: String = "",
+    val currentTheme: AppTheme = AppTheme.System,
+    val appVersion: String = "",
+    val isNewVersionAvailable: Boolean = false
+)
+
+sealed class SettingsUiEffect {
+    data class OpenThemeChooser(val mode: Int) : SettingsUiEffect()
+    object ThemeChanged : SettingsUiEffect()
+    data class ShowAboutUpdate(val info: AboutUpdateUiModel) : SettingsUiEffect()
+}
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val currencyRepo: CurrencyRepository,
     private val aboutUpdateUiDataMapper: Mapper<AboutUpdateDataModel, AboutUpdateUiModel>
-) : ViewModel() {
-
-    private val _selectedLanguage = BaseLiveData<String>()
-    val selectedLanguage get() = _selectedLanguage.asLiveData()
-
-    private val _currencyValue = BaseLiveData<String>()
-    val currencyValue get() = _currencyValue.asLiveData()
-
-    private val _onThemeOpenToChange = EventLiveData<Int>()
-    val onThemeOpenToChange get() = _onThemeOpenToChange.asLiveData()
-
-    private val _onThemeChanged = EventLiveData<Unit>()
-    val onThemeChanged get() = _onThemeChanged.asLiveData()
-
-    private val _isNewVersionAvailable = BaseLiveData<Boolean>(initValue = false)
-    val isNewVersionAvailable get() = _isNewVersionAvailable.asLiveData()
-
-    private val _onShowAboutUpdate = EventLiveData<AboutUpdateUiModel>()
-    val onShowAboutUpdate get() = _onShowAboutUpdate.asLiveData()
-
-    val uiState: StateFlow<SettingsUiState> = combine(
-        _currencyValue.asFlow(),
-        _selectedLanguage.asFlow()
-    ) { currency, language ->
-        SettingsUiState(
-            currentCurrency = currency,
-            currentLanguage = language,
-            currentTheme = AppTheme.System,
-            appVersion = ""
-        )
-    }.stateIn(viewModelScope, SharingStarted.Lazily, SettingsUiState())
+) : BaseViewModel<SettingsUiState, SettingsUiEffect>(SettingsUiState()) {
 
     init {
         observeSelectedLanguage()
@@ -73,29 +52,23 @@ class SettingsViewModel @Inject constructor(
             .flowOn(Dispatchers.IO)
             .onSuccess { status ->
                 Timber.d("version status $status")
-                when (status) {
-                    UpdateStatusDataModel.STATUS_NO_UPDATE -> {
-                        _isNewVersionAvailable post false
-                    }
-
-                    UpdateStatusDataModel.STATUS_NORMAL_UPDATE -> {
-                        _isNewVersionAvailable post true
-                    }
-
-                    UpdateStatusDataModel.STATUS_FORCE_UPGRADE -> {
-                        _isNewVersionAvailable post true
-                    }
+                val isAvailable = when (status) {
+                    UpdateStatusDataModel.STATUS_NO_UPDATE -> false
+                    UpdateStatusDataModel.STATUS_NORMAL_UPDATE -> true
+                    UpdateStatusDataModel.STATUS_FORCE_UPGRADE -> true
+                    else -> false
                 }
+                setState { copy(isNewVersionAvailable = isAvailable) }
             }
             .launchIn(viewModelScope)
     }
 
     fun onOpenNewUpdateInfo() {
         viewModelScope.launch(Dispatchers.IO) {
-            if(isNewVersionAvailable.value == null)return@launch
+            if (uiState.value.isNewVersionAvailable.not()) return@launch
             val info = settingsRepository.getAboutUpdateSync().getDataOrError()
             val infoVo = aboutUpdateUiDataMapper.map(info)
-            _onShowAboutUpdate post event(infoVo)
+            sendEffect(SettingsUiEffect.ShowAboutUpdate(infoVo))
         }
     }
 
@@ -104,7 +77,7 @@ class SettingsViewModel @Inject constructor(
             .flowOn(Dispatchers.IO)
             .onEach {
                 if (it !is Result.Success) return@onEach
-                _currencyValue post it.data.symbol
+                setState { copy(currentCurrency = it.data.symbol) }
             }
             .launchIn(viewModelScope)
     }
@@ -114,7 +87,7 @@ class SettingsViewModel @Inject constructor(
             .flowOn(Dispatchers.IO)
             .onEach {
                 if (it !is Result.Success) return@onEach
-                _selectedLanguage post it.data
+                setState { copy(currentLanguage = it.data) }
             }
             .launchIn(viewModelScope)
     }
@@ -122,14 +95,14 @@ class SettingsViewModel @Inject constructor(
     fun chooseTheme() {
         viewModelScope.launch(Dispatchers.IO) {
             val mode = settingsRepository.getSelectedThemeModeSync().getDataOrError()
-            _onThemeOpenToChange post event(mode)
+            sendEffect(SettingsUiEffect.OpenThemeChooser(mode))
         }
     }
 
     fun setThemeMode(mode: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.setSelectedThemeMode(mode)
-            _onThemeChanged post EventUnit
+            sendEffect(SettingsUiEffect.ThemeChanged)
         }
     }
 

@@ -1,8 +1,7 @@
 package com.arduia.expense.ui.statistics
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
 import com.arduia.expense.data.ExpenseRepository
 import com.arduia.expense.di.StatisticDateRange
 import com.arduia.expense.domain.filter.DateRange
@@ -11,62 +10,49 @@ import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.model.awaitValueOrError
 import com.arduia.expense.model.onError
 import com.arduia.expense.model.onSuccess
+import com.arduia.expense.ui.base.BaseViewModel
 import com.arduia.expense.ui.common.filter.Sorting
 import com.arduia.expense.ui.common.formatter.DateRangeFormatter
-import com.arduia.mvvm.*
+import com.arduia.mvvm.BaseLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
 import java.util.*
 import javax.inject.Inject
+
+data class StatisticsUiState(
+    val isEmptyExpenseData: Boolean = false,
+    val dateRange: String = ""
+)
+
+sealed class StatisticsUiEffect {
+    data class ShowFilter(val filterInfo: ExpenseLogFilterInfo) : StatisticsUiEffect()
+}
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val expenseRepo: ExpenseRepository,
     private val categoryAnalyzer: CategoryAnalyzer,
     @StatisticDateRange private val dateRangeFormatter: DateRangeFormatter
-) : ViewModel() {
-
+) : BaseViewModel<StatisticsUiState, StatisticsUiEffect>(StatisticsUiState()) {
 
     private val filterLimit = BaseLiveData<DateRange>()
     private val filterConstraint = BaseLiveData<DateRange>()
 
-    private val _filterRestored = EventLiveData<Unit>()
-    val filterRestored get() = _filterRestored.asLiveData()
-
-    private val _onFilterShow = EventLiveData<ExpenseLogFilterInfo>()
-    val onFilterShow get() = _onFilterShow.asLiveData()
-
     val dateRange
-        get() = filterConstraint.switchMap {
-            BaseLiveData(createFilterInfo(it))
-        }
-
-    private val _isEmptyExpenseData = BaseLiveData<Boolean>()
-    val isEmptyExpenseData get() = _isEmptyExpenseData.asLiveData()
-
+        get() = filterConstraint.switchMap { BaseLiveData(createFilterInfo(it)) }
 
     val categoryStatisticList
-        get() = filterConstraint.switchMap {
-            BaseLiveData(createStatisticsFromFilter(it))
-        }
+        get() = filterConstraint.switchMap { BaseLiveData(createStatisticsFromFilter(it)) }
 
-    val uiState: StateFlow<StatisticsUiState> = flowOf(StatisticsUiState())
-        .stateIn(viewModelScope, SharingStarted.Lazily, StatisticsUiState())
+    init {
+        observeDateRangeInfo()
+        observeIsEmptyData()
+    }
 
     private fun createStatisticsFromFilter(filter: DateRange): List<CategoryStatisticUiModel> {
-        val expenses = expenseRepo.getExpenseRangeAsc(
-            filter.start,
-            filter.end,
-            0,
-            Int.MAX_VALUE
-        )
+        val expenses = expenseRepo.getExpenseRangeAsc(filter.start, filter.end, 0, Int.MAX_VALUE)
             .awaitValueOrError()
         return categoryAnalyzer.analyze(expenses)
     }
@@ -75,21 +61,10 @@ class StatisticsViewModel @Inject constructor(
         return dateRangeFormatter.format(constraint.start, constraint.end)
     }
 
-    init {
-        observeDateRangeInfo()
-        observeIsEmptyData()
-    }
-
     private fun observeIsEmptyData() {
         expenseRepo.getExpenseTotalCount()
             .flowOn(Dispatchers.IO)
-            .onSuccess {
-                if (it <= 0) {
-                    _isEmptyExpenseData post true
-                } else {
-                    _isEmptyExpenseData post false
-                }
-            }
+            .onSuccess { setState { copy(isEmptyExpenseData = it <= 0) } }
             .launchIn(viewModelScope)
     }
 
@@ -98,30 +73,27 @@ class StatisticsViewModel @Inject constructor(
             .flowOn(Dispatchers.IO)
             .onSuccess {
                 val dateRange = ExpenseDateRange(it.minDate, it.maxDate)
-                filterConstraint post dateRange
-                filterLimit post dateRange
+                filterConstraint.postValue(dateRange)
+                filterLimit.postValue(dateRange)
             }
             .onError {
                 val dateRange = ExpenseDateRange(0, Date().time)
-                filterConstraint post dateRange
-                filterLimit post dateRange
+                filterConstraint.postValue(dateRange)
+                filterLimit.postValue(dateRange)
             }
             .launchIn(viewModelScope)
     }
 
     fun setFilter(filter: ExpenseLogFilterInfo) {
-        this.filterConstraint set filter.dateRangeSelected
+        filterConstraint.value = filter.dateRangeSelected
     }
 
     fun onFilterSelected() {
         val constraint = filterConstraint.value ?: return
         val limit = filterLimit.value ?: return
-        _onFilterShow post event(
-            ExpenseLogFilterInfo(
-                dateRangeLimit = limit,
-                dateRangeSelected = constraint, sorting = Sorting.DESC
-            )
-        )
+        sendEffect(StatisticsUiEffect.ShowFilter(
+            ExpenseLogFilterInfo(dateRangeLimit = limit, dateRangeSelected = constraint, sorting = Sorting.DESC)
+        ))
     }
 
     fun onRangeSelect(range: String) {}

@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentChooseLanguageBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChooseLanguageFragment : Fragment() {
@@ -35,7 +38,7 @@ class ChooseLanguageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectState()
     }
 
     private fun setupView() {
@@ -45,7 +48,7 @@ class ChooseLanguageFragment : Fragment() {
         binding.searchBox.setOnSearchTextChangeListener {
             viewModel.searchLang(it)
         }
-        binding.rvLanguages. addItemDecoration(
+        binding.rvLanguages.addItemDecoration(
             MarginItemDecoration(
                 spaceSide = resources.getDimension(R.dimen.grid_3).toInt(),
                 spaceHeight = requireContext().px(4)
@@ -54,8 +57,14 @@ class ChooseLanguageFragment : Fragment() {
         adapter.setOnItemClickListener(viewModel::selectLang)
     }
 
-    private fun setupViewModel() {
-        viewModel.language.observe(viewLifecycleOwner, adapter::submitList)
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    adapter.submitList(state.languages)
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

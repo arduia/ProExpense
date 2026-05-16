@@ -2,18 +2,20 @@ package com.arduia.expense.ui.statistics
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentStatisticBinding
 import com.arduia.expense.domain.filter.ExpenseLogFilterInfo
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.filter.ExpenseFilterDialogFragment
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StatisticsFragment : NavBaseFragment() {
@@ -40,7 +42,9 @@ class StatisticsFragment : NavBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        setupLiveDataObservers()
+        collectState()
+        collectEffects()
     }
 
     private fun setupView() {
@@ -77,23 +81,37 @@ class StatisticsFragment : NavBaseFragment() {
     }
 
 
-    private fun setupViewModel() {
+    private fun setupLiveDataObservers() {
         viewModel.categoryStatisticList.observe(viewLifecycleOwner) {
             categoryAdapter?.submitList(it)
             if (it.isEmpty()) showNoData() else hideNoData()
         }
+    }
 
-        viewModel.onFilterShow.observe(viewLifecycleOwner, EventObserver {
-            shoeDateRangeDialog(it)
-        })
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.isEmptyExpenseData) {
+                        disableMenuActions()
+                        hideFilterDate()
+                    } else {
+                        enableMenuActions()
+                        showFilterDate()
+                    }
+                }
+            }
+        }
+    }
 
-        viewModel.isEmptyExpenseData.observe(viewLifecycleOwner) { isEmptyData ->
-            if (isEmptyData) {
-                disableMenuActions()
-                hideFilterDate()
-            } else {
-                enableMenuActions()
-                showFilterDate()
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is StatisticsUiEffect.ShowFilter -> shoeDateRangeDialog(effect.filterInfo)
+                    }
+                }
             }
         }
     }

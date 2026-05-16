@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentOnboardConfigBinding
 import com.arduia.expense.ui.common.language.LanguageProvider
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -39,12 +40,10 @@ class OnBoardingConfigFragment : Fragment() {
         return binding.root
     }
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectEffects()
     }
 
     private fun setupView(){
@@ -57,13 +56,17 @@ class OnBoardingConfigFragment : Fragment() {
         }
     }
 
-    private fun setupViewModel(){
-        viewModel.onRestart.observe(viewLifecycleOwner, EventObserver{
-            restartActivity()
-        })
-        viewModel.onContinued.observe(viewLifecycleOwner,EventObserver{
-            onChooseCurrency()
-        })
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is OnBoardingConfigUiEffect.Restart -> restartActivity()
+                        is OnBoardingConfigUiEffect.Continue -> onChooseCurrency()
+                    }
+                }
+            }
+        }
     }
 
     private fun onChooseCurrency(){

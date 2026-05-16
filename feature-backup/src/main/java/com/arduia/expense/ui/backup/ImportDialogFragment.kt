@@ -7,15 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentBackupDetailBinding
 import com.arduia.expense.ui.BackupMessageReceiver
 import com.arduia.expense.ui.MainActivity
 import com.arduia.expense.ui.MainHost
-import com.arduia.mvvm.EventObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,9 +38,8 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewBinding = FragmentBackupDetailBinding.inflate(layoutInflater, container, false)
-
         return viewBinding.root
     }
 
@@ -47,7 +48,11 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
 
         backupMsgReceiver = requireActivity() as MainActivity
         setupView()
-        setupViewModel()
+        collectState()
+        collectEffects()
+
+        val importFileUrl = this.fileUri ?: throw Exception("Url not found exception!")
+        viewModel.setFileUri(importFileUrl)
     }
 
     private fun setupView() {
@@ -58,42 +63,39 @@ class ImportDialogFragment : BottomSheetDialogFragment() {
         viewBinding.btnImport.setOnClickListener {
             viewModel.startImportData()
         }
-
     }
 
-    private fun setupViewModel() {
-        viewModel.fileName.observe(viewLifecycleOwner, Observer { name ->
-            viewBinding.tvNameValue.text = name
-        })
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    viewBinding.tvNameValue.text = state.fileName
+                    viewBinding.tvItemsValue.text = state.totalCount
 
-        viewModel.totalCount.observe(viewLifecycleOwner, Observer { count ->
-            viewBinding.tvItemsValue.text = count
-        })
-
-        viewModel.closeEvent.observe(viewLifecycleOwner, EventObserver {
-            this.dismiss()
-        })
-
-        viewModel.fileNotFoundEvent.observe(viewLifecycleOwner, EventObserver {
-            mainHost.showSnackMessage(getString(R.string.file_not_exist))
-        })
-
-        viewModel.backupTaskEvent.observe(viewLifecycleOwner, EventObserver { id ->
-            backupMsgReceiver.registerBackupTaskID(id)
-        })
-
-        viewModel.loadingEvent.observe(viewLifecycleOwner, EventObserver { isLoading ->
-            if (isLoading) {
-                showLoading()
-                disableEditButton()
-            } else {
-                hideLoading()
-                enableEditButton()
+                    if (state.isLoading) {
+                        showLoading()
+                        disableEditButton()
+                    } else {
+                        hideLoading()
+                        enableEditButton()
+                    }
+                }
             }
-        })
+        }
+    }
 
-        val importFileUrl = this.fileUri ?: throw Exception("Url not found exception!")
-        viewModel.setFileUri(importFileUrl)
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is ImportUiEffect.Close -> this@ImportDialogFragment.dismiss()
+                        is ImportUiEffect.FileNotFound -> mainHost.showSnackMessage(getString(R.string.file_not_exist))
+                        is ImportUiEffect.BackupTaskStarted -> backupMsgReceiver.registerBackupTaskID(effect.taskId)
+                    }
+                }
+            }
+        }
     }
 
     fun showDialog(fm: FragmentManager, uri: Uri) {

@@ -2,23 +2,20 @@ package com.arduia.expense.ui.splash
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentSplashBinding
-import com.arduia.expense.ui.common.themeColor
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashFragment : Fragment() {
@@ -42,7 +39,7 @@ class SplashFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         changeSplashStatusBarColor()
-        setupViewModel()
+        collectEffects()
     }
 
     private fun changeSplashStatusBarColor() {
@@ -55,15 +52,23 @@ class SplashFragment : Fragment() {
         requireActivity().window.statusBarColor = normalStatusBarColor
     }
 
-    private fun setupViewModel() {
-        viewModel.firstTimeEvent.observe(viewLifecycleOwner, EventObserver {
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.dest_language)
-        })
-        viewModel.normalUserEvent.observe(viewLifecycleOwner, EventObserver {
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.dest_home)
-        })
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is SplashUiEffect.NavigateToOnboarding -> {
+                            findNavController().popBackStack()
+                            findNavController().navigate(R.id.dest_language)
+                        }
+                        is SplashUiEffect.NavigateToHome -> {
+                            findNavController().popBackStack()
+                            findNavController().navigate(R.id.dest_home)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -71,5 +76,4 @@ class SplashFragment : Fragment() {
         _binding = null
         restoreNormalStatusBarColor()
     }
-
 }

@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.entry
 
-import androidx.lifecycle.*
 import com.arduia.core.arch.Mapper
 import com.arduia.expense.data.CurrencyRepository
 import com.arduia.expense.data.ExpenseRepository
@@ -8,197 +7,134 @@ import com.arduia.expense.data.local.ExpenseEnt
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.model.SuccessResult
 import com.arduia.expense.model.awaitValueOrError
+import com.arduia.expense.ui.base.BaseViewModel
 import com.arduia.expense.ui.common.category.ExpenseCategory
 import com.arduia.expense.ui.common.expense.ExpenseDetailUiModel
-import com.arduia.mvvm.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
+
+data class ExpenseEntryUiState(
+    val expenseId: Long = 0,
+    val isEditMode: Boolean = false,
+    val name: String = "",
+    val amount: String = "",
+    val note: String = "",
+    val selectedCategory: ExpenseCategory? = null,
+    val currencySymbol: String = "",
+    val currentEntryTime: Long = Date().time,
+    val lockMode: LockMode = LockMode.UNLOCK,
+    val entryMode: ExpenseEntryMode? = null,
+    val entryData: ExpenseUpdateDataUiModel? = null,
+    val isSaving: Boolean = false
+)
+
+sealed class ExpenseEntryUiEffect {
+    object DataInserted : ExpenseEntryUiEffect()
+    object DataUpdated : ExpenseEntryUiEffect()
+    object Next : ExpenseEntryUiEffect()
+    data class ShowDatePicker(val calendar: Calendar) : ExpenseEntryUiEffect()
+    data class ShowTimePicker(val calendar: Calendar) : ExpenseEntryUiEffect()
+}
 
 @HiltViewModel
 class ExpenseEntryViewModel @Inject constructor(
     private val repo: ExpenseRepository,
     private val mapper: Mapper<ExpenseEnt, ExpenseUpdateDataUiModel>,
     private val currencyRepo: CurrencyRepository
-) : ViewModel() {
-
-    private val _onDataInserted = EventLiveData<Unit>()
-    val onDataInserted get() = _onDataInserted.asLiveData()
-
-    private val _onNext = EventLiveData<Unit>()
-    val onNext get() = _onNext.asLiveData()
-
-    private val _onDataUpdated = EventLiveData<Unit>()
-    val onDataUpdated get() = _onDataUpdated.asLiveData()
-
-    private val _onCurrentModeChanged = EventLiveData<ExpenseEntryMode>()
-    val onCurrentModeChanged get() = _onCurrentModeChanged.asLiveData()
-
-    private val _entryData = BaseLiveData<ExpenseUpdateDataUiModel>()
-    val entryData get() = _entryData.asLiveData()
-
-    private val _selectedCategory = BaseLiveData<ExpenseCategory>()
-    val selectedCategory get() = _selectedCategory.asLiveData()
-
-    private val _lockMode = BaseLiveData<LockMode>()
-    val lockMode get() = _lockMode.asLiveData()
-
-    private val _currentEntryTime = BaseLiveData<Long>()
-    val currentEntryTime get() = _currentEntryTime.asLiveData()
-
-    private val _onChooseTimeShow = EventLiveData<Calendar>()
-    val onChooseTimeShow get() = _onChooseTimeShow.asLiveData()
-
-    private val _onChooseDateShow = EventLiveData<Calendar>()
-    val onChooseDateShow get() = _onChooseDateShow.asLiveData()
-
-    private val _isLoading = BaseLiveData<Boolean>()
-    val isLoading get() = _isLoading
-
-    val currencySymbol: LiveData<String> = currencyRepo.getSelectedCacheCurrency()
-        .flowOn(Dispatchers.IO)
-        .map {
-            if (it is SuccessResult) it.data.code else ""
-        }.asLiveData()
-
-    val uiState: StateFlow<ExpenseEntryUiState> = combine(
-        _entryData.asFlow(),
-        _selectedCategory.asFlow(),
-        _currentEntryTime.asFlow(),
-        currencySymbol.asFlow()
-    ) { entryData, selectedCategory, time, symbol ->
-        ExpenseEntryUiState(
-            expenseId = entryData.id.toLong(),
-            isEditMode = entryData.id > 0,
-            name = entryData.name,
-            amount = entryData.amount.toString(),
-            note = entryData.note,
-            selectedCategoryId = selectedCategory.id,
-            categories = emptyList(),
-            currencySymbol = symbol,
-            date = "",
-            nameError = null,
-            amountError = null,
-            isSaving = false
-        )
-    }.stateIn(viewModelScope, SharingStarted.Lazily, ExpenseEntryUiState())
+) : BaseViewModel<ExpenseEntryUiState, ExpenseEntryUiEffect>(ExpenseEntryUiState()) {
 
     init {
-        _lockMode.value = LockMode.UNLOCK
-        updateSelectedDateAsCurrentTime()
+        setState { copy(lockMode = LockMode.UNLOCK, currentEntryTime = Date().time) }
+        observeCurrencySymbol()
+    }
+
+    private fun observeCurrencySymbol() {
+        currencyRepo.getSelectedCacheCurrency()
+            .flowOn(Dispatchers.IO)
+            .map { if (it is SuccessResult) it.data.code else "" }
+            .onEach { symbol -> setState { copy(currencySymbol = symbol) } }
+            .launchIn(viewModelScope)
     }
 
     fun chooseUpdateMode() {
-        _onCurrentModeChanged post event(ExpenseEntryMode.UPDATE)
+        setState { copy(entryMode = ExpenseEntryMode.UPDATE) }
     }
 
     fun chooseSaveMode() {
-        _onCurrentModeChanged post event(ExpenseEntryMode.INSERT)
+        setState { copy(entryMode = ExpenseEntryMode.INSERT) }
     }
 
     fun selectDateTime(time: Long) {
-        _currentEntryTime set time
+        setState { copy(currentEntryTime = time) }
     }
 
     fun onDateSelect() {
-        val date = getCurrentEntryDateTime()
-        _onChooseDateShow set event(date)
+        val calendar = getCurrentEntryDateTime()
+        sendEffect(ExpenseEntryUiEffect.ShowDatePicker(calendar))
     }
 
     fun onTimeSelect() {
-        val time = getCurrentEntryDateTime()
-        _onChooseTimeShow set event(time)
+        val calendar = getCurrentEntryDateTime()
+        sendEffect(ExpenseEntryUiEffect.ShowTimePicker(calendar))
     }
 
     private fun getCurrentEntryDateTime(): Calendar {
-        val time = _currentEntryTime.value ?: throw Exception("Any Time is Not Selected Yet!")
-        return Calendar.getInstance().apply {
-            timeInMillis = time
-        }
+        val time = uiState.value.currentEntryTime
+        return Calendar.getInstance().apply { timeInMillis = time }
     }
 
     fun selectTime(hour: Int, min: Int, milliSec: Int) {
-        val selectedTimeMilli = _currentEntryTime.value ?: throw Exception("time is not selected yet")
-
         val time = Calendar.getInstance().apply {
-            timeInMillis = selectedTimeMilli
+            timeInMillis = uiState.value.currentEntryTime
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, min)
+            set(Calendar.MILLISECOND, milliSec)
         }
-        time[Calendar.HOUR_OF_DAY] = hour
-        time[Calendar.MINUTE] = min
-        time[Calendar.MILLISECOND] = milliSec
-
-        _currentEntryTime set time.timeInMillis
-    }
-
-    private fun loadingOn() {
-        _isLoading post true
-    }
-
-    private fun loadingOff() {
-        _isLoading post false
+        setState { copy(currentEntryTime = time.timeInMillis) }
     }
 
     private fun onDataInserted() {
-        val isLocked = lockMode.value ?: return
+        val isLocked = uiState.value.lockMode
         if (isLocked == LockMode.LOCKED) {
-            _onNext post EventUnit
-            updateSelectedDateAsCurrentTime()
+            sendEffect(ExpenseEntryUiEffect.Next)
+            setState { copy(currentEntryTime = Date().time) }
         } else {
-            _onDataInserted post EventUnit
+            sendEffect(ExpenseEntryUiEffect.DataInserted)
         }
-
     }
 
-    private fun onDataUpdated() {
-        _onDataUpdated post EventUnit
-    }
-
-    fun setLockMode(
-        isLocked: Boolean
-    ){
-        if(isLocked){
-            _lockMode set LockMode.LOCKED
-        }else{
-            _lockMode set LockMode.UNLOCK
-        }
+    fun setLockMode(isLocked: Boolean) {
+        setState { copy(lockMode = if (isLocked) LockMode.LOCKED else LockMode.UNLOCK) }
     }
 
     fun updateExpenseData(expense: ExpenseDetailUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            loadingOn()
-            val oldData = entryData.value
+            setState { copy(isSaving = true) }
+            val oldData = uiState.value.entryData
             val createdDate = oldData?.date
-            val expenseEnt = mapToExpenseEnt(
-                expense,
-                createdDate, modifiedDate = currentEntryTime.value
-            )
+            val expenseEnt = mapToExpenseEnt(expense, createdDate, modifiedDate = uiState.value.currentEntryTime)
             repo.updateExpense(expenseEnt)
-            onDataUpdated()
-            loadingOff()
+            setState { copy(isSaving = false) }
+            sendEffect(ExpenseEntryUiEffect.DataUpdated)
         }
-    }
-
-    private fun updateSelectedDateAsCurrentTime() {
-        _currentEntryTime post  Date().time
     }
 
     fun saveExpenseData(expense: ExpenseDetailUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            loadingOn()
-            val expenseEnt = mapToExpenseEnt(expense, modifiedDate = currentEntryTime.value)
+            setState { copy(isSaving = true) }
+            val expenseEnt = mapToExpenseEnt(expense, modifiedDate = uiState.value.currentEntryTime)
             repo.insertExpense(expenseEnt)
+            setState { copy(isSaving = false) }
             onDataInserted()
-            loadingOff()
         }
     }
 
@@ -217,18 +153,15 @@ class ExpenseEntryViewModel @Inject constructor(
     )
 
     fun setCurrentExpenseId(id: Int) {
-        updateExpenseData(id)
+        loadExpenseData(id)
     }
 
-
-    private fun updateExpenseData(id: Int) {
+    private fun loadExpenseData(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val result = repo.getExpense(id).awaitValueOrError()
-                _currentEntryTime post result.modifiedDate
                 val dataVto = mapper.map(result)
-                _entryData post dataVto
-
+                setState { copy(currentEntryTime = result.modifiedDate, entryData = dataVto) }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -236,7 +169,7 @@ class ExpenseEntryViewModel @Inject constructor(
     }
 
     fun selectCategory(category: ExpenseCategory) {
-        _selectedCategory post category
+        setState { copy(selectedCategory = category) }
     }
 
     fun onNameChange(name: String) {}

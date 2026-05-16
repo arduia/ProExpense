@@ -6,16 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.extension.px
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentChooseLanguageDialogBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.common.ext.restartActivity
+import com.arduia.expense.ui.onboarding.ChooseLanguageUiEffect
 import com.arduia.expense.ui.onboarding.ChooseLanguageViewModel
 import com.arduia.expense.ui.onboarding.LangListAdapter
-import com.arduia.mvvm.EventObserver
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChooseLanguageDialog : BottomSheetDialogFragment() {
@@ -43,7 +47,8 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectState()
+        collectEffects()
     }
 
     private fun setupView() {
@@ -74,26 +79,34 @@ class ChooseLanguageDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupViewModel() {
-
-        viewModel.language.observe(viewLifecycleOwner) {
-            adapter?.submitList(it)
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    adapter?.submitList(state.languages)
+                    binding.btnRestart.isEnabled = state.isRestartEnabled
+                }
+            }
         }
+    }
 
-        viewModel.isRestartEnable.observe(viewLifecycleOwner) {
-            binding.btnRestart.isEnabled = it
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is ChooseLanguageUiEffect.RestartAndDismiss -> {
+                            shouldRestartActivity = true
+                            dismiss()
+                        }
+                        is ChooseLanguageUiEffect.Dismiss -> {
+                            shouldRestartActivity = false
+                            dismiss()
+                        }
+                    }
+                }
+            }
         }
-
-        viewModel.onRestartAndDismiss.observe(viewLifecycleOwner, EventObserver {
-            shouldRestartActivity = true
-            dismiss()
-        })
-
-        viewModel.onDismiss.observe(viewLifecycleOwner, EventObserver {
-            shouldRestartActivity = false
-            dismiss()
-        })
-
     }
 
     override fun onDismiss(dialog: DialogInterface) {

@@ -1,42 +1,36 @@
 package com.arduia.expense.ui.feedback
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.work.*
 import com.arduia.expense.data.FeedbackWorker
-import com.arduia.mvvm.EventLiveData
-import com.arduia.mvvm.EventUnit
-import com.arduia.mvvm.post
+import com.arduia.expense.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
+
+data class FeedbackUiState(
+    val isSending: Boolean = false
+)
+
+sealed class FeedbackUiEffect {
+    object FeedbackSubmitted : FeedbackUiEffect()
+}
 
 @HiltViewModel
 class FeedbackViewModel @Inject constructor(private val workManager: WorkManager)
-    : ViewModel(){
+    : BaseViewModel<FeedbackUiState, FeedbackUiEffect>(FeedbackUiState()) {
 
-    private val _feedbackSubmittedEvent = EventLiveData<Unit>()
-    val feedbackSubmittedEvent = _feedbackSubmittedEvent.asLiveData()
-
-    val uiState: StateFlow<FeedbackUiState> = flowOf(FeedbackUiState())
-        .stateIn(viewModelScope, SharingStarted.Lazily, FeedbackUiState())
-
-    fun sendFeedback(name: String, email: String, comment: String){
+    fun sendFeedback(name: String, email: String, comment: String) {
         val data = createInputDataForWorker(name, email, comment)
         startFeedbackWork(data)
     }
 
-    private fun startFeedbackWork(data: Data){
+    private fun startFeedbackWork(data: Data) {
         val constraints = getWorkConstraint()
         val request = createFeedbackWorkRequest(data, constraints)
         submitWork(request)
-        feedbackHasBeenSubmitted()
+        sendEffect(FeedbackUiEffect.FeedbackSubmitted)
     }
 
-    private fun submitWork(request: WorkRequest){
+    private fun submitWork(request: WorkRequest) {
         workManager.enqueue(request)
     }
 
@@ -47,15 +41,11 @@ class FeedbackViewModel @Inject constructor(private val workManager: WorkManager
             .putString(FeedbackWorker.PARAM_COMMENT, comment)
             .build()
 
-    private fun feedbackHasBeenSubmitted(){
-        _feedbackSubmittedEvent post EventUnit
-    }
-
     private fun createFeedbackWorkRequest(data: Data, constraints: Constraints) =
         OneTimeWorkRequestBuilder<FeedbackWorker>()
-        .setConstraints(constraints)
-        .setInputData(data)
-        .build()
+            .setConstraints(constraints)
+            .setInputData(data)
+            .build()
 
     private fun getWorkConstraint() = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)

@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.expense.R
 import com.arduia.expense.databinding.FragmentFeedbackBinding
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.NavigationDrawer
-import com.arduia.mvvm.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FeedbackFragment : NavBaseFragment() {
@@ -33,11 +36,10 @@ class FeedbackFragment : NavBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectEffects()
     }
 
     private fun setupView() {
-
         binding.toolbar.setNavigationOnClickListener {
             (requireActivity() as? NavigationDrawer)?.openDrawer()
         }
@@ -47,11 +49,19 @@ class FeedbackFragment : NavBaseFragment() {
         }
     }
 
-    private fun setupViewModel() {
-        viewModel.feedbackSubmittedEvent.observe(viewLifecycleOwner, EventObserver {
-            showFeedbackStatusDialog()
-            clearInputField()
-        })
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is FeedbackUiEffect.FeedbackSubmitted -> {
+                            showFeedbackStatusDialog()
+                            clearInputField()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun clearInputField() {
@@ -99,7 +109,7 @@ class FeedbackFragment : NavBaseFragment() {
     }
 
     private fun showCommentEmptyError() {
-        binding.edtComment.error = getString(R.string.empty_comment) //fix
+        binding.edtComment.error = getString(R.string.empty_comment)
     }
 
     private fun getName() = binding.edtName.text.toString()

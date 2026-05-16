@@ -3,7 +3,6 @@ package com.arduia.expense.ui.backup
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
-import androidx.lifecycle.*
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -11,15 +10,26 @@ import com.arduia.expense.data.BackupRepository
 import com.arduia.expense.data.backup.ImportWorker
 import com.arduia.expense.di.IntegerDecimal
 import com.arduia.expense.model.data
-import com.arduia.mvvm.*
+import com.arduia.expense.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+
+data class ImportUiState(
+    val fileName: String = "",
+    val totalCount: String = "",
+    val isLoading: Boolean = false
+)
+
+sealed class ImportUiEffect {
+    object Close : ImportUiEffect()
+    object FileNotFound : ImportUiEffect()
+    data class BackupTaskStarted(val taskId: UUID) : ImportUiEffect()
+}
 
 @HiltViewModel
 class ImportViewModel @Inject constructor(
@@ -28,65 +38,46 @@ class ImportViewModel @Inject constructor(
     @IntegerDecimal
     private val decimalFormat: DecimalFormat,
     private val workManger: WorkManager
-) : ViewModel() {
-
-    private val _fileName = BaseLiveData<String>()
-    val fileName = _fileName.asLiveData()
-
-    private val _totalCount = BaseLiveData<String>()
-    val totalCount = _totalCount.asLiveData()
-
-    private val _closeEvent = EventLiveData<Unit>()
-    val closeEvent = _closeEvent.asLiveData()
-
-    private val _fileNotFoundEvent = EventLiveData<Unit>()
-    val fileNotFoundEvent = _fileNotFoundEvent.asLiveData()
-
-    private val _backupTaskEvent = EventLiveData<UUID>()
-    val backupTaskEvent get() = _backupTaskEvent.asLiveData()
-
-    private val _loadingEvent = EventLiveData<Boolean>()
-    val loadingEvent get() = _loadingEvent.asLiveData()
+) : BaseViewModel<ImportUiState, ImportUiEffect>(ImportUiState()) {
 
     private var currentSelectedUri: Uri? = null
 
     fun setFileUri(uri: Uri) {
-
         currentSelectedUri = uri
 
         viewModelScope.launch(Dispatchers.IO) {
-
-            loadingOn()
+            setState { copy(isLoading = true) }
             try {
-                val itemCount = backupRepo.getItemCount(uri).first().data?:throw Exception()
+                val itemCount = backupRepo.getItemCount(uri).first().data ?: throw Exception()
                 val isInvalidItem = (itemCount < 0)
 
                 if (isInvalidItem) {
-                    _fileNotFoundEvent post EventUnit
-                    _closeEvent post EventUnit
-                    loadingOff()
+                    sendEffect(ImportUiEffect.FileNotFound)
+                    sendEffect(ImportUiEffect.Close)
+                    setState { copy(isLoading = false) }
                     return@launch
                 }
 
                 val fileName = getFileNameFromUri(uri = uri)
 
-                loadingOff()
-                _fileName post fileName
-                _totalCount post decimalFormat.format(itemCount)
+                setState {
+                    copy(
+                        isLoading = false,
+                        fileName = fileName,
+                        totalCount = decimalFormat.format(itemCount)
+                    )
+                }
 
             } catch (e: SecurityException) {
-                loadingOff()
-                _closeEvent post EventUnit
-
-                _fileNotFoundEvent post EventUnit
+                setState { copy(isLoading = false) }
+                sendEffect(ImportUiEffect.Close)
+                sendEffect(ImportUiEffect.FileNotFound)
             }
-
         }
     }
 
     private fun getFileNameFromUri(uri: Uri): String {
         val cursor = contentResolver.query(uri, null, null, null, null)
-
         val fileNameColumnIndex = cursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
         cursor.moveToFirst()
         return cursor.getString(fileNameColumnIndex)
@@ -103,16 +94,7 @@ class ImportViewModel @Inject constructor(
             .build()
 
         workManger.enqueue(importRequest)
-        _backupTaskEvent post event(importRequest.id)
-
-        _closeEvent post EventUnit
-    }
-
-    private fun loadingOn() {
-        _loadingEvent post event(true)
-    }
-
-    private fun loadingOff() {
-        _loadingEvent post event(false)
+        sendEffect(ImportUiEffect.BackupTaskStarted(importRequest.id))
+        sendEffect(ImportUiEffect.Close)
     }
 }

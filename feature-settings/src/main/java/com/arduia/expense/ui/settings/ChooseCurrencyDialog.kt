@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.core.extension.px
 import com.arduia.expense.R
-import com.arduia.expense.databinding.FragmentChooseCurrencyBinding
 import com.arduia.expense.databinding.FragmentChooseCurrencyDialogBinding
 import com.arduia.expense.ui.common.helper.MarginItemDecoration
 import com.arduia.expense.ui.onboarding.ChooseCurrencyViewModel
@@ -32,13 +32,13 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
 
     private var adapter: CurrencyListAdapter? = null
 
-    private var hideLoadingJob: Job ? =null
+    private var hideLoadingJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View  {
+    ): View {
         _binding = FragmentChooseCurrencyDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,7 +46,7 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectState()
     }
 
     fun show(fragmentManager: FragmentManager) {
@@ -73,16 +73,17 @@ class ChooseCurrencyDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupViewModel() {
-        viewModel.currencies.observe(viewLifecycleOwner){
-            adapter?.submitList(it)
-        }
-
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            if (it) {
-                showLoading()
-            } else {
-                hideLoadingWithDelay()
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    adapter?.submitList(state.currencies)
+                    if (state.isLoading) {
+                        showLoading()
+                    } else {
+                        hideLoadingWithDelay()
+                    }
+                }
             }
         }
     }

@@ -13,8 +13,10 @@ import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.arduia.core.view.asGone
@@ -24,8 +26,9 @@ import com.arduia.expense.databinding.FragmentAboutBinding
 import com.arduia.expense.di.LefSideNavOption
 import com.arduia.expense.ui.NavBaseFragment
 import com.arduia.expense.ui.settings.SettingsViewModel
-import com.arduia.mvvm.EventObserver
+import com.arduia.expense.ui.settings.SettingsUiEffect
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -52,11 +55,11 @@ class AboutFragment : NavBaseFragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectState()
+        collectEffects()
     }
 
     private fun setupView() {
@@ -105,7 +108,6 @@ class AboutFragment : NavBaseFragment() {
         }
     }
 
-
     private fun showAboutDeveloper() {
         val devString = getString(R.string.developer)
         val devMailString = "\n" + getString(R.string.developer_email)
@@ -133,19 +135,32 @@ class AboutFragment : NavBaseFragment() {
         binding.tvDeveloper.text = devSpanText
     }
 
-    private fun setupViewModel() {
-        settingViewModel.isNewVersionAvailable.observe(viewLifecycleOwner) { isAvailable ->
-            Timber.d("isNewVersionAvailable! $isAvailable")
-            if (isAvailable) {
-                binding.lnUpdate.asVisible()
-            } else {
-                binding.lnUpdate.asGone()
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingViewModel.uiState.collect { state ->
+                    Timber.d("isNewVersionAvailable! ${state.isNewVersionAvailable}")
+                    if (state.isNewVersionAvailable) {
+                        binding.lnUpdate.asVisible()
+                    } else {
+                        binding.lnUpdate.asGone()
+                    }
+                }
             }
         }
+    }
 
-        settingViewModel.onShowAboutUpdate.observe(viewLifecycleOwner, EventObserver {
-            showAboutUpdateDialog(it)
-        })
+    private fun collectEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingViewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is SettingsUiEffect.ShowAboutUpdate -> showAboutUpdateDialog(effect.info)
+                        else -> Unit
+                    }
+                }
+            }
+        }
     }
 
     private fun openGithubLink() {
@@ -168,9 +183,14 @@ class AboutFragment : NavBaseFragment() {
     }
 
     private fun navigateToWeb(title: String, url: String) {
-        val action = AboutFragmentDirections
-            .actionDestAboutToDestWeb(url = url, title = title)
-        findNavController().navigate(action, slideNavOptions)
+        findNavController().navigate(
+            R.id.dest_web,
+            android.os.Bundle().apply {
+                putString("url", url)
+                putString("title", title)
+            },
+            slideNavOptions
+        )
     }
 
     override fun onDestroyView() {

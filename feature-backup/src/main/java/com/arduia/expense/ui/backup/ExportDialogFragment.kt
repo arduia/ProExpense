@@ -8,15 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.arduia.expense.databinding.FragmentExportDialogBinding
 import com.arduia.expense.ui.MainHost
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ExportDialogFragment : BottomSheetDialogFragment(){
+class ExportDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var viewBinding: FragmentExportDialogBinding
 
@@ -29,20 +32,18 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewBinding = FragmentExportDialogBinding.inflate(layoutInflater, container, false)
-
         return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        setupViewModel()
+        collectState()
     }
 
-    private fun setupView(){
-
+    private fun setupView() {
         viewBinding.btnDrop.setOnClickListener {
             closeDialog()
         }
@@ -52,18 +53,21 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
         }
     }
 
-    private fun setupViewModel(){
-
-        viewModel.exportFileName.observe(viewLifecycleOwner, Observer {fileName ->
-            viewBinding.edtName.setText(fileName)
-
-            viewBinding.edtName.selectAll()
-        })
+    private fun collectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.exportFileName.isNotEmpty()) {
+                        viewBinding.edtName.setText(state.exportFileName)
+                        viewBinding.edtName.selectAll()
+                    }
+                }
+            }
+        }
     }
 
-    private fun openExternalFileBrowserToSave(){
-
-        val fileNameWithExtension =  getCurrentFileName() + ".xls"
+    private fun openExternalFileBrowserToSave() {
+        val fileNameWithExtension = getCurrentFileName() + ".xls"
 
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -79,14 +83,13 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
 
         val isSaveAsRequestOK = (requestCode == SAVE_AS_REQUEST_CODE && resultCode == Activity.RESULT_OK)
 
-        if(isSaveAsRequestOK){
+        if (isSaveAsRequestOK) {
             val selectedFileUri = data?.data ?: return
             onSaveFileUriReturn(fieUri = selectedFileUri)
         }
     }
 
-    private fun onSaveFileUriReturn(fieUri: Uri){
-
+    private fun onSaveFileUriReturn(fieUri: Uri) {
         val currentFileName = getCurrentFileName()
         viewModel.exportDataTo(fileUri = fieUri, fileName = currentFileName)
         closeDialog()
@@ -94,13 +97,12 @@ class ExportDialogFragment : BottomSheetDialogFragment(){
 
     private fun getCurrentFileName() = viewBinding.edtName.text.toString()
 
-    private fun closeDialog(){
+    private fun closeDialog() {
         dismiss()
     }
 
-    companion object{
+    companion object {
         const val TAG = "BackupDialogFragment"
         private const val SAVE_AS_REQUEST_CODE = 8000
     }
-
 }
