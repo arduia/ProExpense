@@ -1,41 +1,40 @@
-# Architecture Patterns - ProExpense Best Practices
+# Architecture Patterns - ProExpense KMP Compose
 
 ## Overview
 
-ProExpense follows **MVVM (Model-View-ViewModel) with Repository Pattern**, a proven Android architecture that separates concerns into three layers: UI, business logic, and data access.
+ProExpense follows **MVVM (Model-View-ViewModel) with Repository Pattern** across a **multi-module, KMP Compose architecture**. This enables code sharing across platforms (iOS, Android, Web) while maintaining clean separation of concerns.
 
 ---
 
-## 1. MVVM Architecture
+## 1. MVVM Architecture for KMP
 
 ### What It Is
 
 MVVM divides the application into three distinct layers:
 
-- **View (UI Layer)**: Fragments, Activities, Compose screens - displays data, handles user interactions
-- **ViewModel**: Holds and manages UI state, survives configuration changes, calls repositories
-- **Model (Data/Domain Layer)**: Business logic, repositories, domain models - independent of UI framework
+- **View (Compose UI Layer)**: Compose screens (shared across platforms) - displays data, handles user interactions
+- **ViewModel**: Holds and manages UI state, independent of platform, calls repositories
+- **Model (Data/Domain Layer)**: Business logic, repositories, domain models - 100% shared code
 
 ### Why Use It
 
 ✅ **Testability**: Each layer can be tested independently  
-✅ **Reusability**: ViewModels and repositories are reusable across multiple UI components  
+✅ **Code Sharing**: ViewModels, repositories, and domain logic shared across platforms  
 ✅ **Maintainability**: Clear separation makes code easier to navigate and update  
-✅ **Lifecycle-Aware**: ViewModels survive configuration changes (screen rotation)  
+✅ **Platform Independence**: UI is the only platform-specific layer  
 
 ### Implementation Example
 
-**ViewModel** - `/app/src/main/java/com/arduia/expense/ui/home/HomeViewModel.kt`
+**ViewModel** - `shared/viewmodel/src/commonMain/kotlin/HomeViewModel.kt`
 ```kotlin
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeViewModel(
     private val expenseRepository: ExpenseRepository,
     private val currencyRepository: CurrencyRepository,
     private val expenseMapper: ExpenseUiModelMapper
-) : ViewModel() {
+) {
     
-    private val _uiState = MutableLiveData<HomeUiState>()
-    val uiState: LiveData<HomeUiState> = _uiState
+    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
     
     fun loadExpenses() {
         viewModelScope.launch {
@@ -53,22 +52,25 @@ class HomeViewModel @Inject constructor(
 }
 ```
 
-**Fragment** - Observes ViewModel state and reacts to changes
+**Compose Screen** - Observes ViewModel state reactively
 ```kotlin
-class HomeFragment : Fragment() {
-    private val viewModel: HomeViewModel by viewModels()
+@Composable
+fun HomeScreen(viewModel: HomeViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
     
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is HomeUiState.Success -> updateUI(state.expenses)
-                is HomeUiState.Error -> showError(state.message)
-                is HomeUiState.Loading -> showLoading()
-            }
+    when (val state = uiState) {
+        is HomeUiState.Loading -> {
+            CircularProgressIndicator()
         }
-        
+        is HomeUiState.Success -> {
+            ExpenseListContent(state.expenses)
+        }
+        is HomeUiState.Error -> {
+            ErrorMessage(state.message)
+        }
+    }
+    
+    LaunchedEffect(Unit) {
         viewModel.loadExpenses()
     }
 }
@@ -76,22 +78,35 @@ class HomeFragment : Fragment() {
 
 ---
 
-## 2. Repository Pattern
+## 2. Repository Pattern with Multi-Module
 
 ### What It Is
 
-Repository provides a **single point of access** to data, abstracting the underlying data sources (Room database, Network API, SharedPreferences).
+Repository provides a **single point of access** to data, abstracting the underlying data sources (SQLDelight, Network API, Local cache). In KMP, repositories are **shared across all platforms**.
 
 ### Why Use It
 
 ✅ **Data Source Abstraction**: UI doesn't know if data comes from DB, network, or cache  
+✅ **Code Sharing**: Single repository implementation used by iOS, Android, Web  
 ✅ **Testability**: Easy to mock repositories in unit tests  
 ✅ **Flexibility**: Switch data sources without changing UI code  
-✅ **Single Responsibility**: Repository handles all data logic  
+✅ **Platform Independence**: Data layer is 100% shared Kotlin code  
+
+### Multi-Module Structure
+
+```
+shared/
+├── domain/          # Pure business logic, entities, value objects
+├── data/            # Repositories, data sources (SQLDelight, network)
+└── viewmodel/       # ViewModels, UI state management
+
+androidApp/         # Android-specific setup (DI, platform utils)
+iosApp/            # iOS-specific setup (DI, platform utils)
+```
 
 ### Implementation Example
 
-**Interface** - `/app/src/main/java/com/arduia/expense/data/ExpenseRepository.kt`
+**Interface** - `shared/domain/src/commonMain/kotlin/repository/ExpenseRepository.kt`
 ```kotlin
 interface ExpenseRepository {
     suspend fun insertExpense(expenseEnt: ExpenseEnt)
@@ -383,26 +398,27 @@ class ExpenseListViewModel @Inject constructor(
 
 ---
 
-## 7. Multi-Layer Data Access
+## 7. Multi-Layer Data Access (KMP)
 
 ### What It Is
 
-Data can come from **multiple sources**: local database (Room), network API (Retrofit), or cached preferences (DataStore). Repository abstracts which source is used.
+Data can come from **multiple sources**: local database (SQLDelight), network API (Ktor), or cached preferences. Repository abstracts which source is used.
 
 ### Why Use It
 
 ✅ **Offline Support**: App works without network using cached data  
 ✅ **Performance**: Cache reduces unnecessary API calls  
 ✅ **Flexibility**: Switch strategies (cache-first, network-first, etc.)  
+✅ **Code Sharing**: Single repository used across iOS, Android, Web  
 
-### Sources in ProExpense
+### Sources in KMP ProExpense
 
-| Source | Use Case | Class |
-|--------|----------|-------|
-| **Room Database** | Local persistent storage | `ProExpenseDatabase`, `ExpenseDao` |
-| **Retrofit API** | Fetch updates, feedback | `ProExpenseServerRepository` |
-| **DataStore Preferences** | User settings, app state | `SettingsRepository` |
-| **Files (Backup)** | Import/export data | `ImportWorker`, `ExportWorker` |
+| Source | Use Case | Implementation |
+|--------|----------|-----------------|
+| **SQLDelight Database** | Local persistent storage (shared) | `ExpenseQueries`, `Database` |
+| **Ktor Client** | Fetch updates, feedback (shared) | `HttpClient`, `ExpenseApi` |
+| **Memory Cache** | User settings, app state (shared) | `CacheRepository` |
+| **Platform Storage** | Platform-specific files | `iosMain`, `androidMain` implementations |
 
 **Example: Layered Data Access**
 ```kotlin
@@ -436,23 +452,26 @@ class CurrencyRepositoryImpl @Inject constructor(
 
 ---
 
-## Key Takeaways
+## Key Takeaways for KMP Compose Multimodule
 
-| Pattern | When to Use | File Example |
-|---------|------------|--------------|
-| **MVVM** | Always - core architecture | `HomeViewModel.kt`, `HomeFragment.kt` |
-| **Repository** | For all data access | `ExpenseRepository.kt` |
-| **Result Type** | For async operations returning data | `Result.kt` |
-| **Value Objects** | For meaningful domain concepts | `Amount.kt` |
-| **Builder** | For complex object construction | `ExpenseLogFilterInfo.Builder` |
-| **Mapper** | For model transformation | `ExpenseUiModelMapper` |
-| **Multi-Layer Data** | When multiple sources needed | `CurrencyRepositoryImpl` |
+| Pattern | When to Use | Module Location |
+|---------|------------|-----------------|
+| **MVVM** | Always - core architecture | `shared/viewmodel/` |
+| **Repository** | For all data access (shared code) | `shared/data/` |
+| **Result Type** | For async operations returning data | `shared/domain/` |
+| **Value Objects** | For meaningful domain concepts | `shared/domain/` |
+| **Builder** | For complex object construction | `shared/domain/` |
+| **Mapper** | For model transformation | `shared/data/` |
+| **Multi-Layer Data** | When multiple sources needed | `shared/data/` |
 
 ---
 
-## Reuse in New Architecture
+## KMP Compose Multi-Module Best Practices
 
-✅ These patterns are **architecture-agnostic** - apply them regardless of UI framework (Compose, XML, or hybrid)  
-✅ **Result Type** is especially valuable for type-safe error handling  
-✅ **Value Objects** encode business rules that shouldn't change  
-✅ **Repository** remains the gateway to all data, regardless of UI implementation
+✅ **Shared code only in `shared/`**: Domain, repositories, viewmodels  
+✅ **Platform code in platform modules**: `androidMain`, `iosMain` for platform-specific implementations  
+✅ **Compose UI only**: No Android Views, Fragments, or LiveData  
+✅ **StateFlow over LiveData**: Use `StateFlow<T>` for reactive state  
+✅ **SQLDelight over Room**: KMP-compatible database  
+✅ **Ktor over Retrofit**: KMP-compatible HTTP client  
+✅ **Single codebase**: Business logic shared across iOS, Android, Web
