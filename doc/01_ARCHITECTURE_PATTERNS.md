@@ -1,159 +1,97 @@
-# Architecture Patterns - ProExpense KMP Compose
+# Architecture Patterns - Best Practices
 
 ## Overview
 
-ProExpense follows **MVVM (Model-View-ViewModel) with Repository Pattern** across a **multi-module, KMP Compose architecture**. This enables code sharing across platforms (iOS, Android, Web) while maintaining clean separation of concerns.
+ProExpense follows proven architecture patterns that are **framework and tool-agnostic**. These principles remain valuable regardless of whether you use Koin or Hilt for DI, Room or SQLDelight for database, or Compose or any other UI framework.
 
 ---
 
-## 1. MVVM Architecture for KMP
+## 1. MVVM Architecture
 
 ### What It Is
 
 MVVM divides the application into three distinct layers:
 
-- **View (Compose UI Layer)**: Compose screens (shared across platforms) - displays data, handles user interactions
-- **ViewModel**: Holds and manages UI state, independent of platform, calls repositories
-- **Model (Data/Domain Layer)**: Business logic, repositories, domain models - 100% shared code
+- **View (UI Layer)**: Displays data and captures user input
+- **ViewModel**: Holds and manages UI state, independent of framework
+- **Model (Domain/Data Layer)**: Business logic, repositories, domain models
 
 ### Why Use It
 
-✅ **Testability**: Each layer can be tested independently  
-✅ **Code Sharing**: ViewModels, repositories, and domain logic shared across platforms  
-✅ **Maintainability**: Clear separation makes code easier to navigate and update  
-✅ **Platform Independence**: UI is the only platform-specific layer  
+✅ **Testability**: Each layer tested independently without UI framework  
+✅ **Reusability**: Business logic and state management independent of UI  
+✅ **Maintainability**: Clear separation makes code easier to navigate  
+✅ **Flexibility**: UI framework can change without affecting core logic  
 
-### Implementation Example
+### Core Pattern
 
-**ViewModel** - `shared/viewmodel/src/commonMain/kotlin/HomeViewModel.kt`
 ```kotlin
+// ViewModel: Independent of any framework
 class HomeViewModel(
     private val expenseRepository: ExpenseRepository,
-    private val currencyRepository: CurrencyRepository,
     private val expenseMapper: ExpenseUiModelMapper
 ) {
-    
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    // State management (implementation varies: LiveData, StateFlow, MutableState, etc.)
+    // private val _uiState = ... // Choose based on framework
     
     fun loadExpenses() {
-        viewModelScope.launch {
-            expenseRepository.getRecentExpense()
-                .onSuccess { expenses ->
-                    _uiState.value = HomeUiState.Success(
-                        expenses.map { expenseMapper.map(it) }
-                    )
-                }
-                .onError { error ->
-                    _uiState.value = HomeUiState.Error(error.message)
-                }
-        }
+        // Load data from repository (framework-agnostic)
+        // Update state (framework-specific implementation)
     }
 }
-```
 
-**Compose Screen** - Observes ViewModel state reactively
-```kotlin
-@Composable
-fun HomeScreen(viewModel: HomeViewModel) {
-    val uiState by viewModel.uiState.collectAsState()
-    
-    when (val state = uiState) {
-        is HomeUiState.Loading -> {
-            CircularProgressIndicator()
-        }
-        is HomeUiState.Success -> {
-            ExpenseListContent(state.expenses)
-        }
-        is HomeUiState.Error -> {
-            ErrorMessage(state.message)
-        }
-    }
-    
-    LaunchedEffect(Unit) {
-        viewModel.loadExpenses()
-    }
-}
+// Domain entities (pure Kotlin, no framework imports)
+data class Expense(
+    val id: Int,
+    val name: String,
+    val amount: Amount,
+    val category: Int,
+    val createdDate: Long,
+    val modifiedDate: Long
+)
 ```
 
 ---
 
-## 2. Repository Pattern with Multi-Module
+## 2. Repository Pattern
 
 ### What It Is
 
-Repository provides a **single point of access** to data, abstracting the underlying data sources (SQLDelight, Network API, Local cache). In KMP, repositories are **shared across all platforms**.
+Repository provides a **single point of access** to data, abstracting the underlying data sources (database, network, cache). Implementation details are hidden from consumers.
 
 ### Why Use It
 
-✅ **Data Source Abstraction**: UI doesn't know if data comes from DB, network, or cache  
-✅ **Code Sharing**: Single repository implementation used by iOS, Android, Web  
-✅ **Testability**: Easy to mock repositories in unit tests  
-✅ **Flexibility**: Switch data sources without changing UI code  
-✅ **Platform Independence**: Data layer is 100% shared Kotlin code  
+✅ **Data Source Abstraction**: Business logic doesn't know if data comes from DB, network, or cache  
+✅ **Testability**: Easy to mock or use test implementations  
+✅ **Flexibility**: Switch implementations without changing business logic  
+✅ **Single Responsibility**: All data access logic in one place  
 
-### Multi-Module Structure
+### Interface Pattern
 
-```
-shared/
-├── domain/          # Pure business logic, entities, value objects
-├── data/            # Repositories, data sources (SQLDelight, network)
-└── viewmodel/       # ViewModels, UI state management
-
-androidApp/         # Android-specific setup (DI, platform utils)
-iosApp/            # iOS-specific setup (DI, platform utils)
-```
-
-### Implementation Example
-
-**Interface** - `shared/domain/src/commonMain/kotlin/repository/ExpenseRepository.kt`
 ```kotlin
+// Define contract (framework-independent)
 interface ExpenseRepository {
-    suspend fun insertExpense(expenseEnt: ExpenseEnt)
-    fun getExpenseAll(): FlowResult<List<ExpenseEnt>>
-    fun getExpenseRange(
-        startTime: Long, 
-        endTime: Long, 
-        offset: Int, 
-        limit: Int
-    ): FlowResult<List<ExpenseEnt>>
-    suspend fun updateExpense(expenseEnt: ExpenseEnt)
-    suspend fun deleteExpense(expenseEnt: ExpenseEnt)
+    suspend fun insertExpense(expense: Expense): Result<Unit>
+    fun getExpenseAll(): Flow<Result<List<Expense>>>
+    suspend fun deleteExpense(id: Int): Result<Unit>
 }
-```
 
-**Implementation** - `/app/src/main/java/com/arduia/expense/data/ExpenseRepositoryImpl.kt`
-```kotlin
-class ExpenseRepositoryImpl @Inject constructor(
-    private val expenseDao: ExpenseDao
+// Implementation hides details
+class ExpenseRepositoryImpl(
+    private val expenseDataSource: ExpenseDataSource
 ) : ExpenseRepository {
-    
-    override suspend fun insertExpense(expenseEnt: ExpenseEnt) {
-        withContext(Dispatchers.IO) {
-            expenseDao.insert(expenseEnt)
+    override suspend fun insertExpense(expense: Expense): Result<Unit> {
+        return try {
+            expenseDataSource.insert(expense)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
         }
     }
-    
-    override fun getExpenseAll(): FlowResult<List<ExpenseEnt>> {
-        return expenseDao.getExpenseAll()
-            .map { SuccessResult(it) }
-            .catch { ErrorResult(RepositoryException(it)) }
-            .flowOn(Dispatchers.IO)
-    }
-    
-    override fun getExpenseRange(
-        startTime: Long,
-        endTime: Long,
-        offset: Int,
-        limit: Int
-    ): FlowResult<List<ExpenseEnt>> {
-        return expenseDao.getExpenseRangeDesc(startTime, endTime, offset, limit)
-            .map { SuccessResult(it) }
-            .catch { ErrorResult(RepositoryException(it)) }
-            .flowOn(Dispatchers.IO)
-    }
 }
 ```
+
+**Key Principle**: Define interfaces in domain layer, implement in data layer.
 
 ---
 
@@ -161,57 +99,39 @@ class ExpenseRepositoryImpl @Inject constructor(
 
 ### What It Is
 
-A **sealed class** that represents three possible states of an async operation:
-- `Success<T>`: Operation completed with data
-- `Error`: Operation failed with exception
-- `Loading`: Operation is in progress
+A **sealed class** that represents the outcome of an async operation (success, error, or loading) instead of throwing exceptions.
 
 ### Why Use It
 
 ✅ **Type Safety**: Compiler enforces handling all cases  
-✅ **No Exceptions**: Errors are values, not exceptions  
+✅ **No Exceptions**: Errors are values, composable like normal data  
 ✅ **Explicit State**: Always clear what state you're in  
-✅ **Functional**: Works well with reactive streams (Flow)  
+✅ **Functional**: Composes well with functional patterns  
 
-### Implementation Example
+### Core Pattern
 
-**Result Type** - `/app/src/main/java/com/arduia/expense/model/Result.kt`
 ```kotlin
-sealed class Result<out R> {
+// Define once, use everywhere
+sealed class Result<out T> {
     data class Success<T>(val data: T) : Result<T>()
     data class Error(val exception: Exception) : Result<Nothing>()
     object Loading : Result<Nothing>()
 }
 
-typealias SuccessResult<T> = Result.Success<T>
-typealias ErrorResult = Result.Error
-typealias LoadingResult = Result.Loading
-typealias FlowResult<T> = Flow<Result<T>>
-```
+// Use in repository contracts
+interface Repository {
+    fun getData(): Flow<Result<List<Data>>>
+}
 
-**Usage in Repository** - Returns `FlowResult<T>` instead of throwing exceptions
-```kotlin
-fun getExpenseAll(): FlowResult<List<ExpenseEnt>> {
-    return expenseDao.getExpenseAll()
-        .map { SuccessResult(it) }  // Wrap in Success
-        .catch { ErrorResult(RepositoryException(it)) }  // Catch as Error
+// Handle in UI layer
+when (val result = viewModel.state) {
+    is Result.Success -> showData(result.data)
+    is Result.Error -> showError(result.exception.message)
+    is Result.Loading -> showProgress()
 }
 ```
 
-**Usage in ViewModel** - Handle all three states
-```kotlin
-expenseRepository.getExpenseAll()
-    .onSuccess { expenses ->
-        _uiState.value = UiState.Success(expenses)
-    }
-    .onError { error ->
-        _uiState.value = UiState.Error(error.message)
-    }
-    .onLoading {
-        _uiState.value = UiState.Loading
-    }
-    .launchIn(viewModelScope)
-```
+**Key Principle**: Use Result type for all async operations, never throw exceptions from repositories.
 
 ---
 
@@ -219,55 +139,45 @@ expenseRepository.getExpenseAll()
 
 ### What It Is
 
-Immutable objects that represent **meaningful business concepts** with embedded business logic. Example: `Amount` represents money with currency conversion logic.
+Immutable objects that represent meaningful **business concepts** with embedded business logic. Unlike data transfer objects, value objects have behavior and validation.
 
 ### Why Use It
 
 ✅ **Business Logic**: Encapsulates rules about the domain  
 ✅ **Type Safety**: Prevents invalid states (e.g., negative amounts)  
 ✅ **Self-Documenting**: Code reads like business language  
-✅ **Operator Overloading**: Makes operations intuitive  
+✅ **Reusability**: Same domain concept used everywhere  
 
-### Implementation Example
+### Core Pattern
 
-**Amount Value Object** - `/app/src/main/java/com/arduia/expense/domain/Amount.kt`
 ```kotlin
-class Amount: ExpenseStore(DataStoreExchangeRate) {
+// Value object with business logic
+class Amount(
+    private val storeValue: Long  // Store as cents to avoid precision errors
+) {
     companion object {
-        // Create from user-facing BigDecimal value
-        fun createFromActual(actual: BigDecimal) = Amount().apply {
-            val storeValue = actual.multiply(BigDecimal(rate.getRate()))
-                .setScale(0, RoundingMode.FLOOR)
-            setStore(storeValue.longValueExact())
-        }
-        
-        // Create from internal stored value
-        fun createFromStore(store: Long) = Amount().apply {
-            setStore(store)
-        }
+        fun createFromActual(actual: BigDecimal) = Amount(
+            (actual * BigDecimal(100)).toLong()
+        )
     }
+    
+    fun getActual(): BigDecimal = storeValue.toBigDecimal() / BigDecimal(100)
+    
+    // Operator overloading for intuitive use
+    operator fun plus(other: Amount) = Amount(storeValue + other.storeValue)
+    operator fun times(multiplier: Int) = Amount(storeValue * multiplier)
 }
 
-// Operator overloading for intuitive arithmetic
-operator fun Amount.times(multiplier: Amount): Amount {
-    val result = this.getStore() * multiplier.getStore()
-    this.setStore(result)
-    return this
-}
-
-operator fun Amount.plus(amount: Amount): Amount {
-    val result = this.getStore() + amount.getStore()
-    setStore(result)
-    return this
-}
+// Domain entity using value objects
+data class Expense(
+    val id: Int,
+    val name: String,
+    val amount: Amount,  // Type-safe, not just Long or Double
+    val category: Int
+)
 ```
 
-**Usage**: No need to think about internal storage, just use it like normal money
-```kotlin
-val price = Amount.createFromActual(BigDecimal("99.99"))
-val quantity = Amount.createFromActual(BigDecimal("5"))
-val total = price * quantity  // Operator overloading makes it intuitive
-```
+**Key Principle**: Use value objects for domain concepts, not primitive types.
 
 ---
 
@@ -275,203 +185,163 @@ val total = price * quantity  // Operator overloading makes it intuitive
 
 ### What It Is
 
-Constructs complex objects step-by-step using a fluent API. Useful when an object has many optional parameters or complex initialization logic.
+Constructs complex objects step-by-step using a fluent API, useful when objects have many optional parameters or complex initialization.
 
 ### Why Use It
 
 ✅ **Readability**: Fluent API is clear and self-documenting  
 ✅ **Flexibility**: Optional parameters without multiple constructors  
-✅ **Immutability**: Can build immutable objects  
-✅ **Validation**: Validate at construction time  
+✅ **Immutability**: Build immutable objects  
+✅ **Validation**: Can validate at construction time  
 
-### Implementation Example
+### Core Pattern
 
-**Filter Builder** - `/app/src/main/java/com/arduia/expense/domain/filter/ExpenseLogFilterInfo.kt`
 ```kotlin
-data class ExpenseLogFilterInfo(
-    val dateRangeLimit: DateRange,
-    val dateRangeSelected: DateRange,
-    val sorting: Sorting
+// Complex filter object
+data class FilterCriteria(
+    val startDate: Long,
+    val endDate: Long,
+    val categories: List<Int>,
+    val sortOrder: SortOrder
 ) {
     class Builder {
-        private var limit: DateRange = ExpenseDateRange(0, 0)
-        private var selected: DateRange = limit
-        private var sorting = Sorting.DESC
-
-        fun setDateLimit(range: DateRange): Builder {
-            this.limit = range
-            return this
+        private var startDate: Long = 0
+        private var endDate: Long = Long.MAX_VALUE
+        private var categories: List<Int> = emptyList()
+        private var sortOrder: SortOrder = SortOrder.DESC
+        
+        fun setDateRange(start: Long, end: Long) = apply {
+            this.startDate = start
+            this.endDate = end
         }
-
-        fun setSelectedLimit(range: DateRange): Builder {
-            this.selected = range
-            return this
+        
+        fun setCategories(cats: List<Int>) = apply {
+            this.categories = cats
         }
-
-        fun setSorting(sorting: Sorting): Builder {
-            this.sorting = sorting
-            return this
-        }
-
-        fun build() = ExpenseLogFilterInfo(
-            dateRangeLimit = limit,
-            dateRangeSelected = selected,
-            sorting = sorting
-        )
+        
+        fun build() = FilterCriteria(startDate, endDate, categories, sortOrder)
     }
 }
-```
 
-**Usage**: Fluent and readable
-```kotlin
-val filter = ExpenseLogFilterInfo.Builder()
-    .setDateLimit(ExpenseDateRange(startDate, endDate))
-    .setSelectedLimit(ExpenseDateRange(selectedStart, selectedEnd))
-    .setSorting(Sorting.DESC)
+// Usage
+val filter = FilterCriteria.Builder()
+    .setDateRange(start, end)
+    .setCategories(listOf(1, 2, 3))
     .build()
 ```
 
+**Key Principle**: Use Builder for complex object construction, not data class copy().
+
 ---
 
-## 6. Adapter/Factory Pattern
+## 6. Mapper Pattern
 
 ### What It Is
 
-Separates object **creation** from the objects themselves. Used for mappers (adapting domain models to UI models) and factories (creating complex objects).
+Explicitly transforms data from one representation to another (e.g., database entity → domain model → UI model).
 
 ### Why Use It
 
-✅ **Separation of Concerns**: Creation logic separate from business logic  
-✅ **Reusability**: Same mapper can transform objects in multiple places  
-✅ **Testability**: Easy to mock mappers  
-✅ **Flexibility**: Change how objects are created without changing consumers  
+✅ **Separation of Concerns**: Each layer has its own models  
+✅ **Testability**: Mappers are easy to test  
+✅ **Reusability**: Same mapper used everywhere  
+✅ **Flexibility**: Change representation without affecting consumers  
 
-### Implementation Example
+### Core Pattern
 
-**Mapper Interface** - `/shared/src/main/java/com/arduia/core/arch/Mapper.kt`
 ```kotlin
+// Define mapper interface (framework-agnostic)
 interface Mapper<I, O> {
     fun map(input: I): O
 }
-```
 
-**Expense Mapper Implementation**
-```kotlin
-class ExpenseUiModelMapper @Inject constructor(
-    private val categoryProvider: ExpenseCategoryProvider,
-    private val dateFormatter: ExpenseDateFormatter
-) : Mapper<ExpenseEnt, ExpenseUiModel> {
-    
-    override fun map(input: ExpenseEnt): ExpenseUiModel {
-        return ExpenseUiModel(
-            id = input.expenseId,
-            name = input.name,
-            amount = input.amount.getActualAsFloat(),
-            category = categoryProvider.getCategoryNameByID(input.category),
-            date = dateFormatter.format(input.createdDate),
-            note = input.note
-        )
-    }
+// Implement for each transformation
+class ExpenseDomainMapper : Mapper<ExpenseDto, Expense> {
+    override fun map(input: ExpenseDto) = Expense(
+        id = input.id,
+        name = input.name,
+        amount = Amount.createFromActual(input.amount),
+        category = input.categoryId,
+        createdDate = input.createdAt.toEpochMilliseconds()
+    )
+}
+
+class ExpenseUiMapper : Mapper<Expense, ExpenseUiModel> {
+    override fun map(input: Expense) = ExpenseUiModel(
+        id = input.id,
+        name = input.name,
+        amount = input.amount.getActual().toFloat(),
+        category = categoryName(input.category),
+        date = formatDate(input.createdDate)
+    )
 }
 ```
 
-**Usage in ViewModel**
-```kotlin
-@HiltViewModel
-class ExpenseListViewModel @Inject constructor(
-    private val expenseRepository: ExpenseRepository,
-    private val expenseMapper: ExpenseUiModelMapper
-) : ViewModel() {
-    
-    fun loadExpenses() {
-        viewModelScope.launch {
-            expenseRepository.getExpenseAll()
-                .onSuccess { entities ->
-                    // Mapper transforms domain -> UI model
-                    val uiModels = entities.map { expenseMapper.map(it) }
-                    updateUI(uiModels)
-                }
-        }
-    }
-}
-```
+**Key Principle**: Never return raw database entities or DTOs from repository. Always map to domain models.
 
 ---
 
-## 7. Multi-Layer Data Access (KMP)
+## 7. Multi-Layer Data Access
 
 ### What It Is
 
-Data can come from **multiple sources**: local database (SQLDelight), network API (Ktor), or cached preferences. Repository abstracts which source is used.
+Data can come from **multiple sources** (database, network, cache). Repository abstracts which source is used.
 
 ### Why Use It
 
 ✅ **Offline Support**: App works without network using cached data  
-✅ **Performance**: Cache reduces unnecessary API calls  
+✅ **Performance**: Cache reduces unnecessary calls  
 ✅ **Flexibility**: Switch strategies (cache-first, network-first, etc.)  
-✅ **Code Sharing**: Single repository used across iOS, Android, Web  
 
-### Sources in KMP ProExpense
+### Core Pattern
 
-| Source | Use Case | Implementation |
-|--------|----------|-----------------|
-| **SQLDelight Database** | Local persistent storage (shared) | `ExpenseQueries`, `Database` |
-| **Ktor Client** | Fetch updates, feedback (shared) | `HttpClient`, `ExpenseApi` |
-| **Memory Cache** | User settings, app state (shared) | `CacheRepository` |
-| **Platform Storage** | Platform-specific files | `iosMain`, `androidMain` implementations |
-
-**Example: Layered Data Access**
 ```kotlin
-class CurrencyRepositoryImpl @Inject constructor(
-    private val currencyDao: CurrencyDao,
-    private val currencyPreferenceDao: PreferenceStorageDao
-) : CurrencyRepository {
-    
-    // Check local database first (fastest)
-    override fun getCurrencies(): FlowResult<List<CurrencyDto>> {
-        return currencyDao.getCurrencyAll()
-            .map { SuccessResult(it) }
-            .catch { ErrorResult(RepositoryException(it)) }
-    }
-    
-    // Store preference in local storage
-    override suspend fun setSelectedCacheCurrency(num: String) {
-        withContext(Dispatchers.IO) {
-            currencyPreferenceDao.setSelectedCurrency(num)
-        }
-    }
-    
-    // Get previously selected currency (with fallback)
-    override fun getSelectedCacheCurrency(): FlowResult<CurrencyDto> {
-        return currencyPreferenceDao.getSelectedCurrency()
-            .map { SuccessResult(it) }
-            .catch { ErrorResult(RepositoryException(it)) }
+interface ExpenseRepository {
+    // Returns data from best available source
+    fun getExpenses(): Flow<Result<List<Expense>>>
+}
+
+class ExpenseRepositoryImpl(
+    private val localDataSource: LocalDataSource,  // Database
+    private val remoteDataSource: RemoteDataSource, // Network
+    private val cacheDataSource: CacheDataSource    // Memory cache
+) : ExpenseRepository {
+    override fun getExpenses(): Flow<Result<List<Expense>>> {
+        // Strategy: Try cache, fall back to local, sync with remote
+        return cacheDataSource.getExpenses()
+            .onEmpty { emit(localDataSource.getExpenses()) }
+            .onSuccess { syncWithRemote() }
     }
 }
 ```
 
----
-
-## Key Takeaways for KMP Compose Multimodule
-
-| Pattern | When to Use | Module Location |
-|---------|------------|-----------------|
-| **MVVM** | Always - core architecture | `shared/viewmodel/` |
-| **Repository** | For all data access (shared code) | `shared/data/` |
-| **Result Type** | For async operations returning data | `shared/domain/` |
-| **Value Objects** | For meaningful domain concepts | `shared/domain/` |
-| **Builder** | For complex object construction | `shared/domain/` |
-| **Mapper** | For model transformation | `shared/data/` |
-| **Multi-Layer Data** | When multiple sources needed | `shared/data/` |
+**Key Principle**: Repository decides data sources, business logic doesn't care.
 
 ---
 
-## KMP Compose Multi-Module Best Practices
+## Key Architecture Principles
 
-✅ **Shared code only in `shared/`**: Domain, repositories, viewmodels  
-✅ **Platform code in platform modules**: `androidMain`, `iosMain` for platform-specific implementations  
-✅ **Compose UI only**: No Android Views, Fragments, or LiveData  
-✅ **StateFlow over LiveData**: Use `StateFlow<T>` for reactive state  
-✅ **SQLDelight over Room**: KMP-compatible database  
-✅ **Ktor over Retrofit**: KMP-compatible HTTP client  
-✅ **Single codebase**: Business logic shared across iOS, Android, Web
+| Pattern | Purpose | Applies Everywhere |
+|---------|---------|-------------------|
+| **MVVM** | Separate UI from business logic | ✅ Yes |
+| **Repository** | Abstract data access | ✅ Yes |
+| **Result Type** | Handle async operations safely | ✅ Yes |
+| **Value Objects** | Represent domain concepts | ✅ Yes |
+| **Builder** | Construct complex objects | ✅ Yes |
+| **Mapper** | Transform between representations | ✅ Yes |
+| **Multi-Layer Data** | Support multiple data sources | ✅ Yes |
+
+---
+
+## Principles that Carry Forward
+
+These architecture patterns are **framework-agnostic** and valuable in any implementation:
+
+✅ **Separation of concerns**: UI ≠ Business Logic ≠ Data Access  
+✅ **Dependency inversion**: Depend on interfaces, not implementations  
+✅ **Single responsibility**: Each class has one reason to change  
+✅ **Open/closed**: Open for extension, closed for modification  
+✅ **Interface segregation**: Small, focused interfaces  
+✅ **Composition over inheritance**: Build complex behavior from simple pieces  
+
+**Key**: The architecture patterns matter more than the tools used to implement them.

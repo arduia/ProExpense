@@ -1,407 +1,269 @@
-# Testing Guidelines - KMP Best Practices
+# Testing Guidelines - Best Practices
 
 ## Overview
 
-ProExpense uses **unit and integration tests** that run on all platforms (iOS, Android, Web) via KMP. Testing is built-in from the start, ensuring code quality across all platforms.
+Good testing practices apply regardless of the framework or tool. This guide documents testing principles and strategies that remain valuable in any architecture.
 
 ---
 
 ## Testing Pyramid
 
 ```
-        🧪 E2E / UI Tests (Small)
-       /                         \
-      /   Instrumented Tests      \
-     /          (Medium)           \
-    /                               \
-   /___   Unit Tests (Large)   _____\
+        UI/Integration Tests (few)
+       /                        \
+      /   Component Tests        \
+     /      (medium)              \
+    /                              \
+   /____   Unit Tests (many)   _____\
   
 Strategy: Many unit tests, fewer integration tests, minimal UI tests
 ```
 
 ---
 
-## Unit Tests
+## Unit Testing
 
-### Test Dependencies
+### What to Test
 
-```gradle
-testImplementation "junit:junit:4.13.2"
-testImplementation "io.mockk:mockk:1.13.8"
-testImplementation "org.mockito:mockito-core:4.11.0"
-testImplementation "androidx.arch.core:core-testing:2.2.0"  // InstantTaskExecutorRule
-testImplementation "org.robolectric:robolectric:4.10.3"
-testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
-```
-
-### ViewModel Testing
-
-**File:** `/app/src/test/java/com/arduia/expense/ui/MainViewModelTest.kt`
+**Test behavior, not implementation:**
 
 ```kotlin
-class HomeViewModelTest {
-    
-    @get:Rule
-    val instantExecutorRule = InstantTaskExecutorRule()  // LiveData testing
-    
-    @RelaxedMockK
-    private lateinit var expenseRepository: ExpenseRepository
-    
-    @RelaxedMockK
-    private lateinit var currencyRepository: CurrencyRepository
-    
-    @RelaxedMockK
-    private lateinit var expenseMapper: ExpenseUiModelMapper
-    
-    private lateinit var viewModel: HomeViewModel
-    
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-        viewModel = HomeViewModel(
-            expenseRepository,
-            currencyRepository,
-            expenseMapper
-        )
-    }
-    
-    @Test
-    fun testLoadExpensesSuccess() {
-        // Arrange: Setup mock to return success
-        val mockExpenses = listOf(
-            ExpenseEnt(1, "Coffee", Amount.createFromStore(100), 1, null, 0, 0),
-            ExpenseEnt(2, "Lunch", Amount.createFromStore(500), 2, null, 0, 0)
-        )
-        coEvery { expenseRepository.getRecentExpense() } returns 
-            flowOf(Result.Success(mockExpenses))
-        
-        val mockUiModels = listOf(
-            ExpenseUiModel(1, "Coffee", "Drinks", 1.0f, "Today", null),
-            ExpenseUiModel(2, "Lunch", "Food", 5.0f, "Today", null)
-        )
-        coEvery { expenseMapper.map(any()) } returnsMany mockUiModels
-        
-        // Act
-        viewModel.loadExpenses()
-        
-        // Assert
-        val state = viewModel.uiState.value
-        assert(state is HomeUiState.Success)
-        assert((state as HomeUiState.Success).expenses.size == 2)
-    }
-    
-    @Test
-    fun testLoadExpensesError() {
-        // Arrange
-        coEvery { expenseRepository.getRecentExpense() } returns 
-            flowOf(Result.Error(Exception("Network error")))
-        
-        // Act
-        viewModel.loadExpenses()
-        
-        // Assert
-        val state = viewModel.uiState.value
-        assert(state is HomeUiState.Error)
-    }
-    
-    @Test
-    fun testDeleteExpense() {
-        // Arrange
-        coEvery { expenseRepository.deleteExpense(any()) } returns Unit
-        coEvery { expenseRepository.getRecentExpense() } returns 
-            flowOf(Result.Success(emptyList()))
-        
-        // Act
-        viewModel.deleteExpense(mockExpenseUiModel)
-        
-        // Assert
-        coVerify { expenseRepository.deleteExpense(any()) }
-    }
+// GOOD - Tests behavior
+@Test
+fun whenAmountIsNegative_validationFails() {
+    val result = AmountValidator.validate(-100)
+    assert(result is ValidationError)
+}
+
+// BAD - Tests implementation detail
+@Test
+fun whenCreatingAmount_storeValueIsSet() {
+    val amount = Amount.createFromStore(100)
+    assert(amount.storeValue == 100)  // Implementation detail
 }
 ```
 
-### Repository Testing
-
-**File:** `/app/src/test/java/com/arduia/expense/data/ExpenseRepositoryTest.kt`
-
-```kotlin
-@RunWith(RobolectricTestRunner::class)
-class ExpenseRepositoryTest {
-    
-    @RelaxedMockK
-    private lateinit var expenseDao: ExpenseDao
-    
-    private lateinit var repository: ExpenseRepository
-    
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-        repository = ExpenseRepositoryImpl(expenseDao)
-    }
-    
-    @Test
-    fun testGetExpenseAll() = runTest {
-        // Arrange
-        val mockExpenses = listOf(
-            ExpenseEnt(1, "Coffee", Amount.createFromStore(100), 1, null, 0, 0)
-        )
-        coEvery { expenseDao.getExpenseAll() } returns flowOf(mockExpenses)
-        
-        // Act
-        val result = repository.getExpenseAll().first()
-        
-        // Assert
-        assert(result is Result.Success)
-        assert((result as Result.Success).data.size == 1)
-    }
-    
-    @Test
-    fun testInsertExpense() = runTest {
-        // Arrange
-        val expense = ExpenseEnt(
-            expenseId = 1,
-            name = "Test",
-            amount = Amount.createFromStore(100),
-            category = 1,
-            note = null,
-            createdDate = System.currentTimeMillis(),
-            modifiedDate = System.currentTimeMillis()
-        )
-        coEvery { expenseDao.insert(any()) } returns Unit
-        
-        // Act
-        repository.insertExpense(expense)
-        
-        // Assert
-        coVerify { expenseDao.insert(expense) }
-    }
-}
-```
-
-### Coroutine Testing
+### AAA Pattern: Arrange-Act-Assert
 
 ```kotlin
 @Test
-fun testAsyncOperation() = runTest {
-    // runTest provides StandardTestDispatcher
-    // Suspending functions run synchronously in test
+fun testExpenseInsertion() {
+    // Arrange: Set up test data and mocks
+    val expense = createTestExpense()
+    val repository = mockRepository()
     
-    val result = suspendingFunction()
-    assert(result == expected)
+    // Act: Call the function being tested
+    repository.insertExpense(expense)
     
-    // Can use advanceUntilIdle() to process pending work
-    advanceUntilIdle()
+    // Assert: Verify the result
+    verify(repository).wasCalledWith(expense)
 }
 ```
 
----
-
-## Integration Tests (KMP)
-
-### Database Integration Test
-
-**File:** `shared/data/src/commonTest/kotlin/repository/ExpenseRepositoryTest.kt`
+### Mock External Dependencies
 
 ```kotlin
-class ExpenseRepositoryIntegrationTest {
-    
-    private lateinit var database: ExpenseDatabase
-    private lateinit var repository: ExpenseRepository
-    
-    @Before
-    fun setUp() {
-        // Use in-memory test driver for all platforms
-        val driver = InMemoryTestDriver()
-        ExpenseDatabase.Schema.create(driver)
-        database = ExpenseDatabase(driver)
-        repository = ExpenseRepositoryImpl(database)
-    }
-    
-    @After
-    fun tearDown() {
-        database.close()
-    }
-    
-    @Test
-    fun testInsertAndRetrieveExpense() = runTest {
-        // Arrange
-        val expense = Expense(
-            id = 1,
-            name = "Test Expense",
-            amount = Amount.createFromStore(100),
-            category = 1,
-            note = null,
-            createdDate = Clock.System.now().toEpochMilliseconds(),
-            modifiedDate = Clock.System.now().toEpochMilliseconds()
-        )
-        
-        // Act
-        repository.insertExpense(expense)
-        
-        // Assert
-        val retrieved = repository.getExpenseAll().first()
-        
-        assert((retrieved as? Result.Success)?.data?.isNotEmpty() == true)
-    }
-    
-    @Test
-    fun testUpdateExpense() = runTest {
-        // Arrange
-        val original = Expense(id = 1, name = "Original", ...)
-        repository.insertExpense(original)
-        
-        val updated = original.copy(name = "Updated")
-        
-        // Act
-        repository.updateExpense(updated)
-        
-        // Assert
-        val result = repository.getExpenseRange(0, Long.MAX_VALUE, 10, 0)
-            .first() as? Result.Success
-        
-        assert(result?.data?.firstOrNull()?.name == "Updated")
-    }
-    
-    @Test
-    fun testDeleteExpense() = runTest {
-        // Arrange
-        val expense = Expense(id = 1, name = "ToDelete", ...)
-        repository.insertExpense(expense)
-        
-        // Act
-        repository.deleteExpense(1)
-        
-        // Assert
-        val all = repository.getExpenseAll().first() as? Result.Success
-        assert(all?.data?.isEmpty() == true)
-    }
-}
+// Mock the repository for ViewModel tests
+val mockRepository = createMock<ExpenseRepository>()
+every { mockRepository.getExpenses() } returns mockFlow
+
+val viewModel = HomeViewModel(mockRepository)
+// Test ViewModel behavior without touching real repository
 ```
 
-### Compose UI Testing
-
-```kotlin
-class ExpenseScreenTest {
-    
-    @get:Rule
-    val composeTestRule = createComposeRule()
-    
-    @Test
-    fun testLoadingState() {
-        composeTestRule.setContent {
-            ExpenseScreen(
-                uiState = HomeUiState.Loading,
-                viewModel = mockk()
-            )
-        }
-        
-        composeTestRule
-            .onNodeWithContentDescription("Loading")
-            .assertIsDisplayed()
-    }
-    
-    @Test
-    fun testExpenseItemDisplaysData() {
-        composeTestRule.setContent {
-            ExpenseItem(
-                expense = ExpenseUiModel(
-                    id = 1,
-                    name = "Coffee",
-                    amount = 5.99f,
-                    category = "Food"
-                ),
-                onDelete = {}
-            )
-        }
-        
-        composeTestRule
-            .onNodeWithText("Coffee")
-            .assertIsDisplayed()
-        
-        composeTestRule
-            .onNodeWithText("5.99")
-            .assertIsDisplayed()
-    }
-}
-```
-
----
-
-## Mocking Strategies
-
-### MockK Syntax
-
-```kotlin
-// Relaxed mocks - default return values
-@RelaxedMockK
-private lateinit var repository: ExpenseRepository
-
-// Setup return value
-coEvery { repository.getExpenseAll() } returns flowOf(Result.Success(list))
-
-// Verify call was made
-coVerify { repository.getExpenseAll() }
-
-// Verify never called
-coVerify(inverse = true) { repository.deleteExpense(any()) }
-
-// Capture arguments
-val slot = slot<ExpenseEnt>()
-coEvery { repository.insertExpense(capture(slot)) } returns Unit
-repository.insertExpense(expense)
-assert(slot.captured.name == "Coffee")
-```
-
-### Common Patterns
-
-```kotlin
-// Return different values on successive calls
-coEvery { repository.getExpenseAll() } returnsMany listOf(
-    flowOf(Result.Loading),
-    flowOf(Result.Success(listOf(expense)))
-)
-
-// Throw exception
-coEvery { repository.getExpenseAll() } throws Exception("Network error")
-
-// Any matcher
-coEvery { repository.insertExpense(any()) } returns Unit
-
-// Lambda verifier
-coVerify { repository.getExpenseAll() }
-
-// Times verification
-coVerify(exactly = 1) { repository.getExpenseAll() }
-```
-
----
-
-## Testing Coroutines & Flow
-
-### FlowResult Testing
+### Test Error Cases
 
 ```kotlin
 @Test
-fun testFlowResultSuccess() = runTest {
-    // Arrange
-    coEvery { dao.getExpenseAll() } returns flowOf(listOf(expense))
+fun whenRepositoryFails_viewModelShowsError() {
+    val mockRepository = createMock<ExpenseRepository>()
+    every { mockRepository.getExpenses() } throws Exception("Network error")
+    
+    val viewModel = HomeViewModel(mockRepository)
+    viewModel.loadExpenses()
+    
+    // Verify error state
+    assert(viewModel.uiState.value is UiState.Error)
+}
+```
+
+---
+
+## Testing Layers
+
+### Domain Layer Tests
+
+Test **business logic** and **validation** - no mocking needed:
+
+```kotlin
+@Test
+fun testAmountAddition() {
+    val amount1 = Amount.createFromStore(100)  // $1.00
+    val amount2 = Amount.createFromStore(250)  // $2.50
+    val sum = amount1 + amount2
+    
+    assert(sum.toFloat() == 3.50f)
+}
+
+@Test
+fun testExpenseDateRangeValidation() {
+    val startDate = 100L
+    val endDate = 50L  // End before start
+    
+    val result = DateRange.validate(startDate, endDate)
+    assert(result is ValidationError)
+}
+
+@Test
+fun testFilterBuilderConstruction() {
+    val filter = FilterCriteria.Builder()
+        .setDateRange(100, 200)
+        .setCategories(listOf(1, 2))
+        .build()
+    
+    assert(filter.startDate == 100)
+    assert(filter.endDate == 200)
+}
+```
+
+### Data Layer Tests
+
+Test **repository logic** with **mocked data sources**:
+
+```kotlin
+@Test
+fun testRepositoryMapsDataCorrectly() {
+    // Arrange: Mock data source
+    val mockDataSource = mockDataSource()
+    every { mockDataSource.getExpenses() } returns testExpenses
+    
+    val repository = ExpenseRepositoryImpl(mockDataSource)
     
     // Act
-    val result = repository.getExpenseAll().first()
+    val result = repository.getExpenses().first()
     
-    // Assert
+    // Assert: Data was mapped correctly
     assert(result is Result.Success)
-    assert((result as Result.Success).data.size == 1)
+    assert((result as Result.Success).data.size == testExpenses.size)
 }
 
 @Test
-fun testFlowResultError() = runTest {
-    // Arrange
-    coEvery { dao.getExpenseAll() } throws Exception("DB error")
+fun testRepositoryHandlesErrors() {
+    // Arrange: Mock error
+    val mockDataSource = mockDataSource()
+    every { mockDataSource.getExpenses() } throws Exception("DB error")
     
-    // Act & Assert
-    val result = repository.getExpenseAll().first()
+    val repository = ExpenseRepositoryImpl(mockDataSource)
+    
+    // Act
+    val result = repository.getExpenses().first()
+    
+    // Assert: Error handled
     assert(result is Result.Error)
+}
+```
+
+### ViewModel Tests
+
+Test **state management** with **mocked repository**:
+
+```kotlin
+@Test
+fun testViewModelLoadsExpenses() {
+    // Arrange
+    val mockRepository = mockRepository()
+    every { mockRepository.getExpenses() } returns flowOf(
+        Result.Success(testExpenses)
+    )
+    
+    val viewModel = HomeViewModel(mockRepository)
+    
+    // Act
+    viewModel.loadExpenses()
+    
+    // Assert
+    val state = viewModel.uiState.value
+    assert(state is UiState.Success)
+    assert((state as UiState.Success).expenses == testExpenses)
+}
+```
+
+---
+
+## Integration Testing
+
+### Test Mapper Transformations
+
+```kotlin
+@Test
+fun testExpenseDomainMapper() {
+    // Mapper should work correctly
+    val dto = ExpenseDto(
+        id = 1,
+        name = "Coffee",
+        amount = 5.99,
+        categoryId = 1,
+        createdAt = Instant.now()
+    )
+    
+    val mapper = ExpenseDomainMapper()
+    val domain = mapper.map(dto)
+    
+    assert(domain.name == "Coffee")
+    assert(domain.amount.toFloat() == 5.99f)
+}
+```
+
+### Test Database Operations
+
+Use **in-memory or test database**:
+
+```kotlin
+@Test
+fun testInsertAndRetrieveExpense() {
+    // Arrange: Use test database
+    val testDatabase = createInMemoryDatabase()
+    val repository = ExpenseRepositoryImpl(testDatabase)
+    
+    val expense = createTestExpense()
+    
+    // Act
+    repository.insertExpense(expense)
+    
+    // Assert
+    val retrieved = repository.getExpenseAll().first()
+    assert((retrieved as Result.Success).data.contains(expense))
+}
+```
+
+---
+
+## UI Testing
+
+### Test Component Behavior
+
+```kotlin
+@Test
+fun testExpenseItemDisplaysCorrectly() {
+    // Test that component renders data correctly
+    val expense = createTestExpense()
+    
+    // Render component (framework-specific)
+    val component = ExpenseItem(expense)
+    
+    // Assert
+    assert(component.getText("Coffee") != null)  // Name shown
+    assert(component.getText("$5.99") != null)   // Amount shown
+}
+
+@Test
+fun testExpenseFormSubmitsOnButtonClick() {
+    var submitted = false
+    val form = ExpenseForm(onSubmit = { submitted = true })
+    
+    form.clickSaveButton()
+    
+    assert(submitted)
 }
 ```
 
@@ -411,116 +273,107 @@ fun testFlowResultError() = runTest {
 
 ```
 src/
-├── test/java/
-│   └── com/arduia/expense/
-│       ├── ui/
-│       │   ├── MainViewModelTest.kt
-│       │   ├── HomeViewModelTest.kt
-│       │   └── ...
-│       ├── data/
-│       │   ├── ExpenseRepositoryTest.kt
-│       │   └── ...
-│       └── domain/
-│           ├── AmountTest.kt
-│           └── ...
-└── androidTest/java/
-    └── com/arduia/expense/
-        ├── data/
-        │   └── ExpenseRepositoryIntegrationTest.kt
-        └── ui/
-            └── HomeFragmentTest.kt
+├── test/             # Unit & integration tests
+│   ├── domain/
+│   │   └── AmountTest.kt
+│   ├── data/
+│   │   ├── ExpenseMapperTest.kt
+│   │   └── ExpenseRepositoryTest.kt
+│   └── viewmodel/
+│       └── HomeViewModelTest.kt
+└── uiTest/           # UI/component tests (if applicable)
+    └── ExpenseItemTest.kt
 ```
 
 ---
 
-## Coverage Goals
-
-| Layer | Coverage Target | Example |
-|-------|-----------------|---------|
-| **Repository** | 80%+ | Success, error, edge cases |
-| **ViewModel** | 70%+ | UI state transitions |
-| **Domain** | 90%+ | Value objects, validation |
-| **Mapper** | 100% | All mappings tested |
-| **Fragment** | 50%+ | Navigation, UI updates |
-
----
-
-## Best Practices
+## Testing Best Practices
 
 ### ✅ DO:
 
-1. **Use runTest {}** for coroutine tests
+1. **Test behavior, not implementation**
    ```kotlin
-   @Test
-   fun testAsync() = runTest { ... }
+   // Test what it does, not how it does it
    ```
 
-2. **Mock external dependencies**
+2. **Use the AAA pattern**
    ```kotlin
-   @RelaxedMockK
-   private lateinit var repository: ExpenseRepository
+   Arrange → Act → Assert
    ```
 
-3. **Test error cases**
+3. **Mock external dependencies**
    ```kotlin
-   coEvery { repo.get() } throws Exception()
+   val mockRepo = mockRepository()
    ```
 
-4. **Use InstantTaskExecutorRule** for LiveData
+4. **Test error cases**
    ```kotlin
-   @get:Rule
-   val instantExecutorRule = InstantTaskExecutorRule()
+   every { repo.get() } throws Exception()
    ```
 
-5. **Test one thing per test** (AAA pattern)
+5. **Use descriptive test names**
+   ```kotlin
+   fun testWhenRepositoryFails_viewModelShowsError()
    ```
-   Arrange: Setup mocks
-   Act: Call function
-   Assert: Verify result
+
+6. **Keep tests small and focused**
+   ```kotlin
+   One assertion per test where possible
+   ```
+
+7. **Test pure functions first**
+   ```kotlin
+   // Domain logic has no dependencies
    ```
 
 ### ❌ DON'T:
 
-1. **Test implementation details**
+1. **Test private methods**
    ```kotlin
-   // BAD - testing how, not what
-   coVerify { dao.getAll() }
-   
-   // GOOD - testing behavior
-   assert(result.isEmpty())
+   // Private methods are implementation details
    ```
 
-2. **Use real databases** in unit tests
+2. **Create fragile tests**
    ```kotlin
-   // BAD
-   val db = ProExpenseDatabase.getInstance(context)
-   
-   // GOOD
-   Room.inMemoryDatabaseBuilder(...).build()
+   // Don't test exact error messages
    ```
 
-3. **Ignore test failures**
-   - Flaky tests indicate design problems
-   - Fix the root cause, not the symptom
-
-4. **Test without mocking** external services
+3. **Use real external services**
    ```kotlin
-   // BAD - Network call in test
-   val api = Retrofit.create(ExpenseApi::class.java)
-   
-   // GOOD - Mock it
-   @RelaxedMockK
-   private lateinit var api: ExpenseApi
+   // Always mock databases, APIs, etc.
+   ```
+
+4. **Skip error case testing**
+   ```kotlin
+   // Test what happens when things fail
+   ```
+
+5. **Write non-deterministic tests**
+   ```kotlin
+   // Tests should be repeatable and consistent
    ```
 
 ---
 
-## Reuse in New Architecture
+## Test Coverage Goals
 
-✅ **Testing patterns** apply regardless of UI framework  
-✅ **Mock strategies** remain valid for new code  
-✅ **Repository testing** works with any data source  
-✅ **ViewModel testing** applies to Compose too  
-✅ **Coroutine testing** pattern `runTest {}` is standard
+| Layer | Recommendation | Why |
+|-------|---|---|
+| **Domain** | 90%+ | Pure logic, easy to test, high value |
+| **Data/Repositories** | 80%+ | Core business logic, testable with mocks |
+| **ViewModel** | 70%+ | State management, test with mocked repo |
+| **UI/Components** | 50%+ | UI logic is often framework-specific |
 
-**Key: Test behavior, not implementation**
+---
+
+## Testing Principles That Carry Forward
+
+✅ **Test behavior, not implementation** - Focus on "what" not "how"  
+✅ **Use AAA pattern** - Clear test structure  
+✅ **Mock external dependencies** - Test in isolation  
+✅ **Test error cases** - Coverage includes failures  
+✅ **Keep tests small** - One thing per test  
+✅ **Descriptive names** - Tests document expected behavior  
+✅ **Pure functions first** - Domain logic is easiest to test  
+
+**Key**: These testing practices apply regardless of framework or language.
