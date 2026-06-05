@@ -1,78 +1,119 @@
-# Logging & Security - ProExpense Best Practices
+# Logging & Security - KMP Best Practices
 
-## Logging with Timber
+## Overview
 
-### Why Timber?
-
-✅ **Conditional Logging**: Different behavior for debug vs release  
-✅ **Pluggable**: Easy to swap implementations (file logging, Crashlytics, etc.)  
-✅ **Tag Management**: Automatic source location tracking  
-✅ **Clean API**: `Timber.d()`, `Timber.e()` instead of `Log.d()`  
+ProExpense uses platform-specific logging via the **expect/actual pattern** - a single logging interface implemented differently on each platform (iOS uses os.log, Android uses Timber, etc.).
 
 ---
 
-## Setup
+## KMP Logging with Expect/Actual
 
-**File:** `/app/src/main/java/com/arduia/expense/ExpenseApplication.kt`
+### Shared Logger Interface
+
+**File:** `shared/utils/src/commonMain/kotlin/Logger.kt`
 
 ```kotlin
-class ExpenseApplication : Application() {
-    
-    override fun onCreate() {
-        super.onCreate()
-        
-        // Initialize DI
-        // ...
-        
-        // Initialize Timber
+expect object Logger {
+    fun d(tag: String, message: String)
+    fun e(tag: String, message: String, exception: Throwable? = null)
+    fun w(tag: String, message: String)
+}
+```
+
+### Android Implementation
+
+**File:** `shared/utils/src/androidMain/kotlin/Logger.kt`
+
+```kotlin
+actual object Logger {
+    init {
         if (BuildConfig.DEBUG) {
-            // Debug logging enabled in development
             Timber.plant(Timber.DebugTree())
+        }
+    }
+    
+    actual fun d(tag: String, message: String) {
+        Timber.tag(tag).d(message)
+    }
+    
+    actual fun e(tag: String, message: String, exception: Throwable?) {
+        if (exception != null) {
+            Timber.tag(tag).e(exception, message)
         } else {
-            // Production: Silent or use Crashlytics
-            // Timber.plant(CrashlyticsTree())
+            Timber.tag(tag).e(message)
+        }
+    }
+    
+    actual fun w(tag: String, message: String) {
+        Timber.tag(tag).w(message)
+    }
+}
+```
+
+### iOS Implementation
+
+**File:** `shared/utils/src/iosMain/kotlin/Logger.kt`
+
+```kotlin
+actual object Logger {
+    actual fun d(tag: String, message: String) {
+        os_log(.debug, log: OSLog.default, "%{public}@: %{public}@", tag, message)
+    }
+    
+    actual fun e(tag: String, message: String, exception: Throwable?) {
+        let errorMsg = exception?.message ?? message
+        os_log(.error, log: OSLog.default, "%{public}@: %{public}@", tag, errorMsg)
+    }
+    
+    actual fun w(tag: String, message: String) {
+        os_log(.default, log: OSLog.default, "%{public}@: %{public}@", tag, message)
+    }
+}
+```
+
+### Usage in Shared Code
+
+```kotlin
+class ExpenseRepository(private val database: ExpenseDatabase) {
+    
+    suspend fun insertExpense(expense: Expense) {
+        Logger.d("ExpenseRepo", "Inserting expense: ${expense.name}")
+        database.expenseQueries.insert(...)
+        Logger.d("ExpenseRepo", "Inserted successfully")
+    }
+    
+    suspend fun deleteExpense(id: Int) {
+        try {
+            database.expenseQueries.delete(id)
+            Logger.d("ExpenseRepo", "Deleted expense $id")
+        } catch (e: Exception) {
+            Logger.e("ExpenseRepo", "Failed to delete", e)
+            throw RepositoryException(e)
         }
     }
 }
 ```
 
-### Debug vs Release
-
-```kotlin
-if (BuildConfig.DEBUG) {
-    // Expensive logging, verbose output
-    Timber.plant(Timber.DebugTree())
-} else {
-    // Silent or minimal (protect user privacy)
-    // Timber.plant(CrashlyticsTree())
-}
-```
-
 ---
 
-## Strategic Logging Locations
+## Logging Best Practices
 
-### 1. ViewModels - State Changes
+### Strategic Logging Locations
 
-**File:** `/app/src/main/java/com/arduia/expense/ui/home/HomeViewModel.kt`
-
+**ViewModels - State Changes:**
 ```kotlin
-@HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val expenseRepository: ExpenseRepository
-) : ViewModel() {
-    
+class HomeViewModel(private val repository: ExpenseRepository) {
     fun loadExpenses() {
         viewModelScope.launch {
-            Timber.d("Loading expenses...")
+            Logger.d("HomeViewModel", "Loading expenses...")
             
-            expenseRepository.getRecentExpense()
+            repository.getRecentExpense()
                 .onSuccess { expenses ->
-                    Timber.d("Loaded ${expenses.size} expenses")
+                    Logger.d("HomeViewModel", "Loaded ${expenses.size} expenses")
                     _uiState.value = HomeUiState.Success(expenses)
                 }
                 .onError { error ->
-                    Timber.e(error, "Failed to load expenses")
+                    Logger.e("HomeViewModel", "Failed to load", error)
                     _uiState.value = HomeUiState.Error(error.message)
                 }
         }
@@ -80,340 +121,173 @@ class HomeViewModel @Inject constructor(
 }
 ```
 
-### 2. Repositories - Data Operations
-
-**File:** `/app/src/main/java/com/arduia/expense/data/ExpenseRepositoryImpl.kt`
-
+**Repositories - Data Operations:**
 ```kotlin
-class ExpenseRepositoryImpl @Inject constructor(
-    private val expenseDao: ExpenseDao
-) : ExpenseRepository {
+class ExpenseRepository(private val database: ExpenseDatabase) {
     
-    override suspend fun insertExpense(expenseEnt: ExpenseEnt) {
-        withContext(Dispatchers.IO) {
-            try {
-                Timber.d("Inserting expense: ${expenseEnt.name}")
-                expenseDao.insert(expenseEnt)
-                Timber.d("Expense inserted successfully")
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to insert expense")
-                throw RepositoryException(e)
-            }
-        }
-    }
-    
-    override fun getExpenseAll(): FlowResult<List<ExpenseEnt>> {
-        return expenseDao.getExpenseAll()
-            .onEach { list ->
-                Timber.d("Retrieved ${list.size} expenses from database")
-            }
-            .map { SuccessResult(it) }
+    fun getExpenseAll(): FlowResult<List<Expense>> {
+        return database.expenseQueries.selectAll()
+            .asFlow()
+            .onEach { Logger.d("ExpenseRepo", "Loaded ${it.size} expenses") }
+            .map { Result.Success(it.map(Mapper::toExpense)) }
             .catch { 
-                Timber.e(it, "Error retrieving expenses")
-                ErrorResult(RepositoryException(it)) 
+                Logger.e("ExpenseRepo", "Error loading expenses", it)
+                emit(Result.Error(it as Exception)) 
             }
     }
 }
-```
-
-### 3. Workers - Background Tasks
-
-**File:** `/app/src/main/java/com/arduia/expense/data/backup/ImportWorker.kt`
-
-```kotlin
-@HiltWorker
-class ImportWorker @AssistedInject constructor(
-    @Assisted context: Context,
-    @Assisted workerParams: WorkerParameters,
-    private val expenseRepository: ExpenseRepository
-) : CoroutineWorker(context, workerParams) {
-    
-    override suspend fun doWork(): Result {
-        return try {
-            Timber.d("Starting import work...")
-            
-            val importUri = inputData.getString("import_uri") ?: return Result.failure()
-            Timber.d("Import URI: $importUri")
-            
-            val expenses = backupRepository.importExpenses(importUri)
-            Timber.d("Parsed ${expenses.size} expenses from file")
-            
-            expenseRepository.insertExpenseAll(expenses)
-            Timber.d("Successfully imported and stored expenses")
-            
-            Result.success(workDataOf("import_count" to expenses.size))
-        } catch (e: Exception) {
-            Timber.e(e, "Import failed")
-            Result.retry()
-        }
-    }
-}
-```
-
----
-
-## Log Levels
-
-### Timber Log Levels
-
-```kotlin
-// Verbose - detailed information for debugging
-Timber.v("User action: expense deleted")
-
-// Debug - development debugging
-Timber.d("Loaded ${expenses.size} expenses from database")
-
-// Info - important business events
-Timber.i("User changed language to Spanish")
-
-// Warning - potential problems
-Timber.w("Database query took ${duration}ms")
-
-// Error - failures (with exceptions)
-Timber.e(exception, "Failed to import file")
-
-// Assert - should never happen
-Timber.wtf("Invalid state reached: ${expense.amount} < 0")
 ```
 
 ---
 
 ## Security Best Practices
 
-### 1. No Sensitive Data Logging
+### No Sensitive Data Logging
 
 ```kotlin
 // BAD - Logs user PII
-Timber.d("User ${user.email} logged in")
+Logger.d("Auth", "User ${user.email} logged in")
 
-// GOOD - Log only IDs
-Timber.d("User logged in: ${user.id}")
+// GOOD - Log only safe information
+Logger.d("Auth", "User logged in: ${user.id}")
 
 // BAD - Logs API responses with sensitive data
-Timber.d("API response: $response")
+Logger.d("Network", "Response: $response")
 
 // GOOD - Log only status
-Timber.d("API request succeeded: ${response.code()}")
+Logger.d("Network", "API request succeeded: ${response.code()}")
 
-// BAD - Logs full exceptions with stack traces in production
-Timber.e(exception, "Network error")
+// BAD - Full exception details in production
+Logger.e("Error", "Exception occurred", exception)
 
 // GOOD - Minimal info in production
-if (BuildConfig.DEBUG) {
-    Timber.e(exception, "Network error")
+if (isDevelopment) {
+    Logger.e("Error", "Exception occurred", exception)
 } else {
-    Timber.e("Network error occurred")
+    Logger.e("Error", "An error occurred")
 }
 ```
 
-### 2. Input Validation
+### Input Validation
 
 ```kotlin
-class ImportWorker @AssistedInject constructor(...) : CoroutineWorker(...) {
-    
-    override suspend fun doWork(): Result {
-        return try {
-            // Always validate external input
-            val importUri = inputData.getString("import_uri") 
-                ?: return Result.failure()
-            
-            val uri = Uri.parse(importUri)
-            if (!isValidUri(uri)) {
-                Timber.e("Invalid import URI provided")
-                return Result.failure()
-            }
-            
-            // Safe to use validated URI
-            val expenses = backupRepository.importExpenses(uri)
-            // ...
-        } catch (e: Exception) {
-            Timber.e(e, "Import failed")
-            Result.retry()
-        }
+suspend fun importExpenses(uri: String): Result<List<Expense>> {
+    // Always validate external input
+    if (!isValidUri(uri)) {
+        Logger.w("Import", "Invalid import URI provided")
+        return Result.Error(Exception("Invalid URI"))
     }
     
-    private fun isValidUri(uri: Uri): Boolean {
-        return uri.scheme in listOf("file", "content")
-            && uri.lastPathSegment?.endsWith(".xlsx") == true
+    try {
+        val expenses = parseExpensesFromFile(uri)
+        Logger.d("Import", "Successfully imported ${expenses.size} expenses")
+        return Result.Success(expenses)
+    } catch (e: Exception) {
+        Logger.e("Import", "Import failed", e)
+        return Result.Error(e)
     }
+}
+
+private fun isValidUri(uri: String): Boolean {
+    return uri.isNotBlank()
+        && (uri.startsWith("file://") || uri.startsWith("content://"))
+        && uri.endsWith(".csv")
 }
 ```
 
-### 3. API Keys & Secrets
+### API Keys & Secrets
 
-**Load from external file (never hardcode):**
+Load secrets from environment or configuration, never hardcode:
 
-**File:** `api.properties` (in gitignore)
-```properties
-API_KEY=your_secret_key_here
-API_BASE_URL=https://api.example.com
-```
-
-**In build.gradle.kts:**
 ```kotlin
-val apiProperties = Properties().apply {
-    load(FileInputStream(rootProject.file("api.properties")))
+// shared/data/src/commonMain/kotlin/ApiConfig.kt
+expect object ApiConfig {
+    val apiBaseUrl: String
+    val apiKey: String
 }
 
-android {
-    defaultConfig {
-        buildConfigField("String", "API_KEY", "\"${apiProperties.getProperty("API_KEY")}\"")
-        buildConfigField("String", "API_BASE_URL", "\"${apiProperties.getProperty("API_BASE_URL")}\"")
-    }
+// shared/data/src/androidMain/kotlin/ApiConfig.kt
+actual object ApiConfig {
+    actual val apiBaseUrl: String = BuildConfig.API_BASE_URL
+    actual val apiKey: String = BuildConfig.API_KEY
 }
-```
 
-**Usage:**
-```kotlin
-@Module
-@InstallIn(SingletonComponent::class)
-object NetworkModule {
-    
-    @Provides
-    @Singleton
-    fun provideApiService(): ExpenseApi {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BuildConfig.API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        
-        return retrofit.create(ExpenseApi::class.java)
+// shared/data/src/iosMain/kotlin/ApiConfig.kt
+actual object ApiConfig {
+    actual val apiBaseUrl: String = Bundle.main.infoDictionary?["API_BASE_URL"] as? String ?: ""
+    actual val apiKey: String = Bundle.main.infoDictionary?["API_KEY"] as? String ?: ""
+}
+
+// Usage
+val httpClient = HttpClient {
+    defaultRequest {
+        url(ApiConfig.apiBaseUrl)
+        headers["Authorization"] = "Bearer ${ApiConfig.apiKey}"
     }
 }
 ```
 
-### 4. ProGuard Configuration
+### SQL Injection Prevention
 
-**File:** `/app/proguard-rules.pro`
+SQLDelight prevents SQL injection by using parameterized queries:
 
-```proguard
-# Preserve database entities for reflection
--keep class com.arduia.expense.data.local.** { *; }
+```sql
+-- GOOD - Parameterized query
+selectByDateRange:
+SELECT * FROM expense 
+WHERE created_date BETWEEN :startTime AND :endTime 
+ORDER BY created_date DESC;
 
-# Preserve ViewModel constructors for Hilt
--keep class com.arduia.expense.ui.**ViewModel { 
-    public <init>(***); 
-}
-
-# Preserve Worker constructors for Hilt
--keep class com.arduia.expense.data.**Worker { 
-    public <init>(android.content.Context, androidx.work.WorkerParameters); 
-}
-
-# Preserve models used in Room
--keep class com.arduia.expense.data.local.** { *; }
-
-# Preserve serialization classes
--keep class com.google.gson.** { *; }
-
-# Keep line numbers for crash reporting
--keepattributes SourceFile,LineNumberTable
--renamesourcefileattribute SourceFile
+-- BAD - Never concatenate queries (not possible with SQLDelight)
+-- SELECT * FROM expense WHERE id = $id
 ```
 
----
+### Data Privacy
 
-## Data Handling
-
-### Database Security
+Never store unnecessary sensitive data:
 
 ```kotlin
-@Database(
-    entities = [ExpenseEnt::class, BackupEnt::class],
-    version = 6
-)
-abstract class ProExpenseDatabase : RoomDatabase() {
-    // No sensitive data in Room
-    // All financial data is properly encrypted by Android OS
-}
-
-// Good: Parameterized queries prevent SQL injection
-@Dao
-interface ExpenseDao {
-    @Query("SELECT * FROM expenses WHERE id = :id")
-    suspend fun getById(id: Int): ExpenseEnt?  // Parameter binding
-    
-    // Bad: String interpolation (don't do this)
-    // @Query("SELECT * FROM expenses WHERE id = $id")
-}
-```
-
-### File Handling
-
-```kotlin
-// Validate before processing files
-fun isValidExpenseFile(uri: Uri): Boolean {
-    return uri.scheme in listOf("file", "content")
-        && uri.lastPathSegment?.endsWith(".xlsx") == true
-        && getFileSize(uri) < MAX_FILE_SIZE  // 10MB limit
-}
-
-// Use ContentResolver for safer file access
-val inputStream = context.contentResolver.openInputStream(uri)
-    ?: throw IOException("Cannot open file")
-
-// Read in chunks, not all at once
-val buffer = ByteArray(8192)
-var bytesRead: Int
-while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-    processChunk(buffer.copyOf(bytesRead))
-}
-```
-
-### User Data Privacy
-
-```kotlin
-// Don't log user PII
-// BAD
-Timber.d("User email: ${user.email}, Phone: ${user.phone}")
-
-// GOOD
-Timber.d("User loaded successfully")
-
-// Don't store unnecessary data
-@Entity(tableName = "users")
+// BAD - Stores sensitive user data
+@Entity
 data class UserEnt(
-    @PrimaryKey val userId: Int,
-    val name: String,  // Only what's necessary
-    // No sensitive data
+    val userId: Int,
+    val email: String,  // Sensitive
+    val password: String,  // NEVER store this
+    val phone: String  // Sensitive
 )
 
-// Encrypt sensitive fields
-@Entity(tableName = "backup_keys")
-data class BackupKeyEnt(
-    @PrimaryKey val keyId: String,
-    @ColumnInfo(name = "encrypted_key")
-    val encryptedKey: String  // Encrypted in DB
+// GOOD - Only store necessary data
+@Entity
+data class UserEnt(
+    val userId: Int,
+    val isAuthenticated: Boolean  // Not sensitive
 )
 ```
 
 ---
 
-## Testing Security
+## Log Levels
 
-### Test for Input Validation
+### When to Use Each Level
 
 ```kotlin
-@Test
-fun testImportValidatesUri() {
-    // Should reject invalid URIs
-    val worker = ImportWorker(context, params)
-    
-    val invalidUri = "invalid://uri"
-    val result = worker.importExpenses(invalidUri)
-    
-    assert(result is Result.Failure)
-}
+// Verbose - Detailed technical information (rarely used)
+Logger.d("DetailedTag", "Variable x = $x, computed y = $y")
 
-@Test
-fun testImportRejectsLargeFiles() {
-    // Should reject files over size limit
-    val largeFile = createFile(MAX_FILE_SIZE + 1)
-    
-    val result = worker.importExpenses(largeFile.uri)
-    
-    assert(result is Result.Failure)
-}
+// Debug - Development information (debug builds)
+Logger.d("MyFeature", "Loaded 50 items from database")
+
+// Info - Important business events (keep in production)
+Logger.d("Auth", "User session started")
+
+// Warning - Potential problems (production warning)
+Logger.w("Database", "Query took ${duration}ms (expected < 100ms)")
+
+// Error - Failures (with exceptions)
+Logger.e("Network", "Request failed with timeout", exception)
+
+// Assert - Should never happen (critical bugs)
+Logger.e("Validation", "Amount cannot be negative: $amount")
 ```
 
 ---
@@ -422,31 +296,32 @@ fun testImportRejectsLargeFiles() {
 
 ### ✅ DO:
 
-1. **Use Timber** for all logging
+1. **Use expect/actual for platform-specific logging**
    ```kotlin
-   Timber.d("message")
-   Timber.e(exception, "error")
+   expect object Logger { ... }
+   actual object Logger { ... }  // per platform
    ```
 
-2. **Validate external input**
+2. **Validate all external input**
    ```kotlin
-   if (!isValidUri(uri)) return Result.failure()
+   if (!isValidUri(uri)) return error()
    ```
 
 3. **Protect sensitive data**
    ```kotlin
-   // Don't log emails, passwords, tokens
-   Timber.d("User authenticated")
+   // Log IDs not emails
+   Logger.d("Auth", "User ${user.id}")
    ```
 
-4. **Use parameterized queries**
+4. **Use appropriate log levels**
    ```kotlin
-   @Query("WHERE id = :id")  // Safe
+   Logger.d("tag", "debug info")
+   Logger.e("tag", "error", exception)
    ```
 
-5. **Load secrets from properties**
+5. **Load secrets from config**
    ```kotlin
-   API_KEY=value  // In gitignore
+   val key = ApiConfig.apiKey
    ```
 
 ### ❌ DON'T:
@@ -454,7 +329,7 @@ fun testImportRejectsLargeFiles() {
 1. **Log sensitive data**
    ```kotlin
    // BAD
-   Timber.d("User: ${user.email}, Password: ${password}")
+   Logger.d("Auth", "Password: ${password}")
    ```
 
 2. **Hardcode secrets**
@@ -463,32 +338,32 @@ fun testImportRejectsLargeFiles() {
    const val API_KEY = "secret123"
    ```
 
-3. **Use string interpolation in SQL**
+3. **Log full exceptions in production**
    ```kotlin
    // BAD
-   @Query("SELECT * FROM expenses WHERE id = $id")
+   Logger.e("Error", exception.stackTrace.toString())
    ```
 
-4. **Log full exceptions in production**
-   ```kotlin
-   // BAD - exposes internals
-   Timber.e(exception, "Error: ${exception.stackTrace}")
-   ```
-
-5. **Skip input validation**
+4. **Skip input validation**
    ```kotlin
    // BAD
    val uri = Uri.parse(userInput)  // No validation
    ```
 
+5. **Store passwords in database**
+   ```kotlin
+   // BAD
+   @Entity data class User(val password: String)
+   ```
+
 ---
 
-## Reuse in New Architecture
+## KMP Security Best Practices
 
-✅ **Timber logging** strategy applies to all code  
-✅ **Security practices** are framework-agnostic  
-✅ **Input validation** principles remain constant  
-✅ **Data privacy** rules don't change with architecture  
-✅ **ProGuard rules** carry forward without modification
+✅ **Expect/Actual for secure storage** - Different per platform  
+✅ **Never hardcode secrets** - Use config/environment  
+✅ **Validate all external input** - Files, URIs, user data  
+✅ **Don't log sensitive data** - User IDs only, not emails  
+✅ **Use platform-native security** - KeyStore on Android, Keychain on iOS  
 
-**Key: Security is not an afterthought - build it in from the start**
+**Key: Security is not optional - build it in from the start**
