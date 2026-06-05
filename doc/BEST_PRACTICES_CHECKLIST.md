@@ -1,43 +1,70 @@
-# ProExpense Best Practices - Quick Reference Checklist
+# ProExpense KMP Compose - Best Practices Checklist
 
-Use this checklist when writing new code to apply ProExpense best practices. See the detailed guides in `/doc/` for full explanations.
+Use this checklist when writing new code for the KMP Compose multi-module architecture. See detailed guides in `/doc/` for full explanations.
 
 ---
 
-## 🏗️ Architecture & Patterns
+## 🏗️ Multi-Module Architecture
+
+When organizing code across shared and platform modules:
+
+- [ ] **Code in `commonMain`**: Domain, data, viewmodel (shared across all platforms)
+- [ ] **Code in `androidMain`**: Android-specific DI, implementations
+- [ ] **Code in `iosMain`**: iOS-specific DI, implementations
+- [ ] **Code in `webMain`**: Web-specific DI, implementations
+- [ ] **Use `expect/actual`**: For platform-specific interfaces
+- [ ] **No platform imports in shared code**: Only use Kotlin stdlib, kotlinx libraries
+- [ ] **Single Compose UI codebase**: No platform-specific UI code
+
+**Module structure:**
+```
+shared/
+├── domain/        # Pure domain logic, entities
+├── data/          # Repositories, data sources
+├── viewmodel/     # ViewModels, UI state
+├── ui/            # Compose screens (shared)
+├── di/            # Koin modules
+└── utils/         # Utilities, expect/actual
+```
+
+---
+
+## 🏛️ Architecture & Patterns
 
 When creating new features:
 
-- [ ] **Separate into layers**: Data → Domain → UI
-- [ ] **Use MVVM**: ViewModel for state, LiveData for observation
-- [ ] **Implement Repository interface**: No direct DAO calls from UI
-- [ ] **Use Result type**: `Result<T>` instead of exceptions for async operations
+- [ ] **Separate into layers**: Domain → Data → ViewModel → UI
+- [ ] **Use MVVM**: ViewModel for state, StateFlow for observation
+- [ ] **Implement Repository interface**: No direct DAO/API calls from UI
+- [ ] **Use Result type**: `Result<T>` instead of exceptions for async
 - [ ] **Use Value Objects**: `Amount`, not `Long`; `DateRange`, not `Pair<Long, Long>`
 - [ ] **Apply Builder pattern**: For complex object construction
-- [ ] **Create Mappers**: Domain → UI transformation via `Mapper<I, O>`
+- [ ] **Create Mappers**: Domain → DTO/ViewModel transformation
 - [ ] **Validate at construction**: Fail fast in domain models
+- [ ] **Use multimodule imports**: Share code across platforms via `shared` module
 
 **File locations:**
-- Domain: `/app/src/main/java/com/arduia/expense/domain/`
-- Data: `/app/src/main/java/com/arduia/expense/data/`
-- UI: `/app/src/main/java/com/arduia/expense/ui/`
+- Domain: `shared/domain/src/commonMain/`
+- Data: `shared/data/src/commonMain/`
+- ViewModel: `shared/viewmodel/src/commonMain/`
+- UI: `shared/ui/src/commonMain/`
 
 ---
 
-## 💉 Dependency Injection (Hilt)
+## 💉 Dependency Injection (Koin)
 
 When registering dependencies:
 
-- [ ] **Use `@HiltViewModel`** for ViewModels
-- [ ] **Use `@Inject constructor`** for constructor injection
-- [ ] **Use `@Provides`** for factory methods
-- [ ] **Use `@Binds`** for interface → implementation binding
-- [ ] **Use correct scopes**: `@Singleton` for DB/repos, `@Factory` for mappers
-- [ ] **Organize in modules**: One module per feature (Database, Repository, Mapper, etc.)
-- [ ] **Avoid circular dependencies**: Restructure if A needs B and B needs A
-- [ ] **Test with `@HiltAndroidTest`**: For instrumented tests
+- [ ] **Use `single { }`** for singletons (DB, repos, HTTP client)
+- [ ] **Use `factory { }`** for new instances (ViewModels, mappers)
+- [ ] **Use constructor injection**: Pass dependencies to constructors
+- [ ] **Define interfaces**: Abstract repositories, use Koin to bind implementations
+- [ ] **Organize in modules**: One module per feature
+- [ ] **Load all modules**: In startKoin() block
+- [ ] **Platform modules last**: Override bindings per platform
+- [ ] **No annotations needed**: Pure Kotlin, no @Inject/@Provides
 
-**File location:** `/app/src/main/java/com/arduia/expense/di/`
+**File location:** `shared/di/src/commonMain/kotlin/`
 
 ---
 
@@ -45,48 +72,54 @@ When registering dependencies:
 
 When handling async operations:
 
-- [ ] **Use `suspend` for one-shot operations**: `suspend fun insertExpense(exp: ExpenseEnt)`
-- [ ] **Use `Flow<T>` for streaming data**: `fun getExpenses(): Flow<List<ExpenseEnt>>`
-- [ ] **Wrap in `FlowResult<T>`**: `FlowResult<List<ExpenseEnt>> = Flow<Result<T>>`
-- [ ] **Use `.flowOn(Dispatchers.IO)`**: Specify thread for database/network
+- [ ] **Use `suspend` for one-shot operations**: `suspend fun insertExpense()`
+- [ ] **Use `Flow<T>` for streaming data**: `fun getExpenses(): Flow<List<Expense>>`
+- [ ] **Wrap in `FlowResult<T>`**: `Flow<Result<T>>` for complete async handling
+- [ ] **Use `.flowOn(Dispatchers.Default)`**: Specify thread for DB/network
 - [ ] **Use `viewModelScope`**: Auto-cancels on ViewModel destruction
-- [ ] **Use `.onSuccess()`, `.onError()`, `.onLoading()`**: Handle Result states
-- [ ] **Observe with `viewLifecycleOwner`**: Prevents memory leaks
-- [ ] **Use `runTest {}`**: For testing suspend functions
+- [ ] **Use `.onSuccess()/.onError()`**: Handle Result states
+- [ ] **Use `runTest {}`** for testing coroutines
+- [ ] **No blocking operations**: Always use suspend functions
 
 ---
 
-## 🗄️ Database (Room)
+## 🗄️ Database (SQLDelight)
 
-When working with Room:
+When working with SQLDelight:
 
-- [ ] **Use `@Entity` for database models**: Suffix with `*Ent`
-- [ ] **Use `*Dao` for data access**: Abstract interfaces, suspend functions
+- [ ] **Write SQL queries in .sq files**: Strong-typed generated queries
+- [ ] **Create index on date columns**: For efficient range queries
+- [ ] **Use parameterized queries**: `WHERE id = :id` (SQL injection safe)
 - [ ] **Return `Flow<T>` from queries**: For reactive updates
-- [ ] **Use `@TypeConverter`** for complex types: `Amount` → `Long`
-- [ ] **Index frequently queried columns**: `@ColumnInfo(index = true)`
-- [ ] **Use parameterized queries**: `@Query("WHERE id = :id")` prevents SQL injection
-- [ ] **Add migrations for schema changes**: `addMigrations(MIGRATION_X_Y)`
-- [ ] **Use version control**: Increment `@Database(version = X)`
+- [ ] **Use transactions**: For multiple operations
+- [ ] **Implement `expect/actual` drivers**: For platform-specific SQLite drivers
+- [ ] **Convert DB rows to domain models**: Use mapper extensions
+- [ ] **Store money as Long**: Integer cents, not decimal
 
-**File location:** `/app/src/main/java/com/arduia/expense/data/local/`
+**File locations:**
+- Queries: `shared/data/src/commonMain/sqldelight/`
+- Generated: Auto-generated in build output
+- Driver: `shared/data/src/[platform]Main/kotlin/`
 
 ---
 
-## 🎨 UI Layer (ViewModel + LiveData)
+## 🎨 Compose UI Layer
 
 When building UI:
 
 - [ ] **Use sealed class for UI state**: `HomeUiState.Loading`, `.Success`, `.Error`
-- [ ] **Use LiveData in ViewModel**: `MutableLiveData<T>` (private), `LiveData<T>` (public)
-- [ ] **Expose immutable LiveData**: `private val _state = MutableLiveData()`, `val state: LiveData = _state`
-- [ ] **Use `by viewModels()`** in Fragment: Hilt injection with survival over config changes
-- [ ] **Observe with LiveData**: `viewModel.state.observe(viewLifecycleOwner) { ... }`
-- [ ] **Clear binding in `onDestroyView()`**: Prevent memory leaks
-- [ ] **Use Safe Args**: Type-safe navigation
-- [ ] **Create UI Mappers**: Domain → UI transformation
+- [ ] **Use StateFlow in ViewModel**: `MutableStateFlow<UiState>` → exposed `StateFlow`
+- [ ] **Collect state in Compose**: `val state by viewModel.state.collectAsState()`
+- [ ] **Use @Composable functions**: For reusable UI components
+- [ ] **Extract small composables**: For performance and reusability
+- [ ] **Use LaunchedEffect**: For side effects (data loading)
+- [ ] **Keep ViewModels pure Kotlin**: No Compose imports
+- [ ] **Test Composables**: Use `createComposeRule()`
 
-**File location:** `/app/src/main/java/com/arduia/expense/ui/`
+**File locations:**
+- ViewModels: `shared/viewmodel/src/commonMain/kotlin/`
+- Screens: `shared/ui/src/commonMain/kotlin/`
+- Components: `shared/ui/src/commonMain/kotlin/common/`
 
 ---
 
@@ -100,45 +133,53 @@ When defining business logic:
 - [ ] **Overload operators**: `Amount + Amount`, `Amount * Number`
 - [ ] **Use sealed classes for types**: `Result<T>`, state enums
 - [ ] **Store money as Long (cents)**: No floating-point errors
-- [ ] **No framework dependencies**: Domain should be pure Kotlin
+- [ ] **No framework dependencies**: Pure Kotlin only
 - [ ] **Document business rules**: Comments for non-obvious logic
 
-**File location:** `/app/src/main/java/com/arduia/expense/domain/`
+**File location:** `shared/domain/src/commonMain/kotlin/`
 
 ---
 
-## 🧪 Testing
+## 🧪 Testing (KMP)
 
 When writing tests:
 
 - [ ] **Test behavior, not implementation**: "What" not "how"
 - [ ] **Mock external dependencies**: Use `@RelaxedMockK`
-- [ ] **Use `runTest {}`** for coroutines: StandardTestDispatcher
-- [ ] **Use `InstantTaskExecutorRule`** for LiveData: Execute synchronously
+- [ ] **Use `runTest {}`** for coroutines
+- [ ] **Use in-memory database**: For repository tests
 - [ ] **Follow AAA pattern**: Arrange → Act → Assert
 - [ ] **Test error cases**: Not just happy path
-- [ ] **Use `@HiltAndroidTest`** for integration tests
+- [ ] **Test Composables**: Use `createComposeRule()`
 - [ ] **Verify with `coVerify`**: For suspend functions
 
 **File locations:**
-- Unit tests: `/app/src/test/java/com/arduia/expense/`
-- Instrumented: `/app/src/androidTest/java/com/arduia/expense/`
+- Shared tests: `shared/*/src/commonTest/`
+- Platform tests: `androidApp/src/test/`, `iosApp/src/test/`
 
 ---
 
-## 🛠️ Shared Utilities
+## 🛠️ KMP-Specific Patterns
 
-When adding reusable code:
+When using KMP features:
 
-- [ ] **Create extension functions**: `View.asVisible()`, `context.dp(16)`
-- [ ] **Use base Mapper interface**: `Mapper<I, O>`
-- [ ] **Create formatters**: `DateFormatter` with multiple implementations
-- [ ] **Use provider pattern**: `ExpenseCategoryProvider` interface
-- [ ] **Inject utilities via DI**: Not static methods
-- [ ] **Keep utilities pure**: No side effects or context dependence
-- [ ] **Document extensions**: Especially non-obvious ones
+- [ ] **Use `expect/actual`** for platform differences
+  ```kotlin
+  // commonMain
+  expect class FileManager
+  
+  // androidMain
+  actual class FileManager { ... }
+  
+  // iosMain
+  actual class FileManager { ... }
+  ```
 
-**File location:** `/shared/src/main/java/com/arduia/core/`
+- [ ] **Use `@HotReload`** for development
+- [ ] **Multiplatform objects**: Use `@Serializable` for data classes
+- [ ] **Resource access**: Use expect/actual, not context
+- [ ] **Date/Time**: Use `kotlinx-datetime` (KMP compatible)
+- [ ] **Testing**: Same tests run on all platforms
 
 ---
 
@@ -146,45 +187,40 @@ When adding reusable code:
 
 When writing code:
 
-- [ ] **Use type-based suffixes**: `ViewModel`, `Repository`, `Mapper`, `Dao`, `Formatter`
-- [ ] **Use PascalCase** for classes
-- [ ] **Use UPPER_CASE** for constants: `const val TABLE_NAME = "expenses"`
-- [ ] **Prefer `val`** over `var`: Immutability by default
-- [ ] **Private mutable with underscore**: `private val _state = MutableLiveData()`
-- [ ] **Data classes** for models: Automatic `equals()`, `toString()`, `copy()`
+- [ ] **Use type-based suffixes**: `ViewModel`, `Repository`, `Mapper`
+- [ ] **PascalCase** for classes
+- [ ] **UPPER_CASE** for constants
+- [ ] **Prefer `val`** over `var`
+- [ ] **Private mutable with underscore**: `private val _state = MutableStateFlow()`
+- [ ] **Data classes** for models
 - [ ] **Sealed classes** for type-safe alternatives
-- [ ] **Use View Binding**: Not synthetic imports
-- [ ] **Document WHY**: Not WHAT (code should be self-documenting)
+- [ ] **Document WHY**: Not WHAT
 
 ---
 
-## 📊 Logging & Security
+## 🚀 Security
 
-When adding logging and handling data:
+When handling data:
 
-- [ ] **Use `Timber.d()`** for debug logs: Conditional in release
-- [ ] **Use `Timber.e(exception, "message")`** for errors
+- [ ] **No hardcoded secrets**: Use config, environment variables, or BuildConfig
+- [ ] **Load from properties**: API keys in BuildConfig/plist
+- [ ] **Validate all input**: URIs, file sizes, user input
 - [ ] **Never log PII**: No emails, passwords, tokens
-- [ ] **Validate external input**: URIs, file sizes, user input
-- [ ] **Load secrets from properties**: `api.properties`, not hardcoded
-- [ ] **Use parameterized SQL queries**: Prevents injection
-- [ ] **Encrypt sensitive data**: Don't store raw secrets
-- [ ] **ProGuard in release**: `minifyEnabled = true`
+- [ ] **Use parameterized SQL**: Prevent SQL injection
+- [ ] **Expect/Actual for secure storage**: KeyStore/Keychain per platform
+- [ ] **No sensitive data in logs**: Only safe IDs
 
 ---
 
-## 🚀 CI/CD
+## 📊 Logging
 
-When preparing for deployment:
+When adding logging:
 
-- [ ] **Run tests locally**: `./gradlew test` before push
-- [ ] **Update version semantically**: `1.0.0-beta08` → `1.0.0`
-- [ ] **Use version catalog**: `gradle/libs.versions.toml`
-- [ ] **Enable ProGuard**: Obfuscate release builds
-- [ ] **Use KSP not KAPT**: Faster compilation
-- [ ] **Write meaningful commit messages**: Describe the why
-- [ ] **Use feature branches**: `feature/...`, `bugfix/...`, `docs/...`
-- [ ] **Review PRs carefully**: Code review catches issues
+- [ ] **Use `Logger` expect/actual**: Platform-specific implementations
+- [ ] **Log in ViewModels**: State changes
+- [ ] **Log in Repositories**: Data operations
+- [ ] **No sensitive data**: Only log safe information
+- [ ] **Appropriate log levels**: `d()` for debug, `e()` for errors
 
 ---
 
@@ -194,49 +230,56 @@ When preparing for deployment:
 
 1. **Plan Architecture**
    - [ ] Design domain models
-   - [ ] Plan data layer (repository, DAO)
-   - [ ] Plan UI layer (ViewModel, Fragment/Compose)
+   - [ ] Plan data layer (repository, SQL queries)
+   - [ ] Plan ViewModel and UI state
+   - [ ] Plan Compose screens
 
 2. **Implement Domain Layer** (start here)
-   - [ ] Create value objects (e.g., Amount)
-   - [ ] Create domain entities (e.g., ExpenseLogItemEnt)
-   - [ ] Add validation in constructors
+   - [ ] Create value objects
+   - [ ] Create domain entities
+   - [ ] Add validation
    - [ ] Create filters/models if needed
 
 3. **Implement Data Layer**
-   - [ ] Create/update DAO
-   - [ ] Create/update Repository interface
+   - [ ] Write SQL queries (.sq file)
+   - [ ] Create Repository interface
    - [ ] Implement repository
-   - [ ] Add migrations if schema changed
+   - [ ] Create mappers (DB → Domain)
 
-4. **Implement UI Layer**
-   - [ ] Create ViewModel
+4. **Implement ViewModel**
+   - [ ] Create ViewModel class
    - [ ] Define UI State sealed class
+   - [ ] Create state management methods
    - [ ] Create mappers (Domain → UI)
-   - [ ] Create Fragment/Compose screen
+
+5. **Implement UI Layer**
+   - [ ] Create Compose screens
+   - [ ] Create reusable components
+   - [ ] Wire state collection
    - [ ] Wire navigation
 
-5. **Dependency Injection**
+6. **Dependency Injection**
    - [ ] Add DI module entries
    - [ ] Bind repository to interface
-   - [ ] Register mappers
+   - [ ] Register ViewModels
+   - [ ] Register mappers if needed
 
-6. **Testing**
-   - [ ] Write domain tests (validation, logic)
-   - [ ] Write repository tests (mocked DAO)
-   - [ ] Write ViewModel tests (mocked repository)
-   - [ ] Write integration tests if needed
+7. **Testing**
+   - [ ] Write domain tests
+   - [ ] Write repository tests (mocked/in-memory DB)
+   - [ ] Write ViewModel tests
+   - [ ] Write Compose UI tests
 
-7. **Logging & Security**
-   - [ ] Add strategic Timber logs
+8. **Security & Logging**
+   - [ ] Add Logger calls
    - [ ] Validate external input
    - [ ] No sensitive data logging
 
-8. **CI/CD**
-   - [ ] Run `./gradlew test` locally
-   - [ ] Commit with descriptive message
-   - [ ] Push to feature branch
-   - [ ] Create PR with tests passing
+9. **Final Checks**
+   - [ ] Run `./gradlew testCommonTest`
+   - [ ] No Android imports in commonMain
+   - [ ] No expect/actual logic in commonMain
+   - [ ] Commit with clear message
 
 ---
 
@@ -245,47 +288,43 @@ When preparing for deployment:
 ### When Something Breaks
 
 1. **Check test failure message** - Tests are the source of truth
-2. **Check logcat with Timber** - See what happened
-3. **Check DAO query** - Is the SQL correct?
-4. **Check repository logic** - Is error handling right?
-5. **Check ViewModel state** - Is state being set correctly?
-6. **Check Fragment observation** - Is observer attached with viewLifecycleOwner?
-7. **Check DI binding** - Is the implementation registered?
-8. **Check type converters** - Are complex types serialized correctly?
+2. **Check commonMain imports** - No `android.*` or `UIKit`
+3. **Check expect/actual** - Is implementation present for all platforms?
+4. **Check SQL query** - Is the SQLDelight query correct?
+5. **Check repository logic** - Is error handling right?
+6. **Check ViewModel state** - Is state being set correctly?
+7. **Check Compose collection** - Is `collectAsState()` called?
+8. **Check DI binding** - Is implementation registered?
 
 ---
 
-## ⚠️ Common Mistakes
+## ⚠️ Common KMP Mistakes
 
 | Mistake | Problem | Solution |
 |---------|---------|----------|
-| Blocking database calls | ANR (crashes) | Use `suspend` + `Dispatchers.IO` |
-| Direct DAO in ViewModel | Hard to test | Use Repository interface |
-| GlobalScope.launch | Memory leaks | Use `viewModelScope.launch` |
-| Logging PII | Security issue | Only log non-sensitive IDs |
-| Mutable LiveData exposed | Can be modified externally | Expose immutable `LiveData<T>` |
-| No View Binding | Null pointer errors | Use View Binding |
-| Hardcoded secrets | Security breach | Load from properties file |
-| SQL string concatenation | SQL injection | Use parameterized queries |
-| No input validation | Crashes/exploits | Validate all external input |
-| Forgetting migrations | Data loss | Add migrations for schema changes |
+| Android imports in shared | Doesn't compile on iOS/Web | Use expect/actual |
+| Direct DAO in ViewModel | Can't test, ties to platform | Use Repository interface |
+| Mutable state in Composables | Recomposes unpredictably | Use StateFlow in ViewModel |
+| Blocking DB calls | Freezes UI | Use suspend functions |
+| No input validation | Crashes/exploits | Validate all external data |
+| Hardcoded secrets | Security breach | Use BuildConfig/plist |
+| Forgetting migrations | Data loss | Add SQLDelight migrations |
+| No platform modules | Can't override implementations | Use androidMain, iosMain |
 
 ---
 
 ## 📚 Quick Links
 
-- **See full guides**: `/doc/01_ARCHITECTURE_PATTERNS.md` through `/doc/11_CICD_WORKFLOW.md`
-- **Repository pattern**: See `/doc/01_ARCHITECTURE_PATTERNS.md`
-- **Hilt setup**: See `/doc/02_DEPENDENCY_INJECTION.md`
-- **Coroutines**: See `/doc/03_REACTIVE_PROGRAMMING.md`
-- **Room**: See `/doc/04_DATABASE_PERSISTENCE.md`
-- **UI/ViewModel**: See `/doc/05_UI_LAYER.md`
-- **Domain models**: See `/doc/06_DOMAIN_MODELING.md`
-- **Testing**: See `/doc/07_TESTING_GUIDELINES.md`
-- **Utilities**: See `/doc/08_SHARED_UTILITIES.md`
-- **Code style**: See `/doc/09_CODE_CONVENTIONS.md`
-- **Logging/Security**: See `/doc/10_LOGGING_SECURITY.md`
-- **CI/CD**: See `/doc/11_CICD_WORKFLOW.md`
+- **01_ARCHITECTURE_PATTERNS.md** - MVVM, Repository, multimodule
+- **02_DEPENDENCY_INJECTION.md** - Koin setup, modules
+- **03_REACTIVE_PROGRAMMING.md** - Coroutines, Flow
+- **04_DATABASE_PERSISTENCE.md** - SQLDelight setup
+- **05_UI_LAYER.md** - Compose, StateFlow, navigation
+- **06_DOMAIN_MODELING.md** - Value objects, validation
+- **07_TESTING_GUIDELINES.md** - Unit and integration tests
+- **09_CODE_CONVENTIONS.md** - Naming, organization
+- **10_LOGGING_SECURITY.md** - Logging, expect/actual, security
+- **11_CICD_WORKFLOW.md** - Build, versions, deployment
 
 ---
 
@@ -293,16 +332,10 @@ When preparing for deployment:
 
 **Code should be so clear that the next person reading it asks "why was this built this way?" not "what does this code do?"**
 
-If you're writing comments explaining WHAT the code does, refactor instead:
-- Better variable names
-- Extract to well-named function
-- Use domain language
-
 ---
 
 ## 📞 Questions?
 
-When unsure:
 1. Check the relevant guide in `/doc/`
 2. Look at existing code for patterns
 3. Ask team members
@@ -311,4 +344,5 @@ When unsure:
 ---
 
 **Last Updated:** June 2026  
-**ProExpense Version:** 1.0.0
+**ProExpense KMP Version:** 1.0.0  
+**Architecture:** Multi-Module KMP with Compose
