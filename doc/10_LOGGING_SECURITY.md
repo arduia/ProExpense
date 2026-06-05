@@ -1,98 +1,8 @@
-# Logging & Security - KMP Best Practices
+# Logging & Security - Best Practices
 
 ## Overview
 
-ProExpense uses platform-specific logging via the **expect/actual pattern** - a single logging interface implemented differently on each platform (iOS uses os.log, Android uses Timber, etc.).
-
----
-
-## KMP Logging with Expect/Actual
-
-### Shared Logger Interface
-
-**File:** `shared/utils/src/commonMain/kotlin/Logger.kt`
-
-```kotlin
-expect object Logger {
-    fun d(tag: String, message: String)
-    fun e(tag: String, message: String, exception: Throwable? = null)
-    fun w(tag: String, message: String)
-}
-```
-
-### Android Implementation
-
-**File:** `shared/utils/src/androidMain/kotlin/Logger.kt`
-
-```kotlin
-actual object Logger {
-    init {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-    }
-    
-    actual fun d(tag: String, message: String) {
-        Timber.tag(tag).d(message)
-    }
-    
-    actual fun e(tag: String, message: String, exception: Throwable?) {
-        if (exception != null) {
-            Timber.tag(tag).e(exception, message)
-        } else {
-            Timber.tag(tag).e(message)
-        }
-    }
-    
-    actual fun w(tag: String, message: String) {
-        Timber.tag(tag).w(message)
-    }
-}
-```
-
-### iOS Implementation
-
-**File:** `shared/utils/src/iosMain/kotlin/Logger.kt`
-
-```kotlin
-actual object Logger {
-    actual fun d(tag: String, message: String) {
-        os_log(.debug, log: OSLog.default, "%{public}@: %{public}@", tag, message)
-    }
-    
-    actual fun e(tag: String, message: String, exception: Throwable?) {
-        let errorMsg = exception?.message ?? message
-        os_log(.error, log: OSLog.default, "%{public}@: %{public}@", tag, errorMsg)
-    }
-    
-    actual fun w(tag: String, message: String) {
-        os_log(.default, log: OSLog.default, "%{public}@: %{public}@", tag, message)
-    }
-}
-```
-
-### Usage in Shared Code
-
-```kotlin
-class ExpenseRepository(private val database: ExpenseDatabase) {
-    
-    suspend fun insertExpense(expense: Expense) {
-        Logger.d("ExpenseRepo", "Inserting expense: ${expense.name}")
-        database.expenseQueries.insert(...)
-        Logger.d("ExpenseRepo", "Inserted successfully")
-    }
-    
-    suspend fun deleteExpense(id: Int) {
-        try {
-            database.expenseQueries.delete(id)
-            Logger.d("ExpenseRepo", "Deleted expense $id")
-        } catch (e: Exception) {
-            Logger.e("ExpenseRepo", "Failed to delete", e)
-            throw RepositoryException(e)
-        }
-    }
-}
-```
+Security and logging best practices are **independent of tools and frameworks**. These principles apply to any architecture or implementation.
 
 ---
 
@@ -100,41 +10,84 @@ class ExpenseRepository(private val database: ExpenseDatabase) {
 
 ### Strategic Logging Locations
 
-**ViewModels - State Changes:**
+**Log at boundaries and important state changes:**
+
+1. **ViewModel State Changes**
+   ```kotlin
+   class HomeViewModel(...) {
+       fun loadExpenses() {
+           log("Loading expenses")
+           // ... load data
+           log("Loaded ${expenses.size} expenses")
+       }
+   }
+   ```
+
+2. **Repository Data Operations**
+   ```kotlin
+   class ExpenseRepository(...) {
+       fun insertExpense(expense: Expense) {
+           log("Inserting expense: ${expense.name}")
+           // ... insert
+           log("Insert successful")
+       }
+   }
+   ```
+
+3. **Error Handling**
+   ```kotlin
+   fun riskyOperation() {
+       try {
+           doWork()
+           log("Operation succeeded")
+       } catch (e: Exception) {
+           logError("Operation failed", e)
+           // Handle error
+       }
+   }
+   ```
+
+### Log Levels
+
+Use appropriate levels for different information:
+
 ```kotlin
-class HomeViewModel(private val repository: ExpenseRepository) {
-    fun loadExpenses() {
-        viewModelScope.launch {
-            Logger.d("HomeViewModel", "Loading expenses...")
-            
-            repository.getRecentExpense()
-                .onSuccess { expenses ->
-                    Logger.d("HomeViewModel", "Loaded ${expenses.size} expenses")
-                    _uiState.value = HomeUiState.Success(expenses)
-                }
-                .onError { error ->
-                    Logger.e("HomeViewModel", "Failed to load", error)
-                    _uiState.value = HomeUiState.Error(error.message)
-                }
-        }
-    }
-}
+// Debug - Detailed development information
+log.debug("Variable x = $x, computed y = $y")
+
+// Info - Important business events  
+log.info("User session started")
+
+// Warning - Potential problems
+log.warning("Database query took ${duration}ms")
+
+// Error - Failures with exceptions
+log.error("Request failed", exception)
 ```
 
-**Repositories - Data Operations:**
+### NO Sensitive Data in Logs
+
 ```kotlin
-class ExpenseRepository(private val database: ExpenseDatabase) {
-    
-    fun getExpenseAll(): FlowResult<List<Expense>> {
-        return database.expenseQueries.selectAll()
-            .asFlow()
-            .onEach { Logger.d("ExpenseRepo", "Loaded ${it.size} expenses") }
-            .map { Result.Success(it.map(Mapper::toExpense)) }
-            .catch { 
-                Logger.e("ExpenseRepo", "Error loading expenses", it)
-                emit(Result.Error(it as Exception)) 
-            }
-    }
+// ❌ BAD - Logs PII
+log("User ${user.email} logged in")
+
+// ✅ GOOD - Only safe information
+log("User ${user.id} logged in")
+
+// ❌ BAD - Logs full response with secrets
+log("API response: $response")
+
+// ✅ GOOD - Only status
+log("API request succeeded: ${response.statusCode()}")
+
+// ❌ BAD - Logs full exception in production
+log.error("Error occurred", exception)
+
+// ✅ GOOD - Conditional detail
+if (isDevelopment) {
+    log.error("Error occurred", exception)
+} else {
+    log.error("An error occurred")
 }
 ```
 
@@ -142,228 +95,189 @@ class ExpenseRepository(private val database: ExpenseDatabase) {
 
 ## Security Best Practices
 
-### No Sensitive Data Logging
+### 1. Never Hardcode Secrets
 
 ```kotlin
-// BAD - Logs user PII
-Logger.d("Auth", "User ${user.email} logged in")
+// ❌ BAD - Secrets in code
+const val API_KEY = "sk_live_abc123xyz"
+const val DB_PASSWORD = "securePassword123"
 
-// GOOD - Log only safe information
-Logger.d("Auth", "User logged in: ${user.id}")
-
-// BAD - Logs API responses with sensitive data
-Logger.d("Network", "Response: $response")
-
-// GOOD - Log only status
-Logger.d("Network", "API request succeeded: ${response.code()}")
-
-// BAD - Full exception details in production
-Logger.e("Error", "Exception occurred", exception)
-
-// GOOD - Minimal info in production
-if (isDevelopment) {
-    Logger.e("Error", "Exception occurred", exception)
-} else {
-    Logger.e("Error", "An error occurred")
-}
+// ✅ GOOD - Load from config/environment
+val apiKey = getConfigValue("API_KEY")
+val dbPassword = getEnvironmentVariable("DB_PASSWORD")
 ```
 
-### Input Validation
+### 2. Validate External Input
 
 ```kotlin
-suspend fun importExpenses(uri: String): Result<List<Expense>> {
-    // Always validate external input
+// ❌ BAD - No validation
+fun importData(uri: String) {
+    val data = readFile(uri)
+    processData(data)
+}
+
+// ✅ GOOD - Validate first
+fun importData(uri: String): Result<Unit> {
     if (!isValidUri(uri)) {
-        Logger.w("Import", "Invalid import URI provided")
-        return Result.Error(Exception("Invalid URI"))
+        return Result.Error("Invalid URI")
     }
     
-    try {
-        val expenses = parseExpensesFromFile(uri)
-        Logger.d("Import", "Successfully imported ${expenses.size} expenses")
-        return Result.Success(expenses)
-    } catch (e: Exception) {
-        Logger.e("Import", "Import failed", e)
-        return Result.Error(e)
+    if (getFileSize(uri) > MAX_SIZE) {
+        return Result.Error("File too large")
     }
+    
+    val data = readFile(uri)
+    return processData(data)
 }
 
 private fun isValidUri(uri: String): Boolean {
-    return uri.isNotBlank()
-        && (uri.startsWith("file://") || uri.startsWith("content://"))
-        && uri.endsWith(".csv")
+    return uri.isNotBlank() &&
+           (uri.startsWith("file://") || uri.startsWith("content://")) &&
+           uri.endsWith(".csv")
 }
 ```
 
-### API Keys & Secrets
-
-Load secrets from environment or configuration, never hardcode:
+### 3. Use Result Type for Error Handling
 
 ```kotlin
-// shared/data/src/commonMain/kotlin/ApiConfig.kt
-expect object ApiConfig {
-    val apiBaseUrl: String
-    val apiKey: String
+// ❌ BAD - Throws exceptions
+fun getUser(id: Int): User {
+    if (id <= 0) throw IllegalArgumentException()
+    return database.getUser(id)  // Can throw
 }
 
-// shared/data/src/androidMain/kotlin/ApiConfig.kt
-actual object ApiConfig {
-    actual val apiBaseUrl: String = BuildConfig.API_BASE_URL
-    actual val apiKey: String = BuildConfig.API_KEY
-}
-
-// shared/data/src/iosMain/kotlin/ApiConfig.kt
-actual object ApiConfig {
-    actual val apiBaseUrl: String = Bundle.main.infoDictionary?["API_BASE_URL"] as? String ?: ""
-    actual val apiKey: String = Bundle.main.infoDictionary?["API_KEY"] as? String ?: ""
-}
-
-// Usage
-val httpClient = HttpClient {
-    defaultRequest {
-        url(ApiConfig.apiBaseUrl)
-        headers["Authorization"] = "Bearer ${ApiConfig.apiKey}"
+// ✅ GOOD - Returns Result
+fun getUser(id: Int): Result<User> {
+    if (id <= 0) {
+        return Result.Error("Invalid user ID")
+    }
+    
+    return try {
+        Result.Success(database.getUser(id))
+    } catch (e: Exception) {
+        Result.Error(e)
     }
 }
 ```
 
-### SQL Injection Prevention
-
-SQLDelight prevents SQL injection by using parameterized queries:
-
-```sql
--- GOOD - Parameterized query
-selectByDateRange:
-SELECT * FROM expense 
-WHERE created_date BETWEEN :startTime AND :endTime 
-ORDER BY created_date DESC;
-
--- BAD - Never concatenate queries (not possible with SQLDelight)
--- SELECT * FROM expense WHERE id = $id
-```
-
-### Data Privacy
-
-Never store unnecessary sensitive data:
+### 4. Input Validation at Boundaries
 
 ```kotlin
-// BAD - Stores sensitive user data
-@Entity
-data class UserEnt(
-    val userId: Int,
-    val email: String,  // Sensitive
-    val password: String,  // NEVER store this
-    val phone: String  // Sensitive
-)
+// ✅ GOOD - Validate at entry points
+interface ExpenseRepository {
+    fun insertExpense(expense: Expense): Result<Unit>
+}
 
-// GOOD - Only store necessary data
-@Entity
-data class UserEnt(
-    val userId: Int,
-    val isAuthenticated: Boolean  // Not sensitive
-)
+class ExpenseRepositoryImpl(...) : ExpenseRepository {
+    override fun insertExpense(expense: Expense): Result<Unit> {
+        // Validate immediately
+        if (expense.amount < 0) {
+            return Result.Error("Amount cannot be negative")
+        }
+        
+        if (expense.name.isBlank()) {
+            return Result.Error("Name cannot be empty")
+        }
+        
+        // Safe to proceed
+        return tryInsert(expense)
+    }
+}
 ```
 
----
-
-## Log Levels
-
-### When to Use Each Level
+### 5. Parameterized Queries (No String Concatenation)
 
 ```kotlin
-// Verbose - Detailed technical information (rarely used)
-Logger.d("DetailedTag", "Variable x = $x, computed y = $y")
+// ❌ BAD - SQL injection risk
+fun getExpense(id: Int) {
+    return database.query("SELECT * FROM expense WHERE id = $id")
+}
 
-// Debug - Development information (debug builds)
-Logger.d("MyFeature", "Loaded 50 items from database")
+// ✅ GOOD - Parameterized
+fun getExpense(id: Int) {
+    return database.query("SELECT * FROM expense WHERE id = ?", listOf(id))
+    // Or with named parameters
+    return database.query("SELECT * FROM expense WHERE id = :id", mapOf("id" to id))
+}
+```
 
-// Info - Important business events (keep in production)
-Logger.d("Auth", "User session started")
+### 6. Data Privacy - Store Only What's Needed
 
-// Warning - Potential problems (production warning)
-Logger.w("Database", "Query took ${duration}ms (expected < 100ms)")
+```kotlin
+// ❌ BAD - Stores sensitive information
+data class User(
+    val id: Int,
+    val email: String,      // Sensitive
+    val passwordHash: String, // NEVER store
+    val phone: String       // Sensitive
+)
 
-// Error - Failures (with exceptions)
-Logger.e("Network", "Request failed with timeout", exception)
+// ✅ GOOD - Only necessary fields
+data class User(
+    val id: Int,
+    val isAuthenticated: Boolean
+)
+```
 
-// Assert - Should never happen (critical bugs)
-Logger.e("Validation", "Amount cannot be negative: $amount")
+### 7. Principle of Least Privilege
+
+```kotlin
+// ❌ BAD - Function can do too much
+class AdminService {
+    fun deleteAllUsers() { /* ... */ }
+    fun modifySystemConfig() { /* ... */ }
+}
+
+// ✅ GOOD - Limited responsibility
+interface UserRepository {
+    fun deleteUser(id: Int): Result<Unit>
+}
+
+interface SystemConfig {
+    fun getConfig(key: String): String
+}
 ```
 
 ---
 
-## Best Practices
+## Common Security Mistakes
 
-### ✅ DO:
-
-1. **Use expect/actual for platform-specific logging**
-   ```kotlin
-   expect object Logger { ... }
-   actual object Logger { ... }  // per platform
-   ```
-
-2. **Validate all external input**
-   ```kotlin
-   if (!isValidUri(uri)) return error()
-   ```
-
-3. **Protect sensitive data**
-   ```kotlin
-   // Log IDs not emails
-   Logger.d("Auth", "User ${user.id}")
-   ```
-
-4. **Use appropriate log levels**
-   ```kotlin
-   Logger.d("tag", "debug info")
-   Logger.e("tag", "error", exception)
-   ```
-
-5. **Load secrets from config**
-   ```kotlin
-   val key = ApiConfig.apiKey
-   ```
-
-### ❌ DON'T:
-
-1. **Log sensitive data**
-   ```kotlin
-   // BAD
-   Logger.d("Auth", "Password: ${password}")
-   ```
-
-2. **Hardcode secrets**
-   ```kotlin
-   // BAD
-   const val API_KEY = "secret123"
-   ```
-
-3. **Log full exceptions in production**
-   ```kotlin
-   // BAD
-   Logger.e("Error", exception.stackTrace.toString())
-   ```
-
-4. **Skip input validation**
-   ```kotlin
-   // BAD
-   val uri = Uri.parse(userInput)  // No validation
-   ```
-
-5. **Store passwords in database**
-   ```kotlin
-   // BAD
-   @Entity data class User(val password: String)
-   ```
+| Mistake | Risk | Prevention |
+|---------|------|-----------|
+| Hardcoded secrets | Exposed in code repo | Use environment variables |
+| No input validation | Invalid/malicious data | Validate at boundaries |
+| Throwing exceptions | Leaks stack traces | Use Result type |
+| Logging PII | Privacy breach | Only log safe data |
+| String concatenation SQL | SQL injection | Use parameterized queries |
+| Storing passwords | Account compromise | Never store, hash if needed |
+| No API authentication | Unauthorized access | Require auth tokens |
+| Trusting user input | Exploits possible | Always validate |
 
 ---
 
-## KMP Security Best Practices
+## Security Validation Checklist
 
-✅ **Expect/Actual for secure storage** - Different per platform  
-✅ **Never hardcode secrets** - Use config/environment  
-✅ **Validate all external input** - Files, URIs, user data  
-✅ **Don't log sensitive data** - User IDs only, not emails  
-✅ **Use platform-native security** - KeyStore on Android, Keychain on iOS  
+Before committing code:
 
-**Key: Security is not optional - build it in from the start**
+- [ ] **No hardcoded secrets**: API keys, passwords, tokens in code?
+- [ ] **External input validated**: All user/file input checked?
+- [ ] **No sensitive logging**: PII in logs?
+- [ ] **Errors handled safely**: Exceptions or Result type?
+- [ ] **Queries parameterized**: Any string concatenation in queries?
+- [ ] **Data stored minimally**: Only what's necessary?
+- [ ] **Access controlled**: Permission checks in place?
+- [ ] **Dependencies updated**: Known vulnerabilities patched?
+
+---
+
+## Principles That Carry Forward
+
+✅ **Never hardcode secrets** - Always load from config  
+✅ **Validate external input** - Don't trust user data  
+✅ **Log strategically** - Help debugging without leaking secrets  
+✅ **Use Result types** - Explicit error handling  
+✅ **Parameterize queries** - Prevent injection attacks  
+✅ **Store minimally** - Only what's necessary  
+✅ **Principle of least privilege** - Limited responsibilities  
+
+**Key**: Security must be built in from the start, not added later.
