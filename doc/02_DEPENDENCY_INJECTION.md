@@ -1,18 +1,19 @@
-# Dependency Injection with Hilt - ProExpense Best Practices
+# Dependency Injection with Koin - KMP Best Practices
 
 ## Overview
 
-ProExpense uses **Hilt** - a dependency injection framework built on top of Dagger that dramatically simplifies DI setup for Android. Hilt handles the complex boilerplate of creating and managing component hierarchies.
+ProExpense uses **Koin** - a lightweight service locator and DI framework that works seamlessly across KMP platforms. Koin is the standard choice for KMP projects due to its simplicity and platform independence.
 
 ---
 
-## Why Hilt?
+## Why Koin for KMP?
 
-✅ **Less Boilerplate**: Automatic component creation vs manual Dagger setup  
-✅ **Lifecycle-Aware**: Built-in Android scopes (singleton, activity, fragment, etc.)  
-✅ **Easy Testing**: `@HiltAndroidTest` for instrumented tests  
-✅ **Type Safety**: Compile-time graph validation  
-✅ **Constructor Injection**: Just add `@Inject` to constructors  
+✅ **Platform Independent**: Works on iOS, Android, and Web  
+✅ **Lightweight**: No code generation, minimal runtime overhead  
+✅ **Familiar Syntax**: Easy to learn and understand  
+✅ **Type Safe**: Compile-time safety with Kotlin's type system  
+✅ **Lazy Loading**: Deferred instantiation of dependencies  
+✅ **Shared Modules**: Define DI graph once, use across platforms  
 
 ---
 
@@ -20,162 +21,169 @@ ProExpense uses **Hilt** - a dependency injection framework built on top of Dagg
 
 ### 1. Scoping: Controlling Lifetime
 
-**@Singleton** - Single instance for entire app lifetime
+**Single** - Single instance for entire app lifetime
 ```kotlin
-@Singleton  // Only ONE instance exists
-class ProExpenseDatabase @Inject constructor(context: Context) {
-    // Created once, reused everywhere
+single {  // Only ONE instance exists
+    ExpenseDatabase(db = get())  // get() resolves dependencies
 }
 ```
 
-**@ActivityComponent** - New instance per Activity
+**Factory** - New instance each time
 ```kotlin
-@ActivityComponent
-class ActivityViewModel @Inject constructor() {
-    // Fresh instance for each activity
+factory {
+    ExpenseMapper()  // Fresh instance on each call
 }
 ```
 
-### 2. Provides: Factory Methods
+### 2. Modules: DI Graph Organization
 
-When constructor injection isn't possible, use `@Provides`:
+Define your dependency graph in modules:
 
 ```kotlin
-@Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
+// shared/di/src/commonMain/kotlin/AppModule.kt
+val sharedModule = module {
+    // Single instances for app lifetime
+    single { ExpenseDatabase() }
+    single { HttpClient { /* config */ } }
+    single { ExpenseRepository(get()) }  // get() injects dependency
     
-    @Provides
-    @Singleton
-    fun provideDatabase(context: Context): ProExpenseDatabase {
-        // Custom creation logic if needed
-        return ProExpenseDatabase.getInstance(context)
-    }
+    // Factory instances (new each time)
+    factory { ExpenseMapper() }
+    factory { HomeViewModel(get(), get()) }  // Multiple dependencies
 }
 ```
 
-### 3. Binds: Interface to Implementation
+### 3. Platform-Specific Modules
 
-Map interfaces to their implementations:
+Define platform-specific dependencies in their modules:
 
 ```kotlin
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class AbstractRepoModule {
-    
-    @Binds
-    @Singleton
-    abstract fun bindExpenseRepository(
-        impl: ExpenseRepositoryImpl
-    ): ExpenseRepository
-    
-    @Binds
-    @Singleton
-    abstract fun bindCurrencyRepository(
-        impl: CurrencyRepositoryImpl
-    ): CurrencyRepository
+// shared/di/src/androidMain/kotlin/AndroidModule.kt
+val androidModule = module {
+    single<FileManager> { AndroidFileManager(context) }
+}
+
+// shared/di/src/iosMain/kotlin/IosModule.kt
+val iosModule = module {
+    single<FileManager> { IosFileManager() }
 }
 ```
 
 ---
 
-## Module Organization
+## KMP Module Organization
 
-ProExpense organizes DI into **feature-scoped modules** - one module per logical feature:
+ProExpense organizes DI into **feature-scoped modules** in the shared module:
 
-**Location:** `/app/src/main/java/com/arduia/expense/di/`
+**Location:** `shared/di/src/commonMain/kotlin/`
 
 ### Key Modules:
 
 | Module | Purpose | Scope |
 |--------|---------|-------|
-| `DatabaseModule.kt` | Room database, DAOs, InvalidationTracker | Singleton |
-| `AbstractRepoModule.kt` | All repository bindings | Singleton |
-| `RepositoryModule.kt` | Context utilities, CacheDao | Singleton |
-| `NetworkModule.kt` | Retrofit, HTTP clients, API services | Singleton |
-| `AbstractMapperModule.kt` | UI mappers (DTO → ViewModel) | Factory |
-| `AbstractDomainModule.kt` | Domain use cases, validators | Factory |
-| `BackgroundModule.kt` | WorkManager | Singleton |
-| `BackupModule.kt` | Backup/restore logic builders | Factory |
-| `FormatModule.kt` | Date/number formatters | Factory |
-| `NavHostModule.kt` | Navigation setup | Activity |
-| `AdapterModule.kt` | RecyclerView adapters | Factory |
-| `AnimationModule.kt` | Animation utilities | Factory |
+| `DatabaseModule` | SQLDelight database, queries | Singleton |
+| `RepositoryModule` | All repository bindings | Singleton |
+| `NetworkModule` | Ktor HTTP client, API services | Singleton |
+| `MapperModule` | Model transformation (DTO → ViewModel) | Factory |
+| `FormatterModule` | Date/number formatters | Factory |
+| `ViewModelModule` | All ViewModels | Factory |
+| `CacheModule` | In-memory cache layer | Singleton |
+
+### Platform-Specific Modules:
+
+| Module | Platform | Purpose |
+|--------|----------|---------|
+| `AndroidModule` | Android only | Android-specific implementations |
+| `IosModule` | iOS only | iOS-specific implementations |
+| `WebModule` | Web only | Web-specific implementations |
 
 ---
 
-## DatabaseModule Example
+## DatabaseModule Example (KMP)
 
-**File:** `/app/src/main/java/com/arduia/expense/di/DatabaseModule.kt`
+**File:** `shared/di/src/commonMain/kotlin/DatabaseModule.kt`
 
 ```kotlin
-@Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
-    
-    @Provides
-    @Singleton
-    fun provideProExpenseDatabase(context: Context): ProExpenseDatabase {
-        return ProExpenseDatabase.getInstance(context)
+val databaseModule = module {
+    // Shared SQLDelight database (available on all platforms)
+    single {
+        ExpenseDatabase(
+            driver = get()  // Platform-specific SQLite driver
+        )
     }
     
-    @Provides
-    @Singleton
-    fun provideExpenseDao(database: ProExpenseDatabase): ExpenseDao {
-        return database.expenseDao()
+    // Access queries directly
+    single {
+        get<ExpenseDatabase>().expenseQueries
     }
     
-    @Provides
-    @Singleton
-    fun provideCurrencyDao(database: ProExpenseDatabase): CurrencyDao {
-        return database.currencyDao()
+    single {
+        get<ExpenseDatabase>().settingsQueries
     }
-    
-    @Provides
-    @Singleton
-    fun provideBackupDao(database: ProExpenseDatabase): BackupDao {
-        return database.backupDao()
+}
+
+// Platform-specific driver setup
+val androidDatabaseModule = module {
+    single<SqlDriver> {
+        AndroidSqliteDriver(
+            schema = ExpenseDatabase.Schema,
+            context = androidContext(),
+            name = "expense.db"
+        )
     }
-    
-    @Provides
-    @Singleton
-    fun provideInvalidationTracker(
-        database: ProExpenseDatabase
-    ): InvalidationTracker {
-        return database.invalidationTracker
+}
+
+val iosDatabaseModule = module {
+    single<SqlDriver> {
+        NativeSqliteDriver(
+            schema = ExpenseDatabase.Schema,
+            name = "expense.db"
+        )
     }
 }
 ```
 
 ---
 
-## ViewModel Injection
+## ViewModel Injection (KMP Compose)
 
 **The Core Pattern:**
 
 ```kotlin
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+// Shared ViewModel (available on all platforms)
+class HomeViewModel(
     private val expenseRepository: ExpenseRepository,
     private val currencyRepository: CurrencyRepository,
     private val expenseMapper: ExpenseUiModelMapper
-) : ViewModel() {
-    // Hilt automatically injects all constructor parameters
-    // Based on DI configuration in modules
+) {
+    // Constructor injection - all parameters from Koin
+    // No framework-specific annotations needed
+}
+
+val viewModelModule = module {
+    factory {
+        HomeViewModel(
+            expenseRepository = get(),
+            currencyRepository = get(),
+            expenseMapper = get()
+        )
+    }
 }
 ```
 
 **Benefits:**
-- `@HiltViewModel` tells Hilt this is a ViewModel
-- `@Inject constructor` on primary constructor
-- All parameters are automatically resolved from the DI graph
-- Fragment/Activity gets it via `by viewModels()` or `by activityViewModels()`
+- Pure Kotlin, no annotations needed
+- Same ViewModel works on iOS, Android, Web
+- Koin resolves dependencies automatically
+- Factory scope creates new instance per use
 
-**In Fragment:**
+**In Compose Screen:**
 ```kotlin
-class HomeFragment : Fragment() {
-    private val viewModel: HomeViewModel by viewModels()
-    // Hilt provides the instance, with all dependencies resolved
+@Composable
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+    // Koin provides the instance, with all dependencies resolved
+    val uiState by viewModel.uiState.collectAsState()
+    // Use state...
 }
 ```
 
@@ -277,90 +285,110 @@ abstract class AbstractMapperModule {
 
 ---
 
-## Worker Injection (Background Tasks)
+## Service Injection (Shared Services)
 
-**Setup:**
+**Setup for shared services across platforms:**
+
 ```kotlin
-@HiltWorker
-class ImportWorker @AssistedInject constructor(
-    @Assisted context: Context,
-    @Assisted workerParams: WorkerParameters,
+// Shared service (works on all platforms)
+class BackupService(
     private val expenseRepository: ExpenseRepository,
-    private val backupRepository: BackupRepository
-) : CoroutineWorker(context, workerParams) {
-    
-    override suspend fun doWork(): Result {
+    private val fileManager: FileManager
+) {
+    suspend fun importExpenses(uri: String): Result<List<Expense>> {
         return try {
-            // Use injected repositories
-            val expenses = backupRepository.importExpenses()
+            val expenses = fileManager.readExpensesFromFile(uri)
             expenseRepository.insertExpenseAll(expenses)
-            Result.success()
+            Result.Success(expenses)
         } catch (e: Exception) {
-            Result.failure()
+            Result.Error(e)
         }
+    }
+}
+
+val serviceModule = module {
+    single {
+        BackupService(
+            expenseRepository = get(),
+            fileManager = get()
+        )
     }
 }
 ```
 
-**Key Differences:**
-- `@HiltWorker` instead of `@HiltViewModel`
-- `@AssistedInject` for mixed assisted and regular injection
-- `@Assisted` for context and parameters
+**Key Benefits:**
+- Pure Kotlin, no framework-specific annotations
+- Same service runs on iOS, Android, Web
+- Easy to test with mock dependencies
 
 ---
 
-## Multi-Module Architecture
+## KMP Multi-Module Architecture
 
-ProExpense has **sub-modules** with their own DI:
+ProExpense is organized as a KMP project with shared and platform-specific modules:
 
 ```
-app/
-├── currency-store/        (Currency exchange logic)
-├── backup/                (Excel export/import)
-├── expense-backup/        (Expense-specific backup)
-├── week-expense-graph/    (Custom chart view)
-└── shared/                (Common utilities)
+shared/                           # Shared across all platforms
+├── domain/                        # Domain models, entities, repositories (interfaces)
+├── data/                          # Data sources, repository implementations
+├── viewmodel/                     # ViewModels, UI state
+├── di/
+│   ├── commonMain/               # Shared DI modules
+│   ├── androidMain/              # Android-specific DI
+│   └── iosMain/                  # iOS-specific DI
+└── utils/                        # Shared utilities
+
+androidApp/                       # Android-specific
+├── main/
+│   └── ui/                       # Compose screens (shared composables)
+└── build.gradle.kts
+
+iosApp/                          # iOS-specific
+└── iosApp/
+    └── UI/                       # Compose screens (shared composables)
+
+webApp/                          # Web-specific
+└── src/
+    └── ui/                       # Compose screens (shared composables)
 ```
 
-**Each module declares its own Hilt components:**
+**Each platform initializes Koin with all modules:**
+
 ```kotlin
-// In currency-store module
-@Module
-@InstallIn(SingletonComponent::class)
-object CurrencyStoreModule {
-    // ...
+// Platform-agnostic initialization
+fun startKoin() {
+    startKoin {
+        modules(
+            databaseModule,
+            repositoryModule,
+            networkModule,
+            mapperModule,
+            viewModelModule,
+            formatterModule
+        )
+    }
 }
 
-// In backup module
-@Module
-@InstallIn(SingletonComponent::class)
-object BackupModule {
-    // ...
+// Platform-specific modules added per platform
+// Android
+startKoin {
+    modules(androidModule, androidDatabaseModule)
 }
-```
 
-**App module depends on all sub-modules:**
-```gradle
-dependencies {
-    implementation project(':currency-store')
-    implementation project(':backup')
-    implementation project(':expense-backup')
-    implementation project(':week-expense-graph')
-    implementation project(':shared')
+// iOS
+startKoin {
+    modules(iosModule, iosDatabaseModule)
 }
 ```
 
 ---
 
-## Testing with Hilt
+## Testing with Koin
 
 ### Unit Tests (Mock Repository)
 
 ```kotlin
 class HomeViewModelTest {
-    
-    @get:Rule
-    val instantExecutorRule = InstantTaskExecutorRule()
     
     @RelaxedMockK
     private lateinit var expenseRepository: ExpenseRepository
@@ -371,59 +399,60 @@ class HomeViewModelTest {
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel = HomeViewModel(
-            expenseRepository = expenseRepository,
-            // ... other mocks
+            expenseRepository = expenseRepository
         )
     }
     
     @Test
-    fun testLoadExpenses() {
+    fun testLoadExpenses() = runTest {
         coEvery { 
-            expenseRepository.getExpenseAll() 
-        } returns flowOf(SuccessResult(mockExpenseList))
+            expenseRepository.getRecentExpense() 
+        } returns flowOf(Result.Success(mockExpenseList))
         
         viewModel.loadExpenses()
         
-        coVerify { expenseRepository.getExpenseAll() }
+        coVerify { expenseRepository.getRecentExpense() }
     }
 }
 ```
 
-### Instrumented Tests (@HiltAndroidTest)
+### Shared Tests (No Platform-Specific Setup)
 
 ```kotlin
-@HiltAndroidTest
 class ExpenseRepositoryTest {
     
-    @get:Rule
-    val hiltRule = HiltAndroidRule(this)
-    
-    @Inject
-    lateinit var expenseRepository: ExpenseRepository
+    private lateinit var expenseRepository: ExpenseRepository
     
     @Before
     fun setUp() {
-        hiltRule.inject()  // Inject real repository
+        // Use in-memory database for testing
+        val testModule = module {
+            single {
+                InMemoryExpenseDatabase()
+            }
+            single { ExpenseRepositoryImpl(get()) }
+        }
+        
+        startKoin { modules(testModule) }
+        expenseRepository = get()
     }
     
     @Test
-    fun testInsertAndRetrieveExpense() {
-        val expense = ExpenseEnt(
-            expenseId = 1,
+    fun testInsertAndRetrieveExpense() = runTest {
+        val expense = Expense(
+            id = 1,
             name = "Test Expense",
             amount = Amount.createFromStore(100),
             category = 1,
             note = null,
-            createdDate = System.currentTimeMillis(),
-            modifiedDate = System.currentTimeMillis()
+            createdDate = Clock.System.now().toEpochMilliseconds(),
+            modifiedDate = Clock.System.now().toEpochMilliseconds()
         )
         
-        runTest {
-            expenseRepository.insertExpense(expense)
-            val retrieved = expenseRepository.getExpenseAll().first()
-            
-            assert(retrieved.isNotEmpty())
-        }
+        expenseRepository.insertExpense(expense)
+        val retrieved = expenseRepository.getExpenseAll().first()
+        
+        assert(retrieved.isNotEmpty())
     }
 }
 ```

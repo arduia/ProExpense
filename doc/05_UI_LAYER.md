@@ -1,54 +1,41 @@
-# UI Layer Architecture - ProExpense Best Practices
+# Compose UI Layer - KMP Best Practices
 
 ## Overview
 
-ProExpense uses **ViewModel + LiveData + Jetpack Compose hybrid** approach - combining traditional Fragment/XML layouts with modern Compose capabilities.
+ProExpense uses **Jetpack Compose** for UI - a declarative, reactive UI framework that works identically across iOS, Android, and Web via KMP.
 
 ---
 
-## ViewModel Architecture
+## ViewModel + StateFlow Architecture
 
-### What It Does
+### What It Is
 
-- Holds and manages UI state
-- Survives configuration changes (rotation)
-- Communicates with repositories for data
-- Exposes state via LiveData for observation
+- **ViewModel**: Holds and manages UI state
+- **StateFlow**: Reactive state container that emits updates
+- **Compose Screen**: Renders state and handles user input
 
-**File:** `/app/src/main/java/com/arduia/expense/ui/home/HomeViewModel.kt`
+### Why Use It
+
+✅ **Reactive**: UI automatically updates when state changes  
+✅ **Testable**: ViewModel tested independently of UI  
+✅ **Predictable**: Single source of truth for state  
+✅ **Platform Independent**: Same ViewModel across iOS, Android, Web  
+
+### Implementation Example
+
+**ViewModel** - `shared/viewmodel/src/commonMain/kotlin/HomeViewModel.kt`
 
 ```kotlin
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeViewModel(
     private val expenseRepository: ExpenseRepository,
     private val currencyRepository: CurrencyRepository,
     private val expenseMapper: ExpenseUiModelMapper
-) : ViewModel() {
-    
-    private val _uiState = MutableLiveData<HomeUiState>()
-    val uiState: LiveData<HomeUiState> = _uiState
-    
-    private val _currentCurrency = MutableLiveData<String>()
-    val currentCurrency: LiveData<String> = _currentCurrency
-    
-    init {
-        loadCurrency()
-        loadExpenses()
-    }
-    
-    private fun loadCurrency() {
-        viewModelScope.launch {
-            currencyRepository.getSelectedCacheCurrency()
-                .onSuccess { currency ->
-                    _currentCurrency.value = currency.code
-                }
-        }
-    }
+) {
+    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
     
     fun loadExpenses() {
         viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
-            
             expenseRepository.getRecentExpense()
                 .onSuccess { expenses ->
                     _uiState.value = HomeUiState.Success(
@@ -63,37 +50,14 @@ class HomeViewModel @Inject constructor(
     
     fun deleteExpense(expense: ExpenseUiModel) {
         viewModelScope.launch {
-            try {
-                expenseRepository.deleteExpense(
-                    ExpenseEnt(...) // Map from UI model back to entity
-                )
-                loadExpenses()  // Refresh list
-            } catch (e: Exception) {
-                _uiState.value = HomeUiState.Error(e.message)
-            }
+            expenseRepository.deleteExpense(
+                expenseMapper.mapBackToDomain(expense)
+            )
+            loadExpenses()
         }
     }
 }
-```
 
-### Key Patterns
-
-| Pattern | Use Case | Example |
-|---------|----------|---------|
-| **MutableLiveData + LiveData** | Exposable mutable state | `_uiState` (private), `uiState` (public) |
-| **Sealed Classes** | Type-safe UI states | `HomeUiState.Loading`, `.Success`, `.Error` |
-| **viewModelScope** | Auto-cancel coroutines | `viewModelScope.launch { ... }` |
-| **Single Responsibility** | Each ViewModel manages one screen | `HomeViewModel`, `ExpenseDetailViewModel` |
-
----
-
-## LiveData for UI State
-
-### UI State Pattern
-
-Define all possible UI states as sealed class:
-
-```kotlin
 sealed class HomeUiState {
     object Loading : HomeUiState()
     data class Success(val expenses: List<ExpenseUiModel>) : HomeUiState()
@@ -102,369 +66,295 @@ sealed class HomeUiState {
 }
 ```
 
-### Observation in Fragment
+**Compose Screen** - Observes and renders state
 
 ```kotlin
-class HomeFragment : Fragment(R.layout.fragment_home) {
-    private val viewModel: HomeViewModel by viewModels()
-    private lateinit var binding: FragmentHomeBinding
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        binding = FragmentHomeBinding.bind(view)
-        
-        // Observe UI state
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is HomeUiState.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.recyclerView.visibility = View.GONE
-                }
-                is HomeUiState.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.recyclerView.visibility = View.VISIBLE
-                    adapter.submitList(state.expenses)
-                }
-                is HomeUiState.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    showErrorDialog(state.message)
-                }
-                is HomeUiState.Empty -> {
-                    binding.emptyStateView.visibility = View.VISIBLE
-                }
-            }
-        }
-        
-        // Observe currency changes
-        viewModel.currentCurrency.observe(viewLifecycleOwner) { currency ->
-            binding.currencyLabel.text = currency
-        }
-    }
-}
-```
-
----
-
-## Navigation Component
-
-Type-safe navigation using Safe Args:
-
-### Define Routes in Navigation Graph
-
-**File:** `res/navigation/nav_graph.xml`
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
-
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.arduia.expense.ui.home.HomeFragment"
-        android:label="Home">
-        <action
-            android:id="@+id/action_home_to_detail"
-            app:destination="@id/expenseDetailFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/expenseDetailFragment"
-        android:name="com.arduia.expense.ui.detail.ExpenseDetailFragment"
-        android:label="Expense Detail">
-        <argument
-            android:name="expenseId"
-            app:argType="integer"
-            android:defaultValue="0" />
-    </fragment>
-</navigation>
-```
-
-### Navigate from Fragment
-
-```kotlin
-class HomeFragment : Fragment() {
-    private val viewModel: HomeViewModel by viewModels()
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        adapter.setOnItemClickListener { expense ->
-            val action = HomeFragmentDirections.actionHomeToDetail(expense.id)
-            findNavController().navigate(action)
-        }
-    }
-}
-```
-
-### Receive Arguments
-
-```kotlin
-class ExpenseDetailFragment : Fragment() {
-    private val args: ExpenseDetailFragmentArgs by navArgs()
-    private val viewModel: ExpenseDetailViewModel by viewModels {
-        ExpenseDetailViewModelFactory(args.expenseId)
-    }
-}
-```
-
----
-
-## Base Classes and Reuse
-
-### NavBaseFragment
-
-Reduces boilerplate by providing common functionality:
-
-**File:** `/app/src/main/java/com/arduia/expense/ui/NavBaseFragment.kt`
-
-```kotlin
-abstract class NavBaseFragment(@LayoutRes layoutResId: Int) : Fragment(layoutResId) {
-    
-    protected fun navigate(action: Int) {
-        findNavController().navigate(action)
-    }
-    
-    protected fun navigateUp() {
-        findNavController().navigateUp()
-    }
-    
-    protected fun showErrorDialog(message: String?) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Error")
-            .setMessage(message ?: "Unknown error")
-            .setPositiveButton("OK") { _, _ -> }
-            .show()
-    }
-    
-    protected fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-}
-```
-
-### Usage
-
-```kotlin
-class HomeFragment : NavBaseFragment(R.layout.fragment_home) {
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        // Use inherited methods
-        btnNavigateToDetail.setOnClickListener {
-            navigate(R.id.action_home_to_detail)
-        }
-    }
-}
-```
-
----
-
-## UI Mappers (Domain → UI Model)
-
-Transform domain models to UI-ready models:
-
-```kotlin
-class ExpenseUiModelMapper @Inject constructor(
-    private val categoryProvider: ExpenseCategoryProvider,
-    private val dateFormatter: ExpenseDateFormatter
-) : Mapper<ExpenseEnt, ExpenseUiModel> {
-    
-    override fun map(input: ExpenseEnt): ExpenseUiModel {
-        return ExpenseUiModel(
-            id = input.expenseId,
-            name = input.name,
-            amount = input.amount.getActualAsFloat(),  // Convert Amount to Float for display
-            categoryName = categoryProvider.getCategoryNameByID(input.category),
-            categoryColor = categoryProvider.getCategoryColorByID(input.category),
-            formattedDate = dateFormatter.format(input.createdDate),
-            note = input.note
-        )
-    }
-}
-```
-
-**Benefits:**
-- UI doesn't depend on domain models
-- Formatting logic centralized
-- Easy to test with mock mappers
-
----
-
-## Paging Integration
-
-Display large lists efficiently with Paging 2:
-
-```kotlin
-@HiltViewModel
-class ExpenseListViewModel @Inject constructor(
-    private val expenseRepository: ExpenseRepository
-) : ViewModel() {
-    
-    fun getPagedExpenses(
-        startDate: Long,
-        endDate: Long
-    ): LiveData<PagedList<ExpenseEnt>> {
-        return LivePagedListBuilder(
-            expenseRepository.getExpenseRangeDescSource(startDate, endDate, 0, 30),
-            PagedList.Config.Builder()
-                .setPageSize(30)
-                .setPrefetchDistance(10)
-                .setInitialLoadSizeHint(30)
-                .build()
-        ).build()
-    }
-}
-```
-
-**In Fragment:**
-```kotlin
-class ExpenseListFragment : Fragment() {
-    private val viewModel: ExpenseListViewModel by viewModels()
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        viewModel.getPagedExpenses(startDate, endDate)
-            .observe(viewLifecycleOwner) { pagedList ->
-                adapter.submitList(pagedList)
-            }
-    }
-}
-```
-
----
-
-## Fragment Lifecycle Best Practices
-
-### Proper State Management
-
-```kotlin
-class HomeFragment : Fragment(R.layout.fragment_home) {
-    private val viewModel: HomeViewModel by viewModels()
-    private var binding: FragmentHomeBinding? = null
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        binding = FragmentHomeBinding.bind(view)
-        
-        // Observe only when view is created
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            updateUI(state)
-        }
-    }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // Clear binding to prevent memory leaks
-        binding = null
-    }
-}
-```
-
-### Common Mistakes
-
-❌ **Don't retain Fragment state manually** - Use ViewModel  
-❌ **Don't store Context in ViewModel** - Use Application context from Hilt  
-❌ **Don't forget to observe with viewLifecycleOwner** - Prevents leaks  
-❌ **Don't call binding after onDestroyView()** - Can cause NPE  
-
----
-
-## Jetpack Compose Integration
-
-Modern UI code uses Compose, but ProExpense still has Fragment/XML. **Hybrid approach:**
-
-```kotlin
-class ComposeFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        setContent {
-            MaterialTheme {
-                ExpenseListScreen(viewModel)
-            }
-        }
-    }
-}
-
 @Composable
-fun ExpenseListScreen(viewModel: ExpenseListViewModel) {
-    val uiState by viewModel.uiState.observeAsState(HomeUiState.Loading)
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
     
-    when (uiState) {
-        is HomeUiState.Loading -> CircularProgressIndicator()
-        is HomeUiState.Success -> {
-            LazyColumn {
-                items((uiState as HomeUiState.Success).expenses) { expense ->
-                    ExpenseItem(expense)
-                }
+    when (val state = uiState) {
+        is HomeUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
-        is HomeUiState.Error -> Text("Error: ${(uiState as HomeUiState.Error).message}")
+        
+        is HomeUiState.Success -> {
+            ExpenseListContent(
+                expenses = state.expenses,
+                onExpenseClick = { /* navigate */ },
+                onExpenseDelete = { viewModel.deleteExpense(it) }
+            )
+        }
+        
+        is HomeUiState.Error -> {
+            ErrorMessage(message = state.message)
+        }
+        
+        is HomeUiState.Empty -> {
+            EmptyStateView()
+        }
+    }
+    
+    LaunchedEffect(Unit) {
+        viewModel.loadExpenses()
     }
 }
 ```
 
 ---
 
-## Recycler View Adapters
+## Compose Patterns
 
-**Pattern:** Delegate to ListAdapter for diffing
+### Unidirectional Data Flow (UDF)
+
+```
+User Action → ViewModel → State Update → Recompose → UI
+```
 
 ```kotlin
-class ExpenseAdapter : ListAdapter<ExpenseUiModel, ExpenseAdapter.ViewHolder>(DIFF_CALLBACK) {
+// ViewModel exposes state and events
+class ExpenseViewModel(private val repo: ExpenseRepository) {
+    private val _state = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = _state.asStateFlow()
     
-    private var onItemClickListener: ((ExpenseUiModel) -> Unit)? = null
+    fun addExpense(expense: Expense) {
+        viewModelScope.launch {
+            _state.value = State.Adding
+            repo.insertExpense(expense)
+            _state.value = State.Success
+        }
+    }
+}
+
+// Compose observes state and calls ViewModel methods
+@Composable
+fun ExpenseForm(viewModel: ExpenseViewModel) {
+    var name by remember { mutableStateOf("") }
     
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            ItemExpenseBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            onItemClickListener
+    Button(onClick = {
+        viewModel.addExpense(
+            Expense(name = name, ...)
+        )
+    }) {
+        Text("Save")
+    }
+}
+```
+
+### Composable Functions
+
+```kotlin
+@Composable
+fun ExpenseItem(
+    expense: ExpenseUiModel,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable { /* navigate */ }
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = expense.name,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = expense.category,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+        }
+        Text(
+            text = "$${expense.amount}",
+            style = MaterialTheme.typography.bodyLarge
+        )
+        IconButton(onClick = onDelete) {
+            Icon(Icons.Default.Delete, "Delete")
+        }
+    }
+}
+```
+
+### State Management with remember
+
+```kotlin
+@Composable
+fun ExpenseDialog(onSave: (Expense) -> Unit) {
+    var showDialog by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Add Expense") },
+            text = {
+                Column {
+                    TextField(value = name, onValueChange = { name = it })
+                    TextField(value = amount, onValueChange = { amount = it })
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onSave(Expense(name, amount.toFloat()))
+                        showDialog = false
+                    }
+                ) {
+                    Text("Save")
+                }
+            }
         )
     }
     
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    Button(onClick = { showDialog = true }) {
+        Text("Add Expense")
+    }
+}
+```
+
+### Effects and Side Effects
+
+```kotlin
+@Composable
+fun ExpenseListScreen(viewModel: ExpenseViewModel) {
+    val state by viewModel.state.collectAsState()
+    
+    // Load data when screen enters composition
+    LaunchedEffect(Unit) {
+        viewModel.loadExpenses()
     }
     
-    fun setOnItemClickListener(listener: (ExpenseUiModel) -> Unit) {
-        onItemClickListener = listener
+    // Update when filter changes
+    LaunchedEffect(selectedCategory) {
+        viewModel.filterByCategory(selectedCategory)
     }
     
-    inner class ViewHolder(
-        private val binding: ItemExpenseBinding,
-        private val clickListener: ((ExpenseUiModel) -> Unit)?
-    ) : RecyclerView.ViewHolder(binding.root) {
-        
-        fun bind(item: ExpenseUiModel) {
-            binding.apply {
-                nameTv.text = item.name
-                amountTv.text = item.amount.toString()
-                dateTv.text = item.formattedDate
-                categoryIv.setImageResource(item.categoryIcon)
-                
-                root.setOnClickListener {
-                    clickListener?.invoke(item)
+    // Cleanup resources on disposal
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.cleanup()
+        }
+    }
+}
+```
+
+---
+
+## Navigation with Compose
+
+```kotlin
+@Composable
+fun NavHost(
+    navController: NavHostController,
+    startDestination: String = Routes.HOME
+) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        composable(Routes.HOME) {
+            HomeScreen(
+                onNavigateToDetail = { expenseId ->
+                    navController.navigate("${Routes.DETAIL}/$expenseId")
                 }
-            }
+            )
         }
+        
+        composable("${Routes.DETAIL}/{expenseId}") { backStackEntry ->
+            val expenseId = backStackEntry.arguments?.getString("expenseId")?.toIntOrNull() ?: 0
+            ExpenseDetailScreen(expenseId)
+        }
+    }
+}
+
+object Routes {
+    const val HOME = "home"
+    const val DETAIL = "detail"
+}
+```
+
+---
+
+## List Performance with LazyColumn
+
+```kotlin
+@Composable
+fun ExpenseList(
+    expenses: List<ExpenseUiModel>,
+    onExpenseClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier) {
+        items(
+            count = expenses.size,
+            key = { expenses[it].id }  // Key for recomposition
+        ) { index ->
+            ExpenseItem(
+                expense = expenses[index],
+                onDelete = { /* ... */ }
+            )
+        }
+    }
+}
+```
+
+---
+
+## Testing Compose UI
+
+```kotlin
+@get:Rule
+val composeTestRule = createComposeRule()
+
+@Test
+fun testExpenseItemDisplaysCorrectly() {
+    composeTestRule.setContent {
+        ExpenseItem(
+            expense = ExpenseUiModel(
+                id = 1,
+                name = "Coffee",
+                amount = 5.99f,
+                category = "Food"
+            ),
+            onDelete = {}
+        )
     }
     
-    companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ExpenseUiModel>() {
-            override fun areItemsTheSame(old: ExpenseUiModel, new: ExpenseUiModel) =
-                old.id == new.id
-            
-            override fun areContentsTheSame(old: ExpenseUiModel, new: ExpenseUiModel) =
-                old == new
-        }
+    composeTestRule
+        .onNodeWithText("Coffee")
+        .assertIsDisplayed()
+    
+    composeTestRule
+        .onNodeWithText("$5.99")
+        .assertIsDisplayed()
+}
+
+@Test
+fun testExpenseFormSavesOnButtonClick() {
+    composeTestRule.setContent {
+        ExpenseForm(
+            onSave = { expense ->
+                assert(expense.name == "Lunch")
+            }
+        )
     }
+    
+    composeTestRule
+        .onNodeWithText("Name")
+        .performTextInput("Lunch")
+    
+    composeTestRule
+        .onNodeWithText("Save")
+        .performClick()
 }
 ```
 
@@ -474,67 +364,84 @@ class ExpenseAdapter : ListAdapter<ExpenseUiModel, ExpenseAdapter.ViewHolder>(DI
 
 ### ✅ DO:
 
-1. **Use sealed classes** for UI states
+1. **Use StateFlow** for reactive state
    ```kotlin
-   sealed class UiState { object Loading : UiState() ... }
+   val state: StateFlow<UiState> = _state.asStateFlow()
    ```
 
-2. **Expose immutable LiveData** from ViewModel
+2. **Define UI states as sealed classes**
    ```kotlin
-   private val _state = MutableLiveData<State>()
-   val state: LiveData<State> = _state
+   sealed class UiState {
+       object Loading : UiState()
+       data class Success(val data: T) : UiState()
+       data class Error(val message: String) : UiState()
+   }
    ```
 
-3. **Use viewLifecycleOwner** for observation
+3. **Keep ViewModels pure Kotlin**
    ```kotlin
-   viewModel.state.observe(viewLifecycleOwner) { ... }
+   // No Compose imports, no platform-specific code
+   class ViewModel(private val repo: Repository)
    ```
 
-4. **Map domain → UI models** in mappers
+4. **Use Composable functions** for reusability
    ```kotlin
-   class ExpenseUiModelMapper : Mapper<ExpenseEnt, ExpenseUiModel>
+   @Composable fun ExpenseItem(expense: Expense)
    ```
 
-5. **Clear binding** in onDestroyView
+5. **Extract smaller Composables** for performance
    ```kotlin
-   override fun onDestroyView() { binding = null }
+   @Composable fun ItemContent() { ... }
    ```
 
 ### ❌ DON'T:
 
-1. **Store UI state in Fragment**
-   ```kotlin
-   // BAD - lost on rotation
-   private var expenses: List<Expense> = emptyList()
-   
-   // GOOD - survives rotation
-   val expenses: LiveData<List<Expense>>
-   ```
-
-2. **Pass Context to ViewModel**
+1. **Store state in Composable functions**
    ```kotlin
    // BAD
-   val context: Context  // Memory leak
-   
-   // GOOD - use Application context
-   @ApplicationContext val context: Context
-   ```
-
-3. **Forget lifecycle management**
-   ```kotlin
-   // BAD - Memory leak
-   viewModel.state.observe(this) { ... }
+   var expenses: List<Expense>? = null
    
    // GOOD
-   viewModel.state.observe(viewLifecycleOwner) { ... }
+   val state by viewModel.state.collectAsState()
+   ```
+
+2. **Suspend functions in Composables**
+   ```kotlin
+   // BAD
+   val data = repository.getData()
+   
+   // GOOD
+   LaunchedEffect(Unit) {
+       viewModel.loadData()
+   }
+   ```
+
+3. **Complex logic in Composables**
+   ```kotlin
+   // BAD
+   if (expense.amount > 100 && ...) { ... }
+   
+   // GOOD
+   val isExpensive = viewModel.isExpensive(expense)
+   ```
+
+4. **Recomposition without keys** in lists
+   ```kotlin
+   // BAD
+   items(expenses) { ExpenseItem(it) }
+   
+   // GOOD
+   items(expenses, key = { it.id }) { ExpenseItem(it) }
    ```
 
 ---
 
-## Reuse in New Architecture
+## KMP Compose Best Practices
 
-✅ **ViewModel + LiveData pattern** works with any UI framework  
-✅ **Navigation Component** remains valid for screen transitions  
-✅ **UI state management** approach applies to Compose  
-✅ **Mapper pattern** works for any model transformation  
-✅ **Lifecycle-aware** scope management is architecture-agnostic
+✅ **Single Compose codebase** works on iOS, Android, Web  
+✅ **Pure Kotlin ViewModels** with no framework imports  
+✅ **StateFlow** for reactive state across all platforms  
+✅ **Shared composables** eliminate UI duplication  
+✅ **Platform-specific Composables** only when necessary  
+
+**Key: Compose is the single source of UI truth across all platforms**

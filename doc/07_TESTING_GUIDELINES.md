@@ -1,8 +1,8 @@
-# Testing Guidelines - ProExpense Best Practices
+# Testing Guidelines - KMP Best Practices
 
 ## Overview
 
-ProExpense has **60+ tests** covering unit tests, integration tests, and instrumented tests. Testing is built-in from the start, not an afterthought.
+ProExpense uses **unit and integration tests** that run on all platforms (iOS, Android, Web) via KMP. Testing is built-in from the start, ensuring code quality across all platforms.
 
 ---
 
@@ -196,38 +196,25 @@ fun testAsyncOperation() = runTest {
 
 ---
 
-## Instrumented Tests
-
-### Setup with Hilt
-
-**Dependencies:**
-```gradle
-androidTestImplementation "com.google.dagger:hilt-android-testing:2.57"
-kspAndroidTest "com.google.dagger:hilt-compiler:2.57"
-androidTestImplementation "androidx.test:runner:1.5.2"
-androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
-```
+## Integration Tests (KMP)
 
 ### Database Integration Test
 
-**File:** `/app/src/androidTest/java/com/arduia/expense/data/ExpenseRepositoryIntegrationTest.kt`
+**File:** `shared/data/src/commonTest/kotlin/repository/ExpenseRepositoryTest.kt`
 
 ```kotlin
-@HiltAndroidTest
 class ExpenseRepositoryIntegrationTest {
     
-    @get:Rule
-    val hiltRule = HiltAndroidRule(this)
-    
-    @Inject
-    lateinit var database: ProExpenseDatabase
-    
-    @Inject
-    lateinit var repository: ExpenseRepository
+    private lateinit var database: ExpenseDatabase
+    private lateinit var repository: ExpenseRepository
     
     @Before
     fun setUp() {
-        hiltRule.inject()  // Must call before using injected fields
+        // Use in-memory test driver for all platforms
+        val driver = InMemoryTestDriver()
+        ExpenseDatabase.Schema.create(driver)
+        database = ExpenseDatabase(driver)
+        repository = ExpenseRepositoryImpl(database)
     }
     
     @After
@@ -238,32 +225,29 @@ class ExpenseRepositoryIntegrationTest {
     @Test
     fun testInsertAndRetrieveExpense() = runTest {
         // Arrange
-        val expense = ExpenseEnt(
-            expenseId = 1,
+        val expense = Expense(
+            id = 1,
             name = "Test Expense",
             amount = Amount.createFromStore(100),
             category = 1,
             note = null,
-            createdDate = System.currentTimeMillis(),
-            modifiedDate = System.currentTimeMillis()
+            createdDate = Clock.System.now().toEpochMilliseconds(),
+            modifiedDate = Clock.System.now().toEpochMilliseconds()
         )
         
         // Act
         repository.insertExpense(expense)
         
         // Assert
-        val retrieved = repository.getExpenseAll()
-            .map { (it as? Result.Success)?.data ?: emptyList() }
-            .first()
+        val retrieved = repository.getExpenseAll().first()
         
-        assert(retrieved.isNotEmpty())
-        assert(retrieved[0].name == "Test Expense")
+        assert((retrieved as? Result.Success)?.data?.isNotEmpty() == true)
     }
     
     @Test
     fun testUpdateExpense() = runTest {
         // Arrange
-        val original = ExpenseEnt(...)
+        val original = Expense(id = 1, name = "Original", ...)
         repository.insertExpense(original)
         
         val updated = original.copy(name = "Updated")
@@ -272,32 +256,71 @@ class ExpenseRepositoryIntegrationTest {
         repository.updateExpense(updated)
         
         // Assert
-        val result = repository.getExpenseById(1)
-        assert(result?.name == "Updated")
+        val result = repository.getExpenseRange(0, Long.MAX_VALUE, 10, 0)
+            .first() as? Result.Success
+        
+        assert(result?.data?.firstOrNull()?.name == "Updated")
+    }
+    
+    @Test
+    fun testDeleteExpense() = runTest {
+        // Arrange
+        val expense = Expense(id = 1, name = "ToDelete", ...)
+        repository.insertExpense(expense)
+        
+        // Act
+        repository.deleteExpense(1)
+        
+        // Assert
+        val all = repository.getExpenseAll().first() as? Result.Success
+        assert(all?.data?.isEmpty() == true)
     }
 }
 ```
 
-### Fragment Testing
+### Compose UI Testing
 
 ```kotlin
-@HiltAndroidTest
-class HomeFragmentTest {
+class ExpenseScreenTest {
     
     @get:Rule
-    val hiltRule = HiltAndroidRule(this)
-    
-    @get:Rule
-    val fragmentRule = launchFragmentInContainer<HomeFragment>()
+    val composeTestRule = createComposeRule()
     
     @Test
-    fun testFragmentLaunchesSuccessfully() {
-        // Fragment launches and renders without crashing
+    fun testLoadingState() {
+        composeTestRule.setContent {
+            ExpenseScreen(
+                uiState = HomeUiState.Loading,
+                viewModel = mockk()
+            )
+        }
+        
+        composeTestRule
+            .onNodeWithContentDescription("Loading")
+            .assertIsDisplayed()
     }
     
     @Test
-    fun testExpenseDisplayed() {
-        onView(withId(R.id.expenseList)).check(matches(isDisplayed()))
+    fun testExpenseItemDisplaysData() {
+        composeTestRule.setContent {
+            ExpenseItem(
+                expense = ExpenseUiModel(
+                    id = 1,
+                    name = "Coffee",
+                    amount = 5.99f,
+                    category = "Food"
+                ),
+                onDelete = {}
+            )
+        }
+        
+        composeTestRule
+            .onNodeWithText("Coffee")
+            .assertIsDisplayed()
+        
+        composeTestRule
+            .onNodeWithText("5.99")
+            .assertIsDisplayed()
     }
 }
 ```
