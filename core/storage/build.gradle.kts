@@ -18,6 +18,10 @@ kotlin {
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
+        }
     }
 }
 
