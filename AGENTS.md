@@ -47,7 +47,7 @@ platforms: iOS + Android (KMP shared logic per product doc).
 - Data ownership — export/import supported; user owns their data
 - Max expense amount: 999,999,999.99
 
-**Stack (current Android codebase):** Kotlin 2.2 · KMP · Jetpack Compose · Min SDK 24 / Target SDK 36
+**Stack (current Android codebase):** Kotlin 2.4 · KMP · Jetpack Compose · Min SDK 24 / Target SDK 36
 
 **Stack (product target):** Kotlin Multiplatform shared logic · SwiftUI (iOS) · Jetpack Compose (Android) · Room (Android) · CoreData (iOS)
 
