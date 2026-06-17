@@ -102,6 +102,7 @@ fun OnboardingNavRow(
     onBack: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
+    showNext: Boolean = true,
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
@@ -145,7 +146,14 @@ fun OnboardingNavRow(
             Text(
                 text = "Next ›",
                 modifier = Modifier
-                    .clickable(onClick = onNext)
+                    .alpha(if (showNext) 1f else 0f)
+                    .then(
+                        if (showNext) {
+                            Modifier.clickable(onClick = onNext)
+                        } else {
+                            Modifier
+                        },
+                    )
                     .semantics { contentDescription = "Next" },
                 style = typography.onboardingNavEmphasis,
                 color = colors.ink,

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.arduia.expense.ui.design.ProExpensePaperBackground
-import com.arduia.expense.ui.onboarding.OnboardingWelcomeScreen
+import com.arduia.expense.ui.onboarding.OnboardingFlow
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,12 +24,9 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         containerColor = ProExpenseTheme.colors.paper,
                     ) { innerPadding ->
-                        OnboardingWelcomeScreen(
+                        OnboardingFlow(
                             modifier = Modifier.padding(innerPadding),
-                            onSkip = {},
-                            onBack = {},
-                            onNext = {},
-                            onGetStarted = {},
+                            onComplete = {},
                         )
                     }
                 }

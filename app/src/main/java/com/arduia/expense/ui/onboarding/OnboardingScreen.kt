@@ -20,35 +20,27 @@ import com.arduia.expense.ui.design.ProExpenseButtonSize
 import com.arduia.expense.ui.design.ProExpensePaperBackground
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-const val ONBOARDING_PAGE_COUNT = 5
-
-data class OnboardingSlide(
-    val title: String,
-    val body: String,
-)
-
-val OnboardingWelcomeSlide = OnboardingSlide(
-    title = "Welcome",
-    body = "Your personal finance notebook.",
-)
-
 @Composable
-fun OnboardingWelcomeScreen(
+fun OnboardingScreen(
+    currentPage: Int,
     onSkip: () -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
     onGetStarted: () -> Unit,
     modifier: Modifier = Modifier,
-    slide: OnboardingSlide = OnboardingWelcomeSlide,
-    currentPage: Int = 0,
 ) {
+    val slide = OnboardingSlides[currentPage]
+    val isLastPage = currentPage == ONBOARDING_PAGE_COUNT - 1
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
 
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
-        OnboardingTopBar(onSkip = onSkip)
+        OnboardingTopBar(
+            onSkip = onSkip,
+            showSkip = !isLastPage,
+        )
 
         Column(
             modifier = Modifier
@@ -58,7 +50,8 @@ fun OnboardingWelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            WelcomeIllustration(
+            OnboardingIllustration(
+                slideIndex = currentPage,
                 modifier = Modifier
                     .widthIn(max = 280.dp)
                     .height(220.dp),
@@ -85,6 +78,7 @@ fun OnboardingWelcomeScreen(
             pageCount = ONBOARDING_PAGE_COUNT,
             onBack = onBack,
             onNext = onNext,
+            showNext = !isLastPage,
         )
 
         ProExpenseButton(
@@ -104,7 +98,24 @@ fun OnboardingWelcomeScreen(
 private fun OnboardingWelcomeScreenPreview() {
     ProExpenseTheme {
         ProExpensePaperBackground {
-            OnboardingWelcomeScreen(
+            OnboardingScreen(
+                currentPage = 0,
+                onSkip = {},
+                onBack = {},
+                onNext = {},
+                onGetStarted = {},
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun OnboardingJournalScreenPreview() {
+    ProExpenseTheme {
+        ProExpensePaperBackground {
+            OnboardingScreen(
+                currentPage = 4,
                 onSkip = {},
                 onBack = {},
                 onNext = {},

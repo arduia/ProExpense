@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33], qualifiers = "w414dp-h868dp")
-class OnboardingWelcomeScreenTest {
+class OnboardingScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -26,8 +26,9 @@ class OnboardingWelcomeScreenTest {
         composeTestRule.setContent {
             ProExpenseTheme {
                 ProExpensePaperBackground(modifier = Modifier.fillMaxSize()) {
-                    OnboardingWelcomeScreen(
+                    OnboardingScreen(
                         modifier = Modifier.fillMaxSize(),
+                        currentPage = 0,
                         onSkip = {},
                         onBack = {},
                         onNext = {},
@@ -45,5 +46,30 @@ class OnboardingWelcomeScreenTest {
         composeTestRule.onNodeWithText("Skip").assertIsDisplayed()
         composeTestRule.onNodeWithText("Next ›").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Page 1 of 5, current").assertIsDisplayed()
+    }
+
+    @Test
+    fun journalSlide_hidesSkipAndNext() {
+        composeTestRule.setContent {
+            ProExpenseTheme {
+                ProExpensePaperBackground(modifier = Modifier.fillMaxSize()) {
+                    OnboardingScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        currentPage = 4,
+                        onSkip = {},
+                        onBack = {},
+                        onNext = {},
+                        onGetStarted = {},
+                    )
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Journal").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Review your spending like a diary, day by day.").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Get started").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Skip").assertDoesNotExist()
     }
 }
