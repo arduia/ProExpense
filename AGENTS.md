@@ -47,53 +47,65 @@ platforms: iOS + Android (KMP shared logic per product doc).
 - Data ownership — export/import supported; user owns their data
 - Max expense amount: 999,999,999.99
 
-**Stack (current Android codebase):** Kotlin 2.2 · Fragments + View Binding (migrating to Compose) ·
-Hilt · Room · MVVM · Coroutines + Flow/LiveData · Retrofit · WorkManager · Min SDK 24 / Target SDK 36
+**Stack (current Android codebase):** Kotlin 2.2 · KMP · Jetpack Compose · Min SDK 24 / Target SDK 36
 
-**Stack (product target):** Kotlin Multiplatform shared logic · SwiftUI (iOS) · Jetpack Compose (Android)
+**Stack (product target):** Kotlin Multiplatform shared logic · SwiftUI (iOS) · Jetpack Compose (Android) · Room (Android) · CoreData (iOS)
 
 ---
 
 ## Architecture
 
 ```
-Fragment / Compose screen
+Compose screen / SwiftUI view
     ↓
-ViewModel (@HiltViewModel, LiveData + Flow via arduia/mvvm-core)
+ViewModel (platform UI layer)
     ↓
-Repository interface → RepositoryImpl
+feature:* repository contracts (KMP commonMain)
     ↓
-Room DAO / Retrofit / Preferences / WorkManager
+core:data contracts → platform storage impl (Room / CoreData)
 ```
+
+See `docs/module_structure.md` for the full module map.
 
 ### Module Structure
 
 ```
 ProExpense/
-├── app/                    Main app, UI, DI, data layer
-├── shared/                 com.arduia.core — extensions, Mapper, locale helpers
-├── backup/                 Excel backup engine (JXL)
-├── expense-backup/         Backup schema/metadata
-├── currency-store/         Currency rate storage
-└── week-expense-graph/     Weekly spend graph widget
+├── app/                         Android Compose shell
+├── shared/                      KMP platform utilities
+├── core/
+│   ├── domain/                  Shared domain models (Amount, FinanceRecord, …)
+│   ├── data/                    Repository contracts, Result wrapper
+│   └── storage/                 Local persistence contracts
+├── feature/
+│   ├── logging/                 Quick Manual Logging (MVP)
+│   ├── currency/                Multi-Currency (MVP)
+│   ├── history/                 Record History (MVP)
+│   ├── sharedcost/              Shared Costs (MVP)
+│   ├── auth/                    PIN Auth (MVP)
+│   └── importexport/            Import & Export (MVP)
+└── iosApp/                      SwiftUI shell (future)
 ```
 
 ### Dependency Rules
 
 | Module | Can depend on |
 |--------|---------------|
-| `app` | all library modules |
-| `week-expense-graph` | `shared` |
-| Library modules | no `app`, no other feature modules |
+| `app` | all `core:*`, all `feature:*`, `shared` |
+| `shared` | nothing (project modules) |
+| `core:domain` | `shared` |
+| `core:data` | `core:domain`, `shared` |
+| `core:storage` | `core:domain`, `shared` |
+| `feature:*` | `core:domain`, `core:data`, `shared` |
+| `feature:*` | **must not** depend on other `feature:*` modules |
 
 ### Key Patterns
 
-- **Hilt** for DI — never introduce Koin
-- **Repository pattern** — single data access point per domain
-- **Mapper pattern** — `Mapper<I,O>` in `:shared`; per-feature `*UiModelMapper`
-- **Result wrapper** — sealed `Result<T>` for async outcomes
-- **No UseCase layer** unless explicitly requested — ViewModels call repositories directly
-- **Amount** value object — stored as integer ×100 in Room
+- **KMP feature modules** — one module per MVP use case; business rules in `commonMain`
+- **Repository pattern** — contracts in `core:data` / `feature:*`; implementations in platform source sets
+- **Result wrapper** — sealed `Result<T>` in `core:data` for async outcomes
+- **Amount** value object — stored as integer ×100 (see `core:domain`)
+- **No cross-feature dependencies** — features compose only at the `app` / UI layer
 
 ---
 
@@ -125,8 +137,7 @@ Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
 ./gradlew :app:installDevDebug
 ```
 
-**Prerequisites:** `local.properties` (sdk.dir), `api.properties` (main_url). Firebase builds
-may require `google-services.json` locally.
+**Prerequisites:** `local.properties` (sdk.dir)
 
 ---
 
@@ -179,11 +190,10 @@ AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/rules/*  >  .cursor/co
 ```
 
 **Known conflicts (always follow AGENTS.md):**
-- **DI:** Hilt, not Koin
-- **Architecture:** MVVM + Repository, not strict MVI
-- **UI (current):** Fragments + View Binding; Compose for new v2 screens when migrating
-- **Testing:** MockK/Robolectric/Espresso, not Roborazzi/Paparazzi
-- **Build gate:** `./gradlew :app:testDevDebugUnitTest`, not `runChecks` (does not exist here)
+- **Architecture:** MVVM + Repository in UI layer; KMP feature modules for shared business logic
+- **UI:** Jetpack Compose (Android); SwiftUI (iOS, future)
+- **Testing:** MockK/Robolectric/Espresso for Android UI tests
+- **Build gate:** `./gradlew :app:compileDevDebugKotlin` or `:core:domain:testDebugUnitTest`
 
 ---
 
@@ -193,6 +203,7 @@ AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/rules/*  >  .cursor/co
 |------|---------|
 | `AGENTS.md` | Master agent instructions (this file) |
 | `docs/finance_tracker_product.md` | Authoritative product vision, MVP scope, roadmap |
+| `docs/module_structure.md` | KMP module map and dependency rules |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/rules/` | Scoped agent rules |
 | `.cursor/commands/` | Slash commands |
@@ -200,4 +211,4 @@ AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/rules/*  >  .cursor/co
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |
 | `gradle/libs.versions.toml` | Version catalog |
-| `app/src/main/res/navigation/main_nav.xml` | Navigation graph |
+| `docs/module_structure.md` | KMP module map |

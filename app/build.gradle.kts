@@ -70,6 +70,13 @@ dependencies {
     implementation(project(":shared"))
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
+    implementation(project(":core:storage"))
+    implementation(project(":feature:logging"))
+    implementation(project(":feature:currency"))
+    implementation(project(":feature:history"))
+    implementation(project(":feature:sharedcost"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:importexport"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
