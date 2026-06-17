@@ -12,24 +12,32 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.R
 
+// Font binaries and stacks: design/FONTS.md · source files: design/fonts/
+
 val ProExpenseSerif = FontFamily(
     Font(R.font.instrument_serif_regular, FontWeight.Normal),
+    Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
     Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
 )
 
 val ProExpenseSans = FontFamily(
-    Font(R.font.manrope_variable, FontWeight.Light),
-    Font(R.font.manrope_variable, FontWeight.Normal),
-    Font(R.font.manrope_variable, FontWeight.Medium),
-    Font(R.font.manrope_variable, FontWeight.SemiBold),
-    Font(R.font.manrope_variable, FontWeight.Bold),
-    Font(R.font.manrope_variable, FontWeight.ExtraBold),
+    Font(R.font.manrope_light, FontWeight.Light),
+    Font(R.font.manrope_regular, FontWeight.Normal),
+    Font(R.font.manrope_medium, FontWeight.Medium),
+    Font(R.font.manrope_semibold, FontWeight.SemiBold),
+    Font(R.font.manrope_bold, FontWeight.Bold),
+    Font(R.font.manrope_extrabold, FontWeight.ExtraBold),
+    Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
+    Font(R.font.plus_jakarta_sans_medium, FontWeight.Medium),
+    Font(R.font.plus_jakarta_sans_semibold, FontWeight.SemiBold),
+    Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold),
+    Font(R.font.plus_jakarta_sans_extrabold, FontWeight.ExtraBold),
 )
 
 val ProExpenseMono = FontFamily(
-    Font(R.font.roboto_mono_variable, FontWeight.Normal),
-    Font(R.font.roboto_mono_variable, FontWeight.Medium),
-    Font(R.font.roboto_mono_variable, FontWeight.SemiBold),
+    Font(R.font.geist_mono_regular, FontWeight.Normal),
+    Font(R.font.geist_mono_medium, FontWeight.Medium),
+    Font(R.font.geist_mono_semibold, FontWeight.SemiBold),
 )
 
 @Immutable

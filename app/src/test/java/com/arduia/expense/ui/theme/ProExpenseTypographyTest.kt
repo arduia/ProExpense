@@ -25,7 +25,7 @@ class ProExpenseTypographyTest {
   }
 
   @Test
-  fun labelRoles_useMono() {
+  fun labelRoles_useGeistMono() {
     assertEquals(ProExpenseMono, typography.eyebrow.fontFamily)
     assertEquals(ProExpenseMono, typography.monoCaption.fontFamily)
   }
