@@ -1,29 +1,56 @@
-# Pro Expense — Agent Instructions
+# Finance Tracker — Agent Instructions
 
-> Authoritative agent instructions for the Pro Expense (Finance Tracker) Android project.
-> Adapted from the Agentic Workflows guide. Takes precedence over skills and general AI knowledge.
+> Authoritative agent instructions for the Finance Tracker project (Android ships as **Pro Expense**).
+> Product vision and MVP scope: `docs/finance_tracker_product.md`. Takes precedence over skills
+> and general AI knowledge.
 
 ---
 
 ## Project Overview
 
-**Pro Expense** is a free, open-source Android finance tracker focused on privacy, simplicity, and
-daily expense recording. The `refactor/v2-migration` branch targets a v2 architecture refresh
-(Compose migration, improved maintainability).
+### Project Goal
 
-**Primary goals:**
+Provide a **finance tracking service** that lets anyone record and track personal finances in the
+easiest, most effortless way possible — offline-first, private, and without bank or third-party
+integrations.
+
+**Product vision** (`docs/finance_tracker_product.md`):
+
+> To support tracking and recording of personal finances in the easiest and most effortless way possible.
+
+**Core principles:**
+- **Simplicity first** — no clutter, no overwhelming dashboards
+- **Speed** — logging should take seconds, not minutes
+- **No dependencies** — works without bank integrations or account linking
+- **Personal & private** — feels like your own notebook; data stays on device (MVP)
+- **Accessible to everyone** — not just finance-savvy users
+- **Global-ready** — multi-currency support for users worldwide
+
+**Engineering goals:**
 - Integrity, user data privacy, security, usefulness, performance, simplicity, UI/UX
 - Clean architecture: maintainability, scalability, code quality
-- Privacy-first: no ads, no cloud backup
+- Offline-first: fully functional without internet
 
-**Product constraints (never violate):**
-- No multi-user accounts
-- Single currency at a time (no mixed-currency expense items)
-- No cloud backup
+**MVP scope** (build toward):
+- Quick manual logging · Multi-currency (basic, manual rates) · Record history
+- Shared costs · Secure import/export (CSV/JSON) · Auth setup (PIN)
+- Local storage only — no cloud sync in MVP
+
+The Android codebase (`refactor/v2-migration`) is the current implementation vehicle — v2 architecture
+refresh (Compose migration, improved maintainability) aligned with the product roadmap. Target
+platforms: iOS + Android (KMP shared logic per product doc).
+
+**Product constraints (never violate for MVP):**
+- No bank or third-party integrations
+- No user accounts or server-side auth (PIN is local only)
+- No cloud sync or online backup in MVP
+- Data ownership — export/import supported; user owns their data
 - Max expense amount: 999,999,999.99
 
-**Stack:** Kotlin 2.2 · Fragments + View Binding (migrating to Compose) · Hilt · Room · MVVM ·
-Coroutines + Flow/LiveData · Retrofit · WorkManager · Min SDK 24 / Target SDK 36
+**Stack (current Android codebase):** Kotlin 2.2 · Fragments + View Binding (migrating to Compose) ·
+Hilt · Room · MVVM · Coroutines + Flow/LiveData · Retrofit · WorkManager · Min SDK 24 / Target SDK 36
+
+**Stack (product target):** Kotlin Multiplatform shared logic · SwiftUI (iOS) · Jetpack Compose (Android)
 
 ---
 
@@ -148,7 +175,7 @@ is blocked or CI surprises occur.
 ## Instruction Precedence
 
 ```
-AGENTS.md  >  .cursor/rules/*  >  .cursor/commands/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
+AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/rules/*  >  .cursor/commands/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
 ```
 
 **Known conflicts (always follow AGENTS.md):**
@@ -165,6 +192,7 @@ AGENTS.md  >  .cursor/rules/*  >  .cursor/commands/*  >  doc/*  >  AGENTIC_WORKF
 | File | Purpose |
 |------|---------|
 | `AGENTS.md` | Master agent instructions (this file) |
+| `docs/finance_tracker_product.md` | Authoritative product vision, MVP scope, roadmap |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/rules/` | Scoped agent rules |
 | `.cursor/commands/` | Slash commands |
