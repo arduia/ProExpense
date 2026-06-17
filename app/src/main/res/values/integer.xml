@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <integer name="duration_left_animation">250</integer>
-    <integer name="duration_right_animation">400</integer>
-    <integer name="duration_entry_pop_drop">400</integer>
-    <integer name="duration_entry_pop_up">350</integer>
-    <integer name="duration_short_snack">1000</integer>
-</resources>

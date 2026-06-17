@@ -11,14 +11,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven(url = "https://jitpack.io")
     }
 }
 
 rootProject.name = "ProExpense"
+
 include(":app")
-include(":expense-backup")
-include(":currency-store")
-include(":backup")
 include(":shared")
-include(":week-expense-graph") 
+include(":core:domain")
+include(":core:data")

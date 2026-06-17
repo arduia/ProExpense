@@ -6,4 +6,5 @@
 .externalNativeBuild
 .cxx
 /.gradle/
+/android-sdk/
 /.idea/
