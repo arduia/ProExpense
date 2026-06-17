@@ -189,6 +189,28 @@ Authoritative workflow. Each step is **gate-first**: if the gate already holds, 
 
 **Else:** Verify once before push. `git push -u origin <branch>` on first push.
 
+### Step 7.5 — Session close-out (mandatory before ending)
+
+**Gate:** Agent has explicitly reported Step 6 status, push status, and branch/PR in the final response.
+
+**Else:** Do not end the session. Run missing verification or push, then report.
+
+Every task completion **must** include a **Workflow status** block in the final message:
+
+```markdown
+## Workflow status
+- Step 6 — Verify: ✅ `<command run>` | ⚠️ G1 flagged (reason) | ❌ not run
+- Step 7 — Push: ✅ `origin/<branch>` @ `<short-sha>` | ❌ not pushed
+- PR: `<url>` or n/a
+```
+
+Rules:
+- **Step 6 ✅** only after the matching command exits 0 in this session (preferred: `./gradlew verifyAll`), or **G1** is declared with reason and compensation.
+- **Step 7 ✅** only after `git push` succeeds and local `HEAD` matches `origin/<branch>`.
+- If Step 6 is ✅ and commits exist, **push before close-out** — do not leave verified work only on disk.
+- On follow-up turns where nothing changed since push, cite the prior Step 6 command and confirm `git status` clean + branch up to date; do not re-run Gradle unless the gate broke (new commits, CI failure, user request).
+- **Never** claim Step 6/7 passed without evidence (command output or `git log` / `git status`).
+
 ### Step 8 — Auto-record Retrospective
 
 **Gate (skip unless BOTH):** (a) large change AND (b) unexpected failure slipped past gates.
@@ -349,6 +371,7 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 ### Rules
 
 - Run Step 6 verify once before pushing, not after every commit
+- End every implementation task with the **Workflow status** block (Step 7.5) — flag Step 6 and push explicitly
 - Never force-push to `main` without explicit user permission
 - Never leave work unpushed when task is complete
 - Multiple commits during implementation are fine
