@@ -121,6 +121,31 @@ data class ProExpenseTypography(
         lineHeight = 15.sp,
         letterSpacing = (-0.005).em,
     ),
+    val onboardingTitle: TextStyle = TextStyle(
+        fontFamily = ProExpenseSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 38.sp,
+        lineHeight = 39.9.sp,
+        letterSpacing = (-0.02).em,
+    ),
+    val onboardingBody: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp,
+        lineHeight = 21.75.sp,
+    ),
+    val onboardingNav: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        lineHeight = 13.sp,
+    ),
+    val onboardingNavEmphasis: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 13.sp,
+        lineHeight = 13.sp,
+    ),
 )
 
 val LocalProExpenseTypography = staticCompositionLocalOf { ProExpenseTypography() }
