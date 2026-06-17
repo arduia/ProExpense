@@ -168,9 +168,11 @@ Authoritative workflow. Each step is **gate-first**: if the gate already holds, 
 
 | Change type | Command |
 |-------------|---------|
+| Any agent change (preferred) | `./gradlew verifyAll` |
 | Logic change | `./gradlew :app:testDevDebugUnitTest` |
 | Multi-module | `./gradlew test` |
 | Build check | `./gradlew :app:compileDevDebugKotlin` |
+| Screenshot / Compose UI | `./gradlew :app:verifyRoborazziDevDebug` |
 | Small non-logic | `./gradlew :app:compileDevDebugKotlin` |
 
 **G1 (no Gradle):** declare verification impossible, treat code as unverified, compensate per retrospectives rule.
@@ -200,8 +202,17 @@ Authoritative workflow. Each step is **gate-first**: if the gate already holds, 
 Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
 
 ```bash
+# Unified verification (build + unit tests + screenshot tests)
+./gradlew verifyAll
+
 # Unit tests (logic changes)
 ./gradlew :app:testDevDebugUnitTest
+
+# Screenshot tests — record new baselines after intentional UI changes
+./gradlew :app:recordRoborazziDevDebug
+
+# Screenshot tests — compare against committed baselines
+./gradlew :app:verifyRoborazziDevDebug
 
 # Kotlin compile (fail-fast)
 ./gradlew :app:compileDevDebugKotlin
@@ -228,6 +239,7 @@ Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
 |------|----------|
 | KMP unit tests | `<module>/src/commonTest/kotlin/` |
 | Android JVM unit tests | `app/src/test/java/` |
+| Screenshot baselines | `app/src/test/screenshots/` |
 | Instrumented tests | `app/src/androidTest/java/com/arduia/expense/` |
 
 ### Core Rules
@@ -252,8 +264,8 @@ Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
 
 - **KMP unit:** `kotlin-test`, coroutines-test
 - **Android JVM unit:** JUnit 4, MockK, Robolectric, coroutines-test
+- **Screenshot:** Roborazzi + Robolectric (`captureRoboImage`, `@Category(ScreenshotTests)`)
 - **UI:** Espresso, Compose UI Test (`createComposeRule`)
-- **Not used:** Roborazzi, Paparazzi
 
 ### TDD Checklist (per method/class)
 

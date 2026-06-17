@@ -10,10 +10,11 @@ compose-bom = "2025.08.00"
 coroutines = "1.6.4"
 junit = "4.13.2"
 mockk = "1.13.14"
-robolectric = "4.14.1"
+robolectric = "4.16.1"
 androidx-test-ext-junit = "1.2.1"
 androidx-test-core = "1.6.1"
 espresso = "3.6.1"
+roborazzi = "1.59.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -39,9 +40,14 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
+
 [plugins]
 android-application = { id = "com.android.application", version = "8.12.0" }
 android-library = { id = "com.android.library", version = "8.12.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
