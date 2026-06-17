@@ -103,8 +103,8 @@ Three families with clear jobs.
 
 | Family | Token | Stack | Job |
 |---|---|---|---|
-| **Instrument Serif** | `--serif` | `"SF Pro Display", -apple-system, "Plus Jakarta Sans", "Manrope", system-ui` | Display only — screen titles, day headers, large amounts. Never body or controls. Weights: Regular 400, Italic. |
-| **Geist** (Manrope) | `--sans` | `"Manrope", "Roboto", -apple-system, system-ui, sans-serif` | All body, buttons, list rows. 500–600 for emphasis, 400 for secondary. Weights: 300–800. |
+| **Instrument Serif** | `--serif` | `"Instrument Serif", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif` | Display only — screen titles, day headers, large amounts. Never body or controls. Weights: Regular 400, Italic. |
+| **Geist** (Manrope) | `--sans` | `"Geist", "Plus Jakarta Sans", "Manrope", "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif` | All body, buttons, list rows. 500–600 for emphasis, 400 for secondary. Weights: 300–800. |
 | **Geist Mono** | `--mono` | `"Geist Mono", "Roboto Mono", ui-monospace, monospace` | Uppercase eyebrows, tab labels, timestamps & tabular figures. Letter-spacing 0.08–0.12em. Weights: 400–600. |
 
 ### Type scale
@@ -120,8 +120,9 @@ Three families with clear jobs.
 
 **Google Fonts import:**
 ```
-Manrope:wght@300;400;500;600;700;800
+Geist:wght@300;400;500;600;700
 Plus+Jakarta+Sans:wght@400;500;600;700;800
+Manrope:wght@300;400;500;600;700;800
 Geist+Mono:wght@400;500;600
 Instrument+Serif:ital@0;1
 ```

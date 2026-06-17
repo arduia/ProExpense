@@ -80,6 +80,12 @@ data class ProExpenseTypography(
         fontSize = 11.5.sp,
         lineHeight = 16.1.sp,
     ),
+    val tagline: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        lineHeight = 18.85.sp,
+    ),
     val eyebrow: TextStyle = TextStyle(
         fontFamily = ProExpenseMono,
         fontWeight = FontWeight.Medium,
