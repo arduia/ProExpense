@@ -1,0 +1,43 @@
+---
+description: Follow these rules when local verification is blocked, CI fails unexpectedly, or post-mortem analysis is needed
+alwaysApply: false
+---
+
+# Retrospectives Guard System (G1–G5)
+
+## G1 — Detect No-Verify Environment Early
+
+**Trigger:** Gradle fails to resolve plugins/deps (e.g. Google Maven 403).
+
+**Action:** Declare verification impossible. Treat all code as **unverified**. Offer network fix.
+
+## G2 — Compensate When Tests Can't Run
+
+**Trigger:** G1 in effect.
+
+**Action:** Self-review every test↔impl pair. Small, frequent pushes. CI/manual build as fallback gate.
+
+## G3 — Edge-Case Admission Check
+
+**Trigger:** Test asserts normalization/clamping on edge input.
+
+**Action:** Confirm parser/guard admits input and reaches asserted code path first.
+
+## G4 — Unmasked Errors Behind Fixed Crash
+
+**Trigger:** Fixed a failure aborting build/lint/test stage.
+
+**Action:** Re-run that stage. Fix incrementally until clean — don't stop at crash fix alone.
+
+## G5 — UI Changes Need Visual Verification
+
+**Trigger:** Fragment layout, Compose, or theme change.
+
+**Action:** Run on device/emulator or Espresso test. Flag if local verify impossible (G1).
+
+## Recording
+
+When Step 8 triggers, append to `.cursor/context/retrospectives.md`:
+- What slipped past gates
+- Root cause
+- Concrete guard to promote into workflow rules

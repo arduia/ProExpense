@@ -1,0 +1,51 @@
+---
+description: Follow these rules when writing or modifying Kotlin source code, layouts, or Compose UI
+globs: "**/*.kt,**/*.xml"
+alwaysApply: false
+---
+
+# Code Standards
+
+## General
+
+- Match existing naming, package layout, and DI patterns in the touched module
+- Minimize scope — only change what the task requires
+- **Hilt always** — `@HiltAndroidApp`, `@HiltViewModel`, `@Module` in `di/`
+- KSP for Room and Hilt compilers
+
+## Comments
+
+Default: **write no comments**. Only when WHY is non-obvious (hidden constraint, subtle invariant,
+workaround). Never explain WHAT the code does. One short line max.
+
+## ViewModel Pattern
+
+- One ViewModel per screen
+- `LiveData` / `Flow` via existing `arduia/mvvm-core` patterns (`EventLiveData`, `EventObserver`)
+- ViewModels call repositories directly (no UseCase layer unless requested)
+- `Result<T>` wrapper for async outcomes
+
+## Fragment UI (current)
+
+- View Binding in fragments
+- Navigation via `main_nav.xml` + Safe Args
+- Feature packages under `ui/<feature>/`
+
+## Compose (v2 migration)
+
+- New screens may use Compose when migrating
+- Split route (with `hiltViewModel()`) from stateless content composable
+- One `@Preview` per distinct UI state on content composables
+- Match Material 3 patterns from existing theme
+
+## Data Layer
+
+- Room entities in `data/local/`; amounts stored as integer ×100
+- Repository interfaces bound in `di/RepositoryModule.kt`
+- Mappers implement `com.arduia.core.arch.Mapper<I,O>`
+
+## Product Guards
+
+- Max expense: 999,999,999.99
+- No cloud backup features
+- Privacy-first — no unnecessary network calls or data collection
