@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpensePalette
@@ -63,4 +64,10 @@ fun AppIconGlyph(
             drawCircle(color = glyphColor, radius = dotRadius, center = corner)
         }
     }
+}
+
+@Preview(showBackground = true, widthDp = 120, heightDp = 120)
+@Composable
+private fun AppIconGlyphPreview() {
+    AppIconGlyph()
 }

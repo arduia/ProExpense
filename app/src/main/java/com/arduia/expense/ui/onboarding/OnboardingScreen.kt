@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.IconArrowLeft
 import com.arduia.expense.ui.design.IconChevronRight
@@ -54,9 +55,13 @@ private val onboardingSlides = listOf(
 fun OnboardingScreen(
     onFinish: () -> Unit,
     modifier: Modifier = Modifier,
+    initialPage: Int = 0,
 ) {
     val colors = ProExpenseTheme.colors
-    val pagerState = rememberPagerState(pageCount = { onboardingSlides.size })
+    val pagerState = rememberPagerState(
+        initialPage = initialPage,
+        pageCount = { onboardingSlides.size },
+    )
     val scope = rememberCoroutineScope()
     val page = pagerState.currentPage
     val isLast = page == onboardingSlides.lastIndex
@@ -171,5 +176,32 @@ private fun OnboardingSlideContent(index: Int) {
             textAlign = TextAlign.Center,
             modifier = Modifier.widthIn(max = 280.dp),
         )
+    }
+}
+
+private const val PREVIEW_WIDTH = 414
+private const val PREVIEW_HEIGHT = 868
+
+@Preview(showBackground = true, widthDp = PREVIEW_WIDTH, heightDp = PREVIEW_HEIGHT)
+@Composable
+private fun OnboardingScreenWelcomePreview() {
+    ProExpenseTheme {
+        OnboardingScreen(onFinish = {}, initialPage = 0)
+    }
+}
+
+@Preview(showBackground = true, widthDp = PREVIEW_WIDTH, heightDp = PREVIEW_HEIGHT)
+@Composable
+private fun OnboardingScreenJournalPreview() {
+    ProExpenseTheme {
+        OnboardingScreen(onFinish = {}, initialPage = onboardingSlides.lastIndex)
+    }
+}
+
+@Preview(showBackground = true, widthDp = PREVIEW_WIDTH, heightDp = PREVIEW_HEIGHT)
+@Composable
+private fun OnboardingQuickLogSlidePreview() {
+    ProExpenseTheme {
+        OnboardingSlideContent(1)
     }
 }
