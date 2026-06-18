@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pro Expense — Font Specimen</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  :root {
+    --ink: #212121; --ink-3: #757575; --line: rgba(33,33,33,.10);
+    --paper: #f5f5f5; --card: #fff; --blue: #039be5;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Manrope', system-ui, sans-serif;
+    padding: 64px; line-height: 1.4;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+  .eyebrow {
+    font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--blue);
+  }
+  h1 { font-family: 'Instrument Serif', serif; font-size: 56px; font-weight: 400; letter-spacing: -.02em; line-height: 1; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: 28px 32px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .card h2 { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; }
+  .meta { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  .row { display: flex; flex-direction: column; gap: 3px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .row:first-of-type { border-top: 0; }
+  .w { font-size: 22px; }
+  .lbl { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .08em; color: var(--ink-3); text-transform: uppercase; }
+  .serif-line { font-family: 'Instrument Serif', serif; font-size: 30px; }
+  .amount { font-family: 'Instrument Serif', serif; font-size: 64px; letter-spacing: -.025em; line-height: 1; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Pro Expense · Type System</div>
+      <h1>Money, made legible.</h1>
+    </div>
+
+    <div class="card">
+      <span class="meta">Manrope · --sans</span>
+      <h2>Manrope — UI &amp; body</h2>
+      <div class="row"><span class="w" style="font-weight:300">Light 300 — Lunch with M.</span><span class="lbl">300</span></div>
+      <div class="row"><span class="w" style="font-weight:400">Regular 400 — Food · 12:30 PM</span><span class="lbl">400</span></div>
+      <div class="row"><span class="w" style="font-weight:500">Medium 500 — Mark as settled</span><span class="lbl">500</span></div>
+      <div class="row"><span class="w" style="font-weight:600">SemiBold 600 — Add expense</span><span class="lbl">600</span></div>
+      <div class="row"><span class="w" style="font-weight:700">Bold 700 — On track</span><span class="lbl">700</span></div>
+      <div class="row"><span class="w" style="font-weight:800">ExtraBold 800 — Over budget</span><span class="lbl">800</span></div>
+    </div>
+
+    <div class="card">
+      <span class="meta">Plus Jakarta Sans · alt sans</span>
+      <h2 style="font-family:'Plus Jakarta Sans';font-weight:700">Plus Jakarta Sans — fallback</h2>
+      <div class="row"><span class="w" style="font-family:'Plus Jakarta Sans';font-weight:400">Regular 400 — The quick brown fox</span><span class="lbl">400</span></div>
+      <div class="row"><span class="w" style="font-family:'Plus Jakarta Sans';font-weight:600">SemiBold 600 — jumps over 1,240</span><span class="lbl">600</span></div>
+      <div class="row"><span class="w" style="font-family:'Plus Jakarta Sans';font-weight:800">ExtraBold 800 — lazy dog</span><span class="lbl">800</span></div>
+    </div>
+
+    <div class="card">
+      <span class="meta">Geist Mono · --mono</span>
+      <h2 style="font-family:'Geist Mono';font-weight:600">Geist Mono — labels &amp; figures</h2>
+      <div class="row"><span class="w" style="font-family:'Geist Mono';font-weight:400;letter-spacing:.04em">400 — AMOUNT · USD · 12:30 PM</span><span class="lbl">400</span></div>
+      <div class="row"><span class="w" style="font-family:'Geist Mono';font-weight:500;letter-spacing:.04em">500 — $1,240.00  $86.50  $9.99</span><span class="lbl">500</span></div>
+      <div class="row"><span class="w" style="font-family:'Geist Mono';font-weight:600;letter-spacing:.04em">600 — HOME BUDGET JOURNAL</span><span class="lbl">600</span></div>
+    </div>
+
+    <div class="card">
+      <span class="meta">Instrument Serif · --serif</span>
+      <h2>Instrument Serif — display</h2>
+      <div class="row"><span class="serif-line">Regular — Today · May 25</span><span class="lbl">400</span></div>
+      <div class="row"><span class="serif-line" style="font-style:italic">Italic — a considered, editorial voice</span><span class="lbl">400 italic</span></div>
+      <div class="row" style="padding-top:14px"><span class="amount">$1,240</span><span class="lbl">display amount · 64px</span></div>
+    </div>
+  </div>
+</body>
+</html>

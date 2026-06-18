@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="AmountTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-06-17T17:46:28.951Z" hostname="cursor" time="0.052">
-  <properties/>
-  <testcase name="acceptsValidAmount" classname="AmountTest" time="0.013"/>
-  <testcase name="rejectsNegativeAmount" classname="AmountTest" time="0.037"/>
-  <testcase name="rejectsAmountAboveCap" classname="AmountTest" time="0.001"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -1,0 +1,208 @@
+/* Pro Expense — Hi-fi palette · Material blue primary */
+:root {
+  /* Material blue (primary) */
+  --blue-100: #b3e5fc;
+  --blue-200: #81d4fa;
+  --blue-300: #4fc3f7;
+  --blue-500: #039be5;
+  --blue-700: #0288d1;
+  /* Greens (success / lent / on-track) */
+  --green-300: #81c784;
+  --green-400: #66bb6a;
+  --green-500: #4caf50;
+  /* Yellows (highlight / future / events) */
+  --yellow-300: #fff176;
+  --yellow-500: #ffeb3b;
+  /* Reds (destructive / over-budget / owe) */
+  --red-300: #e57373;
+  --red-400: #ef5350;
+  /* Neutrals */
+  --gray-100: #f5f5f5;
+  --gray-200: #eeeeee;
+  --gray-300: #e0e0e0;
+  --gray-500: #9e9e9e;
+  --gray-600: #757575;
+  --dark: #000000;
+  --dark-gray: #212121;
+  --white: #ffffff;
+
+  /* ── Semantic tokens (rest of the code uses these) ── */
+  /* Surfaces */
+  --paper: var(--gray-100);        /* main app surface */
+  --paper-2: var(--gray-200);
+  --paper-warm: var(--white);      /* legacy alias for white surface */
+  --card: var(--white);
+  /* Text */
+  --ink: var(--dark-gray);
+  --ink-2: #424242;
+  --ink-3: var(--gray-600);
+  --muted: var(--gray-500);
+  --muted-2: #bdbdbd;
+  /* Lines */
+  --line: rgba(33, 33, 33, 0.10);
+  --line-2: rgba(33, 33, 33, 0.06);
+  --line-strong: var(--gray-300);
+  /* Primary (was clay) — Material blue */
+  --clay: var(--blue-500);
+  --clay-deep: var(--blue-700);
+  --clay-soft: var(--blue-300);
+  --clay-tint: var(--blue-100);
+  /* Success (was sage) — green */
+  --sage: var(--green-500);
+  --sage-soft: var(--green-300);
+  --sage-tint: #c8e6c9;
+  /* Highlight (was coin) — yellow */
+  --coin: var(--yellow-500);
+  --coin-soft: var(--yellow-300);
+  /* Secondary accent (was indigo) — deeper blue */
+  --indigo: var(--blue-700);
+  --indigo-soft: var(--blue-200);
+  /* Destructive (new) */
+  --danger: var(--red-400);
+  --danger-soft: var(--red-300);
+  --danger-tint: #ffcdd2;
+  /* Tag accent — orange */
+  --tag: #fb8c00;
+  --tag-deep: #ef6c00;
+  --tag-soft: #ffb74d;
+  --tag-tint: #ffe0b2;
+  /* Bottom nav — white surface, dark gray inactive, blue active */
+  --nav-bg: var(--white);
+  --nav-text: var(--dark-gray);
+
+  /* Type */
+  --sans: "Manrope", "Roboto", -apple-system, system-ui, sans-serif;
+  --mono: "Geist Mono", "Roboto Mono", ui-monospace, monospace;
+  --serif: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Manrope", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: #1f1a14;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Phone-screen content uses warm paper */
+.proto-app {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animations */
+@keyframes proto-slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes proto-slide-in-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes proto-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes proto-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes proto-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes proto-toast-up {
+  0%   { opacity: 0; transform: translate(-50%, 24px); }
+  15%  { opacity: 1; transform: translate(-50%, 0); }
+  85%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 8px); }
+}
+@keyframes proto-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+@keyframes proto-blink {
+  50% { opacity: 0; }
+}
+@keyframes proto-pulse-hl {
+  0% { background-color: var(--clay-tint); }
+  100% { background-color: transparent; }
+}
+
+.proto-screen-fwd { animation: proto-slide-in-right 280ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+.proto-screen-back { animation: proto-slide-in-left 280ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+.proto-fade { animation: proto-fade-in 200ms ease; }
+.proto-sheet { animation: proto-sheet-up 340ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+.proto-shake { animation: proto-shake 280ms ease; }
+.proto-new-row { animation: proto-pulse-hl 1800ms ease; }
+.proto-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 0.85em;
+  background: var(--clay);
+  margin-left: 3px;
+  vertical-align: -0.05em;
+  animation: proto-blink 1.05s steps(1) infinite;
+}
+
+/* Touch feedback */
+.proto-tap { transition: transform 80ms ease, opacity 80ms ease, background-color 120ms ease; cursor: pointer; user-select: none; }
+.proto-tap:active { transform: scale(0.97); opacity: 0.92; }
+
+/* Scrollbars (inside phone) */
+.proto-scroll { overflow-y: auto; scrollbar-width: thin; }
+.proto-scroll::-webkit-scrollbar { width: 4px; }
+.proto-scroll::-webkit-scrollbar-thumb { background: rgba(43,31,23,0.18); border-radius: 99px; }
+
+/* Backdrop / sheets */
+.proto-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(43, 31, 23, 0.42);
+  animation: proto-fade-in 200ms ease;
+  z-index: 30;
+}
+.proto-sheet-card {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: var(--card);
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
+  z-index: 31;
+  max-height: 78%;
+  display: flex;
+  flex-direction: column;
+}
+.proto-sheet-handle {
+  width: 36px; height: 4px; border-radius: 99px;
+  background: rgba(43,31,23,0.18);
+  margin: 10px auto 4px;
+}
+
+/* Toast */
+.proto-toast {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  background: var(--ink);
+  color: var(--paper-warm);
+  padding: 10px 16px;
+  border-radius: 99px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 40;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  animation: proto-toast-up 2400ms ease forwards;
+}

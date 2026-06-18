@@ -4,28 +4,38 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
+// Color tokens — mirrors pro-expense-finance-tracker/project/DESIGN-SYSTEM.md §1.
+// A cool Material-blue core, three signal hues (green / yellow / red), a single
+// warm orange reserved for event tags, and a calibrated neutral ramp.
 object ProExpensePalette {
+    // Primary · Material blue
     val Blue100 = Color(0xFFB3E5FC)
     val Blue200 = Color(0xFF81D4FA)
     val Blue300 = Color(0xFF4FC3F7)
     val Blue500 = Color(0xFF039BE5)
     val Blue700 = Color(0xFF0288D1)
+    val Blue50 = Color(0xFFE1F5FE)
 
+    // Success · Green
     val Green300 = Color(0xFF81C784)
     val Green400 = Color(0xFF66BB6A)
     val Green500 = Color(0xFF4CAF50)
 
+    // Highlight · Yellow
     val Yellow300 = Color(0xFFFFF176)
     val Yellow500 = Color(0xFFFFEB3B)
 
+    // Destructive · Red
     val Red300 = Color(0xFFE57373)
     val Red400 = Color(0xFFEF5350)
 
+    // Tag accent · Orange
     val TagTint = Color(0xFFFFE0B2)
     val TagSoft = Color(0xFFFFB74D)
     val Tag = Color(0xFFFB8C00)
     val TagDeep = Color(0xFFEF6C00)
 
+    // Neutrals
     val Gray100 = Color(0xFFF5F5F5)
     val Gray200 = Color(0xFFEEEEEE)
     val Gray300 = Color(0xFFE0E0E0)
@@ -34,6 +44,7 @@ object ProExpensePalette {
     val DarkGray = Color(0xFF212121)
     val Black = Color(0xFF000000)
 
+    // Semantic neutrals
     val Card = Color(0xFFFFFFFF)
     val Paper = Color(0xFFF5F5F5)
     val PaperWarm = Color(0xFFFFFDF6)
@@ -47,6 +58,16 @@ object ProExpensePalette {
     val LineStrong = Color(0xFFE0E0E0)
     val Scrim = Color(0x6B2B1F17)
     val SheetHandle = Color(0x2E2B1F17)
+
+    // Material (M3) chrome tokens — used by the onboarding / profile flow
+    // (android-frame.jsx · MD palette).
+    val Surface = Color(0xFFFFFFFF)
+    val SurfaceVariant = Color(0xFFEEF1F4)
+    val SurfaceDim = Color(0xFFF3F4F6)
+    val Outline = Color(0xFFC2C7CE)
+    val OutlineVariant = Color(0xFFDFE3E8)
+    val OnSurface = Color(0xFF1A1C1E)
+    val OnSurfaceVariant = Color(0xFF5A5F66)
 }
 
 @Immutable
@@ -55,6 +76,7 @@ data class ProExpenseColors(
     val primaryDeep: Color = ProExpensePalette.Blue700,
     val primarySoft: Color = ProExpensePalette.Blue300,
     val primaryTint: Color = ProExpensePalette.Blue100,
+    val primaryContainer: Color = ProExpensePalette.Blue100,
     val success: Color = ProExpensePalette.Green500,
     val successSoft: Color = ProExpensePalette.Green400,
     val highlight: Color = ProExpensePalette.Yellow500,
@@ -80,6 +102,15 @@ data class ProExpenseColors(
     val navText: Color = ProExpensePalette.DarkGray,
     val scrim: Color = ProExpensePalette.Scrim,
     val sheetHandle: Color = ProExpensePalette.SheetHandle,
+    // Material chrome
+    val surface: Color = ProExpensePalette.Surface,
+    val surfaceVariant: Color = ProExpensePalette.SurfaceVariant,
+    val surfaceDim: Color = ProExpensePalette.SurfaceDim,
+    val outline: Color = ProExpensePalette.Outline,
+    val outlineVariant: Color = ProExpensePalette.OutlineVariant,
+    val onSurface: Color = ProExpensePalette.OnSurface,
+    val onSurfaceVariant: Color = ProExpensePalette.OnSurfaceVariant,
+    val onPrimary: Color = Color(0xFFFFFFFF),
 )
 
 val LocalProExpenseColors = staticCompositionLocalOf { ProExpenseColors() }

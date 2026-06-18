@@ -8,25 +8,27 @@ import androidx.compose.runtime.ReadOnlyComposable
 
 private val ProExpenseLightColorScheme = lightColorScheme(
     primary = ProExpensePalette.Blue500,
-    onPrimary = ProExpensePalette.PaperWarm,
+    onPrimary = ProExpensePalette.Card,
     primaryContainer = ProExpensePalette.Blue100,
     onPrimaryContainer = ProExpensePalette.Blue700,
     secondary = ProExpensePalette.Blue700,
-    onSecondary = ProExpensePalette.PaperWarm,
+    onSecondary = ProExpensePalette.Card,
     tertiary = ProExpensePalette.Tag,
-    onTertiary = ProExpensePalette.PaperWarm,
+    onTertiary = ProExpensePalette.Card,
     background = ProExpensePalette.Paper,
     onBackground = ProExpensePalette.Ink,
-    surface = ProExpensePalette.Card,
-    onSurface = ProExpensePalette.Ink,
-    surfaceVariant = ProExpensePalette.Gray200,
-    onSurfaceVariant = ProExpensePalette.Ink2,
-    outline = ProExpensePalette.LineStrong,
-    outlineVariant = ProExpensePalette.Line2,
+    surface = ProExpensePalette.Surface,
+    onSurface = ProExpensePalette.OnSurface,
+    surfaceVariant = ProExpensePalette.SurfaceVariant,
+    onSurfaceVariant = ProExpensePalette.OnSurfaceVariant,
+    outline = ProExpensePalette.Outline,
+    outlineVariant = ProExpensePalette.OutlineVariant,
     error = ProExpensePalette.Red400,
-    onError = ProExpensePalette.PaperWarm,
+    onError = ProExpensePalette.Card,
 )
 
+// Entry point for the design-system tokens. `ProExpenseTheme.colors`, `.typography`,
+// `.shapes`, and `.motion` read the active values from the composition.
 object ProExpenseTheme {
     val colors: ProExpenseColors
         @Composable
@@ -53,16 +55,11 @@ object ProExpenseTheme {
 fun ProExpenseTheme(
     content: @Composable () -> Unit,
 ) {
-    val colors = ProExpenseLightColors
-    val typography = ProExpenseTypography()
-    val shapes = ProExpenseShapes()
-    val motion = ProExpenseMotion()
-
     CompositionLocalProvider(
-        LocalProExpenseColors provides colors,
-        LocalProExpenseTypography provides typography,
-        LocalProExpenseShapes provides shapes,
-        LocalProExpenseMotion provides motion,
+        LocalProExpenseColors provides ProExpenseLightColors,
+        LocalProExpenseTypography provides ProExpenseTypography(),
+        LocalProExpenseShapes provides ProExpenseShapes(),
+        LocalProExpenseMotion provides ProExpenseMotion(),
     ) {
         MaterialTheme(
             colorScheme = ProExpenseLightColorScheme,

@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.arduia.expense.ui.design.ProExpensePaperBackground
-import com.arduia.expense.ui.onboarding.OnboardingWelcomeScreen
+import com.arduia.expense.ui.onboarding.OnboardingScreen
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,19 +18,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProExpenseTheme {
-                ProExpensePaperBackground(modifier = Modifier.fillMaxSize()) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        containerColor = ProExpenseTheme.colors.paper,
-                    ) { innerPadding ->
-                        OnboardingWelcomeScreen(
-                            modifier = Modifier.padding(innerPadding),
-                            onSkip = {},
-                            onBack = {},
-                            onNext = {},
-                            onGetStarted = {},
-                        )
-                    }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = ProExpenseTheme.colors.surface,
+                ) { innerPadding ->
+                    OnboardingScreen(
+                        onFinish = {},
+                        modifier = Modifier.padding(innerPadding),
+                    )
                 }
             }
         }

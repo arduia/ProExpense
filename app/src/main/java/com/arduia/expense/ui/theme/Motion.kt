@@ -5,9 +5,8 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
+// Motion — DESIGN-SYSTEM.md §9. Brisk and eased, never bouncy.
 private val ProExpenseEase = CubicBezierEasing(0.22f, 0.61f, 0.36f, 1f)
 
 @Immutable
@@ -16,29 +15,13 @@ data class ProExpenseMotion(
     val sheetTransitionMs: Int = 340,
     val toastDurationMs: Int = 2400,
     val fadeUpMs: Int = 200,
-    val pulseHighlightMs: Int = 1800,
-    val shakeMs: Int = 280,
     val tapScaleMs: Int = 80,
     val pressedScale: Float = 0.97f,
     val standardEasing: Easing = ProExpenseEase,
-    val sheetMaxHeightFraction: Float = 0.78f,
-    val sheetHandleWidth: Dp = 36.dp,
-    val sheetHandleHeight: Dp = 4.dp,
 ) {
-    fun screenTween(forward: Boolean = true) = tween<Float>(
-        durationMillis = screenTransitionMs,
-        easing = standardEasing,
-    )
+    fun screenTween() = tween<Float>(durationMillis = screenTransitionMs, easing = standardEasing)
 
-    fun sheetTween() = tween<Float>(
-        durationMillis = sheetTransitionMs,
-        easing = standardEasing,
-    )
-
-    fun tapTween() = tween<Float>(
-        durationMillis = tapScaleMs,
-        easing = standardEasing,
-    )
+    fun tapTween() = tween<Float>(durationMillis = tapScaleMs, easing = standardEasing)
 }
 
 val LocalProExpenseMotion = staticCompositionLocalOf { ProExpenseMotion() }

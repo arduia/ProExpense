@@ -14,12 +14,14 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.R
 
-// Font binaries and stacks: design/FONTS.md · source files: design/fonts/
-// The design's `--sans` (body, buttons, list rows) is the iOS system font (SF Pro). SF Pro can't
-// ship on Android, so the sans role uses Inter — an OFL-licensed SF-Pro-like humanist UI face.
-// Inter and Geist Mono ship as single variable-font binaries, so every weight is registered against
-// the one resource with an explicit `wght` axis (applied on API 26+). Instrument Serif is a static
-// face used for display only; the system handles serif glyph fallback.
+// Typography — mirrors pro-expense-finance-tracker/project/FONTS.md.
+// Three families with clear jobs:
+//   • Instrument Serif (--serif) — display only: screen titles, day headers, amounts.
+//   • Manrope          (--sans)  — all UI: body, buttons, list rows. Weights 300–800.
+//   • Geist Mono       (--mono)  — eyebrows, tab labels, timestamps, tabular figures.
+// Manrope and Geist Mono ship as single variable-font binaries, so each weight is
+// registered against the one resource with an explicit `wght` axis (applied on API 26+).
+// Instrument Serif is a static display face (regular + italic).
 
 @OptIn(ExperimentalTextApi::class)
 private fun variableFont(resId: Int, weight: FontWeight): Font = Font(
@@ -34,22 +36,23 @@ val ProExpenseSerif = FontFamily(
 )
 
 val ProExpenseSans = FontFamily(
-    variableFont(R.font.inter_regular, FontWeight.Light),
-    variableFont(R.font.inter_regular, FontWeight.Normal),
-    variableFont(R.font.inter_regular, FontWeight.Medium),
-    variableFont(R.font.inter_regular, FontWeight.SemiBold),
-    variableFont(R.font.inter_regular, FontWeight.Bold),
-    variableFont(R.font.inter_regular, FontWeight.ExtraBold),
+    variableFont(R.font.manrope_variable, FontWeight.Light),
+    variableFont(R.font.manrope_variable, FontWeight.Normal),
+    variableFont(R.font.manrope_variable, FontWeight.Medium),
+    variableFont(R.font.manrope_variable, FontWeight.SemiBold),
+    variableFont(R.font.manrope_variable, FontWeight.Bold),
+    variableFont(R.font.manrope_variable, FontWeight.ExtraBold),
 )
 
 val ProExpenseMono = FontFamily(
-    variableFont(R.font.geist_mono_regular, FontWeight.Normal),
-    variableFont(R.font.geist_mono_regular, FontWeight.Medium),
-    variableFont(R.font.geist_mono_regular, FontWeight.SemiBold),
+    variableFont(R.font.geist_mono_variable, FontWeight.Normal),
+    variableFont(R.font.geist_mono_variable, FontWeight.Medium),
+    variableFont(R.font.geist_mono_variable, FontWeight.SemiBold),
 )
 
 @Immutable
 data class ProExpenseTypography(
+    // Display · Instrument Serif
     val displayAmount: TextStyle = TextStyle(
         fontFamily = ProExpenseSerif,
         fontWeight = FontWeight.Normal,
@@ -78,6 +81,7 @@ data class ProExpenseTypography(
         lineHeight = 18.sp,
         letterSpacing = (-0.01).em,
     ),
+    // Body · Manrope
     val body: TextStyle = TextStyle(
         fontFamily = ProExpenseSans,
         fontWeight = FontWeight.Normal,
@@ -96,12 +100,7 @@ data class ProExpenseTypography(
         fontSize = 11.5.sp,
         lineHeight = 16.1.sp,
     ),
-    val tagline: TextStyle = TextStyle(
-        fontFamily = ProExpenseSans,
-        fontWeight = FontWeight.Normal,
-        fontSize = 13.sp,
-        lineHeight = 18.85.sp,
-    ),
+    // Metadata · Geist Mono
     val eyebrow: TextStyle = TextStyle(
         fontFamily = ProExpenseMono,
         fontWeight = FontWeight.Medium,
@@ -116,6 +115,7 @@ data class ProExpenseTypography(
         lineHeight = 15.6.sp,
         letterSpacing = 0.08.em,
     ),
+    // Buttons · Manrope 600
     val buttonSmall: TextStyle = TextStyle(
         fontFamily = ProExpenseSans,
         fontWeight = FontWeight.SemiBold,
@@ -133,34 +133,28 @@ data class ProExpenseTypography(
     val buttonLarge: TextStyle = TextStyle(
         fontFamily = ProExpenseSans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 15.sp,
-        lineHeight = 15.sp,
-        letterSpacing = (-0.005).em,
+        fontSize = 15.5.sp,
+        lineHeight = 15.5.sp,
+        letterSpacing = 0.3.sp,
     ),
+    // Onboarding (Material rendition) — sans headlines, not serif.
     val onboardingTitle: TextStyle = TextStyle(
-        fontFamily = ProExpenseSerif,
-        fontWeight = FontWeight.Normal,
-        fontSize = 38.sp,
-        lineHeight = 39.9.sp,
-        letterSpacing = (-0.02).em,
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 28.sp,
+        lineHeight = 32.2.sp,
     ),
     val onboardingBody: TextStyle = TextStyle(
         fontFamily = ProExpenseSans,
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp,
-        lineHeight = 21.75.sp,
+        lineHeight = 22.5.sp,
     ),
-    val onboardingNav: TextStyle = TextStyle(
+    val topBarTitle: TextStyle = TextStyle(
         fontFamily = ProExpenseSans,
-        fontWeight = FontWeight.Normal,
-        fontSize = 13.sp,
-        lineHeight = 13.sp,
-    ),
-    val onboardingNavEmphasis: TextStyle = TextStyle(
-        fontFamily = ProExpenseSans,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 13.sp,
-        lineHeight = 13.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 22.sp,
+        lineHeight = 26.sp,
     ),
 )
 
