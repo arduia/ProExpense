@@ -11,14 +11,26 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven(url = "https://jitpack.io")
     }
 }
 
 rootProject.name = "ProExpense"
+
+// Android shell
 include(":app")
-include(":expense-backup")
-include(":currency-store")
-include(":backup")
+
+// KMP platform utilities
 include(":shared")
-include(":week-expense-graph") 
+
+// Core layers
+include(":core:domain")
+include(":core:data")
+include(":core:storage")
+
+// MVP feature modules (PRD Phase 1)
+include(":feature:logging")
+include(":feature:currency")
+include(":feature:history")
+include(":feature:sharedcost")
+include(":feature:auth")
+include(":feature:importexport")

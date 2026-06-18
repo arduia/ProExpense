@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": ".cursor/hooks/session-start.sh",
+        "timeout": 300
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/before-gradle.sh",
+        "matcher": "gradlew",
+        "timeout": 300
+      }
+    ]
+  }
+}

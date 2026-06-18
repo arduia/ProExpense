@@ -1,40 +1,53 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+}
+
+kotlin {
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.coroutines.core)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
+        }
+        // The Compose design system lives in androidMain. Exposed with `api` so
+        // every consumer (:app and the :feature:* modules' android source sets)
+        // inherits the Compose runtime alongside the design-system primitives.
+        androidMain.dependencies {
+            api(project.dependencies.platform(libs.compose.bom))
+            api(libs.compose.ui)
+            api(libs.compose.foundation)
+            api(libs.compose.material3)
+            api(libs.compose.ui.tooling.preview)
+        }
+    }
 }
 
 android {
-    namespace = "com.arduia.core"
+    namespace = "com.arduia.expense.shared"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
+    buildFeatures {
+        compose = true
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
 }
-
-dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    testImplementation(libs.junit)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.inline)
-    testImplementation(libs.mockito.kotlin)
-    androidTestImplementation(libs.androidx.test.ext)
-    androidTestImplementation(libs.espresso.core)
-} 

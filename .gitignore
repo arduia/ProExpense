@@ -2,8 +2,11 @@
 /local.properties
 .DS_Store
 /build
+**/build/
 /captures
 .externalNativeBuild
 .cxx
 /.gradle/
+/android-sdk/
 /.idea/
+**/build/outputs/roborazzi/

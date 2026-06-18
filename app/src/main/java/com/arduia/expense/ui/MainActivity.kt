@@ -1,328 +1,61 @@
 package com.arduia.expense.ui
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.*
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
-import com.arduia.core.lang.updateResource
-import com.arduia.expense.R
-import com.arduia.expense.data.SettingRepositoryFactoryImpl
-import com.arduia.expense.databinding.ActivityMainBinding
-import com.arduia.expense.databinding.LayoutHeaderBinding
-import com.arduia.expense.di.IntegerDecimal
-import com.arduia.expense.di.TopDropNavOption
-import com.arduia.expense.model.getDataOrError
-import com.arduia.expense.ui.backup.BackupMessageViewModel
-import com.arduia.mvvm.EventObserver
-import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import java.text.DecimalFormat
-import java.util.*
-import javax.inject.Inject
-import androidx.core.content.ContextCompat
-import com.arduia.expense.ui.about.AboutUpdateUiModel
-import com.arduia.expense.ui.about.ForceUpgradeDialog
-import com.arduia.expense.ui.about.VersionUpdateUtil
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.arduia.expense.ui.onboarding.FirstLaunchFlow
+import com.arduia.expense.ui.theme.ProExpenseTheme
 
-
-@AndroidEntryPoint
-class MainActivity @Inject constructor() : AppCompatActivity(), NavigationDrawer,
-    MainHost, BackupMessageReceiver {
-
-    private lateinit var binding: ActivityMainBinding
-
-    private lateinit var headerBinding: LayoutHeaderBinding
-
-    private val backupViewModel by viewModels<BackupMessageViewModel>()
-
-    private lateinit var navController: NavController
-
-    private lateinit var navOption: NavOptions
-
-    private var itemSelectTask: (() -> Unit)? = null
-
-    override val defaultSnackBarDuration: Int by lazy { resources.getInteger(R.integer.duration_short_snack) }
-
-    private var addBtnClickListener: (() -> Unit)? = {}
-
-    private var snackBarMessage: Snackbar? = null
-
-    private var addFabShowTask: (() -> Unit)? = null
-
-    private val viewModel by viewModels<MainViewModel>()
-
-    private var aboutUpdateDialog: ForceUpgradeDialog? = null
-
-    @Inject
-    @IntegerDecimal
-    lateinit var countFormat: DecimalFormat
-
-    @Inject
-    @TopDropNavOption
-    lateinit var entryNavOption: NavOptions
+class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(viewModel)
-        setTheme(R.style.Theme_ProExpense)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        headerBinding = LayoutHeaderBinding.bind(binding.nvMain.getHeaderView(0))
-        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, false)
-        setContentView(binding.root)
-        navController = findNavController()
-        navOption = createNavOption()
-        setupView()
-        setupViewModel()
-    }
+        enableEdgeToEdge()
+        setContent {
+            ProExpenseTheme {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = ProExpenseTheme.colors.surface,
+                ) { innerPadding ->
+                    var showHome by remember { mutableStateOf(false) }
+                    var profileLabel by remember { mutableStateOf("") }
 
-
-    private fun showForceUpgrade(data: AboutUpdateUiModel) {
-        aboutUpdateDialog?.dismiss()
-        aboutUpdateDialog = ForceUpgradeDialog(this).apply {
-            setOnInstallClickListener {
-                VersionUpdateUtil.openAppStoreLink(this@MainActivity)
-                this@MainActivity.finish()
-            }
-            setOnCloseListener {
-                this@MainActivity.finish()
-            }
-        }
-        aboutUpdateDialog?.show(data)
-    }
-
-    private fun setupViewModel() {
-        backupViewModel.finishedEvent.observe(this, EventObserver {
-            showBackupFinishedMessage(count = it)
-        })
-
-        viewModel.forceUpgradeState.observe(this) { state ->
-            val (enabled, info) = state
-            if (enabled && info != null) {
-                showForceUpgrade(info)
-            }
-        }
-    }
-
-    private fun showBackupFinishedMessage(count: Int) {
-        val isMultiItem = (count > 1)
-        val msg = if (isMultiItem)
-            getString(R.string.multi_items_imported)
-        else
-            getString(R.string.item_imported)
-
-        showSnackMessage("${countFormat.format(count)} $msg")
-    }
-
-    private fun findNavController(): NavController {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fc_main) as NavHostFragment
-        return navHostFragment.navController
-    }
-
-    private fun setupView() {
-
-        binding.fbMainAdd.setColorFilter(ContextCompat.getColor(this, R.color.white))
-        binding.fbMainAdd.setOnClickListener {
-            addBtnClickListener?.invoke()
-        }
-
-        binding.fbMainAdd.hide()
-
-        binding.nvMain.setupWithNavController(navController)
-
-        binding.nvMain.setNavigationItemSelectedListener listener@{ menuItem ->
-
-            itemSelectTask = { selectPage(selectedMenuItem = menuItem) }
-
-            binding.dlMain.closeDrawer(GravityCompat.START)
-
-            return@listener true
-        }
-
-        binding.dlMain.addDrawerListener(object : DrawerLayout.DrawerListener {
-
-            override fun onDrawerStateChanged(newState: Int) {}
-
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
-
-            override fun onDrawerClosed(drawerView: View) {
-                itemSelectTask?.invoke()
-                itemSelectTask = null
-            }
-
-            override fun onDrawerOpened(drawerView: View) {}
-        })
-
-        navController.addOnDestinationChangedListener { _, dest, _ ->
-
-            if (TOP_DESTINATIONS.contains(dest.id)) {
-                binding.dlMain.setDrawerLockMode(
-                    DrawerLayout.LOCK_MODE_UNLOCKED
-                )
-            } else binding.dlMain.setDrawerLockMode(
-                DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-            )
-
-            if (dest.id == R.id.dest_home) {
-                setAddButtonClickListener {
-                    navController.navigate(R.id.dest_expense_entry, null, entryNavOption)
-                }
-                showAddButton()
-            } else hideAddButton()
-
-        }
-
-        headerBinding.btnClose.setOnClickListener {
-            closeDrawer()
-        }
-
-    }
-
-    private fun selectPage(selectedMenuItem: MenuItem) {
-        val isHome = (selectedMenuItem.itemId == R.id.dest_home)
-
-        if (isHome) {
-            navController.popBackStack(R.id.dest_home, false)
-        }
-
-        navController.navigate(selectedMenuItem.itemId, null, navOption)
-    }
-
-    override fun registerBackupTaskID(id: UUID) {
-        backupViewModel.addTaskID(id)
-    }
-
-    override fun unregisterBackupTaskID(id: UUID) {
-        backupViewModel.removeTaskID(id)
-    }
-
-    override fun openDrawer() {
-        binding.dlMain.openDrawer(GravityCompat.START)
-    }
-
-    override fun closeDrawer() {
-        binding.dlMain.closeDrawer(GravityCompat.START)
-    }
-
-    override fun lockDrawer() {
-        with(binding.dlMain) {
-            closeDrawer(GravityCompat.START)
-            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        }
-    }
-
-    override fun unlockDrawer() {
-        binding.dlMain.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-    }
-
-    override fun navigateUpTo(upIntent: Intent?): Boolean {
-        return super.navigateUpTo(upIntent) or navController.navigateUp()
-    }
-
-    override fun onBackPressed() {
-        if (doDrawerClosure()) {
-            super.onBackPressed()
-        }
-    }
-
-    private fun doDrawerClosure(): Boolean {
-        val isDrawerOpen = binding.dlMain.isDrawerOpen(GravityCompat.START)
-        if (isDrawerOpen) {
-            binding.dlMain.closeDrawer(GravityCompat.START)
-            return false
-        }
-        return true
-    }
-
-    override fun showAddButton() {
-
-        addFabShowTask = { showAddFab() }
-
-        when (snackBarMessage?.isShown) {
-            true -> {
-                lifecycleScope.launch {
-                    val delayDuration =
-                        (snackBarMessage?.duration ?: 0) + 300 //Extra 100 for animation
-                    delay(delayDuration.toLong())
-                    addFabShowTask?.invoke()
+                    if (showHome) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "Home — welcome, $profileLabel!",
+                                style = ProExpenseTheme.typography.body,
+                                color = ProExpenseTheme.colors.onSurface,
+                            )
+                        }
+                    } else {
+                        FirstLaunchFlow(
+                            onComplete = { profile ->
+                                profileLabel = profile.name
+                                showHome = true
+                            },
+                            modifier = Modifier.padding(innerPadding),
+                        )
+                    }
                 }
             }
-
-            else -> {
-                addFabShowTask?.invoke()
-            }
         }
-    }
-
-    override fun showAddButtonInstantly() {
-        showAddFab()
-    }
-
-
-    private fun showAddFab() {
-        binding.fbMainAdd.show()
-        binding.fbMainAdd.isClickable = true
-    }
-
-    override fun hideAddButton() {
-        addFabShowTask = null
-        binding.fbMainAdd.isClickable = false
-        binding.fbMainAdd.hide()
-    }
-
-    override fun showSnackMessage(message: String, duration: Int) {
-        snackBarMessage = Snackbar.make(binding.clMain, message, duration).apply {
-            show()
-        }
-    }
-
-    override fun setAddButtonClickListener(listener: (() -> Unit)?) {
-        addBtnClickListener = listener
-    }
-
-    private fun createNavOption() =
-        NavOptions.Builder()
-            .setLaunchSingleTop(true)
-            .build()
-
-    override fun onDestroy() {
-        super.onDestroy()
-        lifecycle.removeObserver(viewModel)
-        itemSelectTask = null
-    }
-
-    override fun attachBaseContext(newBase: Context?) {
-        val localedContext = setUiModeAndGetLocaleContext(newBase)
-        super.attachBaseContext(localedContext)
-    }
-
-    private fun setUiModeAndGetLocaleContext(base: Context?): Context? = runBlocking {
-        if (base == null) return@runBlocking base
-        val setting = SettingRepositoryFactoryImpl.create(base)
-        val selectedLanguage = setting.getSelectedLanguageSync().getDataOrError()
-        delegate.localNightMode = setting.getSelectedThemeModeSync().getDataOrError()
-        return@runBlocking base.updateResource(selectedLanguage)
-    }
-
-    companion object {
-        private val TOP_DESTINATIONS = listOf(
-            R.id.dest_home,
-            R.id.dest_backup,
-            R.id.dest_statistics,
-            R.id.dest_feedback,
-            R.id.dest_about,
-            R.id.dest_settings,
-            R.id.dest_expense_logs
-        )
     }
 }
