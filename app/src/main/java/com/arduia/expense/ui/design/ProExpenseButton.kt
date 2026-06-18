@@ -23,6 +23,7 @@ enum class ProExpenseButtonVariant {
     PrimaryDeep,
     Sage,
     Dark,
+    Danger,
     Secondary,
     Ghost,
 }
@@ -100,6 +101,12 @@ private fun buttonColors(
             colors.ink.copy(alpha = alpha),
             colors.paperWarm.copy(alpha = alpha),
             BorderStroke(1.4.dp, colors.ink.copy(alpha = alpha)),
+        )
+        // Destructive actions — delete & clear-data, per design/DESIGN-SYSTEM.md §1.
+        ProExpenseButtonVariant.Danger -> Triple(
+            colors.danger.copy(alpha = alpha),
+            colors.paperWarm.copy(alpha = alpha),
+            BorderStroke(1.4.dp, colors.danger.copy(alpha = alpha)),
         )
         ProExpenseButtonVariant.Secondary -> Triple(
             Color.Transparent,
