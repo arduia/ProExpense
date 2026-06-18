@@ -107,7 +107,12 @@ fun HomeBottomNav(
                         modifier = Modifier.weight(1f),
                     )
                 }
-                Box(modifier = Modifier.weight(1f))
+                HomeAddFab(
+                    onClick = onAddClick,
+                    modifier = Modifier
+                        .weight(1f)
+                        .offset(y = -dimens.navFabOffset),
+                )
                 homeNavTrailingItems.forEach { item ->
                     HomeNavSlot(
                         item = item,
@@ -118,12 +123,6 @@ fun HomeBottomNav(
                 }
             }
         }
-        HomeAddFab(
-            onClick = onAddClick,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = -dimens.navFabOffset),
-        )
     }
 }
 
@@ -190,10 +189,11 @@ private fun HomeAddFab(
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed) motion.pressedScale else 1f
 
-    Column(
-        modifier = modifier.scale(scale),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(dimens.space4),
+    Box(
+        modifier = modifier
+            .defaultMinSize(minHeight = dimens.touchTargetMin)
+            .scale(scale),
+        contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
@@ -220,18 +220,23 @@ private fun HomeAddFab(
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            ProIcon(
-                glyph = ProIconGlyph.Plus,
-                contentDescription = null,
-                tint = colors.onPrimaryWarm,
-                size = dimens.iconNav,
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(dimens.space2),
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.Plus,
+                    contentDescription = null,
+                    tint = colors.onPrimaryWarm,
+                    size = dimens.iconInline,
+                )
+                Text(
+                    text = "Add",
+                    style = typography.caption,
+                    color = colors.onPrimaryWarm,
+                )
+            }
         }
-        Text(
-            text = "Add",
-            style = typography.caption,
-            color = colors.primary,
-        )
     }
 }
 
