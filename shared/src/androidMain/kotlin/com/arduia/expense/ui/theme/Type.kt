@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.arduia.expense.R
+import com.arduia.expense.shared.R
 
 // Typography — mirrors pro-expense-finance-tracker/project/FONTS.md.
 // Three families with clear jobs:
