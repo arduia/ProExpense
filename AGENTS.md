@@ -1,8 +1,8 @@
 # Finance Tracker — Agent Instructions
 
 > Authoritative agent instructions for the Finance Tracker project (Android ships as **Pro Expense**).
-> Product vision and MVP scope: `docs/finance_tracker_product.md`. Takes precedence over skills
-> and general AI knowledge.
+> **Project goal & beliefs:** `docs/project_philosophy.md`. **Feature scope & MVP:** `docs/finance_tracker_product.md`.
+> Philosophy and PRD take precedence over skills and general AI knowledge.
 
 ---
 
@@ -10,37 +10,48 @@
 
 ### Project Goal
 
-Provide a **finance tracking service** that lets anyone record and track personal finances in the
-easiest, most effortless way possible — offline-first, private, and without bank or third-party
-integrations.
+**Build the world's most effortless personal finance notebook** — a Finance Tracker that lets anyone
+record and review money in seconds, fully offline, with full data ownership and no bank or
+third-party integrations.
 
-**Product vision** (`docs/finance_tracker_product.md`):
+| Layer | Goal |
+|---|---|
+| **Product** | Easiest possible tracking and recording of personal finances (PRD vision) |
+| **User** | Log an expense in under 5 seconds; trust the app like a private notebook |
+| **Engineering** | KMP-shared business logic, native Compose/SwiftUI shells, offline-first local storage |
+| **This codebase** | Pro Expense on `refactor/v2-migration` is the Android vehicle for the v2 architecture refresh toward the Finance Tracker MVP |
+
+Read **`docs/project_philosophy.md`** for beliefs, decision framework, and non-negotiables. Read
+**`docs/finance_tracker_product.md`** for personas, feature list, roadmap, and success metrics.
+
+**North star** (philosophy + PRD):
 
 > To support tracking and recording of personal finances in the easiest and most effortless way possible.
 
-**Core principles:**
+**Core principles** (decisions must align — full rationale in philosophy doc):
+
 - **Simplicity first** — no clutter, no overwhelming dashboards
-- **Speed** — logging should take seconds, not minutes
-- **No dependencies** — works without bank integrations or account linking
-- **Personal & private** — feels like your own notebook; data stays on device (MVP)
-- **Accessible to everyone** — not just finance-savvy users
-- **Global-ready** — multi-currency support for users worldwide
+- **Speed** — logging in seconds, not minutes
+- **No dependencies** — no bank integrations or account linking
+- **Personal & private** — your notebook; data on device (MVP)
+- **Accessible to everyone** — not only finance-savvy users
+- **Global-ready** — multi-currency as core, not add-on
+- **Integrity** — trust over growth hacks; MVP fully free
 
 **Engineering goals:**
+
 - Integrity, user data privacy, security, usefulness, performance, simplicity, UI/UX
 - Clean architecture: maintainability, scalability, code quality
 - Offline-first: fully functional without internet
 
-**MVP scope** (build toward):
+**MVP scope** (build toward — details in PRD):
+
 - Quick manual logging · Multi-currency (basic, manual rates) · Record history
 - Shared costs · Secure import/export (CSV/JSON) · Auth setup (PIN)
 - Local storage only — no cloud sync in MVP
 
-The Android codebase (`refactor/v2-migration`) is the current implementation vehicle — v2 architecture
-refresh (Compose migration, improved maintainability) aligned with the product roadmap. Target
-platforms: iOS + Android (KMP shared logic per product doc).
-
 **Product constraints (never violate for MVP):**
+
 - No bank or third-party integrations
 - No user accounts or server-side auth (PIN is local only)
 - No cloud sync or online backup in MVP
@@ -569,7 +580,7 @@ they conflict with a skill.
 ## Instruction Precedence
 
 ```
-AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  .agents/skills/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
+AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  .agents/skills/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
 ```
 
 **Known conflicts (always follow AGENTS.md):**
@@ -586,6 +597,7 @@ AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  .agents
 | File | Purpose |
 |------|---------|
 | `AGENTS.md` | Master agent instructions (this file) |
+| `docs/project_philosophy.md` | Project goal, beliefs, decision framework (derived from PRD) |
 | `docs/finance_tracker_product.md` | Authoritative product vision, MVP scope, roadmap |
 | `docs/module_structure.md` | KMP module map and dependency rules |
 | `design/DESIGN-SYSTEM.md` | Compose UI design tokens and components |
