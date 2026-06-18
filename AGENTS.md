@@ -328,6 +328,27 @@ workaround). Never explain WHAT the code does. One short line max.
 - One `@Preview` per distinct UI state on content composables
 - Use `ProExpenseTheme` and components from `ui/design/` — see `design/DESIGN-SYSTEM.md`
 
+#### Design system alignment
+
+Components and screens must align with the shared design system. **Do not hardcode common UI
+attributes when a theme token exists.**
+
+| Attribute | Read from |
+|---|---|
+| Colors | `ProExpenseTheme.colors` / `ProExpensePalette` |
+| Typography | `ProExpenseTheme.typography` — no inline `fontSize`, `fontWeight`, or `fontSize * scale` hacks |
+| Spacing & sizing | `ProExpenseTheme.dimensions` — no inline `dp` for standard padding, heights, icon sizes |
+| Corner radii | `ProExpenseTheme.shapes` |
+| Motion | `ProExpenseTheme.motion` |
+
+Rules:
+
+- **`ui/design` primitives must be fully tokenized** — shared components consume theme tokens only.
+- **Missing token? Add it first** — extend `shared/src/androidMain/kotlin/com/arduia/expense/ui/theme/`
+  (`Type.kt`, `Dimensions.kt`, `Shape.kt`, `Color.kt`, `Motion.kt`) with a named token, then use it.
+- **Exceptions (inline values OK):** illustration/scene coordinates, one-off animation math, or
+  layout that has no semantic token yet — flag for tokenization when touching that area.
+
 ### Data Layer
 
 - Domain models in `core:domain`; amounts stored as integer ×100
