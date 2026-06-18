@@ -378,6 +378,7 @@ bash scripts/setup-android-toolchain.sh
 
 # Screenshot tests — record new baselines after intentional UI changes
 # (writes review PNGs to app/src/test/screenshots/ — commit them with the UI diff)
+# Compare each baseline against design_handoff_v2/reference-images/ before committing (Step 5.5)
 ./gradlew :app:recordRoborazziDevDebug
 
 # Screenshot tests — compare against committed baselines
