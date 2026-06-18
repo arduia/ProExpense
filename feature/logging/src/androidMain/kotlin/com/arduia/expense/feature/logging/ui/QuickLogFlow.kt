@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
@@ -18,7 +19,9 @@ import com.arduia.expense.domain.formatWithSymbol
 import com.arduia.expense.feature.logging.AmountInputLogic
 import com.arduia.expense.feature.logging.LogRecordInput
 import com.arduia.expense.feature.logging.LoggingRepository
+import com.arduia.expense.feature.logging.PreviewLoggingRepository
 import com.arduia.expense.feature.logging.amountFromCents
+import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
@@ -125,5 +128,18 @@ fun QuickLogFlow(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun QuickLogFlowAmountPreview() {
+    ProExpenseTheme {
+        QuickLogFlow(
+            homeCurrencyCode = "USD",
+            loggingRepository = PreviewLoggingRepository,
+            onDismiss = {},
+            onSaved = {},
+        )
     }
 }

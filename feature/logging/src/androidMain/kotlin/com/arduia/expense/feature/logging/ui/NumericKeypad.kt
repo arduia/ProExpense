@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.design.IconChevronRight
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -153,5 +154,31 @@ private fun KeypadActionButton(
             },
         )
         trailing?.invoke()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 320)
+@Composable
+private fun NumericKeypadEnabledPreview() {
+    ProExpenseTheme {
+        NumericKeypad(
+            canProceed = true,
+            onKey = {},
+            onSave = {},
+            onNext = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 320)
+@Composable
+private fun NumericKeypadDisabledPreview() {
+    ProExpenseTheme {
+        NumericKeypad(
+            canProceed = false,
+            onKey = {},
+            onSave = {},
+            onNext = {},
+        )
     }
 }

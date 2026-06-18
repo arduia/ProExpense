@@ -13,12 +13,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.formatWithSymbol
 import com.arduia.expense.feature.history.HistoryRepository
 import com.arduia.expense.feature.history.SummaryPeriod
 import com.arduia.expense.feature.logging.LoggingRepository
+import com.arduia.expense.feature.logging.PreviewLoggingRepository
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.ui.home.HomeScreen
 import com.arduia.expense.ui.home.HomeShell
@@ -127,5 +129,65 @@ fun ExpenseApp(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun ExpenseAppHomePreview() {
+    ProExpenseTheme {
+        ExpenseAppHomePreviewHost()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun ExpenseAppQuickLogPreview() {
+    ProExpenseTheme {
+        ExpenseAppQuickLogPreviewHost()
+    }
+}
+
+@Composable
+internal fun ExpenseAppHomePreviewHost(
+    modifier: Modifier = Modifier,
+) {
+    val sampleState = HomeUiState(
+        profileName = "Maya",
+        homeCurrencyCode = "USD",
+        dateLabel = "Wed · May 25",
+        monthSpendLabel = "$12.50",
+        recentRecords = emptyList(),
+    )
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = ProExpenseTheme.colors.surface,
+    ) {
+        HomeShell(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            homeContent = {
+                HomeScreen(state = sampleState, onSeeAll = {})
+            },
+            selectedTab = HomeTab.Home,
+            onTabSelected = {},
+            onAddExpense = {},
+        )
+    }
+}
+
+@Composable
+internal fun ExpenseAppQuickLogPreviewHost(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        ExpenseAppHomePreviewHost()
+        QuickLogFlow(
+            homeCurrencyCode = "USD",
+            loggingRepository = PreviewLoggingRepository,
+            onDismiss = {},
+            onSaved = {},
+        )
     }
 }

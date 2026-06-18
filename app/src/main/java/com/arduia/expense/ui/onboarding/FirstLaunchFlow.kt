@@ -9,9 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.currency.ui.profile.ProfileCurrencyScreen
 import com.arduia.expense.feature.currency.ui.profile.ProfileCurrencySheet
 import com.arduia.expense.feature.currency.ui.profile.ProfileNameScreen
+import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.delay
 
 private const val SPLASH_DISPLAY_MS = 1_800L
@@ -86,5 +88,38 @@ fun FirstLaunchFlow(
                 },
             )
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun FirstLaunchFlowOnboardingPreview() {
+    ProExpenseTheme {
+        OnboardingScreen(onFinish = {})
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun FirstLaunchFlowProfileNamePreview() {
+    ProExpenseTheme {
+        ProfileNameScreen(
+            name = "Maya",
+            onNameChange = {},
+            onContinue = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun FirstLaunchFlowProfileCurrencyPreview() {
+    ProExpenseTheme {
+        ProfileCurrencyScreen(
+            selectedCode = "USD",
+            onCurrencySelected = {},
+            onStartTracking = {},
+            onShowAllCurrencies = {},
+        )
     }
 }

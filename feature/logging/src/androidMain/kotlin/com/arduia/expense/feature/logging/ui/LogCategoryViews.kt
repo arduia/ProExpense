@@ -18,8 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.LogCategory
+import com.arduia.expense.feature.logging.defaultLogCategories
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -92,5 +93,25 @@ fun LogCategoryChip(
             style = typography.buttonSmall,
             color = if (selected) colors.onPrimary else colors.onSurfaceVariant,
         )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 120)
+@Composable
+private fun LogCategoryBadgePreview() {
+    ProExpenseTheme {
+        LogCategoryBadge(category = defaultLogCategories.first())
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 120)
+@Composable
+private fun LogCategoryChipPreview() {
+    val category = defaultLogCategories.first()
+    ProExpenseTheme {
+        Row(horizontalArrangement = Arrangement.spacedBy(ProExpenseTheme.dimensions.space8)) {
+            LogCategoryChip(category = category, selected = false, onClick = {})
+            LogCategoryChip(category = category, selected = true, onClick = {})
+        }
     }
 }
