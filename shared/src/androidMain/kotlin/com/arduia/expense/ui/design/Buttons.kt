@@ -50,7 +50,7 @@ fun ProFilledButton(
     val isPrimary = tone == ProButtonTone.Primary
     val background = if (isPrimary) colors.primary else colors.surfaceVariant
     val foreground = if (isPrimary) colors.onPrimary else colors.onSurface
-    val shape = RoundedCornerShape(28.dp)
+    val shape = RoundedCornerShape(8.dp)
 
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
