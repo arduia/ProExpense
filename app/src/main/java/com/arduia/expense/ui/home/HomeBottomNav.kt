@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -47,7 +45,7 @@ fun HomeBottomNav(
     val dims = ProExpenseTheme.dimensions
     val shapes = ProExpenseTheme.shapes
     val navShadowColor = Color(0x1A000000)
-    val chromeHeight = dims.bottomNavHeight + dims.homeFabRaise
+    val chromeHeight = dims.bottomNavChromeHeight
 
     Box(
         modifier = modifier
@@ -71,7 +69,7 @@ fun HomeBottomNav(
                     clip = false,
                 )
                 .clip(shapes.bottomNav)
-                .background(colors.navBackground.copy(alpha = dims.bottomNavSurfaceAlpha)),
+                .background(colors.navBackground),
         )
 
         Row(
@@ -93,11 +91,9 @@ fun HomeBottomNav(
                 onClick = { onTabSelected(HomeTab.Budget) },
                 modifier = Modifier.weight(1f),
             )
-            AddNavTab(
+            AddNavLabel(
                 onClick = onAddExpense,
-                modifier = Modifier
-                    .weight(1f)
-                    .zIndex(1f),
+                modifier = Modifier.weight(1f),
             )
             BottomNavTab(
                 tab = HomeTab.Journal,
@@ -112,11 +108,25 @@ fun HomeBottomNav(
                 modifier = Modifier.weight(1f),
             )
         }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .size(dims.homeFabSize)
+                .zIndex(1f)
+                .shadow(dims.buttonShadowElevation, CircleShape, clip = false)
+                .clip(CircleShape)
+                .background(colors.primary)
+                .clickable(onClick = onAddExpense),
+            contentAlignment = Alignment.Center,
+        ) {
+            IconPlus(color = colors.onPrimary, size = 24.dp, weight = 2f)
+        }
     }
 }
 
 @Composable
-private fun AddNavTab(
+private fun AddNavLabel(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -124,38 +134,19 @@ private fun AddNavTab(
     val typography = ProExpenseTheme.typography
     val dims = ProExpenseTheme.dimensions
     val interaction = remember { MutableInteractionSource() }
-    val fabCenterFromBarTop = dims.homeFabSize / 2 - dims.homeFabRaise
-    val fabOffsetY = fabCenterFromBarTop - dims.bottomNavIconBandHeight / 2
 
     Column(
         modifier = modifier
-            .fillMaxHeight()
+            .height(dims.bottomNavHeight)
             .clickable(
                 interactionSource = interaction,
-                indication = ripple(bounded = false, radius = dims.homeFabSize / 2),
+                indication = ripple(bounded = false, radius = dims.rippleRadiusIconButton),
                 onClick = onClick,
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dims.bottomNavIconBandHeight),
-            contentAlignment = Alignment.TopCenter,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(dims.homeFabSize)
-                    .offset(y = fabOffsetY)
-                    .shadow(dims.buttonShadowElevation, CircleShape, clip = false)
-                    .clip(CircleShape)
-                    .background(colors.primary),
-                contentAlignment = Alignment.Center,
-            ) {
-                IconPlus(color = colors.onPrimary, size = 24.dp, weight = 2f)
-            }
-        }
+        Box(modifier = Modifier.height(dims.bottomNavIconBandHeight))
         Text(
             text = "Add",
             modifier = Modifier.padding(bottom = dims.bottomNavLabelPaddingBottom),
@@ -187,7 +178,7 @@ private fun BottomNavTab(
 
     Column(
         modifier = modifier
-            .fillMaxHeight()
+            .height(dims.bottomNavHeight)
             .clip(ProExpenseTheme.shapes.pill)
             .clickable(
                 interactionSource = interaction,
@@ -229,7 +220,7 @@ private fun HomeBottomNavPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ProExpenseTheme.colors.paper)
-                .padding(top = 40.dp),
+                .padding(top = 8.dp),
         ) {
             HomeBottomNav(
                 selectedTab = HomeTab.Home,

@@ -2,13 +2,12 @@ package com.arduia.expense.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -32,10 +31,9 @@ class HomeBottomNavScreenshotTest {
             ProExpenseTheme {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp)
-                        .background(ProExpenseTheme.colors.paper)
-                        .padding(top = 40.dp),
+                        .fillMaxSize()
+                        .background(ProExpenseTheme.colors.paper),
+                    contentAlignment = Alignment.BottomCenter,
                 ) {
                     HomeBottomNav(
                         selectedTab = HomeTab.Home,
