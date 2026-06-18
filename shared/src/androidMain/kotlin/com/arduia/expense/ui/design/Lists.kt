@@ -9,7 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -20,6 +23,7 @@ fun TransactionRow(
     amount: String,
     modifier: Modifier = Modifier,
     tag: String? = null,
+    showDivider: Boolean = true,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -28,6 +32,21 @@ fun TransactionRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .then(
+                if (showDivider) {
+                    Modifier.drawBehind {
+                        val stroke = 1.dp.toPx()
+                        drawLine(
+                            color = colors.lineSoft,
+                            start = Offset(0f, size.height - stroke / 2f),
+                            end = Offset(size.width, size.height - stroke / 2f),
+                            strokeWidth = stroke,
+                        )
+                    }
+                } else {
+                    Modifier
+                },
+            )
             .padding(vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),

@@ -103,8 +103,7 @@ fun ProDesignSystemFieldsContent() {
 
 @Composable
 fun ProDesignSystemListsContent() {
-    val dimens = ProExpenseTheme.dimensions
-    Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+    Column {
         DayHeader(title = "Today · May 25", total = "$80.90")
         TransactionRow(
             categoryId = "food",
@@ -118,6 +117,7 @@ fun ProDesignSystemListsContent() {
             meta = "Entertainment · 08:10 PM",
             amount = "$18.00",
             tag = "Bali Trip",
+            showDivider = false,
         )
     }
 }
