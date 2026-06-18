@@ -181,7 +181,7 @@ private fun SheetCurrencyRow(
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 6.dp)
             .clip(RoundedCornerShape(14.dp))
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
+            .clickable(interactionSource = interaction, indication = ripple(), onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
