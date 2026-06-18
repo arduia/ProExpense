@@ -216,6 +216,57 @@ This script:
 
 **Else:** Edit in dependency order. Commit at logical checkpoints.
 
+### Step 5.5 — Design alignment check (UI work)
+
+**Gate:** Implementation matches the provided design handoff before screenshot verify (Step 6).
+
+**Applies to:** Any Compose screen, shell, flow step, theme change, or `ui/design/` component that
+has a corresponding entry in `design_handoff_v2/`.
+
+**Else (mandatory before push on UI work):**
+
+1. **Locate the design source of truth** (in order):
+   - Reference PNG: `design_handoff_v2/reference-images/<screen-id>.png` (414×868 artboards)
+   - Component spec: `design_handoff_v2/components.yaml` → anatomy, states, tokens
+   - Tokens: `design_handoff_v2/design-tokens.json`
+   - Human guide: `design_handoff_v2/DESIGN-SYSTEM.md`, `design_handoff_v2/screen-flows.md`
+
+2. **Read the spec before coding** — note layout anatomy (e.g. tab order, FAB position, insets,
+   active/inactive colors, typography roles). Implement with `ProExpenseTheme` tokens; add missing
+   tokens to `shared/.../ui/theme/` instead of hardcoding.
+
+3. **Implement, then compare yourself** — do not rely on tests alone:
+   - Open the reference PNG and your Roborazzi baseline side-by-side
+   - For chrome components (nav bars, top bars, sheets), add a **focused screenshot test** that
+     crops/isolates the component (e.g. `HomeBottomNavScreenshotTest` at `w414dp-h120dp`)
+   - Check positional geometry that specs call out (overlap, raise, inset, label baseline alignment)
+
+4. **Iterate until aligned** — if the baseline diverges from the reference, fix layout/tokens and
+   re-record; only commit baselines that intentionally match the design.
+
+5. **Record & commit review images:**
+   ```bash
+   ./gradlew :app:recordRoborazziDevDebug
+   git add app/src/test/screenshots/
+   ```
+
+6. **Confirm green compare:**
+   ```bash
+   ./gradlew :app:verifyRoborazziDevDebug   # or verifyAll
+   ```
+
+**Common alignment checks (bottom nav example):**
+
+| Check | Design source | What to verify |
+|-------|---------------|----------------|
+| Tab order & count | `components.yaml` → `HomeBottomNav` | Home · Budget · Add · Journal · More |
+| FAB geometry | `dimension.fab.size`, “raised over bar” | 64dp circle, center on bar top edge (half above / half inside) |
+| Bar shape & inset | `DESIGN-SYSTEM.md` §8 | Floating pill, horizontal inset, soft shadow |
+| Active/inactive | `components.yaml` states | Primary blue active; `#8E8E93` inactive |
+| Typography | `design-tokens.json` → `mono` / tab labels | Geist Mono tab labels, not sans body |
+
+**Step 6 is blocked for UI work until design alignment is ✅ and screenshot verify is green.**
+
 ### Step 6 — Verify In-Session
 
 **Gate:** Right check is green — or verify impossible and flagged with fallback.
@@ -235,17 +286,19 @@ This script:
 | Small non-logic | `./gradlew :app:compileDevDebugKotlin` |
 
 **UI change gate (mandatory before push):** Any change to Compose screens, themes, or
-`ui/design/` components **must** pass screenshot verification in-session before `git push`:
+`ui/design/` components **must** pass **design alignment (Step 5.5)** and screenshot verification
+in-session before `git push`:
 
-1. `./gradlew :app:verifyRoborazziDevDebug` (or `./gradlew verifyAll`) exits 0
-2. **New UI implementation must ship review images** — every new or materially changed screen,
+1. Compared implementation against `design_handoff_v2/reference-images/` and `components.yaml`
+2. `./gradlew :app:verifyRoborazziDevDebug` (or `./gradlew verifyAll`) exits 0
+3. **New UI implementation must ship review images** — every new or materially changed screen,
    shell, flow step, or design-system component needs a Roborazzi screenshot test
    (`captureRoboImage` in `app/src/test/`) and committed baseline PNG(s) under
    `app/src/test/screenshots/` in the **same branch**. These files are the visual review
    artifact for humans and CI; code-only UI delivery without generated images is incomplete.
-3. If visuals changed intentionally, run `./gradlew :app:recordRoborazziDevDebug` to generate
+4. If visuals changed intentionally, run `./gradlew :app:recordRoborazziDevDebug` to generate
    or refresh baselines, then commit the updated PNGs with the UI diff
-4. Every touched content-composable file has `@Preview` (see Compose UI standards)
+5. Every touched content-composable file has `@Preview` (see Compose UI standards)
 
 **Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
 
@@ -283,6 +336,7 @@ Every task completion **must** include a **Workflow status** block in the final 
 ```markdown
 ## Workflow status
 - Step 2.25 — Toolchain: ✅ already configured | ✅ `scripts/setup-android-toolchain.sh` | ⚠️ skipped (reason)
+- Step 5.5 — Design alignment: ✅ compared to `design_handoff_v2/reference-images/<id>.png` | ⚠️ N/A (non-UI) | ❌ not checked
 - Step 6 — Verify: ✅ `<command run>` | ⚠️ G1 flagged (reason) | ❌ not run
 - Step 7 — Push: ✅ `origin/<branch>` @ `<short-sha>` | ❌ not pushed
 - PR: manual (not opened by agent)
@@ -352,6 +406,7 @@ bash scripts/setup-android-toolchain.sh
 
 | Type | Location |
 |------|----------|
+| Design handoff (source of truth) | `design_handoff_v2/` — `reference-images/`, `components.yaml`, `design-tokens.json` |
 | KMP unit tests | `<module>/src/commonTest/kotlin/` |
 | Android JVM unit tests | `app/src/test/java/` |
 | Screenshot baselines (review images) | `app/src/test/screenshots/` — committed PNGs from `recordRoborazziDevDebug` |
@@ -389,6 +444,11 @@ bash scripts/setup-android-toolchain.sh
    add or update a screenshot test, run `recordRoborazziDevDebug`, and commit the resulting
    PNG baselines in `app/src/test/screenshots/` in the same branch. Intentional visual changes
    on existing screens follow the same record-and-commit flow.
+
+9. **Design alignment before screenshot verify** — for UI covered by `design_handoff_v2`, complete
+   Step 5.5: read `components.yaml` + reference PNG, compare baseline to reference side-by-side,
+   fix layout/token gaps, then record baselines. Isolated component screenshot tests are required
+   for reusable chrome (nav bars, top bars, sheets).
 
 ### Tools
 
@@ -446,12 +506,24 @@ workaround). Never explain WHAT the code does. One short line max.
   `app/src/test/screenshots/` via `recordRoborazziDevDebug` before push
 - Verify with `verifyRoborazziDevDebug` (or `verifyAll`) after recording — green compare is
   required; do not push UI without the image files in git
-- Use `ProExpenseTheme` and components from `ui/design/` — see `design/DESIGN-SYSTEM.md`
+- **Design alignment (Step 5.5):** before recording baselines, compare your implementation against
+  `design_handoff_v2/reference-images/<screen>.png` and `components.yaml`. Add focused screenshot
+  tests for chrome components (nav, top bar, sheet) so layout regressions are visible in review.
+- Use `ProExpenseTheme` and components from `ui/design/` — see `design_handoff_v2/DESIGN-SYSTEM.md`
 
 #### Design system alignment
 
-Components and screens must align with the shared design system. **Do not hardcode common UI
-attributes when a theme token exists.**
+Components and screens must align with the shared design system **and** the checked-in design
+handoff (`design_handoff_v2/`). **Do not hardcode common UI attributes when a theme token exists.**
+
+**Verification workflow (summary):**
+
+1. Read `components.yaml` + reference PNG for the screen/component
+2. Implement with theme tokens
+3. Compare reference PNG ↔ Roborazzi baseline side-by-side; fix mismatches
+4. `recordRoborazziDevDebug` → commit PNGs → `verifyRoborazziDevDebug` green
+
+See **Step 5.5 — Design alignment check** for the full checklist.
 
 | Attribute | Read from |
 |---|---|
@@ -603,8 +675,12 @@ declare verification impossible. Treat all code as **unverified**. Compensate pe
 
 **Action (all required before push):**
 
+- Complete **Step 5.5 — Design alignment check** against `design_handoff_v2/`
 - `@Preview` on every touched content-composable file (one per distinct UI state)
-- Roborazzi screenshot test for every new or materially changed UI surface
+- Roborazzi screenshot test for every new or materially changed UI surface; focused test for chrome
+  components (nav bars, top bars, sheets)
+- Side-by-side compare: `design_handoff_v2/reference-images/<id>.png` vs
+  `app/src/test/screenshots/<TestName>.png` before committing baselines
 - `./gradlew :app:recordRoborazziDevDebug` to **generate review image files** (PNG baselines in
   `app/src/test/screenshots/`) and commit them in the same branch when visuals are new or changed
 - `./gradlew :app:verifyRoborazziDevDebug` green after baselines are committed
