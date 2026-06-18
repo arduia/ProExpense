@@ -157,6 +157,41 @@ working branch is settled.
 
 **Else:** Confirm artifact version, Kotlin/Android compatibility. Use web search for unfamiliar APIs.
 
+### Step 2.25 — Prepare Toolchain (before first Gradle command)
+
+**Gate:** Android SDK is configured and Gradle can resolve project dependencies.
+
+Check (all must pass — skip setup if they do):
+
+1. `local.properties` exists at repo root with a valid `sdk.dir=…` path
+2. That SDK path exists on disk (contains `platform-tools/`)
+3. `./gradlew --version` exits 0
+
+**Else (run once per environment / session when the gate fails):**
+
+```bash
+bash scripts/setup-android-toolchain.sh
+```
+
+This script:
+
+- Ensures Java 17+
+- Downloads Android command-line tools (into `android-sdk/` at repo root by default)
+- Installs platform **36** and build-tools **36.0.0**
+- Accepts SDK licenses and writes `local.properties`
+- Warms Gradle dependency resolution (`buildEnvironment`, module `dependencies`)
+
+**When to run:**
+
+| Situation | Action |
+|-----------|--------|
+| Fresh clone, cloud agent, or CI runner | Run setup before Step 6 |
+| `SDK location not found` / missing `sdk.dir` | Run setup, then retry Gradle |
+| Gradle plugin or dependency resolution fails on first run | Run setup, then retry |
+| SDK already configured and `./gradlew verifyAll` works | ✅ skip |
+
+**Do not declare G1** until setup has been attempted when the failure is environmental.
+
 ### Step 3 — Plan
 
 **Gate:** Full change surface obvious for a small, self-contained change.
@@ -187,6 +222,9 @@ working branch is settled.
 
 **Else (run once before push):**
 
+1. **Toolchain gate:** if Step 2.25 is not ✅, run `bash scripts/setup-android-toolchain.sh` first.
+2. Run the verification command for your change type:
+
 | Change type | Command |
 |-------------|---------|
 | Any agent change (preferred) | `./gradlew verifyAll` |
@@ -207,6 +245,8 @@ working branch is settled.
 **Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
 
 **G1 (no Gradle):** declare verification impossible, treat code as unverified, compensate per retrospectives rule.
+Run `bash scripts/setup-android-toolchain.sh` first when the failure is missing SDK or unresolved
+dependencies — only declare G1 if setup was attempted and Gradle still cannot run.
 
 **Local device gates** (when `adb devices` shows a device):
 - L1: `./gradlew :app:compileDevDebugKotlin`
@@ -236,12 +276,14 @@ Every task completion **must** include a **Workflow status** block in the final 
 
 ```markdown
 ## Workflow status
+- Step 2.25 — Toolchain: ✅ already configured | ✅ `scripts/setup-android-toolchain.sh` | ⚠️ skipped (reason)
 - Step 6 — Verify: ✅ `<command run>` | ⚠️ G1 flagged (reason) | ❌ not run
 - Step 7 — Push: ✅ `origin/<branch>` @ `<short-sha>` | ❌ not pushed
 - PR: manual (not opened by agent)
 ```
 
 Rules:
+- **Step 2.25 ✅** when SDK is configured and Gradle resolves dependencies, or after `setup-android-toolchain.sh` succeeds.
 - **Step 6 ✅** only after the matching command exits 0 in this session (preferred: `./gradlew verifyAll`), or **G1** is declared with reason and compensation.
 - **Step 7 ✅** only after `git push` succeeds and local `HEAD` matches `origin/<branch>`.
 - **PR:** always report `manual (not opened by agent)` unless the user explicitly requested PR creation in that turn.
@@ -260,6 +302,12 @@ Rules:
 ## Build Commands
 
 Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
+
+**First-time / fresh environment — run before any command below:**
+
+```bash
+bash scripts/setup-android-toolchain.sh
+```
 
 ```bash
 # Unified verification (build + unit tests + screenshot tests)
@@ -287,7 +335,7 @@ Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
 ./gradlew :app:installDevDebug
 ```
 
-**Prerequisites:** `local.properties` (sdk.dir)
+**Prerequisites:** `local.properties` (`sdk.dir`) — created automatically by `scripts/setup-android-toolchain.sh`.
 
 ---
 
@@ -516,7 +564,8 @@ While the **`refactor/v2-migration`** branch is active and the v2 architecture r
 
 **Trigger:** Gradle fails to resolve plugins/deps, or no Android SDK (`sdk.dir` missing).
 
-**Action:** Declare verification impossible. Treat all code as **unverified**. Offer environment fix.
+**Action:** Run `bash scripts/setup-android-toolchain.sh` and retry Step 6. If Gradle still cannot run,
+declare verification impossible. Treat all code as **unverified**. Compensate per G2.
 
 ### G2 — Compensate When Tests Can't Run
 
