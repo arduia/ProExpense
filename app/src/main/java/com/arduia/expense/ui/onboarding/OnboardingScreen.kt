@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.IconArrowLeft
 import com.arduia.expense.ui.design.IconChevronRight
@@ -54,9 +55,14 @@ private val onboardingSlides = listOf(
 fun OnboardingScreen(
     onFinish: () -> Unit,
     modifier: Modifier = Modifier,
+    initialPage: Int = 0,
 ) {
     val colors = ProExpenseTheme.colors
-    val pagerState = rememberPagerState(pageCount = { onboardingSlides.size })
+    val dims = ProExpenseTheme.dimensions
+    val pagerState = rememberPagerState(
+        initialPage = initialPage,
+        pageCount = { onboardingSlides.size },
+    )
     val scope = rememberCoroutineScope()
     val page = pagerState.currentPage
     val isLast = page == onboardingSlides.lastIndex
@@ -70,8 +76,8 @@ fun OnboardingScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = 8.dp),
+                .height(dims.topBarHeight)
+                .padding(horizontal = dims.space8),
             contentAlignment = Alignment.CenterEnd,
         ) {
             if (!isLast) {
@@ -96,16 +102,16 @@ fun OnboardingScreen(
             activeIndex = page,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 28.dp)
-                .padding(bottom = 22.dp),
+                .padding(horizontal = dims.space28)
+                .padding(bottom = dims.space22),
         )
 
         // Stepper row: Back · Next (lifted clear of the CTA)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
+                .padding(horizontal = dims.space16)
+                .padding(bottom = dims.space16),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -131,8 +137,8 @@ fun OnboardingScreen(
             text = "Get started",
             onClick = onFinish,
             modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 22.dp),
+                .padding(horizontal = dims.space20)
+                .padding(bottom = dims.space22),
         )
     }
 }
@@ -140,36 +146,69 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingSlideContent(index: Int) {
     val colors = ProExpenseTheme.colors
+    val dims = ProExpenseTheme.dimensions
     val slide = onboardingSlides[index]
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
+            .padding(horizontal = dims.space32),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Box(
             modifier = Modifier
-                .width(280.dp)
-                .height(200.dp),
+                .width(dims.onboardingIllustrationFrameWidth)
+                .height(dims.onboardingIllustrationHeight),
             contentAlignment = Alignment.Center,
         ) {
-            onboardingIllustrations[index](Modifier.size(width = 240.dp, height = 200.dp))
+            onboardingIllustrations[index](
+                Modifier.size(
+                    width = dims.onboardingIllustrationWidth,
+                    height = dims.onboardingIllustrationHeight,
+                ),
+            )
         }
-        Spacer(Modifier.height(30.dp))
+        Spacer(Modifier.height(dims.space30))
         Text(
             text = slide.title,
             style = ProExpenseTheme.typography.onboardingTitle,
             color = colors.onSurface,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(dims.space12))
         Text(
             text = slide.body,
             style = ProExpenseTheme.typography.onboardingBody,
             color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.widthIn(max = 280.dp),
+            modifier = Modifier.widthIn(max = dims.onboardingBodyMaxWidth),
         )
+    }
+}
+
+private const val PREVIEW_WIDTH = 414
+private const val PREVIEW_HEIGHT = 868
+
+@Preview(showBackground = true, widthDp = PREVIEW_WIDTH, heightDp = PREVIEW_HEIGHT)
+@Composable
+private fun OnboardingScreenWelcomePreview() {
+    ProExpenseTheme {
+        OnboardingScreen(onFinish = {}, initialPage = 0)
+    }
+}
+
+@Preview(showBackground = true, widthDp = PREVIEW_WIDTH, heightDp = PREVIEW_HEIGHT)
+@Composable
+private fun OnboardingScreenJournalPreview() {
+    ProExpenseTheme {
+        OnboardingScreen(onFinish = {}, initialPage = onboardingSlides.lastIndex)
+    }
+}
+
+@Preview(showBackground = true, widthDp = PREVIEW_WIDTH, heightDp = PREVIEW_HEIGHT)
+@Composable
+private fun OnboardingQuickLogSlidePreview() {
+    ProExpenseTheme {
+        OnboardingSlideContent(1)
     }
 }

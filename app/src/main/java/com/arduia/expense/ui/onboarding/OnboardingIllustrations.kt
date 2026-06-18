@@ -19,6 +19,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
+import com.arduia.expense.ui.theme.ProExpensePalette
 import com.arduia.expense.ui.theme.ProExpenseSans
 
 // Onboarding illustrations — composed scene drawings translated from
@@ -27,15 +28,15 @@ import com.arduia.expense.ui.theme.ProExpenseSans
 // soft blue-50 backdrop. Authored on a 240×200 grid.
 
 private object Illo {
-    val ink = Color(0xFF212121)
-    val blue = Color(0xFF039BE5)
-    val blueDeep = Color(0xFF0288D1)
-    val blue300 = Color(0xFF4FC3F7)
-    val blue100 = Color(0xFFB3E5FC)
-    val blue50 = Color(0xFFE1F5FE)
-    val white = Color(0xFFFFFFFF)
-    val gray = Color(0xFF9E9E9E)
-    val grayLine = Color(0xFFBDBDBD)
+    val ink = ProExpensePalette.Ink
+    val blue = ProExpensePalette.Blue500
+    val blueDeep = ProExpensePalette.Blue700
+    val blue300 = ProExpensePalette.Blue300
+    val blue100 = ProExpensePalette.Blue100
+    val blue50 = ProExpensePalette.Blue50
+    val white = ProExpensePalette.Card
+    val gray = ProExpensePalette.Muted
+    val grayLine = ProExpensePalette.Muted2
 }
 
 private const val VB_W = 240f
