@@ -17,6 +17,7 @@ data class ProExpenseMotion(
     val fadeUpMs: Int = 200,
     val tapScaleMs: Int = 80,
     val pressedScale: Float = 0.97f,
+    val disabledOpacity: Float = 0.4f,
     val standardEasing: Easing = ProExpenseEase,
 ) {
     fun screenTween() = tween<Float>(durationMillis = screenTransitionMs, easing = standardEasing)

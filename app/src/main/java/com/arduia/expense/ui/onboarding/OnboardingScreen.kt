@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -26,12 +25,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arduia.expense.ui.design.IconArrowLeft
+import com.arduia.expense.ui.design.IconBack
 import com.arduia.expense.ui.design.IconChevronRight
-import com.arduia.expense.ui.design.ProButtonTone
-import com.arduia.expense.ui.design.ProFilledButton
-import com.arduia.expense.ui.design.ProTextButton
 import com.arduia.expense.ui.design.PageDots
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.launch
 
@@ -45,12 +44,7 @@ private val onboardingSlides = listOf(
     OnboardingSlide("Journal", "Review your spending like a diary, day by day."),
 )
 
-/**
- * First-launch onboarding — a five-slide swipeable intro.
- * Mirrors android-onboarding.jsx · AndOnboarding (Material 3 rendition).
- *
- * @param onFinish invoked when the user skips or taps "Get started".
- */
+/** Flow 04 — five-slide value intro ending in "Get started". */
 @Composable
 fun OnboardingScreen(
     onFinish: () -> Unit,
@@ -70,22 +64,25 @@ fun OnboardingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.surface),
+            .background(colors.paper),
     ) {
-        // Top bar — Skip (hidden on the last slide)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dims.topBarHeight)
-                .padding(horizontal = dims.space8),
+                .padding(horizontal = dims.space16),
             contentAlignment = Alignment.CenterEnd,
         ) {
             if (!isLast) {
-                ProTextButton(text = "Skip", tone = ProButtonTone.Secondary, onClick = onFinish)
+                ProButton(
+                    text = "Skip",
+                    onClick = onFinish,
+                    variant = ProButtonVariant.Ghost,
+                    size = ProButtonSize.Md,
+                )
             }
         }
 
-        // Hero pager
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -96,7 +93,6 @@ fun OnboardingScreen(
             OnboardingSlideContent(index)
         }
 
-        // Page indicator
         PageDots(
             count = onboardingSlides.size,
             activeIndex = page,
@@ -106,7 +102,6 @@ fun OnboardingScreen(
                 .padding(bottom = dims.space22),
         )
 
-        // Stepper row: Back · Next (lifted clear of the CTA)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,26 +111,29 @@ fun OnboardingScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(modifier = Modifier.alpha(if (page == 0) 0f else 1f)) {
-                ProTextButton(
+                ProButton(
                     text = "Back",
-                    tone = ProButtonTone.Secondary,
                     onClick = { if (page > 0) scope.launch { pagerState.animateScrollToPage(page - 1) } },
-                    leading = { IconArrowLeft(color = colors.onSurfaceVariant) },
+                    variant = ProButtonVariant.Ghost,
+                    size = ProButtonSize.Md,
+                    leading = { IconBack(color = colors.onSurfaceMuted, size = dims.iconSizeDefault) },
                 )
             }
             Box(modifier = Modifier.alpha(if (isLast) 0f else 1f)) {
-                ProTextButton(
+                ProButton(
                     text = "Next",
                     onClick = { if (!isLast) scope.launch { pagerState.animateScrollToPage(page + 1) } },
-                    trailing = { IconChevronRight(color = colors.primaryDeep) },
+                    variant = ProButtonVariant.Ghost,
+                    size = ProButtonSize.Md,
+                    trailing = { IconChevronRight(color = colors.primaryDeep, size = dims.iconSizeDefault) },
                 )
             }
         }
 
-        // Primary CTA
-        ProFilledButton(
+        ProButton(
             text = "Get started",
             onClick = onFinish,
+            fillMaxWidth = true,
             modifier = Modifier
                 .padding(horizontal = dims.space20)
                 .padding(bottom = dims.space22),
@@ -171,15 +169,15 @@ private fun OnboardingSlideContent(index: Int) {
         Spacer(Modifier.height(dims.space30))
         Text(
             text = slide.title,
-            style = ProExpenseTheme.typography.onboardingTitle,
+            style = ProExpenseTheme.typography.screenTitle,
             color = colors.onSurface,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(dims.space12))
         Text(
             text = slide.body,
-            style = ProExpenseTheme.typography.onboardingBody,
-            color = colors.onSurfaceVariant,
+            style = ProExpenseTheme.typography.subtitle,
+            color = colors.onSurfaceMuted,
             textAlign = TextAlign.Center,
             modifier = Modifier.widthIn(max = dims.onboardingBodyMaxWidth),
         )

@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.currency.ui.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -9,12 +10,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -23,12 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import com.arduia.expense.ui.design.IconSearch
-import com.arduia.expense.ui.design.ProLinearProgress
-import com.arduia.expense.ui.design.ProTopBar
+import androidx.compose.ui.unit.dp
+import com.arduia.expense.ui.design.BottomSheet
+import com.arduia.expense.ui.design.IconClose
+import com.arduia.expense.ui.design.ProfileEyebrow
+import com.arduia.expense.ui.design.ProfileSetupHeader
+import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -48,89 +49,55 @@ fun ProfileCurrencySheet(
             it.code.contains(searchQuery, ignoreCase = true) ||
             it.name.contains(searchQuery, ignoreCase = true)
     }
-    val scrimInteraction = remember { MutableInteractionSource() }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Box(
+    BottomSheet(onDismiss = onDismiss, modifier = modifier) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = scrimInteraction,
-                    indication = null,
-                    onClick = onDismiss,
-                )
-                .background(colors.scrim),
-        )
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .height(dims.sheetMaxHeight)
-                .clip(shapes.sheet)
-                .background(colors.surface),
+                .padding(horizontal = dims.space24, vertical = dims.space8),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier = Modifier
-                    .padding(top = dims.sheetHandlePaddingTop, bottom = dims.sheetHandlePaddingBottom)
-                    .align(Alignment.CenterHorizontally)
-                    .size(width = dims.sheetHandleWidth, height = dims.sheetHandleHeight)
-                    .clip(shapes.pill)
-                    .background(colors.outlineVariant),
-            )
-
             Text(
                 text = "All currencies",
                 style = typography.sheetTitle,
                 color = colors.onSurface,
-                modifier = Modifier.padding(horizontal = dims.space24),
             )
-
-            Row(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dims.space16, vertical = dims.space8)
-                    .height(dims.searchFieldHeight)
-                    .clip(shapes.pill)
-                    .background(colors.surfaceVariant)
-                    .padding(horizontal = dims.space18),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dims.space12),
+                    .size(dims.iconButtonSize)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = false),
+                        onClick = onDismiss,
+                    ),
+                contentAlignment = Alignment.Center,
             ) {
-                IconSearch(color = colors.onSurfaceVariant)
-                BasicTextField(
-                    value = searchQuery,
-                    onValueChange = onSearchQueryChange,
-                    modifier = Modifier.weight(1f),
-                    textStyle = typography.fieldValue.copy(color = colors.onSurface),
-                    cursorBrush = SolidColor(colors.primary),
-                    singleLine = true,
-                    decorationBox = { inner ->
-                        if (searchQuery.isEmpty()) {
-                            Text(
-                                text = "Search currency…",
-                                style = typography.fieldValue,
-                                color = colors.onSurfaceVariant,
-                            )
-                        }
-                        inner()
-                    },
-                )
+                IconClose(color = colors.onSurfaceMuted, size = dims.iconSizeDefault)
             }
+        }
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = dims.space8, vertical = dims.space6),
-                verticalArrangement = Arrangement.spacedBy(dims.space2),
-            ) {
-                filtered.forEach { currency ->
-                    SheetCurrencyRow(
-                        currency = currency,
-                        onClick = { onCurrencySelected(currency.code) },
-                    )
-                }
+        SearchField(
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
+            placeholder = "Search currency…",
+            modifier = Modifier
+                .padding(horizontal = dims.space16)
+                .padding(bottom = dims.space8),
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = dims.space16, vertical = dims.space8),
+            verticalArrangement = Arrangement.spacedBy(dims.space8),
+        ) {
+            filtered.forEach { currency ->
+                SheetCurrencyRow(
+                    currency = currency,
+                    onClick = { onCurrencySelected(currency.code) },
+                )
             }
         }
     }
@@ -143,13 +110,22 @@ fun ProfileCurrencySheetPreviewHost(
     val colors = ProExpenseTheme.colors
     val dims = ProExpenseTheme.dimensions
 
-    Box(modifier = modifier.fillMaxSize().background(colors.surface)) {
+    Box(modifier = modifier.fillMaxSize().background(colors.paper)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ProTopBar(title = "Home currency")
-            ProLinearProgress(
-                progress = 1f,
-                modifier = Modifier.padding(horizontal = dims.space16),
-            )
+            ProfileSetupHeader(step = 2, totalSteps = 2, onSkip = {})
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = dims.space24)
+                    .padding(top = dims.space8),
+            ) {
+                ProfileEyebrow(step = 2, totalSteps = 2)
+                Text(
+                    text = "Pick your home currency",
+                    style = ProExpenseTheme.typography.screenTitle,
+                    color = colors.onSurface,
+                    modifier = Modifier.padding(top = dims.space12),
+                )
+            }
             Box(modifier = Modifier.weight(1f))
         }
         ProfileCurrencySheet(
@@ -175,10 +151,11 @@ private fun SheetCurrencyRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = dims.space8, vertical = dims.space6)
             .clip(shapes.listRow)
+            .border(1.dp, colors.line, shapes.listRow)
+            .background(colors.surface)
             .clickable(interactionSource = interaction, indication = ripple(), onClick = onClick)
-            .padding(horizontal = dims.space16, vertical = dims.space12),
+            .padding(horizontal = dims.space16, vertical = dims.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dims.space16),
     ) {
@@ -186,13 +163,13 @@ private fun SheetCurrencyRow(
             modifier = Modifier
                 .size(dims.currencyBadgeSize)
                 .clip(CircleShape)
-                .background(colors.surfaceVariant),
+                .background(colors.paperAlt),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = currency.symbol,
                 style = typography.currencySymbol,
-                color = colors.onSurfaceVariant,
+                color = colors.onSurfaceMuted,
                 textAlign = TextAlign.Center,
             )
         }
@@ -205,7 +182,7 @@ private fun SheetCurrencyRow(
             Text(
                 text = currency.name,
                 style = typography.currencyName,
-                color = colors.onSurfaceVariant,
+                color = colors.onSurfaceMuted,
             )
         }
     }

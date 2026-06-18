@@ -7,28 +7,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 
 private val ProExpenseLightColorScheme = lightColorScheme(
-    primary = ProExpensePalette.Blue500,
-    onPrimary = ProExpensePalette.Card,
-    primaryContainer = ProExpensePalette.Blue100,
-    onPrimaryContainer = ProExpensePalette.Blue700,
-    secondary = ProExpensePalette.Blue700,
-    onSecondary = ProExpensePalette.Card,
+    primary = ProExpensePalette.Primary,
+    onPrimary = ProExpensePalette.OnPrimary,
+    primaryContainer = ProExpensePalette.PrimaryTint,
+    onPrimaryContainer = ProExpensePalette.PrimaryDeep,
+    secondary = ProExpensePalette.PrimaryDeep,
+    onSecondary = ProExpensePalette.OnPrimary,
     tertiary = ProExpensePalette.Tag,
-    onTertiary = ProExpensePalette.Card,
+    onTertiary = ProExpensePalette.OnPrimary,
     background = ProExpensePalette.Paper,
     onBackground = ProExpensePalette.Ink,
     surface = ProExpensePalette.Surface,
-    onSurface = ProExpensePalette.OnSurface,
-    surfaceVariant = ProExpensePalette.SurfaceVariant,
-    onSurfaceVariant = ProExpensePalette.OnSurfaceVariant,
-    outline = ProExpensePalette.Outline,
-    outlineVariant = ProExpensePalette.OutlineVariant,
-    error = ProExpensePalette.Red400,
-    onError = ProExpensePalette.Card,
+    onSurface = ProExpensePalette.Ink,
+    surfaceVariant = ProExpensePalette.PaperAlt,
+    onSurfaceVariant = ProExpensePalette.Ink2,
+    outline = ProExpensePalette.LineStrong,
+    outlineVariant = ProExpensePalette.LineSoft,
+    error = ProExpensePalette.Danger,
+    onError = ProExpensePalette.OnPrimary,
 )
 
-// Entry point for the design-system tokens. `ProExpenseTheme.colors`, `.typography`,
-// `.shapes`, `.dimensions`, and `.motion` read the active values from the composition.
 object ProExpenseTheme {
     val colors: ProExpenseColors
         @Composable

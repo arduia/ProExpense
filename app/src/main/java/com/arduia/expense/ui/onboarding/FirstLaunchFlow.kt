@@ -30,10 +30,7 @@ data class ProfileSetupState(
     val homeCurrencyCode: String = "USD",
 )
 
-/**
- * Flow 04 — First Launch: Splash → Onboarding → Profile Setup (name + currency) → Home.
- * Mirrors the Hi-Fi Flow 04 artboards and android-onboarding.jsx Material rendition.
- */
+/** Flow 04 — Splash → Onboarding → Profile Setup (name + currency) → Home. */
 @Composable
 fun FirstLaunchFlow(
     onComplete: (ProfileSetupState) -> Unit,
@@ -44,6 +41,15 @@ fun FirstLaunchFlow(
     var homeCurrency by rememberSaveable { mutableStateOf("USD") }
     var showCurrencySheet by rememberSaveable { mutableStateOf(false) }
     var currencySearch by rememberSaveable { mutableStateOf("") }
+
+    fun completeWithDefaults() {
+        onComplete(
+            ProfileSetupState(
+                name = profileName.ifBlank { "User" },
+                homeCurrencyCode = homeCurrency,
+            ),
+        )
+    }
 
     LaunchedEffect(step) {
         if (step == FirstLaunchStep.Splash) {
@@ -62,6 +68,7 @@ fun FirstLaunchFlow(
                 name = profileName,
                 onNameChange = { profileName = it },
                 onContinue = { step = FirstLaunchStep.ProfileCurrency },
+                onSkip = { completeWithDefaults() },
             )
             FirstLaunchStep.ProfileCurrency -> ProfileCurrencyScreen(
                 selectedCode = homeCurrency,
@@ -70,6 +77,7 @@ fun FirstLaunchFlow(
                     onComplete(ProfileSetupState(name = profileName, homeCurrencyCode = homeCurrency))
                 },
                 onShowAllCurrencies = { showCurrencySheet = true },
+                onSkip = { completeWithDefaults() },
             )
         }
 
@@ -107,6 +115,7 @@ private fun FirstLaunchFlowProfileNamePreview() {
             name = "Maya",
             onNameChange = {},
             onContinue = {},
+            onSkip = {},
         )
     }
 }
@@ -120,6 +129,7 @@ private fun FirstLaunchFlowProfileCurrencyPreview() {
             onCurrencySelected = {},
             onStartTracking = {},
             onShowAllCurrencies = {},
+            onSkip = {},
         )
     }
 }

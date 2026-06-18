@@ -33,12 +33,12 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 
 private object Illo {
     val ink = ProExpensePalette.Ink
-    val blue = ProExpensePalette.Blue500
-    val blueDeep = ProExpensePalette.Blue700
-    val blue300 = ProExpensePalette.Blue300
-    val blue100 = ProExpensePalette.Blue100
-    val blue50 = ProExpensePalette.Blue50
-    val white = ProExpensePalette.Card
+    val blue = ProExpensePalette.Primary
+    val blueDeep = ProExpensePalette.PrimaryDeep
+    val blue300 = ProExpensePalette.PrimarySoft
+    val blue100 = ProExpensePalette.PrimaryTint
+    val blue50 = ProExpensePalette.FoodTint
+    val white = ProExpensePalette.Surface
     val gray = ProExpensePalette.Muted
     val grayLine = ProExpensePalette.Muted2
 }

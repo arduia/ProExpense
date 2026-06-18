@@ -19,14 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-/**
- * Material outlined text field with notched floating label — mirrors `MdOutlinedField`.
- */
 @Composable
 fun ProOutlinedField(
     label: String,
@@ -44,84 +41,107 @@ fun ProOutlinedField(
     val dims = ProExpenseTheme.dimensions
     val shapes = ProExpenseTheme.shapes
     var focused by remember { mutableStateOf(false) }
-    val borderColor = if (focused) colors.primary else colors.outline
-    val labelColor = if (focused) colors.primaryDeep else colors.onSurfaceVariant
+    val borderColor = if (focused) colors.primary else colors.lineStrong
     val shape = shapes.field
 
-    Box(modifier = modifier) {
-        Row(
+    Text(
+        text = label.uppercase(),
+        style = typography.fieldLabel,
+        color = colors.primary,
+        modifier = Modifier.padding(bottom = dims.fieldLabelGap),
+    )
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = dims.fieldMinHeight)
+            .border(dims.buttonBorderWidth, borderColor, shape)
+            .background(colors.surface, shape)
+            .padding(horizontal = if (leading != null) dims.fieldPaddingHWithLeading else dims.fieldPaddingH),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        leading?.invoke()
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
             modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = dims.fieldMinHeight)
-                .border(
-                    width = if (focused) dims.borderWidthFocused else dims.borderWidth,
-                    color = borderColor,
-                    shape = shape,
+                .weight(1f)
+                .padding(
+                    start = if (leading != null) dims.fieldLeadingGap else 0.dp,
+                    top = dims.fieldPaddingVertical,
+                    bottom = dims.fieldPaddingVertical,
                 )
-                .background(colors.surface, shape)
-                .padding(horizontal = if (leading != null) dims.fieldPaddingHWithLeading else dims.fieldPaddingH),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            leading?.invoke()
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(
-                        start = if (leading != null) dims.fieldLeadingGap else 0.dp,
-                        top = dims.fieldPaddingVertical,
-                        bottom = dims.fieldPaddingVertical,
-                    )
-                    .onFocusChanged { focused = it.isFocused },
-                textStyle = typography.fieldValue.copy(color = colors.onSurface),
-                cursorBrush = SolidColor(colors.primary),
-                singleLine = true,
-                keyboardOptions = keyboardOptions,
-                keyboardActions = keyboardActions,
-                decorationBox = { inner ->
-                    Box {
-                        if (value.isEmpty() && !focused) {
-                            Text(
-                                text = placeholder,
-                                style = typography.fieldValue,
-                                color = colors.onSurfaceVariant,
-                            )
-                        }
-                        inner()
-                    }
-                },
-            )
-        }
-        Text(
-            text = label,
-            style = typography.fieldLabel,
-            color = labelColor,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .layout { measurable, constraints ->
-                    val placeable = measurable.measure(constraints)
-                    layout(placeable.width, placeable.height) {
-                        placeable.placeRelative(
-                            x = if (leading != null) {
-                                dims.fieldLabelOffsetXWithLeading.roundToPx()
-                            } else {
-                                dims.fieldLabelOffsetX.roundToPx()
-                            },
-                            y = dims.fieldLabelOffsetY.roundToPx(),
+                .onFocusChanged { focused = it.isFocused },
+            textStyle = typography.fieldValue.copy(color = colors.onSurface),
+            cursorBrush = SolidColor(colors.primary),
+            singleLine = true,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            decorationBox = { inner ->
+                Box {
+                    if (value.isEmpty() && !focused) {
+                        Text(
+                            text = placeholder,
+                            style = typography.fieldValue,
+                            color = colors.muted,
                         )
                     }
+                    inner()
                 }
-                .background(colors.surface)
-                .padding(horizontal = dims.fieldLabelPaddingH),
+            },
         )
     }
     if (helper != null) {
         Text(
             text = helper,
             style = typography.fieldHelper,
-            color = colors.onSurfaceVariant,
-            modifier = Modifier.padding(start = dims.fieldPaddingH, top = dims.fieldHelperPaddingTop),
+            color = colors.onSurfaceMuted,
+            modifier = Modifier.padding(top = dims.fieldHelperPaddingTop),
+        )
+    }
+}
+
+@Composable
+fun SearchField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val typography = ProExpenseTheme.typography
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
+    var focused by remember { mutableStateOf(false) }
+    val borderColor = if (focused) colors.primary else colors.line
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = dims.searchFieldHeight)
+            .border(1.dp, borderColor, shapes.searchField)
+            .background(colors.surface, shapes.searchField)
+            .padding(horizontal = dims.space16),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconSearch(color = colors.muted, size = dims.iconSizeInline)
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = dims.space12)
+                .onFocusChanged { focused = it.isFocused },
+            textStyle = typography.body.copy(color = colors.onSurface),
+            cursorBrush = SolidColor(colors.primary),
+            singleLine = true,
+            decorationBox = { inner ->
+                Box {
+                    if (value.isEmpty()) {
+                        Text(text = placeholder, style = typography.body, color = colors.muted)
+                    }
+                    inner()
+                }
+            },
         )
     }
 }

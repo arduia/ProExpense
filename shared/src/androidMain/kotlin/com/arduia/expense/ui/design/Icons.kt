@@ -32,6 +32,11 @@ private fun DrawScope.strokePolyline(pts: List<Offset>, color: Color, weight: Fl
 }
 
 @Composable
+fun IconBack(color: Color, modifier: Modifier = Modifier, size: Dp = 24.dp, weight: Float = 1.6f) {
+    IconArrowLeft(color, modifier, size, weight)
+}
+
+@Composable
 fun IconArrowLeft(color: Color, modifier: Modifier = Modifier, size: Dp = 18.dp, weight: Float = 2f) {
     Canvas(modifier.then(Modifier.iconSize(size))) {
         val sx = this.size.width / 24f

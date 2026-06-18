@@ -30,6 +30,7 @@ class ProfileSetupScreenshotTest {
                     name = "Maya",
                     onNameChange = {},
                     onContinue = {},
+                    onSkip = {},
                 )
             }
         }
@@ -45,6 +46,7 @@ class ProfileSetupScreenshotTest {
                     onCurrencySelected = {},
                     onStartTracking = {},
                     onShowAllCurrencies = {},
+                    onSkip = {},
                 )
             }
         }

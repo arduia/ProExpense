@@ -16,10 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-/**
- * Worm-style page indicator (Material `MdPageDots`). The active page stretches
- * into a pill in the primary blue; the rest are outline-variant dots.
- */
 @Composable
 fun PageDots(
     count: Int,
@@ -45,7 +41,7 @@ fun PageDots(
                 label = "dotWidth",
             )
             val color by animateColorAsState(
-                targetValue = if (active) colors.primary else colors.outlineVariant,
+                targetValue = if (active) colors.primary else colors.lineStrong,
                 label = "dotColor",
             )
             Box(

@@ -20,7 +20,7 @@ fun AppIconGlyph(
     size: Dp = 96.dp,
     cornerRadius: Dp = 24.dp,
 ) {
-    val tileColor = ProExpensePalette.Blue500
+    val tileColor = ProExpensePalette.Primary
     val glyphColor = Color.White
 
     Canvas(modifier = modifier.size(size)) {

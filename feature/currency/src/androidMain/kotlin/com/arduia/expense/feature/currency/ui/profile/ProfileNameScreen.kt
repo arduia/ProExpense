@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.currency.ui.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.design.IconUser
-import com.arduia.expense.ui.design.ProFilledButton
-import com.arduia.expense.ui.design.ProLinearProgress
+import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProOutlinedField
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProfileEyebrow
+import com.arduia.expense.ui.design.ProfileSetupHeader
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -25,6 +26,7 @@ fun ProfileNameScreen(
     name: String,
     onNameChange: (String) -> Unit,
     onContinue: () -> Unit,
+    onSkip: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -34,31 +36,29 @@ fun ProfileNameScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.surface),
+            .background(colors.paper),
     ) {
-        ProTopBar(title = "Set up profile")
-        ProLinearProgress(
-            progress = 0.5f,
-            modifier = Modifier.padding(horizontal = dims.space16),
-        )
+        ProfileSetupHeader(step = 1, totalSteps = 2, onSkip = onSkip)
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = dims.space24)
-                .padding(top = dims.space28),
+                .padding(top = dims.space8),
         ) {
+            ProfileEyebrow(step = 1, totalSteps = 2)
             Text(
-                text = "What should we call you?",
-                style = typography.profileTitle,
+                text = "Set up your profile",
+                style = typography.screenTitle,
                 color = colors.onSurface,
+                modifier = Modifier.padding(top = dims.space12),
             )
             Text(
                 text = "Your name personalizes the app and identifies your records and exports. " +
                     "No account needed — everything stays on your device.",
-                style = typography.body,
-                color = colors.onSurfaceVariant,
-                modifier = Modifier.padding(top = dims.space10),
+                style = typography.subtitle,
+                color = colors.onSurfaceMuted,
+                modifier = Modifier.padding(top = dims.space12),
             )
 
             ProOutlinedField(
@@ -67,19 +67,20 @@ fun ProfileNameScreen(
                 onValueChange = onNameChange,
                 placeholder = "e.g. Maya",
                 helper = "Used on your home screen and CSV exports.",
-                leading = { IconUser(color = colors.primaryDeep) },
+                leading = { IconUser(color = colors.onSurfaceMuted) },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { onContinue() }),
-                modifier = Modifier.padding(top = dims.space30),
+                keyboardActions = KeyboardActions(onDone = { if (name.isNotBlank()) onContinue() }),
+                modifier = Modifier.padding(top = dims.space28),
             )
         }
 
         Spacer(Modifier.weight(1f))
 
-        ProFilledButton(
+        ProButton(
             text = "Continue",
             onClick = onContinue,
             enabled = name.isNotBlank(),
+            fillMaxWidth = true,
             modifier = Modifier
                 .padding(horizontal = dims.space20)
                 .padding(bottom = dims.space22),
@@ -89,16 +90,13 @@ fun ProfileNameScreen(
 
 @Preview(showBackground = true, widthDp = 414, heightDp = 868)
 @Composable
-private fun ProfileNameScreenEmptyPreview() {
+private fun ProfileNameScreenPreview() {
     ProExpenseTheme {
-        ProfileNameScreen(name = "", onNameChange = {}, onContinue = {})
-    }
-}
-
-@Preview(showBackground = true, widthDp = 414, heightDp = 868)
-@Composable
-private fun ProfileNameScreenFilledPreview() {
-    ProExpenseTheme {
-        ProfileNameScreen(name = "Maya", onNameChange = {}, onContinue = {})
+        ProfileNameScreen(
+            name = "Maya",
+            onNameChange = {},
+            onContinue = {},
+            onSkip = {},
+        )
     }
 }

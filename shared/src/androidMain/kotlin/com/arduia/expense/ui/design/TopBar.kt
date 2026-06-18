@@ -17,9 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-/**
- * Material small top app bar — mirrors `MdTopBar` from android-frame.jsx.
- */
 @Composable
 fun ProTopBar(
     title: String,
@@ -33,7 +30,7 @@ fun ProTopBar(
         modifier = modifier
             .fillMaxWidth()
             .height(dims.topBarHeight)
-            .padding(start = if (onBack != null) dims.space6 else dims.space12, end = dims.space4),
+            .padding(start = if (onBack != null) dims.space6 else dims.space16, end = dims.space8),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onBack != null) {
@@ -47,12 +44,12 @@ fun ProTopBar(
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                IconArrowLeft(color = colors.onSurface, size = dims.iconSizeNav, weight = 2f)
+                IconBack(color = colors.onSurface, size = dims.iconSizeNav)
             }
         }
         Text(
             text = title,
-            style = ProExpenseTheme.typography.topBarTitle,
+            style = ProExpenseTheme.typography.screenTitle,
             color = colors.onSurface,
             modifier = Modifier
                 .weight(1f)

@@ -2,6 +2,7 @@ package com.arduia.expense.ui.design
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -22,115 +23,167 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-// Buttons — DESIGN-SYSTEM.md §5 (Android Material rendition, android-frame.jsx).
-// Every button scales to 0.97 on press.
+// Buttons — design_handoff_v2 / components.yaml → ProButton
 
-enum class ProButtonTone { Primary, Secondary }
+enum class ProButtonVariant {
+    Primary,
+    PrimaryDeep,
+    Success,
+    Dark,
+    Secondary,
+    Ghost,
+}
 
-/**
- * Material filled (pill) button — the main action on a screen.
- * Full-width, 56dp tall, fully rounded (28dp).
- */
+enum class ProButtonSize { Sm, Md, Lg }
+
+/** @deprecated Use [ProButtonVariant] */
+typealias ProButtonTone = ProButtonVariant
+
 @Composable
-fun ProFilledButton(
+fun ProButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    variant: ProButtonVariant = ProButtonVariant.Primary,
+    size: ProButtonSize = ProButtonSize.Lg,
     enabled: Boolean = true,
-    tone: ProButtonTone = ProButtonTone.Primary,
+    fillMaxWidth: Boolean = false,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dims = ProExpenseTheme.dimensions
     val shapes = ProExpenseTheme.shapes
-    val isPrimary = tone == ProButtonTone.Primary
-    val background = if (isPrimary) colors.primary else colors.surfaceVariant
-    val foreground = if (isPrimary) colors.onPrimary else colors.onSurface
-    val shape = shapes.buttonFilled
+    val typography = ProExpenseTheme.typography
+
+    val (background, foreground, borderColor) = buttonColors(variant, colors)
+    val (height, horizontalPadding, textStyle, shape) = buttonMetrics(size, dims, shapes, typography)
 
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val scale by animateFloatAsState(
         targetValue = if (pressed) ProExpenseTheme.motion.pressedScale else 1f,
         animationSpec = ProExpenseTheme.motion.tapTween(),
-        label = "filledButtonScale",
+        label = "buttonScale",
     )
 
     Row(
         modifier = modifier
             .scale(scale)
-            .fillMaxWidth()
-            .height(dims.buttonFilledHeight)
-            .alpha(if (enabled) 1f else 0.4f)
-            .then(if (isPrimary) Modifier.shadow(dims.buttonShadowElevation, shape, clip = false) else Modifier)
+            .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
+            .height(height)
+            .alpha(if (enabled) 1f else ProExpenseTheme.motion.disabledOpacity)
             .clip(shape)
             .background(background)
+            .border(dims.buttonBorderWidth, borderColor, shape)
             .clickable(
                 interactionSource = interaction,
                 indication = ripple(),
                 enabled = enabled,
                 onClick = onClick,
             )
-            .padding(horizontal = dims.buttonFilledPaddingH),
+            .padding(horizontal = horizontalPadding),
         horizontalArrangement = Arrangement.spacedBy(dims.buttonContentGap, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CompositionLocalProvider(LocalContentColor provides foreground) {
             leading?.invoke()
-            Text(text = text, style = ProExpenseTheme.typography.buttonLarge, color = foreground)
+            Text(text = text, style = textStyle, color = foreground)
             trailing?.invoke()
         }
     }
 }
 
-/**
- * Material text button — tertiary / inline navigation (Skip, Back, Next).
- */
+@Composable
+fun ProFilledButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    tone: ProButtonVariant = ProButtonVariant.Primary,
+    leading: (@Composable () -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    ProButton(
+        text = text,
+        onClick = onClick,
+        modifier = modifier,
+        variant = tone,
+        size = ProButtonSize.Lg,
+        enabled = enabled,
+        fillMaxWidth = true,
+        leading = leading,
+        trailing = trailing,
+    )
+}
+
 @Composable
 fun ProTextButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    tone: ProButtonTone = ProButtonTone.Primary,
+    tone: ProButtonVariant = ProButtonVariant.Ghost,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    val colors = ProExpenseTheme.colors
-    val dims = ProExpenseTheme.dimensions
-    val shapes = ProExpenseTheme.shapes
-    val foreground = if (tone == ProButtonTone.Primary) colors.primaryDeep else colors.onSurfaceVariant
-    val shape = shapes.buttonText
-
-    val interaction = remember { MutableInteractionSource() }
-    val pressed by interaction.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (pressed) ProExpenseTheme.motion.pressedScale else 1f,
-        animationSpec = ProExpenseTheme.motion.tapTween(),
-        label = "textButtonScale",
+    ProButton(
+        text = text,
+        onClick = onClick,
+        modifier = modifier,
+        variant = if (tone == ProButtonVariant.Secondary) ProButtonVariant.Ghost else tone,
+        size = ProButtonSize.Md,
+        leading = leading,
+        trailing = trailing,
     )
+}
 
-    Row(
-        modifier = modifier
-            .scale(scale)
-            .height(dims.buttonTextHeight)
-            .clip(shape)
-            .clickable(
-                interactionSource = interaction,
-                indication = ripple(),
-                onClick = onClick,
-            )
-            .padding(horizontal = dims.buttonTextPaddingH),
-        horizontalArrangement = Arrangement.spacedBy(dims.buttonTextContentGap),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        CompositionLocalProvider(LocalContentColor provides foreground) {
-            leading?.invoke()
-            Text(text = text, style = ProExpenseTheme.typography.buttonMedium, color = foreground)
-            trailing?.invoke()
-        }
-    }
+private data class ButtonMetrics(
+    val height: Dp,
+    val horizontalPadding: Dp,
+    val textStyle: androidx.compose.ui.text.TextStyle,
+    val shape: androidx.compose.foundation.shape.RoundedCornerShape,
+)
+
+@Composable
+private fun buttonMetrics(
+    size: ProButtonSize,
+    dims: com.arduia.expense.ui.theme.ProExpenseDimensions,
+    shapes: com.arduia.expense.ui.theme.ProExpenseShapes,
+    typography: com.arduia.expense.ui.theme.ProExpenseTypography,
+): ButtonMetrics = when (size) {
+    ProButtonSize.Sm -> ButtonMetrics(
+        dims.buttonSmallHeight,
+        dims.buttonPaddingHSm,
+        typography.buttonSmall,
+        shapes.buttonSm,
+    )
+    ProButtonSize.Md -> ButtonMetrics(
+        dims.buttonOutlinedHeight,
+        dims.space18,
+        typography.buttonMedium,
+        shapes.buttonMd,
+    )
+    ProButtonSize.Lg -> ButtonMetrics(
+        dims.buttonFilledHeight,
+        dims.buttonPaddingHLg,
+        typography.buttonLarge,
+        shapes.buttonLg,
+    )
+}
+
+@Composable
+private fun buttonColors(
+    variant: ProButtonVariant,
+    colors: com.arduia.expense.ui.theme.ProExpenseColors,
+): Triple<Color, Color, Color> = when (variant) {
+    ProButtonVariant.Primary -> Triple(colors.primary, colors.paperWarm, colors.primary)
+    ProButtonVariant.PrimaryDeep -> Triple(colors.primaryDeep, colors.paperWarm, colors.primaryDeep)
+    ProButtonVariant.Success -> Triple(colors.success, colors.paperWarm, colors.success)
+    ProButtonVariant.Dark -> Triple(colors.ink, colors.paperWarm, colors.ink)
+    ProButtonVariant.Secondary -> Triple(Color.Transparent, colors.ink, colors.lineStrong)
+    ProButtonVariant.Ghost -> Triple(Color.Transparent, colors.ink2, Color.Transparent)
 }
