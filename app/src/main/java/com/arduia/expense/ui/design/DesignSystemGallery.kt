@@ -84,6 +84,15 @@ fun DesignSystemGallery(
             }
         }
 
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FilterChip(label = "All", selected = true, onClick = {})
+            FilterChip(label = "Income", selected = false, onClick = {})
+            FilterChip(label = "Expense", selected = false, onClick = {})
+        }
+
         DayHeader(title = "Today · May 25", total = "$80.90")
 
         TransactionRow(

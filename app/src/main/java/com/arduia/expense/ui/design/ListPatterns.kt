@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -39,8 +40,9 @@ fun FilterChip(
         Text(
             text = label,
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+            // Active filter chip is weight 600 per design/DESIGN-SYSTEM.md §7.
             style = if (selected) {
-                ProExpenseTheme.typography.bodyEmphasis
+                ProExpenseTheme.typography.body.copy(fontWeight = FontWeight.SemiBold)
             } else {
                 ProExpenseTheme.typography.body
             },

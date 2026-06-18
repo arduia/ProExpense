@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -20,12 +20,19 @@ fun ProExpenseCard(
     val shapes = ProExpenseTheme.shapes
 
     Surface(
-        modifier = modifier,
+        // Soft two-layer paper shadow per design/DESIGN-SYSTEM.md §6 — very low-alpha ink, not a
+        // heavy Material elevation. Shadow colour is applied here; Surface keeps elevation at 0.
+        modifier = modifier.shadow(
+            elevation = 14.dp,
+            shape = shapes.card,
+            clip = false,
+            ambientColor = colors.ink.copy(alpha = 0.04f),
+            spotColor = colors.ink.copy(alpha = 0.04f),
+        ),
         shape = shapes.card,
         color = colors.card,
         contentColor = colors.ink,
         border = BorderStroke(1.dp, colors.line),
-        shadowElevation = 6.dp,
         tonalElevation = 0.dp,
     ) {
         Column(
