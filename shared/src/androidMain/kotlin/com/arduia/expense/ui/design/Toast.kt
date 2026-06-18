@@ -35,7 +35,7 @@ fun ProToast(
         Text(
             text = message,
             style = typography.bodySemiBold,
-            color = colors.paper,
+            color = colors.onPrimaryWarm,
         )
     }
 }

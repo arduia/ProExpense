@@ -61,7 +61,7 @@ fun HomeBottomNav(
     val typography = ProExpenseTheme.typography
     val motion = ProExpenseTheme.motion
     val navElevation = ProExpenseTheme.elevation.nav.firstOrNull()
-    val barHeight = 72.dp
+    val barHeight = dimens.navBarHeight
 
     Box(
         modifier = modifier
@@ -86,7 +86,7 @@ fun HomeBottomNav(
                     },
                 ),
             shape = ProExpenseTheme.shapes.navBar,
-            color = colors.surface.copy(alpha = 0.86f),
+            color = colors.surface.copy(alpha = dimens.navSurfaceAlpha),
         ) {
             Row(
                 modifier = Modifier

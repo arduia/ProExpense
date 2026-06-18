@@ -140,9 +140,9 @@ fun ProButton(
                 border = BorderStroke(dimens.buttonBorderWidth, colors.onSurface),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colors.onSurface,
-                    contentColor = colors.paper,
+                    contentColor = colors.onPrimaryWarm,
                     disabledContainerColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.paper.copy(alpha = motion.disabledOpacity),
+                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
                 ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,

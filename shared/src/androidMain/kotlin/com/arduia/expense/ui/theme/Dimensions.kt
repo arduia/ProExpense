@@ -59,6 +59,8 @@ data class ProDimens(
     val sheetHandleWidth: Dp,
     val sheetHandleHeight: Dp,
     val navCornerRadius: Dp,
+    val navBarHeight: Dp,
+    val navSurfaceAlpha: Float,
     val quickAccessIconSize: Dp,
     val keypadKeyRadius: Dp,
 )
@@ -122,6 +124,8 @@ val ProDefaultDimens = ProDimens(
     sheetHandleWidth = 36.dp,
     sheetHandleHeight = 4.dp,
     navCornerRadius = 8.dp,
+    navBarHeight = 72.dp,
+    navSurfaceAlpha = 0.86f,
     quickAccessIconSize = 36.dp,
     keypadKeyRadius = 12.dp,
 )

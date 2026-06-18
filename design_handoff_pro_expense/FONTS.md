@@ -45,9 +45,11 @@ The build references these via CSS variables in `proto-brand.css`. Keep the fall
 
 | Role | Family | Size | Line height | Letter-spacing | Weight | Example |
 |---|---|---|---|---|---|---|
-| Display amount | serif | 64px | 1.0 | -0.025em | 400 | `$1,240` |
-| Screen title | serif | 32px | 1.0 | -0.015em | 400 | `Journal` |
-| Section head | serif | 18px | 1.1 | -0.01em | 400 | `Today · May 25` |
+| Display amount | mono | 64px | 1.0 | -0.025em | 400 | `$12.50` |
+| List amount | mono | 18px | 1.1 | -0.01em | 400 | `$12.40` |
+| Screen title | sans | 32px | 1.0 | -0.015em | 600 | `Journal` |
+| Section head | sans | 18px | 1.1 | -0.01em | 600 | `Today · May 25` |
+| Display flourish | serif (italic) | 32px | 1.0 | -0.015em | 400 | `Hi, Maya` |
 | Body | sans | 14px | 1.4 | 0 | 400–600 | `Lunch with M.` |
 | Caption | sans | 11.5px | 1.4 | 0 | 400 | `Food · 12:30 PM` |
 | Eyebrow / label | mono | 11px | 1.3 | 0.10em (uppercase) | 500 | `AMOUNT · USD` |
@@ -55,10 +57,10 @@ The build references these via CSS variables in `proto-brand.css`. Keep the fall
 
 ## Usage rules
 
-- **Serif for money, sans for UI.** Instrument Serif is display-only — screen titles, day headers, and amounts. Never set body, buttons, or controls in serif.
-- **Sans is the workhorse.** Manrope carries all body, list rows, and buttons. Use 500–600 for emphasis, 400 for secondary text. Buttons are 600 at -0.005em.
-- **Mono = metadata.** Uppercase eyebrows, tab labels, timestamps, and any tabular figures. Always letter-spaced 0.08–0.12em.
-- **Italics** are available only in Instrument Serif (for an editorial accent). No italic sans or mono shipped.
+- **Mono for money and figures.** Geist Mono carries display amounts, list amounts, eyebrows, timestamps, and keypad digits. Use `tnum` / tabular figures.
+- **Sans is the workhorse.** Manrope carries screen titles, day headers, body, list rows, and buttons. Use 500–600 for emphasis, 400 for secondary text. Buttons are 600 at -0.005em.
+- **Serif = flourish only.** Instrument Serif italic for editorial accents (e.g. the user's name on Home). Not for amounts or screen titles in the Android build.
+- **Italics** are available only in Instrument Serif. No italic sans or mono shipped.
 
 ## Google Fonts equivalent
 

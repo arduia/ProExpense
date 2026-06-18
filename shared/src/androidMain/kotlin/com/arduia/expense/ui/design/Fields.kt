@@ -84,7 +84,7 @@ fun FilterChip(
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed) motion.pressedScale else 1f
     val background = if (selected) colors.onSurface else Color.Transparent
-    val contentColor = if (selected) colors.paper else colors.onSurfaceVariant
+    val contentColor = if (selected) colors.onPrimaryWarm else colors.onSurfaceVariant
     val borderColor = if (selected) colors.onSurface else colors.lineStrong
     val textStyle = if (selected) typography.bodySemiBold else typography.bodyMedium
 

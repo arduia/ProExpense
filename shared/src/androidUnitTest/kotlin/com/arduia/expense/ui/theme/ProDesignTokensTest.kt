@@ -12,6 +12,21 @@ class ProDesignTokensTest {
     }
 
     @Test
+    fun on_primary_warm_matches_handoff_screen_verified() {
+        assertEquals(Color(0xFFFFFDF6), ProLightColors.onPrimaryWarm)
+    }
+
+    @Test
+    fun nav_inactive_matches_handoff_screen_verified() {
+        assertEquals(Color(0xFF8E8E93), ProLightColors.navInactive)
+    }
+
+    @Test
+    fun highlight_deep_matches_events_tile_from_home_screen() {
+        assertEquals(Color(0xFFF9A825), ProLightColors.highlightDeep)
+    }
+
+    @Test
     fun category_food_matches_handoff() {
         val food = ProLightColors.categoryFood
         assertEquals(Color(0xFF039BE5), food.accent)
@@ -34,13 +49,28 @@ class ProDesignTokensTest {
     }
 
     @Test
+    fun motion_keypad_disabled_opacity_matches_handoff() {
+        assertEquals(0.55f, ProDefaultMotion.keypadDisabledOpacity, 0.001f)
+    }
+
+    @Test
     fun display_amount_uses_geist_mono() {
         assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.displayAmount.fontFamily)
     }
 
     @Test
+    fun list_amount_uses_geist_mono() {
+        assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.listAmount.fontFamily)
+    }
+
+    @Test
     fun screen_title_uses_manrope() {
         assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.screenTitle.fontFamily)
+    }
+
+    @Test
+    fun section_head_uses_manrope() {
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.sectionHead.fontFamily)
     }
 
     @Test
@@ -52,5 +82,15 @@ class ProDesignTokensTest {
     fun dimensions_artboard_matches_pixel_9_pro_viewport() {
         assertEquals(ProArtboard.PIXEL_9_PRO_WIDTH_DP.toFloat(), ProDefaultDimens.artboardWidth.value)
         assertEquals(ProArtboard.PIXEL_9_PRO_HEIGHT_DP.toFloat(), ProDefaultDimens.artboardHeight.value)
+    }
+
+    @Test
+    fun nav_surface_alpha_matches_handoff() {
+        assertEquals(0.86f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
+    }
+
+    @Test
+    fun nav_bar_height_matches_handoff() {
+        assertEquals(72f, ProDefaultDimens.navBarHeight.value)
     }
 }

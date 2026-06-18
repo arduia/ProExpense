@@ -91,7 +91,7 @@ fun ProDesignSystemCategoriesContent() {
 fun ProDesignSystemFieldsContent() {
     val dimens = ProExpenseTheme.dimensions
     Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
-        SearchField(value = "", onValueChange = {}, placeholder = "Search transactions")
+        SearchField(value = "", onValueChange = {}, placeholder = "Search notes, amount, category...")
         Row(horizontalArrangement = Arrangement.spacedBy(dimens.space8)) {
             FilterChip(label = "All", selected = true, onClick = {})
             FilterChip(label = "Food", selected = false, onClick = {})
