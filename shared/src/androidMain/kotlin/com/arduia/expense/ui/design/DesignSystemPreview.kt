@@ -3,6 +3,7 @@ package com.arduia.expense.ui.design
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.theme.ProArtboard
@@ -121,6 +123,63 @@ fun ProDesignSystemListsContent() {
 }
 
 @Composable
+fun ProDesignSystemLoggingContent() {
+    val dimens = ProExpenseTheme.dimensions
+    Column(verticalArrangement = Arrangement.spacedBy(dimens.space24)) {
+        AmountDisplay(amountText = "12.50", isZero = false)
+        NumericKeypad(
+            actionsEnabled = true,
+            onKey = {},
+            onBackspace = {},
+            onSave = {},
+            onNext = {},
+        )
+    }
+}
+
+@Composable
+fun ProDesignSystemAuthContent() {
+    val dimens = ProExpenseTheme.dimensions
+    Column(verticalArrangement = Arrangement.spacedBy(dimens.space24)) {
+        PinKeypad(
+            filledDots = 4,
+            onDigit = {},
+            onBackspace = {},
+        )
+        PinKeypad(
+            filledDots = 2,
+            state = PinKeypadState.Locked,
+            lockoutMessage = "Try again in 30s",
+            onDigit = {},
+            onBackspace = {},
+        )
+    }
+}
+
+@Composable
+fun ProDesignSystemNavContent() {
+    HomeBottomNav(
+        selectedTab = HomeNavTab.Home,
+        onTabSelected = {},
+        onAddClick = {},
+    )
+}
+
+@Composable
+fun ProDesignSystemSheetContent() {
+    ProBottomSheet(
+        title = "All currencies",
+        onClose = {},
+    ) {
+        SearchField(
+            value = "",
+            onValueChange = {},
+            placeholder = "Search currency...",
+        )
+    }
+}
+
+@Composable
 fun ProDesignSystemChromeContent() {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -177,7 +236,11 @@ fun ProDesignSystemComponents() {
         DesignSystemSection(title = "CATEGORIES") { ProDesignSystemCategoriesContent() }
         DesignSystemSection(title = "FIELDS") { ProDesignSystemFieldsContent() }
         DesignSystemSection(title = "LISTS") { ProDesignSystemListsContent() }
+        DesignSystemSection(title = "LOGGING") { ProDesignSystemLoggingContent() }
+        DesignSystemSection(title = "AUTH") { ProDesignSystemAuthContent() }
         DesignSystemSection(title = "CHROME") { ProDesignSystemChromeContent() }
+        DesignSystemSection(title = "NAVIGATION") { ProDesignSystemNavContent() }
+        DesignSystemSection(title = "SHEETS") { ProDesignSystemSheetContent() }
     }
 }
 
@@ -237,6 +300,67 @@ fun ProDesignSystemListsPreview() {
                 .padding(ProExpenseTheme.dimensions.space18),
         ) {
             ProDesignSystemListsContent()
+        }
+    }
+}
+
+@Preview(name = "Design system — logging", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 720, showBackground = true)
+@Composable
+fun ProDesignSystemLoggingPreview() {
+    ProExpenseTheme {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(ProExpenseTheme.colors.paper)
+                .padding(ProExpenseTheme.dimensions.space18),
+        ) {
+            ProDesignSystemLoggingContent()
+        }
+    }
+}
+
+@Preview(name = "Design system — auth", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 640, showBackground = true)
+@Composable
+fun ProDesignSystemAuthPreview() {
+    ProExpenseTheme {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(ProExpenseTheme.colors.paper)
+                .padding(ProExpenseTheme.dimensions.space18),
+        ) {
+            ProDesignSystemAuthContent()
+        }
+    }
+}
+
+@Preview(name = "Design system — navigation", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 200, showBackground = true)
+@Composable
+fun ProDesignSystemNavPreview() {
+    ProExpenseTheme {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(ProExpenseTheme.colors.paper)
+                .padding(vertical = ProExpenseTheme.dimensions.space24),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            ProDesignSystemNavContent()
+        }
+    }
+}
+
+@Preview(name = "Design system — sheets", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)
+@Composable
+fun ProDesignSystemSheetPreview() {
+    ProExpenseTheme {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(ProExpenseTheme.colors.paper)
+                .padding(ProExpenseTheme.dimensions.space18),
+        ) {
+            ProDesignSystemSheetContent()
         }
     }
 }
