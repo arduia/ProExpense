@@ -1,8 +1,11 @@
 package com.arduia.expense.ui.onboarding
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -21,6 +24,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProExpensePalette
 import com.arduia.expense.ui.theme.ProExpenseSans
+import com.arduia.expense.ui.theme.ProExpenseTheme
 
 // Onboarding illustrations — composed scene drawings translated from
 // pro-expense-finance-tracker/project/onboarding-illustrations.jsx.
@@ -280,3 +284,13 @@ val onboardingIllustrations: List<@Composable (Modifier) -> Unit> = listOf(
     { m -> IlloEventBudget(m) },
     { m -> IlloJournal(m) },
 )
+
+@Preview(showBackground = true, widthDp = 280, heightDp = 220)
+@Composable
+private fun OnboardingIllustrationQuickLogPreview() {
+  IlloQuickLog(
+    Modifier
+      .height(ProExpenseTheme.dimensions.onboardingIllustrationHeight)
+      .padding(ProExpenseTheme.dimensions.space16),
+  )
+}

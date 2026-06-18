@@ -320,9 +320,14 @@ Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
 
 6. **Capability classes** (DAO, prefs, cache): backbone is save → read/observe round-trip.
 
-7. **Compose `@Preview` is mandatory** — every agent-delivered content-composable file in
-   `app/src/main` (and shared `ui/` when screen-level) ships with at least one `@Preview`
-   per distinct UI state. Missing previews block Step 5 (implement) and Step 7 (push).
+7. **Compose `@Preview` is mandatory** — every Kotlin source file under `app/src/main` **or**
+   `feature/*/src/androidMain` that defines a **public** `@Composable` used for UI (screens, flows,
+   shells, or reusable view components) **must** ship at least one relevant `@Preview` per distinct
+   UI state. Missing previews block Step 5 (implement) and Step 7 (push).
+   - Flow orchestrators (`*Flow`, `*App`, `*Shell`) preview their representative routes/states via
+     dedicated preview composables in the **same file** (static hosts are OK).
+   - Private helpers-only files with no preview-worthy surface (e.g. pure illustration geometry)
+     are the only exception — flag in review if unsure.
 
 8. **Screenshot verify before push on UI changes** — when Compose UI is touched, Roborazzi
    verify must pass in-session before `git push`. Intentional visual changes require
@@ -368,11 +373,17 @@ workaround). Never explain WHAT the code does. One short line max.
 ### Compose UI (Android)
 
 - Split route (with ViewModel) from stateless content composable
-- **Mandatory `@Preview`** — every content-composable file **must** include at least one
-  `@Preview` per distinct UI state. Previews are part of done, not optional polish.
-  Agent-delivered screens without previews are incomplete and must not be pushed.
-- Wrap previews in `ProExpenseTheme`; default artboard `widthDp = 414`, `heightDp = 868`
-  unless the design spec defines another size
+- **Mandatory `@Preview` on every UI composable file** — any file under `app/src/main` or
+  `feature/*/src/androidMain` that exposes a public `@Composable` for screens, flows, shells, or
+  reusable view components **must** include at least one **relevant** `@Preview` per distinct UI
+  state in the **same file**. Previews are part of done, not optional polish. Agent-delivered UI
+  without previews is incomplete and must not be pushed.
+  - Wrap previews in `ProExpenseTheme`; default artboard `widthDp = 414`, `heightDp = 868` unless
+    the design spec defines another size.
+  - Flow orchestrators (`ExpenseApp`, `FirstLaunchFlow`, `QuickLogFlow`, …) use static preview
+    hosts that show each meaningful step/state (child screen previews in the same file are OK).
+  - Use preview fakes/stub repositories when a composable needs DI — never skip previews because
+    of missing production wiring.
 - Pair every new/changed screen with a Roborazzi screenshot test (`captureRoboImage`) in
   `app/src/test/`; verify (and record when intentional) before push
 - Use `ProExpenseTheme` and components from `ui/design/` — see `design/DESIGN-SYSTEM.md`
@@ -423,6 +434,17 @@ Rules:
 | New isolated work and **no** branch named by the user | `git checkout -b <new-branch>` per [Branch naming](#branch-naming). |
 | User explicitly asks for a new branch name | Create exactly that branch (or the name they give). |
 
+#### One branch per session (mandatory)
+
+For a single agent session, use **one working branch** for all implementation work:
+
+- Create **at most one** new branch when the session starts and no user-named branch exists.
+- **Stay on that branch** for every follow-up task, fix, and iteration in the same session — commit and push there.
+- **Do not** create a second `cursor/*`, `feature/*`, or other branch mid-session unless the user **explicitly** asks to create another new branch (e.g. “open a new branch for this”).
+- If the session already has a registered or pushed branch with prior work, **continue on it** rather than branching again.
+
+**Anti-pattern:** Task 1 creates `cursor/compose-home-quicklog-cae7`, task 2 in the same session creates `cursor/v2-migration-pr-base-rule-cae7` instead of committing to the existing branch.
+
 **Anti-pattern:** User says “checkout `refactor/v2-migration` and fix X” → agent runs
 `git checkout -b cursor/fix-x-e0d8`. **Always work on the branch the user chose.**
 
@@ -458,13 +480,13 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 
 ### Rules
 
-- **Respect the user's branch:** never spawn a new branch when they asked to check out or work on a
-  specific one — see [Branch selection](#branch-selection)
+- **One branch per session:** at most one new branch unless the user explicitly requests another — see [One branch per session](#one-branch-per-session-mandatory)
 - Run Step 6 verify once before pushing, not after every commit
-- **Compose UI:** `@Preview` on every touched content-composable file; screenshot verify
-  green before push — see Step 6 UI change gate
+- **Compose UI:** `@Preview` on every touched UI composable file (`app/src/main`, `feature/*/androidMain`);
+  screenshot verify green before push — see Step 6 UI change gate
 - End every implementation task with the **Workflow status** block (Step 7.5) — flag Step 6 and push explicitly
 - **Do not create pull requests** — push only; PRs are opened manually (not as draft, not as ready) unless the user explicitly asks
+- **v2 migration PRs:** target `refactor/v2-migration`, not `main` — see [v2 migration base branch](#v2-migration-base-branch-mandatory-until-migration-completes)
 - Never force-push to `main` without explicit user permission
 - Never leave work unpushed when task is complete
 - Multiple commits during implementation are fine
@@ -474,6 +496,17 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 - **Default:** agent pushes branch, user opens the PR in GitHub/GitLab.
 - **Never** auto-open draft PRs or use PR-management tooling on task completion.
 - **Only** create or update a PR when the user explicitly requests it in that session (then follow their ready/draft preference).
+
+#### v2 migration base branch (mandatory until migration completes)
+
+While the **`refactor/v2-migration`** branch is active and the v2 architecture refresh is in progress:
+
+- **Every pull request must target `refactor/v2-migration`** — not `main`, `develop`, or any other default branch.
+- This applies to agent-created PRs, `cursor/*` branches, `feature/*` branches, and manual PRs.
+- When opening or updating a PR via tooling, set `base_branch` to `refactor/v2-migration` unless the user **explicitly** names a different base in that session.
+- Do **not** merge v2 migration work into `main` until the team declares the migration complete.
+
+**Anti-pattern:** Opening a v2 PR against `main` because it is the repository default branch.
 
 ---
 

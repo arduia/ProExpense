@@ -2,8 +2,10 @@
 
 > Updated by agents during Step 2 (Explore the Codebase). Keep concise — file paths and key patterns only.
 
-**Last updated:** 2026-06-17  
-**Branch:** `refactor/v2-migration`
+**Last updated:** 2026-06-18  
+**Branch:** `refactor/v2-migration`  
+**PR base (v2 migration):** All PRs target `refactor/v2-migration` until the migration is complete — not `main`.  
+**Session branch:** One working branch per agent session unless the user explicitly requests another.
 
 ---
 

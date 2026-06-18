@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.profile
+package com.arduia.expense.feature.currency.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.IconUser
 import com.arduia.expense.ui.design.ProFilledButton
 import com.arduia.expense.ui.design.ProLinearProgress
@@ -21,10 +20,6 @@ import com.arduia.expense.ui.design.ProOutlinedField
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-/**
- * Profile setup step 1 — display name.
- * Mirrors `AndProfileName` from android-onboarding.jsx.
- */
 @Composable
 fun ProfileNameScreen(
     name: String,
@@ -34,6 +29,7 @@ fun ProfileNameScreen(
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val dims = ProExpenseTheme.dimensions
 
     Column(
         modifier = modifier
@@ -43,14 +39,14 @@ fun ProfileNameScreen(
         ProTopBar(title = "Set up profile")
         ProLinearProgress(
             progress = 0.5f,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = dims.space16),
         )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .padding(top = 28.dp),
+                .padding(horizontal = dims.space24)
+                .padding(top = dims.space28),
         ) {
             Text(
                 text = "What should we call you?",
@@ -62,7 +58,7 @@ fun ProfileNameScreen(
                     "No account needed — everything stays on your device.",
                 style = typography.body,
                 color = colors.onSurfaceVariant,
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = dims.space10),
             )
 
             ProOutlinedField(
@@ -74,7 +70,7 @@ fun ProfileNameScreen(
                 leading = { IconUser(color = colors.primaryDeep) },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onContinue() }),
-                modifier = Modifier.padding(top = 30.dp),
+                modifier = Modifier.padding(top = dims.space30),
             )
         }
 
@@ -85,8 +81,8 @@ fun ProfileNameScreen(
             onClick = onContinue,
             enabled = name.isNotBlank(),
             modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 22.dp),
+                .padding(horizontal = dims.space20)
+                .padding(bottom = dims.space22),
         )
     }
 }

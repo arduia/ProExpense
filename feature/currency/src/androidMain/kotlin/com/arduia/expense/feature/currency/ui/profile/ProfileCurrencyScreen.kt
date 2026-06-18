@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.profile
+package com.arduia.expense.feature.currency.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,20 +21,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.design.ProFilledButton
 import com.arduia.expense.ui.design.ProLinearProgress
 import com.arduia.expense.ui.design.ProRadio
 import com.arduia.expense.ui.design.ProTextButton
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 
-/**
- * Profile setup step 2 — home currency selection.
- * Mirrors `AndProfileCurrency` from android-onboarding.jsx.
- */
 @Composable
 fun ProfileCurrencyScreen(
     selectedCode: String,
@@ -45,6 +40,7 @@ fun ProfileCurrencyScreen(
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val dims = ProExpenseTheme.dimensions
 
     Column(
         modifier = modifier
@@ -57,28 +53,28 @@ fun ProfileCurrencyScreen(
                 ProTextButton(
                     text = "All",
                     onClick = onShowAllCurrencies,
-                    modifier = Modifier.padding(end = 8.dp),
+                    modifier = Modifier.padding(end = dims.space8),
                 )
             },
         )
         ProLinearProgress(
             progress = 1f,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = dims.space16),
         )
 
         Text(
             text = "All entries default to this. You can still log in any currency per-expense.",
             style = typography.body,
             color = colors.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp),
+            modifier = Modifier.padding(horizontal = dims.space24, vertical = dims.space20),
         )
 
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+                .padding(horizontal = dims.space12),
+            verticalArrangement = Arrangement.spacedBy(dims.space2),
         ) {
             profileCurrencyOptions.forEach { currency ->
                 CurrencyRow(
@@ -93,8 +89,8 @@ fun ProfileCurrencyScreen(
             text = "Start tracking",
             onClick = onStartTracking,
             modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .padding(top = 12.dp, bottom = 22.dp),
+                .padding(horizontal = dims.space20)
+                .padding(top = dims.space12, bottom = dims.space22),
         )
     }
 }
