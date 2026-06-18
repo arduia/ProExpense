@@ -24,9 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.arduia.expense.ui.design.IconBudget
 import com.arduia.expense.ui.design.IconHome
 import com.arduia.expense.ui.design.IconJournal
@@ -45,10 +47,13 @@ fun HomeBottomNav(
     val dims = ProExpenseTheme.dimensions
     val shapes = ProExpenseTheme.shapes
     val navShadowColor = Color(0x1A000000)
+    val chromeHeight = dims.bottomNavHeight + dims.homeFabRaise
 
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .height(chromeHeight)
+            .graphicsLayer { clip = false }
             .navigationBarsPadding()
             .padding(horizontal = dims.bottomNavInsetH)
             .padding(bottom = dims.bottomNavBottomInset),
@@ -63,9 +68,10 @@ fun HomeBottomNav(
                     shape = shapes.bottomNav,
                     ambientColor = navShadowColor,
                     spotColor = navShadowColor,
+                    clip = false,
                 )
                 .clip(shapes.bottomNav)
-                .background(colors.navBackground),
+                .background(colors.navBackground.copy(alpha = dims.bottomNavSurfaceAlpha)),
         )
 
         Row(
@@ -89,7 +95,9 @@ fun HomeBottomNav(
             )
             AddNavTab(
                 onClick = onAddExpense,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .zIndex(1f),
             )
             BottomNavTab(
                 tab = HomeTab.Journal,
@@ -140,18 +148,18 @@ private fun AddNavTab(
                 modifier = Modifier
                     .size(dims.homeFabSize)
                     .offset(y = fabOffsetY)
-                    .shadow(dims.buttonShadowElevation, CircleShape)
+                    .shadow(dims.buttonShadowElevation, CircleShape, clip = false)
                     .clip(CircleShape)
                     .background(colors.primary),
                 contentAlignment = Alignment.Center,
             ) {
-                IconPlus(color = colors.onPrimary, size = 28.dp, weight = 2f)
+                IconPlus(color = colors.onPrimary, size = 24.dp, weight = 2f)
             }
         }
         Text(
             text = "Add",
             modifier = Modifier.padding(bottom = dims.bottomNavLabelPaddingBottom),
-            style = typography.monoCaption,
+            style = typography.navTabLabel,
             color = colors.navInactive,
         )
     }
@@ -205,7 +213,7 @@ private fun BottomNavTab(
         Text(
             text = label,
             modifier = Modifier.padding(bottom = dims.bottomNavLabelPaddingBottom),
-            style = typography.monoCaption.copy(
+            style = typography.navTabLabel.copy(
                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
             ),
             color = tint,
@@ -221,7 +229,7 @@ private fun HomeBottomNavPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ProExpenseTheme.colors.paper)
-                .padding(top = 32.dp),
+                .padding(top = 40.dp),
         ) {
             HomeBottomNav(
                 selectedTab = HomeTab.Home,

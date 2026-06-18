@@ -1,13 +1,10 @@
 version: 2.1
 
-orbs:
-  android: circleci/android@3.0.1
-
 executors:
   android-executor:
     docker:
       - image: cimg/android:2024.12
-    resource_class: large
+    resource_class: medium
     environment:
       COMPILE_SDK: "36"
       BUILD_TOOLS: "36.0.0"

@@ -112,6 +112,13 @@ data class ProExpenseTypography(
         lineHeight = 15.6.sp,
         letterSpacing = 0.08.em,
     ),
+    val navTabLabel: TextStyle = TextStyle(
+        fontFamily = ProExpenseMono,
+        fontWeight = FontWeight.Normal,
+        fontSize = 11.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 0.08.em,
+    ),
     val buttonSmall: TextStyle = TextStyle(
         fontFamily = ProExpenseSans,
         fontWeight = FontWeight.SemiBold,
