@@ -12,6 +12,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -67,11 +70,31 @@ fun AmountDisplay(
                 style = typography.displayAmount,
                 color = colors.primary,
             )
-            Text(
-                text = amountText,
-                style = typography.displayAmount,
-                color = if (isZero) colors.muted2 else colors.onSurface,
-            )
+            if (isZero) {
+                Text(
+                    text = amountText,
+                    style = typography.displayAmount,
+                    color = colors.muted2,
+                )
+            } else {
+                // Whole part reads in full ink; the decimals recede to muted ink.
+                val decimalIndex = amountText.indexOf('.')
+                Text(
+                    text = buildAnnotatedString {
+                        if (decimalIndex < 0) {
+                            withStyle(SpanStyle(color = colors.onSurface)) { append(amountText) }
+                        } else {
+                            withStyle(SpanStyle(color = colors.onSurface)) {
+                                append(amountText.substring(0, decimalIndex))
+                            }
+                            withStyle(SpanStyle(color = colors.onSurfaceMuted)) {
+                                append(amountText.substring(decimalIndex))
+                            }
+                        }
+                    },
+                    style = typography.displayAmount,
+                )
+            }
         }
         if (isZero && showZeroValidation) {
             Text(
