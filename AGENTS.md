@@ -116,9 +116,19 @@ Authoritative workflow. Each step is **gate-first**: if the gate already holds, 
 
 ### Step 1 — Understand Intention & Scope
 
-**Gate:** Outcome is clear, change size (small/large) is known, enough context to act.
+**Gate:** Outcome is clear, change size (small/large) is known, enough context to act, and the
+working branch is settled.
 
 **Else:** Identify domain concepts and boundaries. Pin down outcome and size. Ask the user if unclear.
+
+**Branch gate (before any implementation):**
+
+- If the user asked to **check out**, **switch to**, or **work on** a **named branch** from the
+  console (e.g. `refactor/v2-migration`, `feature/compose-home`), **use that branch** —
+  `git fetch` + `git checkout <branch>` — and **do not** create a new branch (`cursor/*` or otherwise).
+- Create a new branch only when the user did **not** name a branch and the task needs an isolated
+  line of work — then follow [Branch naming](#branch-naming) below.
+- When unsure, confirm with the user before `git checkout -b`.
 
 ### Step 2 — Explore the Codebase
 
@@ -393,7 +403,19 @@ Rules:
 
 ## Branch & Push Workflow
 
-### Branch Naming
+### Branch selection
+
+| Situation | Action |
+|-----------|--------|
+| User names a branch in the console (“checkout `refactor/v2-migration`”, “work on `feature/foo`”) | `git fetch` + `git checkout <named-branch>`. **Do not** create a new branch. |
+| User selected a branch in the Cursor/Cloud UI and the session starts on it | Stay on that branch. **Do not** create `cursor/*` or any other branch unless the user asks. |
+| New isolated work and **no** branch named by the user | `git checkout -b <new-branch>` per [Branch naming](#branch-naming). |
+| User explicitly asks for a new branch name | Create exactly that branch (or the name they give). |
+
+**Anti-pattern:** User says “checkout `refactor/v2-migration` and fix X” → agent runs
+`git checkout -b cursor/fix-x-e0d8`. **Always work on the branch the user chose.**
+
+### Branch naming
 
 | Type | Pattern | Example |
 |------|---------|---------|
@@ -401,6 +423,9 @@ Rules:
 | Feature | `feature/<name>` | `feature/compose-home` |
 | Agent work | `cursor/<name>` | `cursor/compose-home-2f1e` |
 | Fix | `fix/<name>` | `fix/amount-validation` |
+
+Use `cursor/*` only for **new** agent-initiated branches when the user did not specify an existing
+branch to check out.
 
 ### Push Protocol
 
@@ -422,6 +447,8 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 
 ### Rules
 
+- **Respect the user's branch:** never spawn a new branch when they asked to check out or work on a
+  specific one — see [Branch selection](#branch-selection)
 - Run Step 6 verify once before pushing, not after every commit
 - **Compose UI:** `@Preview` on every touched content-composable file; screenshot verify
   green before push — see Step 6 UI change gate
