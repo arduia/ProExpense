@@ -175,6 +175,16 @@ Authoritative workflow. Each step is **gate-first**: if the gate already holds, 
 | Screenshot / Compose UI | `./gradlew :app:verifyRoborazziDevDebug` |
 | Small non-logic | `./gradlew :app:compileDevDebugKotlin` |
 
+**UI change gate (mandatory before push):** Any change to Compose screens, themes, or
+`ui/design/` components **must** pass screenshot verification in-session before `git push`:
+
+1. `./gradlew :app:verifyRoborazziDevDebug` (or `./gradlew verifyAll`) exits 0
+2. If visuals changed intentionally, run `./gradlew :app:recordRoborazziDevDebug` and commit
+   updated baselines under `app/src/test/screenshots/` in the same branch
+3. Every touched content-composable file has `@Preview` (see Compose UI standards)
+
+**Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
+
 **G1 (no Gradle):** declare verification impossible, treat code as unverified, compensate per retrospectives rule.
 
 **Local device gates** (when `adb devices` shows a device):
@@ -188,6 +198,10 @@ Authoritative workflow. Each step is **gate-first**: if the gate already holds, 
 **Gate:** Step 6 passed (or flagged), commits have why-focused messages.
 
 **Else:** Verify once before push. `git push -u origin <branch>` on first push.
+
+**UI work:** never push Compose UI changes until Step 6 screenshot verify is ✅
+(`verifyRoborazziDevDebug` or `verifyAll`). Previews and screenshot baselines must be
+committed with the UI diff — not in a follow-up.
 
 **Do not open pull requests.** Push the branch only. PRs are created manually by the team — never call PR-management tools or open draft/ready PRs unless the user explicitly asks in that session.
 
@@ -285,6 +299,14 @@ Default flavor for agent work: **devDebug** (`com.arduia.expense.dev`).
 
 6. **Capability classes** (DAO, prefs, cache): backbone is save → read/observe round-trip.
 
+7. **Compose `@Preview` is mandatory** — every agent-delivered content-composable file in
+   `app/src/main` (and shared `ui/` when screen-level) ships with at least one `@Preview`
+   per distinct UI state. Missing previews block Step 5 (implement) and Step 7 (push).
+
+8. **Screenshot verify before push on UI changes** — when Compose UI is touched, Roborazzi
+   verify must pass in-session before `git push`. Intentional visual changes require
+   `recordRoborazziDevDebug` and committed baselines in the same branch.
+
 ### Tools
 
 - **KMP unit:** `kotlin-test`, coroutines-test
@@ -325,7 +347,13 @@ workaround). Never explain WHAT the code does. One short line max.
 ### Compose UI (Android)
 
 - Split route (with ViewModel) from stateless content composable
-- One `@Preview` per distinct UI state on content composables
+- **Mandatory `@Preview`** — every content-composable file **must** include at least one
+  `@Preview` per distinct UI state. Previews are part of done, not optional polish.
+  Agent-delivered screens without previews are incomplete and must not be pushed.
+- Wrap previews in `ProExpenseTheme`; default artboard `widthDp = 414`, `heightDp = 868`
+  unless the design spec defines another size
+- Pair every new/changed screen with a Roborazzi screenshot test (`captureRoboImage`) in
+  `app/src/test/`; verify (and record when intentional) before push
 - Use `ProExpenseTheme` and components from `ui/design/` — see `design/DESIGN-SYSTEM.md`
 
 #### Design system alignment
@@ -395,6 +423,8 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 ### Rules
 
 - Run Step 6 verify once before pushing, not after every commit
+- **Compose UI:** `@Preview` on every touched content-composable file; screenshot verify
+  green before push — see Step 6 UI change gate
 - End every implementation task with the **Workflow status** block (Step 7.5) — flag Step 6 and push explicitly
 - **Do not create pull requests** — push only; PRs are opened manually (not as draft, not as ready) unless the user explicitly asks
 - Never force-push to `main` without explicit user permission
@@ -437,9 +467,14 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 
 ### G5 — UI Changes Need Visual Verification
 
-**Trigger:** Compose screen or theme change.
+**Trigger:** Compose screen, theme, or design-system component change.
 
-**Action:** Run on device/emulator or Espresso/Compose UI test. Flag if local verify impossible (G1).
+**Action (all required before push):**
+
+- `@Preview` on every touched content-composable file (one per distinct UI state)
+- `./gradlew :app:verifyRoborazziDevDebug` green; run `recordRoborazziDevDebug` and commit
+  baselines when visuals change intentionally
+- Device/emulator check only when Roborazzi cannot cover the change; flag if verify impossible (G1)
 
 ### Recording
 
