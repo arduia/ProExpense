@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pro Expense — Hi-Fi Designs · All Flows (A4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proto-brand.css">
+<style>
+  :root { --sheet-w: 794px; --pad: 48px; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #2a231a; }
+
+  /* Screen preview: stack of white A4 sheets centered on a dark backdrop */
+  .doc { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 36px 0 64px; }
+  .doc > * {
+    width: var(--sheet-w);
+    box-sizing: border-box;
+    background: #fff;
+    color: var(--ink);
+    padding: var(--pad);
+    box-shadow: 0 10px 40px rgba(0,0,0,.35);
+  }
+
+  /* Cover band */
+  .cover { padding-top: 120px; padding-bottom: 120px; }
+  .covertag {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--blue-700); margin-bottom: 22px;
+  }
+  .cover h1 { font-size: 46px; line-height: 1.04; margin: 0 0 18px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+  .cover p { margin: 0; font-size: 15px; color: var(--muted); font-weight: 500; }
+
+  /* Flow header */
+  .flowhead { display: flex; align-items: baseline; gap: 18px; padding-bottom: 22px; margin-bottom: 26px; border-bottom: 2px solid var(--ink); }
+  .flownum { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--blue-700); letter-spacing: .08em; padding-top: 4px; }
+  .flowhead h2 { margin: 0 0 4px; font-size: 24px; font-weight: 800; letter-spacing: -.01em; color: var(--ink); }
+  .flowhead p { margin: 0; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .flowcount { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; padding-top: 5px; }
+
+  /* Grid of phone cards */
+  .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 14px; justify-items: center; }
+  .pcard { display: flex; flex-direction: column; align-items: center; gap: 11px; break-inside: avoid; page-break-inside: avoid; }
+  .pframe { position: relative; }
+  .pscale { position: absolute; top: 0; left: 0; width: 390px; height: 844px; transform-origin: top left; }
+  .pcap { font-family: var(--mono); font-size: 10.5px; line-height: 1.3; color: var(--ink-3); text-align: center; max-width: 200px; text-wrap: pretty; }
+
+  @media print {
+    body { background: #fff; }
+    .doc { display: block; padding: 0; gap: 0; }
+    .doc > * { width: auto; box-shadow: none; padding: 0; }
+    .cover { padding: 40mm 0; break-after: page; }
+    .flow { break-before: page; }
+    .flowhead { margin-top: 4mm; }
+  }
+  @page { size: 200mm 308mm; margin: 9mm; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="proto-ui.jsx"></script>
+  <script type="text/babel" src="proto-phone.jsx"></script>
+  <script type="text/babel" src="flow-01-screens.jsx"></script>
+  <script type="text/babel" src="static-flow-01.jsx"></script>
+  <script type="text/babel" src="onboarding-illustrations.jsx"></script>
+  <script type="text/babel" src="static-screens-a.jsx"></script>
+  <script type="text/babel" src="static-screens-b.jsx"></script>
+  <script type="text/babel" src="static-edge-cases.jsx"></script>
+  <script type="text/babel" src="static-event-create.jsx"></script>
+  <script type="text/babel" src="static-profile-setup.jsx"></script>
+  <script type="text/babel" src="static-nav-fills.jsx"></script>
+  <script type="text/babel" src="print-app.jsx"></script>
+
+  <script>
+    // Auto-print once the JSX has rendered all 58 cards and fonts are ready.
+    (function () {
+      function ready() {
+        return document.querySelectorAll('.pcard').length >= 58;
+      }
+      function go() {
+        var tries = 0;
+        var iv = setInterval(function () {
+          tries++;
+          if (ready() || tries > 120) {
+            clearInterval(iv);
+            var fonts = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+            fonts.then(function () { setTimeout(function () { window.print(); }, 600); });
+          }
+        }, 100);
+      }
+      if (document.readyState === 'complete') go();
+      else window.addEventListener('load', go);
+    })();
+  </script>
+</body>
+</html>

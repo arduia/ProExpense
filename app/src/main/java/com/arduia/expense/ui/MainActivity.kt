@@ -5,9 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.arduia.expense.ui.onboarding.OnboardingScreen
+import com.arduia.expense.ui.theme.ProExpenseTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -15,10 +17,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    // New design system & onboarding UI will be implemented here,
-                    // following the specs under designs-pro-expense-finance-tracker/.
+            ProExpenseTheme {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = ProExpenseTheme.colors.surface,
+                ) { innerPadding ->
+                    OnboardingScreen(
+                        onFinish = {},
+                        modifier = Modifier.padding(innerPadding),
+                    )
                 }
             }
         }

@@ -1,0 +1,1305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pro Expense — Logo Brainstorm · Round 02.5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111110;
+    --ink-2: #2a2924;
+    --muted: #6b6a63;
+    --muted-2: #9a988f;
+    --line: #e4e1d6;
+    --line-2: #efece2;
+    --paper: #f6f3e9;
+    --paper-2: #fbf8ee;
+    --card: #ffffff;
+    --clay: #c8482a;
+    --clay-deep: #a8391c;
+    --coin: #d4a93a;
+    --sage: #2f5d3a;
+    --indigo: #1a3a6b;
+    --paper-warm: #fbf2dd;
+    --ink-warm: #2b1f17;
+
+    --sans: "Geist", -apple-system, system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --serif: "Instrument Serif", "Times New Roman", serif;
+    --hand: "Caveat", cursive;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .page { max-width: 1240px; margin: 0 auto; padding: 56px 56px 120px; }
+
+  /* DOC META */
+  .doc-meta {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px solid var(--line); padding-bottom: 16px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .doc-meta .lhs { display: flex; gap: 24px; }
+  .doc-meta .lhs span:first-child { color: var(--ink); }
+  .doc-meta .pill {
+    color: var(--clay); border: 1px solid var(--clay);
+    padding: 2px 8px; border-radius: 99px; font-size: 10px; letter-spacing: 0.16em;
+  }
+
+  /* HERO */
+  .hero { margin-top: 48px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items: end; }
+  h1.title {
+    font-family: var(--serif); font-weight: 400; font-size: 84px;
+    line-height: 0.95; letter-spacing: -0.02em; margin: 0;
+  }
+  h1.title em { font-style: italic; color: var(--clay); }
+  .deck { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 42ch; }
+  .deck .lede {
+    font-family: var(--serif); font-style: italic; font-size: 22px;
+    line-height: 1.35; color: var(--ink); margin: 0 0 16px;
+  }
+
+  /* SECTIONS */
+  section { margin-top: 96px; }
+  .sec-head {
+    display: grid; grid-template-columns: 220px 1fr; gap: 48px;
+    padding-bottom: 22px; border-bottom: 1px solid var(--line); margin-bottom: 36px;
+  }
+  .sec-head .num {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); padding-top: 14px;
+  }
+  .sec-head h2 {
+    font-family: var(--serif); font-weight: 400; font-size: 44px;
+    line-height: 1.0; letter-spacing: -0.015em; margin: 0 0 12px;
+  }
+  .sec-head h2 em { font-style: italic; color: var(--clay); }
+  .sec-head .blurb { color: var(--muted); font-size: 15px; max-width: 60ch; }
+  .sec-head .blurb em { color: var(--ink-2); font-style: italic; font-family: var(--serif); }
+
+  /* anchor row */
+  .anchor {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--line); border: 1px solid var(--line);
+  }
+  .anchor .cell { background: var(--paper-2); padding: 36px; }
+  .anchor .cell.now { background: var(--clay); color: var(--paper-warm); }
+  .anchor .cell .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 22px;
+  }
+  .anchor .cell.now .tag { color: rgba(251,242,221,0.65); }
+  .anchor .cell .row {
+    display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: center;
+  }
+  .anchor .cell .row svg { width: 200px; height: 200px; display: block; }
+  .anchor .cell h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 28px;
+    margin: 0 0 8px; letter-spacing: -0.01em;
+  }
+  .anchor .cell h3 em { font-style: italic; }
+  .anchor .cell.now h3 em { color: var(--paper-warm); }
+  .anchor .cell p { margin: 0 0 12px; font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+  .anchor .cell.now p { color: rgba(251,242,221,0.8); }
+  .anchor .cell .specs {
+    margin-top: 14px; font-family: var(--mono); font-size: 11px;
+    color: var(--muted); line-height: 1.8; letter-spacing: 0.04em;
+  }
+  .anchor .cell.now .specs { color: rgba(251,242,221,0.6); }
+  .anchor .cell .specs .k { display: inline-block; width: 90px; text-transform: uppercase; letter-spacing: 0.12em; }
+
+  /* construction diagram */
+  .construction {
+    margin-top: 28px;
+    background: var(--card); border: 1px solid var(--line);
+    padding: 36px; display: grid; grid-template-columns: 260px 1fr; gap: 48px; align-items: center;
+  }
+  .construction .diagram { display: flex; justify-content: center; }
+  .construction h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 22px;
+    margin: 0 0 14px; letter-spacing: -0.01em;
+  }
+  .construction h3 em { font-style: italic; color: var(--clay); }
+  .construction .grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    margin-top: 12px;
+  }
+  .construction .grid .item {
+    border-left: 2px solid var(--clay); padding: 4px 0 4px 14px;
+  }
+  .construction .grid .item .k {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 4px;
+  }
+  .construction .grid .item .v {
+    font-family: var(--serif); font-size: 16px; font-style: italic; color: var(--ink);
+  }
+  .construction .grid .item .b { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+
+  /* axis section heading */
+  .axis-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; }
+  .axis-head .label {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--clay);
+  }
+  .axis-head h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 32px;
+    margin: 0; letter-spacing: -0.01em;
+  }
+  .axis-head h3 em { font-style: italic; color: var(--clay); }
+  .axis-blurb { color: var(--muted); margin: 0 0 28px; max-width: 64ch; font-size: 14.5px; }
+  .axis-blurb em { color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+
+  /* variation grid */
+  .var-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--line); border: 1px solid var(--line);
+  }
+  .var-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .var-grid.two { grid-template-columns: repeat(2, 1fr); }
+  .var-cell {
+    background: var(--paper-2);
+    display: flex; flex-direction: column;
+    min-height: 320px;
+  }
+  .var-cell .frame {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 28px; background: var(--paper-warm);
+    position: relative;
+  }
+  .var-cell .frame svg { display: block; width: 140px; height: 140px; }
+  .var-cell.dark .frame { background: var(--ink-warm); }
+  .var-cell.clay .frame { background: var(--clay); }
+  .var-cell.paper .frame { background: var(--paper-warm); }
+  .var-cell.cream .frame { background: var(--paper-2); }
+  .var-cell .frame .corner-id {
+    position: absolute; top: 10px; left: 12px;
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .var-cell.dark .frame .corner-id, .var-cell.clay .frame .corner-id { color: rgba(251,242,221,0.5); }
+  .var-cell .meta {
+    background: var(--card); padding: 16px 18px;
+    border-top: 1px solid var(--line-2);
+  }
+  .var-cell .meta .name {
+    font-family: var(--serif); font-size: 18px; font-style: italic;
+    letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  .var-cell .meta .note {
+    font-size: 12.5px; color: var(--muted); line-height: 1.45;
+  }
+  .var-cell .meta .note .good { color: var(--sage); }
+  .var-cell .meta .note .bad { color: var(--clay-deep); }
+  .var-cell.featured .meta { background: var(--paper-warm); }
+  .var-cell.featured .meta .name::after {
+    content: '★'; color: var(--clay); margin-left: 6px;
+    font-style: normal; font-size: 14px;
+  }
+
+  /* lockup grid (wider tiles) */
+  .lockup-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--line); border: 1px solid var(--line);
+  }
+  .lockup-cell {
+    background: var(--paper-2); padding: 0;
+    min-height: 280px; display: flex; flex-direction: column;
+  }
+  .lockup-cell .stage {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 36px; background: var(--paper-warm);
+  }
+  .lockup-cell.dark .stage { background: var(--ink-warm); }
+  .lockup-cell.clay .stage { background: var(--clay); }
+  .lockup-cell .meta {
+    padding: 16px 22px; background: var(--card);
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1px solid var(--line-2);
+  }
+  .lockup-cell .meta .name { font-family: var(--serif); font-size: 18px; font-style: italic; }
+  .lockup-cell .meta .id {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+    color: var(--muted); text-transform: uppercase;
+  }
+
+  /* horizontal lockup */
+  .lock-h { display: flex; align-items: center; gap: 18px; }
+  .lock-h .mark { width: 84px; height: 84px; }
+  .lock-h .word {
+    font-family: var(--serif); font-size: 44px; line-height: 1;
+    letter-spacing: -0.01em; color: var(--ink);
+  }
+  .lock-h .word em { font-style: italic; color: var(--clay); }
+  .lockup-cell.dark .lock-h .word { color: var(--paper-warm); }
+  .lockup-cell.dark .lock-h .word em { color: var(--coin); }
+  .lockup-cell.clay .lock-h .word { color: var(--paper-warm); }
+  .lockup-cell.clay .lock-h .word em { color: var(--ink-warm); font-style: italic; }
+
+  /* stacked lockup */
+  .lock-s { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .lock-s .mark { width: 100px; height: 100px; }
+  .lock-s .word {
+    font-family: var(--serif); font-size: 32px; line-height: 1;
+    letter-spacing: -0.01em; color: var(--ink); text-align: center;
+  }
+  .lock-s .word em { font-style: italic; color: var(--clay); }
+  .lock-s .tagline {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--muted); margin-top: 4px;
+  }
+  .lockup-cell.dark .lock-s .word { color: var(--paper-warm); }
+  .lockup-cell.dark .lock-s .word em { color: var(--coin); }
+  .lockup-cell.dark .lock-s .tagline { color: rgba(251,242,221,0.5); }
+  .lockup-cell.clay .lock-s .word { color: var(--paper-warm); }
+  .lockup-cell.clay .lock-s .word em { color: var(--ink-warm); }
+  .lockup-cell.clay .lock-s .tagline { color: rgba(251,242,221,0.65); }
+
+  /* signature lockup */
+  .lock-sig {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .lock-sig .mark { width: 64px; height: 64px; }
+  .lock-sig .word {
+    font-family: var(--hand); font-size: 38px; line-height: 1;
+    color: var(--ink);
+  }
+  .lockup-cell.dark .lock-sig .word { color: var(--paper-warm); }
+  .lockup-cell.clay .lock-sig .word { color: var(--paper-warm); }
+
+  /* badge lockup */
+  .lock-badge {
+    width: 220px; height: 220px; border-radius: 999px;
+    background: var(--clay); color: var(--paper-warm);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .lock-badge .inner-mark { width: 100px; height: 100px; }
+  .lock-badge svg.rim-text { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* shortlist section */
+  .shortlist {
+    background: var(--ink-warm); color: var(--paper-warm);
+    padding: 56px; border: 1px solid var(--ink-warm);
+  }
+  .shortlist h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 32px;
+    margin: 0 0 8px; letter-spacing: -0.01em;
+  }
+  .shortlist h3 em { font-style: italic; color: var(--coin); }
+  .shortlist .sub {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(251,242,221,0.55);
+    margin-bottom: 36px;
+  }
+  .shortlist .picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .shortlist .pick {
+    background: rgba(251,242,221,0.04);
+    border: 1px solid rgba(251,242,221,0.15);
+    padding: 24px 24px 26px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .shortlist .pick .stage {
+    aspect-ratio: 1/1; background: var(--clay); border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .shortlist .pick .stage svg { width: 130px; height: 130px; }
+  .shortlist .pick .rank {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--coin);
+  }
+  .shortlist .pick h4 {
+    font-family: var(--serif); font-style: italic; font-size: 22px;
+    font-weight: 400; margin: 0;
+  }
+  .shortlist .pick p {
+    margin: 0; font-size: 13.5px; line-height: 1.5;
+    color: rgba(251,242,221,0.7);
+  }
+
+  /* scale row */
+  .scale-row {
+    margin-top: 32px;
+    background: var(--card); border: 1px solid var(--line);
+    padding: 28px 32px;
+    display: flex; align-items: flex-end; justify-content: space-around; gap: 24px;
+  }
+  .scale-row .scale { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .scale-row .scale .px {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    color: var(--muted); text-transform: uppercase;
+  }
+
+  /* signoff */
+  .signoff {
+    margin-top: 96px; padding-top: 32px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* annotation */
+  .annot {
+    font-family: var(--hand); font-size: 22px; color: var(--clay-deep);
+    line-height: 1.1;
+  }
+  .annot-arrow { font-family: var(--serif); font-style: italic; color: var(--clay-deep); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- DOC META -->
+  <div class="doc-meta">
+    <div class="lhs">
+      <span>Pro Expense · Logo Enhancement</span>
+      <span>Doc 02.5</span>
+      <span class="pill">Brainstorm · Refining the Coin</span>
+    </div>
+    <div>17 May 2026</div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1 class="title">Same coin.<br/>Sharper <em>strike</em>.</h1>
+    <div class="deck">
+      <p class="lede">The Pocket Coin is locked. This doc only asks: <em>what does the coin look like up close?</em></p>
+      <p>Five axes of refinement, four to six variations each. Nothing here changes the silhouette, the palette, or the "pe" idea. We're just deciding what kind of coin it is — milled or smooth, struck or stamped, alone or paired.</p>
+    </div>
+  </header>
+
+  <!-- 01 ANCHOR -->
+  <section>
+    <div class="sec-head">
+      <div class="num">01 / The anchor</div>
+      <div>
+        <h2>What we're refining <em>from</em>.</h2>
+        <p class="blurb">Round 02's committed mark, on its two primary surfaces. Everything that follows in this doc keeps the four constants on the right and only changes one variable at a time.</p>
+      </div>
+    </div>
+
+    <div class="anchor">
+      <div class="cell">
+        <div class="tag">R02 · Primary on Paper</div>
+        <div class="row">
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3.5"/>
+            <circle cx="70" cy="70" r="50" fill="none" stroke="#c8482a" stroke-width="1" stroke-dasharray="2 3.5" opacity="0.7"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#c8482a">pe</text>
+          </svg>
+          <div>
+            <h3>The <em>committed</em> mark.</h3>
+            <p>Two concentric circles, a dashed inner rim, and italic <em>pe</em> set in Instrument Serif. Reads as a coin at distance and as a signature up close.</p>
+            <div class="specs">
+              <div><span class="k">Outer ring</span>r60, stroke 3.5</div>
+              <div><span class="k">Inner ring</span>r50, dashed 2/3.5</div>
+              <div><span class="k">Glyph</span>pe · 58pt italic serif</div>
+              <div><span class="k">Optical center</span>baseline y≈90 (10% drop)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cell now">
+        <div class="tag">R02 · App Icon on Clay</div>
+        <div class="row">
+          <svg viewBox="0 0 168 168" aria-hidden="true">
+            <rect width="168" height="168" rx="0" fill="#c8482a"/>
+            <circle cx="84" cy="84" r="64" fill="none" stroke="#fbf2dd" stroke-width="3.5"/>
+            <circle cx="84" cy="84" r="54" fill="none" stroke="#fbf2dd" stroke-width="1" stroke-dasharray="2 3.5" opacity="0.7"/>
+            <text x="84" y="106" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="68" fill="#fbf2dd">pe</text>
+          </svg>
+          <div>
+            <h3>What stays <em>constant</em>.</h3>
+            <p>These four things are non-negotiable across every variation that follows. If a variation breaks one of them, it's the wrong axis.</p>
+            <div class="specs">
+              <div><span class="k">Silhouette</span>circle on rounded square</div>
+              <div><span class="k">Palette</span>clay / paper / ink only</div>
+              <div><span class="k">Glyph</span>"pe" — italic serif</div>
+              <div><span class="k">Stance</span>centered, optically dropped</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- construction breakdown -->
+    <div class="construction">
+      <div class="diagram">
+        <svg width="240" height="240" viewBox="0 0 240 240" aria-hidden="true">
+          <!-- guide grid -->
+          <defs>
+            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e4e1d6" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <rect width="240" height="240" fill="url(#grid)"/>
+          <!-- crosshair -->
+          <line x1="120" y1="20" x2="120" y2="220" stroke="#c8482a" stroke-width="0.5" stroke-dasharray="2 3"/>
+          <line x1="20" y1="120" x2="220" y2="120" stroke="#c8482a" stroke-width="0.5" stroke-dasharray="2 3"/>
+          <!-- rings -->
+          <circle cx="120" cy="120" r="100" fill="none" stroke="#2b1f17" stroke-width="2"/>
+          <circle cx="120" cy="120" r="83" fill="none" stroke="#2b1f17" stroke-width="0.5" stroke-dasharray="2 3"/>
+          <circle cx="120" cy="120" r="68" fill="none" stroke="#c8482a" stroke-width="0.5" stroke-dasharray="3 3"/>
+          <!-- glyph -->
+          <text x="120" y="150" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="84" fill="#2b1f17">pe</text>
+          <!-- measurements -->
+          <text x="120" y="14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#6b6a63" letter-spacing="1">100% Ø</text>
+          <text x="232" y="124" text-anchor="end" font-family="Geist Mono, monospace" font-size="8" fill="#6b6a63" letter-spacing="1">83%</text>
+          <text x="120" y="232" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#c8482a" letter-spacing="1">68% glyph cap</text>
+          <!-- callout -->
+          <line x1="200" y1="120" x2="226" y2="86" stroke="#a8391c" stroke-width="0.5"/>
+          <text x="226" y="80" font-family="Caveat, cursive" font-size="14" fill="#a8391c">edge zone</text>
+        </svg>
+      </div>
+      <div>
+        <h3>Construction — the four <em>tunable knobs</em>.</h3>
+        <div class="grid">
+          <div class="item">
+            <div class="k">Knob A · Edge</div>
+            <div class="v">The 20% rim zone</div>
+            <div class="b">Where rim treatments live: milled, beaded, doubled, inscribed. Most personality lives here.</div>
+          </div>
+          <div class="item">
+            <div class="k">Knob B · Glyph</div>
+            <div class="v">"pe" letterform</div>
+            <div class="b">Italic serif weight, ligature, descender shape, scale. Affects readability at 16px.</div>
+          </div>
+          <div class="item">
+            <div class="k">Knob C · Inscription</div>
+            <div class="v">Micro-text & marks</div>
+            <div class="b">Rim text, stars, dots, year, currency glyphs. Adds artifact-feel without changing silhouette.</div>
+          </div>
+          <div class="item">
+            <div class="k">Knob D · Lockup</div>
+            <div class="v">Mark + wordmark</div>
+            <div class="b">Horizontal, stacked, signature, badge. Used at the level of marketing, not app icon.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 EDGE -->
+  <section>
+    <div class="sec-head">
+      <div class="num">02 / Axis A · Edge</div>
+      <div>
+        <h2>Six ways to <em>finish</em> the rim.</h2>
+        <p class="blurb">The edge is the most-read 20% of the mark. The current dashed inner ring reads as <em>"perforated"</em> — fine, but generic. Below: six rim languages, each with a different physical reference. Pick the one whose <em>noun</em> matches the brand: milled coin, beaded medallion, double-line stamp, gear-tooth token, broken-strike artifact, smooth bullion.</p>
+      </div>
+    </div>
+
+    <div class="axis-head">
+      <span class="label">Axis A · Edge</span>
+      <h3>The <em>rim</em> language.</h3>
+    </div>
+
+    <div class="var-grid">
+      <!-- A1 Reeded -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">A·01</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <g stroke="#fbf2dd" stroke-width="1.4">
+              <!-- reeded tick marks around outer -->
+              <g id="reeds-1"></g>
+            </g>
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3.5"/>
+            <circle cx="70" cy="70" r="54" fill="none" stroke="#fbf2dd" stroke-width="0.8"/>
+            <!-- reed ticks (manual) -->
+            <g stroke="#fbf2dd" stroke-width="1.2" opacity="0.95">
+              <line x1="70" y1="6" x2="70" y2="14"/>
+              <line x1="70" y1="126" x2="70" y2="134"/>
+              <line x1="6" y1="70" x2="14" y2="70"/>
+              <line x1="126" y1="70" x2="134" y2="70"/>
+              <line x1="24.9" y1="24.9" x2="30.5" y2="30.5"/>
+              <line x1="109.5" y1="109.5" x2="115.1" y2="115.1"/>
+              <line x1="115.1" y1="24.9" x2="109.5" y2="30.5"/>
+              <line x1="30.5" y1="109.5" x2="24.9" y2="115.1"/>
+              <line x1="46" y1="9" x2="48.4" y2="16.5"/>
+              <line x1="94" y1="9" x2="91.6" y2="16.5"/>
+              <line x1="9" y1="46" x2="16.5" y2="48.4"/>
+              <line x1="9" y1="94" x2="16.5" y2="91.6"/>
+              <line x1="131" y1="46" x2="123.5" y2="48.4"/>
+              <line x1="131" y1="94" x2="123.5" y2="91.6"/>
+              <line x1="46" y1="131" x2="48.4" y2="123.5"/>
+              <line x1="94" y1="131" x2="91.6" y2="123.5"/>
+              <line x1="14" y1="32.8" x2="20.5" y2="36.7"/>
+              <line x1="119.5" y1="103.3" x2="126" y2="107.2"/>
+              <line x1="126" y1="32.8" x2="119.5" y2="36.7"/>
+              <line x1="20.5" y1="103.3" x2="14" y2="107.2"/>
+              <line x1="32.8" y1="14" x2="36.7" y2="20.5"/>
+              <line x1="103.3" y1="119.5" x2="107.2" y2="126"/>
+              <line x1="107.2" y1="14" x2="103.3" y2="20.5"/>
+              <line x1="36.7" y1="119.5" x2="32.8" y2="126"/>
+            </g>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Reeded edge</div>
+          <div class="note">Tick-marks around the rim like a milled quarter. <span class="good">Reads as currency immediately.</span></div>
+        </div>
+      </div>
+
+      <!-- A2 Beaded -->
+      <div class="var-cell featured clay">
+        <div class="frame">
+          <span class="corner-id">A·02</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <!-- 36 beads on r51 -->
+            <g fill="#fbf2dd">
+              <!-- beads programmatically would be ideal; generated manually for 24 -->
+            </g>
+            <g id="beads" fill="#fbf2dd"></g>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Beaded rim</div>
+          <div class="note">Tiny dots inside the outer ring — a medallion / commemorative-coin tell. <span class="good">Premium without trying.</span></div>
+        </div>
+      </div>
+
+      <!-- A3 Double Ring -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">A·03</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="62" fill="none" stroke="#fbf2dd" stroke-width="2"/>
+            <circle cx="70" cy="70" r="55" fill="none" stroke="#fbf2dd" stroke-width="2"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Double thin ring</div>
+          <div class="note">Two equal hairlines. Reads as <em>stamp</em> or <em>seal</em>. Cleaner at 16px than dashes.</div>
+        </div>
+      </div>
+
+      <!-- A4 Gear teeth -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">A·04</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <g fill="#fbf2dd">
+              <!-- 24 small notches outside -->
+              <g id="gear-teeth"></g>
+            </g>
+            <circle cx="70" cy="70" r="56" fill="#c8482a" stroke="#fbf2dd" stroke-width="2.5"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Gear / token notch</div>
+          <div class="note">Subway-token energy. <span class="bad">May read fintech-y / machine.</span> Save for a "tools" sub-brand.</div>
+        </div>
+      </div>
+
+      <!-- A5 Broken strike -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">A·05</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3.5" stroke-dasharray="180 6 30 6 60 6"/>
+            <circle cx="70" cy="70" r="50" fill="none" stroke="#fbf2dd" stroke-width="0.8" opacity="0.5"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Broken strike</div>
+          <div class="note">Outer ring with intentional gaps — looks <em>worn</em>, hand-pressed. Has voice. Hard to make consistent.</div>
+        </div>
+      </div>
+
+      <!-- A6 Smooth bullion -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">A·06</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="5"/>
+            <text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Smooth bullion</div>
+          <div class="note">A single thicker ring, no inner detail. Most <em>modern</em>, scales best to 16px. Risks looking plain.</div>
+        </div>
+      </div>
+
+      <!-- A7 Dotted micro -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">A·07</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <circle cx="70" cy="70" r="51" fill="none" stroke="#fbf2dd" stroke-width="0.6" stroke-dasharray="0.5 1.6"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Micro-dot inner</div>
+          <div class="note">Dashed → micro-dotted. Same idea as R02 but finer. <span class="good">Most evolutionary path.</span></div>
+        </div>
+      </div>
+
+      <!-- A8 Stitched -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">A·08</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <circle cx="70" cy="70" r="50" fill="none" stroke="#fbf2dd" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Stitched rim</div>
+          <div class="note">Larger dashes — reads as <em>wallet stitching</em>. Ties to "pocket" metaphor.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GLYPH -->
+  <section>
+    <div class="sec-head">
+      <div class="num">03 / Axis B · Glyph</div>
+      <div>
+        <h2>The "pe" itself, six ways.</h2>
+        <p class="blurb">The italic serif "pe" is the signature inside the coin. It can sit upright or slope, ligature or stand apart, take a flourish or not. None of these change the silhouette — only the letterform inside it.</p>
+      </div>
+    </div>
+
+    <div class="axis-head">
+      <span class="label">Axis B · Glyph</span>
+      <h3>The <em>letter</em> inside.</h3>
+    </div>
+
+    <div class="var-grid">
+      <!-- B1 Stock italic serif (R02) -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">B·01</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="62" fill="#c8482a">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">R02 baseline</div>
+          <div class="note">Instrument Serif italic at 62pt. The reference point.</div>
+        </div>
+      </div>
+
+      <!-- B2 Ligatured pe -->
+      <div class="var-cell featured paper">
+        <div class="frame">
+          <span class="corner-id">B·02</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <!-- ligatured pe (custom-drawn): p and e share a curve -->
+            <g fill="#c8482a">
+              <!-- p stem -->
+              <path d="M 44 56 Q 44 52 48 52 L 50 52 Q 52 52 52 56 L 52 102 Q 52 106 48 106 Q 44 106 44 102 Z"/>
+              <!-- p bowl -->
+              <path d="M 52 60 Q 52 56 58 56 Q 76 56 76 70 Q 76 84 60 84 Q 52 84 52 80 Z" fill="none" stroke="#c8482a" stroke-width="6"/>
+              <!-- shared bridge into e -->
+              <path d="M 76 70 Q 84 70 88 66 Q 96 60 96 70 Q 96 84 84 84 Q 76 84 76 78 L 96 78" fill="none" stroke="#c8482a" stroke-width="5" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Custom <em>pe</em> ligature</div>
+          <div class="note">Shared midline between p-bowl and e-eye. <span class="good">Ownable, distinct from default Instrument Serif.</span></div>
+        </div>
+      </div>
+
+      <!-- B3 Roman, not italic -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">B·03</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-size="62" fill="#c8482a">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Roman upright</div>
+          <div class="note">No italic. Sturdier, more "official mint" feel. <span class="bad">Loses the signature warmth.</span></div>
+        </div>
+      </div>
+
+      <!-- B4 Heavy display -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">B·04</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <text x="70" y="94" text-anchor="middle" font-family="Geist, sans-serif" font-weight="700" font-size="54" fill="#c8482a" letter-spacing="-0.04em">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Geist Bold</div>
+          <div class="note">Sans, heavy, geometric. Modern but breaks the editorial tone. <span class="bad">Off-system.</span></div>
+        </div>
+      </div>
+
+      <!-- B5 Capitals -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">B·05</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <text x="70" y="88" text-anchor="middle" font-family="Instrument Serif, serif" font-size="52" fill="#c8482a" letter-spacing="0.04em">PE</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Small caps PE</div>
+          <div class="note">Inscription-style. Reads as <em>memorial</em> coin. Loses the casual notebook tone.</div>
+        </div>
+      </div>
+
+      <!-- B6 Larger p with subscript e -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">B·06</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <text x="58" y="96" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="78" fill="#c8482a">p</text>
+            <text x="98" y="80" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="32" fill="#c8482a">e</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Big p, super-small e</div>
+          <div class="note">Asymmetric, almost a <em>chemical symbol</em>. Distinctive but reads "Pₑ".</div>
+        </div>
+      </div>
+
+      <!-- B7 ampersand -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">B·07</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <text x="44" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="44" fill="#c8482a">p</text>
+            <text x="70" y="88" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="28" fill="#c8482a" opacity="0.55">·</text>
+            <text x="96" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="44" fill="#c8482a">e</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">p · e (with bullet)</div>
+          <div class="note">Separated by a center-dot — reads as initials on a calling card. Quieter.</div>
+        </div>
+      </div>
+
+      <!-- B8 stamped letterpress -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">B·08</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="3"/>
+            <text x="70" y="93" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="62" fill="#c8482a" opacity="0.92">pe</text>
+            <text x="70.6" y="93.6" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="62" fill="#a8391c" opacity="0.4">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Double-strike</div>
+          <div class="note">Half-pixel offset second layer — letterpress ghost. <span class="good">Adds tactile feel; vanishes at small sizes.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 INSCRIPTION -->
+  <section>
+    <div class="sec-head">
+      <div class="num">04 / Axis C · Inscription</div>
+      <div>
+        <h2>What's <em>written</em> on the rim.</h2>
+        <p class="blurb">Real coins carry inscriptions: dates, mottoes, mint marks. We can borrow that vocabulary very lightly — not on the app icon (too small) but on marketing, splash, and large-format applications. Below: five rim-language ideas.</p>
+      </div>
+    </div>
+
+    <div class="axis-head">
+      <span class="label">Axis C · Inscription</span>
+      <h3>Rim <em>text</em> & micro-marks.</h3>
+    </div>
+
+    <div class="var-grid three">
+      <!-- C1 Rim text -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">C·01</span>
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <defs>
+              <path id="topArc" d="M 30 100 A 70 70 0 0 1 170 100" fill="none"/>
+              <path id="botArc" d="M 30 100 A 70 70 0 0 0 170 100" fill="none"/>
+            </defs>
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#fbf2dd" stroke-width="2.5"/>
+            <circle cx="100" cy="100" r="60" fill="none" stroke="#fbf2dd" stroke-width="2"/>
+            <text font-family="Geist Mono, monospace" font-size="9" fill="#fbf2dd" letter-spacing="3.5">
+              <textPath href="#topArc" startOffset="50%" text-anchor="middle">PRO·EXPENSE·NOTEBOOK</textPath>
+            </text>
+            <text font-family="Geist Mono, monospace" font-size="8" fill="#fbf2dd" letter-spacing="3" opacity="0.7">
+              <textPath href="#botArc" startOffset="50%" text-anchor="middle">EST·MMXXVI</textPath>
+            </text>
+            <text x="100" y="118" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="50" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Full rim inscription</div>
+          <div class="note">Coin-style: name on top arc, year on bottom. For splash + brand book only — illegible at app-icon size.</div>
+        </div>
+      </div>
+
+      <!-- C2 Compass dots -->
+      <div class="var-cell featured clay">
+        <div class="frame">
+          <span class="corner-id">C·02</span>
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <circle cx="100" cy="100" r="72" fill="none" stroke="#fbf2dd" stroke-width="0.6" opacity="0.5"/>
+            <!-- compass dots N E S W -->
+            <circle cx="100" cy="20" r="3" fill="#fbf2dd"/>
+            <circle cx="180" cy="100" r="3" fill="#fbf2dd"/>
+            <circle cx="100" cy="180" r="3" fill="#fbf2dd"/>
+            <circle cx="20" cy="100" r="3" fill="#fbf2dd"/>
+            <text x="100" y="120" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="60" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Four compass dots</div>
+          <div class="note">N · E · S · W. Reads as <em>traveller's coin</em>. Ties to multi-currency / Maya, Siti, Carlos, Aiko story.</div>
+        </div>
+      </div>
+
+      <!-- C3 Currency glyphs -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">C·03</span>
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <g font-family="Instrument Serif, serif" font-size="14" fill="#fbf2dd" opacity="0.65" text-anchor="middle">
+              <text x="100" y="24">€</text>
+              <text x="180" y="105">¥</text>
+              <text x="100" y="190">£</text>
+              <text x="20" y="105">฿</text>
+            </g>
+            <text x="100" y="120" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="60" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Currency cardinal points</div>
+          <div class="note">€ ¥ £ ฿ at compass positions. Most literal "multi-currency" expression. Charming, slightly busy.</div>
+        </div>
+      </div>
+
+      <!-- C4 Single star -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">C·04</span>
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#fbf2dd" stroke-width="0.6" stroke-dasharray="1 2.5"/>
+            <!-- single 6-point star at top -->
+            <g fill="#fbf2dd" transform="translate(100 24)">
+              <polygon points="0,-6 1.5,-1.5 6,0 1.5,1.5 0,6 -1.5,1.5 -6,0 -1.5,-1.5"/>
+            </g>
+            <text x="100" y="120" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="60" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">North-star marker</div>
+          <div class="note">One mint-mark at 12 o'clock. Quiet, classic. Almost invisible at small size — that's fine.</div>
+        </div>
+      </div>
+
+      <!-- C5 Year mark -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">C·05</span>
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <text x="100" y="118" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="56" fill="#fbf2dd">pe</text>
+            <text x="100" y="158" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" fill="#fbf2dd" letter-spacing="4" opacity="0.7">·2026·</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Year stamp below</div>
+          <div class="note">Mint-mark year under the glyph. Use for anniversary editions / yearly recaps in-app.</div>
+        </div>
+      </div>
+
+      <!-- C6 Tally -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">C·06</span>
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <!-- tally marks at 6 o'clock -->
+            <g stroke="#fbf2dd" stroke-width="2" stroke-linecap="round">
+              <line x1="88" y1="158" x2="88" y2="172"/>
+              <line x1="93" y1="158" x2="93" y2="172"/>
+              <line x1="98" y1="158" x2="98" y2="172"/>
+              <line x1="103" y1="158" x2="103" y2="172"/>
+              <line x1="85" y1="172" x2="106" y2="158"/>
+            </g>
+            <text x="100" y="118" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="56" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Tally-mark foot</div>
+          <div class="note">Five tally lines = the notebook metaphor in geometry. Ties to "log it" verb. <span class="good">Conceptually strongest.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 LOCKUPS -->
+  <section>
+    <div class="sec-head">
+      <div class="num">05 / Axis D · Lockup</div>
+      <div>
+        <h2>Mark <em>+</em> wordmark, four ways.</h2>
+        <p class="blurb">The coin alone is the app icon, the favicon, the splash. The lockup is what appears on Play Store header, website nav, business cards, and email footers. Four configurations — each with a different "voice."</p>
+      </div>
+    </div>
+
+    <div class="axis-head">
+      <span class="label">Axis D · Lockup</span>
+      <h3>Mark plus <em>wordmark</em>.</h3>
+    </div>
+
+    <div class="lockup-grid">
+      <!-- D1 Horizontal -->
+      <div class="lockup-cell">
+        <div class="stage">
+          <div class="lock-h">
+            <svg class="mark" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="4"/>
+              <text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="60" fill="#c8482a">pe</text>
+            </svg>
+            <div class="word">Pro <em>Expense</em></div>
+          </div>
+        </div>
+        <div class="meta"><span class="name">Horizontal — primary</span><span class="id">D·01 · WEB NAV</span></div>
+      </div>
+
+      <!-- D2 Stacked -->
+      <div class="lockup-cell">
+        <div class="stage">
+          <div class="lock-s">
+            <svg class="mark" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#c8482a" stroke-width="4"/>
+              <text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="60" fill="#c8482a">pe</text>
+            </svg>
+            <div>
+              <div class="word">Pro <em>Expense</em></div>
+              <div class="tagline">The notebook for your money</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta"><span class="name">Stacked + tagline</span><span class="id">D·02 · PLAY STORE</span></div>
+      </div>
+
+      <!-- D3 Signature -->
+      <div class="lockup-cell dark">
+        <div class="stage">
+          <div class="lock-sig">
+            <svg class="mark" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#d4a93a" stroke-width="4"/>
+              <text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="60" fill="#d4a93a">pe</text>
+            </svg>
+            <div class="word">Pro Expense</div>
+          </div>
+        </div>
+        <div class="meta"><span class="name">Handwritten signoff</span><span class="id">D·03 · IN-APP / EMAIL</span></div>
+      </div>
+
+      <!-- D4 Badge -->
+      <div class="lockup-cell">
+        <div class="stage">
+          <div class="lock-badge">
+            <svg class="rim-text" viewBox="0 0 220 220">
+              <defs>
+                <path id="badge-top" d="M 110 110 m -88 0 a 88 88 0 0 1 176 0" fill="none"/>
+                <path id="badge-bot" d="M 110 110 m -88 0 a 88 88 0 0 0 176 0" fill="none"/>
+              </defs>
+              <text font-family="Geist Mono, monospace" font-size="10" fill="#fbf2dd" letter-spacing="4">
+                <textPath href="#badge-top" startOffset="50%" text-anchor="middle">PRO · EXPENSE · NOTEBOOK</textPath>
+              </text>
+              <text font-family="Geist Mono, monospace" font-size="9" fill="#fbf2dd" letter-spacing="3.5" opacity="0.7">
+                <textPath href="#badge-bot" startOffset="50%" text-anchor="middle">EST · MMXXVI · POCKET COIN</textPath>
+              </text>
+            </svg>
+            <svg class="inner-mark" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="56" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+              <text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+            </svg>
+          </div>
+        </div>
+        <div class="meta"><span class="name">Badge / sticker</span><span class="id">D·04 · SWAG · COMMEMORATIVE</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 PHYSICALITY -->
+  <section>
+    <div class="sec-head">
+      <div class="num">06 / Axis E · Physicality</div>
+      <div>
+        <h2>Flat, struck, or <em>stamped</em>.</h2>
+        <p class="blurb">Same vector mark, three rendering registers. Flat is what ships in the app today. Struck (subtle inner shadow) is what App Store / marketing benefits from. Stamped (offset / embossed) is the most "object-like" but most expensive to maintain. Pick the floor and the ceiling.</p>
+      </div>
+    </div>
+
+    <div class="axis-head">
+      <span class="label">Axis E · Physicality</span>
+      <h3>How <em>real</em> is the coin.</h3>
+    </div>
+
+    <div class="var-grid three">
+      <!-- E1 Flat -->
+      <div class="var-cell clay">
+        <div class="frame">
+          <span class="corner-id">E·01</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Flat — minimum spec</div>
+          <div class="note">Strokes + type only. Works at 16px. <span class="good">The floor.</span></div>
+        </div>
+      </div>
+
+      <!-- E2 Struck -->
+      <div class="var-cell featured clay">
+        <div class="frame">
+          <span class="corner-id">E·02</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <defs>
+              <radialGradient id="strike1" cx="50%" cy="38%" r="65%">
+                <stop offset="0%" stop-color="#d96047"/>
+                <stop offset="70%" stop-color="#c8482a"/>
+                <stop offset="100%" stop-color="#a8391c"/>
+              </radialGradient>
+              <radialGradient id="strike2" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#fff5dd" stop-opacity="0.2"/>
+                <stop offset="60%" stop-color="#fbf2dd" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="140" height="140" fill="url(#strike1)"/>
+            <rect width="140" height="140" fill="url(#strike2)"/>
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#a8391c" stroke-width="0.6" opacity="0.7" transform="translate(0 1)"/>
+            <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+            <text x="70" y="91.2" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#7a2b14" opacity="0.18">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Struck — gentle relief</div>
+          <div class="note">Soft radial light, 0.6px shadow under outer ring, 1.2px ghost on glyph. <span class="good">Use for splash, Play Store, hero.</span></div>
+        </div>
+      </div>
+
+      <!-- E3 Embossed paper -->
+      <div class="var-cell paper">
+        <div class="frame">
+          <span class="corner-id">E·03</span>
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <defs>
+              <filter id="emboss" x="-10%" y="-10%" width="120%" height="120%">
+                <feGaussianBlur stdDeviation="0.6" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- white ring + drop shadow + inner highlight to look pressed -->
+            <circle cx="70" cy="71.5" r="60" fill="none" stroke="#d6c8a6" stroke-width="3.5" opacity="0.85"/>
+            <circle cx="70" cy="69" r="60" fill="none" stroke="#fffaee" stroke-width="1" opacity="0.9"/>
+            <circle cx="70" cy="70" r="60" fill="none" stroke="#c8b694" stroke-width="2.2"/>
+            <text x="70" y="91" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#d6c8a6">pe</text>
+            <text x="70" y="89.5" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fffaee" opacity="0.7">pe</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <div class="name">Embossed on paper</div>
+          <div class="note">Tone-on-tone, pressed-in feel. For premium swag, business cards, no-color contexts. <span class="bad">Useless on screen.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- scale test row -->
+    <div class="scale-row">
+      <div class="scale">
+        <svg width="16" height="16" viewBox="0 0 140 140"><rect width="140" height="140" fill="#c8482a"/><text x="70" y="100" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="100" fill="#fbf2dd">pe</text></svg>
+        <span class="px">16 px</span>
+      </div>
+      <div class="scale">
+        <svg width="24" height="24" viewBox="0 0 140 140"><rect width="140" height="140" fill="#c8482a"/><text x="70" y="100" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="92" fill="#fbf2dd">pe</text></svg>
+        <span class="px">24 px</span>
+      </div>
+      <div class="scale">
+        <svg width="40" height="40" viewBox="0 0 140 140"><rect width="140" height="140" fill="#c8482a"/><circle cx="70" cy="70" r="56" fill="none" stroke="#fbf2dd" stroke-width="6"/><text x="70" y="96" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="74" fill="#fbf2dd">pe</text></svg>
+        <span class="px">40 px</span>
+      </div>
+      <div class="scale">
+        <svg width="64" height="64" viewBox="0 0 140 140"><rect width="140" height="140" fill="#c8482a"/><circle cx="70" cy="70" r="58" fill="none" stroke="#fbf2dd" stroke-width="3.5"/><circle cx="70" cy="70" r="49" fill="none" stroke="#fbf2dd" stroke-width="0.8" stroke-dasharray="1.4 2.4"/><text x="70" y="92" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="62" fill="#fbf2dd">pe</text></svg>
+        <span class="px">64 px</span>
+      </div>
+      <div class="scale">
+        <svg width="96" height="96" viewBox="0 0 140 140"><rect width="140" height="140" fill="#c8482a"/><circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/><circle cx="70" cy="70" r="51" fill="none" stroke="#fbf2dd" stroke-width="0.6" stroke-dasharray="0.5 1.6"/><text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text></svg>
+        <span class="px">96 px</span>
+      </div>
+      <div class="scale">
+        <svg width="160" height="160" viewBox="0 0 140 140"><rect width="140" height="140" fill="#c8482a"/><circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/><circle cx="70" cy="70" r="51" fill="none" stroke="#fbf2dd" stroke-width="0.6" stroke-dasharray="0.5 1.6"/><text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text></svg>
+        <span class="px">160 px</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 SHORTLIST -->
+  <section>
+    <div class="sec-head">
+      <div class="num">07 / Shortlist</div>
+      <div>
+        <h2>Three combinations worth <em>striking</em>.</h2>
+        <p class="blurb">Mixing the axes. These are the three I'd hand to a stamping die. Each is named, has a stated job, and is a single decision the team can argue about — not a forest of variations.</p>
+      </div>
+    </div>
+
+    <div class="shortlist">
+      <h3>Three <em>recommendations</em>.</h3>
+      <div class="sub">A·02 · A·07 · A·08 ⨯ B·02 ⨯ C·02 ⨯ E·02</div>
+
+      <div class="picks">
+
+        <!-- Pick 1 -->
+        <div class="pick">
+          <div class="stage">
+            <svg viewBox="0 0 140 140" aria-hidden="true">
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+              <!-- beads -->
+              <g fill="#fbf2dd" id="beads-pick1"></g>
+              <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+            </svg>
+          </div>
+          <div class="rank">Pick 01 · safest evolution</div>
+          <h4>The Beaded Coin</h4>
+          <p>R02 baseline + A·02 beaded inner ring. One change, immediately upgrades the medallion read. Drops cleanly to 16px (beads disappear gracefully). <strong>Ship this if we ship anything.</strong></p>
+        </div>
+
+        <!-- Pick 2 -->
+        <div class="pick">
+          <div class="stage">
+            <svg viewBox="0 0 140 140" aria-hidden="true">
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+              <circle cx="70" cy="70" r="71" fill="none" stroke="#fbf2dd" stroke-width="0.6" opacity="0.6"/>
+              <!-- compass dots -->
+              <circle cx="70" cy="14" r="2.2" fill="#fbf2dd"/>
+              <circle cx="126" cy="70" r="2.2" fill="#fbf2dd"/>
+              <circle cx="70" cy="126" r="2.2" fill="#fbf2dd"/>
+              <circle cx="14" cy="70" r="2.2" fill="#fbf2dd"/>
+              <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+            </svg>
+          </div>
+          <div class="rank">Pick 02 · narrative</div>
+          <h4>The Traveller's Coin</h4>
+          <p>Smooth outer + four compass dots (C·02) + R02 glyph. Telegraphs <em>multi-currency</em> and <em>pocket</em> without literal $/€/¥. Plays well with the four-persona story (Maya · Siti · Carlos · Aiko).</p>
+        </div>
+
+        <!-- Pick 3 -->
+        <div class="pick">
+          <div class="stage">
+            <svg viewBox="0 0 140 140" aria-hidden="true">
+              <defs>
+                <radialGradient id="sl-strike" cx="50%" cy="38%" r="65%">
+                  <stop offset="0%" stop-color="#d96047"/>
+                  <stop offset="70%" stop-color="#c8482a"/>
+                  <stop offset="100%" stop-color="#a8391c"/>
+                </radialGradient>
+              </defs>
+              <rect width="140" height="140" fill="url(#sl-strike)"/>
+              <circle cx="70" cy="70" r="60" fill="none" stroke="#fbf2dd" stroke-width="3"/>
+              <circle cx="70" cy="70" r="50" fill="none" stroke="#fbf2dd" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="70" y="90" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#fbf2dd">pe</text>
+              <text x="70" y="91" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="58" fill="#7a2b14" opacity="0.2">pe</text>
+            </svg>
+          </div>
+          <div class="rank">Pick 03 · bold</div>
+          <h4>The Stitched Pocket</h4>
+          <p>Stitched rim (A·08) + struck physicality (E·02) + R02 glyph. Doubles down on the "pocket / wallet" half of the metaphor. Most distinctive in a Play Store grid. Higher production cost — needs PNG at sizes where SVG can't.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- signoff -->
+  <div class="signoff">
+    <span>Pro Expense · Logo Brainstorm · 02.5</span>
+    <span>Next → pick one, then Round 03 ships it</span>
+  </div>
+
+</div>
+
+<script>
+  // Generate beaded rim dots — Axis A·02 + Pick 01
+  (function generateBeads() {
+    const cells = [
+      { id: 'beads', cx: 70, cy: 70, r: 50, count: 36, fill: '#fbf2dd', dot: 1.6 },
+      { id: 'beads-pick1', cx: 70, cy: 70, r: 50, count: 36, fill: '#fbf2dd', dot: 1.6 },
+    ];
+    cells.forEach(c => {
+      const g = document.getElementById(c.id);
+      if (!g) return;
+      for (let i = 0; i < c.count; i++) {
+        const a = (i / c.count) * Math.PI * 2 - Math.PI/2;
+        const x = c.cx + Math.cos(a) * c.r;
+        const y = c.cy + Math.sin(a) * c.r;
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', x.toFixed(2));
+        dot.setAttribute('cy', y.toFixed(2));
+        dot.setAttribute('r', c.dot);
+        dot.setAttribute('fill', c.fill);
+        g.appendChild(dot);
+      }
+    });
+  })();
+
+  // Generate gear teeth — Axis A·04
+  (function generateGearTeeth() {
+    const g = document.getElementById('gear-teeth');
+    if (!g) return;
+    const cx = 70, cy = 70, rInner = 56, rOuter = 64, count = 28;
+    for (let i = 0; i < count; i++) {
+      const a1 = (i / count) * Math.PI * 2 - Math.PI/2 - 0.04;
+      const a2 = (i / count) * Math.PI * 2 - Math.PI/2 + 0.04;
+      const x1 = cx + Math.cos(a1) * rInner, y1 = cy + Math.sin(a1) * rInner;
+      const x2 = cx + Math.cos(a1) * rOuter, y2 = cy + Math.sin(a1) * rOuter;
+      const x3 = cx + Math.cos(a2) * rOuter, y3 = cy + Math.sin(a2) * rOuter;
+      const x4 = cx + Math.cos(a2) * rInner, y4 = cy + Math.sin(a2) * rInner;
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      p.setAttribute('points', `${x1.toFixed(1)},${y1.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)} ${x3.toFixed(1)},${y3.toFixed(1)} ${x4.toFixed(1)},${y4.toFixed(1)}`);
+      p.setAttribute('fill', '#fbf2dd');
+      g.appendChild(p);
+    }
+  })();
+</script>
+
+</body>
+</html>
