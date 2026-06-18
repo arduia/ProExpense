@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -70,15 +72,17 @@ fun HomeBottomNav(
     val navElevation = ProExpenseTheme.elevation.nav.firstOrNull()
 
     Box(
+        // Height = FAB poke above the bar + bar + floating bottom gap.
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = dimens.space16),
+            .height(dimens.space12 + dimens.navBarHeight + dimens.space8),
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimens.navBarHeight)
                 .align(Alignment.BottomCenter)
+                .offset(y = -dimens.space8)
                 .then(
                     if (navElevation != null) {
                         Modifier.shadow(
@@ -96,8 +100,8 @@ fun HomeBottomNav(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimens.space8, vertical = dimens.space8),
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.space8),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 homeNavLeadingItems.forEach { item ->
@@ -108,12 +112,7 @@ fun HomeBottomNav(
                         modifier = Modifier.weight(1f),
                     )
                 }
-                HomeAddFab(
-                    onClick = onAddClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .offset(y = -dimens.navFabOffset),
-                )
+                Spacer(modifier = Modifier.weight(1f))
                 homeNavTrailingItems.forEach { item ->
                     HomeNavSlot(
                         item = item,
@@ -124,6 +123,10 @@ fun HomeBottomNav(
                 }
             }
         }
+        HomeAddFab(
+            onClick = onAddClick,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
     }
 }
 
@@ -236,7 +239,7 @@ private fun HomeAddFab(
                     glyph = ProIconGlyph.Plus,
                     contentDescription = null,
                     tint = colors.onPrimaryWarm,
-                    size = dimens.iconInline,
+                    size = dimens.iconNav,
                 )
                 Text(
                     text = "Add",
