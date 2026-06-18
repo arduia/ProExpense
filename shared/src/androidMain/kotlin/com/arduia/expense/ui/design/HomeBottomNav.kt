@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,8 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 enum class HomeNavTab {
@@ -42,9 +47,12 @@ private data class HomeNavItem(
     val icon: ProIconGlyph,
 )
 
-private val homeNavItems = listOf(
+private val homeNavLeadingItems = listOf(
     HomeNavItem(HomeNavTab.Home, "Home", ProIconGlyph.Home),
     HomeNavItem(HomeNavTab.Budget, "Budget", ProIconGlyph.Budget),
+)
+
+private val homeNavTrailingItems = listOf(
     HomeNavItem(HomeNavTab.Journal, "Journal", ProIconGlyph.Journal),
     HomeNavItem(HomeNavTab.More, "More", ProIconGlyph.More),
 )
@@ -58,10 +66,7 @@ fun HomeBottomNav(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-    val motion = ProExpenseTheme.motion
     val navElevation = ProExpenseTheme.elevation.nav.firstOrNull()
-    val barHeight = dimens.navBarHeight
 
     Box(
         modifier = modifier
@@ -71,7 +76,7 @@ fun HomeBottomNav(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(barHeight)
+                .height(dimens.navBarHeight)
                 .align(Alignment.BottomCenter)
                 .then(
                     if (navElevation != null) {
@@ -94,38 +99,30 @@ fun HomeBottomNav(
                     .padding(horizontal = dimens.space8, vertical = dimens.space8),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                HomeNavSlot(
-                    item = homeNavItems[0],
-                    selected = selectedTab == homeNavItems[0].tab,
-                    onClick = { onTabSelected(homeNavItems[0].tab) },
-                    modifier = Modifier.weight(1f),
-                )
-                HomeNavSlot(
-                    item = homeNavItems[1],
-                    selected = selectedTab == homeNavItems[1].tab,
-                    onClick = { onTabSelected(homeNavItems[1].tab) },
-                    modifier = Modifier.weight(1f),
-                )
+                homeNavLeadingItems.forEach { item ->
+                    HomeNavSlot(
+                        item = item,
+                        selected = selectedTab == item.tab,
+                        onClick = { onTabSelected(item.tab) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
                 Box(modifier = Modifier.weight(1f))
-                HomeNavSlot(
-                    item = homeNavItems[2],
-                    selected = selectedTab == homeNavItems[2].tab,
-                    onClick = { onTabSelected(homeNavItems[2].tab) },
-                    modifier = Modifier.weight(1f),
-                )
-                HomeNavSlot(
-                    item = homeNavItems[3],
-                    selected = selectedTab == homeNavItems[3].tab,
-                    onClick = { onTabSelected(homeNavItems[3].tab) },
-                    modifier = Modifier.weight(1f),
-                )
+                homeNavTrailingItems.forEach { item ->
+                    HomeNavSlot(
+                        item = item,
+                        selected = selectedTab == item.tab,
+                        onClick = { onTabSelected(item.tab) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
         }
         HomeAddFab(
             onClick = onAddClick,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = (-dimens.space24)),
+                .offset(y = -dimens.navFabOffset),
         )
     }
 }
@@ -149,11 +146,17 @@ private fun HomeNavSlot(
 
     Column(
         modifier = modifier
+            .defaultMinSize(minHeight = dimens.touchTargetMin)
             .scale(scale)
-            .clickable(
+            .semantics {
+                contentDescription = item.label
+            }
+            .selectable(
+                selected = selected,
+                onClick = onClick,
+                role = Role.Tab,
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick,
             )
             .padding(vertical = dimens.space4),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -161,7 +164,7 @@ private fun HomeNavSlot(
     ) {
         ProIcon(
             glyph = item.icon,
-            contentDescription = item.label,
+            contentDescription = null,
             tint = tint,
             size = dimens.iconNav,
         )
@@ -182,6 +185,7 @@ private fun HomeAddFab(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val motion = ProExpenseTheme.motion
+    val fabElevation = ProExpenseTheme.elevation.fab.firstOrNull()
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed) motion.pressedScale else 1f
@@ -194,9 +198,21 @@ private fun HomeAddFab(
         Box(
             modifier = Modifier
                 .size(dimens.fabSize)
-                .shadow(8.dp, CircleShape)
+                .then(
+                    if (fabElevation != null) {
+                        Modifier.shadow(
+                            elevation = fabElevation.blur,
+                            shape = CircleShape,
+                            spotColor = fabElevation.color,
+                            ambientColor = fabElevation.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                )
                 .clip(CircleShape)
                 .background(colors.primary)
+                .semantics { contentDescription = "Add" }
                 .clickable(
                     interactionSource = interactionSource,
                     indication = null,
@@ -206,7 +222,7 @@ private fun HomeAddFab(
         ) {
             ProIcon(
                 glyph = ProIconGlyph.Plus,
-                contentDescription = "Add",
+                contentDescription = null,
                 tint = colors.onPrimaryWarm,
                 size = dimens.iconNav,
             )
@@ -216,5 +232,53 @@ private fun HomeAddFab(
             style = typography.caption,
             color = colors.primary,
         )
+    }
+}
+
+@Preview(
+    name = "HomeBottomNav — Home active",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = 160,
+    showBackground = true,
+)
+@Composable
+private fun HomeBottomNavHomeActivePreview() {
+    ProExpenseTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = ProExpenseTheme.dimensions.space24),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            HomeBottomNav(
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "HomeBottomNav — Journal active",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = 160,
+    showBackground = true,
+)
+@Composable
+private fun HomeBottomNavJournalActivePreview() {
+    ProExpenseTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = ProExpenseTheme.dimensions.space24),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            HomeBottomNav(
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
     }
 }

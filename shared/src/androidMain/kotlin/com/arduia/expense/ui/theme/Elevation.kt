@@ -21,6 +21,7 @@ data class ProElevation(
     val sheet: List<ProShadowLayer>,
     val toast: List<ProShadowLayer>,
     val nav: List<ProShadowLayer>,
+    val fab: List<ProShadowLayer>,
 )
 
 val LocalProElevation = staticCompositionLocalOf { ProDefaultElevation }
@@ -38,5 +39,8 @@ val ProDefaultElevation = ProElevation(
     ),
     nav = listOf(
         ProShadowLayer(0.dp, (-6).dp, 24.dp, 0.dp, Color(0x1A000000)),
+    ),
+    fab = listOf(
+        ProShadowLayer(0.dp, 4.dp, 8.dp, 0.dp, Color(0x33000000)),
     ),
 )
