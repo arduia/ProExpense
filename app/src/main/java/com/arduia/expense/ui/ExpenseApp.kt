@@ -22,8 +22,10 @@ import com.arduia.expense.feature.history.SummaryPeriod
 import com.arduia.expense.feature.logging.LoggingRepository
 import com.arduia.expense.feature.logging.PreviewLoggingRepository
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
+import com.arduia.expense.ui.home.HomeSampleData
 import com.arduia.expense.ui.home.HomeScreen
 import com.arduia.expense.ui.home.HomeShell
+import com.arduia.expense.ui.home.HomeStateMapper
 import com.arduia.expense.ui.home.HomeTab
 import com.arduia.expense.ui.home.HomeUiState
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
@@ -46,7 +48,17 @@ fun ExpenseApp(
     var showQuickLog by remember { mutableStateOf(false) }
     var refreshToken by remember { mutableIntStateOf(0) }
     var highlightRecordId by remember { mutableStateOf<String?>(null) }
-    var homeState by remember { mutableStateOf(HomeUiState("", "USD", "", "$0", emptyList())) }
+    var homeState by remember {
+        mutableStateOf(
+            HomeUiState(
+                profileName = "",
+                homeCurrencyCode = "USD",
+                dateLabel = "",
+                monthLabel = "",
+                monthSpendLabel = "$0",
+            ),
+        )
+    }
     val scope = rememberCoroutineScope()
     val headerDateFormatter = remember { DateTimeFormatter.ofPattern("EEE · MMM d") }
 
@@ -65,12 +77,19 @@ fun ExpenseApp(
                 is Result.Success -> result.data.take(10)
                 is Result.Error -> emptyList()
             }
+            val groups = HomeStateMapper.mapRecords(
+                records = records,
+                homeCurrencyCode = profileState.homeCurrencyCode,
+                zoneId = zoneId,
+            )
             homeState = HomeUiState(
                 profileName = profileState.name,
                 homeCurrencyCode = profileState.homeCurrencyCode,
                 dateLabel = ZonedDateTime.now(zoneId).format(headerDateFormatter),
+                monthLabel = HomeStateMapper.monthLabel(zoneId),
                 monthSpendLabel = summary.formatWithSymbol(profileState.homeCurrencyCode),
-                recentRecords = records,
+                spendHelperText = HomeStateMapper.spendHelperText(groups.isEmpty()),
+                recentGroups = groups,
                 highlightRecordId = highlightId,
             )
         }
@@ -85,7 +104,7 @@ fun ExpenseApp(
     ProExpenseTheme {
         Scaffold(
             modifier = modifier.fillMaxSize(),
-            containerColor = ProExpenseTheme.colors.surface,
+            containerColor = ProExpenseTheme.colors.paper,
         ) { innerPadding ->
             if (showHome) {
                 Box(
@@ -98,7 +117,8 @@ fun ExpenseApp(
                             HomeScreen(
                                 state = homeState,
                                 onSeeAll = {},
-                                zoneId = zoneId,
+                                onLogFirstExpense = { showQuickLog = true },
+                                onQuickAccess = {},
                             )
                         },
                         selectedTab = HomeTab.Home,
@@ -152,23 +172,21 @@ private fun ExpenseAppQuickLogPreview() {
 internal fun ExpenseAppHomePreviewHost(
     modifier: Modifier = Modifier,
 ) {
-    val sampleState = HomeUiState(
-        profileName = "Maya",
-        homeCurrencyCode = "USD",
-        dateLabel = "Wed · May 25",
-        monthSpendLabel = "$12.50",
-        recentRecords = emptyList(),
-    )
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = ProExpenseTheme.colors.surface,
+        containerColor = ProExpenseTheme.colors.paper,
     ) {
         HomeShell(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
             homeContent = {
-                HomeScreen(state = sampleState, onSeeAll = {})
+                HomeScreen(
+                    state = HomeSampleData.casual,
+                    onSeeAll = {},
+                    onLogFirstExpense = {},
+                    onQuickAccess = {},
+                )
             },
             selectedTab = HomeTab.Home,
             onTabSelected = {},

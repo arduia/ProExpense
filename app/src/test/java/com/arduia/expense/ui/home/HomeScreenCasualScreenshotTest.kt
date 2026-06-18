@@ -14,19 +14,19 @@ import org.robolectric.annotation.GraphicsMode
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [33], qualifiers = "w414dp-h868dp")
-class HomeScreenshotTest {
+class HomeScreenCasualScreenshotTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
-    fun homeScreenEmpty_matchesDesignSpec() {
+    fun homeScreenCasual_matchesDesignSpec() {
         composeTestRule.setContent {
             ProExpenseTheme {
                 HomeShell(
                     homeContent = {
                         HomeScreen(
-                            state = HomeSampleData.empty,
+                            state = HomeSampleData.casual,
                             onSeeAll = {},
                             onLogFirstExpense = {},
                             onQuickAccess = {},

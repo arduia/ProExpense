@@ -234,4 +234,74 @@ fun IconMore(color: Color, modifier: Modifier = Modifier, size: Dp = 22.dp, weig
     }
 }
 
+@Composable
+fun IconAt(color: Color, modifier: Modifier = Modifier, size: Dp = 12.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        drawCircle(color, 8f * sx, Offset(12f * sx, 12f * sy), style = Stroke(width = w))
+        drawLine(color, Offset(12f * sx, 8f * sy), Offset(12f * sx, 16f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(9f * sx, 5f * sy), Offset(15f * sx, 5f * sy), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconFeatReports(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val w = weight * sx
+        drawLine(color, Offset(5f * sx, 19f * sx), Offset(5f * sx, 8f * sx), w, StrokeCap.Round)
+        drawLine(color, Offset(11f * sx, 19f * sx), Offset(11f * sx, 5f * sx), w, StrokeCap.Round)
+        drawLine(color, Offset(17f * sx, 19f * sx), Offset(17f * sx, 12f * sx), w, StrokeCap.Round)
+        drawLine(color, Offset(3f * sx, 19f * sx), Offset(21f * sx, 19f * sx), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconFeatDebt(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        drawCircle(color, 3f * sx, Offset(9f * sx, 8f * sy), style = Stroke(width = w))
+        drawCircle(color, 3f * sx, Offset(17f * sx, 14f * sy), style = Stroke(width = w))
+        strokePolyline(listOf(Offset(3f, 19f), Offset(3f, 16.5f), Offset(9f, 13f), Offset(15f, 16.5f), Offset(15f, 19f)), color, weight)
+        strokePolyline(listOf(Offset(14f, 21f), Offset(14f, 19f), Offset(17f, 17f), Offset(20f, 17f)), color, weight)
+    }
+}
+
+@Composable
+fun IconFeatSplit(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        drawCircle(color, 3f * sx, Offset(8f * sx, 8f * sy), style = Stroke(width = w))
+        drawCircle(color, 3f * sx, Offset(17f * sx, 8f * sy), style = Stroke(width = w))
+        drawCircle(color, 3f * sx, Offset(12f * sx, 17f * sy), style = Stroke(width = w))
+        drawLine(color, Offset(10f * sx, 10f * sy), Offset(13.5f * sx, 14f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(14.5f * sx, 10f * sy), Offset(12f * sx, 14f * sy), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconFeatEvents(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        strokePolyline(
+            listOf(
+                Offset(5f, 7f), Offset(19f, 7f), Offset(17f, 20f), Offset(8f, 20f),
+                Offset(7f, 19.1f), Offset(5f, 7f),
+            ),
+            color,
+            weight,
+        )
+        drawLine(color, Offset(8f * sx, 7f * sy), Offset(8f * sx, 5f * sy), weight * sx, StrokeCap.Round)
+        drawLine(color, Offset(16f * sx, 7f * sy), Offset(16f * sx, 5f * sy), weight * sx, StrokeCap.Round)
+        strokePolyline(listOf(Offset(8f, 5f), Offset(8f, 3f), Offset(12f, 3f), Offset(16f, 3f), Offset(16f, 5f)), color, weight)
+    }
+}
+
 private fun Modifier.iconSize(size: Dp): Modifier = this.size(size)

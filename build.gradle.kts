@@ -7,12 +7,19 @@ plugins {
     alias(libs.plugins.roborazzi) apply false
 }
 
+tasks.register<Exec>("verifyDesignAlignment") {
+    group = "verification"
+    description = "Check Roborazzi baselines against design_handoff_v2 reference images (Step 5.5)."
+    commandLine("bash", "scripts/verify-design-alignment.sh")
+}
+
 tasks.register("verifyAll") {
     group = "verification"
     description = "Build devDebug, run all unit tests, and verify Roborazzi screenshots."
     dependsOn(
         ":app:assembleDevDebug",
         ":app:verifyRoborazziDevDebug",
+        "verifyDesignAlignment",
     )
 }
 

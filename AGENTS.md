@@ -253,7 +253,13 @@ has a corresponding entry in `design_handoff_v2/`.
 6. **Confirm green compare:**
    ```bash
    ./gradlew :app:verifyRoborazziDevDebug   # or verifyAll
+   bash scripts/verify-design-alignment.sh  # optional pixel diff vs reference PNGs
    ```
+
+**Automated alignment (agents):** `design_handoff_v2/screenshot-alignment.yaml` maps each Roborazzi
+baseline to its reference artboard. `scripts/verify-design-alignment.sh` checks baselines exist and,
+when ImageMagick is installed, diffs against reference PNGs. Wired into `./gradlew verifyAll` as
+`verifyDesignAlignment`.
 
 **Common alignment checks (bottom nav example):**
 

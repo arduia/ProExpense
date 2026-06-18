@@ -51,14 +51,10 @@ private fun HomeShellPreview() {
         HomeShell(
             homeContent = {
                 HomeScreen(
-                    state = HomeUiState(
-                        profileName = "Maya",
-                        homeCurrencyCode = "USD",
-                        dateLabel = "Wed · May 25",
-                        monthSpendLabel = "$0",
-                        recentRecords = emptyList(),
-                    ),
+                    state = HomeSampleData.empty,
                     onSeeAll = {},
+                    onLogFirstExpense = {},
+                    onQuickAccess = {},
                 )
             },
             selectedTab = HomeTab.Home,

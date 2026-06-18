@@ -1,0 +1,35 @@
+# Maps Roborazzi baseline PNGs to design_handoff_v2 reference artboards.
+# Used by scripts/verify-design-alignment.sh (Step 5.5 automation).
+# Baseline filename = <fully-qualified-test-class>.<test-method>.png
+
+alignments:
+  - baseline: com.arduia.expense.ui.home.HomeScreenshotTest.homeScreenEmpty_matchesDesignSpec.png
+    reference: flow-01-home-empty.png
+    note: Home tab — empty state (fresh user)
+
+  - baseline: com.arduia.expense.ui.home.HomeScreenCasualScreenshotTest.homeScreenCasual_matchesDesignSpec.png
+    reference: flow-01-home-casual.png
+    note: Home tab — casual persona with recent transactions
+
+  - baseline: com.arduia.expense.ui.home.HomeBottomNavScreenshotTest.homeBottomNav_homeSelected_matchesDesignSpec.png
+    reference: flow-01-home-empty.png
+    note: Bottom nav chrome — crop bottom ~120dp of home-empty reference
+    crop: { width: 414, height: 120, anchor: bottom }
+
+  - baseline: com.arduia.expense.ui.onboarding.FirstLaunchScreenshotTest.splash_matchesDesignSpec.png
+    reference: flow-04-splash.png
+
+  - baseline: com.arduia.expense.ui.onboarding.OnboardingScreenshotTest.onboarding_welcomeSlide.png
+    reference: flow-04-onb-1.png
+
+  - baseline: com.arduia.expense.feature.logging.ui.QuickLogScreenshotTest.addAmount_matchesDesignSpec.png
+    reference: flow-01-add-amount.png
+
+  - baseline: com.arduia.expense.ui.profile.ProfileSetupScreenshotTest.profileName_matchesDesignSpec.png
+    reference: flow-04-prof-name.png
+
+  - baseline: com.arduia.expense.ui.profile.ProfileSetupScreenshotTest.profileCurrency_matchesDesignSpec.png
+    reference: flow-04-prof-currency.png
+
+  - baseline: com.arduia.expense.ui.profile.ProfileSetupScreenshotTest.profileCurrencySheet_matchesDesignSpec.png
+    reference: flow-04-prof-currency-sheet.png
