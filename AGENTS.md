@@ -470,10 +470,44 @@ Drill from cheap to expensive. Stop when you have an actionable cause.
 
 ---
 
+## Android Agent Skills
+
+Official Android skills from [android/skills](https://github.com/android/skills) are installed
+under `.agents/skills/` (Cursor Agent Skills standard). See `.agents/skills/README.md`.
+
+### Install / update
+
+```bash
+./scripts/install-android-skills.sh
+```
+
+Bootstraps the [Android CLI](https://developer.android.com/tools/agents/android-cli) when missing,
+then runs `android skills add --all --agent=cursor --project=.`.
+
+The Cursor `session-start` hook installs skills automatically when `.agents/skills/` is absent.
+
+### When to use
+
+Agents should consult relevant skills for specialized Android workflows (testing setup, edge-to-edge,
+navigation, R8 analysis, AGP upgrades, etc.). **This file and product docs take precedence** when
+they conflict with a skill.
+
+| Skill | Relevance |
+|---|---|
+| `android-cli` | SDK, emulator, docs, layout inspection |
+| `testing-setup` | Unit / instrumented / screenshot tests |
+| `edge-to-edge` | System bar insets |
+| `navigation-3` | Compose navigation |
+| `migrate-xml-views-to-jetpack-compose` | View → Compose migration |
+| `r8-analyzer` | APK size / shrinker |
+| `perfetto-trace-analysis` | Performance traces |
+
+---
+
 ## Instruction Precedence
 
 ```
-AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
+AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  .agents/skills/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
 ```
 
 **Known conflicts (always follow AGENTS.md):**
@@ -495,6 +529,7 @@ AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  doc/*  
 | `design/DESIGN-SYSTEM.md` | Compose UI design tokens and components |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
+| `.agents/skills/` | Official Android agent skills (see `scripts/install-android-skills.sh`) |
 | `.cursor/context/project_codebase.md` | Live codebase snapshot |
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |
