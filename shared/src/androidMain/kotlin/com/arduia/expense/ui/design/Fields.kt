@@ -23,6 +23,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.layout
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
@@ -97,11 +98,18 @@ fun ProOutlinedField(
             style = typography.fieldLabel,
             color = labelColor,
             modifier = Modifier
-                .padding(start = if (leading != null) 44.dp else 14.dp)
-                .background(colors.surface)
-                .padding(horizontal = 4.dp)
                 .align(Alignment.TopStart)
-                .padding(top = (-8).dp),
+                .layout { measurable, constraints ->
+                    val placeable = measurable.measure(constraints)
+                    layout(placeable.width, placeable.height) {
+                        placeable.placeRelative(
+                            x = if (leading != null) 44.dp.roundToPx() else 14.dp.roundToPx(),
+                            y = (-8).dp.roundToPx(),
+                        )
+                    }
+                }
+                .background(colors.surface)
+                .padding(horizontal = 4.dp),
         )
     }
     if (helper != null) {
