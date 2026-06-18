@@ -184,7 +184,13 @@ fun ProDesignSystemChromeContent() {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
-        ProTopBar(title = "Journal", onBack = {}, action = ProTopBarAction.More, onAction = {})
+        ProTopBar(
+            title = "Reports",
+            onBack = {},
+            backLabel = "More",
+            action = ProTopBarAction.More,
+            onAction = {},
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(dimens.space8)) {
             QuickAccessTile(
                 label = "Reports",

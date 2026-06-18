@@ -2,11 +2,10 @@ package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +23,7 @@ fun ProTopBar(
     title: String,
     onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    backLabel: String? = null,
     action: ProTopBarAction = ProTopBarAction.None,
     onAction: () -> Unit = {},
 ) {
@@ -31,43 +31,63 @@ fun ProTopBar(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = dimens.space8),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        contentAlignment = Alignment.Center,
     ) {
         if (onBack != null) {
-            ProIcon(
-                glyph = ProIconGlyph.Back,
-                contentDescription = "Back",
-                tint = colors.onSurface,
-                modifier = Modifier.clickable(onClick = onBack),
-            )
-        } else {
-            Spacer(modifier = Modifier.size(dimens.iconNav))
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .clickable(onClick = onBack)
+                    .padding(end = dimens.space8),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimens.space4),
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.Back,
+                    contentDescription = if (backLabel == null) "Back" else null,
+                    tint = colors.onSurface,
+                )
+                if (backLabel != null) {
+                    Text(
+                        text = backLabel,
+                        style = typography.bodyMedium,
+                        color = colors.onSurface,
+                    )
+                }
+            }
         }
-        Text(
-            text = title,
-            style = typography.screenTitle,
-            color = colors.onSurface,
-            modifier = Modifier.weight(1f).padding(horizontal = dimens.space12),
-        )
+
+        if (title.isNotEmpty()) {
+            Text(
+                text = title,
+                style = typography.sectionHead,
+                color = colors.onSurface,
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+
         when (action) {
             ProTopBarAction.More -> ProIcon(
                 glyph = ProIconGlyph.More,
                 contentDescription = "More",
                 tint = colors.onSurface,
-                modifier = Modifier.clickable(onClick = onAction),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clickable(onClick = onAction),
             )
             ProTopBarAction.Close -> ProIcon(
                 glyph = ProIconGlyph.Close,
                 contentDescription = "Close",
                 tint = colors.onSurface,
-                modifier = Modifier.clickable(onClick = onAction),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clickable(onClick = onAction),
             )
-            ProTopBarAction.None -> Spacer(modifier = Modifier.size(dimens.iconNav))
+            ProTopBarAction.None -> Unit
         }
     }
 }
