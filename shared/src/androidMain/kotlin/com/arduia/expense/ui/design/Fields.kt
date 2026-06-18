@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,9 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
@@ -43,23 +41,25 @@ fun ProOutlinedField(
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     var focused by remember { mutableStateOf(false) }
     val borderColor = if (focused) colors.primary else colors.outline
     val labelColor = if (focused) colors.primaryDeep else colors.onSurfaceVariant
-    val shape = RoundedCornerShape(6.dp)
+    val shape = shapes.field
 
     Box(modifier = modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 56.dp)
+                .heightIn(min = dims.fieldMinHeight)
                 .border(
-                    width = if (focused) 2.dp else 1.4.dp,
+                    width = if (focused) dims.borderWidthFocused else dims.borderWidth,
                     color = borderColor,
                     shape = shape,
                 )
                 .background(colors.surface, shape)
-                .padding(horizontal = if (leading != null) 14.dp else 16.dp),
+                .padding(horizontal = if (leading != null) dims.fieldPaddingHWithLeading else dims.fieldPaddingH),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             leading?.invoke()
@@ -69,9 +69,9 @@ fun ProOutlinedField(
                 modifier = Modifier
                     .weight(1f)
                     .padding(
-                        start = if (leading != null) 12.dp else 0.dp,
-                        top = 15.dp,
-                        bottom = 15.dp,
+                        start = if (leading != null) dims.fieldLeadingGap else 0.dp,
+                        top = dims.fieldPaddingVertical,
+                        bottom = dims.fieldPaddingVertical,
                     )
                     .onFocusChanged { focused = it.isFocused },
                 textStyle = typography.fieldValue.copy(color = colors.onSurface),
@@ -103,13 +103,17 @@ fun ProOutlinedField(
                     val placeable = measurable.measure(constraints)
                     layout(placeable.width, placeable.height) {
                         placeable.placeRelative(
-                            x = if (leading != null) 44.dp.roundToPx() else 14.dp.roundToPx(),
-                            y = (-8).dp.roundToPx(),
+                            x = if (leading != null) {
+                                dims.fieldLabelOffsetXWithLeading.roundToPx()
+                            } else {
+                                dims.fieldLabelOffsetX.roundToPx()
+                            },
+                            y = dims.fieldLabelOffsetY.roundToPx(),
                         )
                     }
                 }
                 .background(colors.surface)
-                .padding(horizontal = 4.dp),
+                .padding(horizontal = dims.fieldLabelPaddingH),
         )
     }
     if (helper != null) {
@@ -117,7 +121,7 @@ fun ProOutlinedField(
             text = helper,
             style = typography.fieldHelper,
             color = colors.onSurfaceVariant,
-            modifier = Modifier.padding(start = 16.dp, top = 5.dp),
+            modifier = Modifier.padding(start = dims.fieldPaddingH, top = dims.fieldHelperPaddingTop),
         )
     }
 }

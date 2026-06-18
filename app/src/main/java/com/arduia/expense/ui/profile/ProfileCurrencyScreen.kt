@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -28,9 +27,7 @@ import com.arduia.expense.ui.design.ProLinearProgress
 import com.arduia.expense.ui.design.ProRadio
 import com.arduia.expense.ui.design.ProTextButton
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.theme.ProExpenseSerif
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -110,32 +107,30 @@ private fun CurrencyRow(
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     val interaction = remember { MutableInteractionSource() }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
+            .clip(shapes.listRow)
             .background(if (selected) colors.primaryContainer else colors.surface)
             .clickable(interactionSource = interaction, indication = ripple(), onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 12.dp),
+            .padding(horizontal = dims.space12, vertical = dims.space12),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(dims.space16),
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(dims.currencyBadgeSize)
                 .clip(CircleShape)
                 .background(if (selected) colors.surface else colors.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = currency.symbol,
-                style = typography.currencyCode.copy(
-                    fontFamily = ProExpenseSerif,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = typography.currencyCode.fontSize * 1.125f,
-                ),
+                style = typography.currencySymbol,
                 color = if (selected) colors.primaryDeep else colors.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )

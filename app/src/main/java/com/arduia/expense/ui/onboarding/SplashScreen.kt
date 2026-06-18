@@ -39,21 +39,21 @@ fun SplashScreen(
         ProCircularProgress(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 116.dp),
+                .padding(bottom = ProExpenseTheme.dimensions.splashProgressBottom),
         )
 
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 54.dp),
+                .padding(bottom = ProExpenseTheme.dimensions.splashBrandingBottom),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "Pro Expense",
-                style = typography.bodyEmphasis.copy(fontSize = typography.bodyEmphasis.fontSize * 1.07f),
+                style = typography.brandName,
                 color = colors.onSurface,
             )
-            Spacer(Modifier.height(3.dp))
+            Spacer(Modifier.height(ProExpenseTheme.dimensions.splashBrandingGap))
             Text(
                 text = "Your finance notebook",
                 style = typography.tagline,
