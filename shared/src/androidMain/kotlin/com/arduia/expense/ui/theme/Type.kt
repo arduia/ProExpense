@@ -67,6 +67,13 @@ data class ProExpenseTypography(
         lineHeight = 19.8.sp,
         letterSpacing = (-0.01).em,
     ),
+    val rowAmount: TextStyle = TextStyle(
+        fontFamily = ProExpenseSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 18.sp,
+        letterSpacing = (-0.01).em,
+    ),
     val body: TextStyle = TextStyle(
         fontFamily = ProExpenseSans,
         fontWeight = FontWeight.Normal,

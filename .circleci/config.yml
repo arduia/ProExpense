@@ -1,14 +1,48 @@
 version: 2.1
 
 orbs:
- android: circleci/android@0.2.1
+  android: circleci/android@3.0.1
+
+executors:
+  android-executor:
+    docker:
+      - image: cimg/android:2024.12
+    resource_class: large
+    environment:
+      COMPILE_SDK: "36"
+      BUILD_TOOLS: "36.0.0"
+      ANDROID_SDK_ROOT: /home/circleci/android-sdk
+      ANDROID_HOME: /home/circleci/android-sdk
+      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
 jobs:
-  build:
-    executor: android/android
-
+  build_and_test:
+    executor: android-executor
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - android-sdk-v1-{{ checksum "scripts/setup-android-toolchain.sh" }}-{{ checksum "gradle/libs.versions.toml" }}
+            - android-sdk-v1-
       - run:
-          name: chmod permissions
-          command: chmod +x ./gradlew
+          name: Install Android toolchain and download dependencies
+          command: bash scripts/setup-android-toolchain.sh
+      - save_cache:
+          key: android-sdk-v1-{{ checksum "scripts/setup-android-toolchain.sh" }}-{{ checksum "gradle/libs.versions.toml" }}
+          paths:
+            - android-sdk
+            - ~/.gradle
+            - ~/.android
+      - run:
+          name: Build, unit test, and verify Roborazzi
+          command: ./gradlew --no-daemon --stacktrace verifyAll
+      - store_test_results:
+          path: app/build/test-results
+      - store_artifacts:
+          path: app/build/outputs
+          destination: build-outputs
+
+workflows:
+  build_and_test:
+    jobs:
+      - build_and_test

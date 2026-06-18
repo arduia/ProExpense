@@ -71,7 +71,7 @@ fun LogCategoryChip(
                 shape = shapes.pill,
             )
             .clickable(interactionSource = interaction, indication = ripple(), onClick = onClick)
-            .padding(horizontal = dims.space12, vertical = dims.space7),
+            .padding(horizontal = dims.space12, vertical = dims.space8),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dims.space6),
     ) {

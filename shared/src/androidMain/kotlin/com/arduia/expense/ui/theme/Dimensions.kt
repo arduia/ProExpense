@@ -37,6 +37,7 @@ data class ProExpenseDimensions(
     val buttonPaddingVLg: Dp = 16.dp,
     val buttonBorderWidth: Dp = 1.4.dp,
     val borderWidth: Dp = 1.4.dp,
+    val buttonShadowElevation: Dp = 6.dp,
     val buttonContentGap: Dp = 8.dp,
 
     val fieldMinHeight: Dp = 56.dp,
