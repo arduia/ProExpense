@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -141,7 +141,14 @@ private fun HomeNavSlot(
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed) motion.pressedScale else 1f
     val tint = if (selected) colors.primary else colors.navInactive
-    val labelStyle = if (selected) typography.bodySemiBold else typography.caption
+    val labelStyle = if (selected) {
+        typography.caption.copy(
+            fontFamily = typography.monoFamily,
+            fontWeight = FontWeight.SemiBold,
+        )
+    } else {
+        typography.caption.copy(fontFamily = typography.monoFamily)
+    }
 
     Column(
         modifier = modifier
@@ -232,7 +239,7 @@ private fun HomeAddFab(
                 )
                 Text(
                     text = "Add",
-                    style = typography.caption,
+                    style = typography.caption.copy(fontFamily = typography.monoFamily),
                     color = colors.onPrimaryWarm,
                 )
             }

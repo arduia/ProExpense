@@ -93,4 +93,12 @@ class ProDesignTokensTest {
     fun nav_bar_height_matches_handoff() {
         assertEquals(72f, ProDefaultDimens.navBarHeight.value)
     }
+
+    @Test
+    fun nav_shell_bottom_inset_accounts_for_fab_raise() {
+        assertEquals(
+            ProDefaultDimens.navBarHeight + ProDefaultDimens.navFabOffset,
+            ProDefaultDimens.navShellBottomInset,
+        )
+    }
 }
