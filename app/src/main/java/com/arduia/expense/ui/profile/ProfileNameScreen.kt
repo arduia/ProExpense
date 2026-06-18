@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.IconUser
 import com.arduia.expense.ui.design.ProFilledButton
@@ -87,5 +88,21 @@ fun ProfileNameScreen(
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 22.dp),
         )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun ProfileNameScreenEmptyPreview() {
+    ProExpenseTheme {
+        ProfileNameScreen(name = "", onNameChange = {}, onContinue = {})
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun ProfileNameScreenFilledPreview() {
+    ProExpenseTheme {
+        ProfileNameScreen(name = "Maya", onNameChange = {}, onContinue = {})
     }
 }

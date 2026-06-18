@@ -32,6 +32,7 @@ import com.arduia.expense.ui.theme.ProExpenseSerif
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Profile setup step 2 — home currency selection.
@@ -152,5 +153,18 @@ private fun CurrencyRow(
             )
         }
         ProRadio(selected = selected)
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun ProfileCurrencyScreenPreview() {
+    ProExpenseTheme {
+        ProfileCurrencyScreen(
+            selectedCode = "USD",
+            onCurrencySelected = {},
+            onStartTracking = {},
+            onShowAllCurrencies = {},
+        )
     }
 }

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.IconSearch
 import com.arduia.expense.ui.design.ProLinearProgress
@@ -214,5 +215,13 @@ private fun SheetCurrencyRow(
                 color = colors.onSurfaceVariant,
             )
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 414, heightDp = 868)
+@Composable
+private fun ProfileCurrencySheetPreview() {
+    ProExpenseTheme {
+        ProfileCurrencySheetPreviewHost()
     }
 }
