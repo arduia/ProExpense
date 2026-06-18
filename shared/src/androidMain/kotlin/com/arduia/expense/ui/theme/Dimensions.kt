@@ -103,6 +103,17 @@ data class ProExpenseDimensions(
     val onboardingIllustrationHeight: Dp = 200.dp,
     val onboardingIllustrationFrameWidth: Dp = 280.dp,
     val onboardingBodyMaxWidth: Dp = 280.dp,
+
+    // Home & quick log
+    val homeHeaderPaddingH: Dp = 22.dp,
+    val homeFabSize: Dp = 56.dp,
+    val homeFabBottomOffset: Dp = 88.dp,
+    val bottomNavHeight: Dp = 72.dp,
+    val categoryBadgeSize: Dp = 38.dp,
+    val categoryChipIconSize: Dp = 14.dp,
+    val keypadKeyHeight: Dp = 52.dp,
+    val keypadActionHeight: Dp = 52.dp,
+    val amountSymbolSize: Dp = 30.dp,
 )
 
 val LocalProExpenseDimensions = staticCompositionLocalOf { ProExpenseDimensions() }

@@ -9,9 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.arduia.expense.ui.profile.ProfileCurrencyScreen
-import com.arduia.expense.ui.profile.ProfileCurrencySheet
-import com.arduia.expense.ui.profile.ProfileNameScreen
+import com.arduia.expense.feature.currency.ui.profile.ProfileCurrencyScreen
+import com.arduia.expense.feature.currency.ui.profile.ProfileCurrencySheet
+import com.arduia.expense.feature.currency.ui.profile.ProfileNameScreen
 import kotlinx.coroutines.delay
 
 private const val SPLASH_DISPLAY_MS = 1_800L

@@ -22,6 +22,9 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.coroutines.test)
         }
+        androidMain.dependencies {
+            implementation(libs.coroutines.core)
+        }
     }
 }
 
