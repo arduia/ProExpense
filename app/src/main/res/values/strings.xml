@@ -154,5 +154,19 @@
     <string name="profile_name_label">PROFILE NAME</string>
     <string name="profile_name_hint">Your name</string>
     <string name="profile_name_helper">Used on your home screen and CSV exports.</string>
+
+    <!-- Quick log / expense entry -->
+    <string name="new_expense">New expense</string>
+    <string name="details">Details</string>
+    <string name="amount_step">Amount</string>
+    <string name="save_expense">Save expense · %1$s</string>
+    <string name="next_with_chevron">Next ></string>
+    <string name="clear">Clear</string>
+    <string name="amount_must_be_greater_than_zero">Amount must be greater than $0</string>
+
+    <!-- Budget / events -->
+    <string name="budget_tracker">BUDGET TRACKER</string>
+    <string name="events">Events</string>
+    <string name="new_event">+ New event</string>
 </resources>
 

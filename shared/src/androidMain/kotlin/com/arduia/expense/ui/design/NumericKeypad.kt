@@ -42,6 +42,8 @@ fun NumericKeypad(
     onSave: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
+    saveLabel: String = "Save",
+    nextLabel: String = "Next",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -76,14 +78,14 @@ fun NumericKeypad(
             horizontalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
             ProButton(
-                text = "Save",
+                text = saveLabel,
                 onClick = onSave,
                 modifier = Modifier.weight(1f),
                 variant = ProButtonVariant.Secondary,
                 enabled = actionsEnabled,
             )
             ProButton(
-                text = "Next",
+                text = nextLabel,
                 onClick = onNext,
                 modifier = Modifier.weight(1f),
                 enabled = actionsEnabled,
