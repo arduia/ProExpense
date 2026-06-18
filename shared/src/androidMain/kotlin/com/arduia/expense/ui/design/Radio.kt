@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.design
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -8,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.background
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
@@ -21,12 +20,13 @@ fun ProRadio(
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
+    val dims = ProExpenseTheme.dimensions
     Box(
         modifier = modifier
-            .size(22.dp)
+            .size(dims.radioOuterSize)
             .clip(CircleShape)
             .border(
-                width = 2.dp,
+                width = dims.radioBorderWidth,
                 color = if (selected) colors.primary else colors.outline,
                 shape = CircleShape,
             ),
@@ -35,7 +35,7 @@ fun ProRadio(
         if (selected) {
             Box(
                 modifier = Modifier
-                    .size(11.dp)
+                    .size(dims.radioInnerSize)
                     .clip(CircleShape)
                     .background(colors.primary),
             )

@@ -9,18 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
  * Worm-style page indicator (Material `MdPageDots`). The active page stretches
- * into a 22dp pill in the primary blue; the rest are 7dp outline-variant dots.
+ * into a pill in the primary blue; the rest are outline-variant dots.
  */
 @Composable
 fun PageDots(
@@ -29,15 +27,17 @@ fun PageDots(
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(7.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(dims.pageDotSpacing, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         repeat(count) { i ->
             val active = i == activeIndex
             val width by animateDpAsState(
-                targetValue = if (active) 22.dp else 7.dp,
+                targetValue = if (active) dims.pageDotActiveWidth else dims.pageDotSize,
                 animationSpec = tween(
                     durationMillis = ProExpenseTheme.motion.screenTransitionMs,
                     easing = ProExpenseTheme.motion.standardEasing,
@@ -51,8 +51,8 @@ fun PageDots(
             Box(
                 modifier = Modifier
                     .width(width)
-                    .height(7.dp)
-                    .clip(RoundedCornerShape(99.dp))
+                    .height(dims.pageDotSize)
+                    .clip(shapes.pill)
                     .background(color),
             )
         }

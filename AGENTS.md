@@ -328,6 +328,27 @@ workaround). Never explain WHAT the code does. One short line max.
 - One `@Preview` per distinct UI state on content composables
 - Use `ProExpenseTheme` and components from `ui/design/` — see `design/DESIGN-SYSTEM.md`
 
+#### Design system alignment
+
+Components and screens must align with the shared design system. **Do not hardcode common UI
+attributes when a theme token exists.**
+
+| Attribute | Read from |
+|---|---|
+| Colors | `ProExpenseTheme.colors` / `ProExpensePalette` |
+| Typography | `ProExpenseTheme.typography` — no inline `fontSize`, `fontWeight`, or `fontSize * scale` hacks |
+| Spacing & sizing | `ProExpenseTheme.dimensions` — no inline `dp` for standard padding, heights, icon sizes |
+| Corner radii | `ProExpenseTheme.shapes` |
+| Motion | `ProExpenseTheme.motion` |
+
+Rules:
+
+- **`ui/design` primitives must be fully tokenized** — shared components consume theme tokens only.
+- **Missing token? Add it first** — extend `shared/src/androidMain/kotlin/com/arduia/expense/ui/theme/`
+  (`Type.kt`, `Dimensions.kt`, `Shape.kt`, `Color.kt`, `Motion.kt`) with a named token, then use it.
+- **Exceptions (inline values OK):** illustration/scene coordinates, one-off animation math, or
+  layout that has no semantic token yet — flag for tokenization when touching that area.
+
 ### Data Layer
 
 - Domain models in `core:domain`; amounts stored as integer ×100
@@ -449,10 +470,44 @@ Drill from cheap to expensive. Stop when you have an actionable cause.
 
 ---
 
+## Android Agent Skills
+
+Official Android skills from [android/skills](https://github.com/android/skills) are installed
+under `.agents/skills/` (Cursor Agent Skills standard). See `.agents/skills/README.md`.
+
+### Install / update
+
+```bash
+./scripts/install-android-skills.sh
+```
+
+Bootstraps the [Android CLI](https://developer.android.com/tools/agents/android-cli) when missing,
+then runs `android skills add --all --agent=cursor --project=.`.
+
+The Cursor `session-start` hook installs skills automatically when `.agents/skills/` is absent.
+
+### When to use
+
+Agents should consult relevant skills for specialized Android workflows (testing setup, edge-to-edge,
+navigation, R8 analysis, AGP upgrades, etc.). **This file and product docs take precedence** when
+they conflict with a skill.
+
+| Skill | Relevance |
+|---|---|
+| `android-cli` | SDK, emulator, docs, layout inspection |
+| `testing-setup` | Unit / instrumented / screenshot tests |
+| `edge-to-edge` | System bar insets |
+| `navigation-3` | Compose navigation |
+| `migrate-xml-views-to-jetpack-compose` | View → Compose migration |
+| `r8-analyzer` | APK size / shrinker |
+| `perfetto-trace-analysis` | Performance traces |
+
+---
+
 ## Instruction Precedence
 
 ```
-AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
+AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  .agents/skills/*  >  doc/*  >  AGENTIC_WORKFLOWS_GUIDE.md  >  general AI knowledge
 ```
 
 **Known conflicts (always follow AGENTS.md):**
@@ -474,6 +529,7 @@ AGENTS.md  >  docs/finance_tracker_product.md  >  .cursor/commands/*  >  doc/*  
 | `design/DESIGN-SYSTEM.md` | Compose UI design tokens and components |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
+| `.agents/skills/` | Official Android agent skills (see `scripts/install-android-skills.sh`) |
 | `.cursor/context/project_codebase.md` | Live codebase snapshot |
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |

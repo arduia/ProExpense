@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -24,16 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.IconSearch
 import com.arduia.expense.ui.design.ProLinearProgress
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.theme.ProExpenseSerif
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
@@ -49,6 +45,8 @@ fun ProfileCurrencySheet(
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     val filtered = profileCurrencyOptions.filter {
         searchQuery.isBlank() ||
             it.code.contains(searchQuery, ignoreCase = true) ||
@@ -65,43 +63,43 @@ fun ProfileCurrencySheet(
                     indication = null,
                     onClick = onDismiss,
                 )
-                .background(Color.Black.copy(alpha = 0.32f)),
+                .background(colors.scrim),
         )
 
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .height(520.dp)
-                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .height(dims.sheetMaxHeight)
+                .clip(shapes.sheet)
                 .background(colors.surface),
         ) {
             Box(
                 modifier = Modifier
-                    .padding(top = 12.dp, bottom = 14.dp)
+                    .padding(top = dims.sheetHandlePaddingTop, bottom = dims.sheetHandlePaddingBottom)
                     .align(Alignment.CenterHorizontally)
-                    .size(width = 32.dp, height = 4.dp)
-                    .clip(RoundedCornerShape(99.dp))
+                    .size(width = dims.sheetHandleWidth, height = dims.sheetHandleHeight)
+                    .clip(shapes.pill)
                     .background(colors.outlineVariant),
             )
 
             Text(
                 text = "All currencies",
-                style = typography.profileTitle.copy(fontSize = typography.profileTitle.fontSize * 0.75f),
+                style = typography.sheetTitle,
                 color = colors.onSurface,
-                modifier = Modifier.padding(horizontal = 24.dp),
+                modifier = Modifier.padding(horizontal = dims.space24),
             )
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(99.dp))
+                    .padding(horizontal = dims.space16, vertical = dims.space8)
+                    .height(dims.searchFieldHeight)
+                    .clip(shapes.pill)
                     .background(colors.surfaceVariant)
-                    .padding(horizontal = 18.dp),
+                    .padding(horizontal = dims.space18),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(dims.space12),
             ) {
                 IconSearch(color = colors.onSurfaceVariant)
                 BasicTextField(
@@ -128,8 +126,8 @@ fun ProfileCurrencySheet(
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                    .padding(horizontal = dims.space8, vertical = dims.space6),
+                verticalArrangement = Arrangement.spacedBy(dims.space2),
             ) {
                 filtered.forEach { currency ->
                     SheetCurrencyRow(
@@ -174,31 +172,30 @@ private fun SheetCurrencyRow(
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     val interaction = remember { MutableInteractionSource() }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 6.dp)
-            .clip(RoundedCornerShape(14.dp))
+            .padding(horizontal = dims.space8, vertical = dims.space6)
+            .clip(shapes.listRow)
             .clickable(interactionSource = interaction, indication = ripple(), onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = dims.space16, vertical = dims.space12),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(dims.space16),
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(dims.currencyBadgeSize)
                 .clip(CircleShape)
                 .background(colors.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = currency.symbol,
-                style = typography.currencyCode.copy(
-                    fontFamily = ProExpenseSerif,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                style = typography.currencySymbol,
                 color = colors.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )

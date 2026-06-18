@@ -28,7 +28,7 @@ private val ProExpenseLightColorScheme = lightColorScheme(
 )
 
 // Entry point for the design-system tokens. `ProExpenseTheme.colors`, `.typography`,
-// `.shapes`, and `.motion` read the active values from the composition.
+// `.shapes`, `.dimensions`, and `.motion` read the active values from the composition.
 object ProExpenseTheme {
     val colors: ProExpenseColors
         @Composable
@@ -49,6 +49,11 @@ object ProExpenseTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalProExpenseMotion.current
+
+    val dimensions: ProExpenseDimensions
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalProExpenseDimensions.current
 }
 
 @Composable
@@ -60,6 +65,7 @@ fun ProExpenseTheme(
         LocalProExpenseTypography provides ProExpenseTypography(),
         LocalProExpenseShapes provides ProExpenseShapes(),
         LocalProExpenseMotion provides ProExpenseMotion(),
+        LocalProExpenseDimensions provides ProExpenseDimensions(),
     ) {
         MaterialTheme(
             colorScheme = ProExpenseLightColorScheme,

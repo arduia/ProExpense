@@ -13,9 +13,11 @@ data class ProExpenseShapes(
     val quickTile: RoundedCornerShape = RoundedCornerShape(14.dp),
     val card: RoundedCornerShape = RoundedCornerShape(18.dp),
     val sheet: RoundedCornerShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-    val button: RoundedCornerShape = RoundedCornerShape(28.dp),
+    val buttonFilled: RoundedCornerShape = RoundedCornerShape(8.dp),
+    val buttonText: RoundedCornerShape = RoundedCornerShape(20.dp),
     val field: RoundedCornerShape = RoundedCornerShape(6.dp),
     val searchField: RoundedCornerShape = RoundedCornerShape(14.dp),
+    val listRow: RoundedCornerShape = RoundedCornerShape(14.dp),
     val badge: RoundedCornerShape = RoundedCornerShape(50),
 )
 

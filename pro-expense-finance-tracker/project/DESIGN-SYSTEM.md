@@ -247,4 +247,22 @@ Movement is brisk and eased, never bouncy. Screens slide on a shared curve, shee
 
 ---
 
+## 10. Compose implementation
+
+Android Compose maps this spec to `ProExpenseTheme` in `shared/.../ui/theme/`:
+
+| Spec area | Kotlin token | Access |
+|---|---|---|
+| Colors | `ProExpensePalette`, `ProExpenseColors` | `ProExpenseTheme.colors` |
+| Typography | `ProExpenseTypography` | `ProExpenseTheme.typography` |
+| Spacing & sizing | `ProExpenseDimensions` | `ProExpenseTheme.dimensions` |
+| Corner radii | `ProExpenseShapes` | `ProExpenseTheme.shapes` |
+| Motion | `ProExpenseMotion` | `ProExpenseTheme.motion` |
+
+**Rule:** screens and `ui/design` components must use these tokens — not hardcoded `Color(0x…)`,
+`fontSize`, `dp`, or radius literals — when a semantic token exists. Add a named token in the theme
+module first if the spec needs a value that is not yet defined.
+
+---
+
 *Pro Expense · Design System · mirrors the shipped Hi-Fi build.*

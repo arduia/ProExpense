@@ -12,6 +12,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/ensure-android-sdk.sh"
 ensure_android_sdk
 
+# Bootstrap Android agent skills when missing (see scripts/install-android-skills.sh).
+if [ ! -f "${SCRIPT_DIR}/../../.agents/skills/android-cli/SKILL.md" ]; then
+  if [ -x "${SCRIPT_DIR}/../../scripts/install-android-skills.sh" ]; then
+    "${SCRIPT_DIR}/../../scripts/install-android-skills.sh" >/dev/null 2>&1 || true
+  fi
+fi
+
 sdk_root="${ENSURE_ANDROID_SDK_ROOT:-}"
 status="${ENSURE_ANDROID_SDK_STATUS:-unknown}"
 

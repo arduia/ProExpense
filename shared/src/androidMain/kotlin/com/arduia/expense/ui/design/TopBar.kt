@@ -28,25 +28,26 @@ fun ProTopBar(
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
+    val dims = ProExpenseTheme.dimensions
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .padding(start = if (onBack != null) 6.dp else 12.dp, end = 4.dp),
+            .height(dims.topBarHeight)
+            .padding(start = if (onBack != null) dims.space6 else dims.space12, end = dims.space4),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onBack != null) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(dims.iconButtonSize)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = ripple(bounded = false, radius = 24.dp),
+                        indication = ripple(bounded = false, radius = dims.rippleRadiusIconButton),
                         onClick = onBack,
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                IconArrowLeft(color = colors.onSurface, size = 24.dp, weight = 2f)
+                IconArrowLeft(color = colors.onSurface, size = dims.iconSizeNav, weight = 2f)
             }
         }
         Text(
@@ -55,7 +56,7 @@ fun ProTopBar(
             color = colors.onSurface,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = if (onBack != null) 4.dp else 0.dp),
+                .padding(start = if (onBack != null) dims.space4 else 0.dp),
         )
         trailing?.invoke()
     }

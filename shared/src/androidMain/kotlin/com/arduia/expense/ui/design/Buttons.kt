@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -24,7 +23,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 // Buttons — DESIGN-SYSTEM.md §5 (Android Material rendition, android-frame.jsx).
@@ -47,10 +45,12 @@ fun ProFilledButton(
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     val isPrimary = tone == ProButtonTone.Primary
     val background = if (isPrimary) colors.primary else colors.surfaceVariant
     val foreground = if (isPrimary) colors.onPrimary else colors.onSurface
-    val shape = RoundedCornerShape(8.dp)
+    val shape = shapes.buttonFilled
 
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
@@ -64,9 +64,9 @@ fun ProFilledButton(
         modifier = modifier
             .scale(scale)
             .fillMaxWidth()
-            .height(56.dp)
+            .height(dims.buttonFilledHeight)
             .alpha(if (enabled) 1f else 0.4f)
-            .then(if (isPrimary) Modifier.shadow(6.dp, shape, clip = false) else Modifier)
+            .then(if (isPrimary) Modifier.shadow(dims.buttonShadowElevation, shape, clip = false) else Modifier)
             .clip(shape)
             .background(background)
             .clickable(
@@ -75,8 +75,8 @@ fun ProFilledButton(
                 enabled = enabled,
                 onClick = onClick,
             )
-            .padding(horizontal = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            .padding(horizontal = dims.buttonFilledPaddingH),
+        horizontalArrangement = Arrangement.spacedBy(dims.buttonContentGap, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CompositionLocalProvider(LocalContentColor provides foreground) {
@@ -100,8 +100,10 @@ fun ProTextButton(
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
+    val dims = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     val foreground = if (tone == ProButtonTone.Primary) colors.primaryDeep else colors.onSurfaceVariant
-    val shape = RoundedCornerShape(20.dp)
+    val shape = shapes.buttonText
 
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
@@ -114,15 +116,15 @@ fun ProTextButton(
     Row(
         modifier = modifier
             .scale(scale)
-            .height(40.dp)
+            .height(dims.buttonTextHeight)
             .clip(shape)
             .clickable(
                 interactionSource = interaction,
                 indication = ripple(),
                 onClick = onClick,
             )
-            .padding(horizontal = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+            .padding(horizontal = dims.buttonTextPaddingH),
+        horizontalArrangement = Arrangement.spacedBy(dims.buttonTextContentGap),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CompositionLocalProvider(LocalContentColor provides foreground) {
