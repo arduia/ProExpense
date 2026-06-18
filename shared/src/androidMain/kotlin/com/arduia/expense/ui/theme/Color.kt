@@ -38,6 +38,7 @@ object ProExpensePalette {
     val Ink3 = Color(0xFF757575)
     val Muted = Color(0xFF9E9E9E)
     val Muted2 = Color(0xFFBDBDBD)
+    val NavInactive = Color(0xFF8E8E93)
 
     val Line = Color(0x19212121)
     val LineSoft = Color(0x0F212121)
@@ -101,6 +102,7 @@ data class ProExpenseColors(
     val outlineVariant: Color = ProExpensePalette.LineStrong,
     val navBackground: Color = ProExpensePalette.Surface,
     val navText: Color = ProExpensePalette.Ink,
+    val navInactive: Color = ProExpensePalette.NavInactive,
 )
 
 val LocalProExpenseColors = staticCompositionLocalOf { ProExpenseColors() }

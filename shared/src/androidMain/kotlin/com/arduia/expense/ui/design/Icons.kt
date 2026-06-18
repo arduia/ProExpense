@@ -180,4 +180,58 @@ fun IconHome(color: Color, modifier: Modifier = Modifier, size: Dp = 22.dp, weig
     }
 }
 
+@Composable
+fun IconBudget(color: Color, modifier: Modifier = Modifier, size: Dp = 22.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        strokePolyline(
+            listOf(
+                Offset(4f, 7f), Offset(4f, 19f), Offset(5f, 20f), Offset(19f, 20f),
+                Offset(20f, 19f), Offset(20f, 7f), Offset(4f, 7f),
+            ),
+            color,
+            weight,
+        )
+        strokePolyline(
+            listOf(Offset(4f, 7f), Offset(4f, 5f), Offset(5f, 4f), Offset(16f, 4f), Offset(20f, 7f)),
+            color,
+            weight,
+        )
+        drawCircle(color, 1.5f * sx, Offset(16f * sx, 13f * sy))
+    }
+}
+
+@Composable
+fun IconJournal(color: Color, modifier: Modifier = Modifier, size: Dp = 22.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        strokePolyline(
+            listOf(
+                Offset(5f, 4f), Offset(18f, 4f), Offset(19f, 5f), Offset(19f, 20f),
+                Offset(16f, 18f), Offset(13f, 20f), Offset(10f, 18f), Offset(7f, 20f),
+                Offset(4f, 18f), Offset(4f, 5f), Offset(5f, 4f),
+            ),
+            color,
+            weight,
+        )
+        drawLine(color, Offset(9f * sx, 8f * sy), Offset(15f * sx, 8f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(9f * sx, 12f * sy), Offset(15f * sx, 12f * sy), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconMore(color: Color, modifier: Modifier = Modifier, size: Dp = 22.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val dotRadius = 1.4f * sx
+        listOf(6f, 12f, 18f).forEach { x ->
+            drawCircle(color, dotRadius, Offset(x * sx, 12f * sy))
+        }
+    }
+}
+
 private fun Modifier.iconSize(size: Dp): Modifier = this.size(size)
