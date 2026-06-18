@@ -22,7 +22,7 @@ data class ProExpenseShapes(
     val searchField: RoundedCornerShape = RoundedCornerShape(14.dp),
     val listRow: RoundedCornerShape = RoundedCornerShape(14.dp),
     val keypadKey: RoundedCornerShape = RoundedCornerShape(12.dp),
-    val bottomNav: RoundedCornerShape = RoundedCornerShape(28.dp),
+    val bottomNav: RoundedCornerShape = RoundedCornerShape(percent = 50),
 )
 
 val LocalProExpenseShapes = staticCompositionLocalOf { ProExpenseShapes() }
