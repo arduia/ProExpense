@@ -238,9 +238,14 @@ This script:
 `ui/design/` components **must** pass screenshot verification in-session before `git push`:
 
 1. `./gradlew :app:verifyRoborazziDevDebug` (or `./gradlew verifyAll`) exits 0
-2. If visuals changed intentionally, run `./gradlew :app:recordRoborazziDevDebug` and commit
-   updated baselines under `app/src/test/screenshots/` in the same branch
-3. Every touched content-composable file has `@Preview` (see Compose UI standards)
+2. **New UI implementation must ship review images** — every new or materially changed screen,
+   shell, flow step, or design-system component needs a Roborazzi screenshot test
+   (`captureRoboImage` in `app/src/test/`) and committed baseline PNG(s) under
+   `app/src/test/screenshots/` in the **same branch**. These files are the visual review
+   artifact for humans and CI; code-only UI delivery without generated images is incomplete.
+3. If visuals changed intentionally, run `./gradlew :app:recordRoborazziDevDebug` to generate
+   or refresh baselines, then commit the updated PNGs with the UI diff
+4. Every touched content-composable file has `@Preview` (see Compose UI standards)
 
 **Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
 
@@ -261,8 +266,9 @@ dependencies — only declare G1 if setup was attempted and Gradle still cannot 
 **Else:** Verify once before push. `git push -u origin <branch>` on first push.
 
 **UI work:** never push Compose UI changes until Step 6 screenshot verify is ✅
-(`verifyRoborazziDevDebug` or `verifyAll`). Previews and screenshot baselines must be
-committed with the UI diff — not in a follow-up.
+(`verifyRoborazziDevDebug` or `verifyAll`). Previews, Roborazzi tests, and committed baseline
+PNG images under `app/src/test/screenshots/` must ship with the UI diff — not in a follow-up.
+Reviewers use those images to judge visual correctness without running the app locally.
 
 **Do not open pull requests.** Push the branch only. PRs are created manually by the team — never call PR-management tools or open draft/ready PRs unless the user explicitly asks in that session.
 
@@ -317,6 +323,7 @@ bash scripts/setup-android-toolchain.sh
 ./gradlew :app:testDevDebugUnitTest
 
 # Screenshot tests — record new baselines after intentional UI changes
+# (writes review PNGs to app/src/test/screenshots/ — commit them with the UI diff)
 ./gradlew :app:recordRoborazziDevDebug
 
 # Screenshot tests — compare against committed baselines
@@ -347,7 +354,7 @@ bash scripts/setup-android-toolchain.sh
 |------|----------|
 | KMP unit tests | `<module>/src/commonTest/kotlin/` |
 | Android JVM unit tests | `app/src/test/java/` |
-| Screenshot baselines | `app/src/test/screenshots/` |
+| Screenshot baselines (review images) | `app/src/test/screenshots/` — committed PNGs from `recordRoborazziDevDebug` |
 | Instrumented tests | `app/src/androidTest/java/com/arduia/expense/` |
 
 ### Core Rules
@@ -378,8 +385,10 @@ bash scripts/setup-android-toolchain.sh
      are the only exception — flag in review if unsure.
 
 8. **Screenshot verify before push on UI changes** — when Compose UI is touched, Roborazzi
-   verify must pass in-session before `git push`. Intentional visual changes require
-   `recordRoborazziDevDebug` and committed baselines in the same branch.
+   verify must pass in-session before `git push`. **New UI must generate review images:**
+   add or update a screenshot test, run `recordRoborazziDevDebug`, and commit the resulting
+   PNG baselines in `app/src/test/screenshots/` in the same branch. Intentional visual changes
+   on existing screens follow the same record-and-commit flow.
 
 ### Tools
 
@@ -433,7 +442,10 @@ workaround). Never explain WHAT the code does. One short line max.
   - Use preview fakes/stub repositories when a composable needs DI — never skip previews because
     of missing production wiring.
 - Pair every new/changed screen with a Roborazzi screenshot test (`captureRoboImage`) in
-  `app/src/test/`; verify (and record when intentional) before push
+  `app/src/test/`; **generate and commit baseline PNG review images** under
+  `app/src/test/screenshots/` via `recordRoborazziDevDebug` before push
+- Verify with `verifyRoborazziDevDebug` (or `verifyAll`) after recording — green compare is
+  required; do not push UI without the image files in git
 - Use `ProExpenseTheme` and components from `ui/design/` — see `design/DESIGN-SYSTEM.md`
 
 #### Design system alignment
@@ -592,8 +604,10 @@ declare verification impossible. Treat all code as **unverified**. Compensate pe
 **Action (all required before push):**
 
 - `@Preview` on every touched content-composable file (one per distinct UI state)
-- `./gradlew :app:verifyRoborazziDevDebug` green; run `recordRoborazziDevDebug` and commit
-  baselines when visuals change intentionally
+- Roborazzi screenshot test for every new or materially changed UI surface
+- `./gradlew :app:recordRoborazziDevDebug` to **generate review image files** (PNG baselines in
+  `app/src/test/screenshots/`) and commit them in the same branch when visuals are new or changed
+- `./gradlew :app:verifyRoborazziDevDebug` green after baselines are committed
 - Device/emulator check only when Roborazzi cannot cover the change; flag if verify impossible (G1)
 
 ### Recording
