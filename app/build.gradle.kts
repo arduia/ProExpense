@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.roborazzi)
 }
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -50,6 +52,10 @@ android {
         }
     }
 
+    buildFeatures {
+        compose = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -58,6 +64,9 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            all {
+                it.systemProperties["robolectric.pixelCopyRenderMode"] = "hardware"
+            }
         }
     }
 
@@ -81,8 +90,20 @@ dependencies {
     implementation(project(":feature:importexport"))
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.material)
+
+    val composeBom = platform(libs.compose.bom)
+    implementation(composeBom)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.foundation)
+
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
@@ -90,8 +111,19 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.androidx.test.core)
+    testImplementation(composeBom)
+    testImplementation(libs.compose.ui.test.junit4)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.roborazzi.junit.rule)
 
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(composeBom)
+    androidTestImplementation(libs.compose.ui.test.junit4)
+}
+
+roborazzi {
+    outputDir.set(file("src/test/screenshots"))
 }
