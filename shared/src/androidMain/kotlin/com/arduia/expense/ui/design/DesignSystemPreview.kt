@@ -181,7 +181,7 @@ fun ProDesignSystemComponents() {
     }
 }
 
-@Preview(name = "Design system — buttons", widthDp = ProArtboard.TABLET_WIDTH_DP, heightDp = 480, showBackground = true)
+@Preview(name = "Design system — buttons", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true)
 @Composable
 fun ProDesignSystemButtonsPreview() {
     ProExpenseTheme {
@@ -196,7 +196,7 @@ fun ProDesignSystemButtonsPreview() {
     }
 }
 
-@Preview(name = "Design system — categories", widthDp = ProArtboard.TABLET_WIDTH_DP, heightDp = 360, showBackground = true)
+@Preview(name = "Design system — categories", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)
 @Composable
 fun ProDesignSystemCategoriesPreview() {
     ProExpenseTheme {
@@ -211,7 +211,7 @@ fun ProDesignSystemCategoriesPreview() {
     }
 }
 
-@Preview(name = "Design system — fields", widthDp = ProArtboard.TABLET_WIDTH_DP, heightDp = 360, showBackground = true)
+@Preview(name = "Design system — fields", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)
 @Composable
 fun ProDesignSystemFieldsPreview() {
     ProExpenseTheme {
@@ -226,7 +226,7 @@ fun ProDesignSystemFieldsPreview() {
     }
 }
 
-@Preview(name = "Design system — lists", widthDp = ProArtboard.TABLET_WIDTH_DP, heightDp = 480, showBackground = true)
+@Preview(name = "Design system — lists", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true)
 @Composable
 fun ProDesignSystemListsPreview() {
     ProExpenseTheme {
@@ -241,7 +241,7 @@ fun ProDesignSystemListsPreview() {
     }
 }
 
-@Preview(name = "Design system — chrome", widthDp = ProArtboard.TABLET_WIDTH_DP, heightDp = 520, showBackground = true)
+@Preview(name = "Design system — chrome", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 520, showBackground = true)
 @Composable
 fun ProDesignSystemChromePreview() {
     ProExpenseTheme {
@@ -258,8 +258,8 @@ fun ProDesignSystemChromePreview() {
 
 @Preview(
     name = "Design system — full gallery",
-    widthDp = ProArtboard.TABLET_WIDTH_DP,
-    heightDp = ProArtboard.TABLET_HEIGHT_DP,
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
     showBackground = true,
 )
 @Composable

@@ -16,9 +16,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Preview(
-    name = "Design system foundation (tablet)",
-    widthDp = ProArtboard.TABLET_WIDTH_DP,
-    heightDp = ProArtboard.TABLET_HEIGHT_DP,
+    name = "Design system foundation (Pixel 9 Pro)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
     showBackground = true,
 )
 @Composable
