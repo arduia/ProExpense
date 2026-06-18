@@ -124,7 +124,7 @@ private fun KeypadKey(
     ) {
         if (label == "backspace") {
             ProIcon(
-                glyph = ProIconGlyph.Back,
+                glyph = ProIconGlyph.Backspace,
                 contentDescription = "Backspace",
                 tint = colors.onSurface,
                 size = dimens.iconNav,

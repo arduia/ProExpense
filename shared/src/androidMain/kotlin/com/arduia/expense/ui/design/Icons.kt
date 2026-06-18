@@ -19,6 +19,7 @@ enum class ProIconGlyph(@DrawableRes val resId: Int) {
     Plus(R.drawable.ic_plus),
     Minus(R.drawable.ic_minus),
     Back(R.drawable.ic_back),
+    Backspace(R.drawable.ic_backspace),
     Close(R.drawable.ic_close),
     ChevronDown(R.drawable.ic_chevron_down),
     ChevronRight(R.drawable.ic_chevron_right),

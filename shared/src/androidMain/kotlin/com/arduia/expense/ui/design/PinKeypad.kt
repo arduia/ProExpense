@@ -177,14 +177,23 @@ private fun PinKey(
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed && enabled) motion.pressedScale else 1f
+    val isBackspace = label == "backspace"
 
     Box(
         modifier = modifier
             .aspectRatio(1.45f)
             .scale(scale)
             .clip(ProExpenseTheme.shapes.keypadKey)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.keypadKey)
-            .background(colors.surface)
+            // Backspace reads as a bare glyph — only digit keys carry the surface card.
+            .then(
+                if (isBackspace) {
+                    Modifier
+                } else {
+                    Modifier
+                        .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.keypadKey)
+                        .background(colors.surface)
+                },
+            )
             .clickable(
                 enabled = enabled,
                 interactionSource = interactionSource,
@@ -195,9 +204,9 @@ private fun PinKey(
             .defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,
     ) {
-        if (label == "backspace") {
+        if (isBackspace) {
             ProIcon(
-                glyph = ProIconGlyph.Back,
+                glyph = ProIconGlyph.Backspace,
                 contentDescription = "Backspace",
                 tint = colors.onSurface,
                 size = dimens.iconNav,
