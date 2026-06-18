@@ -21,7 +21,12 @@ import androidx.compose.ui.unit.dp
     showBackground = true,
 )
 @Composable
-private fun ProExpenseThemeFoundationPreview() {
+fun ProExpenseThemeFoundationPreview() {
+    ProExpenseThemeFoundation()
+}
+
+@Composable
+fun ProExpenseThemeFoundation() {
     ProExpenseTheme {
         val colors = ProExpenseTheme.colors
         val typography = ProExpenseTheme.typography
