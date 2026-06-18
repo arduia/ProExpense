@@ -423,6 +423,17 @@ Rules:
 | New isolated work and **no** branch named by the user | `git checkout -b <new-branch>` per [Branch naming](#branch-naming). |
 | User explicitly asks for a new branch name | Create exactly that branch (or the name they give). |
 
+#### One branch per session (mandatory)
+
+For a single agent session, use **one working branch** for all implementation work:
+
+- Create **at most one** new branch when the session starts and no user-named branch exists.
+- **Stay on that branch** for every follow-up task, fix, and iteration in the same session — commit and push there.
+- **Do not** create a second `cursor/*`, `feature/*`, or other branch mid-session unless the user **explicitly** asks to create another new branch (e.g. “open a new branch for this”).
+- If the session already has a registered or pushed branch with prior work, **continue on it** rather than branching again.
+
+**Anti-pattern:** Task 1 creates `cursor/compose-home-quicklog-cae7`, task 2 in the same session creates `cursor/v2-migration-pr-base-rule-cae7` instead of committing to the existing branch.
+
 **Anti-pattern:** User says “checkout `refactor/v2-migration` and fix X” → agent runs
 `git checkout -b cursor/fix-x-e0d8`. **Always work on the branch the user chose.**
 
@@ -458,8 +469,7 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 
 ### Rules
 
-- **Respect the user's branch:** never spawn a new branch when they asked to check out or work on a
-  specific one — see [Branch selection](#branch-selection)
+- **One branch per session:** at most one new branch unless the user explicitly requests another — see [One branch per session](#one-branch-per-session-mandatory)
 - Run Step 6 verify once before pushing, not after every commit
 - **Compose UI:** `@Preview` on every touched content-composable file; screenshot verify
   green before push — see Step 6 UI change gate
