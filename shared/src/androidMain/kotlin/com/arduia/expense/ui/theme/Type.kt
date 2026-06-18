@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.theme
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -21,22 +20,24 @@ private val ManropeFamily = FontFamily(
     Font(R.font.manrope_variable, FontWeight.ExtraBold),
 )
 
-private val InstrumentSerifFamily = FontFamily(
-    Font(R.font.instrument_serif_regular, FontWeight.Normal),
-    Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
-)
-
 private val GeistMonoFamily = FontFamily(
     Font(R.font.geist_mono_variable, FontWeight.Normal),
     Font(R.font.geist_mono_variable, FontWeight.Medium),
-    Font(R.font.geist_mono_variable, FontWeight.SemiBold),
+)
+
+private val InstrumentSerifFamily = FontFamily(
+    Font(R.font.instrument_serif_regular, FontWeight.Normal),
+    Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.manrope_variable, FontWeight.Normal),
 )
 
 @Immutable
 data class ProTypography(
     val displayAmount: TextStyle,
+    val listAmount: TextStyle,
     val screenTitle: TextStyle,
     val sectionHead: TextStyle,
+    val displayFlourish: TextStyle,
     val body: TextStyle,
     val bodyMedium: TextStyle,
     val bodySemiBold: TextStyle,
@@ -57,25 +58,42 @@ private fun lineHeight(fontSizeSp: Float, multiplier: Float) =
 
 val ProDefaultTypography = ProTypography(
     displayAmount = TextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = GeistMonoFamily,
         fontSize = 64.sp,
         lineHeight = lineHeight(64f, 1f),
         letterSpacing = (-0.025).em,
         fontWeight = FontWeight.Normal,
+        fontFeatureSettings = "tnum",
+    ),
+    listAmount = TextStyle(
+        fontFamily = GeistMonoFamily,
+        fontSize = 18.sp,
+        lineHeight = lineHeight(18f, 1.1f),
+        letterSpacing = (-0.01).em,
+        fontWeight = FontWeight.Normal,
+        fontFeatureSettings = "tnum",
     ),
     screenTitle = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 32.sp,
+        lineHeight = lineHeight(32f, 1f),
+        letterSpacing = (-0.015).em,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    sectionHead = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 18.sp,
+        lineHeight = lineHeight(18f, 1.1f),
+        letterSpacing = (-0.01).em,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    displayFlourish = TextStyle(
         fontFamily = InstrumentSerifFamily,
         fontSize = 32.sp,
         lineHeight = lineHeight(32f, 1f),
         letterSpacing = (-0.015).em,
         fontWeight = FontWeight.Normal,
-    ),
-    sectionHead = TextStyle(
-        fontFamily = InstrumentSerifFamily,
-        fontSize = 18.sp,
-        lineHeight = lineHeight(18f, 1.1f),
-        letterSpacing = (-0.01).em,
-        fontWeight = FontWeight.Normal,
+        fontStyle = FontStyle.Italic,
     ),
     body = TextStyle(
         fontFamily = ManropeFamily,
@@ -121,12 +139,14 @@ val ProDefaultTypography = ProTypography(
         lineHeight = lineHeight(12f, 1.3f),
         letterSpacing = 0.08.em,
         fontWeight = FontWeight.Normal,
+        fontFeatureSettings = "tnum",
     ),
     keypadKey = TextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = GeistMonoFamily,
         fontSize = 22.sp,
         lineHeight = lineHeight(22f, 1f),
         fontWeight = FontWeight.Normal,
+        fontFeatureSettings = "tnum",
     ),
     sansFamily = ManropeFamily,
     serifFamily = InstrumentSerifFamily,

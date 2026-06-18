@@ -56,6 +56,11 @@ fun ProExpenseThemeFoundation() {
                 color = colors.muted,
             )
             Text(
+                text = "Hi, Maya",
+                style = typography.displayFlourish,
+                color = colors.primary,
+            )
+            Text(
                 text = "Lunch with M.",
                 style = typography.bodyMedium,
                 color = colors.onSurface,
@@ -64,6 +69,11 @@ fun ProExpenseThemeFoundation() {
                 text = "Food · 12:30 PM",
                 style = typography.caption,
                 color = colors.onSurfaceMuted,
+            )
+            Text(
+                text = "\$12.40",
+                style = typography.listAmount,
+                color = colors.onSurface,
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(dimens.space8),

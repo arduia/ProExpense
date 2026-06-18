@@ -34,6 +34,21 @@ class ProDesignTokensTest {
     }
 
     @Test
+    fun display_amount_uses_geist_mono() {
+        assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.displayAmount.fontFamily)
+    }
+
+    @Test
+    fun screen_title_uses_manrope() {
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.screenTitle.fontFamily)
+    }
+
+    @Test
+    fun display_flourish_uses_instrument_serif() {
+        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.displayFlourish.fontFamily)
+    }
+
+    @Test
     fun dimensions_artboard_matches_tablet_roborazzi_viewport() {
         assertEquals(ProArtboard.TABLET_WIDTH_DP.toFloat(), ProDefaultDimens.artboardWidth.value)
         assertEquals(ProArtboard.TABLET_HEIGHT_DP.toFloat(), ProDefaultDimens.artboardHeight.value)
