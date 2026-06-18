@@ -15,7 +15,7 @@ import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [33], qualifiers = "w414dp-h868dp")
+@Config(sdk = [33], qualifiers = "w900dp-h1280dp")
 @Category(ScreenshotTests::class)
 class ProExpenseThemeScreenshotTest {
 

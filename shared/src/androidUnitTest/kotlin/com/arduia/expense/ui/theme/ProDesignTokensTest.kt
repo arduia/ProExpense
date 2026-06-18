@@ -34,8 +34,8 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun dimensions_artboard_matches_roborazzi_viewport() {
-        assertEquals(414f, ProDefaultDimens.artboardWidth.value)
-        assertEquals(868f, ProDefaultDimens.artboardHeight.value)
+    fun dimensions_artboard_matches_tablet_roborazzi_viewport() {
+        assertEquals(ProArtboard.TABLET_WIDTH_DP.toFloat(), ProDefaultDimens.artboardWidth.value)
+        assertEquals(ProArtboard.TABLET_HEIGHT_DP.toFloat(), ProDefaultDimens.artboardHeight.value)
     }
 }

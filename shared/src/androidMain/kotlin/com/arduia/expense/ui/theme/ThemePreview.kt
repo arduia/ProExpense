@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -15,9 +16,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Preview(
-    name = "Design system foundation",
-    widthDp = 414,
-    heightDp = 868,
+    name = "Design system foundation (tablet)",
+    widthDp = ProArtboard.TABLET_WIDTH_DP,
+    heightDp = ProArtboard.TABLET_HEIGHT_DP,
     showBackground = true,
 )
 @Composable
@@ -34,6 +35,7 @@ fun ProExpenseThemeFoundation() {
 
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .background(colors.paper)
                 .padding(dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),

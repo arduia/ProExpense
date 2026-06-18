@@ -5,6 +5,11 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+object ProArtboard {
+    const val TABLET_WIDTH_DP = 900
+    const val TABLET_HEIGHT_DP = 1280
+}
+
 @Immutable
 data class ProButtonSize(
     val height: Dp,
@@ -110,8 +115,8 @@ val ProDefaultDimens = ProDimens(
     sheetMaxHeightFraction = 0.78f,
     fabSize = 64.dp,
     touchTargetMin = 44.dp,
-    artboardWidth = 414.dp,
-    artboardHeight = 868.dp,
+    artboardWidth = ProArtboard.TABLET_WIDTH_DP.dp,
+    artboardHeight = ProArtboard.TABLET_HEIGHT_DP.dp,
     buttonBorderWidth = 1.4.dp,
     chipBorderWidth = 1.2.dp,
     sheetHandleWidth = 36.dp,
