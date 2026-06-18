@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.profile
+package com.arduia.expense.feature.currency.ui.profile
 
 data class ProfileCurrencyOption(
     val code: String,

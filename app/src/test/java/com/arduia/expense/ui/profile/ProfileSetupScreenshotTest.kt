@@ -3,6 +3,9 @@ package com.arduia.expense.ui.profile
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.arduia.expense.feature.currency.ui.profile.ProfileCurrencyScreen
+import com.arduia.expense.feature.currency.ui.profile.ProfileCurrencySheetPreviewHost
+import com.arduia.expense.feature.currency.ui.profile.ProfileNameScreen
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule

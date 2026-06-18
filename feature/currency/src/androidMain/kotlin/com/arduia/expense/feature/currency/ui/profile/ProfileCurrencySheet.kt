@@ -1,4 +1,4 @@
-package com.arduia.expense.ui.profile
+package com.arduia.expense.feature.currency.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,15 +26,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.IconSearch
 import com.arduia.expense.ui.design.ProLinearProgress
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-/**
- * Currency picker bottom sheet — mirrors `AndProfileCurrencySheet`.
- */
 @Composable
 fun ProfileCurrencySheet(
     searchQuery: String,
@@ -140,19 +136,19 @@ fun ProfileCurrencySheet(
     }
 }
 
-/** Full-screen host for the currency-sheet design artboard (dimmed base + sheet). */
 @Composable
 fun ProfileCurrencySheetPreviewHost(
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
+    val dims = ProExpenseTheme.dimensions
 
     Box(modifier = modifier.fillMaxSize().background(colors.surface)) {
         Column(modifier = Modifier.fillMaxSize()) {
             ProTopBar(title = "Home currency")
             ProLinearProgress(
                 progress = 1f,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = dims.space16),
             )
             Box(modifier = Modifier.weight(1f))
         }

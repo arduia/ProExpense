@@ -95,4 +95,84 @@ fun IconCheck(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, wei
     }
 }
 
+@Composable
+fun IconClose(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, weight: Float = 1.8f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        strokePolyline(listOf(Offset(6f, 6f), Offset(18f, 18f)), color, weight)
+        strokePolyline(listOf(Offset(18f, 6f), Offset(6f, 18f)), color, weight)
+    }
+}
+
+@Composable
+fun IconPlus(color: Color, modifier: Modifier = Modifier, size: Dp = 24.dp, weight: Float = 2f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val w = weight * sx
+        drawLine(color, Offset(12f * sx, 5f * sx), Offset(12f * sx, 19f * sx), w, StrokeCap.Round)
+        drawLine(color, Offset(5f * sx, 12f * sx), Offset(19f * sx, 12f * sx), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconBell(color: Color, modifier: Modifier = Modifier, size: Dp = 18.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        strokePolyline(listOf(Offset(6f, 16f), Offset(6f, 11f), Offset(12f, 5f), Offset(18f, 11f), Offset(18f, 16f), Offset(19.5f, 18f), Offset(4.5f, 18f), Offset(6f, 16f)), color, weight)
+        drawLine(color, Offset(10f * sx, 20f * sy), Offset(14f * sx, 20f * sy), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconCalendar(color: Color, modifier: Modifier = Modifier, size: Dp = 18.dp, weight: Float = 1.7f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        drawRoundRect(
+            color = color,
+            topLeft = Offset(4f * sx, 5f * sy),
+            size = androidx.compose.ui.geometry.Size(16f * sx, 15f * sy),
+            cornerRadius = androidx.compose.ui.geometry.CornerRadius(2f * sx, 2f * sy),
+            style = Stroke(width = w),
+        )
+        drawLine(color, Offset(4f * sx, 10f * sy), Offset(20f * sx, 10f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(9f * sx, 3f * sy), Offset(9f * sx, 7f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(15f * sx, 3f * sy), Offset(15f * sx, 7f * sy), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconClock(color: Color, modifier: Modifier = Modifier, size: Dp = 12.dp, weight: Float = 1.8f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val w = weight * sx
+        drawCircle(color, 8f * sx, Offset(12f * sx, 12f * sx), style = Stroke(width = w))
+        drawLine(color, Offset(12f * sx, 12f * sx), Offset(12f * sx, 8f * sx), w, StrokeCap.Round)
+        drawLine(color, Offset(12f * sx, 12f * sx), Offset(15f * sx, 14f * sx), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconNote(color: Color, modifier: Modifier = Modifier, size: Dp = 18.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        strokePolyline(listOf(Offset(6f, 4f), Offset(15f, 4f), Offset(19f, 8f), Offset(19f, 20f), Offset(6f, 20f), Offset(6f, 4f)), color, weight)
+        drawLine(color, Offset(15f * sx, 4f * sy), Offset(15f * sx, 8f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(15f * sx, 8f * sy), Offset(19f * sx, 8f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(9f * sx, 13f * sy), Offset(15f * sx, 13f * sy), w, StrokeCap.Round)
+        drawLine(color, Offset(9f * sx, 17f * sy), Offset(13f * sx, 17f * sy), w, StrokeCap.Round)
+    }
+}
+
+@Composable
+fun IconHome(color: Color, modifier: Modifier = Modifier, size: Dp = 22.dp, weight: Float = 1.6f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        strokePolyline(listOf(Offset(4f, 11.5f), Offset(12f, 5f), Offset(20f, 11.5f), Offset(20f, 19f), Offset(16f, 19f), Offset(16f, 13f), Offset(8f, 13f), Offset(8f, 19f), Offset(4f, 19f), Offset(4f, 11.5f)), color, weight)
+    }
+}
+
 private fun Modifier.iconSize(size: Dp): Modifier = this.size(size)
