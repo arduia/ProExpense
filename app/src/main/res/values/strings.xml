@@ -133,5 +133,26 @@
     <string name="recent">Recent</string>
     <string name="okay">Okay</string>
     <string name="repeat_entry">Repeat Entry</string>
+
+    <!-- First launch / onboarding -->
+    <string name="splash_tagline">Your finance notebook</string>
+    <string name="get_started">Get started</string>
+    <string name="back">Back</string>
+    <string name="onboarding_welcome_title">Welcome</string>
+    <string name="onboarding_welcome_subtitle">Your personal finance notebook.</string>
+    <string name="onboarding_quick_log_title">Quick Log</string>
+    <string name="onboarding_quick_log_subtitle">Log expenses in seconds — amount, category, done.</string>
+    <string name="onboarding_shared_costs_title">Shared Costs</string>
+    <string name="onboarding_shared_costs_subtitle">Split bills instantly — total, people, done.</string>
+    <string name="onboarding_event_budget_title">Event Budget</string>
+    <string name="onboarding_event_budget_subtitle">Plan and track any event budget — trips, weddings, parties.</string>
+    <string name="onboarding_journal_title">Journal</string>
+    <string name="onboarding_journal_subtitle">Review your spending like a diary, day by day.</string>
+    <string name="profile_setup_step">PROFILE · %1$d OF %2$d</string>
+    <string name="profile_setup_title">Set up your profile</string>
+    <string name="profile_setup_description">Your name personalizes the app — greeting you on the home screen and identifying your records and exports. No account needed; everything stays on your device.</string>
+    <string name="profile_name_label">PROFILE NAME</string>
+    <string name="profile_name_hint">Your name</string>
+    <string name="profile_name_helper">Used on your home screen and CSV exports.</string>
 </resources>
 

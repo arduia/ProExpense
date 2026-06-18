@@ -25,6 +25,51 @@ import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
+fun ProfileNameField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(ProExpenseTheme.shapes.searchField)
+            .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
+            .background(colors.surface)
+            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        textStyle = typography.body.copy(color = colors.onSurface),
+        cursorBrush = SolidColor(colors.primary),
+        singleLine = true,
+        decorationBox = { inner ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.User,
+                    contentDescription = null,
+                    tint = colors.primary,
+                    size = dimens.iconNav,
+                )
+                Box(modifier = Modifier.padding(start = dimens.space8)) {
+                    if (value.isEmpty()) {
+                        Text(text = placeholder, style = typography.body, color = colors.muted)
+                    }
+                    inner()
+                }
+            }
+        },
+    )
+}
+
+@Composable
 fun SearchField(
     value: String,
     onValueChange: (String) -> Unit,
