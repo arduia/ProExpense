@@ -1,24 +1,26 @@
 {
   "$schema": "https://tr.designtokens.org/format/",
-  "$description": "Pro Expense — design tokens (W3C Design Tokens format). Units: color=hex sRGB, dimension=dp (layout) / sp (text), duration=ms. Maps to ProExpenseTheme (colors, typography, dimensions, shapes, motion).",
+  "$description": "Pro Expense — design tokens (W3C Design Tokens format). Units: color=hex sRGB, dimension=dp (layout) / sp (text), duration=ms. Maps to ProExpenseTheme in :shared. Screen-verified against reference-images/ (Jun 2026).",
   "color": {
     "$type": "color",
-    "primary":   { "$value": "#039be5", "$description": "Material blue — primary actions, active nav, links, Add button, amount accents" },
+    "primary":   { "$value": "#039be5", "$description": "Material blue — primary actions, active nav, links, Add button, amount $ prefix" },
     "primaryDeep": { "$value": "#0288d1", "$description": "Deep blue — primary on tinted/active surfaces" },
     "primarySoft": { "$value": "#4fc3f7", "$description": "Soft blue — disabled primary, low-emphasis" },
-    "primaryTint": { "$value": "#b3e5fc", "$description": "Blue tint — selected backgrounds" },
-    "onPrimary": { "$value": "#ffffff", "$description": "Text/icon on primary fills" },
+    "primaryTint": { "$value": "#b3e5fc", "$description": "Blue tint — selected backgrounds, Reports tile" },
+    "onPrimary": { "$value": "#ffffff", "$description": "Text/icon on primary fills (legacy alias)" },
+    "onPrimaryWarm": { "$value": "#fffdf6", "$description": "Warm white on primary/dark fills — buttons, active filter chips, toast text (screen-verified)" },
     "surface":   { "$value": "#ffffff", "$description": "Cards, sheets, nav surface" },
     "onSurface": { "$value": "#212121", "$description": "Primary text on surface/paper" },
-    "onSurfaceVariant": { "$value": "#424242", "$description": "Secondary text" },
+    "onSurfaceVariant": { "$value": "#424242", "$description": "Secondary text, idle chip labels" },
     "onSurfaceMuted":   { "$value": "#757575", "$description": "Captions, meta labels" },
-    "paper":     { "$value": "#f5f5f5", "$description": "App background (warm paper canvas)" },
+    "paper":     { "$value": "#f5f5f5", "$description": "App background canvas" },
     "paperAlt":  { "$value": "#eeeeee", "$description": "Secondary paper / inset fills" },
     "success":   { "$value": "#4caf50", "$description": "On-track budgets, money lent back, positive confirm" },
     "successSoft": { "$value": "#81c784" },
     "successTint": { "$value": "#c8e6c9" },
     "highlight": { "$value": "#ffeb3b", "$description": "Future / event highlight, coin accents" },
-    "highlightSoft": { "$value": "#fff176" },
+    "highlightSoft": { "$value": "#fff176", "$description": "Events quick-access tile tint" },
+    "highlightDeep": { "$value": "#f9a825", "$description": "Events tile icon accent (screen-verified flow-01-home-casual)" },
     "danger":    { "$value": "#ef5350", "$description": "Over-budget, money owed, delete & clear-data" },
     "dangerSoft": { "$value": "#e57373" },
     "dangerTint": { "$value": "#ffcdd2" },
@@ -28,10 +30,12 @@
     "tagTint":   { "$value": "#ffe0b2" },
     "muted":     { "$value": "#9e9e9e", "$description": "Placeholders, disabled text" },
     "muted2":    { "$value": "#bdbdbd", "$description": "Very low emphasis (e.g. $0 amount before entry)" },
-    "line":      { "$value": "#21212119", "$description": "Card & row borders — black @ 10% (rgba(33,33,33,.10))" },
+    "line":      { "$value": "#21212119", "$description": "Card & row borders — black @ 10%" },
     "lineSoft":  { "$value": "#2121210f", "$description": "Inner dividers — black @ 6%" },
     "lineStrong": { "$value": "#e0e0e0", "$description": "Chip / outlined-button borders" },
     "scrim":     { "$value": "#2b1f176b", "$description": "Bottom-sheet scrim — rgba(43,31,23,.42)" },
+    "navInactive": { "$value": "#8e8e93", "$description": "Inactive bottom-nav tab icon/label (screen-verified)" },
+    "navSurfaceAlpha": { "$type": "number", "$value": 0.86, "$description": "Floating nav bar surface opacity" },
     "category": {
       "$description": "Per-category accent (icon/chip-fill) + tint (badge background)",
       "food":          { "accent": { "$value": "#039be5" }, "tint": { "$value": "#e1f5fe" } },
@@ -46,19 +50,24 @@
   },
   "fontFamily": {
     "$type": "fontFamily",
-    "serif": { "$value": ["Instrument Serif", "serif"], "$description": "Display only — money & titles. Never body or controls." },
-    "sans":  { "$value": ["Manrope", "Roboto", "sans-serif"], "$description": "All UI — body, buttons, list rows" },
-    "mono":  { "$value": ["Geist Mono", "Roboto Mono", "monospace"], "$description": "Metadata — eyebrows, tab labels, timestamps" }
+    "serif": { "$value": ["Instrument Serif", "serif"], "$description": "Display flourishes only — italic name accents. Not amounts or screen titles in Android build." },
+    "sans":  { "$value": ["Manrope", "Roboto", "sans-serif"], "$description": "All UI — body, buttons, screen titles, day headers" },
+    "mono":  { "$value": ["Geist Mono", "Roboto Mono", "monospace"], "$description": "Amounts, eyebrows, tab labels, timestamps, keypad digits" }
   },
   "typography": {
     "$type": "typography",
-    "$description": "fontSize & lineHeight in sp; letterSpacing in em; lineHeight as multiplier",
-    "displayAmount": { "$value": { "fontFamily": "{fontFamily.serif}", "fontSize": "64sp", "lineHeight": 1.0, "letterSpacing": "-0.025em", "fontWeight": 400 }, "$description": "Large amounts — $1,240" },
-    "screenTitle":   { "$value": { "fontFamily": "{fontFamily.serif}", "fontSize": "32sp", "lineHeight": 1.0, "letterSpacing": "-0.015em", "fontWeight": 400 }, "$description": "Screen titles — Journal" },
-    "sectionHead":   { "$value": { "fontFamily": "{fontFamily.serif}", "fontSize": "18sp", "lineHeight": 1.1, "letterSpacing": "-0.01em", "fontWeight": 400 }, "$description": "Day headers — Today · May 25" },
+    "$description": "Android ProExpenseTheme (screen-verified). Reference PNGs may show serif amounts from Hi-Fi export; product uses Geist Mono for figures.",
+    "displayAmount": { "$value": { "fontFamily": "{fontFamily.mono}", "fontSize": "64sp", "lineHeight": 1.0, "letterSpacing": "-0.025em", "fontWeight": 400, "fontFeatureSettings": "tnum" }, "$description": "Large amounts — $12.50 on Add screen" },
+    "listAmount":    { "$value": { "fontFamily": "{fontFamily.mono}", "fontSize": "18sp", "lineHeight": 1.1, "letterSpacing": "-0.01em", "fontWeight": 400, "fontFeatureSettings": "tnum" }, "$description": "Transaction row amounts" },
+    "screenTitle":   { "$value": { "fontFamily": "{fontFamily.sans}", "fontSize": "32sp", "lineHeight": 1.0, "letterSpacing": "-0.015em", "fontWeight": 600 }, "$description": "Screen titles — Journal top bar" },
+    "sectionHead":   { "$value": { "fontFamily": "{fontFamily.sans}", "fontSize": "18sp", "lineHeight": 1.1, "letterSpacing": "-0.01em", "fontWeight": 600 }, "$description": "Day headers — Today · May 25" },
+    "displayFlourish": { "$value": { "fontFamily": "{fontFamily.serif}", "fontSize": "32sp", "lineHeight": 1.0, "letterSpacing": "-0.015em", "fontWeight": 400, "fontStyle": "italic" }, "$description": "Editorial accent — Hi, Maya on Home" },
     "body":          { "$value": { "fontFamily": "{fontFamily.sans}", "fontSize": "14sp", "lineHeight": 1.4, "letterSpacing": "0em", "fontWeight": 400 }, "$description": "Body & list rows; use 500–600 for emphasis" },
     "caption":       { "$value": { "fontFamily": "{fontFamily.sans}", "fontSize": "11.5sp", "lineHeight": 1.4, "letterSpacing": "0em", "fontWeight": 400 }, "$description": "Meta under list rows — Food · 12:30 PM" },
-    "eyebrow":       { "$value": { "fontFamily": "{fontFamily.mono}", "fontSize": "11sp", "lineHeight": 1.3, "letterSpacing": "0.10em", "fontWeight": 500, "textCase": "uppercase" }, "$description": "Uppercase eyebrows & tab labels — AMOUNT · USD" }
+    "eyebrow":       { "$value": { "fontFamily": "{fontFamily.mono}", "fontSize": "11sp", "lineHeight": 1.3, "letterSpacing": "0.10em", "fontWeight": 500, "textCase": "uppercase" }, "$description": "AMOUNT · USD, SPENT · MAY" },
+    "tabTimestamp":  { "$value": { "fontFamily": "{fontFamily.mono}", "fontSize": "12sp", "lineHeight": 1.3, "letterSpacing": "0.08em", "fontWeight": 400, "fontFeatureSettings": "tnum" }, "$description": "Day-header running totals" },
+    "keypadKey":     { "$value": { "fontFamily": "{fontFamily.mono}", "fontSize": "22sp", "lineHeight": 1.0, "fontWeight": 400, "fontFeatureSettings": "tnum" }, "$description": "Numeric & PIN keypad digits" },
+    "button":        { "$value": { "fontFamily": "{fontFamily.sans}", "fontSize": "14sp", "lineHeight": 1.4, "letterSpacing": "-0.005em", "fontWeight": 600 }, "$description": "ProButton label" }
   },
   "dimension": {
     "$type": "dimension",
@@ -80,26 +89,32 @@
       "44": { "$value": "44dp" }
     },
     "button": {
-      "filled":   { "height": { "$value": "52dp" }, "$description": "Filled/primary button height (48–56dp range)" },
+      "filled":   { "height": { "$value": "52dp" } },
       "outlined": { "height": { "$value": "48dp" } },
-      "small":    { "height": { "$value": "36dp" } }
+      "small":    { "height": { "$value": "36dp" } },
+      "borderWidth": { "$value": "1.4dp" }
     },
     "icon": {
-      "nav":    { "$value": "24dp", "$description": "Nav & action icon grid (rendered 25dp in tab bar)" },
-      "inline": { "$value": "16dp", "$description": "Inline meta icons (search, at)" },
-      "badge":  { "$value": "38dp", "$description": "Category badge diameter in lists" }
+      "nav":    { "$value": "24dp" },
+      "inline": { "$value": "16dp" },
+      "badge":  { "$value": "38dp" }
     },
     "card":  { "radius": { "$value": "18dp" }, "padding": { "$value": "18dp" } },
-    "chip":  { "radius": { "$value": "999dp", "$description": "Fully rounded pill" } },
-    "tile":  { "radius": { "$value": "14dp", "$description": "Quick-access tile" } },
-    "sheet": { "radiusTop": { "$value": "22dp" }, "maxHeightPct": { "$value": "78%" } },
-    "fab":   { "size": { "$value": "64dp", "$description": "Raised Add button in bottom nav" } },
+    "chip":  { "radius": { "$value": "999dp" }, "borderWidth": { "$value": "1.2dp" } },
+    "tile":  { "radius": { "$value": "14dp" }, "iconSize": { "$value": "36dp" } },
+    "sheet": { "radiusTop": { "$value": "22dp" }, "maxHeightPct": { "$value": "78%" }, "handleWidth": { "$value": "36dp" }, "handleHeight": { "$value": "4dp" } },
+    "nav":   { "cornerRadius": { "$value": "8dp" }, "barHeight": { "$value": "72dp" }, "fabOffset": { "$value": "24dp" } },
+    "fab":   { "size": { "$value": "64dp" } },
+    "keypad": { "keyRadius": { "$value": "12dp" }, "keyAspectRatio": { "$type": "number", "$value": 1.45 } },
     "touchTarget": { "min": { "$value": "44dp" } },
-    "artboard": { "width": { "$value": "414dp" }, "height": { "$value": "868dp" } }
+    "artboard": {
+      "handoff": { "width": { "$value": "414dp" }, "height": { "$value": "868dp" }, "$description": "reference-images/ PNG viewport" },
+      "screenshot": { "width": { "$value": "427dp" }, "height": { "$value": "952dp" }, "device": "Pixel 9 Pro", "$description": "Roborazzi @Config qualifiers" }
+    }
   },
   "elevation": {
     "$type": "shadow",
-    "card":  { "$value": [ { "offsetX": "0dp", "offsetY": "1dp", "blur": "0dp", "spread": "0dp", "color": "#2121210a" }, { "offsetX": "0dp", "offsetY": "6dp", "blur": "14dp", "spread": "0dp", "color": "#2121210a" } ], "$description": "Two-layer soft card shadow" },
+    "card":  { "$value": [ { "offsetX": "0dp", "offsetY": "1dp", "blur": "0dp", "spread": "0dp", "color": "#2121210a" }, { "offsetX": "0dp", "offsetY": "6dp", "blur": "14dp", "spread": "0dp", "color": "#2121210a" } ] },
     "sheet": { "$value": [ { "offsetX": "0dp", "offsetY": "-8dp", "blur": "24dp", "spread": "0dp", "color": "#00000026" } ] },
     "toast": { "$value": [ { "offsetX": "0dp", "offsetY": "8dp", "blur": "18dp", "spread": "0dp", "color": "#0000002e" } ] },
     "nav":   { "$value": [ { "offsetX": "0dp", "offsetY": "-6dp", "blur": "24dp", "spread": "0dp", "color": "#0000001a" } ] }
@@ -107,19 +122,20 @@
   "motion": {
     "duration": {
       "$type": "duration",
-      "screen": { "$value": "280ms", "$description": "Screen forward/back transition" },
-      "sheet":  { "$value": "340ms", "$description": "Bottom-sheet rise" },
+      "screen": { "$value": "280ms" },
+      "sheet":  { "$value": "340ms" },
       "fade":   { "$value": "200ms" },
       "tap":    { "$value": "80ms" },
       "shake":  { "$value": "280ms" },
-      "rowPulse": { "$value": "1800ms", "$description": "New-row highlight tint → transparent" },
-      "toast":  { "$value": "2400ms", "$description": "Toast show + auto-dismiss" }
+      "rowPulse": { "$value": "1800ms" },
+      "toast":  { "$value": "2400ms" }
     },
     "easing": {
       "$type": "cubicBezier",
-      "standard": { "$value": [0.22, 0.61, 0.36, 1], "$description": "Screen & sheet curve — brisk, not bouncy" }
+      "standard": { "$value": [0.22, 0.61, 0.36, 1] }
     },
-    "pressedScale": { "$type": "number", "$value": 0.97, "$description": "Scale on press for tappable elements" },
-    "disabledOpacity": { "$type": "number", "$value": 0.4 }
+    "pressedScale": { "$type": "number", "$value": 0.97 },
+    "disabledOpacity": { "$type": "number", "$value": 0.4 },
+    "keypadDisabledOpacity": { "$type": "number", "$value": 0.55, "$description": "Save/Next row when amount <= 0" }
   }
 }

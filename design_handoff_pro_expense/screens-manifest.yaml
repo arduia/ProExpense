@@ -5,6 +5,7 @@
 
 defaults:
   viewport: { width: 414, height: 868, unit: dp }
+  screenshot_viewport: { width: 427, height: 952, unit: dp, device: Pixel 9 Pro }
   theme: ProExpenseTheme
   bottom_nav: HomeBottomNav  # present on top-level tab screens only
 

@@ -4,7 +4,9 @@
 # Target packages: ui/design/ (shared primitives), feature/*/ui/ (screen composables).
 
 meta:
-  artboard: { width: 414, height: 868, unit: dp }
+  artboard:
+    handoff: { width: 414, height: 868, unit: dp }
+    screenshot: { width: 427, height: 952, unit: dp, device: Pixel 9 Pro }
   theme: ProExpenseTheme
   package_root: ui/design
 

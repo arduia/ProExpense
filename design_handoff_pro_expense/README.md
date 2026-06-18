@@ -29,7 +29,7 @@ The visual sources here are **design references**, not production code. The HTML
 4. **Tests** — add a Roborazzi golden per state; target = matching `reference-images/` file.
 
 ## Non-negotiable rules (from the brief)
-- **Serif (Instrument Serif) for money & titles only.** Sans (Manrope) for all controls/body. Mono (Geist Mono) for eyebrows/timestamps.
+- **Manrope for UI and headings.** **Geist Mono for amounts and tabular figures.** **Instrument Serif for occasional flourishes only** (e.g. italic name on Home). Reference PNGs may still show serif amounts from the Hi-Fi export; the Android build uses mono for figures.
 - **Signal colors carry meaning, never decoration:** green = on-track/success, yellow = future/events, red = over/owed/destructive, orange = event @-tags.
 - **Color tokens are semantic** — reference `color.primary`, `color.surface`, etc., never raw hex per screen.
 - **No one-off styles per screen** — every screen composes catalog primitives.

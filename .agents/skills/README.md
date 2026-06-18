@@ -19,6 +19,11 @@ script bootstraps it when missing.
 Each subdirectory contains a `SKILL.md` with YAML frontmatter. Cursor discovers these under
 `.agents/skills/` automatically.
 
+**Project skills** (not overwritten by `install-android-skills.sh`):
+- `design-handoff-to-compose` — handoff → Compose workflow; linked from `AGENTS.md` § Compose UI.
+
+**Official Android skills** (installed/updated via `install-android-skills.sh`):
+
 ## Precedence
 
 Project `AGENTS.md` takes precedence over skill guidance when they conflict.
@@ -27,6 +32,7 @@ Project `AGENTS.md` takes precedence over skill guidance when they conflict.
 
 | Skill | When to use |
 |---|---|
+| **`design-handoff-to-compose`** | **Building Compose UI from `design_handoff_pro_expense/` mockups, PNGs, or HTML prototype** |
 | `android-cli` | SDK, emulator, docs search, layout inspection |
 | `testing-setup` | Unit, instrumented, screenshot test setup |
 | `edge-to-edge` | System bar insets and window layout |

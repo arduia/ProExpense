@@ -420,21 +420,26 @@ workaround). Never explain WHAT the code does. One short line max.
 
 ### Compose UI (Android)
 
+**Design handoff:** When implementing screens or primitives from `design_handoff_pro_expense/`,
+read **`.agents/skills/design-handoff-to-compose/SKILL.md`** first and follow its foundations-first
+build order (tokens → atoms → molecules → organisms → screen → verify). Bundle paths:
+`design-tokens.json`, `components.yaml`, `screens-manifest.yaml`, `reference-images/`.
+
 - Split route (with ViewModel) from stateless content composable
 - **Mandatory `@Preview` on every UI composable file** — any file under `app/src/main` or
   `feature/*/src/androidMain` that exposes a public `@Composable` for screens, flows, shells, or
   reusable view components **must** include at least one **relevant** `@Preview` per distinct UI
   state in the **same file**. Previews are part of done, not optional polish. Agent-delivered UI
   without previews is incomplete and must not be pushed.
-  - Wrap previews in `ProExpenseTheme`; default artboard `widthDp = 414`, `heightDp = 868` unless
-    the design spec defines another size.
+  - Wrap previews in `ProExpenseTheme`; default artboard `ProArtboard.PIXEL_9_PRO_WIDTH_DP` ×
+    `PIXEL_9_PRO_HEIGHT_DP` (427×952 dp) unless the screen spec defines another size.
   - Flow orchestrators (`ExpenseApp`, `FirstLaunchFlow`, `QuickLogFlow`, …) use static preview
     hosts that show each meaningful step/state (child screen previews in the same file are OK).
   - Use preview fakes/stub repositories when a composable needs DI — never skip previews because
     of missing production wiring.
 - Pair every new/changed screen with a Roborazzi screenshot test (`captureRoboImage`) in
   `app/src/test/`; verify (and record when intentional) before push
-- Use `ProExpenseTheme` and components from `ui/design/` — see `design/DESIGN-SYSTEM.md`
+- Use `ProExpenseTheme` and components from `ui/design/` — see `design_handoff_pro_expense/DESIGN-SYSTEM.md`
 
 #### Design system alignment
 
@@ -644,11 +649,12 @@ The Cursor `session-start` hook installs skills automatically when `.agents/skil
 ### When to use
 
 Agents should consult relevant skills for specialized Android workflows (testing setup, edge-to-edge,
-navigation, R8 analysis, AGP upgrades, etc.). **This file and product docs take precedence** when
-they conflict with a skill.
+navigation, R8 analysis, AGP upgrades, **design handoff → Compose**, etc.). **This file and product
+docs take precedence** when they conflict with a skill.
 
 | Skill | Relevance |
 |---|---|
+| **`design-handoff-to-compose`** | **Implementing UI from `design_handoff_pro_expense/` — tokens-first, bottom-up, PNG verify** |
 | `android-cli` | SDK, emulator, docs, layout inspection |
 | `testing-setup` | Unit / instrumented / screenshot tests |
 | `edge-to-edge` | System bar insets |
@@ -682,10 +688,12 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `docs/project_philosophy.md` | Project goal, beliefs, decision framework (derived from PRD) |
 | `docs/finance_tracker_product.md` | Authoritative product vision, MVP scope, roadmap |
 | `docs/module_structure.md` | KMP module map and dependency rules |
-| `design/DESIGN-SYSTEM.md` | Compose UI design tokens and components |
+| `design/DESIGN-SYSTEM.md` | Legacy path — use `design_handoff_pro_expense/DESIGN-SYSTEM.md` |
+| `design_handoff_pro_expense/` | Design handoff bundle (tokens, components, screens, reference PNGs) |
+| `.agents/skills/design-handoff-to-compose/` | Design handoff → Compose workflow skill |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
-| `.agents/skills/` | Official Android agent skills (see `scripts/install-android-skills.sh`) |
+| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project `design-handoff-to-compose` |
 | `.cursor/context/project_codebase.md` | Live codebase snapshot |
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |

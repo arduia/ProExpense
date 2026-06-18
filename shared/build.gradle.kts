@@ -28,6 +28,11 @@ kotlin {
             api(libs.compose.material3)
             api(libs.compose.ui.tooling.preview)
         }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.junit)
+            }
+        }
     }
 }
 

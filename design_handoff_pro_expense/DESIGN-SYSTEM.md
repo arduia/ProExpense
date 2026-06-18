@@ -92,6 +92,9 @@ A cool Material-blue core, three signal hues (green / yellow / red) for financia
 | Muted | `--muted` | `#9e9e9e` | Placeholders |
 | Line | `--line` | `rgba(33,33,33,.10)` | Card & row borders |
 | Line 2 | `--line-2` | `rgba(33,33,33,.06)` | Inner dividers |
+| On-primary warm | `--on-primary-warm` | `#fffdf6` | Button/chip/toast text on dark or primary fills |
+| Nav inactive | `--nav-inactive` | `#8e8e93` | Inactive bottom-nav tab |
+| Events deep | `--highlight-deep` | `#f9a825` | Events quick-access tile accent |
 
 **Aliased semantic names** (legacy color-name → role): `--clay` = primary blue, `--clay-deep` = deep blue, `--clay-soft` = soft blue, `--clay-tint` = blue tint; `--sage` = success green; `--coin` = highlight yellow; `--indigo` = secondary deep blue; `--danger` = red; `--nav-bg` = white, `--nav-text` = dark gray.
 
@@ -103,17 +106,18 @@ Three families with clear jobs.
 
 | Family | Token | Stack | Job |
 |---|---|---|---|
-| **Instrument Serif** | `--serif` | `"SF Pro Display", -apple-system, "Plus Jakarta Sans", "Manrope", system-ui` | Display only — screen titles, day headers, large amounts. Never body or controls. Weights: Regular 400, Italic. |
-| **Geist** (Manrope) | `--sans` | `"Manrope", "Roboto", -apple-system, system-ui, sans-serif` | All body, buttons, list rows. 500–600 for emphasis, 400 for secondary. Weights: 300–800. |
-| **Geist Mono** | `--mono` | `"Geist Mono", "Roboto Mono", ui-monospace, monospace` | Uppercase eyebrows, tab labels, timestamps & tabular figures. Letter-spacing 0.08–0.12em. Weights: 400–600. |
+| **Instrument Serif** | `--serif` | `"Instrument Serif", …` | Display flourishes only — italic name accents. Not amounts or screen titles in Android. |
+| **Manrope** | `--sans` | `"Manrope", "Roboto", …` | All UI — body, buttons, screen titles, day headers. 500–600 for emphasis. |
+| **Geist Mono** | `--mono` | `"Geist Mono", "Roboto Mono", …` | Amounts, eyebrows, tab labels, timestamps, keypad digits. |
 
 ### Type scale
 
 | Role | Family | Size | Line height | Letter-spacing | Example |
 |---|---|---|---|---|---|
-| Display amount | serif | 64px | 1.0 | -0.025em | `$1,240` |
-| Screen title | serif | 32px | 1.0 | -0.015em | `Journal` |
-| Section head | serif | 18px | 1.1 | -0.01em | `Today · May 25` |
+| Display amount | mono | 64px | 1.0 | -0.025em | `$12.50` |
+| Screen title | sans | 32px | 1.0 | -0.015em | `Journal` |
+| Section head | sans | 18px | 1.1 | -0.01em | `Today · May 25` |
+| Display flourish | serif italic | 32px | 1.0 | -0.015em | `Hi, Maya` |
 | Body | sans | 14px | 1.4 | 0 | `Lunch with M.` |
 | Caption | sans | 11.5px | 1.4 | 0 | `Food · 12:30 PM` |
 | Eyebrow / label | mono | 11px | 1.3 | 0.1em (uppercase) | `AMOUNT · USD` |
@@ -210,10 +214,10 @@ White cards float on warm paper with a soft two-layer shadow and a hairline bord
 
 ## 7. Data & list patterns
 
-Transactions are the core unit: a tinted **category badge**, a two-line **label / meta** block, and a **serif amount** on the right. Day groups carry a serif header and a mono running total. Event tags glow orange.
+Transactions are the core unit: a tinted **category badge**, a two-line **label / meta** block, and a **mono amount** on the right. Day groups carry a sans section header and a mono running total. Event tags glow orange.
 
-- **Transaction row** — CatBadge (38px) · note (14px sans, 500) over meta (11.5px muted) · amount (18px serif). Optional `@tag` in `--tag` orange with `at` icon.
-- **Day header** — serif 18px title + mono 12px muted total.
+- **Transaction row** — CatBadge (38px) · note (14px sans, 500) over meta (11.5px muted) · amount (18px mono). Optional `@tag` in `--tag` orange with `at` icon.
+- **Day header** — sans 18px title + mono 12px muted total.
 - **Search field** — `--card` bg, 14px radius, 1px `--line`, `search` icon (16px muted) + placeholder.
 - **Filter chips** — pill; active = `--ink` fill / `--paper-warm` text / 600; idle = transparent / `--ink-2` / `--line-strong` border.
 - **Numeric keypad** — amount-entry primitive, auto-opens on Add. 3-column grid, **serif keys** (1·9, decimal, ⌫ backspace), 12px radius `--card` keys on `--line`. Action row inside the pad: **Save** (secondary outline, quick-log) + **Next** (primary `--clay`, to details), both disabled below $0 (opacity 0.55). Max display 999,999,999.99.
@@ -270,7 +274,7 @@ How the tokens and primitives land in `ProExpenseTheme` and the `ui/design/` + `
 - `motion.pressedScale` → `Modifier.scale()` driven by `interactionSource.collectIsPressedAsState()` (or `0.97f` on press).
 
 ### Fonts
-Bundle the `fonts/*.woff2` as Compose `FontFamily`s (convert to `.ttf`/`.otf` for Android `res/font/` if woff2 isn't accepted by your toolchain). `fontFamily.serif = Instrument Serif`, `fontFamily.sans = Manrope`, `fontFamily.mono = Geist Mono`. **Serif is display-only — amounts, titles, day headers.** Never set body, buttons, or controls in serif.
+Bundle the `fonts/*.woff2` as Compose `FontFamily`s. `fontFamily.sans = Manrope`, `fontFamily.mono = Geist Mono`, `fontFamily.serif = Instrument Serif`. **Mono for amounts; sans for UI; serif for flourishes only.**
 
 ### Primitive → composable
 | Doc primitive | Composable (`components.yaml`) | Package |
@@ -288,7 +292,7 @@ Bundle the `fonts/*.woff2` as Compose `FontFamily`s (convert to `.ttf`/`.otf` fo
 | Icons | `ProIcon` (from `icons/*.svg` → `ImageVector`) | `ui/design/Icons.kt` |
 
 ### Screenshot tests (Roborazzi)
-Reference images in `reference-images/` are full 414 × 868 dp captures named `{flow}-{screen}-{state}.png` (edge cases: `edge-*.png`). Use them as the visual target per `@Preview` / Roborazzi golden — one preview per state listed in `screens-manifest.yaml`. Render previews at 414 × 868 dp with `ProExpenseTheme` applied.
+Reference images in `reference-images/` are full 414 × 868 dp captures named `{flow}-{screen}-{state}.png` (edge cases: `edge-*.png`). Roborazzi baselines use **427 × 952 dp** (Pixel 9 Pro). Use reference PNGs as the visual target per screen state in `screens-manifest.yaml`.
 
 ---
 

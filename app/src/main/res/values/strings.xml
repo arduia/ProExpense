@@ -10,6 +10,7 @@
     <string name="statistics">Statistics</string>
     <string name="free">Free</string>
     <string name="home">Home</string>
+    <string name="home_empty_hint">No spending logged yet</string>
     <string name="expenses_in_this_week">Expenses in this Week</string>
     <string name="mmk">MMK</string>
     <string name="date">Date</string>
