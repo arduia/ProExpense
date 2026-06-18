@@ -465,6 +465,7 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
   green before push — see Step 6 UI change gate
 - End every implementation task with the **Workflow status** block (Step 7.5) — flag Step 6 and push explicitly
 - **Do not create pull requests** — push only; PRs are opened manually (not as draft, not as ready) unless the user explicitly asks
+- **v2 migration PRs:** target `refactor/v2-migration`, not `main` — see [v2 migration base branch](#v2-migration-base-branch-mandatory-until-migration-completes)
 - Never force-push to `main` without explicit user permission
 - Never leave work unpushed when task is complete
 - Multiple commits during implementation are fine
@@ -474,6 +475,17 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 - **Default:** agent pushes branch, user opens the PR in GitHub/GitLab.
 - **Never** auto-open draft PRs or use PR-management tooling on task completion.
 - **Only** create or update a PR when the user explicitly requests it in that session (then follow their ready/draft preference).
+
+#### v2 migration base branch (mandatory until migration completes)
+
+While the **`refactor/v2-migration`** branch is active and the v2 architecture refresh is in progress:
+
+- **Every pull request must target `refactor/v2-migration`** — not `main`, `develop`, or any other default branch.
+- This applies to agent-created PRs, `cursor/*` branches, `feature/*` branches, and manual PRs.
+- When opening or updating a PR via tooling, set `base_branch` to `refactor/v2-migration` unless the user **explicitly** names a different base in that session.
+- Do **not** merge v2 migration work into `main` until the team declares the migration complete.
+
+**Anti-pattern:** Opening a v2 PR against `main` because it is the repository default branch.
 
 ---
 
