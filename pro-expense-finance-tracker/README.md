@@ -16,7 +16,14 @@ The design medium is **HTML/CSS/JS** — these are prototypes, not production co
 
 **Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
 
+## Designing in Claude Design
+
+Use **`CLAUDE_DESIGN_GUIDE.md`** in this folder — copy-paste prompts for design system setup,
+per-flow screens, and export/handoff requirements (tokens JSON, PNG references @ 414×868, SVG
+icons) so implementations map cleanly to Jetpack Compose and Roborazzi verification.
+
 ## Bundle contents
 
 - `pro-expense-finance-tracker/README.md` — this file
+- `pro-expense-finance-tracker/CLAUDE_DESIGN_GUIDE.md` — prompts for Claude Design sessions
 - `pro-expense-finance-tracker/project/` — the `Pro Expense - Finance Tracker` project files (HTML prototypes, assets, components)
