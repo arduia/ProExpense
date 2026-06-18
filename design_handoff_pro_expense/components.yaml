@@ -1,0 +1,169 @@
+# Pro Expense — Component Catalog
+# Compose-aligned primitives. Every screen composes these — no one-off styles per screen.
+# Token refs use the names in design-tokens.json. Screen ids match screens-manifest.yaml.
+# Target packages: ui/design/ (shared primitives), feature/*/ui/ (screen composables).
+
+meta:
+  artboard: { width: 414, height: 868, unit: dp }
+  theme: ProExpenseTheme
+  package_root: ui/design
+
+components:
+
+  - name: ProButton
+    package: ui/design/Buttons.kt
+    role: Primary text/action button. One button component, six variants, three sizes.
+    variants:
+      - primary        # bg color.primary, text color.onPrimary, border 1.4dp primary
+      - primaryDeep    # bg color.primaryDeep — primary on tinted/active surfaces
+      - success        # bg color.success — positive confirm (mark settled, on-track)
+      - dark           # bg color.onSurface, text color.paper — high-contrast alt
+      - secondary      # transparent bg, text onSurface, 1.4dp color.lineStrong border (outlined)
+      - ghost          # transparent bg + border, text onSurface (tertiary / cancel)
+    sizes:
+      sm: { padding: "8x14dp", fontSize: 12sp, radius: 10dp }
+      md: { padding: "12x18dp", fontSize: 14sp, radius: 12dp }
+      lg: { padding: "16x22dp", fontSize: 15sp, radius: 14dp }
+    states: [default, pressed (scale motion.pressedScale), disabled (alpha motion.disabledOpacity)]
+    tokens: [color.primary, color.primaryDeep, color.success, color.onPrimary, color.onSurface, color.lineStrong, color.paper, dimension.button.filled.height, motion.pressedScale, motion.disabledOpacity]
+    font: { family: fontFamily.sans, weight: 600, letterSpacing: "-0.005em" }
+    used_on: [pin-setup, prof-name, prof-currency, add-amount, event-create, debt-add, shared-input, onb-5, more-clear, journal-actions, debt-owe-detail]
+
+  - name: LogCategoryBadge
+    package: ui/design/Category.kt
+    role: Circular tinted background + accent category icon. Identifies a transaction's category in lists.
+    props: { category: CategoryId, size: dp (default 38) }
+    states: [default]  # static; one per category
+    tokens: [color.category.*.tint (background), color.category.*.accent (icon)]
+    icon: "icon-cat-{category}.svg @ 0.52 * size, stroke 1.7dp"
+    used_on: [home-casual, home-budget, home-event, journal-list, journal-detail, add-amount, add-details, reports, categories]
+
+  - name: CategoryChip
+    package: ui/design/Category.kt
+    role: Selectable category pill (horizontal scroll on Add screen).
+    variants:
+      idle:     # transparent bg, text color.onSurfaceVariant, 1.2dp color.lineStrong border, weight 500
+      selected: # bg color.category.*.accent, text color.onPrimary, accent border, weight 600
+    states: [idle, selected, pressed]
+    tokens: [color.category.*.accent, color.onPrimary, color.onSurfaceVariant, color.lineStrong, dimension.chip.radius]
+    used_on: [add-amount, add-details, categories, edge-cat-dup]
+
+  - name: TransactionRow
+    package: feature/journal/ui/TransactionRow.kt
+    role: Core list unit — LogCategoryBadge + 2-line note/meta + serif amount, optional @event tag.
+    anatomy:
+      - badge: LogCategoryBadge (38dp)
+      - note: body (14sp sans, weight 500)
+      - meta: caption (11.5sp, color.onSurfaceMuted) — "Category · time"
+      - amount: sectionHead serif (18sp), right-aligned
+      - tag (optional): color.tag text + icon-at, "@Event name"
+    states: [default, new (rowPulse highlight on insert), pressed]
+    tokens: [typography.body, typography.caption, typography.sectionHead, color.onSurfaceMuted, color.tag, motion.rowPulse]
+    used_on: [home-casual, home-budget, home-event, journal-list, edge-note, edge-tag]
+
+  - name: DayHeader
+    package: feature/journal/ui/DayHeader.kt
+    role: Date-group header in journal/home lists.
+    anatomy: { title: sectionHead serif (18sp), total: mono 12sp color.muted, right-aligned }
+    states: [default]
+    tokens: [typography.sectionHead, fontFamily.mono, color.muted]
+    used_on: [home-casual, journal-list]
+
+  - name: AmountDisplay
+    package: feature/logging/ui/AmountDisplay.kt
+    role: Large serif amount on the Add screen + validation messaging.
+    states:
+      default:  # serif 64sp, color.onSurface, "$" prefix in color.primary
+      zero:     # value color.muted2, helper "Amount must be greater than $0" in color.primary + shake
+    rules: { max_display: "999,999,999.99", grouping: "thousands comma", decimals: "0 or 2" }
+    tokens: [typography.displayAmount, color.onSurface, color.primary, color.muted2, motion.shake]
+    used_on: [add-zero, add-amount, edge-shared-zero, edge-event-errors]
+
+  - name: NumericKeypad
+    package: feature/logging/ui/NumericKeypad.kt
+    role: Amount-entry pad — auto-opens on Add. 3-col serif keys (1-9, ".", backspace) + action row.
+    anatomy:
+      keys: "3-col grid, surface keys (radius 12dp), serif 22sp, backspace = icon-back"
+      actions: "Save (ProButton secondary) + Next (ProButton primary), equal width; both disabled below $0"
+    states: [default, disabled (amount <= 0 → actions at alpha 0.55)]
+    tokens: [color.surface, color.line, fontFamily.serif, color.primary, color.lineStrong, dimension.space.8]
+    used_on: [add-zero, add-amount]
+
+  - name: PinKeypad
+    package: feature/auth/ui/PinKeypad.kt
+    role: 3-col numeric pad for PIN setup/entry. 6 dot indicators above.
+    states: [default, filled (dots), locked (alpha 0.3, countdown), error (dots shake)]
+    tokens: [color.surface, color.onSurface, color.danger, fontFamily.mono]
+    used_on: [pin-setup, pin-entry, pin-lock, edge-pin-mismatch, edge-pin-wrong]
+
+  - name: SearchField
+    package: ui/design/Fields.kt
+    role: Rounded search input with leading icon.
+    anatomy: { bg: color.surface, radius: 14dp, border: 1dp color.line, icon: icon-search 16dp color.muted }
+    states: [empty (placeholder), active, results, no-results]
+    tokens: [color.surface, color.line, color.muted, typography.body]
+    used_on: [journal-list, edge-search]
+
+  - name: FilterChip
+    package: ui/design/Fields.kt
+    role: Pill filter selector (journal categories).
+    variants:
+      active: # bg color.onSurface, text color.paper, weight 600
+      idle:   # transparent, text color.onSurfaceVariant, 1dp color.lineStrong border
+    states: [active, idle, pressed]
+    tokens: [color.onSurface, color.paper, color.onSurfaceVariant, color.lineStrong, dimension.chip.radius]
+    used_on: [journal-list, edge-search]
+
+  - name: QuickAccessTile
+    package: app/ui/home/QuickAccessTile.kt
+    role: Home shortcut tile — 36dp tinted icon square over label.
+    instances: [Reports (blue tint / primaryDeep), Debts (success tint / success), Split (tag tint / tagDeep), Events (highlight tint / #f9a825)]
+    states: [default, pressed]
+    tokens: [dimension.tile.radius, color.surface, color.line, feature accent + tint pairs]
+    used_on: [home-empty, home-casual, home-budget, home-event]
+
+  - name: HomeBottomNav
+    package: app/ui/HomeBottomNav.kt
+    role: Floating detached glass tab bar with raised circular Add (FAB).
+    anatomy:
+      bar: "color.surface @ 86% + blur, 8dp top corners, elevation.nav, inset from edges"
+      tabs: [Home, Budget, (Add), Journal, More]
+      add: "64dp circular FAB, bg color.primary, icon-plus, raised -24dp over bar"
+    states: { tab: [active (color.primary, stroke 2.1dp + weight 600), inactive (#8e8e93, stroke 1.7dp)] }
+    tokens: [color.surface, color.primary, dimension.fab.size, elevation.nav]
+    used_on: [home-empty, home-casual, home-budget, home-event, journal-list, more-hub]
+
+  - name: ProTopBar
+    package: ui/design/TopBar.kt
+    role: Screen header — back chevron + serif title + optional trailing action (more/close).
+    anatomy: { back: icon-back 24dp, title: screenTitle serif (or smaller inline), action: icon-more / icon-close }
+    states: [default]
+    tokens: [typography.screenTitle, color.onSurface, dimension.icon.nav]
+    used_on: [journal-detail, reports, categories, event-detail, debt-lent-detail, debt-owe-detail, shared-input, more-currency]
+
+  - name: BottomSheet
+    package: ui/design/BottomSheet.kt
+    role: Modal sheet rising over a scrim for create/edit/pick flows.
+    anatomy: { surface: color.surface, radiusTop: 22dp, handle: "36x4dp color @ 18%", scrim: color.scrim, maxHeight: 78% }
+    states: [hidden, presented (sheet-up motion)]
+    tokens: [color.surface, color.scrim, dimension.sheet.radiusTop, elevation.sheet, motion.duration.sheet, motion.easing.standard]
+    used_on: [prof-currency-sheet, journal-actions, debt-add, more-currency]
+
+  - name: Toast
+    package: ui/design/Toast.kt
+    role: Confirmation pill, bottom-center, auto-dismiss.
+    anatomy: { bg: color.onSurface, text: color.paper, radius: 999dp, icon: icon-check in color.success }
+    states: [shown (toast-up 2400ms then auto-dismiss)]
+    tokens: [color.onSurface, color.paper, color.success, elevation.toast, motion.duration.toast]
+    used_on: ["(global overlay — Save confirm, settled, exported)"]
+
+  - name: ProIcon
+    package: ui/design/Icons.kt
+    role: Stroke icon set, 24x24 grid, 1.6dp weight (2dp active), rounded caps. See icons/ folder (34 SVGs).
+    groups:
+      nav_chrome: [home, budget, journal, more, plus, minus, back, close, chevron-down, chevron-right, search, bell, check]
+      detail_meta: [sparkle, at, calendar, clock, note, user, eye, fingerprint]
+      feature: [feat-reports, feat-debt, feat-split, feat-events]
+      category: [cat-food, cat-transport, cat-shopping, cat-bills, cat-health, cat-entertainment, cat-coffee, cat-pet, cat-default]
+    tokens: [stroke = contextual color; strokeWidth 1.6 / 2.0 active]
+    used_on: [all]
