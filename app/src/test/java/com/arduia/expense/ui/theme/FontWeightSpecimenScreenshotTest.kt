@@ -48,7 +48,7 @@ class FontWeightSpecimenScreenshotTest {
                         modifier = Modifier.fillMaxSize().padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Text("Manrope (sans)", style = ProExpenseTheme.typography.eyebrow)
+                        Text("Inter (sans)", style = ProExpenseTheme.typography.eyebrow)
                         WeightRow("300 Light", ProExpenseSans, FontWeight.Light)
                         WeightRow("400 Regular", ProExpenseSans, FontWeight.Normal)
                         WeightRow("500 Medium", ProExpenseSans, FontWeight.Medium)

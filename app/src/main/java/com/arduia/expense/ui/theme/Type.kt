@@ -15,9 +15,11 @@ import androidx.compose.ui.unit.sp
 import com.arduia.expense.R
 
 // Font binaries and stacks: design/FONTS.md · source files: design/fonts/
-// Manrope (sans) and Geist Mono each ship as a single variable-font binary, so every weight is
-// registered against the one resource with an explicit `wght` axis (applied on API 26+). Instrument
-// Serif is a static face used for display only; the system handles serif glyph fallback.
+// The design's `--sans` (body, buttons, list rows) is the iOS system font (SF Pro). SF Pro can't
+// ship on Android, so the sans role uses Inter — an OFL-licensed SF-Pro-like humanist UI face.
+// Inter and Geist Mono ship as single variable-font binaries, so every weight is registered against
+// the one resource with an explicit `wght` axis (applied on API 26+). Instrument Serif is a static
+// face used for display only; the system handles serif glyph fallback.
 
 @OptIn(ExperimentalTextApi::class)
 private fun variableFont(resId: Int, weight: FontWeight): Font = Font(
@@ -32,12 +34,12 @@ val ProExpenseSerif = FontFamily(
 )
 
 val ProExpenseSans = FontFamily(
-    variableFont(R.font.manrope_regular, FontWeight.Light),
-    variableFont(R.font.manrope_regular, FontWeight.Normal),
-    variableFont(R.font.manrope_regular, FontWeight.Medium),
-    variableFont(R.font.manrope_regular, FontWeight.SemiBold),
-    variableFont(R.font.manrope_regular, FontWeight.Bold),
-    variableFont(R.font.manrope_regular, FontWeight.ExtraBold),
+    variableFont(R.font.inter_regular, FontWeight.Light),
+    variableFont(R.font.inter_regular, FontWeight.Normal),
+    variableFont(R.font.inter_regular, FontWeight.Medium),
+    variableFont(R.font.inter_regular, FontWeight.SemiBold),
+    variableFont(R.font.inter_regular, FontWeight.Bold),
+    variableFont(R.font.inter_regular, FontWeight.ExtraBold),
 )
 
 val ProExpenseMono = FontFamily(
