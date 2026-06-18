@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
@@ -20,6 +21,16 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.coroutines.test)
         }
+        // The Compose design system lives in androidMain. Exposed with `api` so
+        // every consumer (:app and the :feature:* modules' android source sets)
+        // inherits the Compose runtime alongside the design-system primitives.
+        androidMain.dependencies {
+            api(project.dependencies.platform(libs.compose.bom))
+            api(libs.compose.ui)
+            api(libs.compose.foundation)
+            api(libs.compose.material3)
+            api(libs.compose.ui.tooling.preview)
+        }
     }
 }
 
@@ -29,6 +40,10 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     compileOptions {
