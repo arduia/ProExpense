@@ -156,6 +156,49 @@ data class ProExpenseTypography(
         fontSize = 22.sp,
         lineHeight = 26.sp,
     ),
+    val profileTitle: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 24.sp,
+        lineHeight = 28.8.sp,
+    ),
+    val tagline: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 11.5.sp,
+        lineHeight = 16.1.sp,
+    ),
+    val fieldLabel: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 12.sp,
+        letterSpacing = 0.1.sp,
+    ),
+    val fieldValue: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 16.sp,
+    ),
+    val fieldHelper: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 16.8.sp,
+    ),
+    val currencyCode: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 16.sp,
+    ),
+    val currencyName: TextStyle = TextStyle(
+        fontFamily = ProExpenseSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        lineHeight = 18.2.sp,
+    ),
 )
 
 val LocalProExpenseTypography = staticCompositionLocalOf { ProExpenseTypography() }

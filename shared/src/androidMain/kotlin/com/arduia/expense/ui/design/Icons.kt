@@ -56,4 +56,42 @@ fun IconChevronLeft(color: Color, modifier: Modifier = Modifier, size: Dp = 18.d
     }
 }
 
+@Composable
+fun IconUser(color: Color, modifier: Modifier = Modifier, size: Dp = 22.dp, weight: Float = 1.8f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val sy = this.size.height / 24f
+        val w = weight * sx
+        drawCircle(color, 4f * sx, Offset(12f * sx, 8f * sy), style = Stroke(width = w))
+        strokePolyline(
+            listOf(Offset(5f, 20f), Offset(5f, 17f), Offset(12f, 14f), Offset(19f, 17f), Offset(19f, 20f)),
+            color,
+            weight,
+        )
+    }
+}
+
+@Composable
+fun IconSearch(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, weight: Float = 1.8f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        val sx = this.size.width / 24f
+        val w = weight * sx
+        drawCircle(color, 7f * sx, Offset(10f * sx, 10f * sx), style = Stroke(width = w))
+        drawLine(
+            color,
+            Offset(15.5f * sx, 15.5f * sx),
+            Offset(20f * sx, 20f * sx),
+            strokeWidth = w,
+            cap = StrokeCap.Round,
+        )
+    }
+}
+
+@Composable
+fun IconCheck(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp, weight: Float = 2.4f) {
+    Canvas(modifier.then(Modifier.iconSize(size))) {
+        strokePolyline(listOf(Offset(5f, 12.5f), Offset(10f, 17f), Offset(19f, 7f)), color, weight)
+    }
+}
+
 private fun Modifier.iconSize(size: Dp): Modifier = this.size(size)
