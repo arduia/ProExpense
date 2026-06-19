@@ -13,6 +13,12 @@ class PreviewHistoryRepository(
     override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> =
         Result.Success(records)
 
+    override suspend fun getById(id: String): Result<FinanceRecord?> =
+        Result.Success(records.firstOrNull { it.id == id })
+
+    override suspend fun deleteRecord(id: String): Result<Unit> =
+        Result.Success(Unit)
+
     override suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary> =
         Result.Success(
             RecordSummary(

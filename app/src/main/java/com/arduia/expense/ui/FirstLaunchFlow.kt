@@ -10,6 +10,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.di.AppGraph
 import com.arduia.expense.ui.auth.PinSetupScreenContent
 import com.arduia.expense.ui.auth.PinSetupStep
 import com.arduia.expense.ui.currency.ProfileCurrencyScreenContent
@@ -34,6 +35,7 @@ private enum class FirstLaunchStep {
 
 @Composable
 fun FirstLaunchFlow(
+    appGraph: AppGraph,
     modifier: Modifier = Modifier,
     startAtMain: Boolean = false,
     isReturningUser: Boolean = false,
@@ -153,7 +155,11 @@ fun FirstLaunchFlow(
                 onUnlocked = { step = FirstLaunchStep.Main },
                 demoSecurityAnswer = securityAnswer.ifBlank { "notebook" },
             )
-            FirstLaunchStep.Main -> ExpenseApp(modifier = Modifier)
+            FirstLaunchStep.Main -> ExpenseApp(
+                appGraph = appGraph,
+                modifier = Modifier,
+                onPinSetupRequested = { step = FirstLaunchStep.PinSetup },
+            )
         }
     }
 }

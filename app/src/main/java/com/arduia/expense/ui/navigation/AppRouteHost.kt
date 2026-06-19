@@ -13,7 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
-import com.arduia.expense.feature.logging.AmountInputLogic
+import androidx.compose.runtime.collectAsState
+import com.arduia.expense.di.AppGraph
 import com.arduia.expense.ui.auth.PinEntryMode
 import com.arduia.expense.ui.auth.PinEntryScreenContent
 import com.arduia.expense.ui.categories.CategoryListScreenContent
@@ -28,7 +29,6 @@ import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.events.EventCreateScreenContent
 import com.arduia.expense.ui.events.EventDetailScreenContent
 import com.arduia.expense.ui.journal.JournalDetailScreenContent
-import com.arduia.expense.ui.preview.previewCategoryItems
 import com.arduia.expense.ui.preview.previewDebtLent
 import com.arduia.expense.ui.preview.previewDebtOwe
 import com.arduia.expense.ui.preview.previewEventDetailTransactions
@@ -45,6 +45,7 @@ import kotlinx.coroutines.delay
 fun AppRouteHost(
     route: String,
     navigator: AppNavigator,
+    appGraph: AppGraph,
     modifier: Modifier = Modifier,
 ) {
     var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
@@ -61,6 +62,7 @@ fun AppRouteHost(
 
             AppRoutes.CATEGORIES -> CategoriesRoute(
                 modifier = Modifier.fillMaxSize(),
+                appGraph = appGraph,
                 onBack = navigator::pop,
             )
 
@@ -85,11 +87,6 @@ fun AppRouteHost(
                     toastMessage = null
                     toastMessage = "clear"
                 },
-            )
-
-            AppRoutes.JOURNAL_DETAIL -> JournalDetailRoute(
-                modifier = Modifier.fillMaxSize(),
-                onBack = navigator::pop,
             )
 
             AppRoutes.EVENT_CREATE -> EventCreateRoute(
@@ -141,19 +138,30 @@ fun AppRouteHost(
             )
 
             else -> {
-                val eventTitle = AppRoutes.eventDetailTitle(route)
-                if (eventTitle != null) {
-                    EventDetailScreenContent(
+                val recordId = AppRoutes.journalDetailId(route)
+                when {
+                    recordId != null -> JournalDetailRoute(
+                        recordId = recordId,
                         modifier = Modifier.fillMaxSize(),
-                        title = eventTitle,
-                        dateRange = "May 12 — May 26",
-                        spentLabel = "$1,240",
-                        budgetLabel = "of $2,000",
-                        progress = 0.62f,
-                        isClosed = false,
-                        transactions = previewEventDetailTransactions,
+                        appGraph = appGraph,
                         onBack = navigator::pop,
                     )
+                    else -> {
+                        val eventTitle = AppRoutes.eventDetailTitle(route)
+                        if (eventTitle != null) {
+                            EventDetailScreenContent(
+                                modifier = Modifier.fillMaxSize(),
+                                title = eventTitle,
+                                dateRange = "May 12 — May 26",
+                                spentLabel = "$1,240",
+                                budgetLabel = "of $2,000",
+                                progress = 0.62f,
+                                isClosed = false,
+                                transactions = previewEventDetailTransactions,
+                                onBack = navigator::pop,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -176,40 +184,22 @@ fun AppRouteHost(
 
 @Composable
 private fun CategoriesRoute(
+    appGraph: AppGraph,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var categories by remember { mutableStateOf(previewCategoryItems) }
-    var newCategoryName by rememberSaveable { mutableStateOf("") }
-    var duplicateError by rememberSaveable { mutableStateOf(false) }
-    var selectedCategoryId by rememberSaveable { mutableStateOf<String?>(null) }
+    val state by appGraph.categoryListViewModel.uiState.collectAsState()
 
     CategoryListScreenContent(
         modifier = modifier,
-        categories = categories,
-        selectedCategoryId = selectedCategoryId,
-        onCategorySelected = { selectedCategoryId = it },
-        newCategoryName = newCategoryName,
-        onNewCategoryChange = {
-            newCategoryName = it
-            duplicateError = false
-        },
-        duplicateError = duplicateError,
+        categories = state.categories,
+        selectedCategoryId = state.selectedCategoryId,
+        onCategorySelected = appGraph.categoryListViewModel::onCategorySelected,
+        newCategoryName = state.newCategoryName,
+        onNewCategoryChange = appGraph.categoryListViewModel::onNewCategoryChange,
+        duplicateError = state.duplicateError,
         onBack = onBack,
-        onAddCategory = {
-            val trimmed = newCategoryName.trim()
-            if (trimmed.isBlank()) return@CategoryListScreenContent
-            val exists = categories.any { it.second.equals(trimmed, ignoreCase = true) }
-            if (exists) {
-                duplicateError = true
-            } else {
-                val id = trimmed.lowercase().replace(" ", "_")
-                categories = categories + (id to trimmed)
-                selectedCategoryId = id
-                newCategoryName = ""
-                duplicateError = false
-            }
-        },
+        onAddCategory = appGraph.categoryListViewModel::onAddCategory,
     )
 }
 
@@ -256,17 +246,30 @@ private fun ClearDataRoute(
 
 @Composable
 private fun JournalDetailRoute(
+    recordId: String,
+    appGraph: AppGraph,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val viewModel = remember(recordId) {
+        appGraph.createJournalDetailViewModel(
+            recordId = recordId,
+            onDeleted = {
+                appGraph.refreshAfterDataChange()
+                onBack()
+            },
+        )
+    }
+    val state by viewModel.uiState.collectAsState()
     var showActions by rememberSaveable { mutableStateOf(false) }
+
     JournalDetailScreenContent(
         modifier = modifier,
-        categoryId = "entertainment",
-        note = "Movie · Dune",
-        meta = "Entertainment · May 25 · 08:10 PM",
-        amount = "$18.00",
-        eventTag = "Bali Trip",
+        categoryId = state.categoryId,
+        note = state.note,
+        meta = state.meta,
+        amount = state.amount,
+        eventTag = state.eventTag,
         showActionsSheet = showActions,
         onBack = onBack,
         onMore = { showActions = true },
@@ -274,7 +277,7 @@ private fun JournalDetailRoute(
         onEdit = { showActions = false },
         onDelete = {
             showActions = false
-            onBack()
+            viewModel.deleteRecord()
         },
     )
 }

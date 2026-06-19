@@ -42,6 +42,9 @@ fun HomeScreenContent(
     onSplitClick: () -> Unit,
     onEventsClick: () -> Unit,
     modifier: Modifier = Modifier,
+    showPinSetupBanner: Boolean = false,
+    onPinBannerTap: () -> Unit = {},
+    onPinBannerDismiss: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -89,6 +92,13 @@ fun HomeScreenContent(
                                 append(state.greetingName)
                             }
                         },
+                    )
+                }
+
+                if (showPinSetupBanner) {
+                    PinSetupBanner(
+                        onTap = onPinBannerTap,
+                        onDismiss = onPinBannerDismiss,
                     )
                 }
 

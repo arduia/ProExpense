@@ -22,6 +22,7 @@ import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.preview.JournalDayGroup
+import com.arduia.expense.ui.preview.JournalTransactionItem
 import com.arduia.expense.ui.preview.previewJournalFilters
 import com.arduia.expense.ui.preview.previewJournalList
 import com.arduia.expense.ui.theme.ProArtboard
@@ -35,13 +36,14 @@ fun JournalScreenContent(
     selectedFilter: String,
     onFilterSelected: (String) -> Unit,
     dayGroups: List<JournalDayGroup>,
+    searchResults: List<JournalTransactionItem>? = null,
     onTransactionClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val showEmpty = dayGroups.isEmpty()
+    val showEmpty = dayGroups.isEmpty() && searchResults.isNullOrEmpty()
 
     LazyColumn(
         modifier = modifier
@@ -93,6 +95,23 @@ fun JournalScreenContent(
                         color = colors.onSurfaceMuted,
                     )
                 }
+            }
+        } else if (!searchResults.isNullOrEmpty()) {
+            items(
+                items = searchResults,
+                key = { it.id },
+            ) { transaction ->
+                TransactionRow(
+                    categoryId = transaction.categoryId,
+                    note = transaction.note,
+                    meta = transaction.meta,
+                    amount = transaction.amount,
+                    tag = transaction.tag,
+                    modifier = Modifier.proClickable(
+                        onClick = { onTransactionClick(transaction.id) },
+                        shape = ProExpenseTheme.shapes.searchField,
+                    ),
+                )
             }
         } else {
             dayGroups.forEach { group ->

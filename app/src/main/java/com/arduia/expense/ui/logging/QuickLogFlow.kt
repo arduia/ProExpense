@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
+import com.arduia.expense.di.AppGraph
+import com.arduia.expense.feature.logging.AddExpenseViewModel
 import com.arduia.expense.feature.logging.AmountInputLogic
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
@@ -48,15 +51,14 @@ private val quickLogTimeOptions = listOf(
 
 @Composable
 fun QuickLogFlow(
+    viewModel: AddExpenseViewModel,
     onDismiss: () -> Unit,
     onSaved: () -> Unit,
     modifier: Modifier = Modifier,
     initialStep: QuickLogStep = QuickLogStep.Amount,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var step by rememberSaveable { mutableStateOf(initialStep) }
-    var amount by rememberSaveable { mutableStateOf("") }
-    var selectedCategoryId by rememberSaveable { mutableStateOf("food") }
-    var note by rememberSaveable { mutableStateOf("") }
     var eventTag by rememberSaveable { mutableStateOf<String?>(null) }
     var showCustomCategories by rememberSaveable { mutableStateOf(false) }
     var dateIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -89,36 +91,42 @@ fun QuickLogFlow(
         when (currentStep) {
             QuickLogStep.Amount -> AddAmountScreen(
                 modifier = Modifier,
-                amount = amount,
-                selectedCategoryId = selectedCategoryId,
+                amount = uiState.amount,
+                selectedCategoryId = uiState.selectedCategoryId,
                 showCustomCategories = showCustomCategories,
-                onAmountChange = { amount = it },
-                onCategorySelected = { selectedCategoryId = it },
+                onAmountChange = viewModel::onAmountChanged,
+                onCategorySelected = viewModel::onCategorySelected,
                 onMoreCategoriesClick = { showCustomCategories = true },
                 onClose = onDismiss,
-                onSave = onSaved,
+                onSave = {
+                    viewModel.onSaveFromAmountOnly()
+                    onSaved()
+                },
                 onNext = { step = QuickLogStep.Details },
             )
             QuickLogStep.Details -> {
-                val display = AmountInputLogic.toDisplay(amount)
+                val display = AmountInputLogic.toDisplay(uiState.amount)
                 val amountLabel = "$${
                     if (display.decimal != null) "${display.whole}.${display.decimal}" else display.whole
                 }"
                 AddDetailsScreen(
                     modifier = Modifier,
                     amountLabel = amountLabel,
-                    selectedCategoryId = selectedCategoryId,
-                    note = note,
+                    selectedCategoryId = uiState.selectedCategoryId,
+                    note = uiState.note,
                     dateLabel = dateLabel,
                     timeLabel = timeLabel,
                     eventTag = eventTag,
-                    onNoteChange = { note = it },
-                    onCategorySelected = { selectedCategoryId = it },
+                    onNoteChange = viewModel::onNoteChanged,
+                    onCategorySelected = viewModel::onCategorySelected,
                     onBack = { step = QuickLogStep.Amount },
                     onEditAmount = { step = QuickLogStep.Amount },
                     onClearTag = { eventTag = null },
                     onDateTimeClick = { showDateTimeSheet = true },
-                    onSave = onSaved,
+                    onSave = {
+                        viewModel.onSaveWithDetails()
+                        onSaved()
+                    },
                 )
             }
         }
@@ -171,7 +179,9 @@ private fun formatQuickLogDate(date: LocalDate, locale: Locale, todayLabel: Stri
 )
 @Composable
 private fun QuickLogFlowAmountPreview() {
+    val graph = AppGraph(kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main))
+    val viewModel = graph.prewarmAddExpenseViewModel(onSaved = {}, onSaveFailed = {})
     ProExpenseTheme {
-        QuickLogFlow(onDismiss = {}, onSaved = {})
+        QuickLogFlow(viewModel = viewModel, onDismiss = {}, onSaved = {})
     }
 }

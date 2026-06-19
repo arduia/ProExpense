@@ -173,6 +173,9 @@
     <string name="home_greeting">Hi, %1$s</string>
     <string name="home_greeting_prefix">Hi, </string>
     <string name="home_spend_this_month">Spent this month</string>
+    <string name="home_pin_banner_title">Protect your records with a PIN</string>
+    <string name="home_pin_banner_body">Set a 6-digit PIN so only you can open Pro Expense.</string>
+    <string name="dismiss">Dismiss</string>
     <string name="quick_access_reports">Reports</string>
     <string name="quick_access_debt">Debts</string>
     <string name="quick_access_split">Split</string>

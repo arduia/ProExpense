@@ -6,7 +6,12 @@ object AppRoutes {
     const val CURRENCY = "currency"
     const val EXPORT = "export"
     const val CLEAR = "clear"
-    const val JOURNAL_DETAIL = "journal_detail"
+    const val JOURNAL_DETAIL_PREFIX = "journal_detail:"
+
+    fun journalDetail(recordId: String): String = "$JOURNAL_DETAIL_PREFIX$recordId"
+
+    fun journalDetailId(route: String): String? =
+        route.removePrefix(JOURNAL_DETAIL_PREFIX).takeIf { route.startsWith(JOURNAL_DETAIL_PREFIX) }
     const val EVENT_CREATE = "event_create"
     const val DEBT_TRACKER = "debt_tracker"
     const val DEBT_ADD = "debt_add"
