@@ -30,6 +30,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Resolve commit message
+        id: commit
+        run: |
+          {
+            echo 'message<<EOF'
+            git log -1 --pretty=%s
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -107,6 +116,7 @@ jobs:
             success \
             "${{ github.ref_name }}" \
             "${{ github.sha }}" \
+            "${{ steps.commit.outputs.message }}" \
             "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             "${{ env.APK_ARTIFACT_NAME }}" \
             "build/ci/${{ env.APK_DOWNLOAD_NAME }}" \
@@ -122,5 +132,6 @@ jobs:
             failure \
             "${{ github.ref_name }}" \
             "${{ github.sha }}" \
+            "${{ steps.commit.outputs.message }}" \
             "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             "${{ env.APK_ARTIFACT_NAME }}"

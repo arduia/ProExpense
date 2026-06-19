@@ -5,14 +5,15 @@ set -euo pipefail
 STATUS="${1:-}"
 BRANCH="${2:-}"
 COMMIT_SHA="${3:-}"
-RUN_URL="${4:-}"
-ARTIFACT_NAME="${5:-}"
-APK_FILE="${6:-}"
-APK_DOWNLOAD_URL="${7:-}"
-ARTIFACT_URL="${8:-}"
+COMMIT_MESSAGE="${4:-}"
+RUN_URL="${5:-}"
+ARTIFACT_NAME="${6:-}"
+APK_FILE="${7:-}"
+APK_DOWNLOAD_URL="${8:-}"
+ARTIFACT_URL="${9:-}"
 
 if [[ -z "$STATUS" || -z "$BRANCH" || -z "$COMMIT_SHA" || -z "$RUN_URL" || -z "$ARTIFACT_NAME" ]]; then
-  echo "Usage: $0 <success|failure> <branch> <commit_sha> <run_url> <artifact_name> [apk_file] [apk_download_url] [artifact_url]" >&2
+  echo "Usage: $0 <success|failure> <branch> <commit_sha> <commit_message> <run_url> <artifact_name> [apk_file] [apk_download_url] [artifact_url]" >&2
   exit 1
 fi
 
@@ -70,6 +71,20 @@ if [[ -n "$RUN_URL" ]]; then
   LINK_LINES+="<${RUN_URL}|View workflow run>"
 fi
 
+COMMIT_MESSAGE_BLOCK="$(jq -n \
+  --arg message "$COMMIT_MESSAGE" \
+  'if ($message | length) > 0 then
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: ("*Commit message:*\n>" + $message)
+      }
+    }
+  else
+    empty
+  end')"
+
 PAYLOAD="$(jq -n \
   --arg emoji "$EMOJI" \
   --arg headline "$HEADLINE" \
@@ -79,30 +94,36 @@ PAYLOAD="$(jq -n \
   --arg artifact "$ARTIFACT_NAME" \
   --arg detail "${DETAIL}${APK_DETAIL}" \
   --arg links "$LINK_LINES" \
+  --argjson commit_message_block "${COMMIT_MESSAGE_BLOCK:-null}" \
   '{
     text: ($emoji + " " + $headline),
-    blocks: [
-      {
-        type: "header",
-        text: { type: "plain_text", text: $headline }
-      },
-      {
-        type: "section",
-        fields: [
-          { type: "mrkdwn", text: ("*Repository:*\n" + $repo) },
-          { type: "mrkdwn", text: ("*Branch:*\n`" + $branch + "`") },
-          { type: "mrkdwn", text: ("*Commit:*\n`" + $sha + "`") },
-          { type: "mrkdwn", text: ("*Artifact:*\n`" + $artifact + "`") }
-        ]
-      },
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: ($detail + "\n" + $links)
+    blocks: (
+      [
+        {
+          type: "header",
+          text: { type: "plain_text", text: $headline }
+        },
+        {
+          type: "section",
+          fields: [
+            { type: "mrkdwn", text: ("*Repository:*\n" + $repo) },
+            { type: "mrkdwn", text: ("*Branch:*\n`" + $branch + "`") },
+            { type: "mrkdwn", text: ("*Commit:*\n`" + $sha + "`") },
+            { type: "mrkdwn", text: ("*Artifact:*\n`" + $artifact + "`") }
+          ]
         }
-      }
-    ]
+      ]
+      + (if $commit_message_block == null then [] else [$commit_message_block] end)
+      + [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: ($detail + "\n" + $links)
+          }
+        }
+      ]
+    )
   }')"
 
 curl -fsS -X POST \
