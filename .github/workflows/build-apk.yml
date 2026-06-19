@@ -1,0 +1,96 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - refactor/v2-migration
+      - v2-migration
+      - 'cursor/**'
+  workflow_dispatch:
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APK_ARTIFACT_NAME: pro-expense-dev-debug
+
+jobs:
+  build_apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache Android SDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            android-sdk
+            ~/.android
+          key: android-sdk-${{ runner.os }}-api36-bt36-${{ hashFiles('scripts/setup-android-toolchain.sh', 'gradle/libs.versions.toml') }}
+          restore-keys: |
+            android-sdk-${{ runner.os }}-api36-bt36-
+            android-sdk-${{ runner.os }}-
+
+      - name: Cache Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install Android toolchain and download dependencies
+        run: bash scripts/setup-android-toolchain.sh
+
+      - name: Build dev debug APK
+        run: ./gradlew --no-daemon --stacktrace :app:assembleDevDebug
+
+      - name: Resolve APK path
+        id: apk
+        run: |
+          APK_PATH="$(find app/build/outputs/apk/dev/debug -name '*.apk' -type f | head -n 1)"
+          if [[ -z "$APK_PATH" ]]; then
+            echo "APK not found under app/build/outputs/apk/dev/debug" >&2
+            exit 1
+          fi
+          echo "path=$APK_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APK_ARTIFACT_NAME }}
+          path: ${{ steps.apk.outputs.path }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Notify Slack on success
+        if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          bash scripts/notify-slack-apk-build.sh \
+            success \
+            "${{ github.ref_name }}" \
+            "${{ github.sha }}" \
+            "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            "${{ env.APK_ARTIFACT_NAME }}" \
+            "${{ steps.apk.outputs.path }}"
+
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          bash scripts/notify-slack-apk-build.sh \
+            failure \
+            "${{ github.ref_name }}" \
+            "${{ github.sha }}" \
+            "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            "${{ env.APK_ARTIFACT_NAME }}"
