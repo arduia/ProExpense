@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -73,17 +72,16 @@ fun HomeBottomNav(
     val navElevation = ProExpenseTheme.elevation.nav.firstOrNull()
 
     Box(
-        // Height = FAB poke above the bar + bar + floating bottom gap.
         modifier = modifier
             .fillMaxWidth()
-            .height(dimens.space12 + dimens.navBarHeight + dimens.space8),
+            .height(dimens.navFabOffset + dimens.navBarHeight + dimens.navBottomMargin),
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimens.navBarHeight)
                 .align(Alignment.BottomCenter)
-                .offset(y = -dimens.space8)
+                .padding(bottom = dimens.navBottomMargin)
                 .then(
                     if (navElevation != null) {
                         Modifier.shadow(

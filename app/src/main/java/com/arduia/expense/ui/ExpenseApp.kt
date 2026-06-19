@@ -52,7 +52,6 @@ fun ExpenseApp(
     var journalSearch by rememberSaveable { mutableStateOf("") }
     var journalFilter by rememberSaveable { mutableStateOf("All") }
     var saveToastMessage by rememberSaveable { mutableStateOf<String?>(null) }
-    val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val filteredJournal = remember(journalSearch, journalFilter) {
@@ -107,14 +106,7 @@ fun ExpenseApp(
                 targetState = navState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-                    .then(
-                        if (showBottomNav) {
-                            Modifier.padding(bottom = dimens.navShellBottomInset)
-                        } else {
-                            Modifier
-                        },
-                    ),
+                    .padding(innerPadding),
                 transitionSpec = { appNavTransition(motion, reduceMotion) },
                 label = "expenseAppNav",
             ) { state ->

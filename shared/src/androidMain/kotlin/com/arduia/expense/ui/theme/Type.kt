@@ -43,6 +43,7 @@ private val InstrumentSerifFamily = FontFamily(
 @Immutable
 data class ProTypography(
     val displayAmount: TextStyle,
+    val summaryAmount: TextStyle,
     val listAmount: TextStyle,
     val screenTitle: TextStyle,
     val sectionHead: TextStyle,
@@ -71,6 +72,14 @@ val ProDefaultTypography = ProTypography(
         fontSize = 64.sp,
         lineHeight = proLineHeight(64f, 1f),
         letterSpacing = (-0.025).em,
+        fontWeight = FontWeight.Normal,
+        fontFeatureSettings = "tnum",
+    ),
+    summaryAmount = TextStyle(
+        fontFamily = GeistMonoFamily,
+        fontSize = 40.sp,
+        lineHeight = proLineHeight(40f, 1f),
+        letterSpacing = (-0.02).em,
         fontWeight = FontWeight.Normal,
         fontFeatureSettings = "tnum",
     ),

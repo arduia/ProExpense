@@ -89,7 +89,7 @@ fun HomeScreenContent(
                     )
                     Text(
                         text = state.monthSpend,
-                        style = typography.displayAmount,
+                        style = typography.summaryAmount,
                         color = colors.onSurface,
                     )
                     if (state.monthDelta != null) {

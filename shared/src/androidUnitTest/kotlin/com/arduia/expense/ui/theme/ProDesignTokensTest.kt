@@ -110,6 +110,17 @@ class ProDesignTokensTest {
     }
 
     @Test
+    fun summary_amount_uses_geist_mono() {
+        assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.summaryAmount.fontFamily)
+        assertEquals(40f, ProDefaultTypography.summaryAmount.fontSize.value)
+    }
+
+    @Test
+    fun nav_bottom_margin_matches_handoff() {
+        assertEquals(8f, ProDefaultDimens.navBottomMargin.value)
+    }
+
+    @Test
     fun nav_bar_height_matches_handoff() {
         assertEquals(72f, ProDefaultDimens.navBarHeight.value)
     }
