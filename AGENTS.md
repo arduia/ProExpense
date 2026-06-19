@@ -420,10 +420,31 @@ workaround). Never explain WHAT the code does. One short line max.
 
 ### Compose UI (Android)
 
-**Design handoff:** When implementing screens or primitives from `design_handoff_pro_expense/`,
-read **`.agents/skills/design-handoff-to-compose/SKILL.md`** first and follow its foundations-first
-build order (tokens → atoms → molecules → organisms → screen → verify). Bundle paths:
-`design-tokens.json`, `components.yaml`, `screens-manifest.yaml`, `reference-images/`.
+#### Compose skills workflow (mandatory for new UI)
+
+For every new or materially changed Compose screen, follow this order. Full skill bodies live under
+`.agents/skills/` — read the linked file at each step.
+
+| Step | When | Skill | Path |
+|------|------|-------|------|
+| **1 — Build** | Implementing from mockup / handoff or adding a new screen | Design handoff → Compose | [`.agents/skills/design-handoff-to-compose/SKILL.md`](.agents/skills/design-handoff-to-compose/SKILL.md) |
+| **2 — Polish** | Affordances, animations, navigation transitions feel abrupt or static | Motion, navigation & interaction polish | [`.agents/skills/compose-motion-polish/SKILL.md`](.agents/skills/compose-motion-polish/SKILL.md) |
+| **3 — Audit** | Screen wired and before merge / push; or when asked to review quality | Compose product auditor | [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md) |
+
+Step 1 is required when building from `design_handoff_pro_expense/`. Step 2 applies during polish
+passes or when touch targets, ripple, or transitions are in scope. Step 3 is the pre-merge gate —
+produce a findings report; do not rewrite unless asked to fix.
+
+**Quick references (step 1):** bundle paths `design-tokens.json`, `components.yaml`,
+`screens-manifest.yaml`, `reference-images/`. Build order: tokens → atoms → molecules → organisms →
+screen → verify.
+
+**Quick references (step 2):** reuse `Interaction.kt` (`proIconClickable`, `proClickable`),
+`NavMotion.kt`, `ProNavTransitions.kt`, `rememberProReduceMotion()` — no magic durations or bare-icon
+`clickable`.
+
+**Quick references (step 3):** product scope in `docs/finance_tracker_product.md`; distinguish
+preview-fake wiring from real ViewModel/repository integration when reporting findings.
 
 - Split route (with ViewModel) from stateless content composable
 - **Mandatory `@Preview` on every UI composable file** — any file under `app/src/main` or
@@ -654,7 +675,9 @@ docs take precedence** when they conflict with a skill.
 
 | Skill | Relevance |
 |---|---|
-| **`design-handoff-to-compose`** | **Implementing UI from `design_handoff_pro_expense/` — tokens-first, bottom-up, PNG verify** |
+| **`design-handoff-to-compose`** | **Step 1 — Implementing UI from `design_handoff_pro_expense/` (tokens-first, bottom-up, PNG verify)** |
+| **`compose-motion-polish`** | **Step 2 — Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
+| **`compose-product-auditor`** | **Step 3 — Pre-merge product audit (states, wiring, a11y, i18n, resilience)** |
 | `android-cli` | SDK, emulator, docs, layout inspection |
 | `testing-setup` | Unit / instrumented / screenshot tests |
 | `edge-to-edge` | System bar insets |
@@ -690,10 +713,12 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `docs/module_structure.md` | KMP module map and dependency rules |
 | `design/DESIGN-SYSTEM.md` | Legacy path — use `design_handoff_pro_expense/DESIGN-SYSTEM.md` |
 | `design_handoff_pro_expense/` | Design handoff bundle (tokens, components, screens, reference PNGs) |
-| `.agents/skills/design-handoff-to-compose/` | Design handoff → Compose workflow skill |
+| `.agents/skills/design-handoff-to-compose/` | Step 1 — Design handoff → Compose workflow |
+| `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
+| `.agents/skills/compose-product-auditor/` | Step 3 — Pre-merge Compose product auditor |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
-| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project `design-handoff-to-compose` |
+| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project Compose workflow (`design-handoff-to-compose`, `compose-motion-polish`, `compose-product-auditor`) |
 | `.cursor/context/project_codebase.md` | Live codebase snapshot |
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |

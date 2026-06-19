@@ -47,6 +47,8 @@ fun AddAmountScreen(
     onSave: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
+    showCustomCategories: Boolean = false,
+    onMoreCategoriesClick: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -104,7 +106,8 @@ fun AddAmountScreen(
                 customCategories = customLogCategories.map { it.id to it.label },
                 selectedCategoryId = selectedCategoryId,
                 onCategorySelected = onCategorySelected,
-                onMoreClick = {},
+                showCustomSection = showCustomCategories,
+                onMoreClick = onMoreCategoriesClick,
             )
         }
 

@@ -8,10 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,35 +59,62 @@ fun DebtTrackerScreenContent(
             onBack = onBack,
             modifier = Modifier.padding(horizontal = dimens.space18),
         )
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
                 .padding(horizontal = dimens.space18, vertical = dimens.space16),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            SegmentedToggle(
-                options = listOf(
-                    stringResource(R.string.debt_lent),
-                    stringResource(R.string.debt_owe),
-                ),
-                selectedIndex = selectedTab,
-                onSelected = onTabSelected,
-            )
-            records.forEach { record ->
-                DebtRecordRow(
-                    personName = record.personName,
-                    amount = record.amount,
-                    dueLabel = record.dueLabel,
-                    isSettled = record.isSettled,
-                    onClick = { onRecordClick(record.id) },
+            item {
+                SegmentedToggle(
+                    options = listOf(
+                        stringResource(R.string.debt_lent),
+                        stringResource(R.string.debt_owe),
+                    ),
+                    selectedIndex = selectedTab,
+                    onSelected = onTabSelected,
                 )
             }
-            ProButton(
-                text = stringResource(R.string.debt_add),
-                onClick = onAddClick,
-                size = ProButtonSize.Md,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            if (records.isEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = dimens.space32),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.debt_empty_title),
+                            style = typography.sectionHead,
+                            color = colors.onSurface,
+                        )
+                        Text(
+                            text = stringResource(R.string.debt_empty_subtitle),
+                            style = typography.body,
+                            color = colors.onSurfaceMuted,
+                        )
+                    }
+                }
+            } else {
+                items(records, key = { it.id }) { record ->
+                    DebtRecordRow(
+                        personName = record.personName,
+                        amount = record.amount,
+                        dueLabel = record.dueLabel,
+                        isSettled = record.isSettled,
+                        onClick = { onRecordClick(record.id) },
+                    )
+                }
+            }
+            item {
+                ProButton(
+                    text = stringResource(R.string.debt_add),
+                    onClick = onAddClick,
+                    size = ProButtonSize.Md,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }
@@ -95,8 +123,10 @@ fun DebtTrackerScreenContent(
 fun DebtAddScreenContent(
     personName: String,
     onPersonNameChange: (String) -> Unit,
-    amount: String,
+    amountText: String,
+    onAmountChange: (String) -> Unit,
     dueDate: String,
+    saveEnabled: Boolean,
     onClose: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
@@ -116,12 +146,16 @@ fun DebtAddScreenContent(
                 onValueChange = onPersonNameChange,
                 placeholder = stringResource(R.string.debt_person_hint),
             )
-            Text(text = amount, style = typography.sectionHead, color = colors.onSurface)
+            ProfileNameField(
+                value = amountText,
+                onValueChange = onAmountChange,
+                placeholder = stringResource(R.string.amount),
+            )
             Text(text = dueDate, style = typography.caption, color = colors.onSurfaceMuted)
             ProButton(
                 text = stringResource(R.string.save),
                 onClick = onSave,
-                enabled = personName.isNotBlank(),
+                enabled = saveEnabled,
                 size = ProButtonSize.Lg,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -136,9 +170,12 @@ fun DebtDetailScreenContent(
     amount: String,
     dueLabel: String,
     isSettled: Boolean,
+    showDeleteConfirm: Boolean,
     onBack: () -> Unit,
     onMarkSettled: () -> Unit,
-    onDelete: () -> Unit,
+    onRequestDelete: () -> Unit,
+    onCancelDelete: () -> Unit,
+    onConfirmDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -166,12 +203,27 @@ fun DebtDetailScreenContent(
             Text(text = dueLabel, style = typography.body, color = colors.onSurfaceMuted)
             if (isSettled) {
                 Text(text = stringResource(R.string.debt_settled_label), style = typography.eyebrow, color = colors.success)
-                ProButton(
-                    text = stringResource(R.string.debt_delete_settled),
-                    onClick = onDelete,
-                    variant = ProButtonVariant.Ghost,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                if (!showDeleteConfirm) {
+                    ProButton(
+                        text = stringResource(R.string.debt_delete_settled),
+                        onClick = onRequestDelete,
+                        variant = ProButtonVariant.Ghost,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                } else {
+                    ProButton(
+                        text = stringResource(R.string.delete_confirm),
+                        onClick = onConfirmDelete,
+                        variant = ProButtonVariant.Ghost,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    ProButton(
+                        text = stringResource(R.string.cancel),
+                        onClick = onCancelDelete,
+                        variant = ProButtonVariant.Secondary,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             } else {
                 ProButton(
                     text = stringResource(R.string.debt_mark_settled),
@@ -200,6 +252,22 @@ private fun DebtLentPreview() {
     }
 }
 
+@Preview(name = "Debt empty", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true)
+@Composable
+private fun DebtEmptyPreview() {
+    ProExpenseTheme {
+        DebtTrackerScreenContent(
+            selectedTab = 0,
+            lentRecords = emptyList(),
+            oweRecords = emptyList(),
+            onTabSelected = {},
+            onAddClick = {},
+            onRecordClick = {},
+            onBack = {},
+        )
+    }
+}
+
 @Preview(name = "Debt add", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true)
 @Composable
 private fun DebtAddPreview() {
@@ -207,8 +275,10 @@ private fun DebtAddPreview() {
         DebtAddScreenContent(
             personName = "John",
             onPersonNameChange = {},
-            amount = "$50.00",
-            dueDate = "Due May 30",
+            amountText = "50.00",
+            onAmountChange = {},
+            dueDate = "Due in 30 days",
+            saveEnabled = true,
             onClose = {},
             onSave = {},
         )
@@ -223,11 +293,34 @@ private fun DebtDetailLentPreview() {
             personName = "John",
             isLent = true,
             amount = "$50.00",
-            dueLabel = "Due May 30",
+            dueLabel = "Due in 30 days",
             isSettled = false,
+            showDeleteConfirm = false,
             onBack = {},
             onMarkSettled = {},
-            onDelete = {},
+            onRequestDelete = {},
+            onCancelDelete = {},
+            onConfirmDelete = {},
+        )
+    }
+}
+
+@Preview(name = "Debt detail delete confirm", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true)
+@Composable
+private fun DebtDetailDeleteConfirmPreview() {
+    ProExpenseTheme {
+        DebtDetailScreenContent(
+            personName = "John",
+            isLent = true,
+            amount = "$50.00",
+            dueLabel = "Due in 30 days",
+            isSettled = true,
+            showDeleteConfirm = true,
+            onBack = {},
+            onMarkSettled = {},
+            onRequestDelete = {},
+            onCancelDelete = {},
+            onConfirmDelete = {},
         )
     }
 }

@@ -3,11 +3,12 @@ package com.arduia.expense.ui.journal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,70 +43,72 @@ fun JournalScreenContent(
     val typography = ProExpenseTheme.typography
     val showEmpty = dayGroups.isEmpty()
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.paper)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.space18, vertical = dimens.space24),
+            .background(colors.paper),
+        contentPadding = PaddingValues(horizontal = dimens.space18, vertical = dimens.space24),
+        verticalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
-        Text(
-            text = stringResource(R.string.journal),
-            style = typography.screenTitle,
-            color = colors.onSurface,
-        )
-        SearchField(
-            value = searchQuery,
-            onValueChange = onSearchChange,
-            placeholder = stringResource(R.string.journal_search_hint),
-            modifier = Modifier.padding(top = dimens.space16),
-        )
-        Row(
-            modifier = Modifier.padding(top = dimens.space12),
-            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-        ) {
-            filters.forEach { filter ->
-                FilterChip(
-                    label = filter,
-                    selected = filter == selectedFilter,
-                    onClick = { onFilterSelected(filter) },
+        item(key = "journal-header") {
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space12)) {
+                Text(
+                    text = stringResource(R.string.journal),
+                    style = typography.screenTitle,
+                    color = colors.onSurface,
                 )
+                SearchField(
+                    value = searchQuery,
+                    onValueChange = onSearchChange,
+                    placeholder = stringResource(R.string.journal_search_hint),
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                    filters.forEach { filter ->
+                        FilterChip(
+                            label = filter,
+                            selected = filter == selectedFilter,
+                            onClick = { onFilterSelected(filter) },
+                        )
+                    }
+                }
             }
         }
 
         if (showEmpty) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = dimens.space32),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = stringResource(R.string.journal_no_results),
-                    style = typography.body,
-                    color = colors.onSurfaceMuted,
-                )
+            item(key = "journal-empty") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = dimens.space32),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = stringResource(R.string.journal_no_results),
+                        style = typography.body,
+                        color = colors.onSurfaceMuted,
+                    )
+                }
             }
         } else {
-            Column(
-                modifier = Modifier.padding(top = dimens.space8),
-                verticalArrangement = Arrangement.spacedBy(dimens.space4),
-            ) {
-                dayGroups.forEach { group ->
+            dayGroups.forEach { group ->
+                item(key = "header-${group.dayTitle}") {
                     DayHeader(title = group.dayTitle, total = group.dayTotal)
-                    group.transactions.forEach { transaction ->
-                        TransactionRow(
-                            categoryId = transaction.categoryId,
-                            note = transaction.note,
-                            meta = transaction.meta,
-                            amount = transaction.amount,
-                            tag = transaction.tag,
-                            modifier = Modifier.proClickable(
-                                onClick = { onTransactionClick(transaction.id) },
-                                shape = ProExpenseTheme.shapes.searchField,
-                            ),
-                        )
-                    }
+                }
+                items(
+                    items = group.transactions,
+                    key = { "${group.dayTitle}-${it.id}" },
+                ) { transaction ->
+                    TransactionRow(
+                        categoryId = transaction.categoryId,
+                        note = transaction.note,
+                        meta = transaction.meta,
+                        amount = transaction.amount,
+                        tag = transaction.tag,
+                        modifier = Modifier.proClickable(
+                            onClick = { onTransactionClick(transaction.id) },
+                            shape = ProExpenseTheme.shapes.searchField,
+                        ),
+                    )
                 }
             }
         }

@@ -226,6 +226,11 @@
     <string name="clear_data_title">Clear all data</string>
     <string name="clear_data_description">This permanently removes all records from this device. Export a backup first if you need your data later.</string>
     <string name="clear_data_confirm">Clear all data</string>
+    <string name="clear_data_confirm_prompt">This cannot be undone. Clear everything?</string>
+    <string name="toast_export_success">Export ready — share when you connect storage</string>
+    <string name="toast_data_cleared">All records cleared on this device</string>
+    <string name="toast_expense_saved">Expense saved</string>
+    <string name="delete_confirm">Delete permanently</string>
 
     <!-- PIN -->
     <string name="pin_setup_title">Create a PIN</string>
@@ -248,6 +253,7 @@
     <string name="event_date_range">Date range</string>
     <string name="event_budget_amount">Budget amount</string>
     <string name="event_save">Save event</string>
+    <string name="event_name_required">Event name is required</string>
     <string name="event_detail_title">Event</string>
     <string name="event_empty_title">No events yet</string>
     <string name="event_empty_subtitle">Create a budget for trips, parties, or any occasion.</string>
@@ -268,6 +274,9 @@
     <string name="debt_mark_settled">Mark settled</string>
     <string name="debt_delete_settled">Delete record</string>
     <string name="debt_settled_label">Settled</string>
+    <string name="debt_empty_title">No debt records yet</string>
+    <string name="debt_empty_subtitle">Track money you lent or owe with a quick record.</string>
+    <string name="debt_due_preview">Due in 30 days</string>
 
     <!-- Shared costs -->
     <string name="shared_costs_title">Split a bill</string>
@@ -278,6 +287,10 @@
     <string name="shared_per_person">Per person</string>
     <string name="shared_save_split">Save split</string>
     <string name="shared_history_title">Split history</string>
+    <string name="shared_history_empty">No saved splits yet</string>
     <string name="shared_people_count">%1$d people</string>
+    <string name="date_time_picker_title">Date and time</string>
+    <string name="event_tag_format">@%1$s</string>
+    <string name="pin_biometric_cd">Unlock with biometrics</string>
 </resources>
 

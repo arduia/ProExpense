@@ -188,11 +188,22 @@ private fun PinKey(
                         .background(colors.surface)
                 },
             )
-            .proRippleClickable(
-                onClick = onClick,
-                interactionSource = interactionSource,
-                enabled = enabled,
-                role = Role.Button,
+            .then(
+                if (isBackspace) {
+                    Modifier.proCircularRippleClickable(
+                        onClick = onClick,
+                        interactionSource = interactionSource,
+                        enabled = enabled,
+                        role = Role.Button,
+                    )
+                } else {
+                    Modifier.proRippleClickable(
+                        onClick = onClick,
+                        interactionSource = interactionSource,
+                        enabled = enabled,
+                        role = Role.Button,
+                    )
+                },
             )
             .defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,

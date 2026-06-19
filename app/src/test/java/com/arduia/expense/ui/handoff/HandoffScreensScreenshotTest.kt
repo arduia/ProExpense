@@ -231,6 +231,8 @@ class HandoffScreensScreenshotTest {
     @Test fun categories_list() = capture {
         CategoryListScreenContent(
             categories = previewCategoryItems,
+            selectedCategoryId = "food",
+            onCategorySelected = {},
             newCategoryName = "",
             onNewCategoryChange = {},
             duplicateError = false,
@@ -252,7 +254,15 @@ class HandoffScreensScreenshotTest {
 
     @Test fun data_export() = capture { DataExportScreenContent(onBack = {}, onExport = {}) }
 
-    @Test fun clear_data() = capture { ClearDataScreenContent(onBack = {}, onConfirmClear = {}) }
+    @Test fun clear_data() = capture {
+        ClearDataScreenContent(
+            showConfirmStep = false,
+            onRequestClear = {},
+            onCancelConfirm = {},
+            onBack = {},
+            onConfirmClear = {},
+        )
+    }
 
     @Test fun event_list_active() = capture {
         EventListScreenContent(events = previewEventListActive, onNewEvent = {}, onEventClick = {})
@@ -272,6 +282,7 @@ class HandoffScreensScreenshotTest {
             onNameChange = {},
             dateRange = "May 12 — May 26",
             amountText = "2000",
+            onAmountChange = {},
             showErrors = false,
             onBack = {},
             onSave = {},
@@ -307,8 +318,10 @@ class HandoffScreensScreenshotTest {
         DebtAddScreenContent(
             personName = "John",
             onPersonNameChange = {},
-            amount = "$50.00",
-            dueDate = "Due May 30",
+            amountText = "50.00",
+            onAmountChange = {},
+            dueDate = "Due in 30 days",
+            saveEnabled = true,
             onClose = {},
             onSave = {},
         )
@@ -319,17 +332,21 @@ class HandoffScreensScreenshotTest {
             personName = "John",
             isLent = true,
             amount = "$50.00",
-            dueLabel = "Due May 30",
+            dueLabel = "Due in 30 days",
             isSettled = false,
+            showDeleteConfirm = false,
             onBack = {},
             onMarkSettled = {},
-            onDelete = {},
+            onRequestDelete = {},
+            onCancelDelete = {},
+            onConfirmDelete = {},
         )
     }
 
     @Test fun shared_input() = capture {
         SharedCostsScreenContent(
             amountText = "120.00",
+            onAmountChange = {},
             peopleCount = 4,
             showZeroValidation = false,
             onIncrementPeople = {},

@@ -53,6 +53,7 @@ fun AddDetailsScreen(
     onClearTag: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
+    onDateTimeClick: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -96,7 +97,7 @@ fun AddDetailsScreen(
                 leading = {
                     ProIcon(
                         glyph = ProIconGlyph.Calendar,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.calendar),
                         tint = colors.muted,
                         size = dimens.iconNav,
                     )
@@ -104,11 +105,12 @@ fun AddDetailsScreen(
                 trailing = {
                     ProIcon(
                         glyph = ProIconGlyph.ChevronRight,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.more),
                         tint = colors.muted,
                         size = dimens.iconInline,
                     )
                 },
+                onClick = onDateTimeClick,
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
                     Text(text = dateLabel, style = typography.bodySemiBold, color = colors.onSurface)
@@ -118,7 +120,7 @@ fun AddDetailsScreen(
                     ) {
                         ProIcon(
                             glyph = ProIconGlyph.Clock,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.time),
                             tint = colors.muted,
                             size = dimens.iconInline,
                         )
@@ -167,7 +169,7 @@ fun AddDetailsScreen(
                     },
                 ) {
                     Text(
-                        text = "@ $eventTag",
+                        text = stringResource(R.string.event_tag_format, eventTag),
                         style = typography.bodyMedium,
                         color = colors.tag,
                     )

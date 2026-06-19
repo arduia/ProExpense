@@ -20,7 +20,14 @@ Each subdirectory contains a `SKILL.md` with YAML frontmatter. Cursor discovers 
 `.agents/skills/` automatically.
 
 **Project skills** (not overwritten by `install-android-skills.sh`):
-- `design-handoff-to-compose` — handoff → Compose workflow; linked from `AGENTS.md` § Compose UI.
+
+Compose implementation workflow — run in order for new UI; linked from `AGENTS.md` § Compose UI:
+
+| Step | Skill | Path |
+|------|-------|------|
+| 1 — Build | `design-handoff-to-compose` | `.agents/skills/design-handoff-to-compose/SKILL.md` |
+| 2 — Polish | `compose-motion-polish` | `.agents/skills/compose-motion-polish/SKILL.md` |
+| 3 — Audit | `compose-product-auditor` | `.agents/skills/compose-product-auditor/SKILL.md` |
 
 **Official Android skills** (installed/updated via `install-android-skills.sh`):
 
@@ -32,7 +39,9 @@ Project `AGENTS.md` takes precedence over skill guidance when they conflict.
 
 | Skill | When to use |
 |---|---|
-| **`design-handoff-to-compose`** | **Building Compose UI from `design_handoff_pro_expense/` mockups, PNGs, or HTML prototype** |
+| **`design-handoff-to-compose`** | **Step 1 — Building Compose UI from `design_handoff_pro_expense/` mockups, PNGs, or HTML prototype** |
+| **`compose-motion-polish`** | **Step 2 — Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
+| **`compose-product-auditor`** | **Step 3 — Pre-merge audit: states, wiring, a11y, i18n, performance, sensitive data** |
 | `android-cli` | SDK, emulator, docs search, layout inspection |
 | `testing-setup` | Unit, instrumented, screenshot test setup |
 | `edge-to-edge` | System bar insets and window layout |

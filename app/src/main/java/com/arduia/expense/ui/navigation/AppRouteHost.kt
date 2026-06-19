@@ -1,13 +1,19 @@
 package com.arduia.expense.ui.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
+import com.arduia.expense.feature.logging.AmountInputLogic
 import com.arduia.expense.ui.auth.PinEntryMode
 import com.arduia.expense.ui.auth.PinEntryScreenContent
 import com.arduia.expense.ui.categories.CategoryListScreenContent
@@ -17,6 +23,8 @@ import com.arduia.expense.ui.data.DataExportScreenContent
 import com.arduia.expense.ui.debt.DebtAddScreenContent
 import com.arduia.expense.ui.debt.DebtDetailScreenContent
 import com.arduia.expense.ui.debt.DebtTrackerScreenContent
+import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.events.EventCreateScreenContent
 import com.arduia.expense.ui.events.EventDetailScreenContent
 import com.arduia.expense.ui.journal.JournalDetailScreenContent
@@ -30,6 +38,8 @@ import com.arduia.expense.ui.reports.ReportsScreenContent
 import com.arduia.expense.ui.shared.SharedCostsScreenContent
 import com.arduia.expense.ui.shared.SharedHistoryScreenContent
 import com.arduia.expense.ui.shared.SharedSummaryScreenContent
+import com.arduia.expense.ui.util.PinDemo
+import kotlinx.coroutines.delay
 
 @Composable
 fun AppRouteHost(
@@ -37,194 +47,437 @@ fun AppRouteHost(
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
 ) {
-    when (route) {
-        AppRoutes.REPORTS -> ReportsScreenContent(
-            modifier = modifier,
-            monthLabel = stringResource(R.string.reports_monthly),
-            totalSpend = "$80.90",
-            categories = previewReportsCategories,
-            onBack = navigator::pop,
-        )
+    var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
-        AppRoutes.CATEGORIES -> CategoryListScreenContent(
-            modifier = modifier,
-            categories = previewCategoryItems,
-            newCategoryName = "",
-            onNewCategoryChange = {},
-            duplicateError = false,
-            onBack = navigator::pop,
-            onAddCategory = {},
-        )
-
-        AppRoutes.CURRENCY -> {
-            var showPicker by rememberSaveable { mutableStateOf(false) }
-            var selectedCode by rememberSaveable { mutableStateOf("USD") }
-            CurrencySettingScreenContent(
-                modifier = modifier,
-                selectedCode = selectedCode,
-                showPicker = showPicker,
-                onOpenPicker = { showPicker = true },
-                onClosePicker = { showPicker = false },
-                onCurrencySelected = {
-                    selectedCode = it
-                    showPicker = false
-                },
+    Box(modifier = modifier.fillMaxSize()) {
+        when (route) {
+            AppRoutes.REPORTS -> ReportsScreenContent(
+                modifier = Modifier.fillMaxSize(),
+                monthLabel = stringResource(R.string.reports_monthly),
+                totalSpend = "$80.90",
+                categories = previewReportsCategories,
                 onBack = navigator::pop,
             )
-        }
 
-        AppRoutes.EXPORT -> DataExportScreenContent(
-            modifier = modifier,
-            onBack = navigator::pop,
-            onExport = navigator::pop,
-        )
-
-        AppRoutes.CLEAR -> ClearDataScreenContent(
-            modifier = modifier,
-            onBack = navigator::pop,
-            onConfirmClear = navigator::pop,
-        )
-
-        AppRoutes.JOURNAL_DETAIL -> {
-            var showActions by rememberSaveable { mutableStateOf(false) }
-            JournalDetailScreenContent(
-                modifier = modifier,
-                categoryId = "entertainment",
-                note = "Movie · Dune",
-                meta = "Entertainment · May 25 · 08:10 PM",
-                amount = "$18.00",
-                eventTag = "Bali Trip",
-                showActionsSheet = showActions,
+            AppRoutes.CATEGORIES -> CategoriesRoute(
+                modifier = Modifier.fillMaxSize(),
                 onBack = navigator::pop,
-                onMore = { showActions = true },
-                onDismissActions = { showActions = false },
-                onEdit = { showActions = false },
-                onDelete = {
-                    showActions = false
-                    navigator.pop()
+            )
+
+            AppRoutes.CURRENCY -> CurrencyRoute(
+                modifier = Modifier.fillMaxSize(),
+                onBack = navigator::pop,
+            )
+
+            AppRoutes.EXPORT -> DataExportScreenContent(
+                modifier = Modifier.fillMaxSize(),
+                onBack = navigator::pop,
+                onExport = {
+                    toastMessage = null
+                    toastMessage = "export"
                 },
             )
-        }
 
-        AppRoutes.EVENT_CREATE -> EventCreateScreenContent(
-            modifier = modifier,
-            name = "Bali Trip",
-            onNameChange = {},
-            dateRange = "May 12 — May 26",
-            amountText = "2000",
-            showErrors = false,
-            onBack = navigator::pop,
-            onSave = navigator::pop,
-        )
+            AppRoutes.CLEAR -> ClearDataRoute(
+                modifier = Modifier.fillMaxSize(),
+                onBack = navigator::pop,
+                onCleared = {
+                    toastMessage = null
+                    toastMessage = "clear"
+                },
+            )
 
-        AppRoutes.DEBT_TRACKER -> {
-            var debtTab by rememberSaveable { mutableStateOf(0) }
-            DebtTrackerScreenContent(
-                modifier = modifier,
-                selectedTab = debtTab,
-                lentRecords = previewDebtLent,
-                oweRecords = previewDebtOwe,
-                onTabSelected = { debtTab = it },
-                onAddClick = { navigator.push(AppRoutes.DEBT_ADD) },
+            AppRoutes.JOURNAL_DETAIL -> JournalDetailRoute(
+                modifier = Modifier.fillMaxSize(),
+                onBack = navigator::pop,
+            )
+
+            AppRoutes.EVENT_CREATE -> EventCreateRoute(
+                modifier = Modifier.fillMaxSize(),
+                onBack = navigator::pop,
+                onSaved = navigator::pop,
+            )
+
+            AppRoutes.DEBT_TRACKER -> DebtTrackerRoute(
+                modifier = Modifier.fillMaxSize(),
+                onBack = navigator::pop,
+                onAdd = { navigator.push(AppRoutes.DEBT_ADD) },
                 onRecordClick = { navigator.push(AppRoutes.DEBT_DETAIL) },
+            )
+
+            AppRoutes.DEBT_ADD -> DebtAddRoute(
+                modifier = Modifier.fillMaxSize(),
+                onClose = navigator::pop,
+                onSave = navigator::pop,
+            )
+
+            AppRoutes.DEBT_DETAIL -> DebtDetailRoute(
+                modifier = Modifier.fillMaxSize(),
                 onBack = navigator::pop,
             )
-        }
 
-        AppRoutes.DEBT_ADD -> DebtAddScreenContent(
-            modifier = modifier,
-            personName = "John",
-            onPersonNameChange = {},
-            amount = "$50.00",
-            dueDate = "Due May 30",
-            onClose = navigator::pop,
-            onSave = navigator::pop,
-        )
+            AppRoutes.SHARED_INPUT -> SharedInputRoute(
+                modifier = Modifier.fillMaxSize(),
+                onBack = navigator::pop,
+                onCalculate = { navigator.push(AppRoutes.SHARED_SUMMARY) },
+            )
 
-        AppRoutes.DEBT_DETAIL -> DebtDetailScreenContent(
-            modifier = modifier,
-            personName = "John",
-            isLent = true,
-            amount = "$50.00",
-            dueLabel = "Due May 30",
-            isSettled = false,
-            onBack = navigator::pop,
-            onMarkSettled = navigator::pop,
-            onDelete = navigator::pop,
-        )
+            AppRoutes.SHARED_SUMMARY -> SharedSummaryScreenContent(
+                modifier = Modifier.fillMaxSize(),
+                people = listOf(
+                    "Alex" to "$30.00",
+                    "Jordan" to "$30.00",
+                    "Sam" to "$30.00",
+                    "Taylor" to "$30.00",
+                ),
+                onBack = navigator::pop,
+                onSave = { navigator.replace(AppRoutes.SHARED_HISTORY) },
+            )
 
-        AppRoutes.SHARED_INPUT -> SharedCostsScreenContent(
-            modifier = modifier,
-            amountText = "120.00",
-            peopleCount = 4,
-            showZeroValidation = false,
-            onIncrementPeople = {},
-            onDecrementPeople = {},
-            onCalculate = { navigator.push(AppRoutes.SHARED_SUMMARY) },
-            onBack = navigator::pop,
-        )
+            AppRoutes.SHARED_HISTORY -> SharedHistoryScreenContent(
+                modifier = Modifier.fillMaxSize(),
+                items = previewSharedHistory,
+                onBack = navigator::pop,
+            )
 
-        AppRoutes.SHARED_SUMMARY -> SharedSummaryScreenContent(
-            modifier = modifier,
-            people = listOf(
-                "Alex" to "$30.00",
-                "Jordan" to "$30.00",
-                "Sam" to "$30.00",
-                "Taylor" to "$30.00",
-            ),
-            onBack = navigator::pop,
-            onSave = { navigator.replace(AppRoutes.SHARED_HISTORY) },
-        )
-
-        AppRoutes.SHARED_HISTORY -> SharedHistoryScreenContent(
-            modifier = modifier,
-            items = previewSharedHistory,
-            onBack = navigator::pop,
-        )
-
-        else -> {
-            val eventTitle = AppRoutes.eventDetailTitle(route)
-            if (eventTitle != null) {
-                EventDetailScreenContent(
-                    modifier = modifier,
-                    title = eventTitle,
-                    dateRange = "May 12 — May 26",
-                    spentLabel = "$1,240",
-                    budgetLabel = "of $2,000",
-                    progress = 0.62f,
-                    isClosed = false,
-                    transactions = previewEventDetailTransactions,
-                    onBack = navigator::pop,
-                )
+            else -> {
+                val eventTitle = AppRoutes.eventDetailTitle(route)
+                if (eventTitle != null) {
+                    EventDetailScreenContent(
+                        modifier = Modifier.fillMaxSize(),
+                        title = eventTitle,
+                        dateRange = "May 12 — May 26",
+                        spentLabel = "$1,240",
+                        budgetLabel = "of $2,000",
+                        progress = 0.62f,
+                        isClosed = false,
+                        transactions = previewEventDetailTransactions,
+                        onBack = navigator::pop,
+                    )
+                }
             }
         }
+
+        val resolvedToast = when (toastMessage) {
+            "export" -> stringResource(R.string.toast_export_success)
+            "clear" -> stringResource(R.string.toast_data_cleared)
+            else -> toastMessage
+        }
+        ProToastHost(
+            message = resolvedToast,
+            onDismiss = {
+                val shouldPop = toastMessage == "export" || toastMessage == "clear"
+                toastMessage = null
+                if (shouldPop) navigator.pop()
+            },
+        )
     }
+}
+
+@Composable
+private fun CategoriesRoute(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var categories by remember { mutableStateOf(previewCategoryItems) }
+    var newCategoryName by rememberSaveable { mutableStateOf("") }
+    var duplicateError by rememberSaveable { mutableStateOf(false) }
+    var selectedCategoryId by rememberSaveable { mutableStateOf<String?>(null) }
+
+    CategoryListScreenContent(
+        modifier = modifier,
+        categories = categories,
+        selectedCategoryId = selectedCategoryId,
+        onCategorySelected = { selectedCategoryId = it },
+        newCategoryName = newCategoryName,
+        onNewCategoryChange = {
+            newCategoryName = it
+            duplicateError = false
+        },
+        duplicateError = duplicateError,
+        onBack = onBack,
+        onAddCategory = {
+            val trimmed = newCategoryName.trim()
+            if (trimmed.isBlank()) return@CategoryListScreenContent
+            val exists = categories.any { it.second.equals(trimmed, ignoreCase = true) }
+            if (exists) {
+                duplicateError = true
+            } else {
+                val id = trimmed.lowercase().replace(" ", "_")
+                categories = categories + (id to trimmed)
+                selectedCategoryId = id
+                newCategoryName = ""
+                duplicateError = false
+            }
+        },
+    )
+}
+
+@Composable
+private fun CurrencyRoute(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var showPicker by rememberSaveable { mutableStateOf(false) }
+    var selectedCode by rememberSaveable { mutableStateOf("USD") }
+    CurrencySettingScreenContent(
+        modifier = modifier,
+        selectedCode = selectedCode,
+        showPicker = showPicker,
+        onOpenPicker = { showPicker = true },
+        onClosePicker = { showPicker = false },
+        onCurrencySelected = {
+            selectedCode = it
+            showPicker = false
+        },
+        onBack = onBack,
+    )
+}
+
+@Composable
+private fun ClearDataRoute(
+    onBack: () -> Unit,
+    onCleared: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var showConfirmStep by rememberSaveable { mutableStateOf(false) }
+    ClearDataScreenContent(
+        modifier = modifier,
+        showConfirmStep = showConfirmStep,
+        onRequestClear = { showConfirmStep = true },
+        onCancelConfirm = { showConfirmStep = false },
+        onBack = onBack,
+        onConfirmClear = {
+            showConfirmStep = false
+            onCleared()
+        },
+    )
+}
+
+@Composable
+private fun JournalDetailRoute(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var showActions by rememberSaveable { mutableStateOf(false) }
+    JournalDetailScreenContent(
+        modifier = modifier,
+        categoryId = "entertainment",
+        note = "Movie · Dune",
+        meta = "Entertainment · May 25 · 08:10 PM",
+        amount = "$18.00",
+        eventTag = "Bali Trip",
+        showActionsSheet = showActions,
+        onBack = onBack,
+        onMore = { showActions = true },
+        onDismissActions = { showActions = false },
+        onEdit = { showActions = false },
+        onDelete = {
+            showActions = false
+            onBack()
+        },
+    )
+}
+
+@Composable
+private fun EventCreateRoute(
+    onBack: () -> Unit,
+    onSaved: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var name by rememberSaveable { mutableStateOf("") }
+    var amountText by rememberSaveable { mutableStateOf("") }
+    var showErrors by rememberSaveable { mutableStateOf(false) }
+
+    EventCreateScreenContent(
+        modifier = modifier,
+        name = name,
+        onNameChange = {
+            name = it
+            showErrors = false
+        },
+        dateRange = "May 12 — May 26",
+        amountText = amountText,
+        onAmountChange = { amountText = it },
+        showErrors = showErrors,
+        onBack = onBack,
+        onSave = {
+            if (name.isBlank() || amountText.isBlank()) {
+                showErrors = true
+            } else {
+                onSaved()
+            }
+        },
+    )
+}
+
+@Composable
+private fun DebtTrackerRoute(
+    onBack: () -> Unit,
+    onAdd: () -> Unit,
+    onRecordClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var debtTab by rememberSaveable { mutableStateOf(0) }
+    DebtTrackerScreenContent(
+        modifier = modifier,
+        selectedTab = debtTab,
+        lentRecords = previewDebtLent,
+        oweRecords = previewDebtOwe,
+        onTabSelected = { debtTab = it },
+        onAddClick = onAdd,
+        onRecordClick = onRecordClick,
+        onBack = onBack,
+    )
+}
+
+@Composable
+private fun DebtAddRoute(
+    onClose: () -> Unit,
+    onSave: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var personName by rememberSaveable { mutableStateOf("") }
+    var amountText by rememberSaveable { mutableStateOf("") }
+    val dueDate = stringResource(R.string.debt_due_preview)
+
+    DebtAddScreenContent(
+        modifier = modifier,
+        personName = personName,
+        onPersonNameChange = { personName = it },
+        amountText = amountText,
+        onAmountChange = { amountText = it },
+        dueDate = dueDate,
+        onClose = onClose,
+        onSave = {
+            if (personName.isNotBlank() && amountText.isNotBlank()) onSave()
+        },
+        saveEnabled = personName.isNotBlank() && amountText.isNotBlank(),
+    )
+}
+
+@Composable
+private fun DebtDetailRoute(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var isSettled by rememberSaveable { mutableStateOf(false) }
+    var showDeleteConfirm by rememberSaveable { mutableStateOf(false) }
+
+    DebtDetailScreenContent(
+        modifier = modifier,
+        personName = "John",
+        isLent = true,
+        amount = "$50.00",
+        dueLabel = stringResource(R.string.debt_due_preview),
+        isSettled = isSettled,
+        showDeleteConfirm = showDeleteConfirm,
+        onBack = onBack,
+        onMarkSettled = { isSettled = true },
+        onRequestDelete = { showDeleteConfirm = true },
+        onCancelDelete = { showDeleteConfirm = false },
+        onConfirmDelete = onBack,
+    )
+}
+
+@Composable
+private fun SharedInputRoute(
+    onBack: () -> Unit,
+    onCalculate: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var amountText by rememberSaveable { mutableStateOf("120.00") }
+    var peopleCount by rememberSaveable { mutableIntStateOf(4) }
+    var showZeroValidation by rememberSaveable { mutableStateOf(false) }
+
+    SharedCostsScreenContent(
+        modifier = modifier,
+        amountText = amountText,
+        onAmountChange = {
+            amountText = it
+            showZeroValidation = false
+        },
+        peopleCount = peopleCount,
+        showZeroValidation = showZeroValidation,
+        onIncrementPeople = { peopleCount = (peopleCount + 1).coerceAtMost(20) },
+        onDecrementPeople = { peopleCount = (peopleCount - 1).coerceAtLeast(1) },
+        onCalculate = {
+            val amount = amountText.toDoubleOrNull() ?: 0.0
+            if (amount <= 0.0) {
+                showZeroValidation = true
+            } else {
+                onCalculate()
+            }
+        },
+        onBack = onBack,
+    )
 }
 
 @Composable
 fun PinEntryRouteHost(
     onUnlocked: () -> Unit,
     modifier: Modifier = Modifier,
+    demoPin: String = PinDemo.DEMO_PIN,
+    demoSecurityAnswer: String = PinDemo.DEMO_SECURITY_ANSWER,
 ) {
     var mode by rememberSaveable { mutableStateOf(PinEntryMode.Entry) }
-    var filledDots by rememberSaveable { mutableStateOf(0) }
+    var filledDots by rememberSaveable { mutableIntStateOf(0) }
+    var currentPin by remember { mutableStateOf("") }
     var recoveryAnswer by rememberSaveable { mutableStateOf("") }
+    var wrongAttempts by rememberSaveable { mutableIntStateOf(0) }
+    var lockoutSeconds by rememberSaveable { mutableIntStateOf(0) }
 
-        PinEntryScreenContent(
+    LaunchedEffect(lockoutSeconds) {
+        if (lockoutSeconds > 0) {
+            delay(1_000)
+            lockoutSeconds -= 1
+            if (lockoutSeconds == 0) {
+                mode = PinEntryMode.Entry
+                wrongAttempts = 0
+            }
+        }
+    }
+
+    PinEntryScreenContent(
         modifier = modifier,
         mode = mode,
         filledDots = filledDots,
-        lockoutSeconds = 30,
+        lockoutSeconds = lockoutSeconds,
         recoveryAnswer = recoveryAnswer,
         onRecoveryAnswerChange = { recoveryAnswer = it },
-        onDigit = {
-            val next = (filledDots + 1).coerceAtMost(6)
-            filledDots = next
-            if (next == 6) onUnlocked()
+        onDigit = { digit ->
+            if (mode == PinEntryMode.Lockout) return@PinEntryScreenContent
+            if (currentPin.length >= 6) return@PinEntryScreenContent
+            currentPin += digit.toString()
+            filledDots = currentPin.length
+            if (currentPin.length == 6) {
+                if (currentPin == demoPin) {
+                    onUnlocked()
+                } else {
+                    wrongAttempts += 1
+                    currentPin = ""
+                    filledDots = 0
+                    mode = PinEntryMode.Wrong
+                    if (wrongAttempts >= PinDemo.MAX_ATTEMPTS) {
+                        mode = PinEntryMode.Lockout
+                        lockoutSeconds = PinDemo.LOCKOUT_SECONDS
+                    }
+                }
+            }
         },
-        onBackspace = { filledDots = (filledDots - 1).coerceAtLeast(0) },
+        onBackspace = {
+            if (currentPin.isNotEmpty()) {
+                currentPin = currentPin.dropLast(1)
+                filledDots = currentPin.length
+            }
+            if (mode == PinEntryMode.Wrong) mode = PinEntryMode.Entry
+        },
         onForgotPin = { mode = PinEntryMode.Recovery },
-        onUnlockRecovery = onUnlocked,
+        onUnlockRecovery = {
+            if (recoveryAnswer.trim().equals(demoSecurityAnswer, ignoreCase = true)) {
+                onUnlocked()
+            }
+        },
         onBiometricUnlock = onUnlocked,
     )
 }

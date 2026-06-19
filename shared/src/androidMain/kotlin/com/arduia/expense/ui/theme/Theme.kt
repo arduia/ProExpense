@@ -1,6 +1,8 @@
 package com.arduia.expense.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -8,7 +10,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 
 @Composable
 fun ProExpenseTheme(
-    colors: ProColors = ProLightColors,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    colors: ProColors = if (darkTheme) ProDarkColors else ProLightColors,
     typography: ProTypography = ProDefaultTypography,
     dimensions: ProDimens = ProDefaultDimens,
     shapes: ProShapes = ProDefaultShapes,
@@ -16,7 +19,7 @@ fun ProExpenseTheme(
     elevation: ProElevation = ProDefaultElevation,
     content: @Composable () -> Unit,
 ) {
-    val materialColors = colors.toMaterialColorScheme()
+    val materialColors = colors.toMaterialColorScheme(darkTheme)
     CompositionLocalProvider(
         LocalProColors provides colors,
         LocalProTypography provides typography,
@@ -64,7 +67,10 @@ object ProExpenseTheme {
         get() = LocalProElevation.current
 }
 
-fun ProColors.toMaterialColorScheme() = lightColorScheme(
+fun ProColors.toMaterialColorScheme(darkTheme: Boolean = false) =
+    if (darkTheme) toMaterialDarkColorScheme() else toMaterialLightColorScheme()
+
+private fun ProColors.toMaterialLightColorScheme() = lightColorScheme(
     primary = primary,
     onPrimary = onPrimary,
     primaryContainer = primaryTint,
@@ -87,6 +93,34 @@ fun ProColors.toMaterialColorScheme() = lightColorScheme(
     onError = onPrimary,
     errorContainer = dangerTint,
     onErrorContainer = danger,
+    outline = lineStrong,
+    outlineVariant = line,
+    scrim = scrim,
+)
+
+private fun ProColors.toMaterialDarkColorScheme() = darkColorScheme(
+    primary = primary,
+    onPrimary = onPrimary,
+    primaryContainer = primaryTint,
+    onPrimaryContainer = primarySoft,
+    secondary = primaryDeep,
+    onSecondary = onPrimary,
+    secondaryContainer = primaryTint,
+    onSecondaryContainer = onSurface,
+    tertiary = tag,
+    onTertiary = onPrimary,
+    tertiaryContainer = tagTint,
+    onTertiaryContainer = tagSoft,
+    background = paper,
+    onBackground = onSurface,
+    surface = surface,
+    onSurface = onSurface,
+    surfaceVariant = paperAlt,
+    onSurfaceVariant = onSurfaceVariant,
+    error = danger,
+    onError = onPrimary,
+    errorContainer = dangerTint,
+    onErrorContainer = dangerSoft,
     outline = lineStrong,
     outlineVariant = line,
     scrim = scrim,
