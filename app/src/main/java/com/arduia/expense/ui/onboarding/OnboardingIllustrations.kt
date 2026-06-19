@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect as UiRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -28,7 +27,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProColors
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import kotlin.math.min
 
 private val illustrationWidth = 300.dp
 private val illustrationHeight = 280.dp
@@ -574,54 +572,5 @@ fun JournalIllustration(modifier: Modifier = Modifier) {
             amount = "$42",
             withCheck = true,
         )
-    }
-}
-
-@Composable
-fun SplashBrandMark(
-    modifier: Modifier = Modifier,
-) {
-    val colors = ProExpenseTheme.colors
-    val elevation = ProExpenseTheme.elevation.fab.firstOrNull()
-
-    Canvas(modifier = modifier) {
-        val side = min(size.width, size.height)
-        val corner = side * 0.25f
-        val inset = side * 0.22f
-        val handle = side * 0.07f
-
-        if (elevation != null) {
-            drawRoundRect(
-                color = elevation.color,
-                topLeft = Offset(4.dp.toPx(), 6.dp.toPx()),
-                size = Size(side, side),
-                cornerRadius = CornerRadius(corner, corner),
-            )
-        }
-
-        drawRoundRect(
-            color = colors.primary,
-            size = Size(side, side),
-            cornerRadius = CornerRadius(corner, corner),
-        )
-
-        val frame = UiRect(inset, inset, side - inset, side - inset)
-        drawRoundRect(
-            color = colors.onPrimaryWarm,
-            topLeft = frame.topLeft,
-            size = frame.size,
-            cornerRadius = CornerRadius(side * 0.04f, side * 0.04f),
-            style = Stroke(width = side * 0.045f),
-        )
-
-        val corners = listOf(
-            Offset(frame.left, frame.top),
-            Offset(frame.right, frame.top),
-            Offset(frame.left, frame.bottom),
-            Offset(frame.right, frame.bottom),
-        )
-        corners.forEach { point ->
-            drawCircle(color = colors.onPrimaryWarm, radius = handle, center = point)
-        }
     }
 }
