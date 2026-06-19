@@ -128,6 +128,7 @@ class BudgetScreenScreenshotTest {
                     BudgetScreenContent(
                         events = previewEvents,
                         onNewEvent = {},
+                        onEventClick = {},
                     )
                 }
             }

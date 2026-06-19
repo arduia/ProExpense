@@ -12,12 +12,13 @@ val previewEvents: List<EventBudgetCardState> = previewEventListActive
 fun BudgetScreenContent(
     events: List<EventBudgetCardState>,
     onNewEvent: () -> Unit,
+    onEventClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     EventListScreenContent(
         events = events,
         onNewEvent = onNewEvent,
-        onEventClick = {},
+        onEventClick = onEventClick,
         modifier = modifier,
     )
 }

@@ -22,6 +22,8 @@ import com.arduia.expense.ui.design.PinKeypad
 import com.arduia.expense.ui.design.PinKeypadState
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
@@ -140,6 +142,7 @@ fun PinEntryScreenContent(
     onBackspace: () -> Unit,
     onForgotPin: () -> Unit,
     onUnlockRecovery: () -> Unit,
+    onBiometricUnlock: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -208,6 +211,17 @@ fun PinEntryScreenContent(
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))
+            if (mode == PinEntryMode.Entry) {
+                ProIcon(
+                    glyph = ProIconGlyph.Fingerprint,
+                    contentDescription = stringResource(R.string.pin_entry_subtitle),
+                    tint = colors.primary,
+                    modifier = Modifier
+                        .padding(bottom = dimens.space16)
+                        .proClickable(onClick = onBiometricUnlock, shape = ProExpenseTheme.shapes.chip)
+                        .padding(dimens.space8),
+                )
+            }
             PinKeypad(
                 filledDots = filledDots,
                 onDigit = onDigit,

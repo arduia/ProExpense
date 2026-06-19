@@ -1,6 +1,6 @@
 package com.arduia.expense.ui.onboarding
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,12 +19,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,7 +63,10 @@ fun SplashScreenContent(modifier: Modifier = Modifier) {
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SplashBrandMark(modifier = Modifier.size(88.dp))
+            LauncherAppIcon(
+                modifier = Modifier.size(88.dp),
+                contentDescription = stringResource(R.string.app_name),
+            )
             Text(
                 text = stringResource(R.string.app_name),
                 style = typography.screenTitle,
@@ -103,40 +102,25 @@ fun SplashScreenContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SplashBrandMark(modifier: Modifier = Modifier) {
-    val colors = ProExpenseTheme.colors
-
+private fun LauncherAppIcon(
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+) {
     Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(22.dp))
-            .background(colors.primary),
-        contentAlignment = Alignment.Center,
+        modifier = modifier.clip(RoundedCornerShape(22.dp)),
     ) {
-        Canvas(modifier = Modifier.size(48.dp)) {
-            val inset = 10.dp.toPx()
-            drawRoundRect(
-                color = colors.onPrimaryWarm,
-                topLeft = Offset(inset, inset),
-                size = Size(size.width - inset * 2, size.height - inset * 2),
-                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx()),
-                style = Stroke(width = 2.5.dp.toPx()),
-            )
-            val handleR = 3.dp.toPx()
-            listOf(
-                Offset(inset, inset),
-                Offset(size.width - inset, inset),
-                Offset(inset, size.height - inset),
-                Offset(size.width - inset, size.height - inset),
-            ).forEach { center ->
-                drawCircle(colors.onPrimaryWarm, radius = handleR, center = center)
-            }
-            val path = Path().apply {
-                moveTo(size.width * 0.35f, size.height * 0.62f)
-                lineTo(size.width * 0.48f, size.height * 0.75f)
-                lineTo(size.width * 0.68f, size.height * 0.42f)
-            }
-            drawPath(path, colors.onPrimaryWarm, style = Stroke(2.5.dp.toPx(), cap = StrokeCap.Round))
-        }
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_background),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = contentDescription,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
+        )
     }
 }
 

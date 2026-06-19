@@ -263,7 +263,7 @@ class HandoffScreensScreenshotTest {
     }
 
     @Test fun budget_events_list() = capture {
-        BudgetScreenContent(events = previewEvents, onNewEvent = {})
+        BudgetScreenContent(events = previewEvents, onNewEvent = {}, onEventClick = {})
     }
 
     @Test fun event_create() = capture {
