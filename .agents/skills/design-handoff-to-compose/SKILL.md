@@ -227,3 +227,12 @@ how it is themed and used.
 3. Produce the component triage table (element → rung → reason → Material base); pause on ambiguous cases.
 4. Build layer by layer; after each layer, show the file(s) + preview and state how it matches the PNG.
 5. Only then compose upward.
+
+## Compose skills workflow (Pro Expense)
+
+This skill is **step 1** of the Compose UI workflow in `AGENTS.md`. After building:
+
+| Step | Skill |
+|------|-------|
+| 2 — Polish affordances & motion | `.agents/skills/compose-motion-polish/SKILL.md` |
+| 3 — Pre-merge product audit | `.agents/skills/compose-product-auditor/SKILL.md` |

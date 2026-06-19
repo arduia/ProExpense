@@ -158,3 +158,12 @@ with `AnimatedContent` at orchestrator level — not Navigation 2/3. Reuse exist
 Design handoff tokens (`touchTarget.min` = 44dp) govern visual spacing; use
 `minimumInteractiveComponentSize()` on icon actions to meet the 48dp Material accessibility floor
 without changing tokenized layout dimensions.
+
+## Compose skills workflow (Pro Expense)
+
+This skill is **step 2** of the Compose UI workflow in `AGENTS.md`:
+
+| Step | Skill |
+|------|-------|
+| 1 — Build from handoff | `.agents/skills/design-handoff-to-compose/SKILL.md` |
+| 3 — Pre-merge product audit | `.agents/skills/compose-product-auditor/SKILL.md` |
