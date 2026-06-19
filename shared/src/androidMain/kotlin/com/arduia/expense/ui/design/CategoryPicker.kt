@@ -2,9 +2,7 @@ package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -14,12 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -50,7 +46,10 @@ fun CategoryPicker(
                         text = "+ More",
                         style = typography.bodyMedium,
                         color = colors.primary,
-                        modifier = Modifier.clickable(onClick = onMoreClick),
+                        modifier = Modifier.proClickable(
+                            onClick = onMoreClick,
+                            shape = ProExpenseTheme.shapes.chip,
+                        ),
                     )
                 }
             } else {
@@ -130,19 +129,18 @@ private fun AddCategoryChip(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val chipShape = ProExpenseTheme.shapes.chip
     val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale = if (pressed) ProExpenseTheme.motion.pressedScale else 1f
 
     Text(
         text = "+ Add",
         style = typography.bodyMedium,
         color = colors.onSurfaceVariant,
         modifier = modifier
-            .scale(scale)
-            .clip(ProExpenseTheme.shapes.chip)
-            .border(BorderStroke(dimens.chipBorderWidth, colors.lineStrong), ProExpenseTheme.shapes.chip)
-            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .proPressScale(interactionSource)
+            .clip(chipShape)
+            .border(BorderStroke(dimens.chipBorderWidth, colors.lineStrong), chipShape)
+            .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
             .padding(horizontal = dimens.space14, vertical = dimens.space8),
     )
 }

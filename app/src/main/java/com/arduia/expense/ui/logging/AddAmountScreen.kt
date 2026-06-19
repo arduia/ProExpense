@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.logging
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,7 @@ import com.arduia.expense.ui.design.CategoryPicker
 import com.arduia.expense.ui.design.NumericKeypad
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -72,7 +72,7 @@ fun AddAmountScreen(
                 glyph = ProIconGlyph.Close,
                 contentDescription = stringResource(R.string.close),
                 tint = colors.onSurface,
-                modifier = Modifier.clickable(onClick = onClose),
+                modifier = Modifier.proIconClickable(onClick = onClose),
             )
             Text(
                 text = stringResource(R.string.new_expense),

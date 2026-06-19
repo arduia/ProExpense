@@ -3,9 +3,8 @@ package com.arduia.expense.ui.design
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,12 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -61,10 +58,8 @@ fun CategoryChip(
     val category = colors.category(categoryId)
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val motion = ProExpenseTheme.motion
     val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale = if (pressed) motion.pressedScale else 1f
+    val chipShape = ProExpenseTheme.shapes.chip
     val background = if (selected) category.accent else Color.Transparent
     val contentColor = if (selected) colors.onPrimaryWarm else colors.onSurfaceVariant
     val borderColor = if (selected) category.accent else colors.lineStrong
@@ -72,15 +67,11 @@ fun CategoryChip(
 
     Row(
         modifier = modifier
-            .scale(scale)
-            .clip(ProExpenseTheme.shapes.chip)
+            .proPressScale(interactionSource)
+            .clip(chipShape)
             .background(background)
-            .border(BorderStroke(dimens.chipBorderWidth, borderColor), ProExpenseTheme.shapes.chip)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick,
-            )
+            .border(BorderStroke(dimens.chipBorderWidth, borderColor), chipShape)
+            .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
             .padding(horizontal = dimens.space14, vertical = dimens.space8),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space6),

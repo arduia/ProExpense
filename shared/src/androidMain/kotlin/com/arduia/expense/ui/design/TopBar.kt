@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.design
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -30,6 +29,7 @@ fun ProTopBar(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val shapes = ProExpenseTheme.shapes
 
     Box(
         modifier = modifier
@@ -41,8 +41,11 @@ fun ProTopBar(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .clickable(onClick = onBack)
-                    .padding(end = dimens.space8),
+                    .proClickable(
+                        onClick = onBack,
+                        shape = shapes.searchField,
+                    )
+                    .padding(horizontal = dimens.space8, vertical = dimens.space4),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimens.space4),
             ) {
@@ -77,7 +80,7 @@ fun ProTopBar(
                 tint = colors.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .clickable(onClick = onAction),
+                    .proIconClickable(onClick = onAction),
             )
             ProTopBarAction.Close -> ProIcon(
                 glyph = ProIconGlyph.Close,
@@ -85,7 +88,7 @@ fun ProTopBar(
                 tint = colors.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .clickable(onClick = onAction),
+                    .proIconClickable(onClick = onAction),
             )
             ProTopBarAction.None -> Unit
         }

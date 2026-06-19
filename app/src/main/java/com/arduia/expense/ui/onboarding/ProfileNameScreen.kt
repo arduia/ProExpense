@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.onboarding
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,7 @@ import com.arduia.expense.R
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProfileNameField
+import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -71,7 +71,7 @@ fun ProfileNameScreen(
                 style = typography.bodyMedium,
                 color = colors.muted,
                 modifier = Modifier
-                    .clickable(onClick = onSkip)
+                    .proClickable(onClick = onSkip, shape = ProExpenseTheme.shapes.chip)
                     .padding(dimens.space8),
             )
         }
