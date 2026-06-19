@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
 import com.arduia.expense.di.AppGraph
 import com.arduia.expense.ui.budget.BudgetScreenContent
-import com.arduia.expense.ui.budget.previewEvents
 import com.arduia.expense.ui.design.HomeBottomNav
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProToastHost
@@ -41,6 +40,7 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.backwardScreenExit
 import com.arduia.expense.ui.theme.forwardScreenEnter
 import com.arduia.expense.ui.theme.rememberProReduceMotion
+import com.arduia.expense.ui.util.toEventBudgetCardState
 import com.arduia.expense.ui.util.toHomeScreenState
 import com.arduia.expense.ui.util.toJournalDayGroup
 import com.arduia.expense.ui.util.toJournalTransactionItem
@@ -59,6 +59,7 @@ fun ExpenseApp(
 
     val homeState by appGraph.homeViewModel.uiState.collectAsState()
     val journalState by appGraph.journalViewModel.uiState.collectAsState()
+    val eventBudgetState by appGraph.eventBudgetViewModel.uiState.collectAsState()
 
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
@@ -145,9 +146,15 @@ fun ExpenseApp(
                             onEventsClick = { navigator.switchTab(HomeNavTab.Budget) },
                         )
                         HomeNavTab.Budget -> BudgetScreenContent(
-                            events = previewEvents,
+                            events = eventBudgetState.events.map { it.toEventBudgetCardState() },
                             onNewEvent = { navigator.push(AppRoutes.EVENT_CREATE) },
-                            onEventClick = { title -> navigator.push(AppRoutes.eventDetail(title)) },
+                            onEventClick = { title ->
+                                val eventId = eventBudgetState.events
+                                    .firstOrNull { it.title == title }
+                                    ?.id
+                                    ?: title
+                                navigator.push(AppRoutes.eventDetail(eventId))
+                            },
                         )
                         HomeNavTab.Journal -> JournalScreenContent(
                             searchQuery = journalState.searchQuery,

@@ -71,6 +71,8 @@ private class FakeRecordDateFormatter : RecordDateFormatter {
 
     override fun formatDayTitle(dayKey: Long): String = "Day-$dayKey"
 
+    override fun formatMonthYear(epochMillis: Long): String = "Month-$epochMillis"
+
     override fun formatMeta(epochMillis: Long, categoryLabel: String): String = "$categoryLabel · $epochMillis"
 
     override fun nowEpochMillis(): Long = 1_700_000_000_000L

@@ -52,7 +52,7 @@ class ProNavTransitionsTest {
     fun nested_push_is_forward() {
         val kind = resolveNavTransitionKind(
             from = state(route = AppRoutes.DEBT_TRACKER, stackSize = 1),
-            to = state(route = AppRoutes.DEBT_ADD, stackSize = 2),
+            to = state(route = AppRoutes.debtAdd(isLent = true), stackSize = 2),
         )
         assertEquals(NavTransitionKind.Forward, kind)
     }
@@ -60,7 +60,7 @@ class ProNavTransitionsTest {
     @Test
     fun replace_route_is_forward() {
         val kind = resolveNavTransitionKind(
-            from = state(route = AppRoutes.SHARED_SUMMARY, stackSize = 2),
+            from = state(route = AppRoutes.sharedSummary("preview"), stackSize = 2),
             to = state(route = AppRoutes.SHARED_HISTORY, stackSize = 2),
         )
         assertEquals(NavTransitionKind.Forward, kind)

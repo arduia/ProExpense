@@ -1,7 +1,9 @@
 package com.arduia.expense.feature.history
 
+import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SecurityStateReader
+import com.arduia.expense.domain.calculateBudgetProgress
 import com.arduia.expense.domain.formatWithSymbol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +23,7 @@ data class HomeUiState(
 
 class HomeViewModel(
     private val historyRepository: HistoryRepository,
+    private val budgetRepository: BudgetRepository,
     private val securityState: SecurityStateReader,
     private val formatter: RecordDateFormatter,
     private val categoryLabel: (String) -> String,
@@ -42,7 +45,21 @@ class HomeViewModel(
             val summary = historyRepository.getSummary(SummaryPeriod.MONTHLY, now)
             val records = historyRepository.getRecords()
             val pinConfigured = securityState.hasPinConfigured()
+            val daysInMonth = formatter.daysInMonth(now).coerceAtLeast(1)
 
+            val budget = budgetRepository.getMonthlyBudget()
+            val budgetCents = when (budget) {
+                is Result.Success -> budget.data?.valueInCents
+                is Result.Error -> null
+            }
+            val progress = calculateBudgetProgress(
+                spentCents = when (summary) {
+                    is Result.Success -> summary.data.totalInHomeCurrency.valueInCents
+                    is Result.Error -> 0L
+                },
+                budgetCents = budgetCents,
+                periodDays = daysInMonth,
+            )
             val monthSpend = when (summary) {
                 is Result.Success -> summary.data.totalInHomeCurrency.formatWithSymbol(homeCurrencyCode)
                 is Result.Error -> "$0"
@@ -58,12 +75,7 @@ class HomeViewModel(
                 categoryLabel = categoryLabel,
                 recentLimit = 10,
             )
-            val daysInMonth = formatter.daysInMonth(now).coerceAtLeast(1)
-            val dailyAverageCents = when (summary) {
-                is Result.Success -> summary.data.totalInHomeCurrency.valueInCents / daysInMonth
-                is Result.Error -> 0L
-            }
-            val dailyAverage = com.arduia.expense.domain.Amount(dailyAverageCents)
+            val dailyAverage = com.arduia.expense.domain.Amount(progress.dailyAverageCents)
                 .formatWithSymbol(homeCurrencyCode)
 
             _uiState.update {

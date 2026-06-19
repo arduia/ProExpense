@@ -24,6 +24,9 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.coroutines.test)
         }
+        androidMain.dependencies {
+            implementation(project(":core:storage"))
+        }
     }
 }
 

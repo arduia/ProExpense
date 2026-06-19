@@ -27,6 +27,11 @@ class AndroidRecordDateFormatter(
         }
     }
 
+    override fun formatMonthYear(epochMillis: Long): String {
+        val date = Instant.ofEpochMilli(epochMillis).atZone(zoneId).toLocalDate()
+        return date.format(DateTimeFormatter.ofPattern("MMMM yyyy", locale))
+    }
+
     override fun formatMeta(epochMillis: Long, categoryLabel: String): String {
         val time = Instant.ofEpochMilli(epochMillis)
             .atZone(zoneId)

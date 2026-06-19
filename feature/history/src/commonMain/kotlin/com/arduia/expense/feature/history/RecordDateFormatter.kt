@@ -5,6 +5,8 @@ interface RecordDateFormatter {
 
     fun formatDayTitle(dayKey: Long): String
 
+    fun formatMonthYear(epochMillis: Long): String
+
     fun formatMeta(epochMillis: Long, categoryLabel: String): String
 
     fun nowEpochMillis(): Long

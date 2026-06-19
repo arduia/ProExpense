@@ -3,13 +3,13 @@ package com.arduia.expense.feature.history
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.storage.InMemoryFinanceStore
+import com.arduia.expense.storage.InMemoryDataStore
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class InMemoryHistoryRepository(
-    private val store: InMemoryFinanceStore,
+    private val store: InMemoryDataStore,
     private val zoneId: ZoneId = ZoneId.systemDefault(),
 ) : HistoryRepository {
     override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> {
@@ -29,7 +29,7 @@ class InMemoryHistoryRepository(
     }
 
     override suspend fun deleteRecord(id: String): Result<Unit> {
-        store.delete(id)
+        store.deleteRecord(id)
         return Result.Success(Unit)
     }
 

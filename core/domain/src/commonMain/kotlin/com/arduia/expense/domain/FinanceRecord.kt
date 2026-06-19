@@ -9,4 +9,6 @@ data class FinanceRecord(
     val type: RecordType,
     val note: String?,
     val recordedAtEpochMillis: Long,
+    val tagType: ExpenseTagType? = null,
+    val tagId: String? = null,
 )
