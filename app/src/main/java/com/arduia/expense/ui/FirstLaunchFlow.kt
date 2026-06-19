@@ -7,6 +7,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.ui.auth.PinSetupScreenContent
+import com.arduia.expense.ui.auth.PinSetupStep
+import com.arduia.expense.ui.currency.ProfileCurrencyScreenContent
 import com.arduia.expense.ui.onboarding.OnboardingScreen
 import com.arduia.expense.ui.onboarding.ProfileNameScreen
 import com.arduia.expense.ui.onboarding.SplashScreen
@@ -17,6 +20,8 @@ private enum class FirstLaunchStep {
     Splash,
     Onboarding,
     ProfileName,
+    ProfileCurrency,
+    PinSetup,
     Main,
 }
 
@@ -29,6 +34,8 @@ fun FirstLaunchFlow(
         mutableStateOf(if (startAtMain) FirstLaunchStep.Main else FirstLaunchStep.Splash)
     }
     var profileName by rememberSaveable { mutableStateOf("") }
+    var homeCurrency by rememberSaveable { mutableStateOf("USD") }
+    var showCurrencyPicker by rememberSaveable { mutableStateOf(false) }
 
     when (step) {
         FirstLaunchStep.Splash -> SplashScreen(
@@ -45,9 +52,33 @@ fun FirstLaunchFlow(
             initialName = profileName,
             onContinue = { name ->
                 profileName = name
-                step = FirstLaunchStep.Main
+                step = FirstLaunchStep.ProfileCurrency
             },
-            onSkip = { step = FirstLaunchStep.Main },
+            onSkip = { step = FirstLaunchStep.ProfileCurrency },
+        )
+        FirstLaunchStep.ProfileCurrency -> ProfileCurrencyScreenContent(
+            modifier = modifier,
+            selectedCode = homeCurrency,
+            showPicker = showCurrencyPicker,
+            onOpenPicker = { showCurrencyPicker = true },
+            onClosePicker = { showCurrencyPicker = false },
+            onCurrencySelected = {
+                homeCurrency = it
+                showCurrencyPicker = false
+            },
+            onContinue = { step = FirstLaunchStep.PinSetup },
+            onSkip = { step = FirstLaunchStep.PinSetup },
+        )
+        FirstLaunchStep.PinSetup -> PinSetupScreenContent(
+            modifier = modifier,
+            step = PinSetupStep.Create,
+            filledDots = 0,
+            mismatchError = false,
+            securityAnswer = "",
+            onSecurityAnswerChange = {},
+            onDigit = {},
+            onBackspace = {},
+            onContinueSecurity = { step = FirstLaunchStep.Main },
         )
         FirstLaunchStep.Main -> ExpenseApp(modifier = modifier)
     }

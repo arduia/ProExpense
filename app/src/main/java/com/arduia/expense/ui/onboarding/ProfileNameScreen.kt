@@ -130,47 +130,6 @@ fun ProfileNameScreen(
     }
 }
 
-@Composable
-private fun SetupStepIndicator(
-    currentStep: Int,
-    totalSteps: Int,
-    modifier: Modifier = Modifier,
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        repeat(totalSteps) { index ->
-            val step = index + 1
-            val active = step <= currentStep
-            Box(
-                modifier = Modifier
-                    .then(
-                        if (step == currentStep) {
-                            Modifier
-                                .width(28.dp)
-                                .height(8.dp)
-                        } else {
-                            Modifier.size(8.dp)
-                        },
-                    )
-                    .clip(
-                        if (step == currentStep) {
-                            RoundedCornerShape(50)
-                        } else {
-                            CircleShape
-                        },
-                    )
-                    .background(if (active) colors.primary else colors.lineStrong),
-            )
-        }
-    }
-}
-
 @Preview(
     name = "Profile name setup",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
