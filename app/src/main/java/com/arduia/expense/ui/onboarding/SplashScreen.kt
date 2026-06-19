@@ -1,6 +1,5 @@
 package com.arduia.expense.ui.onboarding
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,8 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -101,27 +98,11 @@ fun SplashScreenContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SplashBrandMark(
-    modifier: Modifier = Modifier,
-    contentDescription: String? = null,
-) {
-    Image(
-        painter = painterResource(R.drawable.splash_brand_mark),
-        contentDescription = contentDescription,
-        contentScale = ContentScale.Fit,
-        modifier = modifier.size(88.dp),
-    )
-}
-
-@Composable
 private fun LauncherAppIcon(
-    contentDescription: String,
+    @Suppress("UNUSED_PARAMETER") contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
-    SplashBrandMark(
-        modifier = modifier,
-        contentDescription = contentDescription,
-    )
+    SplashBrandMark(modifier = modifier)
 }
 
 @Preview(
