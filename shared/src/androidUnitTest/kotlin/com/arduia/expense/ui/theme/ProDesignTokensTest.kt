@@ -1,6 +1,9 @@
 package com.arduia.expense.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -76,6 +79,23 @@ class ProDesignTokensTest {
     @Test
     fun display_flourish_uses_instrument_serif() {
         assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.displayFlourish.fontFamily)
+    }
+
+    @Test
+    fun button_typography_matches_handoff() {
+        val button = ProDefaultTypography.button
+        assertEquals(ProDefaultTypography.sansFamily, button.fontFamily)
+        assertEquals(FontWeight.SemiBold, button.fontWeight)
+        assertEquals(14f, button.fontSize.value)
+        assertEquals((-0.005).em, button.letterSpacing)
+        assertEquals(19.6f, button.lineHeight.value)
+    }
+
+    @Test
+    fun button_md_size_font_matches_handoff() {
+        assertEquals(14f, ProDefaultDimens.buttonMd.fontSizeSp)
+        assertEquals(12f, ProDefaultDimens.buttonSm.fontSizeSp)
+        assertEquals(15f, ProDefaultDimens.buttonLg.fontSizeSp)
     }
 
     @Test
