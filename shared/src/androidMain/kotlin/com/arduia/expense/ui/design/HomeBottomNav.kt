@@ -76,14 +76,13 @@ fun HomeBottomNav(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(dimens.navFabOffset + dimens.navBarHeight + dimens.navBottomMargin),
+            .height(dimens.navFabOffset + dimens.navBarHeight),
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimens.navBarHeight)
                 .align(Alignment.BottomCenter)
-                .padding(bottom = dimens.navBottomMargin)
                 .then(
                     if (navElevation != null) {
                         Modifier.shadow(
