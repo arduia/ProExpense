@@ -3,19 +3,24 @@ package com.arduia.expense.ui.design
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -33,6 +38,13 @@ fun AmountDisplay(
     val typography = ProExpenseTheme.typography
     val motion = ProExpenseTheme.motion
     val shakeOffset = remember { Animatable(0f) }
+    val amountAutoSize = remember(typography.displayAmount.fontSize) {
+        TextAutoSize.StepBased(
+            minFontSize = 28.sp,
+            maxFontSize = typography.displayAmount.fontSize,
+            stepSize = 0.5.sp,
+        )
+    }
 
     LaunchedEffect(showZeroValidation) {
         if (showZeroValidation) {
@@ -61,41 +73,24 @@ fun AmountDisplay(
             style = typography.eyebrow,
             color = colors.muted,
         )
-        Row(
-            modifier = Modifier.padding(top = dimens.space8),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = currencySymbol,
-                style = typography.displayAmount,
-                color = colors.primary,
-            )
-            if (isZero) {
-                Text(
-                    text = amountText,
-                    style = typography.displayAmount,
-                    color = colors.muted2,
-                )
-            } else {
-                // Whole part reads in full ink; the decimals recede to muted ink.
-                val decimalIndex = amountText.indexOf('.')
-                Text(
-                    text = buildAnnotatedString {
-                        if (decimalIndex < 0) {
-                            withStyle(SpanStyle(color = colors.onSurface)) { append(amountText) }
-                        } else {
-                            withStyle(SpanStyle(color = colors.onSurface)) {
-                                append(amountText.substring(0, decimalIndex))
-                            }
-                            withStyle(SpanStyle(color = colors.onSurfaceMuted)) {
-                                append(amountText.substring(decimalIndex))
-                            }
-                        }
-                    },
-                    style = typography.displayAmount,
-                )
-            }
-        }
+        BasicText(
+            text = buildAmountLine(
+                currencySymbol = currencySymbol,
+                amountText = amountText,
+                isZero = isZero,
+                primaryColor = colors.primary,
+                amountColor = if (isZero) colors.muted2 else colors.onSurface,
+                decimalColor = colors.onSurfaceMuted,
+            ),
+            style = typography.displayAmount,
+            autoSize = amountAutoSize,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Clip,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = dimens.space8),
+        )
         if (isZero && showZeroValidation) {
             Text(
                 text = zeroHelperMessage,
@@ -103,6 +98,38 @@ fun AmountDisplay(
                 color = colors.primary,
                 modifier = Modifier.padding(top = dimens.space8),
             )
+        }
+    }
+}
+
+private fun buildAmountLine(
+    currencySymbol: String,
+    amountText: String,
+    isZero: Boolean,
+    primaryColor: Color,
+    amountColor: Color,
+    decimalColor: Color,
+) = buildAnnotatedString {
+    withStyle(SpanStyle(color = primaryColor)) {
+        append(currencySymbol)
+    }
+    if (isZero) {
+        withStyle(SpanStyle(color = amountColor)) {
+            append(amountText)
+        }
+        return@buildAnnotatedString
+    }
+    val decimalIndex = amountText.indexOf('.')
+    if (decimalIndex < 0) {
+        withStyle(SpanStyle(color = amountColor)) {
+            append(amountText)
+        }
+    } else {
+        withStyle(SpanStyle(color = amountColor)) {
+            append(amountText.substring(0, decimalIndex))
+        }
+        withStyle(SpanStyle(color = decimalColor)) {
+            append(amountText.substring(decimalIndex))
         }
     }
 }

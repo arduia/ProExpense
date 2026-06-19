@@ -105,8 +105,24 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun nav_surface_alpha_matches_handoff() {
-        assertEquals(0.86f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
+    fun nav_surface_alpha_is_opaque_white() {
+        assertEquals(1f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
+    }
+
+    @Test
+    fun summary_amount_uses_geist_mono() {
+        assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.summaryAmount.fontFamily)
+        assertEquals(40f, ProDefaultTypography.summaryAmount.fontSize.value)
+    }
+
+    @Test
+    fun nav_fab_drop_offset_matches_handoff() {
+        assertEquals(4f, ProDefaultDimens.navFabDropOffset.value)
+    }
+
+    @Test
+    fun nav_bottom_margin_matches_handoff() {
+        assertEquals(8f, ProDefaultDimens.navBottomMargin.value)
     }
 
     @Test

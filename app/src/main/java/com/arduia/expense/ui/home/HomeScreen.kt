@@ -1,5 +1,8 @@
 package com.arduia.expense.ui.home
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,8 +15,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.DayHeader
 import com.arduia.expense.ui.design.ProIconGlyph
@@ -37,43 +46,96 @@ fun HomeScreenContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val cardShape = ProExpenseTheme.shapes.card
+    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = dimens.space18, vertical = dimens.space24),
+        contentPadding = PaddingValues(
+            start = dimens.space18,
+            end = dimens.space18,
+            top = dimens.space24,
+            bottom = dimens.space24 + dimens.navShellBottomInset,
+        ),
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         item(key = "home-summary") {
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
                 if (state.greetingName.isNotBlank()) {
+                    val greetingPrefix = stringResource(R.string.home_greeting_prefix)
+                    val flourish = typography.displayFlourish
                     Text(
-                        text = stringResource(R.string.home_greeting, state.greetingName),
+                        text = buildAnnotatedString {
+                            withStyle(
+                                SpanStyle(
+                                    color = colors.onSurface,
+                                    fontFamily = flourish.fontFamily,
+                                    fontSize = flourish.fontSize,
+                                    fontStyle = flourish.fontStyle,
+                                    letterSpacing = flourish.letterSpacing,
+                                ),
+                            ) {
+                                append(greetingPrefix)
+                            }
+                            withStyle(
+                                SpanStyle(
+                                    color = colors.primary,
+                                    fontFamily = flourish.fontFamily,
+                                    fontSize = flourish.fontSize,
+                                    fontStyle = flourish.fontStyle,
+                                    letterSpacing = flourish.letterSpacing,
+                                ),
+                            ) {
+                                append(state.greetingName)
+                            }
+                        },
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (cardElevation != null) {
+                                Modifier.shadow(
+                                    elevation = cardElevation.blur,
+                                    shape = cardShape,
+                                    spotColor = cardElevation.color,
+                                    ambientColor = cardElevation.color,
+                                )
+                            } else {
+                                Modifier
+                            },
+                        )
+                        .clip(cardShape)
+                        .border(BorderStroke(1.dp, colors.line), cardShape)
+                        .background(colors.surface)
+                        .padding(dimens.cardPadding),
+                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_spend_this_month),
                         style = typography.eyebrow,
                         color = colors.muted,
                     )
-                }
-                Text(
-                    text = stringResource(R.string.home_spend_this_month),
-                    style = typography.eyebrow,
-                    color = colors.muted,
-                )
-                Text(
-                    text = state.monthSpend,
-                    style = typography.displayAmount,
-                    color = colors.onSurface,
-                )
-                if (state.monthDelta != null) {
                     Text(
-                        text = state.monthDelta,
-                        style = typography.caption,
-                        color = colors.success,
+                        text = state.monthSpend,
+                        style = typography.summaryAmount,
+                        color = colors.onSurface,
                     )
-                } else if (state.showEmptyHint) {
-                    Text(
-                        text = stringResource(R.string.home_empty_hint),
-                        style = typography.body,
-                        color = colors.onSurfaceMuted,
-                    )
+                    if (state.monthDelta != null) {
+                        Text(
+                            text = state.monthDelta,
+                            style = typography.caption,
+                            color = colors.success,
+                        )
+                    } else if (state.showEmptyHint) {
+                        Text(
+                            text = stringResource(R.string.home_empty_hint),
+                            style = typography.body,
+                            color = colors.onSurfaceMuted,
+                        )
+                    }
                 }
 
                 Row(
@@ -83,32 +145,24 @@ fun HomeScreenContent(
                     QuickAccessTile(
                         label = stringResource(R.string.quick_access_reports),
                         icon = ProIconGlyph.FeatReports,
-                        tint = colors.primaryTint,
-                        accent = colors.primaryDeep,
                         onClick = onReportsClick,
                         modifier = Modifier.weight(1f),
                     )
                     QuickAccessTile(
                         label = stringResource(R.string.quick_access_debt),
                         icon = ProIconGlyph.FeatDebt,
-                        tint = colors.successTint,
-                        accent = colors.success,
                         onClick = onDebtClick,
                         modifier = Modifier.weight(1f),
                     )
                     QuickAccessTile(
                         label = stringResource(R.string.quick_access_split),
                         icon = ProIconGlyph.FeatSplit,
-                        tint = colors.tagTint,
-                        accent = colors.tagDeep,
                         onClick = onSplitClick,
                         modifier = Modifier.weight(1f),
                     )
                     QuickAccessTile(
                         label = stringResource(R.string.quick_access_events),
                         icon = ProIconGlyph.FeatEvents,
-                        tint = colors.highlightSoft,
-                        accent = colors.highlightDeep,
                         onClick = onEventsClick,
                         modifier = Modifier.weight(1f),
                     )

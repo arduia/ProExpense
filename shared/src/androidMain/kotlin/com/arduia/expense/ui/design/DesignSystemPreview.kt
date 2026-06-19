@@ -195,29 +195,21 @@ fun ProDesignSystemChromeContent() {
             QuickAccessTile(
                 label = "Reports",
                 icon = ProIconGlyph.FeatReports,
-                tint = colors.primaryTint,
-                accent = colors.primaryDeep,
                 onClick = {},
             )
             QuickAccessTile(
                 label = "Debt",
                 icon = ProIconGlyph.FeatDebt,
-                tint = colors.successTint,
-                accent = colors.success,
                 onClick = {},
             )
             QuickAccessTile(
                 label = "Split",
                 icon = ProIconGlyph.FeatSplit,
-                tint = colors.tagTint,
-                accent = colors.tagDeep,
                 onClick = {},
             )
             QuickAccessTile(
                 label = "Events",
                 icon = ProIconGlyph.FeatEvents,
-                tint = colors.highlightSoft,
-                accent = colors.highlightDeep,
                 onClick = {},
             )
         }

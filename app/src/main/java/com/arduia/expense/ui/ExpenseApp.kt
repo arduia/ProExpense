@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,7 +53,6 @@ fun ExpenseApp(
     var journalSearch by rememberSaveable { mutableStateOf("") }
     var journalFilter by rememberSaveable { mutableStateOf("All") }
     var saveToastMessage by rememberSaveable { mutableStateOf<String?>(null) }
-    val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val filteredJournal = remember(journalSearch, journalFilter) {
@@ -88,33 +88,12 @@ fun ExpenseApp(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             containerColor = ProExpenseTheme.colors.paper,
-            bottomBar = {
-                if (showBottomNav) {
-                    HomeBottomNav(
-                        modifier = Modifier.navigationBarsPadding(),
-                        selectedTab = selectedTab,
-                        onTabSelected = { tab ->
-                            if (tab != HomeNavTab.Add) {
-                                selectedTab = tab
-                            }
-                        },
-                        onAddClick = { quickLogOpen = true },
-                    )
-                }
-            },
         ) { innerPadding ->
             AnimatedContent(
                 targetState = navState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-                    .then(
-                        if (showBottomNav) {
-                            Modifier.padding(bottom = dimens.navShellBottomInset)
-                        } else {
-                            Modifier
-                        },
-                    ),
+                    .padding(innerPadding),
                 transitionSpec = { appNavTransition(motion, reduceMotion) },
                 label = "expenseAppNav",
             ) { state ->
@@ -158,6 +137,21 @@ fun ExpenseApp(
                     }
                 }
             }
+        }
+
+        if (showBottomNav) {
+            HomeBottomNav(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding(),
+                selectedTab = selectedTab,
+                onTabSelected = { tab ->
+                    if (tab != HomeNavTab.Add) {
+                        selectedTab = tab
+                    }
+                },
+                onAddClick = { quickLogOpen = true },
+            )
         }
 
         AnimatedVisibility(

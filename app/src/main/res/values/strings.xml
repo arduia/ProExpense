@@ -170,7 +170,8 @@
     <string name="new_event">+ New event</string>
 
     <!-- Home -->
-    <string name="home_greeting">Hello, %1$s</string>
+    <string name="home_greeting">Hi, %1$s</string>
+    <string name="home_greeting_prefix">Hi, </string>
     <string name="home_spend_this_month">Spent this month</string>
     <string name="quick_access_reports">Reports</string>
     <string name="quick_access_debt">Debts</string>

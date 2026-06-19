@@ -31,12 +31,21 @@ class ProNavTransitionsTest {
     }
 
     @Test
-    fun tab_switch_is_fade() {
+    fun tab_switch_forward_is_slide_forward() {
         val kind = resolveNavTransitionKind(
             from = state(tab = HomeNavTab.Home, stackSize = 0),
             to = state(tab = HomeNavTab.Budget, stackSize = 0),
         )
-        assertEquals(NavTransitionKind.TabFade, kind)
+        assertEquals(NavTransitionKind.TabForward, kind)
+    }
+
+    @Test
+    fun tab_switch_backward_is_slide_backward() {
+        val kind = resolveNavTransitionKind(
+            from = state(tab = HomeNavTab.Journal, stackSize = 0),
+            to = state(tab = HomeNavTab.Home, stackSize = 0),
+        )
+        assertEquals(NavTransitionKind.TabBackward, kind)
     }
 
     @Test

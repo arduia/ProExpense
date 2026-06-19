@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -73,17 +74,16 @@ fun HomeBottomNav(
     val navElevation = ProExpenseTheme.elevation.nav.firstOrNull()
 
     Box(
-        // Height = FAB poke above the bar + bar + floating bottom gap.
         modifier = modifier
             .fillMaxWidth()
-            .height(dimens.space12 + dimens.navBarHeight + dimens.space8),
+            .height(dimens.navFabOffset + dimens.navBarHeight + dimens.navBottomMargin),
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimens.navBarHeight)
                 .align(Alignment.BottomCenter)
-                .offset(y = -dimens.space8)
+                .padding(bottom = dimens.navBottomMargin)
                 .then(
                     if (navElevation != null) {
                         Modifier.shadow(
@@ -98,11 +98,16 @@ fun HomeBottomNav(
                 ),
             shape = ProExpenseTheme.shapes.navBar,
             color = colors.surface.copy(alpha = dimens.navSurfaceAlpha),
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = dimens.space8),
+                    .padding(
+                        horizontal = dimens.space8,
+                        vertical = dimens.navItemPaddingVertical,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 homeNavLeadingItems.forEach { item ->
@@ -126,7 +131,9 @@ fun HomeBottomNav(
         }
         HomeAddFab(
             onClick = onAddClick,
-            modifier = Modifier.align(Alignment.TopCenter),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = dimens.navFabDropOffset),
         )
     }
 }
@@ -155,9 +162,9 @@ private fun HomeNavSlot(
 
     Column(
         modifier = modifier
-            .defaultMinSize(minHeight = dimens.touchTargetMin)
-            .padding(vertical = dimens.space4),
+            .defaultMinSize(minHeight = dimens.touchTargetMin),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Column(
             modifier = Modifier
@@ -168,8 +175,9 @@ private fun HomeNavSlot(
                     shape = RoundedCornerShape(dimens.navCornerRadius),
                     interactionSource = interactionSource,
                     role = Role.Tab,
+                    showRipple = false,
                 )
-                .padding(horizontal = dimens.space8, vertical = dimens.space4),
+                .padding(horizontal = dimens.space8),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(dimens.space4),
         ) {

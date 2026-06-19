@@ -9,8 +9,6 @@ import com.arduia.expense.ui.theme.backwardScreenExit
 import com.arduia.expense.ui.theme.forwardScreenEnter
 import com.arduia.expense.ui.theme.forwardScreenExit
 import com.arduia.expense.ui.theme.stepTransition
-import com.arduia.expense.ui.theme.tabFadeEnter
-import com.arduia.expense.ui.theme.tabFadeExit
 import androidx.compose.animation.togetherWith
 
 data class AppNavState(
@@ -24,7 +22,16 @@ data class AppNavState(
 enum class NavTransitionKind {
     Forward,
     Backward,
-    TabFade,
+    TabForward,
+    TabBackward,
+}
+
+private fun HomeNavTab.slideOrdinal(): Int = when (this) {
+    HomeNavTab.Home -> 0
+    HomeNavTab.Budget -> 1
+    HomeNavTab.Add -> 2
+    HomeNavTab.Journal -> 3
+    HomeNavTab.More -> 4
 }
 
 fun resolveNavTransitionKind(
@@ -36,7 +43,13 @@ fun resolveNavTransitionKind(
         to.stackSize < from.stackSize -> NavTransitionKind.Backward
         from.displayKey.startsWith("tab:") &&
             to.displayKey.startsWith("tab:") &&
-            from.displayKey != to.displayKey -> NavTransitionKind.TabFade
+            from.displayKey != to.displayKey -> {
+            if (to.tab.slideOrdinal() >= from.tab.slideOrdinal()) {
+                NavTransitionKind.TabForward
+            } else {
+                NavTransitionKind.TabBackward
+            }
+        }
         from.displayKey != to.displayKey -> NavTransitionKind.Forward
         else -> NavTransitionKind.Forward
     }
@@ -51,8 +64,10 @@ fun AnimatedContentTransitionScope<AppNavState>.appNavTransition(
             motion.forwardScreenEnter(reduceMotion) togetherWith motion.forwardScreenExit(reduceMotion)
         NavTransitionKind.Backward ->
             motion.backwardScreenEnter(reduceMotion) togetherWith motion.backwardScreenExit(reduceMotion)
-        NavTransitionKind.TabFade ->
-            motion.tabFadeEnter(reduceMotion) togetherWith motion.tabFadeExit(reduceMotion)
+        NavTransitionKind.TabForward ->
+            motion.forwardScreenEnter(reduceMotion) togetherWith motion.forwardScreenExit(reduceMotion)
+        NavTransitionKind.TabBackward ->
+            motion.backwardScreenEnter(reduceMotion) togetherWith motion.backwardScreenExit(reduceMotion)
     }
 }
 

@@ -100,8 +100,8 @@ fun FirstLaunchFlow(
                     homeCurrency = it
                     showCurrencyPicker = false
                 },
-                onContinue = { step = FirstLaunchStep.PinSetup },
-                onSkip = { step = FirstLaunchStep.PinSetup },
+                onContinue = { step = FirstLaunchStep.Main },
+                onSkip = { step = FirstLaunchStep.Main },
             )
             FirstLaunchStep.PinSetup -> PinSetupScreenContent(
                 modifier = Modifier,
