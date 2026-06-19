@@ -22,6 +22,9 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
 fun ClearDataScreenContent(
+    showConfirmStep: Boolean,
+    onRequestClear: () -> Unit,
+    onCancelConfirm: () -> Unit,
     onBack: () -> Unit,
     onConfirmClear: () -> Unit,
     modifier: Modifier = Modifier,
@@ -47,20 +50,46 @@ fun ClearDataScreenContent(
                 .fillMaxWidth()
                 .padding(horizontal = dimens.space18, vertical = dimens.space24),
         ) {
-            Text(
-                text = stringResource(R.string.clear_data_description),
-                style = typography.body,
-                color = colors.onSurfaceMuted,
-            )
-            ProButton(
-                text = stringResource(R.string.clear_data_confirm),
-                onClick = onConfirmClear,
-                variant = ProButtonVariant.Ghost,
-                size = ProButtonSize.Lg,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space24),
-            )
+            if (!showConfirmStep) {
+                Text(
+                    text = stringResource(R.string.clear_data_description),
+                    style = typography.body,
+                    color = colors.onSurfaceMuted,
+                )
+                ProButton(
+                    text = stringResource(R.string.clear_data_confirm),
+                    onClick = onRequestClear,
+                    variant = ProButtonVariant.Ghost,
+                    size = ProButtonSize.Lg,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space24),
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.clear_data_confirm_prompt),
+                    style = typography.body,
+                    color = colors.danger,
+                )
+                ProButton(
+                    text = stringResource(R.string.clear_data_confirm),
+                    onClick = onConfirmClear,
+                    variant = ProButtonVariant.Ghost,
+                    size = ProButtonSize.Lg,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space24),
+                )
+                ProButton(
+                    text = stringResource(R.string.cancel),
+                    onClick = onCancelConfirm,
+                    variant = ProButtonVariant.Secondary,
+                    size = ProButtonSize.Lg,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space12),
+                )
+            }
         }
     }
 }
@@ -74,6 +103,31 @@ fun ClearDataScreenContent(
 @Composable
 private fun ClearDataPreview() {
     ProExpenseTheme {
-        ClearDataScreenContent(onBack = {}, onConfirmClear = {})
+        ClearDataScreenContent(
+            showConfirmStep = false,
+            onRequestClear = {},
+            onCancelConfirm = {},
+            onBack = {},
+            onConfirmClear = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Clear data — confirm",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ClearDataConfirmPreview() {
+    ProExpenseTheme {
+        ClearDataScreenContent(
+            showConfirmStep = true,
+            onRequestClear = {},
+            onCancelConfirm = {},
+            onBack = {},
+            onConfirmClear = {},
+        )
     }
 }

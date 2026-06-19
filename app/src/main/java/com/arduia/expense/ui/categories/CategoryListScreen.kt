@@ -31,6 +31,8 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 @Composable
 fun CategoryListScreenContent(
     categories: List<Pair<String, String>>,
+    selectedCategoryId: String?,
+    onCategorySelected: (String) -> Unit,
     newCategoryName: String,
     onNewCategoryChange: (String) -> Unit,
     duplicateError: Boolean,
@@ -76,8 +78,8 @@ fun CategoryListScreenContent(
                     CategoryChip(
                         label = label,
                         categoryId = id,
-                        selected = false,
-                        onClick = {},
+                        selected = id == selectedCategoryId,
+                        onClick = { onCategorySelected(id) },
                     )
                 }
             }
@@ -122,6 +124,8 @@ private fun CategoryListPreview() {
     ProExpenseTheme {
         CategoryListScreenContent(
             categories = previewCategoryItems,
+            selectedCategoryId = "food",
+            onCategorySelected = {},
             newCategoryName = "",
             onNewCategoryChange = {},
             duplicateError = false,
@@ -142,6 +146,8 @@ private fun CategoryDuplicatePreview() {
     ProExpenseTheme {
         CategoryListScreenContent(
             categories = previewCategoryItems,
+            selectedCategoryId = null,
+            onCategorySelected = {},
             newCategoryName = "Food",
             onNewCategoryChange = {},
             duplicateError = true,

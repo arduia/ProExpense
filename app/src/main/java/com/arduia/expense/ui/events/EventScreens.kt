@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -18,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
-import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.ProButton
@@ -45,39 +46,42 @@ fun EventListScreenContent(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(colors.paper)
-            .verticalScroll(rememberScrollState())
             .padding(horizontal = dimens.space18, vertical = dimens.space24),
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-                Text(text = stringResource(R.string.budget_tracker), style = typography.eyebrow, color = colors.muted)
-                Text(text = stringResource(R.string.events), style = typography.screenTitle, color = colors.onSurface)
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                    Text(text = stringResource(R.string.budget_tracker), style = typography.eyebrow, color = colors.muted)
+                    Text(text = stringResource(R.string.events), style = typography.screenTitle, color = colors.onSurface)
+                }
+                ProButton(text = stringResource(R.string.new_event), onClick = onNewEvent, size = ProButtonSize.Sm)
             }
-            ProButton(text = stringResource(R.string.new_event), onClick = onNewEvent, size = ProButtonSize.Sm)
         }
 
         if (events.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space32),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimens.space8),
-            ) {
-                Text(text = stringResource(R.string.event_empty_title), style = typography.sectionHead, color = colors.onSurface)
-                Text(text = stringResource(R.string.event_empty_subtitle), style = typography.body, color = colors.onSurfaceMuted)
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space32),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    Text(text = stringResource(R.string.event_empty_title), style = typography.sectionHead, color = colors.onSurface)
+                    Text(text = stringResource(R.string.event_empty_subtitle), style = typography.body, color = colors.onSurfaceMuted)
+                }
             }
         } else {
-            events.forEach { event ->
+            items(events, key = { it.title }) { event ->
                 EventBudgetCard(
                     state = event,
                     modifier = Modifier.proClickable(onClick = { onEventClick(event.title) }, shape = ProExpenseTheme.shapes.card),
@@ -93,6 +97,7 @@ fun EventCreateScreenContent(
     onNameChange: (String) -> Unit,
     dateRange: String,
     amountText: String,
+    onAmountChange: (String) -> Unit,
     showErrors: Boolean,
     onBack: () -> Unit,
     onSave: () -> Unit,
@@ -129,14 +134,20 @@ fun EventCreateScreenContent(
             Text(text = stringResource(R.string.event_date_range), style = typography.eyebrow, color = colors.muted)
             Text(text = dateRange, style = typography.bodySemiBold, color = colors.onSurface)
             Text(text = stringResource(R.string.event_budget_amount), style = typography.eyebrow, color = colors.muted)
-            AmountDisplay(
-                amountText = amountText.ifBlank { "0" },
-                isZero = amountText.isBlank() || amountText == "0",
-                showZeroValidation = showErrors && (amountText.isBlank() || amountText == "0"),
-                zeroHelperMessage = stringResource(R.string.amount_must_be_greater_than_zero),
+            ProfileNameField(
+                value = amountText,
+                onValueChange = onAmountChange,
+                placeholder = stringResource(R.string.amount),
             )
             if (showErrors && name.isBlank()) {
-                Text(text = stringResource(R.string.category_duplicate_error), style = typography.caption, color = colors.danger)
+                Text(text = stringResource(R.string.event_name_required), style = typography.caption, color = colors.danger)
+            }
+            if (showErrors && (amountText.isBlank() || amountText == "0")) {
+                Text(
+                    text = stringResource(R.string.amount_must_be_greater_than_zero),
+                    style = typography.caption,
+                    color = colors.danger,
+                )
             }
             ProButton(
                 text = stringResource(R.string.event_save),
@@ -177,27 +188,36 @@ fun EventDetailScreenContent(
             onBack = onBack,
             modifier = Modifier.padding(horizontal = dimens.space18),
         )
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
                 .padding(horizontal = dimens.space18, vertical = dimens.space16),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            EventBudgetCard(
-                state = EventBudgetCardState(
-                    title = title,
-                    dateRange = dateRange,
-                    spentLabel = spentLabel,
-                    budgetLabel = budgetLabel,
-                    progress = progress,
-                    isOverBudget = progress > 1f,
-                ),
-            )
-            if (isClosed) {
-                Text(text = stringResource(R.string.event_closed_label), style = typography.caption, color = colors.muted)
+            item {
+                EventBudgetCard(
+                    state = EventBudgetCardState(
+                        title = title,
+                        dateRange = dateRange,
+                        spentLabel = spentLabel,
+                        budgetLabel = budgetLabel,
+                        progress = progress,
+                        isOverBudget = progress > 1f,
+                    ),
+                )
             }
-            Text(text = stringResource(R.string.event_linked_transactions), style = typography.sectionHead, color = colors.onSurface)
-            transactions.forEach { item ->
+            if (isClosed) {
+                item {
+                    Text(text = stringResource(R.string.event_closed_label), style = typography.caption, color = colors.muted)
+                }
+            }
+            item {
+                Text(text = stringResource(R.string.event_linked_transactions), style = typography.sectionHead, color = colors.onSurface)
+            }
+            items(
+                items = transactions,
+                key = { "${it.categoryId}-${it.note}-${it.meta}" },
+            ) { item ->
                 TransactionRow(
                     categoryId = item.categoryId,
                     note = item.note,
@@ -234,6 +254,7 @@ private fun EventCreatePreview() {
             onNameChange = {},
             dateRange = "May 12 — May 26",
             amountText = "2000",
+            onAmountChange = {},
             showErrors = false,
             onBack = {},
             onSave = {},
