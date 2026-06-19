@@ -8,9 +8,11 @@ COMMIT_SHA="${3:-}"
 RUN_URL="${4:-}"
 ARTIFACT_NAME="${5:-}"
 APK_FILE="${6:-}"
+APK_DOWNLOAD_URL="${7:-}"
+ARTIFACT_URL="${8:-}"
 
 if [[ -z "$STATUS" || -z "$BRANCH" || -z "$COMMIT_SHA" || -z "$RUN_URL" || -z "$ARTIFACT_NAME" ]]; then
-  echo "Usage: $0 <success|failure> <branch> <commit_sha> <run_url> <artifact_name> [apk_file]" >&2
+  echo "Usage: $0 <success|failure> <branch> <commit_sha> <run_url> <artifact_name> [apk_file] [apk_download_url] [artifact_url]" >&2
   exit 1
 fi
 
@@ -31,7 +33,13 @@ SHORT_SHA="${COMMIT_SHA:0:7}"
 if [[ "$STATUS" == "success" ]]; then
   EMOJI=":white_check_mark:"
   HEADLINE="${APP_NAME} APK build succeeded"
-  DETAIL="Download the APK from the workflow artifacts."
+  if [[ -n "$APK_DOWNLOAD_URL" ]]; then
+    DETAIL="Install the APK using the direct download link below."
+  elif [[ -n "$ARTIFACT_URL" ]]; then
+    DETAIL="Download the APK from the GitHub artifact page (GitHub login required)."
+  else
+    DETAIL="Download the APK from the workflow run."
+  fi
 else
   EMOJI=":x:"
   HEADLINE="${APP_NAME} APK build failed"
@@ -45,6 +53,23 @@ if [[ -n "$APK_FILE" && -f "$APK_FILE" ]]; then
   APK_DETAIL=" APK size: ${APK_MB} MB."
 fi
 
+LINK_LINES=""
+if [[ -n "$APK_DOWNLOAD_URL" ]]; then
+  LINK_LINES+="<${APK_DOWNLOAD_URL}|Download APK (direct link)>"
+fi
+if [[ -n "$ARTIFACT_URL" ]]; then
+  if [[ -n "$LINK_LINES" ]]; then
+    LINK_LINES+="\n"
+  fi
+  LINK_LINES+="<${ARTIFACT_URL}|GitHub artifact page>"
+fi
+if [[ -n "$RUN_URL" ]]; then
+  if [[ -n "$LINK_LINES" ]]; then
+    LINK_LINES+="\n"
+  fi
+  LINK_LINES+="<${RUN_URL}|View workflow run>"
+fi
+
 PAYLOAD="$(jq -n \
   --arg emoji "$EMOJI" \
   --arg headline "$HEADLINE" \
@@ -53,7 +78,7 @@ PAYLOAD="$(jq -n \
   --arg sha "$SHORT_SHA" \
   --arg artifact "$ARTIFACT_NAME" \
   --arg detail "${DETAIL}${APK_DETAIL}" \
-  --arg run_url "$RUN_URL" \
+  --arg links "$LINK_LINES" \
   '{
     text: ($emoji + " " + $headline),
     blocks: [
@@ -74,7 +99,7 @@ PAYLOAD="$(jq -n \
         type: "section",
         text: {
           type: "mrkdwn",
-          text: ($detail + "\n<" + $run_url + "|Open GitHub Actions run>")
+          text: ($detail + "\n" + $links)
         }
       }
     ]

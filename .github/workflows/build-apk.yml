@@ -16,6 +16,10 @@ concurrency:
 
 env:
   APK_ARTIFACT_NAME: pro-expense-dev-debug
+  APK_DOWNLOAD_NAME: pro-expense-dev-debug.apk
+
+permissions:
+  contents: write
 
 jobs:
   build_apk:
@@ -62,13 +66,37 @@ jobs:
           fi
           echo "path=$APK_PATH" >> "$GITHUB_OUTPUT"
 
+      - name: Stage APK for release
+        id: staged
+        run: |
+          mkdir -p build/ci
+          cp "${{ steps.apk.outputs.path }}" "build/ci/${{ env.APK_DOWNLOAD_NAME }}"
+          TAG="apk-dev-${{ github.sha }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "download_url=${{ github.server_url }}/${{ github.repository }}/releases/download/${TAG}/${{ env.APK_DOWNLOAD_NAME }}" >> "$GITHUB_OUTPUT"
+
       - name: Upload APK artifact
+        id: upload_apk
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APK_ARTIFACT_NAME }}
-          path: ${{ steps.apk.outputs.path }}
+          path: build/ci/${{ env.APK_DOWNLOAD_NAME }}
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish pre-release with direct APK download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.staged.outputs.tag }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release delete "$TAG" --yes
+          fi
+          gh release create "$TAG" \
+            "build/ci/${{ env.APK_DOWNLOAD_NAME }}" \
+            --title "Dev APK ${GITHUB_SHA:0:7}" \
+            --notes "Automated dev debug build from \`${{ github.ref_name }}\`." \
+            --prerelease
 
       - name: Notify Slack on success
         if: success()
@@ -81,7 +109,9 @@ jobs:
             "${{ github.sha }}" \
             "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             "${{ env.APK_ARTIFACT_NAME }}" \
-            "${{ steps.apk.outputs.path }}"
+            "build/ci/${{ env.APK_DOWNLOAD_NAME }}" \
+            "${{ steps.staged.outputs.download_url }}" \
+            "${{ steps.upload_apk.outputs.artifact-url }}"
 
       - name: Notify Slack on failure
         if: failure()
