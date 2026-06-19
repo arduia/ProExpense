@@ -102,7 +102,10 @@ fun HomeBottomNav(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = dimens.space8),
+                    .padding(
+                        horizontal = dimens.space8,
+                        vertical = dimens.navItemPaddingVertical,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 homeNavLeadingItems.forEach { item ->
@@ -155,9 +158,9 @@ private fun HomeNavSlot(
 
     Column(
         modifier = modifier
-            .defaultMinSize(minHeight = dimens.touchTargetMin)
-            .padding(vertical = dimens.space4),
+            .defaultMinSize(minHeight = dimens.touchTargetMin),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Column(
             modifier = Modifier
@@ -168,8 +171,9 @@ private fun HomeNavSlot(
                     shape = RoundedCornerShape(dimens.navCornerRadius),
                     interactionSource = interactionSource,
                     role = Role.Tab,
+                    showRipple = false,
                 )
-                .padding(horizontal = dimens.space8, vertical = dimens.space4),
+                .padding(horizontal = dimens.space8),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(dimens.space4),
         ) {

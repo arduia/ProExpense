@@ -116,6 +116,7 @@ fun Modifier.proSelectable(
     enabled: Boolean = true,
     role: Role = Role.Tab,
     scaleOnPress: Boolean = true,
+    showRipple: Boolean = true,
 ): Modifier {
     val motion = ProExpenseTheme.motion
     val pressed by interactionSource.collectIsPressedAsState()
@@ -130,6 +131,6 @@ fun Modifier.proSelectable(
             enabled = enabled,
             role = role,
             interactionSource = interactionSource,
-            indication = proBoundedRipple(),
+            indication = if (showRipple) proBoundedRipple() else null,
         )
 }
