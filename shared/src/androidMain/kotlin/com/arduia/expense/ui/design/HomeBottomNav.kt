@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -70,7 +69,10 @@ fun HomeBottomNav(
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val navElevation = ProExpenseTheme.elevation.nav.firstOrNull()
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -81,9 +83,21 @@ fun HomeBottomNav(
                 .fillMaxWidth()
                 .height(dimens.navBarHeight)
                 .align(Alignment.BottomCenter)
-                .padding(bottom = dimens.navBottomMargin),
+                .padding(bottom = dimens.navBottomMargin)
+                .then(
+                    if (navElevation != null) {
+                        Modifier.shadow(
+                            elevation = navElevation.blur,
+                            shape = ProExpenseTheme.shapes.navBar,
+                            spotColor = navElevation.color,
+                            ambientColor = navElevation.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ),
             shape = ProExpenseTheme.shapes.navBar,
-            color = Color.Transparent,
+            color = colors.surface.copy(alpha = dimens.navSurfaceAlpha),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
