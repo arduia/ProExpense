@@ -42,14 +42,17 @@ fun resolveNavTransitionKind(
     }
 }
 
-fun AnimatedContentTransitionScope<AppNavState>.appNavTransition(motion: ProMotion): ContentTransform {
+fun AnimatedContentTransitionScope<AppNavState>.appNavTransition(
+    motion: ProMotion,
+    reduceMotion: Boolean = false,
+): ContentTransform {
     return when (resolveNavTransitionKind(initialState, targetState)) {
         NavTransitionKind.Forward ->
-            motion.forwardScreenEnter() togetherWith motion.forwardScreenExit()
+            motion.forwardScreenEnter(reduceMotion) togetherWith motion.forwardScreenExit(reduceMotion)
         NavTransitionKind.Backward ->
-            motion.backwardScreenEnter() togetherWith motion.backwardScreenExit()
+            motion.backwardScreenEnter(reduceMotion) togetherWith motion.backwardScreenExit(reduceMotion)
         NavTransitionKind.TabFade ->
-            motion.tabFadeEnter() togetherWith motion.tabFadeExit()
+            motion.tabFadeEnter(reduceMotion) togetherWith motion.tabFadeExit(reduceMotion)
     }
 }
 
@@ -57,4 +60,5 @@ fun stepTransition(
     motion: ProMotion,
     fromIndex: Int,
     toIndex: Int,
-): ContentTransform = motion.stepTransition(fromIndex, toIndex)
+    reduceMotion: Boolean = false,
+): ContentTransform = motion.stepTransition(fromIndex, toIndex, reduceMotion)

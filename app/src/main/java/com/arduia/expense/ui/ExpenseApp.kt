@@ -36,6 +36,7 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.backwardScreenExit
 import com.arduia.expense.ui.theme.forwardScreenEnter
+import com.arduia.expense.ui.theme.rememberProReduceMotion
 
 @Composable
 fun ExpenseApp(
@@ -46,6 +47,7 @@ fun ExpenseApp(
     var quickLogOpen by rememberSaveable { mutableStateOf(false) }
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
+    val reduceMotion = rememberProReduceMotion()
 
     val navigator = remember(backStack, selectedTab) {
         AppNavigator(
@@ -102,7 +104,7 @@ fun ExpenseApp(
                             Modifier
                         },
                     ),
-                transitionSpec = { appNavTransition(motion) },
+                transitionSpec = { appNavTransition(motion, reduceMotion) },
                 label = "expenseAppNav",
             ) { state ->
                 if (state.route != null) {
@@ -150,8 +152,8 @@ fun ExpenseApp(
         AnimatedVisibility(
             visible = quickLogOpen,
             modifier = Modifier.fillMaxSize(),
-            enter = motion.forwardScreenEnter(),
-            exit = motion.backwardScreenExit(),
+            enter = motion.forwardScreenEnter(reduceMotion),
+            exit = motion.backwardScreenExit(reduceMotion),
         ) {
             QuickLogFlow(
                 modifier = Modifier.fillMaxSize(),

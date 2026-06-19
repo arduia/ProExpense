@@ -220,7 +220,7 @@ private fun HomeAddFab(
                 .clip(CircleShape)
                 .background(colors.primary)
                 .semantics { contentDescription = "Add" }
-                .proRippleClickable(
+                .proCircularRippleClickable(
                     onClick = onClick,
                     interactionSource = interactionSource,
                     role = Role.Button,

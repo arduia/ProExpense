@@ -19,6 +19,7 @@ import com.arduia.expense.ui.onboarding.ProfileNameScreen
 import com.arduia.expense.ui.onboarding.SplashScreen
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.rememberProReduceMotion
 
 private enum class FirstLaunchStep {
     Splash,
@@ -46,6 +47,7 @@ fun FirstLaunchFlow(
     var pinDots by rememberSaveable { mutableIntStateOf(0) }
     var securityAnswer by rememberSaveable { mutableStateOf("") }
     val motion = ProExpenseTheme.motion
+    val reduceMotion = rememberProReduceMotion()
 
     AnimatedContent(
         targetState = step,
@@ -55,6 +57,7 @@ fun FirstLaunchFlow(
                 motion = motion,
                 fromIndex = initialState.ordinal,
                 toIndex = targetState.ordinal,
+                reduceMotion = reduceMotion,
             )
         },
         label = "firstLaunchNav",

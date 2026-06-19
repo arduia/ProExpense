@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import com.arduia.expense.feature.logging.AmountInputLogic
 import com.arduia.expense.ui.navigation.stepTransition
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.rememberProReduceMotion
 
 enum class QuickLogStep {
     Amount,
@@ -31,6 +32,7 @@ fun QuickLogFlow(
     val timeLabel = "12:30 PM"
     var eventTag by rememberSaveable { mutableStateOf<String?>(null) }
     val motion = ProExpenseTheme.motion
+    val reduceMotion = rememberProReduceMotion()
 
     AnimatedContent(
         targetState = step,
@@ -40,6 +42,7 @@ fun QuickLogFlow(
                 motion = motion,
                 fromIndex = initialState.ordinal,
                 toIndex = targetState.ordinal,
+                reduceMotion = reduceMotion,
             )
         },
         label = "quickLogNav",

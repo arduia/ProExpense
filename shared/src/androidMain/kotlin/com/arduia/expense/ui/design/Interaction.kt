@@ -4,9 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +20,9 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
 fun proBoundedRipple() = ripple(bounded = true)
+
+@Composable
+fun proIconRipple() = ripple(bounded = false)
 
 @Composable
 fun Modifier.proPressScale(
@@ -41,6 +44,20 @@ fun Modifier.proRippleClickable(
 ): Modifier = clickable(
     interactionSource = interactionSource,
     indication = proBoundedRipple(),
+    enabled = enabled,
+    role = role,
+    onClick = onClick,
+)
+
+@Composable
+fun Modifier.proCircularRippleClickable(
+    onClick: () -> Unit,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true,
+    role: Role? = null,
+): Modifier = clickable(
+    interactionSource = interactionSource,
+    indication = proIconRipple(),
     enabled = enabled,
     role = role,
     onClick = onClick,
@@ -75,12 +92,15 @@ fun Modifier.proIconClickable(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ): Modifier {
-    val dimens = ProExpenseTheme.dimensions
+    val motion = ProExpenseTheme.motion
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale = if (pressed && enabled) motion.pressedScale else 1f
     return this
-        .defaultMinSize(minWidth = dimens.touchTargetMin, minHeight = dimens.touchTargetMin)
-        .proClickable(
+        .minimumInteractiveComponentSize()
+        .scale(scale)
+        .clip(CircleShape)
+        .proCircularRippleClickable(
             onClick = onClick,
-            shape = CircleShape,
             interactionSource = interactionSource,
             enabled = enabled,
             role = Role.Button,
@@ -101,6 +121,7 @@ fun Modifier.proSelectable(
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (scaleOnPress && pressed && enabled) motion.pressedScale else 1f
     return this
+        .minimumInteractiveComponentSize()
         .scale(scale)
         .clip(shape)
         .selectable(

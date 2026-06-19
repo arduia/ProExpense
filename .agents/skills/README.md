@@ -21,6 +21,7 @@ Each subdirectory contains a `SKILL.md` with YAML frontmatter. Cursor discovers 
 
 **Project skills** (not overwritten by `install-android-skills.sh`):
 - `design-handoff-to-compose` — handoff → Compose workflow; linked from `AGENTS.md` § Compose UI.
+- `compose-motion-polish` — interaction affordances, motion tokens, navigation transitions; linked from `AGENTS.md` § Compose UI.
 
 **Official Android skills** (installed/updated via `install-android-skills.sh`):
 
@@ -33,6 +34,7 @@ Project `AGENTS.md` takes precedence over skill guidance when they conflict.
 | Skill | When to use |
 |---|---|
 | **`design-handoff-to-compose`** | **Building Compose UI from `design_handoff_pro_expense/` mockups, PNGs, or HTML prototype** |
+| **`compose-motion-polish`** | **Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
 | `android-cli` | SDK, emulator, docs search, layout inspection |
 | `testing-setup` | Unit, instrumented, screenshot test setup |
 | `edge-to-edge` | System bar insets and window layout |

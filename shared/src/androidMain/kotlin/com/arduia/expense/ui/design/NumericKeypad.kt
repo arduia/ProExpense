@@ -119,10 +119,20 @@ private fun KeypadKey(
                         .background(colors.surface)
                 },
             )
-            .proRippleClickable(
-                onClick = onClick,
-                interactionSource = interactionSource,
-                role = Role.Button,
+            .then(
+                if (isBackspace) {
+                    Modifier.proCircularRippleClickable(
+                        onClick = onClick,
+                        interactionSource = interactionSource,
+                        role = Role.Button,
+                    )
+                } else {
+                    Modifier.proRippleClickable(
+                        onClick = onClick,
+                        interactionSource = interactionSource,
+                        role = Role.Button,
+                    )
+                },
             )
             .defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,

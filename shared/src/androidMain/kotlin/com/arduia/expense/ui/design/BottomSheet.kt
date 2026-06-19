@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.sheetEnter
 import com.arduia.expense.ui.theme.sheetExit
 import androidx.compose.animation.core.tween
@@ -118,6 +119,7 @@ fun ProBottomSheetHost(
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
+    val reduceMotion = rememberProReduceMotion()
 
     AnimatedVisibility(
         visible = true,
@@ -143,8 +145,8 @@ fun ProBottomSheetHost(
             AnimatedVisibility(
                 visible = true,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                enter = motion.sheetEnter(),
-                exit = motion.sheetExit(),
+                enter = motion.sheetEnter(reduceMotion),
+                exit = motion.sheetExit(reduceMotion),
             ) {
                 ProBottomSheet(
                     title = title,

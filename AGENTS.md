@@ -425,6 +425,11 @@ read **`.agents/skills/design-handoff-to-compose/SKILL.md`** first and follow it
 build order (tokens → atoms → molecules → organisms → screen → verify). Bundle paths:
 `design-tokens.json`, `components.yaml`, `screens-manifest.yaml`, `reference-images/`.
 
+**Motion & interaction polish:** When adding or editing Compose UI affordances, animations, or
+navigation transitions, read **`.agents/skills/compose-motion-polish/SKILL.md`**. Reuse
+`Interaction.kt` helpers (`proIconClickable`, `proClickable`), `NavMotion.kt` transition builders,
+and `rememberProReduceMotion()` — never scatter magic durations or put `clickable` on bare icons.
+
 - Split route (with ViewModel) from stateless content composable
 - **Mandatory `@Preview` on every UI composable file** — any file under `app/src/main` or
   `feature/*/src/androidMain` that exposes a public `@Composable` for screens, flows, shells, or
@@ -655,6 +660,7 @@ docs take precedence** when they conflict with a skill.
 | Skill | Relevance |
 |---|---|
 | **`design-handoff-to-compose`** | **Implementing UI from `design_handoff_pro_expense/` — tokens-first, bottom-up, PNG verify** |
+| **`compose-motion-polish`** | **Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
 | `android-cli` | SDK, emulator, docs, layout inspection |
 | `testing-setup` | Unit / instrumented / screenshot tests |
 | `edge-to-edge` | System bar insets |
@@ -691,9 +697,10 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `design/DESIGN-SYSTEM.md` | Legacy path — use `design_handoff_pro_expense/DESIGN-SYSTEM.md` |
 | `design_handoff_pro_expense/` | Design handoff bundle (tokens, components, screens, reference PNGs) |
 | `.agents/skills/design-handoff-to-compose/` | Design handoff → Compose workflow skill |
+| `.agents/skills/compose-motion-polish/` | Motion, navigation transitions, interaction affordances |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
-| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project `design-handoff-to-compose` |
+| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project `design-handoff-to-compose`, `compose-motion-polish` |
 | `.cursor/context/project_codebase.md` | Live codebase snapshot |
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |
