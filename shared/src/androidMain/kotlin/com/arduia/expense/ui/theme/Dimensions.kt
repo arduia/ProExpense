@@ -135,7 +135,7 @@ val ProDefaultDimens = ProDimens(
     navFabDropOffset = 4.dp,
     navBottomMargin = 8.dp,
     navShellBottomInset = 96.dp,
-    navSurfaceAlpha = 0.86f,
+    navSurfaceAlpha = 0f,
     quickAccessIconSize = 36.dp,
     keypadKeyRadius = 12.dp,
 )

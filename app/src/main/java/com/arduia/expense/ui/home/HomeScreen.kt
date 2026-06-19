@@ -51,7 +51,12 @@ fun HomeScreenContent(
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = dimens.space18, vertical = dimens.space24),
+        contentPadding = PaddingValues(
+            start = dimens.space18,
+            end = dimens.space18,
+            top = dimens.space24,
+            bottom = dimens.space24 + dimens.navShellBottomInset,
+        ),
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         item(key = "home-summary") {

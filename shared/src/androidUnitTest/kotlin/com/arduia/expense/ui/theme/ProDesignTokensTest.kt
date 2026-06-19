@@ -105,8 +105,8 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun nav_surface_alpha_matches_handoff() {
-        assertEquals(0.86f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
+    fun nav_surface_alpha_is_transparent() {
+        assertEquals(0f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
     }
 
     @Test

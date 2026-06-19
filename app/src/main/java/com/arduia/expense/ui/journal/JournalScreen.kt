@@ -47,7 +47,12 @@ fun JournalScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(colors.paper),
-        contentPadding = PaddingValues(horizontal = dimens.space18, vertical = dimens.space24),
+        contentPadding = PaddingValues(
+            start = dimens.space18,
+            end = dimens.space18,
+            top = dimens.space24,
+            bottom = dimens.space24 + dimens.navShellBottomInset,
+        ),
         verticalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
         item(key = "journal-header") {
