@@ -116,6 +116,11 @@ class ProDesignTokensTest {
     }
 
     @Test
+    fun nav_fab_drop_offset_matches_handoff() {
+        assertEquals(4f, ProDefaultDimens.navFabDropOffset.value)
+    }
+
+    @Test
     fun nav_bottom_margin_matches_handoff() {
         assertEquals(8f, ProDefaultDimens.navBottomMargin.value)
     }

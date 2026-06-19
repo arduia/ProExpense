@@ -18,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
@@ -54,10 +57,33 @@ fun HomeScreenContent(
         item(key = "home-summary") {
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
                 if (state.greetingName.isNotBlank()) {
+                    val greetingPrefix = stringResource(R.string.home_greeting_prefix)
+                    val flourish = typography.displayFlourish
                     Text(
-                        text = stringResource(R.string.home_greeting, state.greetingName),
-                        style = typography.displayFlourish,
-                        color = colors.onSurface,
+                        text = buildAnnotatedString {
+                            withStyle(
+                                SpanStyle(
+                                    color = colors.onSurface,
+                                    fontFamily = flourish.fontFamily,
+                                    fontSize = flourish.fontSize,
+                                    fontStyle = flourish.fontStyle,
+                                    letterSpacing = flourish.letterSpacing,
+                                ),
+                            ) {
+                                append(greetingPrefix)
+                            }
+                            withStyle(
+                                SpanStyle(
+                                    color = colors.primary,
+                                    fontFamily = flourish.fontFamily,
+                                    fontSize = flourish.fontSize,
+                                    fontStyle = flourish.fontStyle,
+                                    letterSpacing = flourish.letterSpacing,
+                                ),
+                            ) {
+                                append(state.greetingName)
+                            }
+                        },
                     )
                 }
 

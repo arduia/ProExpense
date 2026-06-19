@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -102,26 +101,27 @@ fun SplashScreenContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
+private fun SplashBrandMark(
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
+    Image(
+        painter = painterResource(R.drawable.splash_brand_mark),
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Fit,
+        modifier = modifier.size(88.dp),
+    )
+}
+
+@Composable
 private fun LauncherAppIcon(
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.clip(RoundedCornerShape(22.dp)),
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ic_launcher_background),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
-        Image(
-            painter = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = contentDescription,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit,
-        )
-    }
+    SplashBrandMark(
+        modifier = modifier,
+        contentDescription = contentDescription,
+    )
 }
 
 @Preview(
