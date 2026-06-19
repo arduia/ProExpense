@@ -20,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.proLineHeight
 
 enum class ProButtonVariant {
     Primary,
@@ -63,7 +64,10 @@ fun ProButton(
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed && enabled) motion.pressedScale else 1f
     val textStyle = typography.button.merge(
-        TextStyle(fontSize = buttonSize.fontSizeSp.sp),
+        TextStyle(
+            fontSize = buttonSize.fontSizeSp.sp,
+            lineHeight = proLineHeight(buttonSize.fontSizeSp, 1.4f),
+        ),
     )
     val contentPadding = PaddingValues(
         horizontal = buttonSize.horizontalPadding,

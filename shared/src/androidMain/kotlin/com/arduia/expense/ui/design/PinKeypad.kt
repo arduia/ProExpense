@@ -5,9 +5,7 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,13 +20,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -173,33 +169,30 @@ private fun PinKey(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val motion = ProExpenseTheme.motion
     val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val scale = if (pressed && enabled) motion.pressedScale else 1f
     val isBackspace = label == "backspace"
+    val keyShape = ProExpenseTheme.shapes.keypadKey
+    val rippleShape = if (isBackspace) CircleShape else keyShape
 
     Box(
         modifier = modifier
             .aspectRatio(1.45f)
-            .scale(scale)
-            .clip(ProExpenseTheme.shapes.keypadKey)
-            // Backspace reads as a bare glyph — only digit keys carry the surface card.
+            .proPressScale(interactionSource, enabled = enabled)
+            .clip(rippleShape)
             .then(
                 if (isBackspace) {
                     Modifier
                 } else {
                     Modifier
-                        .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.keypadKey)
+                        .border(BorderStroke(1.dp, colors.line), keyShape)
                         .background(colors.surface)
                 },
             )
-            .clickable(
-                enabled = enabled,
-                interactionSource = interactionSource,
-                indication = null,
-                role = Role.Button,
+            .proRippleClickable(
                 onClick = onClick,
+                interactionSource = interactionSource,
+                enabled = enabled,
+                role = Role.Button,
             )
             .defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,

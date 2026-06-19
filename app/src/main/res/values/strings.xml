@@ -133,5 +133,151 @@
     <string name="recent">Recent</string>
     <string name="okay">Okay</string>
     <string name="repeat_entry">Repeat Entry</string>
+
+    <!-- First launch / onboarding -->
+    <string name="splash_tagline">Your finance notebook</string>
+    <string name="get_started">Get started</string>
+    <string name="back">Back</string>
+    <string name="onboarding_welcome_title">Welcome</string>
+    <string name="onboarding_welcome_subtitle">Your personal finance notebook.</string>
+    <string name="onboarding_quick_log_title">Quick Log</string>
+    <string name="onboarding_quick_log_subtitle">Log expenses in seconds — amount, category, done.</string>
+    <string name="onboarding_shared_costs_title">Shared Costs</string>
+    <string name="onboarding_shared_costs_subtitle">Split bills instantly — total, people, done.</string>
+    <string name="onboarding_event_budget_title">Event Budget</string>
+    <string name="onboarding_event_budget_subtitle">Plan and track any event budget — trips, weddings, parties.</string>
+    <string name="onboarding_journal_title">Journal</string>
+    <string name="onboarding_journal_subtitle">Review your spending like a diary, day by day.</string>
+    <string name="profile_setup_step">PROFILE · %1$d OF %2$d</string>
+    <string name="profile_setup_title">Set up your profile</string>
+    <string name="profile_setup_description">Your name personalizes the app — greeting you on the home screen and identifying your records and exports. No account needed; everything stays on your device.</string>
+    <string name="profile_name_label">PROFILE NAME</string>
+    <string name="profile_name_hint">Your name</string>
+    <string name="profile_name_helper">Used on your home screen and CSV exports.</string>
+
+    <!-- Quick log / expense entry -->
+    <string name="new_expense">New expense</string>
+    <string name="details">Details</string>
+    <string name="amount_step">Amount</string>
+    <string name="save_expense">Save expense · %1$s</string>
+    <string name="next_with_chevron">Next ></string>
+    <string name="clear">Clear</string>
+    <string name="amount_must_be_greater_than_zero">Amount must be greater than $0</string>
+
+    <!-- Budget / events -->
+    <string name="budget_tracker">BUDGET TRACKER</string>
+    <string name="events">Events</string>
+    <string name="new_event">+ New event</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Hello, %1$s</string>
+    <string name="home_spend_this_month">Spent this month</string>
+    <string name="quick_access_reports">Reports</string>
+    <string name="quick_access_debt">Debts</string>
+    <string name="quick_access_split">Split</string>
+    <string name="quick_access_events">Events</string>
+
+    <!-- Journal -->
+    <string name="journal">Journal</string>
+    <string name="journal_search_hint">Search notes or categories</string>
+    <string name="journal_no_results">No matching records</string>
+    <string name="journal_detail">Transaction</string>
+    <string name="journal_edit">Edit</string>
+    <string name="journal_delete">Delete</string>
+    <string name="journal_linked_event">Linked event</string>
+    <string name="journal_actions_title">Actions</string>
+
+    <!-- More hub -->
+    <string name="more_hub">More</string>
+    <string name="more_reports">Reports</string>
+    <string name="more_reports_sub">Monthly category breakdown</string>
+    <string name="more_categories">Categories</string>
+    <string name="more_categories_sub">Default and custom categories</string>
+    <string name="more_currency">Home currency</string>
+    <string name="more_currency_sub">Change your default currency</string>
+    <string name="more_export">Export data</string>
+    <string name="more_export_sub">Download records as CSV</string>
+    <string name="more_clear">Clear all data</string>
+    <string name="more_clear_sub">Remove all records from this device</string>
+
+    <!-- Reports -->
+    <string name="reports_title">Reports</string>
+    <string name="reports_monthly">May 2025</string>
+    <string name="reports_total_spend">Total spend</string>
+    <string name="reports_uncategorized">No categorized spending yet</string>
+
+    <!-- Categories -->
+    <string name="categories_title">Categories</string>
+    <string name="add_category">Add category</string>
+    <string name="category_name_hint">Category name</string>
+    <string name="category_duplicate_error">A category with this name already exists</string>
+
+    <!-- Currency -->
+    <string name="profile_currency_title">Choose home currency</string>
+    <string name="profile_currency_description">Your home currency converts all entries for summaries and exports.</string>
+    <string name="currency_setting_title">Home currency</string>
+    <string name="currency_picker_title">Select currency</string>
+    <string name="continue_label">Continue</string>
+
+    <!-- Data -->
+    <string name="export_title">Export data</string>
+    <string name="export_description">Export all your records as a CSV file. Data stays on your device until you share it.</string>
+    <string name="export_csv">Export CSV</string>
+    <string name="clear_data_title">Clear all data</string>
+    <string name="clear_data_description">This permanently removes all records from this device. Export a backup first if you need your data later.</string>
+    <string name="clear_data_confirm">Clear all data</string>
+
+    <!-- PIN -->
+    <string name="pin_setup_title">Create a PIN</string>
+    <string name="pin_setup_subtitle">Enter a 6-digit PIN to secure your records</string>
+    <string name="pin_confirm_title">Confirm your PIN</string>
+    <string name="pin_security_title">Security question</string>
+    <string name="pin_security_subtitle">Required for PIN recovery if you forget it</string>
+    <string name="pin_security_hint">Your answer</string>
+    <string name="pin_mismatch">PINs do not match — try again</string>
+    <string name="pin_entry_title">Enter PIN</string>
+    <string name="pin_entry_subtitle">Unlock Pro Expense</string>
+    <string name="pin_wrong">Incorrect PIN</string>
+    <string name="pin_lockout">Try again in %1$ds</string>
+    <string name="pin_forgot">Forgot PIN?</string>
+    <string name="pin_recovery_title">Answer your security question</string>
+
+    <!-- Events -->
+    <string name="event_create_title">New event</string>
+    <string name="event_name_hint">Event name</string>
+    <string name="event_date_range">Date range</string>
+    <string name="event_budget_amount">Budget amount</string>
+    <string name="event_save">Save event</string>
+    <string name="event_detail_title">Event</string>
+    <string name="event_empty_title">No events yet</string>
+    <string name="event_empty_subtitle">Create a budget for trips, parties, or any occasion.</string>
+    <string name="event_closed_label">Closed</string>
+    <string name="event_spent_of">%1$s of %2$s</string>
+    <string name="event_linked_transactions">Linked transactions</string>
+
+    <!-- Debt -->
+    <string name="debt_tracker_title">Debt tracker</string>
+    <string name="debt_lent">Lent</string>
+    <string name="debt_owe">Owe</string>
+    <string name="debt_add">Add record</string>
+    <string name="debt_add_title">New debt record</string>
+    <string name="debt_person_hint">Person name</string>
+    <string name="debt_due_hint">Due date</string>
+    <string name="debt_detail_lent">Lent to %1$s</string>
+    <string name="debt_detail_owe">Owe %1$s</string>
+    <string name="debt_mark_settled">Mark settled</string>
+    <string name="debt_delete_settled">Delete record</string>
+    <string name="debt_settled_label">Settled</string>
+
+    <!-- Shared costs -->
+    <string name="shared_costs_title">Split a bill</string>
+    <string name="shared_total_label">Total amount</string>
+    <string name="shared_people_label">People</string>
+    <string name="shared_calculate">Calculate split</string>
+    <string name="shared_summary_title">Split summary</string>
+    <string name="shared_per_person">Per person</string>
+    <string name="shared_save_split">Save split</string>
+    <string name="shared_history_title">Split history</string>
+    <string name="shared_people_count">%1$d people</string>
 </resources>
 
