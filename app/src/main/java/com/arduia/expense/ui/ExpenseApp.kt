@@ -15,11 +15,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.R
 import com.arduia.expense.ui.budget.BudgetScreenContent
 import com.arduia.expense.ui.budget.previewEvents
 import com.arduia.expense.ui.design.HomeBottomNav
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.home.HomeScreenContent
 import com.arduia.expense.ui.journal.JournalScreenContent
 import com.arduia.expense.ui.logging.QuickLogFlow
@@ -37,6 +40,7 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.backwardScreenExit
 import com.arduia.expense.ui.theme.forwardScreenEnter
 import com.arduia.expense.ui.theme.rememberProReduceMotion
+import com.arduia.expense.ui.util.filterJournalGroups
 
 @Composable
 fun ExpenseApp(
@@ -45,9 +49,16 @@ fun ExpenseApp(
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
     var backStack by rememberSaveable { mutableStateOf(listOf<String>()) }
     var quickLogOpen by rememberSaveable { mutableStateOf(false) }
+    var journalSearch by rememberSaveable { mutableStateOf("") }
+    var journalFilter by rememberSaveable { mutableStateOf("All") }
+    var saveToastMessage by rememberSaveable { mutableStateOf<String?>(null) }
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
+    val filteredJournal = remember(journalSearch, journalFilter) {
+        filterJournalGroups(previewJournalList, journalSearch, journalFilter)
+    }
+    val savedToast = stringResource(R.string.toast_expense_saved)
 
     val navigator = remember(backStack, selectedTab) {
         AppNavigator(
@@ -128,12 +139,12 @@ fun ExpenseApp(
                             onEventClick = { title -> navigator.push(AppRoutes.eventDetail(title)) },
                         )
                         HomeNavTab.Journal -> JournalScreenContent(
-                            searchQuery = "",
-                            onSearchChange = {},
+                            searchQuery = journalSearch,
+                            onSearchChange = { journalSearch = it },
                             filters = previewJournalFilters,
-                            selectedFilter = "All",
-                            onFilterSelected = {},
-                            dayGroups = previewJournalList,
+                            selectedFilter = journalFilter,
+                            onFilterSelected = { journalFilter = it },
+                            dayGroups = filteredJournal,
                             onTransactionClick = { navigator.push(AppRoutes.JOURNAL_DETAIL) },
                         )
                         HomeNavTab.More -> MoreHubScreenContent(
@@ -158,9 +169,17 @@ fun ExpenseApp(
             QuickLogFlow(
                 modifier = Modifier.fillMaxSize(),
                 onDismiss = { quickLogOpen = false },
-                onSaved = { quickLogOpen = false },
+                onSaved = {
+                    quickLogOpen = false
+                    saveToastMessage = savedToast
+                },
             )
         }
+
+        ProToastHost(
+            message = saveToastMessage,
+            onDismiss = { saveToastMessage = null },
+        )
     }
 }
 

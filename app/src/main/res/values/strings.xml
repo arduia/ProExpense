@@ -289,5 +289,8 @@
     <string name="shared_history_title">Split history</string>
     <string name="shared_history_empty">No saved splits yet</string>
     <string name="shared_people_count">%1$d people</string>
+    <string name="date_time_picker_title">Date and time</string>
+    <string name="event_tag_format">@%1$s</string>
+    <string name="pin_biometric_cd">Unlock with biometrics</string>
 </resources>
 

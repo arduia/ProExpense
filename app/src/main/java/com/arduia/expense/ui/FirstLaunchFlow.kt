@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -46,6 +47,9 @@ fun FirstLaunchFlow(
     var pinSetupStep by rememberSaveable { mutableStateOf(PinSetupStep.Create) }
     var pinDots by rememberSaveable { mutableIntStateOf(0) }
     var securityAnswer by rememberSaveable { mutableStateOf("") }
+    var mismatchError by rememberSaveable { mutableStateOf(false) }
+    var createdPin by remember { mutableStateOf("") }
+    var currentPinEntry by remember { mutableStateOf("") }
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
 
@@ -103,32 +107,51 @@ fun FirstLaunchFlow(
                 modifier = Modifier,
                 step = pinSetupStep,
                 filledDots = pinDots,
-                mismatchError = false,
+                mismatchError = mismatchError,
                 securityAnswer = securityAnswer,
                 onSecurityAnswerChange = { securityAnswer = it },
-                onDigit = {
-                    val next = (pinDots + 1).coerceAtMost(6)
-                    pinDots = next
-                    if (next == 6) {
+                onDigit = { digit ->
+                    if (currentPinEntry.length >= 6) return@PinSetupScreenContent
+                    currentPinEntry += digit.toString()
+                    pinDots = currentPinEntry.length
+                    if (currentPinEntry.length == 6) {
                         when (pinSetupStep) {
                             PinSetupStep.Create -> {
-                                pinSetupStep = PinSetupStep.Confirm
+                                createdPin = currentPinEntry
+                                currentPinEntry = ""
                                 pinDots = 0
+                                mismatchError = false
+                                pinSetupStep = PinSetupStep.Confirm
                             }
                             PinSetupStep.Confirm -> {
-                                pinSetupStep = PinSetupStep.SecurityQuestion
-                                pinDots = 0
+                                if (currentPinEntry == createdPin) {
+                                    currentPinEntry = ""
+                                    pinDots = 0
+                                    mismatchError = false
+                                    pinSetupStep = PinSetupStep.SecurityQuestion
+                                } else {
+                                    currentPinEntry = ""
+                                    pinDots = 0
+                                    mismatchError = true
+                                }
                             }
                             PinSetupStep.SecurityQuestion -> Unit
                         }
                     }
                 },
-                onBackspace = { pinDots = (pinDots - 1).coerceAtLeast(0) },
+                onBackspace = {
+                    if (currentPinEntry.isNotEmpty()) {
+                        currentPinEntry = currentPinEntry.dropLast(1)
+                        pinDots = currentPinEntry.length
+                        mismatchError = false
+                    }
+                },
                 onContinueSecurity = { step = FirstLaunchStep.Main },
             )
             FirstLaunchStep.PinEntry -> PinEntryRouteHost(
                 modifier = Modifier,
                 onUnlocked = { step = FirstLaunchStep.Main },
+                demoSecurityAnswer = securityAnswer.ifBlank { "notebook" },
             )
             FirstLaunchStep.Main -> ExpenseApp(modifier = Modifier)
         }

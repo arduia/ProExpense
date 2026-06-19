@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_home">Home</string>
+    <string name="nav_budget">Budget</string>
+    <string name="nav_journal">Journal</string>
+    <string name="nav_more">More</string>
+    <string name="nav_add">Add</string>
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="more">More</string>
+    <string name="backspace">Backspace</string>
+    <string name="category_section_default">DEFAULT</string>
+    <string name="category_section_custom">CUSTOM</string>
+    <string name="category_picker_more">+ More</string>
+    <string name="category_picker_add">+ Add</string>
+    <string name="event_over_budget">OVER BUDGET</string>
+    <string name="toast_check_icon">Success</string>
+</resources>

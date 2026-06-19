@@ -24,16 +24,25 @@ fun DetailFieldCard(
     modifier: Modifier = Modifier,
     leading: @Composable () -> Unit,
     trailing: @Composable (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val shape = ProExpenseTheme.shapes.card
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+            .then(
+                if (onClick != null) {
+                    Modifier.proClickable(onClick = onClick, shape = shape)
+                } else {
+                    Modifier
+                },
+            )
+            .clip(shape)
+            .border(BorderStroke(1.dp, colors.line), shape)
             .background(colors.surface)
             .padding(dimens.space14),
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),

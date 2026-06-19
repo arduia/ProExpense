@@ -30,8 +30,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -45,18 +47,18 @@ enum class HomeNavTab {
 
 private data class HomeNavItem(
     val tab: HomeNavTab,
-    val label: String,
+    val labelRes: Int,
     val icon: ProIconGlyph,
 )
 
 private val homeNavLeadingItems = listOf(
-    HomeNavItem(HomeNavTab.Home, "Home", ProIconGlyph.Home),
-    HomeNavItem(HomeNavTab.Budget, "Budget", ProIconGlyph.Budget),
+    HomeNavItem(HomeNavTab.Home, R.string.nav_home, ProIconGlyph.Home),
+    HomeNavItem(HomeNavTab.Budget, R.string.nav_budget, ProIconGlyph.Budget),
 )
 
 private val homeNavTrailingItems = listOf(
-    HomeNavItem(HomeNavTab.Journal, "Journal", ProIconGlyph.Journal),
-    HomeNavItem(HomeNavTab.More, "More", ProIconGlyph.More),
+    HomeNavItem(HomeNavTab.Journal, R.string.nav_journal, ProIconGlyph.Journal),
+    HomeNavItem(HomeNavTab.More, R.string.nav_more, ProIconGlyph.More),
 )
 
 @Composable
@@ -141,6 +143,7 @@ private fun HomeNavSlot(
     val typography = ProExpenseTheme.typography
     val interactionSource = remember { MutableInteractionSource() }
     val tint = if (selected) colors.primary else colors.navInactive
+    val label = stringResource(item.labelRes)
     val labelStyle = if (selected) {
         typography.caption.copy(
             fontFamily = typography.monoFamily,
@@ -158,7 +161,7 @@ private fun HomeNavSlot(
     ) {
         Column(
             modifier = Modifier
-                .semantics { contentDescription = item.label }
+                .semantics { contentDescription = label }
                 .proSelectable(
                     selected = selected,
                     onClick = onClick,
@@ -177,7 +180,7 @@ private fun HomeNavSlot(
                 size = dimens.iconNav,
             )
             Text(
-                text = item.label,
+                text = label,
                 style = labelStyle,
                 color = tint,
             )
@@ -195,6 +198,7 @@ private fun HomeAddFab(
     val typography = ProExpenseTheme.typography
     val fabElevation = ProExpenseTheme.elevation.fab.firstOrNull()
     val interactionSource = remember { MutableInteractionSource() }
+    val addContentDescription = stringResource(R.string.nav_add)
 
     Box(
         modifier = modifier
@@ -219,7 +223,7 @@ private fun HomeAddFab(
                 )
                 .clip(CircleShape)
                 .background(colors.primary)
-                .semantics { contentDescription = "Add" }
+                .semantics { contentDescription = addContentDescription }
                 .proCircularRippleClickable(
                     onClick = onClick,
                     interactionSource = interactionSource,
@@ -238,7 +242,7 @@ private fun HomeAddFab(
                     size = dimens.iconNav,
                 )
                 Text(
-                    text = "Add",
+                    text = stringResource(R.string.nav_add),
                     style = typography.caption.copy(fontFamily = typography.monoFamily),
                     color = colors.onPrimaryWarm,
                 )

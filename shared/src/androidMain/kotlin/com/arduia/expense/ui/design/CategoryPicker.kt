@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -26,6 +28,7 @@ fun CategoryPicker(
     selectedCategoryId: String,
     onCategorySelected: (String) -> Unit,
     modifier: Modifier = Modifier,
+    showCustomSection: Boolean = true,
     onMoreClick: (() -> Unit)? = null,
     showAddChip: Boolean = false,
     onAddClick: () -> Unit = {},
@@ -39,11 +42,11 @@ fun CategoryPicker(
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         CategoryPickerSection(
-            title = "DEFAULT",
-            trailing = if (onMoreClick != null) {
+            title = stringResource(R.string.category_section_default),
+            trailing = if (onMoreClick != null && !showCustomSection) {
                 {
                     Text(
-                        text = "+ More",
+                        text = stringResource(R.string.category_picker_more),
                         style = typography.bodyMedium,
                         color = colors.primary,
                         modifier = Modifier.proClickable(
@@ -71,8 +74,8 @@ fun CategoryPicker(
             }
         }
 
-        if (customCategories.isNotEmpty() || showAddChip) {
-            CategoryPickerSection(title = "CUSTOM") {
+        if (showCustomSection && (customCategories.isNotEmpty() || showAddChip)) {
+            CategoryPickerSection(title = stringResource(R.string.category_section_custom)) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(dimens.space8),
                     verticalArrangement = Arrangement.spacedBy(dimens.space8),
@@ -133,7 +136,7 @@ private fun AddCategoryChip(
     val interactionSource = remember { MutableInteractionSource() }
 
     Text(
-        text = "+ Add",
+        text = stringResource(R.string.category_picker_add),
         style = typography.bodyMedium,
         color = colors.onSurfaceVariant,
         modifier = modifier
