@@ -1,5 +1,9 @@
 package com.arduia.expense.ui.design
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +25,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.sheetEnter
+import com.arduia.expense.ui.theme.sheetExit
+import androidx.compose.animation.core.tween
 
 @Composable
 fun ProBottomSheet(
@@ -110,18 +117,42 @@ fun ProBottomSheetHost(
     sheetContent: @Composable () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
+    val motion = ProExpenseTheme.motion
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.scrim),
+    AnimatedVisibility(
+        visible = true,
+        modifier = modifier.fillMaxSize(),
+        enter = fadeIn(
+            animationSpec = tween(
+                durationMillis = motion.fadeDurationMillis,
+                easing = motion.standardEasing,
+            ),
+        ),
+        exit = fadeOut(
+            animationSpec = tween(
+                durationMillis = motion.fadeDurationMillis,
+                easing = motion.standardEasing,
+            ),
+        ),
     ) {
-        ProBottomSheet(
-            title = title,
-            onClose = onClose,
-            modifier = Modifier.align(Alignment.BottomCenter),
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colors.scrim),
         ) {
-            sheetContent()
+            AnimatedVisibility(
+                visible = true,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = motion.sheetEnter(),
+                exit = motion.sheetExit(),
+            ) {
+                ProBottomSheet(
+                    title = title,
+                    onClose = onClose,
+                ) {
+                    sheetContent()
+                }
+            }
         }
     }
 }

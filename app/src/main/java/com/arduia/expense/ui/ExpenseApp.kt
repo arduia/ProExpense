@@ -1,6 +1,8 @@
 package com.arduia.expense.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -22,14 +24,18 @@ import com.arduia.expense.ui.home.HomeScreenContent
 import com.arduia.expense.ui.journal.JournalScreenContent
 import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.more.MoreHubScreenContent
+import com.arduia.expense.ui.navigation.AppNavState
 import com.arduia.expense.ui.navigation.AppNavigator
 import com.arduia.expense.ui.navigation.AppRouteHost
 import com.arduia.expense.ui.navigation.AppRoutes
+import com.arduia.expense.ui.navigation.appNavTransition
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewJournalFilters
 import com.arduia.expense.ui.preview.previewJournalList
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.backwardScreenExit
+import com.arduia.expense.ui.theme.forwardScreenEnter
 
 @Composable
 fun ExpenseApp(
@@ -39,6 +45,7 @@ fun ExpenseApp(
     var backStack by rememberSaveable { mutableStateOf(listOf<String>()) }
     var quickLogOpen by rememberSaveable { mutableStateOf(false) }
     val dimens = ProExpenseTheme.dimensions
+    val motion = ProExpenseTheme.motion
 
     val navigator = remember(backStack, selectedTab) {
         AppNavigator(
@@ -48,91 +55,109 @@ fun ExpenseApp(
         )
     }
 
-    if (quickLogOpen) {
-        QuickLogFlow(
-            modifier = modifier.fillMaxSize(),
-            onDismiss = { quickLogOpen = false },
-            onSaved = { quickLogOpen = false },
-        )
-        return
+    val currentRoute = backStack.lastOrNull()
+    val showBottomNav = currentRoute == null && !quickLogOpen
+    val navState = AppNavState(
+        route = currentRoute,
+        tab = selectedTab,
+        stackSize = backStack.size,
+    )
+
+    BackHandler(enabled = quickLogOpen) {
+        quickLogOpen = false
     }
 
-    val currentRoute = backStack.lastOrNull()
-    val showBottomNav = currentRoute == null
-
-    BackHandler(enabled = navigator.canPop) {
+    BackHandler(enabled = navigator.canPop && !quickLogOpen) {
         navigator.pop()
     }
 
-    Scaffold(
-        modifier = modifier,
-        containerColor = ProExpenseTheme.colors.paper,
-        bottomBar = {
-            if (showBottomNav) {
-                HomeBottomNav(
-                    modifier = Modifier.navigationBarsPadding(),
-                    selectedTab = selectedTab,
-                    onTabSelected = { tab ->
-                        if (tab != HomeNavTab.Add) {
-                            selectedTab = tab
-                        }
-                    },
-                    onAddClick = { quickLogOpen = true },
-                )
-            }
-        },
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .then(
-                    if (showBottomNav) {
-                        Modifier.padding(bottom = dimens.navShellBottomInset)
-                    } else {
-                        Modifier
-                    },
-                ),
-        ) {
-            if (currentRoute != null) {
-                AppRouteHost(
-                    route = currentRoute,
-                    navigator = navigator,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            } else {
-                when (selectedTab) {
-                    HomeNavTab.Home -> HomeScreenContent(
-                        state = previewHomeCasual,
-                        onReportsClick = { navigator.push(AppRoutes.REPORTS) },
-                        onDebtClick = { navigator.push(AppRoutes.DEBT_TRACKER) },
-                        onSplitClick = { navigator.push(AppRoutes.SHARED_INPUT) },
-                        onEventsClick = { navigator.switchTab(HomeNavTab.Budget) },
+    Box(modifier = modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = ProExpenseTheme.colors.paper,
+            bottomBar = {
+                if (showBottomNav) {
+                    HomeBottomNav(
+                        modifier = Modifier.navigationBarsPadding(),
+                        selectedTab = selectedTab,
+                        onTabSelected = { tab ->
+                            if (tab != HomeNavTab.Add) {
+                                selectedTab = tab
+                            }
+                        },
+                        onAddClick = { quickLogOpen = true },
                     )
-                    HomeNavTab.Budget -> BudgetScreenContent(
-                        events = previewEvents,
-                        onNewEvent = { navigator.push(AppRoutes.EVENT_CREATE) },
-                        onEventClick = { title -> navigator.push(AppRoutes.eventDetail(title)) },
+                }
+            },
+        ) { innerPadding ->
+            AnimatedContent(
+                targetState = navState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .then(
+                        if (showBottomNav) {
+                            Modifier.padding(bottom = dimens.navShellBottomInset)
+                        } else {
+                            Modifier
+                        },
+                    ),
+                transitionSpec = { appNavTransition(motion) },
+                label = "expenseAppNav",
+            ) { state ->
+                if (state.route != null) {
+                    AppRouteHost(
+                        route = state.route,
+                        navigator = navigator,
+                        modifier = Modifier.fillMaxSize(),
                     )
-                    HomeNavTab.Journal -> JournalScreenContent(
-                        searchQuery = "",
-                        onSearchChange = {},
-                        filters = previewJournalFilters,
-                        selectedFilter = "All",
-                        onFilterSelected = {},
-                        dayGroups = previewJournalList,
-                        onTransactionClick = { navigator.push(AppRoutes.JOURNAL_DETAIL) },
-                    )
-                    HomeNavTab.More -> MoreHubScreenContent(
-                        onReportsClick = { navigator.push(AppRoutes.REPORTS) },
-                        onCategoriesClick = { navigator.push(AppRoutes.CATEGORIES) },
-                        onCurrencyClick = { navigator.push(AppRoutes.CURRENCY) },
-                        onExportClick = { navigator.push(AppRoutes.EXPORT) },
-                        onClearClick = { navigator.push(AppRoutes.CLEAR) },
-                    )
-                    HomeNavTab.Add -> Unit
+                } else {
+                    when (state.tab) {
+                        HomeNavTab.Home -> HomeScreenContent(
+                            state = previewHomeCasual,
+                            onReportsClick = { navigator.push(AppRoutes.REPORTS) },
+                            onDebtClick = { navigator.push(AppRoutes.DEBT_TRACKER) },
+                            onSplitClick = { navigator.push(AppRoutes.SHARED_INPUT) },
+                            onEventsClick = { navigator.switchTab(HomeNavTab.Budget) },
+                        )
+                        HomeNavTab.Budget -> BudgetScreenContent(
+                            events = previewEvents,
+                            onNewEvent = { navigator.push(AppRoutes.EVENT_CREATE) },
+                            onEventClick = { title -> navigator.push(AppRoutes.eventDetail(title)) },
+                        )
+                        HomeNavTab.Journal -> JournalScreenContent(
+                            searchQuery = "",
+                            onSearchChange = {},
+                            filters = previewJournalFilters,
+                            selectedFilter = "All",
+                            onFilterSelected = {},
+                            dayGroups = previewJournalList,
+                            onTransactionClick = { navigator.push(AppRoutes.JOURNAL_DETAIL) },
+                        )
+                        HomeNavTab.More -> MoreHubScreenContent(
+                            onReportsClick = { navigator.push(AppRoutes.REPORTS) },
+                            onCategoriesClick = { navigator.push(AppRoutes.CATEGORIES) },
+                            onCurrencyClick = { navigator.push(AppRoutes.CURRENCY) },
+                            onExportClick = { navigator.push(AppRoutes.EXPORT) },
+                            onClearClick = { navigator.push(AppRoutes.CLEAR) },
+                        )
+                        HomeNavTab.Add -> Unit
+                    }
                 }
             }
+        }
+
+        AnimatedVisibility(
+            visible = quickLogOpen,
+            modifier = Modifier.fillMaxSize(),
+            enter = motion.forwardScreenEnter(),
+            exit = motion.backwardScreenExit(),
+        ) {
+            QuickLogFlow(
+                modifier = Modifier.fillMaxSize(),
+                onDismiss = { quickLogOpen = false },
+                onSaved = { quickLogOpen = false },
+            )
         }
     }
 }
