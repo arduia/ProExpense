@@ -3,8 +3,6 @@ package com.arduia.expense.ui.design
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -120,7 +118,9 @@ fun DetailAmountSummaryCard(
         ) {
             Text(text = "AMOUNT", style = typography.eyebrow, color = colors.muted)
             Row(
-                modifier = Modifier.clickableWithoutRipple(onEdit),
+                modifier = Modifier
+                    .proClickable(onClick = onEdit, shape = ProExpenseTheme.shapes.chip)
+                    .padding(horizontal = dimens.space4, vertical = dimens.space2),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimens.space4),
             ) {
@@ -136,10 +136,3 @@ fun DetailAmountSummaryCard(
         Text(text = amountLabel, style = typography.sectionHead, color = colors.onSurface)
     }
 }
-
-private fun Modifier.clickableWithoutRipple(onClick: () -> Unit): Modifier =
-    clickable(
-        interactionSource = MutableInteractionSource(),
-        indication = null,
-        onClick = onClick,
-    )

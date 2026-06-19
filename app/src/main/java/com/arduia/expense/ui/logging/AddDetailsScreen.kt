@@ -2,7 +2,6 @@ package com.arduia.expense.ui.logging
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,9 +13,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
@@ -31,6 +33,8 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.proPressScale
+import com.arduia.expense.ui.design.proRippleClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -140,17 +144,24 @@ fun AddDetailsScreen(
                         )
                     },
                     trailing = {
+                        val chipShape = ProExpenseTheme.shapes.chip
+                        val interactionSource = remember { MutableInteractionSource() }
                         Text(
                             text = stringResource(R.string.clear),
                             style = typography.bodyMedium,
                             color = colors.onSurfaceVariant,
                             modifier = Modifier
+                                .proPressScale(interactionSource)
+                                .clip(chipShape)
                                 .border(
                                     width = dimens.chipBorderWidth,
                                     color = colors.lineStrong,
-                                    shape = ProExpenseTheme.shapes.chip,
+                                    shape = chipShape,
                                 )
-                                .clickable(onClick = onClearTag)
+                                .proRippleClickable(
+                                    onClick = onClearTag,
+                                    interactionSource = interactionSource,
+                                )
                                 .padding(horizontal = dimens.space12, vertical = dimens.space6),
                         )
                     },

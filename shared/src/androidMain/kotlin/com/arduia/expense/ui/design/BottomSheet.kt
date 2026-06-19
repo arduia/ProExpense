@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -89,7 +88,7 @@ fun ProBottomSheet(
                     glyph = ProIconGlyph.Close,
                     contentDescription = "Close",
                     tint = colors.onSurface,
-                    modifier = Modifier.clickable(onClick = onClose),
+                    modifier = Modifier.proIconClickable(onClick = onClose),
                 )
             }
             Box(

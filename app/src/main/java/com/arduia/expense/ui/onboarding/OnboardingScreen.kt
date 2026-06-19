@@ -2,7 +2,6 @@ package com.arduia.expense.ui.onboarding
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +34,7 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.launch
@@ -109,7 +109,10 @@ fun OnboardingScreen(
                     color = colors.muted,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        .clickable(onClick = onSkip)
+                        .proClickable(
+                            onClick = onSkip,
+                            shape = ProExpenseTheme.shapes.chip,
+                        )
                         .padding(dimens.space8),
                 )
             }
@@ -243,8 +246,11 @@ private fun OnboardingPagerControls(
         if (showBack) {
             Row(
                 modifier = Modifier
-                    .clickable(onClick = onBack)
-                    .padding(vertical = dimens.space8),
+                    .proClickable(
+                        onClick = onBack,
+                        shape = ProExpenseTheme.shapes.searchField,
+                    )
+                    .padding(horizontal = dimens.space8, vertical = dimens.space8),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimens.space4),
             ) {
@@ -267,8 +273,11 @@ private fun OnboardingPagerControls(
         if (showNext) {
             Row(
                 modifier = Modifier
-                    .clickable(onClick = onNext)
-                    .padding(vertical = dimens.space8),
+                    .proClickable(
+                        onClick = onNext,
+                        shape = ProExpenseTheme.shapes.searchField,
+                    )
+                    .padding(horizontal = dimens.space8, vertical = dimens.space8),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimens.space4),
             ) {
