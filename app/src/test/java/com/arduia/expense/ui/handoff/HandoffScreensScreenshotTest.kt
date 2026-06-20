@@ -216,6 +216,8 @@ class HandoffScreensScreenshotTest {
             onCategoriesClick = {},
             onCurrencyClick = {},
             onExportClick = {},
+            onImportClick = {},
+            onSecurityClick = {},
             onClearClick = {},
         )
     }

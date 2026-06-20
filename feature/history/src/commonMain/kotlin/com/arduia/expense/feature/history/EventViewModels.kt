@@ -22,6 +22,7 @@ data class EventListItemState(
     val dateRange: String,
     val spentLabel: String,
     val budgetLabel: String,
+    val dailyAverageLabel: String,
     val progress: Float,
     val isOverBudget: Boolean = false,
     val overAmountLabel: String? = null,
@@ -71,22 +72,30 @@ class EventBudgetViewModel(
             is Result.Error -> emptyList()
         }
         val spent = records.sumOf { it.homeCurrencyAmount.valueInCents }
+        val periodDays = eventPeriodDays(startEpochMillis, endEpochMillis)
         val progress = calculateBudgetProgress(
             spentCents = spent,
             budgetCents = budgetAmount.valueInCents,
-            periodDays = formatter.daysInMonth(startEpochMillis).coerceAtLeast(1),
+            periodDays = periodDays,
         )
         val dateRange = "${formatter.formatDayTitle(formatter.dayKey(startEpochMillis))} — ${formatter.formatDayTitle(formatter.dayKey(endEpochMillis))}"
+        val dailyAverage = Amount(progress.dailyAverageCents).formatWithSymbol(currency) + "/day"
         return EventListItemState(
             id = id,
             title = name,
             dateRange = dateRange,
             spentLabel = Amount(spent).formatWithSymbol(currency),
             budgetLabel = "of ${budgetAmount.formatWithSymbol(currency)}",
+            dailyAverageLabel = dailyAverage,
             progress = (progress.progressPercent / 100f).coerceIn(0f, 1f),
             isOverBudget = progress.progressPercent > 100f,
             overAmountLabel = if (progress.progressPercent > 100f) "over" else null,
         )
+    }
+
+    private fun eventPeriodDays(startEpochMillis: Long, endEpochMillis: Long): Int {
+        val span = endEpochMillis - startEpochMillis
+        return ((span / 86_400_000L) + 1).toInt().coerceAtLeast(1)
     }
 }
 
@@ -154,10 +163,15 @@ data class EventDetailUiState(
     val dateRange: String = "",
     val spentLabel: String = "",
     val budgetLabel: String = "",
+    val dailyAverageLabel: String = "",
     val progress: Float = 0f,
     val isClosed: Boolean = false,
     val transactions: List<ExpenseListItem> = emptyList(),
     val isLoading: Boolean = true,
+    val isEditing: Boolean = false,
+    val editName: String = "",
+    val showDeleteConfirm: Boolean = false,
+    val linkedExpenseCount: Int = 0,
 )
 
 class EventDetailViewModel(
@@ -168,12 +182,76 @@ class EventDetailViewModel(
     private val homeCurrencyCode: String,
     private val categoryLabel: (String) -> String,
     private val scope: CoroutineScope,
+    private val onDeleted: () -> Unit = {},
 ) {
     private val _uiState = MutableStateFlow(EventDetailUiState())
     val uiState: StateFlow<EventDetailUiState> = _uiState.asStateFlow()
 
+    private var loadedEvent: Event? = null
+
     init {
         scope.launch { load() }
+    }
+
+    fun onEditToggled() {
+        val event = loadedEvent ?: return
+        _uiState.update {
+            it.copy(isEditing = !it.isEditing, editName = event.name)
+        }
+    }
+
+    fun onEditNameChange(name: String) {
+        _uiState.update { it.copy(editName = name.take(30)) }
+    }
+
+    fun onSaveEdit() {
+        val event = loadedEvent ?: return
+        val name = _uiState.value.editName.trim()
+        if (name.isBlank()) return
+        scope.launch {
+            val updated = event.copy(name = name)
+            when (eventRepository.upsert(updated)) {
+                is Result.Success -> {
+                    loadedEvent = updated
+                    _uiState.update { it.copy(isEditing = false, title = name) }
+                }
+                is Result.Error -> Unit
+            }
+        }
+    }
+
+    fun onCloseEvent() {
+        val event = loadedEvent ?: return
+        scope.launch {
+            when (eventRepository.upsert(event.copy(status = EventStatus.CLOSED))) {
+                is Result.Success -> {
+                    loadedEvent = event.copy(status = EventStatus.CLOSED)
+                    _uiState.update { it.copy(isClosed = true) }
+                }
+                is Result.Error -> Unit
+            }
+        }
+    }
+
+    fun onDeleteRequested() {
+        val count = _uiState.value.transactions.size
+        _uiState.update { it.copy(showDeleteConfirm = true, linkedExpenseCount = count) }
+    }
+
+    fun onCancelDelete() {
+        _uiState.update { it.copy(showDeleteConfirm = false) }
+    }
+
+    fun onConfirmDelete() {
+        scope.launch {
+            when (eventRepository.delete(eventId)) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(showDeleteConfirm = false) }
+                    onDeleted()
+                }
+                is Result.Error -> Unit
+            }
+        }
     }
 
     private suspend fun load() {
@@ -184,6 +262,7 @@ class EventDetailViewModel(
                     _uiState.update { it.copy(isLoading = false) }
                     return
                 }
+                loadedEvent = event
                 val records = when (val r = historyRepository.getRecords()) {
                     is Result.Success -> r.data.filter {
                         it.tagType == ExpenseTagType.EVENT && it.tagId == eventId
@@ -191,10 +270,11 @@ class EventDetailViewModel(
                     is Result.Error -> emptyList()
                 }
                 val spent = records.sumOf { it.homeCurrencyAmount.valueInCents }
+                val periodDays = eventPeriodDays(event.startEpochMillis, event.endEpochMillis)
                 val progress = calculateBudgetProgress(
                     spentCents = spent,
                     budgetCents = event.budgetAmount.valueInCents,
-                    periodDays = formatter.daysInMonth(event.startEpochMillis).coerceAtLeast(1),
+                    periodDays = periodDays,
                 )
                 val dateRange = "${formatter.formatDayTitle(formatter.dayKey(event.startEpochMillis))} — ${formatter.formatDayTitle(formatter.dayKey(event.endEpochMillis))}"
                 val transactions = records.map { record ->
@@ -213,14 +293,22 @@ class EventDetailViewModel(
                         dateRange = dateRange,
                         spentLabel = Amount(spent).formatWithSymbol(homeCurrencyCode),
                         budgetLabel = "of ${event.budgetAmount.formatWithSymbol(homeCurrencyCode)}",
+                        dailyAverageLabel = Amount(progress.dailyAverageCents).formatWithSymbol(homeCurrencyCode) + "/day",
                         progress = (progress.progressPercent / 100f).coerceIn(0f, 1f),
                         isClosed = event.status != EventStatus.ACTIVE,
                         transactions = transactions,
                         isLoading = false,
+                        editName = event.name,
+                        linkedExpenseCount = transactions.size,
                     )
                 }
             }
             is Result.Error -> _uiState.update { it.copy(isLoading = false) }
         }
+    }
+
+    private fun eventPeriodDays(startEpochMillis: Long, endEpochMillis: Long): Int {
+        val span = endEpochMillis - startEpochMillis
+        return ((span / 86_400_000L) + 1).toInt().coerceAtLeast(1)
     }
 }

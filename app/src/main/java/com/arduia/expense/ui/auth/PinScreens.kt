@@ -33,6 +33,7 @@ enum class PinSetupStep {
     Create,
     Confirm,
     SecurityQuestion,
+    BiometricOffer,
 }
 
 @Composable
@@ -45,6 +46,8 @@ fun PinSetupScreenContent(
     onDigit: (Int) -> Unit,
     onBackspace: () -> Unit,
     onContinueSecurity: () -> Unit,
+    onBiometricAccepted: () -> Unit = {},
+    onBiometricSkipped: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -67,6 +70,7 @@ fun PinSetupScreenContent(
                 PinSetupStep.Create -> stringResource(R.string.pin_setup_title)
                 PinSetupStep.Confirm -> stringResource(R.string.pin_confirm_title)
                 PinSetupStep.SecurityQuestion -> stringResource(R.string.pin_security_title)
+                PinSetupStep.BiometricOffer -> stringResource(R.string.pin_biometric_offer_title)
             },
             style = typography.screenTitle,
             color = colors.onSurface,
@@ -77,6 +81,7 @@ fun PinSetupScreenContent(
                 PinSetupStep.Create -> stringResource(R.string.pin_setup_subtitle)
                 PinSetupStep.Confirm -> stringResource(R.string.pin_setup_subtitle)
                 PinSetupStep.SecurityQuestion -> stringResource(R.string.pin_security_subtitle)
+                PinSetupStep.BiometricOffer -> stringResource(R.string.pin_biometric_offer_subtitle)
             },
             style = typography.body,
             color = colors.onSurfaceMuted,
@@ -102,6 +107,23 @@ fun PinSetupScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = dimens.space24),
+            )
+        } else if (step == PinSetupStep.BiometricOffer) {
+            Spacer(modifier = Modifier.weight(1f))
+            ProButton(
+                text = stringResource(R.string.pin_biometric_enable),
+                onClick = onBiometricAccepted,
+                size = ProButtonSize.Lg,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            ProButton(
+                text = stringResource(R.string.pin_biometric_skip),
+                onClick = onBiometricSkipped,
+                variant = com.arduia.expense.ui.design.ProButtonVariant.Ghost,
+                size = ProButtonSize.Lg,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space12, bottom = dimens.space24),
             )
         } else {
             if (mismatchError) {

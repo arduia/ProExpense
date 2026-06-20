@@ -8,36 +8,46 @@ import kotlinx.coroutines.sync.withLock
 
 class InMemoryPinAuthRepository(
     private val store: InMemoryDataStore,
+    private val keyManager: DatabaseKeyManager,
 ) : PinAuthRepository, SecurityStateReader {
     private val mutex = Mutex()
-    private var pinConfigured = false
     private var storedPin: String? = null
     private var biometricEnrolled = false
 
     override suspend fun isPinConfigured(): Result<Boolean> = mutex.withLock {
-        Result.Success(pinConfigured)
+        Result.Success(storedPin != null && store.isPinProtected())
     }
 
     override suspend fun setPin(pin: String): Result<Unit> = mutex.withLock {
         if (pin.length != 6 || pin.any { !it.isDigit() }) {
             return Result.Error("PIN must be 6 digits")
         }
-        storedPin = pin
-        pinConfigured = true
-        Result.Success(Unit)
+        when (val rotation = keyManager.rotateToPinDerivedKey(pin)) {
+            is Result.Error -> return rotation
+            is Result.Success -> {
+                storedPin = pin
+                Result.Success(Unit)
+            }
+        }
     }
 
     override suspend fun verifyPin(pin: String): Result<Boolean> = mutex.withLock {
-        Result.Success(storedPin == pin)
+        Result.Success(storedPin == pin && keyManager.verifyDerivedKey(pin))
     }
 
     override suspend fun clearPin(): Result<Unit> = mutex.withLock {
-        storedPin = null
-        pinConfigured = false
-        biometricEnrolled = false
-        store.securityAnswerNormalized = null
-        Result.Success(Unit)
+        when (val rotation = keyManager.rotateToRandomKey()) {
+            is Result.Error -> return rotation
+            is Result.Success -> {
+                storedPin = null
+                biometricEnrolled = false
+                store.securityAnswerNormalized = null
+                Result.Success(Unit)
+            }
+        }
     }
+
+    override suspend fun changePin(newPin: String): Result<Unit> = setPin(newPin)
 
     override suspend fun setSecurityAnswer(answer: String): Result<Unit> = mutex.withLock {
         val normalized = answer.trim().lowercase()
@@ -53,5 +63,15 @@ class InMemoryPinAuthRepository(
 
     override suspend fun isBiometricEnrolled(): Boolean = mutex.withLock { biometricEnrolled }
 
-    override suspend fun hasPinConfigured(): Boolean = mutex.withLock { pinConfigured }
+    override suspend fun setBiometricEnrolled(enabled: Boolean): Result<Unit> = mutex.withLock {
+        if (enabled && storedPin == null) {
+            return Result.Error("PIN must be configured before enabling biometrics")
+        }
+        biometricEnrolled = enabled
+        Result.Success(Unit)
+    }
+
+    override suspend fun hasPinConfigured(): Boolean = mutex.withLock {
+        storedPin != null && store.isPinProtected()
+    }
 }

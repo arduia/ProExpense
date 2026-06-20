@@ -5,6 +5,8 @@ object AppRoutes {
     const val CATEGORIES = "categories"
     const val CURRENCY = "currency"
     const val EXPORT = "export"
+    const val IMPORT = "import"
+    const val SECURITY = "security"
     const val CLEAR = "clear"
     const val JOURNAL_DETAIL_PREFIX = "journal_detail:"
 

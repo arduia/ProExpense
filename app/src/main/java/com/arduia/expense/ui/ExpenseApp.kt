@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
@@ -70,6 +71,8 @@ fun ExpenseApp(
             appGraph.prewarmAddExpenseViewModel(
                 onSaved = {
                     appGraph.refreshAfterDataChange()
+                    quickLogOpen = false
+                    saveToastMessage = savedToast
                 },
                 onSaveFailed = { message ->
                     saveErrorToast = message
@@ -173,6 +176,8 @@ fun ExpenseApp(
                             onCategoriesClick = { navigator.push(AppRoutes.CATEGORIES) },
                             onCurrencyClick = { navigator.push(AppRoutes.CURRENCY) },
                             onExportClick = { navigator.push(AppRoutes.EXPORT) },
+                            onImportClick = { navigator.push(AppRoutes.IMPORT) },
+                            onSecurityClick = { navigator.push(AppRoutes.SECURITY) },
                             onClearClick = { navigator.push(AppRoutes.CLEAR) },
                         )
                         HomeNavTab.Add -> Unit
@@ -194,7 +199,11 @@ fun ExpenseApp(
                 },
                 onAddClick = {
                     appGraph.prewarmAddExpenseViewModel(
-                        onSaved = { appGraph.refreshAfterDataChange() },
+                        onSaved = {
+                            appGraph.refreshAfterDataChange()
+                            quickLogOpen = false
+                            saveToastMessage = savedToast
+                        },
                         onSaveFailed = { message -> saveErrorToast = message },
                     )
                     quickLogOpen = true
@@ -213,11 +222,6 @@ fun ExpenseApp(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = addExpenseViewModel,
                     onDismiss = { quickLogOpen = false },
-                    onSaved = {
-                        quickLogOpen = false
-                        saveToastMessage = savedToast
-                        appGraph.refreshAfterDataChange()
-                    },
                 )
             }
         }
@@ -240,7 +244,13 @@ fun ExpenseApp(
 )
 @Composable
 private fun ExpenseAppHomePreview() {
+    val context = LocalContext.current
     ProExpenseTheme {
-        ExpenseApp(appGraph = AppGraph(kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main)))
+        ExpenseApp(
+            appGraph = AppGraph(
+                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main),
+                context,
+            ),
+        )
     }
 }

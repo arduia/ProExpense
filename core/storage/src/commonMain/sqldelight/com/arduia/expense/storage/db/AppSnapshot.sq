@@ -1,0 +1,11 @@
+CREATE TABLE app_snapshot (
+    id INTEGER NOT NULL PRIMARY KEY,
+    payload BLOB NOT NULL
+);
+
+insertSnapshot:
+INSERT OR REPLACE INTO app_snapshot(id, payload)
+VALUES (1, ?);
+
+selectSnapshot:
+SELECT payload FROM app_snapshot WHERE id = 1;

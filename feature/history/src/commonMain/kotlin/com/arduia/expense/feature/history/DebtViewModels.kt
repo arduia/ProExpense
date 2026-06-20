@@ -65,6 +65,7 @@ data class DebtAddUiState(
     val personName: String = "",
     val amountText: String = "",
     val saveError: String? = null,
+    val oppositeSideWarning: String? = null,
 )
 
 class DebtAddViewModel(
@@ -76,8 +77,11 @@ class DebtAddViewModel(
     private val _uiState = MutableStateFlow(DebtAddUiState())
     val uiState: StateFlow<DebtAddUiState> = _uiState.asStateFlow()
 
+    private var warningAcknowledged = false
+
     fun onPersonNameChange(name: String) {
-        _uiState.update { it.copy(personName = name.take(30), saveError = null) }
+        warningAcknowledged = false
+        _uiState.update { it.copy(personName = name.take(30), saveError = null, oppositeSideWarning = null) }
     }
 
     fun onAmountChange(amount: String) {
@@ -93,16 +97,42 @@ class DebtAddViewModel(
             return
         }
         scope.launch {
-            val debt = Debt(
-                id = "debt_${Random.nextLong().toString(16)}",
-                personName = state.personName.trim(),
-                amount = Amount(cents),
-                direction = if (isLent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE,
-            )
-            when (debtRepository.upsert(debt)) {
-                is Result.Success -> onSaved()
-                is Result.Error -> _uiState.update { it.copy(saveError = "Could not save") }
+            if (!warningAcknowledged) {
+                val opposite = if (isLent) DebtDirection.I_OWE else DebtDirection.OWED_TO_ME
+                when (val lookup = debtRepository.findByPersonName(state.personName.trim())) {
+                    is Result.Success -> {
+                        val conflict = lookup.data.any { it.direction == opposite && !it.isSettled }
+                        if (conflict) {
+                            _uiState.update {
+                                it.copy(
+                                    oppositeSideWarning = "${state.personName.trim()} already has a record on the other side",
+                                )
+                            }
+                            return@launch
+                        }
+                    }
+                    is Result.Error -> Unit
+                }
             }
+            persistDebt(state.personName.trim(), cents)
+        }
+    }
+
+    fun onConfirmDespiteWarning() {
+        warningAcknowledged = true
+        onSave()
+    }
+
+    private suspend fun persistDebt(personName: String, cents: Long) {
+        val debt = Debt(
+            id = "debt_${Random.nextLong().toString(16)}",
+            personName = personName,
+            amount = Amount(cents),
+            direction = if (isLent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE,
+        )
+        when (debtRepository.upsert(debt)) {
+            is Result.Success -> onSaved()
+            is Result.Error -> _uiState.update { it.copy(saveError = "Could not save") }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.data.Result
+import com.arduia.expense.domain.BudgetColorTier
 import com.arduia.expense.domain.calculateBudgetProgress
 import com.arduia.expense.domain.formatWithSymbol
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +23,7 @@ data class ReportsUiState(
     val monthLabel: String = "",
     val totalSpend: String = "$0",
     val dailyAverage: String = "",
+    val budgetColor: BudgetColorTier? = null,
     val categories: List<ReportsCategoryState> = emptyList(),
     val isLoading: Boolean = true,
 )
@@ -62,6 +64,7 @@ class ReportsViewModel(
                             totalSpend = summary.data.totalInHomeCurrency.formatWithSymbol(homeCurrencyCode),
                             dailyAverage = com.arduia.expense.domain.Amount(progress.dailyAverageCents)
                                 .formatWithSymbol(homeCurrencyCode) + "/day",
+                            budgetColor = progress.colorTier,
                             categories = categories,
                             isLoading = false,
                         )

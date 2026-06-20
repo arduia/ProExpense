@@ -1,15 +1,21 @@
 package com.arduia.expense.di
 
+import android.content.Context
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.SecurityStateReader
+import com.arduia.expense.feature.auth.AndroidBiometricAvailability
+import com.arduia.expense.feature.auth.AndroidPinKeyDeriver
+import com.arduia.expense.feature.auth.BiometricAvailability
+import com.arduia.expense.feature.auth.DatabaseKeyManager
 import com.arduia.expense.feature.auth.InMemoryPinAuthRepository
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.PinEntryViewModel
 import com.arduia.expense.feature.auth.PinSetupViewModel
+import com.arduia.expense.feature.auth.SecuritySettingsViewModel
 import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.currency.InMemoryCurrencyRepository
 import com.arduia.expense.feature.history.AndroidRecordDateFormatter
@@ -44,15 +50,23 @@ import com.arduia.expense.storage.InMemoryDataStore
 import com.arduia.expense.storage.InMemoryDebtRepository
 import com.arduia.expense.storage.InMemoryEventRepository
 import com.arduia.expense.storage.InMemoryLockoutRepository
+import com.arduia.expense.storage.SqlDelightSnapshotPersistence
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class AppGraph(
     applicationScope: CoroutineScope,
+    private val appContext: Context,
 ) {
     private val scope = CoroutineScope(applicationScope.coroutineContext + SupervisorJob())
 
     val dataStore = InMemoryDataStore()
+    private val keyDeriver = AndroidPinKeyDeriver()
+    val databaseKeyManager = DatabaseKeyManager(dataStore, keyDeriver)
+    val biometricAvailability: BiometricAvailability = AndroidBiometricAvailability(appContext)
+    private val snapshotPersistence = SqlDelightSnapshotPersistence(appContext, dataStore)
+
     val loggingRepository: LoggingRepository = InMemoryLoggingRepository(dataStore)
     val historyRepository: HistoryRepository = InMemoryHistoryRepository(dataStore)
     val categoryRepository: CategoryRepository = InMemoryCategoryRepository()
@@ -60,7 +74,7 @@ class AppGraph(
     val debtRepository: DebtRepository = InMemoryDebtRepository(dataStore)
     val budgetRepository: BudgetRepository = InMemoryBudgetRepository(dataStore)
     val lockoutRepository: LockoutRepository = InMemoryLockoutRepository(dataStore)
-    val pinAuthRepository: PinAuthRepository = InMemoryPinAuthRepository(dataStore)
+    val pinAuthRepository: PinAuthRepository = InMemoryPinAuthRepository(dataStore, databaseKeyManager)
     val securityStateReader: SecurityStateReader = pinAuthRepository as SecurityStateReader
     val currencyRepository: CurrencyRepository = InMemoryCurrencyRepository(dataStore)
     val sharedCostRepository: SharedCostRepository = InMemorySharedCostRepository(dataStore)
@@ -120,6 +134,15 @@ class AppGraph(
 
     private var addExpenseViewModel: AddExpenseViewModel? = null
 
+    init {
+        scope.launch {
+            if (dataStore.getActiveKey() == null) {
+                databaseKeyManager.rotateToRandomKey()
+            }
+            snapshotPersistence.restoreIfPresent()
+        }
+    }
+
     fun homeCurrency(): String = homeCurrencyCode
 
     fun prewarmAddExpenseViewModel(
@@ -130,6 +153,8 @@ class AppGraph(
         if (existing != null) return existing
         return AddExpenseViewModel(
             loggingRepository = loggingRepository,
+            eventRepository = eventRepository,
+            debtRepository = debtRepository,
             homeCurrencyCode = homeCurrencyCode,
             scope = scope,
             nowEpochMillis = dateFormatter::nowEpochMillis,
@@ -156,7 +181,7 @@ class AppGraph(
     )
 
     fun createPinSetupViewModel(onComplete: () -> Unit): PinSetupViewModel =
-        PinSetupViewModel(pinAuthRepository, scope, onComplete)
+        PinSetupViewModel(pinAuthRepository, biometricAvailability, scope, onComplete)
 
     fun createPinEntryViewModel(
         onUnlocked: () -> Unit,
@@ -169,6 +194,14 @@ class AppGraph(
         onUnlocked = onUnlocked,
         onRecoverySuccess = onRecoverySuccess,
     )
+
+    fun createSecuritySettingsViewModel(onChangePinRequested: () -> Unit): SecuritySettingsViewModel =
+        SecuritySettingsViewModel(
+            pinAuthRepository = pinAuthRepository,
+            biometricAvailability = biometricAvailability,
+            scope = scope,
+            onChangePinRequested = onChangePinRequested,
+        )
 
     fun createEventCreateViewModel(onSaved: () -> Unit): EventCreateViewModel =
         EventCreateViewModel(eventRepository, dateFormatter, scope, onSaved)
@@ -187,16 +220,19 @@ class AppGraph(
         onDeleted = onDeleted,
     )
 
-    fun createEventDetailViewModel(eventId: String): EventDetailViewModel =
-        EventDetailViewModel(
-            eventId = eventId,
-            eventRepository = eventRepository,
-            historyRepository = historyRepository,
-            formatter = dateFormatter,
-            homeCurrencyCode = homeCurrencyCode,
-            categoryLabel = categoryLabel,
-            scope = scope,
-        )
+    fun createEventDetailViewModel(
+        eventId: String,
+        onDeleted: () -> Unit = {},
+    ): EventDetailViewModel = EventDetailViewModel(
+        eventId = eventId,
+        eventRepository = eventRepository,
+        historyRepository = historyRepository,
+        formatter = dateFormatter,
+        homeCurrencyCode = homeCurrencyCode,
+        categoryLabel = categoryLabel,
+        scope = scope,
+        onDeleted = onDeleted,
+    )
 
     fun createSharedCostInputViewModel(onCalculated: (String) -> Unit): SharedCostInputViewModel =
         SharedCostInputViewModel(
@@ -213,6 +249,8 @@ class AppGraph(
     suspend fun clearAllData() {
         dataStore.clearAll()
         pinAuthRepository.clearPin()
+        databaseKeyManager.rotateToRandomKey()
+        snapshotPersistence.persist()
         homeViewModel.refresh()
         journalViewModel.refresh()
         eventBudgetViewModel.refresh()
@@ -226,6 +264,7 @@ class AppGraph(
         eventBudgetViewModel.refresh()
         debtTrackerViewModel.refresh()
         reportsViewModel.refresh()
+        scope.launch { snapshotPersistence.persist() }
     }
 
     private fun categoryRepositoryLabel(id: String): String {

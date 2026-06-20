@@ -25,6 +25,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.coroutines.core)
+            implementation(libs.androidx.biometric)
             implementation(project(":core:storage"))
         }
     }

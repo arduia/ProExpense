@@ -12,6 +12,7 @@ enum class PinSetupStep {
     ENTER,
     CONFIRM,
     SECURITY_QUESTION,
+    BIOMETRIC_OFFER,
     COMPLETE,
 }
 
@@ -20,15 +21,19 @@ data class PinSetupUiState(
     val filledDots: Int = 0,
     val mismatchError: Boolean = false,
     val securityAnswer: String = "",
+    val biometricAvailable: Boolean = false,
     val errorMessage: String? = null,
 )
 
 class PinSetupViewModel(
     private val pinAuthRepository: PinAuthRepository,
+    private val biometricAvailability: BiometricAvailability,
     private val scope: CoroutineScope,
     private val onComplete: () -> Unit,
 ) {
-    private val _uiState = MutableStateFlow(PinSetupUiState())
+    private val _uiState = MutableStateFlow(
+        PinSetupUiState(biometricAvailable = biometricAvailability.isAvailable()),
+    )
     val uiState: StateFlow<PinSetupUiState> = _uiState.asStateFlow()
 
     private var createdPin: String = ""
@@ -36,7 +41,12 @@ class PinSetupViewModel(
 
     fun onDigit(digit: Int) {
         val state = _uiState.value
-        if (state.step == PinSetupStep.SECURITY_QUESTION || state.step == PinSetupStep.COMPLETE) return
+        if (state.step == PinSetupStep.SECURITY_QUESTION ||
+            state.step == PinSetupStep.BIOMETRIC_OFFER ||
+            state.step == PinSetupStep.COMPLETE
+        ) {
+            return
+        }
         if (currentEntry.length >= 6) return
         currentEntry += digit.toString()
         _uiState.update { it.copy(filledDots = currentEntry.length, mismatchError = false) }
@@ -82,8 +92,11 @@ class PinSetupViewModel(
                 is Result.Success -> {
                     when (pinAuthRepository.setPin(createdPin)) {
                         is Result.Success -> {
-                            _uiState.update { it.copy(step = PinSetupStep.COMPLETE) }
-                            onComplete()
+                            if (_uiState.value.biometricAvailable) {
+                                _uiState.update { it.copy(step = PinSetupStep.BIOMETRIC_OFFER) }
+                            } else {
+                                completeSetup()
+                            }
                         }
                         is Result.Error -> _uiState.update { it.copy(errorMessage = "Could not save PIN") }
                     }
@@ -91,5 +104,19 @@ class PinSetupViewModel(
                 is Result.Error -> _uiState.update { it.copy(errorMessage = "Could not save security answer") }
             }
         }
+    }
+
+    fun onBiometricOffered(accepted: Boolean) {
+        scope.launch {
+            if (accepted) {
+                pinAuthRepository.setBiometricEnrolled(true)
+            }
+            completeSetup()
+        }
+    }
+
+    private fun completeSetup() {
+        _uiState.update { it.copy(step = PinSetupStep.COMPLETE) }
+        onComplete()
     }
 }

@@ -12,6 +12,6 @@ class ExpenseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         val applicationScope = CoroutineScope(SupervisorJob())
-        appGraph = AppGraph(applicationScope)
+        appGraph = AppGraph(applicationScope, applicationContext)
     }
 }

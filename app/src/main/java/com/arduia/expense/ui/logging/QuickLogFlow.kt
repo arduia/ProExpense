@@ -28,6 +28,8 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -53,17 +55,16 @@ private val quickLogTimeOptions = listOf(
 fun QuickLogFlow(
     viewModel: AddExpenseViewModel,
     onDismiss: () -> Unit,
-    onSaved: () -> Unit,
     modifier: Modifier = Modifier,
     initialStep: QuickLogStep = QuickLogStep.Amount,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var step by rememberSaveable { mutableStateOf(initialStep) }
-    var eventTag by rememberSaveable { mutableStateOf<String?>(null) }
     var showCustomCategories by rememberSaveable { mutableStateOf(false) }
     var dateIndex by rememberSaveable { mutableIntStateOf(0) }
     var timeIndex by rememberSaveable { mutableIntStateOf(0) }
     var showDateTimeSheet by rememberSaveable { mutableStateOf(false) }
+    var showTagSheet by rememberSaveable { mutableStateOf(false) }
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val locale = LocalContext.current.resources.configuration.locales[0] ?: Locale.getDefault()
@@ -75,7 +76,16 @@ fun QuickLogFlow(
         quickLogTimeOptions[timeIndex].format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale))
     }
 
-    AnimatedContent(
+    fun applyRecordedAt() {
+        val zoned = ZonedDateTime.of(
+            quickLogDateOptions[dateIndex],
+            quickLogTimeOptions[timeIndex],
+            ZoneId.systemDefault(),
+        )
+        viewModel.onRecordedAtChanged(zoned.toInstant().toEpochMilli())
+    }
+
+  AnimatedContent(
         targetState = step,
         modifier = modifier,
         transitionSpec = {
@@ -99,8 +109,8 @@ fun QuickLogFlow(
                 onMoreCategoriesClick = { showCustomCategories = true },
                 onClose = onDismiss,
                 onSave = {
+                    applyRecordedAt()
                     viewModel.onSaveFromAmountOnly()
-                    onSaved()
                 },
                 onNext = { step = QuickLogStep.Details },
             )
@@ -116,16 +126,17 @@ fun QuickLogFlow(
                     note = uiState.note,
                     dateLabel = dateLabel,
                     timeLabel = timeLabel,
-                    eventTag = eventTag,
+                    eventTag = uiState.selectedTag?.label,
                     onNoteChange = viewModel::onNoteChanged,
                     onCategorySelected = viewModel::onCategorySelected,
                     onBack = { step = QuickLogStep.Amount },
                     onEditAmount = { step = QuickLogStep.Amount },
-                    onClearTag = { eventTag = null },
+                    onClearTag = { viewModel.onTagSelected(null) },
+                    onTagFieldClick = { showTagSheet = true },
                     onDateTimeClick = { showDateTimeSheet = true },
                     onSave = {
+                        applyRecordedAt()
                         viewModel.onSaveWithDetails()
-                        onSaved()
                     },
                 )
             }
@@ -143,6 +154,7 @@ fun QuickLogFlow(
                         text = formatQuickLogDate(date, locale, todayLabel),
                         onClick = {
                             dateIndex = index
+                            applyRecordedAt()
                             showDateTimeSheet = false
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -153,7 +165,28 @@ fun QuickLogFlow(
                         text = time.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)),
                         onClick = {
                             timeIndex = index
+                            applyRecordedAt()
                             showDateTimeSheet = false
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        }
+    }
+
+    if (showTagSheet) {
+        ProBottomSheetHost(
+            title = stringResource(R.string.add_event_tag),
+            onClose = { showTagSheet = false },
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(ProExpenseTheme.dimensions.space8)) {
+                uiState.availableTags.forEach { tag ->
+                    ProButton(
+                        text = tag.label,
+                        onClick = {
+                            viewModel.onTagSelected(tag)
+                            showTagSheet = false
                         },
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -179,9 +212,10 @@ private fun formatQuickLogDate(date: LocalDate, locale: Locale, todayLabel: Stri
 )
 @Composable
 private fun QuickLogFlowAmountPreview() {
-    val graph = AppGraph(kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main))
+    val context = LocalContext.current
+    val graph = AppGraph(kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main), context)
     val viewModel = graph.prewarmAddExpenseViewModel(onSaved = {}, onSaveFailed = {})
     ProExpenseTheme {
-        QuickLogFlow(viewModel = viewModel, onDismiss = {}, onSaved = {})
+        QuickLogFlow(viewModel = viewModel, onDismiss = {})
     }
 }

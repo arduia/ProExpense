@@ -17,9 +17,11 @@ import androidx.compose.runtime.collectAsState
 import com.arduia.expense.di.AppGraph
 import com.arduia.expense.feature.importexport.ExportFormat
 import com.arduia.expense.ui.auth.PinEntryScreenContent
+import com.arduia.expense.ui.auth.SecuritySettingsScreenContent
 import com.arduia.expense.ui.categories.CategoryListScreenContent
 import com.arduia.expense.ui.currency.CurrencySettingScreenContent
 import com.arduia.expense.ui.data.ClearDataScreenContent
+import com.arduia.expense.ui.data.DataImportScreenContent
 import com.arduia.expense.ui.data.DataExportScreenContent
 import com.arduia.expense.ui.debt.DebtAddScreenContent
 import com.arduia.expense.ui.debt.DebtDetailScreenContent
@@ -38,6 +40,7 @@ import com.arduia.expense.ui.util.toReportsCategoryTriple
 import com.arduia.expense.ui.util.toSharedHistoryItem
 import com.arduia.expense.ui.util.toUiPinEntryMode
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.feature.sharedcost.SplitMode
 import kotlinx.coroutines.launch
 
 @Composable
@@ -74,6 +77,22 @@ fun AppRouteHost(
                 appGraph = appGraph,
                 onBack = navigator::pop,
                 onExported = { toastMessage = "export" },
+            )
+
+            AppRoutes.IMPORT -> ImportRoute(
+                modifier = Modifier.fillMaxSize(),
+                appGraph = appGraph,
+                onBack = navigator::pop,
+                onImported = { count -> toastMessage = "import:$count" },
+            )
+
+            AppRoutes.SECURITY -> SecurityRoute(
+                modifier = Modifier.fillMaxSize(),
+                appGraph = appGraph,
+                onBack = navigator::pop,
+                onChangePinRequested = {
+                    navigator.pop()
+                },
             )
 
             AppRoutes.CLEAR -> ClearDataRoute(
@@ -174,10 +193,19 @@ fun AppRouteHost(
             }
         }
 
-        val resolvedToast = when (toastMessage) {
+        val resolvedToast = when (val message = toastMessage) {
             "export" -> stringResource(R.string.toast_export_success)
             "clear" -> stringResource(R.string.toast_data_cleared)
-            else -> toastMessage
+            else -> if (message?.startsWith("import:") == true) {
+                val count = message.removePrefix("import:").toIntOrNull() ?: 0
+                if (count == 1) {
+                    stringResource(R.string.item_imported)
+                } else {
+                    stringResource(R.string.multi_items_imported)
+                }
+            } else {
+                message
+            }
         }
         ProToastHost(
             message = resolvedToast,
@@ -203,6 +231,10 @@ private fun ReportsRoute(
         monthLabel = state.monthLabel.ifBlank { stringResource(R.string.reports_monthly) },
         totalSpend = state.totalSpend,
         categories = state.categories.map { it.toReportsCategoryTriple() },
+        dailyAverage = state.dailyAverage,
+        budgetColor = state.budgetColor,
+        onPreviousMonth = appGraph.reportsViewModel::onPreviousMonth,
+        onNextMonth = appGraph.reportsViewModel::onNextMonth,
         onBack = onBack,
         showUncategorizedFallback = state.categories.isEmpty(),
     )
@@ -261,6 +293,63 @@ private fun CurrencyRoute(
             }
         },
         onBack = onBack,
+    )
+}
+
+@Composable
+private fun ImportRoute(
+    appGraph: AppGraph,
+    onBack: () -> Unit,
+    onImported: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val scope = rememberCoroutineScope()
+    var importText by rememberSaveable { mutableStateOf("") }
+    var resultMessage by rememberSaveable { mutableStateOf<String?>(null) }
+
+    DataImportScreenContent(
+        modifier = modifier,
+        importText = importText,
+        onImportTextChange = { importText = it },
+        resultMessage = resultMessage,
+        onBack = onBack,
+        onImport = {
+            scope.launch {
+                when (val result = appGraph.importExportRepository.importFrom(importText, ExportFormat.CSV)) {
+                    is com.arduia.expense.data.Result.Success -> {
+                        resultMessage = "${result.data.importedCount} imported"
+                        appGraph.refreshAfterDataChange()
+                        onImported(result.data.importedCount)
+                    }
+                    is com.arduia.expense.data.Result.Error -> resultMessage = "Import failed"
+                }
+            }
+        },
+    )
+}
+
+@Composable
+private fun SecurityRoute(
+    appGraph: AppGraph,
+    onBack: () -> Unit,
+    onChangePinRequested: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val viewModel = remember {
+        appGraph.createSecuritySettingsViewModel(onChangePinRequested = onChangePinRequested)
+    }
+    val state by viewModel.uiState.collectAsState()
+
+    SecuritySettingsScreenContent(
+        modifier = modifier,
+        isPinEnabled = state.isPinEnabled,
+        isBiometricEnabled = state.isBiometricEnabled,
+        biometricAvailable = state.biometricAvailable,
+        message = state.message,
+        onBack = onBack,
+        onChangePin = viewModel::onChangePinRequested,
+        onDisablePin = viewModel::onDisablePin,
+        onBiometricToggled = viewModel::onBiometricToggled,
     )
 }
 
@@ -383,19 +472,39 @@ private fun EventDetailRoute(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel = remember(eventId) { appGraph.createEventDetailViewModel(eventId) }
+    val viewModel = remember(eventId) {
+        appGraph.createEventDetailViewModel(
+            eventId = eventId,
+            onDeleted = {
+                appGraph.eventBudgetViewModel.refresh()
+                onBack()
+            },
+        )
+    }
     val state by viewModel.uiState.collectAsState()
 
     EventDetailScreenContent(
         modifier = modifier,
-        title = state.title,
+        title = if (state.isEditing) state.editName else state.title,
         dateRange = state.dateRange,
         spentLabel = state.spentLabel,
         budgetLabel = state.budgetLabel,
+        dailyAverageLabel = state.dailyAverageLabel,
         progress = state.progress,
         isClosed = state.isClosed,
         transactions = state.transactions.map { it.toHomeTransactionItem() },
+        isEditing = state.isEditing,
+        editName = state.editName,
+        onEditNameChange = viewModel::onEditNameChange,
+        showDeleteConfirm = state.showDeleteConfirm,
+        linkedExpenseCount = state.linkedExpenseCount,
         onBack = onBack,
+        onEditToggle = viewModel::onEditToggled,
+        onSaveEdit = viewModel::onSaveEdit,
+        onCloseEvent = viewModel::onCloseEvent,
+        onDeleteRequest = viewModel::onDeleteRequested,
+        onCancelDelete = viewModel::onCancelDelete,
+        onConfirmDelete = viewModel::onConfirmDelete,
     )
 }
 
@@ -443,8 +552,11 @@ private fun DebtAddRoute(
         amountText = state.amountText,
         onAmountChange = viewModel::onAmountChange,
         dueDate = dueDate,
+        warningMessage = state.oppositeSideWarning,
+        errorMessage = state.saveError,
         onClose = onClose,
         onSave = viewModel::onSave,
+        onConfirmWarning = viewModel::onConfirmDespiteWarning,
         saveEnabled = state.personName.isNotBlank() && state.amountText.isNotBlank(),
     )
 }
@@ -504,7 +616,12 @@ private fun SharedInputRoute(
         amountText = state.amountText,
         onAmountChange = viewModel::onAmountChange,
         peopleCount = state.peopleCount,
+        splitMode = state.splitMode,
+        customAmountTexts = state.customAmountTexts,
+        customAmountError = state.customAmountError,
         showZeroValidation = state.showZeroValidation,
+        onSplitModeChanged = viewModel::onSplitModeChanged,
+        onCustomAmountChange = viewModel::onCustomAmountChange,
         onIncrementPeople = viewModel::incrementPeople,
         onDecrementPeople = viewModel::decrementPeople,
         onCalculate = viewModel::onCalculate,

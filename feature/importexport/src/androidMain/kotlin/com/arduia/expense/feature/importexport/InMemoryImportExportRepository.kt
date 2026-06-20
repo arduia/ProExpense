@@ -16,7 +16,7 @@ class InMemoryImportExportRepository(
                     prefix = "[",
                     postfix = "]",
                 ) { r ->
-                    """{"id":"${r.id}","cents":${r.homeCurrencyAmount.valueInCents},"category":"${r.categoryId}"}"""
+                    """{"id":"${r.id}","cents":${r.homeCurrencyAmount.valueInCents},"category":"${r.categoryId}","recordedAt":${r.recordedAtEpochMillis}}"""
                 }
                 Result.Success(body)
             }
@@ -32,9 +32,34 @@ class InMemoryImportExportRepository(
         Result.Error("Export failed")
     }
 
-    override suspend fun importFrom(content: String, format: ExportFormat): Result<ImportSummary> =
-        Result.Success(ImportSummary(importedCount = 0, skippedCount = 0))
+    override suspend fun importFrom(content: String, format: ExportFormat): Result<ImportSummary> = try {
+        val parsed = when (format) {
+            ExportFormat.CSV -> ImportParser.parseCsv(content)
+            ExportFormat.JSON -> ImportParser.parseJson(content)
+        }
+        var imported = 0
+        var skipped = 0
+        parsed.forEach { record ->
+            val existing = store.allRecords().any { it.id == record.id }
+            if (existing) {
+                skipped += 1
+            } else {
+                store.insertRecord(record)
+                imported += 1
+            }
+        }
+        Result.Success(ImportSummary(importedCount = imported, skippedCount = skipped))
+    } catch (e: Exception) {
+        Result.Error("Import failed")
+    }
 
-    override suspend fun previewImport(content: String, format: ExportFormat): Result<List<FinanceRecord>> =
-        Result.Success(emptyList())
+    override suspend fun previewImport(content: String, format: ExportFormat): Result<List<FinanceRecord>> = try {
+        val parsed = when (format) {
+            ExportFormat.CSV -> ImportParser.parseCsv(content)
+            ExportFormat.JSON -> ImportParser.parseJson(content)
+        }
+        Result.Success(parsed)
+    } catch (e: Exception) {
+        Result.Error("Preview failed")
+    }
 }

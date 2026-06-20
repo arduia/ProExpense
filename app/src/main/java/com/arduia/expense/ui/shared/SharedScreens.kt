@@ -25,6 +25,7 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProfileNameField
+import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.SharedPersonRow
 import com.arduia.expense.ui.preview.SharedHistoryItem
 import com.arduia.expense.ui.preview.previewSharedHistory
@@ -42,6 +43,11 @@ fun SharedCostsScreenContent(
     onCalculate: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    splitMode: com.arduia.expense.feature.sharedcost.SplitMode = com.arduia.expense.feature.sharedcost.SplitMode.EVEN,
+    customAmountTexts: List<String> = emptyList(),
+    customAmountError: String? = null,
+    onSplitModeChanged: (com.arduia.expense.feature.sharedcost.SplitMode) -> Unit = {},
+    onCustomAmountChange: (Int, String) -> Unit = { _, _ -> },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -90,6 +96,34 @@ fun SharedCostsScreenContent(
                     onIncrement = onIncrementPeople,
                     onDecrement = onDecrementPeople,
                 )
+            }
+            SegmentedToggle(
+                options = listOf(
+                    stringResource(R.string.shared_split_even),
+                    stringResource(R.string.shared_split_custom),
+                ),
+                selectedIndex = if (splitMode == com.arduia.expense.feature.sharedcost.SplitMode.EVEN) 0 else 1,
+                onSelected = { index ->
+                    val mode = if (index == 0) {
+                        com.arduia.expense.feature.sharedcost.SplitMode.EVEN
+                    } else {
+                        com.arduia.expense.feature.sharedcost.SplitMode.CUSTOM
+                    }
+                    onSplitModeChanged(mode)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (splitMode == com.arduia.expense.feature.sharedcost.SplitMode.CUSTOM) {
+                customAmountTexts.forEachIndexed { index, amount ->
+                    ProfileNameField(
+                        value = amount,
+                        onValueChange = { onCustomAmountChange(index, it) },
+                        placeholder = stringResource(R.string.shared_person_amount, index + 1),
+                    )
+                }
+                if (customAmountError != null) {
+                    Text(text = customAmountError, style = typography.caption, color = colors.danger)
+                }
             }
             ProButton(
                 text = stringResource(R.string.shared_calculate),

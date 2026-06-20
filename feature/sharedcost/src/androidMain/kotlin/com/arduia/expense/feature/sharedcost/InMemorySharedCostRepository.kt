@@ -19,6 +19,7 @@ class InMemorySharedCostRepository(
             currency = input.currency,
             participants = input.participants,
             recordedAtEpochMillis = input.recordedAtEpochMillis,
+            customShareCents = input.customShareCents,
         )
         store.insertSharedCost(cost)
         return Result.Success(cost)
@@ -29,7 +30,8 @@ class InMemorySharedCostRepository(
     override suspend fun getSettlement(sharedCostId: String): Result<SettlementSummary> {
         val cost = store.allSharedCosts().firstOrNull { it.id == sharedCostId }
             ?: return Result.Error("Shared cost not found")
-        val shares = calculateEvenSplit(cost.totalAmount.valueInCents, cost.participants.size)
+        val shares = cost.customShareCents
+            ?: calculateEvenSplit(cost.totalAmount.valueInCents, cost.participants.size)
         val lines = cost.participants.zip(shares).map { (participant, cents) ->
             SettlementLine(participant = participant, owedAmount = Amount(cents))
         }

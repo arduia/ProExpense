@@ -203,12 +203,17 @@
     <string name="more_export_sub">Download records as CSV</string>
     <string name="more_clear">Clear all data</string>
     <string name="more_clear_sub">Remove all records from this device</string>
+    <string name="more_security">Security</string>
+    <string name="more_security_sub">PIN, biometrics, and recovery</string>
+    <string name="more_import_sub">Restore records from CSV</string>
 
     <!-- Reports -->
     <string name="reports_title">Reports</string>
     <string name="reports_monthly">May 2025</string>
     <string name="reports_total_spend">Total spend</string>
     <string name="reports_uncategorized">No categorized spending yet</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
 
     <!-- Categories -->
     <string name="categories_title">Categories</string>
@@ -226,6 +231,8 @@
     <!-- Data -->
     <string name="export_title">Export data</string>
     <string name="export_description">Export all your records as a CSV file. Data stays on your device until you share it.</string>
+    <string name="import_description">Paste exported CSV content to import records. Duplicates are skipped.</string>
+    <string name="import_paste_hint">Paste CSV data</string>
     <string name="export_csv">Export CSV</string>
     <string name="clear_data_title">Clear all data</string>
     <string name="clear_data_description">This permanently removes all records from this device. Export a backup first if you need your data later.</string>
@@ -264,6 +271,9 @@
     <string name="event_closed_label">Closed</string>
     <string name="event_spent_of">%1$s of %2$s</string>
     <string name="event_linked_transactions">Linked transactions</string>
+    <string name="event_edit">Edit</string>
+    <string name="event_close">Close event</string>
+    <string name="event_delete_warning">This event has %1$d linked expenses. Delete anyway?</string>
 
     <!-- Debt -->
     <string name="debt_tracker_title">Debt tracker</string>
@@ -281,6 +291,7 @@
     <string name="debt_empty_title">No debt records yet</string>
     <string name="debt_empty_subtitle">Track money you lent or owe with a quick record.</string>
     <string name="debt_due_preview">Due in 30 days</string>
+    <string name="debt_save_anyway">Save anyway</string>
 
     <!-- Shared costs -->
     <string name="shared_costs_title">Split a bill</string>
@@ -293,8 +304,20 @@
     <string name="shared_history_title">Split history</string>
     <string name="shared_history_empty">No saved splits yet</string>
     <string name="shared_people_count">%1$d people</string>
+    <string name="shared_split_even">Even split</string>
+    <string name="shared_split_custom">Custom split</string>
+    <string name="shared_person_amount">Person %1$d amount</string>
     <string name="date_time_picker_title">Date and time</string>
+    <string name="add_event_tag">Link event or debt</string>
     <string name="event_tag_format">@%1$s</string>
     <string name="pin_biometric_cd">Unlock with biometrics</string>
+    <string name="pin_biometric_offer_title">Enable biometrics?</string>
+    <string name="pin_biometric_offer_subtitle">Unlock faster with fingerprint or face on this device.</string>
+    <string name="pin_biometric_enable">Enable biometrics</string>
+    <string name="pin_biometric_skip">Skip for now</string>
+    <string name="security_change_pin">Change PIN</string>
+    <string name="security_disable_pin">Disable PIN</string>
+    <string name="security_biometric_enable">Enable biometrics</string>
+    <string name="security_biometric_disable">Disable biometrics</string>
 </resources>
 

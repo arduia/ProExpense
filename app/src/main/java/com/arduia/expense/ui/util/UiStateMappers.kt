@@ -84,7 +84,8 @@ fun com.arduia.expense.feature.auth.PinSetupStep.toUiPinSetupStep(): com.arduia.
         com.arduia.expense.feature.auth.PinSetupStep.ENTER -> com.arduia.expense.ui.auth.PinSetupStep.Create
         com.arduia.expense.feature.auth.PinSetupStep.CONFIRM -> com.arduia.expense.ui.auth.PinSetupStep.Confirm
         com.arduia.expense.feature.auth.PinSetupStep.SECURITY_QUESTION -> com.arduia.expense.ui.auth.PinSetupStep.SecurityQuestion
-        com.arduia.expense.feature.auth.PinSetupStep.COMPLETE -> com.arduia.expense.ui.auth.PinSetupStep.SecurityQuestion
+        com.arduia.expense.feature.auth.PinSetupStep.BIOMETRIC_OFFER -> com.arduia.expense.ui.auth.PinSetupStep.BiometricOffer
+        com.arduia.expense.feature.auth.PinSetupStep.COMPLETE -> com.arduia.expense.ui.auth.PinSetupStep.BiometricOffer
     }
 
 fun com.arduia.expense.feature.auth.PinEntryMode.toUiPinEntryMode(): com.arduia.expense.ui.auth.PinEntryMode =

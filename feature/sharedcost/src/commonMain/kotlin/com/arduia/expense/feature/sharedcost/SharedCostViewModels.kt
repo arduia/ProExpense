@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 data class SharedCostInputUiState(
     val amountText: String = "",
     val peopleCount: Int = 2,
+    val splitMode: SplitMode = SplitMode.EVEN,
+    val customAmountTexts: List<String> = emptyList(),
+    val customAmountError: String? = null,
     val showZeroValidation: Boolean = false,
 )
 
@@ -38,19 +40,56 @@ class SharedCostInputViewModel(
     private val scope: CoroutineScope,
     private val onCalculated: (String) -> Unit,
 ) {
-    private val _uiState = MutableStateFlow(SharedCostInputUiState())
+    private val _uiState = MutableStateFlow(SharedCostInputUiState(customAmountTexts = listOf("", "")))
     val uiState: StateFlow<SharedCostInputUiState> = _uiState.asStateFlow()
 
     fun onAmountChange(text: String) {
-        _uiState.update { it.copy(amountText = text, showZeroValidation = false) }
+        _uiState.update { it.copy(amountText = text, showZeroValidation = false, customAmountError = null) }
     }
 
     fun incrementPeople() {
-        _uiState.update { it.copy(peopleCount = (it.peopleCount + 1).coerceAtMost(20)) }
+        _uiState.update { state ->
+            val count = (state.peopleCount + 1).coerceAtMost(20)
+            state.copy(
+                peopleCount = count,
+                customAmountTexts = resizeCustomTexts(state.customAmountTexts, count),
+            )
+        }
     }
 
     fun decrementPeople() {
-        _uiState.update { it.copy(peopleCount = (it.peopleCount - 1).coerceAtLeast(1)) }
+        _uiState.update { state ->
+            val count = (state.peopleCount - 1).coerceAtLeast(1)
+            state.copy(
+                peopleCount = count,
+                customAmountTexts = resizeCustomTexts(state.customAmountTexts, count),
+            )
+        }
+    }
+
+    fun onSplitModeChanged(mode: SplitMode) {
+        val state = _uiState.value
+        val totalCents = (state.amountText.toDoubleOrNull() ?: 0.0).let { (it * 100).toLong() }
+        val prefilled = if (mode == SplitMode.CUSTOM && totalCents > 0) {
+            calculateEvenSplit(totalCents, state.peopleCount).map { cents ->
+                (cents / 100.0).toString()
+            }
+        } else {
+            state.customAmountTexts
+        }
+        _uiState.update {
+            it.copy(splitMode = mode, customAmountTexts = prefilled, customAmountError = null)
+        }
+    }
+
+    fun onCustomAmountChange(index: Int, value: String) {
+        _uiState.update { state ->
+            val updated = state.customAmountTexts.toMutableList()
+            if (index in updated.indices) {
+                updated[index] = value
+            }
+            state.copy(customAmountTexts = updated, customAmountError = null)
+        }
     }
 
     fun onCalculate() {
@@ -65,18 +104,38 @@ class SharedCostInputViewModel(
             val participants = List(state.peopleCount) { index ->
                 Participant(id = "p$index", name = "Person ${index + 1}")
             }
+            val customShares = if (state.splitMode == SplitMode.CUSTOM) {
+                val shares = state.customAmountTexts.map { text ->
+                    (text.toDoubleOrNull() ?: 0.0).let { (it * 100).toLong() }
+                }
+                val error = validateCustomSplit(cents, shares)
+                if (error != null) {
+                    _uiState.update { it.copy(customAmountError = error) }
+                    return@launch
+                }
+                shares
+            } else {
+                null
+            }
             val input = SharedCostInput(
                 title = "Shared cost",
                 totalAmount = Amount(cents),
                 currency = CurrencyCode(homeCurrencyCode),
                 participants = participants,
                 recordedAtEpochMillis = nowEpochMillis(),
+                splitMode = state.splitMode,
+                customShareCents = customShares,
             )
             when (val result = sharedCostRepository.create(input)) {
                 is Result.Success -> onCalculated(result.data.id)
                 is Result.Error -> Unit
             }
         }
+    }
+
+    private fun resizeCustomTexts(current: List<String>, count: Int): List<String> {
+        if (current.size == count) return current
+        return List(count) { index -> current.getOrNull(index).orEmpty() }
     }
 }
 

@@ -130,6 +130,8 @@ fun FirstLaunchFlow(
                 onDigit = pinSetupViewModel::onDigit,
                 onBackspace = pinSetupViewModel::onBackspace,
                 onContinueSecurity = pinSetupViewModel::onContinueSecurity,
+                onBiometricAccepted = { pinSetupViewModel.onBiometricOffered(true) },
+                onBiometricSkipped = { pinSetupViewModel.onBiometricOffered(false) },
             )
             FirstLaunchStep.PinEntry -> PinEntryRouteHost(
                 modifier = Modifier,
