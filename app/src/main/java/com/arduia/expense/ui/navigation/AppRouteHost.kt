@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
 import androidx.compose.runtime.collectAsState
 import com.arduia.expense.di.AppGraph
+import android.util.Base64
 import com.arduia.expense.feature.importexport.ExportFormat
 import com.arduia.expense.ui.auth.PinBiometricEffect
 import com.arduia.expense.ui.auth.PinEntryScreenContent
@@ -306,23 +307,36 @@ private fun ImportRoute(
 ) {
     val scope = rememberCoroutineScope()
     var importText by rememberSaveable { mutableStateOf("") }
+    var importPassword by rememberSaveable { mutableStateOf("") }
     var resultMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
     DataImportScreenContent(
         modifier = modifier,
         importText = importText,
         onImportTextChange = { importText = it },
+        importPassword = importPassword,
+        onImportPasswordChange = { importPassword = it },
         resultMessage = resultMessage,
         onBack = onBack,
         onImport = {
             scope.launch {
-                when (val result = appGraph.importExportRepository.importFrom(importText, ExportFormat.CSV)) {
+                val decoded = runCatching {
+                    Base64.decode(importText.trim(), Base64.DEFAULT)
+                }.getOrNull()
+                val isZipArchive = decoded != null && decoded.size >= 2 &&
+                    decoded[0] == 'P'.code.toByte() && decoded[1] == 'K'.code.toByte()
+                val result = if (isZipArchive && decoded != null) {
+                    appGraph.importExportRepository.importEncryptedArchive(decoded, importPassword)
+                } else {
+                    appGraph.importExportRepository.importFrom(importText, ExportFormat.CSV)
+                }
+                when (result) {
                     is com.arduia.expense.data.Result.Success -> {
                         resultMessage = "${result.data.importedCount} imported"
                         appGraph.refreshAfterDataChange()
                         onImported(result.data.importedCount)
                     }
-                    is com.arduia.expense.data.Result.Error -> resultMessage = "Import failed"
+                    is com.arduia.expense.data.Result.Error -> resultMessage = result.message ?: "Import failed"
                 }
             }
         },
@@ -362,13 +376,16 @@ private fun ExportRoute(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
+    var exportPassword by rememberSaveable { mutableStateOf("") }
 
     DataExportScreenContent(
         modifier = modifier,
+        exportPassword = exportPassword,
+        onExportPasswordChange = { exportPassword = it },
         onBack = onBack,
         onExport = {
             scope.launch {
-                when (appGraph.importExportRepository.exportAll(ExportFormat.CSV)) {
+                when (appGraph.importExportRepository.exportEncryptedArchive(exportPassword)) {
                     is com.arduia.expense.data.Result.Success -> onExported()
                     is com.arduia.expense.data.Result.Error -> Unit
                 }

@@ -5,7 +5,7 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 
 class InMemoryBudgetRepository(
-    private val store: InMemoryDataStore,
+    private val store: EntityDataStore,
 ) : BudgetRepository {
     override suspend fun getMonthlyBudget(): Result<Amount?> {
         val cents = store.monthlyBudgetCents
@@ -14,6 +14,7 @@ class InMemoryBudgetRepository(
 
     override suspend fun setMonthlyBudget(amount: Amount?): Result<Unit> {
         store.monthlyBudgetCents = amount?.valueInCents
+        store.persistSettings()
         return Result.Success(Unit)
     }
 }

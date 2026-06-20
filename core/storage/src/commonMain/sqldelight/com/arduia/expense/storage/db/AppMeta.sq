@@ -1,0 +1,20 @@
+CREATE TABLE app_meta (
+    id INTEGER NOT NULL PRIMARY KEY,
+    monthly_budget_cents INTEGER,
+    home_currency_code TEXT NOT NULL,
+    failed_attempt_count INTEGER NOT NULL,
+    lockout_until INTEGER,
+    security_answer_hash TEXT,
+    security_question_id TEXT,
+    biometric_enrolled INTEGER NOT NULL,
+    biometric_wrapped_key BLOB
+);
+
+insertMeta:
+INSERT OR REPLACE INTO app_meta(
+    id, monthly_budget_cents, home_currency_code, failed_attempt_count, lockout_until,
+    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectMeta:
+SELECT * FROM app_meta WHERE id = 1;

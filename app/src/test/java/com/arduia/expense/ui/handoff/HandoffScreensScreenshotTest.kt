@@ -109,6 +109,9 @@ class HandoffScreensScreenshotTest {
             step = PinSetupStep.Create,
             filledDots = 3,
             mismatchError = false,
+            securityQuestions = listOf("pet" to "What was your first pet's name?"),
+            selectedQuestionId = "pet",
+            onSecurityQuestionSelected = {},
             securityAnswer = "",
             onSecurityAnswerChange = {},
             onDigit = {},
@@ -255,7 +258,14 @@ class HandoffScreensScreenshotTest {
         )
     }
 
-    @Test fun data_export() = capture { DataExportScreenContent(onBack = {}, onExport = {}) }
+    @Test fun data_export() = capture {
+        DataExportScreenContent(
+            exportPassword = "",
+            onExportPasswordChange = {},
+            onBack = {},
+            onExport = {},
+        )
+    }
 
     @Test fun clear_data() = capture {
         ClearDataScreenContent(

@@ -5,11 +5,11 @@ import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Participant
 import com.arduia.expense.domain.SharedCost
-import com.arduia.expense.storage.InMemoryDataStore
+import com.arduia.expense.storage.EntityDataStore
 import java.util.UUID
 
 class InMemorySharedCostRepository(
-    private val store: InMemoryDataStore,
+    private val store: EntityDataStore,
 ) : SharedCostRepository {
     override suspend fun create(input: SharedCostInput): Result<SharedCost> {
         val cost = SharedCost(

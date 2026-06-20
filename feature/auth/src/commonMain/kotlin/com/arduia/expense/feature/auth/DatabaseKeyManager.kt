@@ -1,12 +1,14 @@
 package com.arduia.expense.feature.auth
 
 import com.arduia.expense.data.Result
+import com.arduia.expense.storage.DatabaseRekeyer
 import com.arduia.expense.storage.KeyRotationStore
 import kotlin.random.Random
 
 class DatabaseKeyManager(
     private val store: KeyRotationStore,
     private val keyDeriver: PinKeyDeriver,
+    private val rekeyer: DatabaseRekeyer? = null,
 ) {
     suspend fun rotateToPinDerivedKey(pin: String): Result<Unit> {
         if (pin.length != 6 || pin.any { !it.isDigit() }) {
@@ -14,6 +16,7 @@ class DatabaseKeyManager(
         }
         val salt = keyDeriver.generateSalt()
         val derived = keyDeriver.deriveKey(pin, salt)
+        rekeyer?.rekey(derived)
         store.setPinDerivedKey(derived, salt)
         return Result.Success(Unit)
     }
@@ -21,6 +24,7 @@ class DatabaseKeyManager(
     suspend fun rotateToRandomKey(): Result<Unit> {
         val randomKey = ByteArray(32)
         Random.nextBytes(randomKey)
+        rekeyer?.rekey(randomKey)
         store.setRandomKey(randomKey)
         return Result.Success(Unit)
     }

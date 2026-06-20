@@ -1,0 +1,24 @@
+CREATE TABLE event_record (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    start_epoch_millis INTEGER NOT NULL,
+    end_epoch_millis INTEGER NOT NULL,
+    budget_cents INTEGER NOT NULL,
+    status TEXT NOT NULL
+);
+
+insertEvent:
+INSERT OR REPLACE INTO event_record(id, name, start_epoch_millis, end_epoch_millis, budget_cents, status)
+VALUES (?, ?, ?, ?, ?, ?);
+
+deleteEvent:
+DELETE FROM event_record WHERE id = ?;
+
+selectAllEvents:
+SELECT * FROM event_record ORDER BY start_epoch_millis DESC;
+
+selectEventById:
+SELECT * FROM event_record WHERE id = ?;
+
+deleteAllEvents:
+DELETE FROM event_record;

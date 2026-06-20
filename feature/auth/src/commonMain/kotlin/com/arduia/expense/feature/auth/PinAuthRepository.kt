@@ -18,11 +18,15 @@ interface PinAuthRepository {
 
     suspend fun changePin(newPin: String): Result<Unit>
 
-    suspend fun setSecurityAnswer(answer: String): Result<Unit>
+    suspend fun setSecurityAnswer(questionId: String, answer: String): Result<Unit>
 
     suspend fun verifySecurityAnswer(answer: String): Result<Boolean>
 
     suspend fun isBiometricEnrolled(): Boolean
 
     suspend fun setBiometricEnrolled(enabled: Boolean): Result<Unit>
+
+    suspend fun unlockWithBiometric(): Result<Boolean>
+
+    suspend fun getSecurityQuestionId(): String?
 }

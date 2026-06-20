@@ -3,13 +3,13 @@ package com.arduia.expense.feature.history
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.storage.InMemoryDataStore
+import com.arduia.expense.storage.EntityDataStore
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class InMemoryHistoryRepository(
-    private val store: InMemoryDataStore,
+    private val store: EntityDataStore,
     private val zoneId: ZoneId = ZoneId.systemDefault(),
 ) : HistoryRepository {
     override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> {

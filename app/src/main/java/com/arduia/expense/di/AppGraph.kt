@@ -8,11 +8,13 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.feature.auth.AndroidBiometricAvailability
+import com.arduia.expense.feature.auth.AndroidBiometricKeyStore
 import com.arduia.expense.feature.auth.AndroidPinKeyDeriver
+import com.arduia.expense.feature.auth.AndroidSecurityAnswerHasher
 import com.arduia.expense.feature.auth.BiometricAvailability
 import com.arduia.expense.feature.auth.DatabaseKeyManager
-import com.arduia.expense.feature.auth.InMemoryPinAuthRepository
 import com.arduia.expense.feature.auth.PinAuthRepository
+import com.arduia.expense.feature.auth.PinAuthRepositoryImpl
 import com.arduia.expense.feature.auth.PinEntryViewModel
 import com.arduia.expense.feature.auth.PinSetupViewModel
 import com.arduia.expense.feature.auth.SecuritySettingsViewModel
@@ -33,7 +35,7 @@ import com.arduia.expense.feature.history.JournalViewModel
 import com.arduia.expense.feature.history.RecordDateFormatter
 import com.arduia.expense.feature.history.ReportsViewModel
 import com.arduia.expense.feature.importexport.ImportExportRepository
-import com.arduia.expense.feature.importexport.InMemoryImportExportRepository
+import com.arduia.expense.feature.importexport.SqlDelightImportExportRepository
 import com.arduia.expense.feature.logging.AddExpenseViewModel
 import com.arduia.expense.feature.logging.CategoryListViewModel
 import com.arduia.expense.feature.logging.InMemoryCategoryRepository
@@ -45,12 +47,16 @@ import com.arduia.expense.feature.sharedcost.InMemorySharedCostRepository
 import com.arduia.expense.feature.sharedcost.SharedCostInputViewModel
 import com.arduia.expense.feature.sharedcost.SharedCostRepository
 import com.arduia.expense.feature.sharedcost.SharedSummaryViewModel
+import com.arduia.expense.storage.AndroidDatabaseKeyStorage
+import com.arduia.expense.storage.DatabaseRekeyer
+import com.arduia.expense.storage.EntityDataStore
 import com.arduia.expense.storage.InMemoryBudgetRepository
 import com.arduia.expense.storage.InMemoryDataStore
 import com.arduia.expense.storage.InMemoryDebtRepository
 import com.arduia.expense.storage.InMemoryEventRepository
 import com.arduia.expense.storage.InMemoryLockoutRepository
-import com.arduia.expense.storage.SqlDelightSnapshotPersistence
+import com.arduia.expense.storage.KeyRotationStore
+import com.arduia.expense.storage.ProExpenseDatabaseSession
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -61,11 +67,23 @@ class AppGraph(
 ) {
     private val scope = CoroutineScope(applicationScope.coroutineContext + SupervisorJob())
 
-    val dataStore = InMemoryDataStore()
+  private val storageBootstrap = openStorage(appContext)
+    val dataStore: EntityDataStore = storageBootstrap.dataStore
+    private val keyStorage: KeyRotationStore = storageBootstrap.keyStorage
+    private val databaseRekeyer: DatabaseRekeyer? = storageBootstrap.rekeyer
+
     private val keyDeriver = AndroidPinKeyDeriver()
-    val databaseKeyManager = DatabaseKeyManager(dataStore, keyDeriver)
+    val databaseKeyManager = DatabaseKeyManager(keyStorage, keyDeriver, databaseRekeyer)
     val biometricAvailability: BiometricAvailability = AndroidBiometricAvailability(appContext)
-    private val snapshotPersistence = SqlDelightSnapshotPersistence(appContext, dataStore)
+    private val biometricKeyStore = runCatching { AndroidBiometricKeyStore(appContext) }.getOrNull()
+    val pinAuthRepository: PinAuthRepository = PinAuthRepositoryImpl(
+        store = dataStore,
+        keyStorage = keyStorage,
+        keyManager = databaseKeyManager,
+        answerHasher = AndroidSecurityAnswerHasher(),
+        biometricKeyStore = biometricKeyStore,
+    )
+    val securityStateReader: SecurityStateReader = pinAuthRepository as SecurityStateReader
 
     val loggingRepository: LoggingRepository = InMemoryLoggingRepository(dataStore)
     val historyRepository: HistoryRepository = InMemoryHistoryRepository(dataStore)
@@ -74,11 +92,9 @@ class AppGraph(
     val debtRepository: DebtRepository = InMemoryDebtRepository(dataStore)
     val budgetRepository: BudgetRepository = InMemoryBudgetRepository(dataStore)
     val lockoutRepository: LockoutRepository = InMemoryLockoutRepository(dataStore)
-    val pinAuthRepository: PinAuthRepository = InMemoryPinAuthRepository(dataStore, databaseKeyManager)
-    val securityStateReader: SecurityStateReader = pinAuthRepository as SecurityStateReader
     val currencyRepository: CurrencyRepository = InMemoryCurrencyRepository(dataStore)
     val sharedCostRepository: SharedCostRepository = InMemorySharedCostRepository(dataStore)
-    val importExportRepository: ImportExportRepository = InMemoryImportExportRepository(dataStore)
+    val importExportRepository: ImportExportRepository = SqlDelightImportExportRepository(dataStore)
     val dateFormatter: RecordDateFormatter = AndroidRecordDateFormatter()
 
     private val homeCurrencyCode: String = dataStore.homeCurrencyCode
@@ -136,10 +152,9 @@ class AppGraph(
 
     init {
         scope.launch {
-            if (dataStore.getActiveKey() == null) {
+            if (keyStorage.getActiveKey() == null) {
                 databaseKeyManager.rotateToRandomKey()
             }
-            snapshotPersistence.restoreIfPresent()
         }
     }
 
@@ -250,7 +265,6 @@ class AppGraph(
         dataStore.clearAll()
         pinAuthRepository.clearPin()
         databaseKeyManager.rotateToRandomKey()
-        snapshotPersistence.persist()
         homeViewModel.refresh()
         journalViewModel.refresh()
         eventBudgetViewModel.refresh()
@@ -264,12 +278,26 @@ class AppGraph(
         eventBudgetViewModel.refresh()
         debtTrackerViewModel.refresh()
         reportsViewModel.refresh()
-        scope.launch { snapshotPersistence.persist() }
     }
 
     private fun categoryRepositoryLabel(id: String): String {
         val fromStatic = allLogCategories.firstOrNull { it.id == id }?.label
         if (fromStatic != null) return fromStatic
         return logCategoryById(id).label
+    }
+
+    private data class StorageBootstrap(
+        val dataStore: EntityDataStore,
+        val keyStorage: KeyRotationStore,
+        val rekeyer: DatabaseRekeyer?,
+    )
+
+    private fun openStorage(context: Context): StorageBootstrap = runCatching {
+        val keyStorage = AndroidDatabaseKeyStorage(context)
+        val session = ProExpenseDatabaseSession.open(context, keyStorage)
+        StorageBootstrap(session.dataStore, session.keyStorage, session)
+    }.getOrElse {
+        val inMemory = InMemoryDataStore()
+        StorageBootstrap(inMemory, inMemory, null)
     }
 }

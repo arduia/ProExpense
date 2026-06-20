@@ -5,7 +5,7 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Event
 
 class InMemoryEventRepository(
-    private val store: InMemoryDataStore,
+    private val store: EntityDataStore,
 ) : EventRepository {
     override suspend fun getAll(): Result<List<Event>> = Result.Success(store.allEvents())
 

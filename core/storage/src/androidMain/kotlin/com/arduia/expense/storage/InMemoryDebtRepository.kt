@@ -5,7 +5,7 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Debt
 
 class InMemoryDebtRepository(
-    private val store: InMemoryDataStore,
+    private val store: EntityDataStore,
 ) : DebtRepository {
     override suspend fun getAll(): Result<List<Debt>> = Result.Success(store.allDebts())
 

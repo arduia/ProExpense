@@ -20,6 +20,8 @@ data class PinSetupUiState(
     val step: PinSetupStep = PinSetupStep.ENTER,
     val filledDots: Int = 0,
     val mismatchError: Boolean = false,
+    val securityQuestions: List<SecurityQuestion> = SecurityQuestions.all,
+    val selectedQuestionId: String = SecurityQuestions.all.first().id,
     val securityAnswer: String = "",
     val biometricAvailable: Boolean = false,
     val errorMessage: String? = null,
@@ -80,15 +82,20 @@ class PinSetupViewModel(
         }
     }
 
+    fun onSecurityQuestionSelected(questionId: String) {
+        _uiState.update { it.copy(selectedQuestionId = questionId) }
+    }
+
     fun onSecurityAnswerChange(answer: String) {
         _uiState.update { it.copy(securityAnswer = answer) }
     }
 
     fun onContinueSecurity() {
-        val answer = _uiState.value.securityAnswer.trim()
+        val state = _uiState.value
+        val answer = state.securityAnswer.trim()
         if (answer.isBlank()) return
         scope.launch {
-            when (pinAuthRepository.setSecurityAnswer(answer)) {
+            when (pinAuthRepository.setSecurityAnswer(state.selectedQuestionId, answer)) {
                 is Result.Success -> {
                     when (pinAuthRepository.setPin(createdPin)) {
                         is Result.Success -> {

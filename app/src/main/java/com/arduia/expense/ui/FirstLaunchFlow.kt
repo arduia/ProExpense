@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.di.AppGraph
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.ui.auth.PinSetupScreenContent
+import com.arduia.expense.ui.auth.securityQuestionLabels
 import com.arduia.expense.ui.currency.ProfileCurrencyScreenContent
 import com.arduia.expense.ui.navigation.PinEntryRouteHost
 import com.arduia.expense.ui.navigation.stepTransition
@@ -125,6 +126,9 @@ fun FirstLaunchFlow(
                 step = pinSetupState.step.toUiPinSetupStep(),
                 filledDots = pinSetupState.filledDots,
                 mismatchError = pinSetupState.mismatchError,
+                securityQuestions = securityQuestionLabels(),
+                selectedQuestionId = pinSetupState.selectedQuestionId,
+                onSecurityQuestionSelected = pinSetupViewModel::onSecurityQuestionSelected,
                 securityAnswer = pinSetupState.securityAnswer,
                 onSecurityAnswerChange = pinSetupViewModel::onSecurityAnswerChange,
                 onDigit = pinSetupViewModel::onDigit,

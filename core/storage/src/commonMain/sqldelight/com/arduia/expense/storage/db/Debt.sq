@@ -1,0 +1,24 @@
+CREATE TABLE debt_record (
+    id TEXT NOT NULL PRIMARY KEY,
+    person_name TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    direction TEXT NOT NULL,
+    due_epoch_millis INTEGER,
+    is_settled INTEGER NOT NULL
+);
+
+insertDebt:
+INSERT OR REPLACE INTO debt_record(id, person_name, amount_cents, direction, due_epoch_millis, is_settled)
+VALUES (?, ?, ?, ?, ?, ?);
+
+deleteDebt:
+DELETE FROM debt_record WHERE id = ?;
+
+selectAllDebts:
+SELECT * FROM debt_record ORDER BY person_name;
+
+selectDebtById:
+SELECT * FROM debt_record WHERE id = ?;
+
+deleteAllDebts:
+DELETE FROM debt_record;

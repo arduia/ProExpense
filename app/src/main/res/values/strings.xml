@@ -230,9 +230,12 @@
 
     <!-- Data -->
     <string name="export_title">Export data</string>
-    <string name="export_description">Export all your records as a CSV file. Data stays on your device until you share it.</string>
-    <string name="import_description">Paste exported CSV content to import records. Duplicates are skipped.</string>
-    <string name="import_paste_hint">Paste CSV data</string>
+    <string name="export_description">Create a password-protected backup file. Use a separate export password — not your app PIN.</string>
+    <string name="import_description">Paste exported CSV content or a base64-encoded backup to import records.</string>
+    <string name="import_paste_hint">Paste CSV or backup data</string>
+    <string name="export_password_hint">Export password</string>
+    <string name="export_encrypted">Create encrypted backup</string>
+    <string name="import_password_hint">Import password</string>
     <string name="export_csv">Export CSV</string>
     <string name="clear_data_title">Clear all data</string>
     <string name="clear_data_description">This permanently removes all records from this device. Export a backup first if you need your data later.</string>
@@ -250,6 +253,11 @@
     <string name="pin_security_title">Security question</string>
     <string name="pin_security_subtitle">Required for PIN recovery if you forget it</string>
     <string name="pin_security_hint">Your answer</string>
+    <string name="security_question_pet">What was your first pet\'s name?</string>
+    <string name="security_question_city">What city were you born in?</string>
+    <string name="security_question_school">What was the name of your first school?</string>
+    <string name="security_question_maiden">What is your mother\'s maiden name?</string>
+    <string name="security_question_nickname">What was your childhood nickname?</string>
     <string name="pin_mismatch">PINs do not match — try again</string>
     <string name="pin_entry_title">Enter PIN</string>
     <string name="pin_entry_subtitle">Unlock Pro Expense</string>

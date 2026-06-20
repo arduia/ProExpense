@@ -24,6 +24,8 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 fun DataImportScreenContent(
     importText: String,
     onImportTextChange: (String) -> Unit,
+    importPassword: String,
+    onImportPasswordChange: (String) -> Unit,
     onBack: () -> Unit,
     onImport: () -> Unit,
     modifier: Modifier = Modifier,
@@ -61,6 +63,12 @@ fun DataImportScreenContent(
                 placeholder = stringResource(R.string.import_paste_hint),
                 modifier = Modifier.padding(top = dimens.space16),
             )
+            ProfileNameField(
+                value = importPassword,
+                onValueChange = onImportPasswordChange,
+                placeholder = stringResource(R.string.import_password_hint),
+                modifier = Modifier.padding(top = dimens.space12),
+            )
             if (resultMessage != null) {
                 Text(
                     text = resultMessage,
@@ -72,7 +80,7 @@ fun DataImportScreenContent(
             ProButton(
                 text = stringResource(R.string.import_data),
                 onClick = onImport,
-                enabled = importText.isNotBlank(),
+                enabled = importText.isNotBlank() && importPassword.isNotBlank(),
                 size = ProButtonSize.Lg,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,6 +102,8 @@ private fun DataImportPreview() {
         DataImportScreenContent(
             importText = "id,amountCents,categoryId,note,recordedAt",
             onImportTextChange = {},
+            importPassword = "",
+            onImportPasswordChange = {},
             onBack = {},
             onImport = {},
         )

@@ -80,7 +80,7 @@ private class FakePinAuthRepository(
 
     override suspend fun changePin(newPin: String): Result<Unit> = Result.Success(Unit)
 
-    override suspend fun setSecurityAnswer(answer: String): Result<Unit> = Result.Success(Unit)
+    override suspend fun setSecurityAnswer(questionId: String, answer: String): Result<Unit> = Result.Success(Unit)
 
     override suspend fun verifySecurityAnswer(answer: String): Result<Boolean> = Result.Success(true)
 
@@ -90,4 +90,8 @@ private class FakePinAuthRepository(
         biometricEnrolled = enabled
         return Result.Success(Unit)
     }
+
+    override suspend fun unlockWithBiometric(): Result<Boolean> = Result.Success(true)
+
+    override suspend fun getSecurityQuestionId(): String? = null
 }

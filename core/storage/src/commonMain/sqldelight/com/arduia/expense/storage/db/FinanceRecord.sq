@@ -1,0 +1,29 @@
+CREATE TABLE finance_record (
+    id TEXT NOT NULL PRIMARY KEY,
+    amount_cents INTEGER NOT NULL,
+    currency_code TEXT NOT NULL,
+    home_amount_cents INTEGER NOT NULL,
+    category_id TEXT NOT NULL,
+    type TEXT NOT NULL,
+    note TEXT,
+    recorded_at INTEGER NOT NULL,
+    tag_type TEXT,
+    tag_id TEXT
+);
+
+insertRecord:
+INSERT OR REPLACE INTO finance_record(
+    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, tag_type, tag_id
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteRecord:
+DELETE FROM finance_record WHERE id = ?;
+
+selectAllRecords:
+SELECT * FROM finance_record ORDER BY recorded_at DESC;
+
+selectRecordById:
+SELECT * FROM finance_record WHERE id = ?;
+
+deleteAllRecords:
+DELETE FROM finance_record;

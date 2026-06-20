@@ -6,7 +6,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class InMemoryLockoutRepository(
-    private val store: InMemoryDataStore,
+    private val store: EntityDataStore,
 ) : LockoutRepository {
     private val mutex = Mutex()
 
@@ -26,12 +26,14 @@ class InMemoryLockoutRepository(
         if (store.failedAttemptCount >= maxAttempts) {
             store.lockoutUntilEpochMillis = nowEpochMillis + lockoutDurationMs
         }
+        store.persistSettings()
         lockoutStateLocked(nowEpochMillis)
     }
 
     override suspend fun resetLockout() = mutex.withLock {
         store.failedAttemptCount = 0
         store.lockoutUntilEpochMillis = null
+        store.persistSettings()
     }
 
     override suspend fun isLockedOut(nowEpochMillis: Long): Boolean = mutex.withLock {

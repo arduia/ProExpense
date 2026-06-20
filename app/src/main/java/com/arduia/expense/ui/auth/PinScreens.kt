@@ -41,6 +41,9 @@ fun PinSetupScreenContent(
     step: PinSetupStep,
     filledDots: Int,
     mismatchError: Boolean,
+    securityQuestions: List<Pair<String, String>>,
+    selectedQuestionId: String,
+    onSecurityQuestionSelected: (String) -> Unit,
     securityAnswer: String,
     onSecurityAnswerChange: (String) -> Unit,
     onDigit: (Int) -> Unit,
@@ -53,6 +56,7 @@ fun PinSetupScreenContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val shapes = ProExpenseTheme.shapes
     val keypadState = if (mismatchError) PinKeypadState.Error else PinKeypadState.Default
 
     Column(
@@ -90,13 +94,36 @@ fun PinSetupScreenContent(
         )
 
         if (step == PinSetupStep.SecurityQuestion) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space24),
+                verticalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                securityQuestions.forEach { (id, label) ->
+                    val selected = id == selectedQuestionId
+                    Text(
+                        text = label,
+                        style = typography.body,
+                        color = if (selected) colors.onSurface else colors.onSurfaceMuted,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .proClickable(
+                                onClick = { onSecurityQuestionSelected(id) },
+                                shape = shapes.tile,
+                            )
+                            .padding(vertical = dimens.space8),
+                        textAlign = TextAlign.Start,
+                    )
+                }
+            }
             ProfileNameField(
                 value = securityAnswer,
                 onValueChange = onSecurityAnswerChange,
                 placeholder = stringResource(R.string.pin_security_hint),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = dimens.space32),
+                    .padding(top = dimens.space16),
             )
             Spacer(modifier = Modifier.weight(1f))
             ProButton(
@@ -276,6 +303,9 @@ private fun PinSetupPreview() {
             step = PinSetupStep.Create,
             filledDots = 3,
             mismatchError = false,
+            securityQuestions = listOf("pet" to "What was your first pet's name?"),
+            selectedQuestionId = "pet",
+            onSecurityQuestionSelected = {},
             securityAnswer = "",
             onSecurityAnswerChange = {},
             onDigit = {},
@@ -293,6 +323,9 @@ private fun PinSecurityPreview() {
             step = PinSetupStep.SecurityQuestion,
             filledDots = 0,
             mismatchError = false,
+            securityQuestions = listOf("pet" to "What was your first pet's name?"),
+            selectedQuestionId = "pet",
+            onSecurityQuestionSelected = {},
             securityAnswer = "",
             onSecurityAnswerChange = {},
             onDigit = {},

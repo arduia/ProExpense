@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.androidx.sqlite)
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.sqlcipher.android)
+            implementation(libs.androidx.security.crypto)
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))

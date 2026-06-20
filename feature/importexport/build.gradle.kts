@@ -26,6 +26,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(project(":core:storage"))
+            implementation(libs.zip4j)
         }
     }
 }

@@ -3,11 +3,11 @@ package com.arduia.expense.feature.logging
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.storage.InMemoryDataStore
+import com.arduia.expense.storage.EntityDataStore
 import java.util.UUID
 
 class InMemoryLoggingRepository(
-    private val store: InMemoryDataStore,
+    private val store: EntityDataStore,
 ) : LoggingRepository {
     override suspend fun createRecord(input: LogRecordInput): Result<FinanceRecord> = try {
         val record = FinanceRecord(

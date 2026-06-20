@@ -109,8 +109,17 @@ class PinEntryViewModel(
     fun onBiometricUnlock() {
         if (_uiState.value.mode == PinEntryMode.LOCKOUT) return
         scope.launch {
-            lockoutRepository.resetLockout()
-            onUnlocked()
+            when (val result = pinAuthRepository.unlockWithBiometric()) {
+                is Result.Success -> {
+                    if (result.data) {
+                        lockoutRepository.resetLockout()
+                        onUnlocked()
+                    } else {
+                        handleWrongPin()
+                    }
+                }
+                is Result.Error -> handleWrongPin()
+            }
         }
     }
 
