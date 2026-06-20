@@ -1,11 +1,13 @@
 package com.arduia.expense.ui.design
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -18,7 +20,10 @@ import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [33])
+@Config(
+    sdk = [33],
+    qualifiers = "w${ProArtboard.SPEC_CAPTURE_WIDTH_DP}dp-h${ProArtboard.SPEC_CAPTURE_HEIGHT_DP}dp",
+)
 @Category(ScreenshotTests::class)
 class DesignSystemSpecScreenshotTest {
 
@@ -28,7 +33,7 @@ class DesignSystemSpecScreenshotTest {
     private fun captureSpec(content: @androidx.compose.runtime.Composable () -> Unit) {
         composeTestRule.setContent {
             ProExpenseTheme {
-                SpecCaptureHost(modifier = Modifier.wrapContentSize()) {
+                SpecCaptureHost(modifier = Modifier.fillMaxWidth()) {
                     content()
                 }
             }

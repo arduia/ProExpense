@@ -5,6 +5,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ProDesignTokensTest {
@@ -131,5 +132,41 @@ class ProDesignTokensTest {
             ProDefaultDimens.navBarHeight + ProDefaultDimens.navFabOffset,
             ProDefaultDimens.navShellBottomInset,
         )
+    }
+
+    @Test
+    fun body_and_caption_use_manrope() {
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.body.fontFamily)
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.caption.fontFamily)
+    }
+
+    @Test
+    fun eyebrow_and_timestamp_use_geist_mono() {
+        assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.eyebrow.fontFamily)
+        assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.tabTimestamp.fontFamily)
+        assertEquals(0.04.em, ProDefaultTypography.tabTimestamp.letterSpacing)
+    }
+
+    @Test
+    fun nav_label_uses_manrope() {
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.navLabel.fontFamily)
+        assertEquals(10f, ProDefaultTypography.navLabel.fontSize.value)
+    }
+
+    @Test
+    fun search_field_uses_manrope() {
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.searchField.fontFamily)
+        assertEquals(13f, ProDefaultTypography.searchField.fontSize.value)
+    }
+
+    @Test
+    fun keypad_key_uses_instrument_serif() {
+        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.keypadKey.fontFamily)
+    }
+
+    @Test
+    fun spec_capture_artboard_is_wider_than_phone() {
+        assertEquals(1100, ProArtboard.SPEC_CAPTURE_WIDTH_DP)
+        assertTrue(ProArtboard.SPEC_CAPTURE_WIDTH_DP > ProArtboard.PIXEL_9_PRO_WIDTH_DP)
     }
 }

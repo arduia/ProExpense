@@ -8,6 +8,8 @@ import androidx.compose.ui.unit.dp
 object ProArtboard {
     const val PIXEL_9_PRO_WIDTH_DP = 427
     const val PIXEL_9_PRO_HEIGHT_DP = 952
+    const val SPEC_CAPTURE_WIDTH_DP = 1100
+    const val SPEC_CAPTURE_HEIGHT_DP = 800
 }
 
 @Immutable

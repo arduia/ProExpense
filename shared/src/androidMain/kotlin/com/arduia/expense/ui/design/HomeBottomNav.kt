@@ -151,12 +151,9 @@ private fun HomeNavSlot(
     val tint = if (selected) colors.primary else colors.navInactive
     val label = stringResource(item.labelRes)
     val labelStyle = if (selected) {
-        typography.caption.copy(
-            fontFamily = typography.monoFamily,
-            fontWeight = FontWeight.SemiBold,
-        )
+        typography.navLabel.copy(fontWeight = FontWeight.SemiBold)
     } else {
-        typography.caption.copy(fontFamily = typography.monoFamily)
+        typography.navLabel
     }
 
     Column(
@@ -250,7 +247,7 @@ private fun HomeAddFab(
                 )
                 Text(
                     text = stringResource(R.string.nav_add),
-                    style = typography.caption.copy(fontFamily = typography.monoFamily),
+                    style = typography.navLabel.copy(fontWeight = FontWeight.SemiBold),
                     color = colors.onPrimaryWarm,
                 )
             }

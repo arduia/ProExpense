@@ -86,7 +86,7 @@ fun SearchField(
             .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.searchField)
             .background(colors.surface)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        textStyle = typography.body.copy(color = colors.onSurface),
+        textStyle = typography.searchField.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
         decorationBox = { inner ->
@@ -102,7 +102,7 @@ fun SearchField(
                 )
                 Box(modifier = Modifier.padding(start = dimens.space8)) {
                     if (value.isEmpty()) {
-                        Text(text = placeholder, style = typography.body, color = colors.muted)
+                        Text(text = placeholder, style = typography.searchField, color = colors.muted)
                     }
                     inner()
                 }

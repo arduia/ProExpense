@@ -32,6 +32,7 @@ private val ManropeFamily = FontFamily(
 private val GeistMonoFamily = FontFamily(
     variableFont(R.font.geist_mono_variable, FontWeight.Normal),
     variableFont(R.font.geist_mono_variable, FontWeight.Medium),
+    variableFont(R.font.geist_mono_variable, FontWeight.SemiBold),
 )
 
 private val InstrumentSerifFamily = FontFamily(
@@ -55,6 +56,8 @@ data class ProTypography(
     val button: TextStyle,
     val tabTimestamp: TextStyle,
     val keypadKey: TextStyle,
+    val navLabel: TextStyle,
+    val searchField: TextStyle,
     val sansFamily: FontFamily,
     val serifFamily: FontFamily,
     val monoFamily: FontFamily,
@@ -151,7 +154,7 @@ val ProDefaultTypography = ProTypography(
         fontFamily = GeistMonoFamily,
         fontSize = 12.sp,
         lineHeight = proLineHeight(12f, 1.3f),
-        letterSpacing = 0.08.em,
+        letterSpacing = 0.04.em,
         fontWeight = FontWeight.Normal,
         fontFeatureSettings = "tnum",
     ),
@@ -159,6 +162,18 @@ val ProDefaultTypography = ProTypography(
         fontFamily = InstrumentSerifFamily,
         fontSize = 22.sp,
         lineHeight = proLineHeight(22f, 1f),
+        fontWeight = FontWeight.Normal,
+    ),
+    navLabel = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 10.sp,
+        lineHeight = proLineHeight(10f, 1.2f),
+        fontWeight = FontWeight.Medium,
+    ),
+    searchField = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 13.sp,
+        lineHeight = proLineHeight(13f, 1.4f),
         fontWeight = FontWeight.Normal,
     ),
     sansFamily = ManropeFamily,
