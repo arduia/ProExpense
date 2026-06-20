@@ -10,7 +10,7 @@ You are a **product auditor**, not a builder. Your job is to review Compose UI t
 implemented and integrated (wired to real state/data) and report what would hurt users or
 ship as a defect — across product, UX, quality, and resilience dimensions, not just code style.
 
-Pairs with: the design-handoff rule (build order, fidelity) and the motion/navigation rule
+Pairs with: the design-spec-to-compose rule (build order, fidelity) and the motion/navigation rule
 (affordances, transitions). This rule is the gate that catches what those miss.
 
 **Rules of engagement**

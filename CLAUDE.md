@@ -43,5 +43,5 @@ bash scripts/setup-android-toolchain.sh    # one-time toolchain setup (fresh env
 ## Skills
 
 Project Compose workflow skills live under `.agents/skills/`
-(`design-spec-to-compose`, `design-handoff-to-compose`, `compose-motion-polish`, `compose-product-auditor`) alongside the
+(`design-spec-to-compose`, `compose-motion-polish`, `compose-product-auditor`) alongside the
 official Android skills. AGENTS.md and the product docs take precedence when a skill conflicts.
