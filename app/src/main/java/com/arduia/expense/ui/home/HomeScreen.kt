@@ -197,6 +197,7 @@ private fun HomeHeader(
         Box(
             modifier = Modifier
                 .size(dimens.touchTargetMin)
+                .padding(2.dp)
                 .clip(CircleShape)
                 .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
                 .background(colors.surface)
@@ -467,6 +468,7 @@ private fun HomeRecentSection(
                 style = typography.caption.copy(fontWeight = FontWeight.SemiBold),
                 color = colors.primary,
                 modifier = Modifier
+                    .padding(2.dp)
                     .minimumInteractiveComponentSize()
                     .proClickable(
                         onClick = onSeeAll,
