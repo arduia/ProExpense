@@ -1,5 +1,7 @@
 package com.arduia.expense.feature.logging
 
+import com.arduia.expense.domain.parseAmountToCents
+
 data class LogCategory(
     val id: String,
     val label: String,
@@ -77,7 +79,6 @@ object AmountInputLogic {
 
     fun toCents(amount: String): Long? {
         if (!canProceed(amount)) return null
-        val value = amount.toBigDecimal()
-        return value.movePointRight(2).toLong()
+        return parseAmountToCents(amount)
     }
 }

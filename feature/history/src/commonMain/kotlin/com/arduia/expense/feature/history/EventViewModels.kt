@@ -8,6 +8,7 @@ import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.ExpenseTagType
 import com.arduia.expense.domain.calculateBudgetProgress
 import com.arduia.expense.domain.formatWithSymbol
+import com.arduia.expense.domain.parseAmountToCents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -136,7 +137,7 @@ class EventCreateViewModel(
 
     fun onSave() {
         val state = _uiState.value
-        val cents = state.amountText.replace(",", "").toDoubleOrNull()?.let { (it * 100).toLong() }
+        val cents = parseAmountToCents(state.amountText.replace(",", ""))
         if (state.name.isBlank() || cents == null || cents <= 0) {
             _uiState.update { it.copy(showErrors = true) }
             return

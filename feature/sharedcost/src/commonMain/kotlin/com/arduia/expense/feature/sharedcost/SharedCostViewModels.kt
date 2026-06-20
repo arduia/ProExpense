@@ -5,6 +5,7 @@ import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Participant
 import com.arduia.expense.domain.formatWithSymbol
+import com.arduia.expense.domain.parseAmountToCents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,7 +70,7 @@ class SharedCostInputViewModel(
 
     fun onSplitModeChanged(mode: SplitMode) {
         val state = _uiState.value
-        val totalCents = (state.amountText.toDoubleOrNull() ?: 0.0).let { (it * 100).toLong() }
+        val totalCents = parseAmountToCents(state.amountText) ?: 0L
         val prefilled = if (mode == SplitMode.CUSTOM && totalCents > 0) {
             calculateEvenSplit(totalCents, state.peopleCount).map { cents ->
                 (cents / 100.0).toString()
@@ -94,19 +95,18 @@ class SharedCostInputViewModel(
 
     fun onCalculate() {
         val state = _uiState.value
-        val total = state.amountText.toDoubleOrNull() ?: 0.0
-        if (total <= 0.0) {
+        val cents = parseAmountToCents(state.amountText) ?: 0L
+        if (cents <= 0L) {
             _uiState.update { it.copy(showZeroValidation = true) }
             return
         }
         scope.launch {
-            val cents = (total * 100).toLong()
             val participants = List(state.peopleCount) { index ->
                 Participant(id = "p$index", name = "Person ${index + 1}")
             }
             val customShares = if (state.splitMode == SplitMode.CUSTOM) {
                 val shares = state.customAmountTexts.map { text ->
-                    (text.toDoubleOrNull() ?: 0.0).let { (it * 100).toLong() }
+                    parseAmountToCents(text) ?: 0L
                 }
                 val error = validateCustomSplit(cents, shares)
                 if (error != null) {

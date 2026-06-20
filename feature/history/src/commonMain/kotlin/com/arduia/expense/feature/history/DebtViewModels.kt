@@ -6,6 +6,7 @@ import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.formatWithSymbol
+import com.arduia.expense.domain.parseAmountToCents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -90,7 +91,7 @@ class DebtAddViewModel(
 
     fun onSave() {
         val state = _uiState.value
-        val cents = state.amountText.replace(",", "").toDoubleOrNull()?.let { (it * 100).toLong() }
+        val cents = parseAmountToCents(state.amountText.replace(",", ""))
         if (state.personName.isBlank()) return
         if (cents == null || cents <= 0) {
             _uiState.update { it.copy(saveError = "Amount must be greater than zero") }

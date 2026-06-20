@@ -16,7 +16,10 @@ class AmountInputLogicTest {
     @Test
     fun applyKey_appendsDigitsUntilDecimalLimit() {
         assertEquals("12.5", AmountInputLogic.applyKey("12.", "5"))
-        assertEquals("12.5", AmountInputLogic.applyKey("12.5", "6"))
+        // Two decimal places are allowed (MAX_DECIMAL_PLACES = 2).
+        assertEquals("12.56", AmountInputLogic.applyKey("12.5", "6"))
+        // A third decimal place is rejected.
+        assertEquals("12.56", AmountInputLogic.applyKey("12.56", "7"))
     }
 
     @Test

@@ -86,6 +86,24 @@ class SharedCostInputViewModelTest {
     }
 
     @Test
+    fun onCalculate_decimalAmount_convertsToCentsWithoutRoundingError() = runTest(dispatcher) {
+        val repository = FakeSharedCostRepository()
+        val viewModel = SharedCostInputViewModel(
+            sharedCostRepository = repository,
+            homeCurrencyCode = "USD",
+            nowEpochMillis = { 1L },
+            scope = this,
+            onCalculated = {},
+        )
+
+        viewModel.onAmountChange("4.35")
+        viewModel.onCalculate()
+        advanceUntilIdle()
+
+        assertEquals(435L, repository.lastInput?.totalAmount?.valueInCents)
+    }
+
+    @Test
     fun onCalculate_evenSplit_usesNullCustomShares() = runTest(dispatcher) {
         val repository = FakeSharedCostRepository()
         val viewModel = SharedCostInputViewModel(
