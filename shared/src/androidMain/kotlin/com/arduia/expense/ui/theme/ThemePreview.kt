@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.ui.design.HeroGreeting
 
 @Preview(
     name = "Design system foundation (Pixel 9 Pro)",
@@ -41,8 +42,19 @@ fun ProExpenseThemeFoundation() {
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             Text(
-                text = "Journal",
-                style = typography.screenTitle,
+                text = "New expense",
+                style = typography.appBarTitle,
+                color = colors.onSurface,
+            )
+            HeroGreeting(name = "Maya")
+            Text(
+                text = "Edit expense",
+                style = typography.sheetTitle,
+                color = colors.onSurface,
+            )
+            Text(
+                text = "Today · May 25",
+                style = typography.sectionHead,
                 color = colors.onSurface,
             )
             Text(
@@ -54,11 +66,6 @@ fun ProExpenseThemeFoundation() {
                 text = "AMOUNT · USD",
                 style = typography.eyebrow,
                 color = colors.muted,
-            )
-            Text(
-                text = "Hi, Maya",
-                style = typography.displayFlourish,
-                color = colors.primary,
             )
             Text(
                 text = "Lunch with M.",

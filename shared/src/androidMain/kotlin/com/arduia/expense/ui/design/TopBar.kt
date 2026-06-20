@@ -9,7 +9,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+
+@Preview(
+    name = "ProTopBar — app bar title",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    showBackground = true,
+)
+@Composable
+private fun ProTopBarPreview() {
+    ProExpenseTheme {
+        ProTopBar(
+            title = "New expense",
+            onBack = {},
+            backLabel = "Back",
+        )
+    }
+}
 
 enum class ProTopBarAction {
     None,
@@ -67,7 +85,7 @@ fun ProTopBar(
         if (title.isNotEmpty()) {
             Text(
                 text = title,
-                style = typography.sectionHead,
+                style = typography.appBarTitle,
                 color = colors.onSurface,
                 modifier = Modifier.align(Alignment.Center),
             )

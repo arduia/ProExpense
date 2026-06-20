@@ -69,18 +69,36 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun screen_title_uses_instrument_serif() {
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.screenTitle.fontFamily)
+    fun app_bar_title_uses_manrope_at_17sp() {
+        val title = ProDefaultTypography.appBarTitle
+        assertEquals(ProDefaultTypography.sansFamily, title.fontFamily)
+        assertEquals(17f, title.fontSize.value)
+        assertEquals(0.em, title.letterSpacing)
     }
 
     @Test
-    fun section_head_uses_instrument_serif() {
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.sectionHead.fontFamily)
+    fun hero_greeting_uses_manrope_with_serif_emphasis() {
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.heroGreeting.fontFamily)
+        assertEquals(30f, ProDefaultTypography.heroGreeting.fontSize.value)
+        assertEquals(32f, ProDefaultTypography.heroGreeting.lineHeight.value)
+        assertEquals((-0.015).em, ProDefaultTypography.heroGreeting.letterSpacing)
+        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.heroGreetingEmphasis.fontFamily)
     }
 
     @Test
-    fun display_flourish_uses_instrument_serif() {
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.displayFlourish.fontFamily)
+    fun sheet_title_uses_instrument_serif_at_22sp() {
+        val title = ProDefaultTypography.sheetTitle
+        assertEquals(ProDefaultTypography.serifFamily, title.fontFamily)
+        assertEquals(22f, title.fontSize.value)
+        assertEquals((-0.01).em, title.letterSpacing)
+    }
+
+    @Test
+    fun section_head_uses_instrument_serif_at_18sp() {
+        val head = ProDefaultTypography.sectionHead
+        assertEquals(ProDefaultTypography.serifFamily, head.fontFamily)
+        assertEquals(18f, head.fontSize.value)
+        assertEquals((-0.01).em, head.letterSpacing)
     }
 
     @Test

@@ -40,7 +40,7 @@ fun DesignSystemGalleryScreen(modifier: Modifier = Modifier) {
             )
             Text(
                 text = "Component gallery",
-                style = typography.screenTitle,
+                style = typography.heroGreeting,
                 color = colors.onSurface,
             )
             Text(
@@ -48,6 +48,29 @@ fun DesignSystemGalleryScreen(modifier: Modifier = Modifier) {
                 style = typography.body,
                 color = colors.onSurfaceVariant,
             )
+        }
+
+        GallerySection(number = "00", title = "Typography") {
+            GalleryStage("App bar title") {
+                ProTopBar(title = "New expense", onBack = {}, backLabel = "Back")
+            }
+            GalleryStage("Hero greeting") {
+                HeroGreeting(name = "Maya")
+            }
+            GalleryStage("Sheet title") {
+                Text(
+                    text = "Edit expense",
+                    style = typography.sheetTitle,
+                    color = colors.onSurface,
+                )
+            }
+            GalleryStage("Section / day head") {
+                Text(
+                    text = "Today · May 25",
+                    style = typography.sectionHead,
+                    color = colors.onSurface,
+                )
+            }
         }
 
         GallerySection(number = "01", title = "Button") {
