@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -56,7 +57,8 @@ class PinEntryViewModelTest {
         )
 
         viewModel.onScreenLoaded()
-        advanceUntilIdle()
+        // runCurrent (not advanceUntilIdle) so the 30s lockout ticker is not fast-forwarded to reset.
+        runCurrent()
 
         assertEquals(PinEntryMode.LOCKOUT, viewModel.uiState.value.mode)
         assertFalse(viewModel.uiState.value.biometricShouldTrigger)
@@ -95,7 +97,8 @@ class PinEntryViewModelTest {
 
         repeat(5) {
             repeat(6) { viewModel.onDigit(1) }
-            advanceUntilIdle()
+            // runCurrent (not advanceUntilIdle) so the 30s lockout ticker is not fast-forwarded to reset.
+            runCurrent()
         }
 
         assertEquals(PinEntryMode.LOCKOUT, viewModel.uiState.value.mode)
@@ -136,7 +139,8 @@ class PinEntryViewModelTest {
         )
 
         viewModel.onBiometricUnlock()
-        advanceUntilIdle()
+        // runCurrent (not advanceUntilIdle) so the 30s lockout ticker is not fast-forwarded to reset.
+        runCurrent()
 
         assertFalse(unlocked)
         assertEquals(PinEntryMode.LOCKOUT, viewModel.uiState.value.mode)

@@ -24,3 +24,20 @@ contradicted the 2-decimal rule; `./gradlew test` reported success anyway becaus
   point). Never use `(double * 100).toLong()` for currency.
 - When verifying after a fix, force execution (`--rerun-tasks`) or use `./gradlew verifyAll`;
   do not trust a cached `./gradlew test` as proof a previously-failing test now passes.
+
+## 2026-06-20 — PIN lockout bypass + release-variant screenshot tests
+
+**What slipped (both masked by the build cache above):**
+1. `PinEntryViewModel.onBiometricUnlock` only checked the UI `mode == LOCKOUT`, not the
+   lockout repository, so a biometric unlock could bypass an active lockout — a brute-force
+   protection hole. Lockout-trigger tests also used `advanceUntilIdle()`, which fast-forwards
+   the 30s countdown ticker and resets the lockout before the assertion.
+2. Roborazzi/Compose UI tests failed under `testDevReleaseUnitTest` ("Unable to resolve
+   activity for ComponentActivity") because `compose-ui-test-manifest` is `debugImplementation`
+   only and isn't merged into the release variant.
+
+**Guards:**
+- Auth guards must consult the authoritative repository state (lockout), never just UI state.
+- For lockout/ticker assertions use `runCurrent()`, not `advanceUntilIdle()`.
+- Robolectric Compose UI tests are debug-only; tag them `@Category(ComposeUiTests/ScreenshotTests)`
+  and exclude those categories from the release unit-test variant.

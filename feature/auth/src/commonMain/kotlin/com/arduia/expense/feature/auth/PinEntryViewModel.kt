@@ -107,8 +107,13 @@ class PinEntryViewModel(
     }
 
     fun onBiometricUnlock() {
-        if (_uiState.value.mode == PinEntryMode.LOCKOUT) return
         scope.launch {
+            // Authoritative lockout check — the UI mode may not yet reflect an active lockout,
+            // and a biometric unlock must never bypass it.
+            if (lockoutRepository.isLockedOut(nowEpochMillis())) {
+                refreshLockoutState()
+                return@launch
+            }
             when (val result = pinAuthRepository.unlockWithBiometric()) {
                 is Result.Success -> {
                     if (result.data) {
@@ -124,8 +129,13 @@ class PinEntryViewModel(
     }
 
     fun onBiometricFailed() {
-        if (_uiState.value.mode == PinEntryMode.LOCKOUT) return
-        scope.launch { handleWrongPin() }
+        scope.launch {
+            if (lockoutRepository.isLockedOut(nowEpochMillis())) {
+                refreshLockoutState()
+                return@launch
+            }
+            handleWrongPin()
+        }
     }
 
     private suspend fun verifyPin(pin: String) {
