@@ -55,6 +55,7 @@ fun ExpenseApp(
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
     var backStack by rememberSaveable { mutableStateOf(listOf<String>()) }
     var quickLogOpen by rememberSaveable { mutableStateOf(false) }
+    var editingRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var saveToastMessage by rememberSaveable { mutableStateOf<String?>(null) }
     var saveErrorToast by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -66,12 +67,14 @@ fun ExpenseApp(
     val reduceMotion = rememberProReduceMotion()
     val savedToast = stringResource(R.string.toast_expense_saved)
 
-    val addExpenseViewModel = remember(quickLogOpen) {
+    val addExpenseViewModel = remember(quickLogOpen, editingRecordId) {
         if (quickLogOpen) {
             appGraph.prewarmAddExpenseViewModel(
+                editingRecordId = editingRecordId,
                 onSaved = {
                     appGraph.refreshAfterDataChange()
                     quickLogOpen = false
+                    editingRecordId = null
                     saveToastMessage = savedToast
                 },
                 onSaveFailed = { message ->
@@ -110,6 +113,7 @@ fun ExpenseApp(
 
     BackHandler(enabled = quickLogOpen) {
         quickLogOpen = false
+        editingRecordId = null
     }
 
     BackHandler(enabled = navigator.canPop && !quickLogOpen) {
@@ -135,6 +139,10 @@ fun ExpenseApp(
                         navigator = navigator,
                         appGraph = appGraph,
                         modifier = Modifier.fillMaxSize(),
+                        onEditRecord = { recordId ->
+                            editingRecordId = recordId
+                            quickLogOpen = true
+                        },
                     )
                 } else {
                     when (state.tab) {
@@ -147,15 +155,14 @@ fun ExpenseApp(
                             onDebtClick = { navigator.push(AppRoutes.DEBT_TRACKER) },
                             onSplitClick = { navigator.push(AppRoutes.SHARED_INPUT) },
                             onEventsClick = { navigator.switchTab(HomeNavTab.Budget) },
+                            onActiveEventClick = { eventId ->
+                                navigator.push(AppRoutes.eventDetail(eventId))
+                            },
                         )
                         HomeNavTab.Budget -> BudgetScreenContent(
                             events = eventBudgetState.events.map { it.toEventBudgetCardState() },
                             onNewEvent = { navigator.push(AppRoutes.EVENT_CREATE) },
-                            onEventClick = { title ->
-                                val eventId = eventBudgetState.events
-                                    .firstOrNull { it.title == title }
-                                    ?.id
-                                    ?: title
+                            onEventClick = { eventId ->
                                 navigator.push(AppRoutes.eventDetail(eventId))
                             },
                         )
@@ -221,7 +228,15 @@ fun ExpenseApp(
                 QuickLogFlow(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = addExpenseViewModel,
-                    onDismiss = { quickLogOpen = false },
+                    onDismiss = {
+                        quickLogOpen = false
+                        editingRecordId = null
+                    },
+                    initialStep = if (editingRecordId != null) {
+                        com.arduia.expense.ui.logging.QuickLogStep.Details
+                    } else {
+                        com.arduia.expense.ui.logging.QuickLogStep.Amount
+                    },
                 )
             }
         }

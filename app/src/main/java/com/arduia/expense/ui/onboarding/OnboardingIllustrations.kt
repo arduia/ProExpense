@@ -574,3 +574,8 @@ fun JournalIllustration(modifier: Modifier = Modifier) {
         )
     }
 }
+
+@Composable
+fun GetStartedIllustration(modifier: Modifier = Modifier) {
+    WelcomeIllustration(modifier = modifier)
+}

@@ -99,6 +99,9 @@ fun FirstLaunchFlow(
                 initialName = profileName,
                 onContinue = { name ->
                     profileName = name
+                    scope.launch {
+                        appGraph.setDisplayName(name)
+                    }
                     step = FirstLaunchStep.ProfileCurrency
                 },
                 onSkip = { step = FirstLaunchStep.ProfileCurrency },

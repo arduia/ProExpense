@@ -2,7 +2,7 @@
  * Domain rules (design plan Screen 03 / C6):
  * - PIN setup banner when no PIN configured.
  * - Banner dismiss hides for session only.
- * - Daily average uses full calendar month days (D10).
+ * - Month delta prefers month-over-month % when prior month has spend.
  */
 package com.arduia.expense.feature.history
 
@@ -27,10 +27,12 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(
             historyRepository = HistoryFakeHistoryRepository(emptyList()),
             budgetRepository = HistoryFakeBudgetRepository(null),
+            eventRepository = HistoryFakeEventRepository(),
             securityState = HistoryFakeSecurityState(pinConfigured = false),
             formatter = HistoryFakeRecordDateFormatter(),
             categoryLabel = { "Food" },
             homeCurrencyCode = "USD",
+            displayNameProvider = { "" },
             scope = this,
         )
         advanceUntilIdle()
@@ -43,10 +45,12 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(
             historyRepository = HistoryFakeHistoryRepository(emptyList()),
             budgetRepository = HistoryFakeBudgetRepository(null),
+            eventRepository = HistoryFakeEventRepository(),
             securityState = HistoryFakeSecurityState(pinConfigured = true),
             formatter = HistoryFakeRecordDateFormatter(),
             categoryLabel = { "Food" },
             homeCurrencyCode = "USD",
+            displayNameProvider = { "" },
             scope = this,
         )
         advanceUntilIdle()
@@ -59,10 +63,12 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(
             historyRepository = HistoryFakeHistoryRepository(emptyList()),
             budgetRepository = HistoryFakeBudgetRepository(null),
+            eventRepository = HistoryFakeEventRepository(),
             securityState = HistoryFakeSecurityState(pinConfigured = false),
             formatter = HistoryFakeRecordDateFormatter(),
             categoryLabel = { "Food" },
             homeCurrencyCode = "USD",
+            displayNameProvider = { "" },
             scope = this,
         )
         advanceUntilIdle()
@@ -72,7 +78,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun refresh_includesDailyAverageInDelta() = runTest(dispatcher) {
+    fun refresh_includesDailyAverageWhenNoPriorMonthSpend() = runTest(dispatcher) {
         val records = listOf(
             FinanceRecord(
                 id = "r1",
@@ -88,14 +94,17 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(
             historyRepository = HistoryFakeHistoryRepository(records),
             budgetRepository = HistoryFakeBudgetRepository(Amount(10000)),
+            eventRepository = HistoryFakeEventRepository(),
             securityState = HistoryFakeSecurityState(pinConfigured = true),
             formatter = HistoryFakeRecordDateFormatter(),
             categoryLabel = { "Food" },
             homeCurrencyCode = "USD",
+            displayNameProvider = { "Maya" },
             scope = this,
         )
         advanceUntilIdle()
 
         assertEquals("$1/day avg", viewModel.uiState.value.monthDelta)
+        assertEquals("Maya", viewModel.uiState.value.greetingName)
     }
 }

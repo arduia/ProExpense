@@ -25,6 +25,7 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 data class EventBudgetCardState(
+    val id: String = "",
     val title: String,
     val dateRange: String,
     val spentLabel: String,

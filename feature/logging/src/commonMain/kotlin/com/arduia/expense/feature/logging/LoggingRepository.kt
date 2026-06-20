@@ -21,6 +21,8 @@ data class LogRecordInput(
 interface LoggingRepository {
     suspend fun createRecord(input: LogRecordInput): Result<FinanceRecord>
 
+    suspend fun getRecord(id: String): Result<FinanceRecord?>
+
     suspend fun updateRecord(record: FinanceRecord): Result<Unit>
 
     suspend fun deleteRecord(id: String): Result<Unit>

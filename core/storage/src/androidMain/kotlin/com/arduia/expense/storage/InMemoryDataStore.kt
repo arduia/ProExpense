@@ -21,6 +21,7 @@ class InMemoryDataStore : KeyRotationStore, EntityDataStore {
     override var securityAnswerHash: String? = null
     override var securityQuestionId: String? = null
     override var biometricEnrolled: Boolean = false
+    override var displayName: String = ""
 
     private var activeKey: ByteArray? = null
     private var pinSalt: ByteArray? = null
@@ -110,6 +111,7 @@ class InMemoryDataStore : KeyRotationStore, EntityDataStore {
         securityAnswerHash = null
         securityQuestionId = null
         biometricEnrolled = false
+        displayName = ""
         biometricWrappedKey = null
         activeKey = null
         pinSalt = null

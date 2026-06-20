@@ -43,7 +43,9 @@ fun JournalScreenContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val showEmpty = dayGroups.isEmpty() && searchResults.isNullOrEmpty()
+    val showEmptyJournal = dayGroups.isEmpty() && searchQuery.isBlank()
+    val searchReturnedEmpty = searchResults?.isEmpty() == true && searchQuery.isNotBlank()
+    val hasSearchResults = !searchResults.isNullOrEmpty()
 
     LazyColumn(
         modifier = modifier
@@ -81,46 +83,43 @@ fun JournalScreenContent(
             }
         }
 
-        if (showEmpty) {
-            item(key = "journal-empty") {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = dimens.space32),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        text = stringResource(R.string.journal_no_results),
-                        style = typography.body,
-                        color = colors.onSurfaceMuted,
-                    )
+        when {
+            searchReturnedEmpty -> {
+                item(key = "journal-no-results") {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = dimens.space32),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.journal_no_results),
+                            style = typography.body,
+                            color = colors.onSurfaceMuted,
+                        )
+                    }
                 }
             }
-        } else if (!searchResults.isNullOrEmpty()) {
-            items(
-                items = searchResults,
-                key = { it.id },
-            ) { transaction ->
-                TransactionRow(
-                    categoryId = transaction.categoryId,
-                    note = transaction.note,
-                    meta = transaction.meta,
-                    amount = transaction.amount,
-                    tag = transaction.tag,
-                    modifier = Modifier.proClickable(
-                        onClick = { onTransactionClick(transaction.id) },
-                        shape = ProExpenseTheme.shapes.searchField,
-                    ),
-                )
-            }
-        } else {
-            dayGroups.forEach { group ->
-                item(key = "header-${group.dayTitle}") {
-                    DayHeader(title = group.dayTitle, total = group.dayTotal)
+            showEmptyJournal -> {
+                item(key = "journal-empty") {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = dimens.space32),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.journal_empty),
+                            style = typography.body,
+                            color = colors.onSurfaceMuted,
+                        )
+                    }
                 }
+            }
+            hasSearchResults -> {
                 items(
-                    items = group.transactions,
-                    key = { "${group.dayTitle}-${it.id}" },
+                    items = searchResults.orEmpty(),
+                    key = { it.id },
                 ) { transaction ->
                     TransactionRow(
                         categoryId = transaction.categoryId,
@@ -133,6 +132,29 @@ fun JournalScreenContent(
                             shape = ProExpenseTheme.shapes.searchField,
                         ),
                     )
+                }
+            }
+            else -> {
+                dayGroups.forEach { group ->
+                    item(key = "header-${group.dayTitle}") {
+                        DayHeader(title = group.dayTitle, total = group.dayTotal)
+                    }
+                    items(
+                        items = group.transactions,
+                        key = { "${group.dayTitle}-${it.id}" },
+                    ) { transaction ->
+                        TransactionRow(
+                            categoryId = transaction.categoryId,
+                            note = transaction.note,
+                            meta = transaction.meta,
+                            amount = transaction.amount,
+                            tag = transaction.tag,
+                            modifier = Modifier.proClickable(
+                                onClick = { onTransactionClick(transaction.id) },
+                                shape = ProExpenseTheme.shapes.searchField,
+                            ),
+                        )
+                    }
                 }
             }
         }
@@ -176,6 +198,7 @@ private fun JournalNoResultsPreview() {
             selectedFilter = "All",
             onFilterSelected = {},
             dayGroups = emptyList(),
+            searchResults = emptyList(),
             onTransactionClick = {},
         )
     }

@@ -90,6 +90,9 @@ private class FakeLoggingRepository : LoggingRepository {
         return Result.Success(record)
     }
 
+    override suspend fun getRecord(id: String): Result<FinanceRecord?> =
+        Result.Success(records.firstOrNull { it.id == id })
+
     override suspend fun updateRecord(record: FinanceRecord): Result<Unit> = Result.Success(Unit)
 
     override suspend fun deleteRecord(id: String): Result<Unit> = Result.Success(Unit)

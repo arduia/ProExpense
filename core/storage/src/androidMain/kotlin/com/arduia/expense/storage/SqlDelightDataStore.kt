@@ -18,6 +18,7 @@ class SqlDelightDataStore(
     override var securityAnswerHash: String? = null
     override var securityQuestionId: String? = null
     override var biometricEnrolled: Boolean = false
+    override var displayName: String = ""
 
     private var biometricWrappedKey: ByteArray? = null
 
@@ -35,6 +36,7 @@ class SqlDelightDataStore(
         securityQuestionId = meta.security_question_id
         biometricEnrolled = meta.biometric_enrolled == 1L
         biometricWrappedKey = meta.biometric_wrapped_key
+        displayName = meta.display_name
     }
 
     override suspend fun getBiometricWrappedKey(): ByteArray? = withContext(Dispatchers.IO) {
@@ -153,6 +155,7 @@ class SqlDelightDataStore(
         securityAnswerHash = null
         securityQuestionId = null
         biometricEnrolled = false
+        displayName = ""
         biometricWrappedKey = null
         persistMeta()
     }
@@ -172,6 +175,7 @@ class SqlDelightDataStore(
             security_question_id = securityQuestionId,
             biometric_enrolled = if (biometricEnrolled) 1L else 0L,
             biometric_wrapped_key = biometricWrappedKey,
+            display_name = displayName,
         )
     }
 }

@@ -28,6 +28,9 @@ class InMemoryLoggingRepository(
         Result.Error(error.message ?: "Invalid record")
     }
 
+    override suspend fun getRecord(id: String): Result<FinanceRecord?> =
+        Result.Success(store.allRecords().firstOrNull { it.id == id })
+
     override suspend fun updateRecord(record: FinanceRecord): Result<Unit> = try {
         store.updateRecord(record)
         Result.Success(Unit)

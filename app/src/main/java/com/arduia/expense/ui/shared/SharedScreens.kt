@@ -24,6 +24,7 @@ import com.arduia.expense.ui.design.PeopleStepper
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.SharedPersonRow
@@ -48,6 +49,7 @@ fun SharedCostsScreenContent(
     customAmountError: String? = null,
     onSplitModeChanged: (com.arduia.expense.feature.sharedcost.SplitMode) -> Unit = {},
     onCustomAmountChange: (Int, String) -> Unit = { _, _ -> },
+    onHistoryClick: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -66,6 +68,17 @@ fun SharedCostsScreenContent(
             onBack = onBack,
             modifier = Modifier.padding(horizontal = dimens.space18),
         )
+        if (onHistoryClick != null) {
+            Text(
+                text = stringResource(R.string.shared_history),
+                style = typography.bodyMedium,
+                color = colors.primary,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(horizontal = dimens.space18, vertical = dimens.space4)
+                    .proClickable(onClick = onHistoryClick, shape = ProExpenseTheme.shapes.chip),
+            )
+        }
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())

@@ -67,9 +67,9 @@ private val onboardingPages = listOf(
         { EventBudgetIllustration() },
     ),
     OnboardingPage(
-        R.string.onboarding_journal_title,
-        R.string.onboarding_journal_subtitle,
-        { JournalIllustration() },
+        R.string.onboarding_get_started_title,
+        R.string.onboarding_get_started_subtitle,
+        { GetStartedIllustration() },
     ),
 )
 
@@ -313,13 +313,13 @@ private fun OnboardingWelcomePreview() {
 }
 
 @Preview(
-    name = "Onboarding — journal",
+    name = "Onboarding — get started",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
     showBackground = true,
 )
 @Composable
-private fun OnboardingJournalPreview() {
+private fun OnboardingGetStartedPreview() {
     ProExpenseTheme {
         OnboardingScreen(onGetStarted = {}, onSkip = {}, initialPage = 4)
     }

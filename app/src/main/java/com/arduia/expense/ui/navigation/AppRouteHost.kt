@@ -41,6 +41,7 @@ import com.arduia.expense.ui.util.toHomeTransactionItem
 import com.arduia.expense.ui.util.toReportsCategoryTriple
 import com.arduia.expense.ui.util.toSharedHistoryItem
 import com.arduia.expense.ui.util.toUiPinEntryMode
+import com.arduia.expense.ui.util.toUiPinSetupStep
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.feature.sharedcost.SplitMode
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ fun AppRouteHost(
     navigator: AppNavigator,
     appGraph: AppGraph,
     modifier: Modifier = Modifier,
+    onEditRecord: (String) -> Unit = {},
 ) {
     var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -93,6 +95,15 @@ fun AppRouteHost(
                 appGraph = appGraph,
                 onBack = navigator::pop,
                 onChangePinRequested = {
+                    navigator.push(AppRoutes.CHANGE_PIN)
+                },
+            )
+
+            AppRoutes.CHANGE_PIN -> ChangePinRoute(
+                modifier = Modifier.fillMaxSize(),
+                appGraph = appGraph,
+                onBack = navigator::pop,
+                onComplete = {
                     navigator.pop()
                 },
             )
@@ -159,6 +170,7 @@ fun AppRouteHost(
                                         appGraph = appGraph,
                                         onBack = navigator::pop,
                                         onCalculate = { id -> navigator.push(AppRoutes.sharedSummary(id)) },
+                                        onHistory = { navigator.push(AppRoutes.SHARED_HISTORY) },
                                     )
                                     route == AppRoutes.SHARED_HISTORY -> SharedHistoryRoute(
                                         modifier = Modifier.fillMaxSize(),
@@ -173,6 +185,7 @@ fun AppRouteHost(
                                                 modifier = Modifier.fillMaxSize(),
                                                 appGraph = appGraph,
                                                 onBack = navigator::pop,
+                                                onEditRecord = onEditRecord,
                                             )
                                             else -> {
                                                 val eventId = AppRoutes.eventDetailId(route)
@@ -425,6 +438,7 @@ private fun JournalDetailRoute(
     recordId: String,
     appGraph: AppGraph,
     onBack: () -> Unit,
+    onEditRecord: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = remember(recordId) {
@@ -450,7 +464,11 @@ private fun JournalDetailRoute(
         onBack = onBack,
         onMore = { showActions = true },
         onDismissActions = { showActions = false },
-        onEdit = { showActions = false },
+        onEdit = {
+            showActions = false
+            onEditRecord(recordId)
+            onBack()
+        },
         onDelete = {
             showActions = false
             viewModel.deleteRecord()
@@ -622,6 +640,7 @@ private fun SharedInputRoute(
     appGraph: AppGraph,
     onBack: () -> Unit,
     onCalculate: (String) -> Unit,
+    onHistory: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = remember {
@@ -643,6 +662,39 @@ private fun SharedInputRoute(
         onIncrementPeople = viewModel::incrementPeople,
         onDecrementPeople = viewModel::decrementPeople,
         onCalculate = viewModel::onCalculate,
+        onBack = onBack,
+        onHistoryClick = onHistory,
+    )
+}
+
+@Composable
+private fun ChangePinRoute(
+    appGraph: AppGraph,
+    onBack: () -> Unit,
+    onComplete: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val viewModel = remember {
+        appGraph.createPinSetupViewModel(onComplete = onComplete, isChangePinMode = true)
+    }
+    val state by viewModel.uiState.collectAsState()
+
+    com.arduia.expense.ui.auth.PinSetupScreenContent(
+        modifier = modifier,
+        step = state.step.toUiPinSetupStep(),
+        filledDots = state.filledDots,
+        mismatchError = state.mismatchError,
+        securityQuestions = com.arduia.expense.ui.auth.securityQuestionLabels(),
+        selectedQuestionId = state.selectedQuestionId,
+        onSecurityQuestionSelected = viewModel::onSecurityQuestionSelected,
+        securityAnswer = state.securityAnswer,
+        onSecurityAnswerChange = viewModel::onSecurityAnswerChange,
+        onDigit = viewModel::onDigit,
+        onBackspace = viewModel::onBackspace,
+        onContinueSecurity = viewModel::onContinueSecurity,
+        onBiometricAccepted = { viewModel.onBiometricOffered(true) },
+        onBiometricSkipped = { viewModel.onBiometricOffered(false) },
+        isChangePinMode = true,
         onBack = onBack,
     )
 }

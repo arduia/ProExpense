@@ -59,7 +59,7 @@ class OnboardingScreenshotTest {
     fun onboarding_event_budget() = captureOnboarding(3)
 
     @Test
-    fun onboarding_journal() = captureOnboarding(4)
+    fun onboarding_get_started() = captureOnboarding(4)
 
     @Test
     fun splash_default() {

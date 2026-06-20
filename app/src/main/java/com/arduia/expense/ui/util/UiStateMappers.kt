@@ -6,18 +6,40 @@ import com.arduia.expense.feature.history.ExpenseDayGroup
 import com.arduia.expense.feature.history.ExpenseListItem
 import com.arduia.expense.feature.history.HomeUiState as FeatureHomeUiState
 import com.arduia.expense.ui.design.EventBudgetCardState
+import com.arduia.expense.ui.preview.HomeActiveEventState
+import com.arduia.expense.ui.preview.HomeBudgetSummaryState
 import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
 import com.arduia.expense.ui.preview.HomeUiState
 import com.arduia.expense.ui.preview.JournalDayGroup
 import com.arduia.expense.ui.preview.JournalTransactionItem
 
-fun FeatureHomeUiState.toHomeScreenState(greetingName: String = ""): HomeUiState = HomeUiState(
+fun FeatureHomeUiState.toHomeScreenState(): HomeUiState = HomeUiState(
     greetingName = greetingName,
     monthSpend = monthSpend,
     monthDelta = monthDelta,
     dayGroups = dayGroups.map { it.toHomeDayGroup() },
     showEmptyHint = showEmptyHint,
+    budgetSummary = budgetSummary?.let {
+        HomeBudgetSummaryState(
+            spentLabel = it.spentLabel,
+            budgetLabel = it.budgetLabel,
+            progress = it.progress,
+            statusLabel = it.statusLabel,
+            isOverBudget = it.isOverBudget,
+        )
+    },
+    activeEvent = activeEvent?.let {
+        HomeActiveEventState(
+            eventId = it.eventId,
+            title = it.title,
+            dateRange = it.dateRange,
+            spentLabel = it.spentLabel,
+            budgetLabel = it.budgetLabel,
+            progress = it.progress,
+            isOverBudget = it.isOverBudget,
+        )
+    },
 )
 
 fun ExpenseDayGroup.toHomeDayGroup(): HomeDayGroup = HomeDayGroup(
@@ -50,6 +72,7 @@ fun ExpenseListItem.toHomeTransactionItem(): HomeTransactionItem = HomeTransacti
 )
 
 fun EventListItemState.toEventBudgetCardState(): EventBudgetCardState = EventBudgetCardState(
+    id = id,
     title = title,
     dateRange = dateRange,
     spentLabel = spentLabel,

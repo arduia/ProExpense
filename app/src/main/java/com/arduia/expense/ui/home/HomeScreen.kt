@@ -25,12 +25,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.DayHeader
+import com.arduia.expense.ui.design.EventBudgetCard
+import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.TransactionRow
+import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.preview.HomeUiState
+import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewHomeEmpty
+import com.arduia.expense.ui.preview.previewHomeEvent
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -45,6 +50,7 @@ fun HomeScreenContent(
     showPinSetupBanner: Boolean = false,
     onPinBannerTap: () -> Unit = {},
     onPinBannerDismiss: () -> Unit = {},
+    onActiveEventClick: (String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -133,11 +139,19 @@ fun HomeScreenContent(
                         style = typography.summaryAmount,
                         color = colors.onSurface,
                     )
+                    if (state.budgetSummary != null) {
+                        val budget = state.budgetSummary
+                        Text(
+                            text = "${budget.statusLabel} · ${budget.spentLabel} ${budget.budgetLabel}",
+                            style = typography.bodyMedium,
+                            color = if (budget.isOverBudget) colors.danger else colors.onSurfaceMuted,
+                        )
+                    }
                     if (state.monthDelta != null) {
                         Text(
                             text = state.monthDelta,
                             style = typography.caption,
-                            color = colors.success,
+                            color = if (state.monthDelta.startsWith("+")) colors.danger else colors.success,
                         )
                     } else if (state.showEmptyHint) {
                         Text(
@@ -146,6 +160,24 @@ fun HomeScreenContent(
                             color = colors.onSurfaceMuted,
                         )
                     }
+                }
+
+                state.activeEvent?.let { event ->
+                    EventBudgetCard(
+                        state = EventBudgetCardState(
+                            id = event.eventId,
+                            title = event.title,
+                            dateRange = event.dateRange,
+                            spentLabel = event.spentLabel,
+                            budgetLabel = event.budgetLabel,
+                            progress = event.progress,
+                            isOverBudget = event.isOverBudget,
+                        ),
+                        modifier = Modifier.proClickable(
+                            onClick = { onActiveEventClick(event.eventId) },
+                            shape = cardShape,
+                        ),
+                    )
                 }
 
                 Row(
@@ -239,6 +271,44 @@ private fun HomeCasualPreview() {
     ProExpenseTheme {
         HomeScreenContent(
             state = previewHomeCasual,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — budget",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeBudgetPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeBudget,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — event",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeEventPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeEvent,
             onReportsClick = {},
             onDebtClick = {},
             onSplitClick = {},

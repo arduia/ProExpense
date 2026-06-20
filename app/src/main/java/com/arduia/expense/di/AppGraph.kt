@@ -104,10 +104,12 @@ class AppGraph(
     val homeViewModel = HomeViewModel(
         historyRepository = historyRepository,
         budgetRepository = budgetRepository,
+        eventRepository = eventRepository,
         securityState = securityStateReader,
         formatter = dateFormatter,
         categoryLabel = categoryLabel,
         homeCurrencyCode = homeCurrencyCode,
+        displayNameProvider = { dataStore.displayName },
         scope = scope,
     )
 
@@ -163,9 +165,10 @@ class AppGraph(
     fun prewarmAddExpenseViewModel(
         onSaved: () -> Unit,
         onSaveFailed: (String) -> Unit,
+        editingRecordId: String? = null,
     ): AddExpenseViewModel {
         val existing = addExpenseViewModel
-        if (existing != null) return existing
+        if (existing != null && existing.editingRecordId == editingRecordId) return existing
         return AddExpenseViewModel(
             loggingRepository = loggingRepository,
             eventRepository = eventRepository,
@@ -175,12 +178,21 @@ class AppGraph(
             nowEpochMillis = dateFormatter::nowEpochMillis,
             onSaved = onSaved,
             onSaveFailed = onSaveFailed,
+            editingRecordId = editingRecordId,
         ).also { addExpenseViewModel = it }
     }
 
     fun clearAddExpenseViewModel() {
         addExpenseViewModel = null
     }
+
+    suspend fun setDisplayName(name: String) {
+        dataStore.displayName = name.trim()
+        dataStore.persistSettings()
+        homeViewModel.refresh()
+    }
+
+    fun displayName(): String = dataStore.displayName
 
     fun createJournalDetailViewModel(
         recordId: String,
@@ -195,8 +207,11 @@ class AppGraph(
         onDeleted = onDeleted,
     )
 
-    fun createPinSetupViewModel(onComplete: () -> Unit): PinSetupViewModel =
-        PinSetupViewModel(pinAuthRepository, biometricAvailability, scope, onComplete)
+    fun createPinSetupViewModel(
+        onComplete: () -> Unit,
+        isChangePinMode: Boolean = false,
+    ): PinSetupViewModel =
+        PinSetupViewModel(pinAuthRepository, biometricAvailability, scope, onComplete, isChangePinMode)
 
     fun createPinEntryViewModel(
         onUnlocked: () -> Unit,

@@ -32,6 +32,7 @@ class PinSetupViewModel(
     private val biometricAvailability: BiometricAvailability,
     private val scope: CoroutineScope,
     private val onComplete: () -> Unit,
+    private val isChangePinMode: Boolean = false,
 ) {
     private val _uiState = MutableStateFlow(
         PinSetupUiState(biometricAvailable = biometricAvailability.isAvailable()),
@@ -61,9 +62,22 @@ class PinSetupViewModel(
                 }
                 PinSetupStep.CONFIRM -> {
                     if (currentEntry == createdPin) {
-                        currentEntry = ""
-                        _uiState.update {
-                            it.copy(step = PinSetupStep.SECURITY_QUESTION, filledDots = 0, mismatchError = false)
+                        if (isChangePinMode) {
+                            scope.launch {
+                                when (pinAuthRepository.changePin(createdPin)) {
+                                    is Result.Success -> completeSetup()
+                                    is Result.Error -> _uiState.update {
+                                        it.copy(errorMessage = "Could not save PIN", filledDots = 0)
+                                    }
+                                }
+                            }
+                            currentEntry = ""
+                            _uiState.update { it.copy(filledDots = 0, mismatchError = false) }
+                        } else {
+                            currentEntry = ""
+                            _uiState.update {
+                                it.copy(step = PinSetupStep.SECURITY_QUESTION, filledDots = 0, mismatchError = false)
+                            }
                         }
                     } else {
                         currentEntry = ""

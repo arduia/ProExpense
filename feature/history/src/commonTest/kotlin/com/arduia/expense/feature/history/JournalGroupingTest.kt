@@ -83,6 +83,8 @@ private class JournalGroupingFakeFormatter : RecordDateFormatter {
 
     override fun daysInMonth(epochMillis: Long): Int = 30
 
+    override fun minusMonths(epochMillis: Long, months: Int): Long = epochMillis - months * 30L * 86_400_000L
+
     companion object {
         private const val DAY_MS = 86_400_000L
     }

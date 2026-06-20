@@ -7,6 +7,7 @@ object AppRoutes {
     const val EXPORT = "export"
     const val IMPORT = "import"
     const val SECURITY = "security"
+    const val CHANGE_PIN = "change_pin"
     const val CLEAR = "clear"
     const val JOURNAL_DETAIL_PREFIX = "journal_detail:"
 

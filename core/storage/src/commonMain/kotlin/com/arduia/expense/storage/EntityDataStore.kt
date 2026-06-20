@@ -13,6 +13,7 @@ interface EntityDataStore {
     var securityAnswerHash: String?
     var securityQuestionId: String?
     var biometricEnrolled: Boolean
+    var displayName: String
 
     suspend fun persistSettings()
 

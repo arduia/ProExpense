@@ -12,4 +12,6 @@ interface RecordDateFormatter {
     fun nowEpochMillis(): Long
 
     fun daysInMonth(epochMillis: Long): Int
+
+    fun minusMonths(epochMillis: Long, months: Int): Long
 }

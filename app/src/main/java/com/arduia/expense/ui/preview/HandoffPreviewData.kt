@@ -22,6 +22,26 @@ data class HomeUiState(
     val monthDelta: String? = null,
     val dayGroups: List<HomeDayGroup> = emptyList(),
     val showEmptyHint: Boolean = true,
+    val budgetSummary: HomeBudgetSummaryState? = null,
+    val activeEvent: HomeActiveEventState? = null,
+)
+
+data class HomeBudgetSummaryState(
+    val spentLabel: String,
+    val budgetLabel: String,
+    val progress: Float,
+    val statusLabel: String,
+    val isOverBudget: Boolean,
+)
+
+data class HomeActiveEventState(
+    val eventId: String,
+    val title: String,
+    val dateRange: String,
+    val spentLabel: String,
+    val budgetLabel: String,
+    val progress: Float,
+    val isOverBudget: Boolean,
 )
 
 val previewHomeEmpty = HomeUiState(
@@ -47,6 +67,38 @@ val previewHomeCasual = HomeUiState(
             ),
         ),
     ),
+)
+
+val previewHomeBudget = HomeUiState(
+    greetingName = "Siti",
+    monthSpend = "$420.00",
+    monthDelta = "-8% from last month",
+    showEmptyHint = false,
+    budgetSummary = HomeBudgetSummaryState(
+        spentLabel = "$420.00",
+        budgetLabel = "of $500.00",
+        progress = 0.84f,
+        statusLabel = "On track",
+        isOverBudget = false,
+    ),
+    dayGroups = previewHomeCasual.dayGroups,
+)
+
+val previewHomeEvent = HomeUiState(
+    greetingName = "Carlos",
+    monthSpend = "$1,240.00",
+    monthDelta = "+5% from last month",
+    showEmptyHint = false,
+    activeEvent = HomeActiveEventState(
+        eventId = "event_bali",
+        title = "Bali Trip",
+        dateRange = "May 12 — May 26",
+        spentLabel = "$1,240",
+        budgetLabel = "of $2,000",
+        progress = 0.62f,
+        isOverBudget = false,
+    ),
+    dayGroups = previewHomeCasual.dayGroups,
 )
 
 data class JournalTransactionItem(
@@ -146,6 +198,7 @@ val previewEventListEmpty: List<EventBudgetCardState> = emptyList()
 
 val previewEventListActive = listOf(
     EventBudgetCardState(
+        id = "event_bali",
         title = "Bali Trip",
         dateRange = "May 12 — May 26",
         spentLabel = "$1,240",
@@ -153,6 +206,7 @@ val previewEventListActive = listOf(
         progress = 0.62f,
     ),
     EventBudgetCardState(
+        id = "event_wedding",
         title = "John's Wedding",
         dateRange = "Jun 14 — Jun 15",
         spentLabel = "$800",
@@ -160,6 +214,7 @@ val previewEventListActive = listOf(
         progress = 0.53f,
     ),
     EventBudgetCardState(
+        id = "event_birthday",
         title = "Birthday party",
         dateRange = "Apr 20 — Apr 20",
         spentLabel = "$545",

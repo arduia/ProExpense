@@ -142,4 +142,5 @@ private class FakeRecordDateFormatter : RecordDateFormatter {
     override fun formatMeta(epochMillis: Long, categoryLabel: String): String = categoryLabel
     override fun nowEpochMillis(): Long = 1L
     override fun daysInMonth(epochMillis: Long): Int = 30
+    override fun minusMonths(epochMillis: Long, months: Int): Long = epochMillis - months * 30L * 86_400_000L
 }

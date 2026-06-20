@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.PinKeypad
 import com.arduia.expense.ui.design.PinKeypadState
+import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
@@ -52,6 +53,8 @@ fun PinSetupScreenContent(
     onBiometricAccepted: () -> Unit = {},
     onBiometricSkipped: () -> Unit = {},
     modifier: Modifier = Modifier,
+    isChangePinMode: Boolean = false,
+    onBack: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -64,14 +67,28 @@ fun PinSetupScreenContent(
             .fillMaxSize()
             .background(colors.paper)
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = dimens.space18),
+            .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        if (onBack != null) {
+            ProTopBar(
+                title = "",
+                onBack = onBack,
+                modifier = Modifier.padding(horizontal = dimens.space18),
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = dimens.space18),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
         Spacer(modifier = Modifier.height(dimens.space32))
         Text(
             text = when (step) {
-                PinSetupStep.Create -> stringResource(R.string.pin_setup_title)
+                PinSetupStep.Create -> stringResource(
+                    if (isChangePinMode) R.string.pin_change_title else R.string.pin_setup_title,
+                )
                 PinSetupStep.Confirm -> stringResource(R.string.pin_confirm_title)
                 PinSetupStep.SecurityQuestion -> stringResource(R.string.pin_security_title)
                 PinSetupStep.BiometricOffer -> stringResource(R.string.pin_biometric_offer_title)
@@ -169,6 +186,7 @@ fun PinSetupScreenContent(
                 state = keypadState,
                 modifier = Modifier.padding(bottom = dimens.space24),
             )
+        }
         }
     }
 }

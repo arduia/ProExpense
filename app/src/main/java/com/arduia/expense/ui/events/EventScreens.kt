@@ -87,10 +87,10 @@ fun EventListScreenContent(
                 }
             }
         } else {
-            items(events, key = { it.title }) { event ->
+            items(events, key = { it.id.ifBlank { it.title } }) { event ->
                 EventBudgetCard(
                     state = event,
-                    modifier = Modifier.proClickable(onClick = { onEventClick(event.title) }, shape = ProExpenseTheme.shapes.card),
+                    modifier = Modifier.proClickable(onClick = { onEventClick(event.id) }, shape = ProExpenseTheme.shapes.card),
                 )
             }
         }

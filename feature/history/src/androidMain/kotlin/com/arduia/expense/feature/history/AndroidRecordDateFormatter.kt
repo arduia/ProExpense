@@ -45,4 +45,12 @@ class AndroidRecordDateFormatter(
         val date = Instant.ofEpochMilli(epochMillis).atZone(zoneId).toLocalDate()
         return date.lengthOfMonth()
     }
+
+    override fun minusMonths(epochMillis: Long, months: Int): Long {
+        val date = Instant.ofEpochMilli(epochMillis).atZone(zoneId).toLocalDate()
+        return date.minusMonths(months.toLong())
+            .atStartOfDay(zoneId)
+            .toInstant()
+            .toEpochMilli()
+    }
 }

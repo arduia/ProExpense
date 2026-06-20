@@ -48,6 +48,21 @@ internal class HistoryFakeRecordDateFormatter : RecordDateFormatter {
     override fun nowEpochMillis(): Long = 1_700_000_000_000L
 
     override fun daysInMonth(epochMillis: Long): Int = 30
+
+    override fun minusMonths(epochMillis: Long, months: Int): Long = epochMillis - months * 30L * 86_400_000L
+}
+
+internal class HistoryFakeEventRepository : com.arduia.expense.data.EventRepository {
+    override suspend fun getAll(): Result<List<com.arduia.expense.domain.Event>> =
+        Result.Success(emptyList())
+
+    override suspend fun getById(id: String): Result<com.arduia.expense.domain.Event?> =
+        Result.Success(null)
+
+    override suspend fun upsert(event: com.arduia.expense.domain.Event): Result<Unit> =
+        Result.Success(Unit)
+
+    override suspend fun delete(id: String): Result<Unit> = Result.Success(Unit)
 }
 
 internal class HistoryFakeSecurityState(
