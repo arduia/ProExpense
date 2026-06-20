@@ -80,6 +80,13 @@ data class ProDimens(
     val emptyIllustrationHeight: Dp,
     val addHintChipSize: Dp,
     val addHintIconSize: Dp,
+    val onboardingIllustrationSize: Dp,
+    val pageIndicatorActiveWidth: Dp,
+    val pageIndicatorDotSize: Dp,
+    val onboardingNavBottomMargin: Dp,
+    val profileStepBarWidth: Dp,
+    val profileStepBarHeight: Dp,
+    val currencySymbolSize: Dp,
 )
 
 val LocalProDimens = staticCompositionLocalOf { ProDefaultDimens }
@@ -160,4 +167,11 @@ val ProDefaultDimens = ProDimens(
     emptyIllustrationHeight = 140.dp,
     addHintChipSize = 20.dp,
     addHintIconSize = 12.dp,
+    onboardingIllustrationSize = 280.dp,
+    pageIndicatorActiveWidth = 22.dp,
+    pageIndicatorDotSize = 6.dp,
+    onboardingNavBottomMargin = 48.dp,
+    profileStepBarWidth = 28.dp,
+    profileStepBarHeight = 4.dp,
+    currencySymbolSize = 36.dp,
 )

@@ -146,6 +146,8 @@
     <string name="onboarding_shared_costs_subtitle">Split bills instantly — total, people, done.</string>
     <string name="onboarding_event_budget_title">Event Budget</string>
     <string name="onboarding_event_budget_subtitle">Plan and track any event budget — trips, weddings, parties.</string>
+    <string name="onboarding_journal_title">Journal</string>
+    <string name="onboarding_journal_subtitle">Review your spending like a diary, day by day.</string>
     <string name="onboarding_get_started_title">You are all set</string>
     <string name="onboarding_get_started_subtitle">Start logging in seconds. Your notebook stays on your device.</string>
     <string name="journal_empty">No records yet — tap + to log your first expense</string>
@@ -254,10 +256,12 @@
     <string name="category_duplicate_error">A category with this name already exists</string>
 
     <!-- Currency -->
-    <string name="profile_currency_title">Choose home currency</string>
-    <string name="profile_currency_description">Your home currency converts all entries for summaries and exports.</string>
+    <string name="profile_currency_title">Pick your home currency</string>
+    <string name="profile_currency_description">All entries default to this. You can still log in any currency per-expense.</string>
     <string name="currency_setting_title">Home currency</string>
-    <string name="currency_picker_title">Select currency</string>
+    <string name="currency_picker_title">All currencies</string>
+    <string name="search_currency_placeholder">Search currency...</string>
+    <string name="start_tracking">Start tracking</string>
     <string name="continue_label">Continue</string>
 
     <!-- Data -->
