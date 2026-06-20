@@ -5,14 +5,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -22,6 +25,8 @@ fun QuickAccessTile(
     icon: ProIconGlyph,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    iconTint: Color = ProExpenseTheme.colors.primaryDeep,
+    iconBackground: Color = ProExpenseTheme.colors.primaryTint,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -40,12 +45,20 @@ fun QuickAccessTile(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
-        ProIcon(
-            glyph = icon,
-            contentDescription = null,
-            tint = colors.primary,
-            size = dimens.iconNav,
-        )
+        Box(
+            modifier = Modifier
+                .size(dimens.quickAccessIconSize)
+                .clip(tileShape)
+                .background(iconBackground),
+            contentAlignment = Alignment.Center,
+        ) {
+            ProIcon(
+                glyph = icon,
+                contentDescription = null,
+                tint = iconTint,
+                size = dimens.iconInline + 4.dp,
+            )
+        }
         Text(
             text = label,
             style = typography.caption,

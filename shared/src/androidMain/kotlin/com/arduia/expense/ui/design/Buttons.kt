@@ -26,6 +26,7 @@ enum class ProButtonVariant {
     Primary,
     PrimaryDeep,
     Success,
+    Danger,
     Dark,
     Secondary,
     Ghost,
@@ -127,6 +128,25 @@ fun ProButton(
                     containerColor = colors.success,
                     contentColor = colors.onPrimaryWarm,
                     disabledContainerColor = colors.success.copy(alpha = motion.disabledOpacity),
+                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                ),
+                contentPadding = contentPadding,
+                interactionSource = interactionSource,
+            ) {
+                Text(text = text, style = textStyle)
+            }
+        }
+        ProButtonVariant.Danger -> {
+            Button(
+                onClick = onClick,
+                modifier = scaledModifier,
+                enabled = enabled,
+                shape = shape,
+                border = BorderStroke(dimens.buttonBorderWidth, colors.danger),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.danger,
+                    contentColor = colors.onPrimaryWarm,
+                    disabledContainerColor = colors.danger.copy(alpha = motion.disabledOpacity),
                     disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
                 ),
                 contentPadding = contentPadding,

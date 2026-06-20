@@ -20,13 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.AmountInputField
 import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
+import com.arduia.expense.ui.design.GenericTextField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.preview.HomeTransactionItem
@@ -132,7 +133,7 @@ fun EventCreateScreenContent(
                 .padding(horizontal = dimens.space18, vertical = dimens.space16),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            ProfileNameField(
+            GenericTextField(
                 value = name,
                 onValueChange = onNameChange,
                 placeholder = stringResource(R.string.event_name_hint),
@@ -140,7 +141,7 @@ fun EventCreateScreenContent(
             Text(text = stringResource(R.string.event_date_range), style = typography.eyebrow, color = colors.muted)
             Text(text = dateRange, style = typography.bodySemiBold, color = colors.onSurface)
             Text(text = stringResource(R.string.event_budget_amount), style = typography.eyebrow, color = colors.muted)
-            ProfileNameField(
+            AmountInputField(
                 value = amountText,
                 onValueChange = onAmountChange,
                 placeholder = stringResource(R.string.amount),
@@ -231,7 +232,7 @@ fun EventDetailScreenContent(
             }
             if (isEditing) {
                 item {
-                    ProfileNameField(
+                    GenericTextField(
                         value = editName,
                         onValueChange = onEditNameChange,
                         placeholder = stringResource(R.string.event_name_hint),
@@ -266,7 +267,7 @@ fun EventDetailScreenContent(
                         ProButton(
                             text = stringResource(R.string.delete),
                             onClick = onDeleteRequest,
-                            variant = ProButtonVariant.Ghost,
+                            variant = ProButtonVariant.Danger,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -282,7 +283,7 @@ fun EventDetailScreenContent(
                     ProButton(
                         text = stringResource(R.string.delete_confirm),
                         onClick = onConfirmDelete,
-                        variant = ProButtonVariant.Ghost,
+                        variant = ProButtonVariant.Danger,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     ProButton(

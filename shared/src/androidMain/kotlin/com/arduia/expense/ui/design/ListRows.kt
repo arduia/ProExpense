@@ -97,10 +97,13 @@ fun DebtRecordRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSettled: Boolean = false,
+    isLent: Boolean = true,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val iconBackground = if (isLent) colors.successTint else colors.dangerTint
+    val iconTint = if (isLent) colors.success else colors.danger
 
     Row(
         modifier = modifier
@@ -114,13 +117,13 @@ fun DebtRecordRow(
             modifier = Modifier
                 .size(dimens.quickAccessIconSize)
                 .clip(ProExpenseTheme.shapes.tile)
-                .background(colors.successSoft),
+                .background(iconBackground),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(
                 glyph = ProIconGlyph.User,
                 contentDescription = null,
-                tint = colors.success,
+                tint = iconTint,
                 size = dimens.iconInline + 4.dp,
             )
         }
@@ -217,7 +220,7 @@ fun ReportsCategoryRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
-            LogCategoryBadge(categoryId = categoryId, size = dimens.space32)
+            LogCategoryBadge(categoryId = categoryId, size = dimens.iconBadge)
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = categoryLabel,
@@ -242,7 +245,7 @@ fun ReportsCategoryRow(
             }
             Text(
                 text = amount,
-                style = typography.bodySemiBold,
+                style = typography.listAmount,
                 color = colors.onSurface,
             )
         }

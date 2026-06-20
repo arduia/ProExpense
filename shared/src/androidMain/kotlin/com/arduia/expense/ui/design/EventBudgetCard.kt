@@ -50,9 +50,7 @@ fun EventBudgetCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
+            .proCardSurface(shape = ProExpenseTheme.shapes.card)
             .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -112,7 +110,7 @@ fun EventBudgetCard(
         ) {
             Text(
                 text = state.spentLabel,
-                style = typography.sectionHead,
+                style = typography.listAmount,
                 color = spentColor,
                 textDecoration = if (state.isOverBudget) TextDecoration.LineThrough else null,
             )

@@ -1,8 +1,5 @@
 package com.arduia.expense.ui.home
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,8 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,6 +25,7 @@ import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.TransactionRow
+import com.arduia.expense.ui.design.proCardSurface
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.preview.HomeUiState
 import com.arduia.expense.ui.preview.previewHomeBudget
@@ -56,7 +52,6 @@ fun HomeScreenContent(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val cardShape = ProExpenseTheme.shapes.card
-    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -111,21 +106,7 @@ fun HomeScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .then(
-                            if (cardElevation != null) {
-                                Modifier.shadow(
-                                    elevation = cardElevation.blur,
-                                    shape = cardShape,
-                                    spotColor = cardElevation.color,
-                                    ambientColor = cardElevation.color,
-                                )
-                            } else {
-                                Modifier
-                            },
-                        )
-                        .clip(cardShape)
-                        .border(BorderStroke(1.dp, colors.line), cardShape)
-                        .background(colors.surface)
+                        .proCardSurface(shape = cardShape)
                         .padding(dimens.cardPadding),
                     verticalArrangement = Arrangement.spacedBy(dimens.space8),
                 ) {
@@ -188,24 +169,32 @@ fun HomeScreenContent(
                         label = stringResource(R.string.quick_access_reports),
                         icon = ProIconGlyph.FeatReports,
                         onClick = onReportsClick,
+                        iconTint = colors.primaryDeep,
+                        iconBackground = colors.primaryTint,
                         modifier = Modifier.weight(1f),
                     )
                     QuickAccessTile(
                         label = stringResource(R.string.quick_access_debt),
                         icon = ProIconGlyph.FeatDebt,
                         onClick = onDebtClick,
+                        iconTint = colors.success,
+                        iconBackground = colors.successTint,
                         modifier = Modifier.weight(1f),
                     )
                     QuickAccessTile(
                         label = stringResource(R.string.quick_access_split),
                         icon = ProIconGlyph.FeatSplit,
                         onClick = onSplitClick,
+                        iconTint = colors.tagDeep,
+                        iconBackground = colors.tagTint,
                         modifier = Modifier.weight(1f),
                     )
                     QuickAccessTile(
                         label = stringResource(R.string.quick_access_events),
                         icon = ProIconGlyph.FeatEvents,
                         onClick = onEventsClick,
+                        iconTint = colors.highlightDeep,
+                        iconBackground = colors.highlightSoft,
                         modifier = Modifier.weight(1f),
                     )
                 }

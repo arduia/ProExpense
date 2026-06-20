@@ -113,7 +113,7 @@ fun PinKeypad(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
-    val keypadAlpha = if (state == PinKeypadState.Locked) motion.keypadDisabledOpacity else 1f
+    val keypadAlpha = if (state == PinKeypadState.Locked) 0.3f else 1f
 
     Column(
         modifier = modifier.fillMaxWidth(),

@@ -20,12 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.AmountInputField
 import com.arduia.expense.ui.design.PeopleStepper
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.proCardSurface
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.SharedPersonRow
 import com.arduia.expense.ui.preview.SharedHistoryItem
@@ -86,7 +87,7 @@ fun SharedCostsScreenContent(
             verticalArrangement = Arrangement.spacedBy(dimens.space24),
         ) {
             Text(text = stringResource(R.string.shared_total_label), style = typography.eyebrow, color = colors.muted)
-            ProfileNameField(
+            AmountInputField(
                 value = amountText,
                 onValueChange = onAmountChange,
                 placeholder = stringResource(R.string.amount),
@@ -128,7 +129,7 @@ fun SharedCostsScreenContent(
             )
             if (splitMode == com.arduia.expense.feature.sharedcost.SplitMode.CUSTOM) {
                 customAmountTexts.forEachIndexed { index, amount ->
-                    ProfileNameField(
+                    AmountInputField(
                         value = amount,
                         onValueChange = { onCustomAmountChange(index, it) },
                         placeholder = stringResource(R.string.shared_person_amount, index + 1),
@@ -234,7 +235,7 @@ fun SharedHistoryScreenContent(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(colors.surface, ProExpenseTheme.shapes.card)
+                            .proCardSurface(shape = ProExpenseTheme.shapes.card)
                             .padding(dimens.space14),
                     ) {
                         Text(text = item.title, style = typography.bodySemiBold, color = colors.onSurface)
@@ -250,7 +251,7 @@ fun SharedHistoryScreenContent(
                                 style = typography.caption,
                                 color = colors.muted,
                             )
-                            Text(text = item.total, style = typography.bodySemiBold, color = colors.onSurface)
+                            Text(text = item.total, style = typography.listAmount, color = colors.onSurface)
                         }
                     }
                 }

@@ -59,7 +59,7 @@ fun ClearDataScreenContent(
                 ProButton(
                     text = stringResource(R.string.clear_data_confirm),
                     onClick = onRequestClear,
-                    variant = ProButtonVariant.Ghost,
+                    variant = ProButtonVariant.Danger,
                     size = ProButtonSize.Lg,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -74,7 +74,7 @@ fun ClearDataScreenContent(
                 ProButton(
                     text = stringResource(R.string.clear_data_confirm),
                     onClick = onConfirmClear,
-                    variant = ProButtonVariant.Ghost,
+                    variant = ProButtonVariant.Danger,
                     size = ProButtonSize.Lg,
                     modifier = Modifier
                         .fillMaxWidth()

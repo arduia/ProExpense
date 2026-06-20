@@ -17,13 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.AmountInputField
 import com.arduia.expense.ui.design.DebtRecordRow
+import com.arduia.expense.ui.design.GenericTextField
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.preview.DebtRecordItem
 import com.arduia.expense.ui.preview.previewDebtLent
@@ -103,6 +105,7 @@ fun DebtTrackerScreenContent(
                         amount = record.amount,
                         dueLabel = record.dueLabel,
                         isSettled = record.isSettled,
+                        isLent = selectedTab == 0,
                         onClick = { onRecordClick(record.id) },
                     )
                 }
@@ -144,12 +147,13 @@ fun DebtAddScreenContent(
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(dimens.space12)) {
-            ProfileNameField(
+            GenericTextField(
                 value = personName,
                 onValueChange = onPersonNameChange,
                 placeholder = stringResource(R.string.debt_person_hint),
+                leadingIcon = ProIconGlyph.User,
             )
-            ProfileNameField(
+            AmountInputField(
                 value = amountText,
                 onValueChange = onAmountChange,
                 placeholder = stringResource(R.string.amount),
@@ -214,7 +218,7 @@ fun DebtDetailScreenContent(
             modifier = Modifier.padding(horizontal = dimens.space18, vertical = dimens.space24),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            Text(text = amount, style = typography.screenTitle, color = colors.onSurface)
+            Text(text = amount, style = typography.summaryAmount, color = colors.onSurface)
             Text(text = dueLabel, style = typography.body, color = colors.onSurfaceMuted)
             if (isSettled) {
                 Text(text = stringResource(R.string.debt_settled_label), style = typography.eyebrow, color = colors.success)
@@ -222,14 +226,14 @@ fun DebtDetailScreenContent(
                     ProButton(
                         text = stringResource(R.string.debt_delete_settled),
                         onClick = onRequestDelete,
-                        variant = ProButtonVariant.Ghost,
+                        variant = ProButtonVariant.Danger,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 } else {
                     ProButton(
                         text = stringResource(R.string.delete_confirm),
                         onClick = onConfirmDelete,
-                        variant = ProButtonVariant.Ghost,
+                        variant = ProButtonVariant.Danger,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     ProButton(

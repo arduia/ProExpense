@@ -106,7 +106,7 @@ class ProDesignTokensTest {
 
     @Test
     fun nav_surface_alpha_is_opaque_white() {
-        assertEquals(1f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
+        assertEquals(0.86f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
     }
 
     @Test

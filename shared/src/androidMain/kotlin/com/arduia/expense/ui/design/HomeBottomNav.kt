@@ -76,6 +76,7 @@ fun HomeBottomNav(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = dimens.navHorizontalInset)
             .height(dimens.navFabOffset + dimens.navBarHeight),
     ) {
         Surface(
@@ -202,7 +203,6 @@ private fun HomeAddFab(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
     val fabElevation = ProExpenseTheme.elevation.fab.firstOrNull()
     val interactionSource = remember { MutableInteractionSource() }
     val addContentDescription = stringResource(R.string.nav_add)
@@ -238,22 +238,12 @@ private fun HomeAddFab(
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimens.space2),
-            ) {
-                ProIcon(
-                    glyph = ProIconGlyph.Plus,
-                    contentDescription = null,
-                    tint = colors.onPrimaryWarm,
-                    size = dimens.iconNav,
-                )
-                Text(
-                    text = stringResource(R.string.nav_add),
-                    style = typography.caption.copy(fontFamily = typography.monoFamily),
-                    color = colors.onPrimaryWarm,
-                )
-            }
+            ProIcon(
+                glyph = ProIconGlyph.Plus,
+                contentDescription = addContentDescription,
+                tint = colors.onPrimaryWarm,
+                size = dimens.iconNav,
+            )
         }
     }
 }

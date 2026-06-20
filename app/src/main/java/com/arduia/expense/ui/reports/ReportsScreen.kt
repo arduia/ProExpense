@@ -98,7 +98,7 @@ fun ReportsScreenContent(
             )
             Text(
                 text = totalSpend,
-                style = typography.screenTitle,
+                style = typography.summaryAmount,
                 color = spendColor,
             )
             if (dailyAverage.isNotBlank()) {

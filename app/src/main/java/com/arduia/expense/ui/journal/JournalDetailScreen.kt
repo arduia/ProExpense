@@ -134,7 +134,7 @@ fun JournalDetailScreenContent(
                 ProButton(
                     text = stringResource(R.string.journal_delete),
                     onClick = onDelete,
-                    variant = ProButtonVariant.Ghost,
+                    variant = ProButtonVariant.Danger,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

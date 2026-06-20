@@ -13,10 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.GenericTextField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -54,10 +55,11 @@ fun DataExportScreenContent(
                 style = typography.body,
                 color = colors.onSurfaceMuted,
             )
-            ProfileNameField(
+            GenericTextField(
                 value = exportPassword,
                 onValueChange = onExportPasswordChange,
                 placeholder = stringResource(R.string.export_password_hint),
+                leadingIcon = ProIconGlyph.Eye,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = dimens.space16),

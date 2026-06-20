@@ -18,12 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
-import com.arduia.expense.ui.design.CategoryChip
+import com.arduia.expense.ui.design.GenericTextField
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.preview.previewCategoryItems
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -75,12 +74,6 @@ fun CategoryListScreenContent(
                         color = colors.onSurface,
                         modifier = Modifier.weight(1f),
                     )
-                    CategoryChip(
-                        label = label,
-                        categoryId = id,
-                        selected = id == selectedCategoryId,
-                        onClick = { onCategorySelected(id) },
-                    )
                 }
             }
 
@@ -90,7 +83,7 @@ fun CategoryListScreenContent(
                 color = colors.primary,
                 modifier = Modifier.padding(top = dimens.space16),
             )
-            ProfileNameField(
+            GenericTextField(
                 value = newCategoryName,
                 onValueChange = onNewCategoryChange,
                 placeholder = stringResource(R.string.category_name_hint),

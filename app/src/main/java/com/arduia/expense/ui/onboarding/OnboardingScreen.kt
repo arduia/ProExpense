@@ -177,14 +177,22 @@ fun OnboardingScreen(
                 .padding(horizontal = dimens.space24, vertical = dimens.space8),
         )
 
-        ProButton(
-            text = stringResource(R.string.get_started),
-            onClick = onGetStarted,
-            size = ProButtonSize.Lg,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.space18, vertical = dimens.space16),
-        )
+        if (isLastPage) {
+            ProButton(
+                text = stringResource(R.string.get_started),
+                onClick = onGetStarted,
+                size = ProButtonSize.Lg,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.space18, vertical = dimens.space16),
+            )
+        } else {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = dimens.space16 + dimens.buttonLg.height),
+            )
+        }
     }
 }
 
