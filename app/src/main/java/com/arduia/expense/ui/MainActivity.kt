@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
-import com.arduia.expense.ui.theme.ProExpenseTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -20,7 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ProExpenseTheme {
+            MaterialTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Text(
                         text = stringResource(R.string.app_welcome),
