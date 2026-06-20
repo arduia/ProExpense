@@ -427,5 +427,49 @@
     <string name="security_disable_pin">Disable PIN</string>
     <string name="security_biometric_enable">Enable biometrics</string>
     <string name="security_biometric_disable">Disable biometrics</string>
+
+    <!-- Debt &amp; Lending -->
+    <string name="debt_title">Debt</string>
+    <string name="debt_back_more">More</string>
+    <string name="debt_detail_back">Debt</string>
+    <string name="debt_tab_lent">I Lent</string>
+    <string name="debt_tab_owe">I Owe</string>
+    <string name="debt_youre_owed">YOU\'RE OWED</string>
+    <string name="debt_you_owe">YOU OWE</string>
+    <string name="debt_section_active">ACTIVE</string>
+    <string name="debt_section_settled">SETTLED</string>
+    <string name="debt_settled_chip">SETTLED</string>
+    <string name="debt_settled_meta">Settled · %1$s</string>
+    <string name="debt_you_lent">YOU LENT</string>
+    <string name="debt_you_owe_caps">YOU OWE</string>
+    <string name="debt_date_recorded">Date recorded</string>
+    <string name="debt_due_date">Due date</string>
+    <string name="debt_status">Status</string>
+    <string name="debt_no_due">No due date</string>
+    <string name="debt_linked_expense">LINKED EXPENSE</string>
+    <string name="debt_reference_only">Reference only</string>
+    <string name="debt_edit">Edit</string>
+    <string name="debt_mark_as_settled">Mark as settled</string>
+    <string name="debt_new_record">New record</string>
+    <string name="debt_person_label">PERSON</string>
+    <string name="debt_amount_label">AMOUNT</string>
+    <string name="debt_date_label">DATE</string>
+    <string name="debt_due_optional">DUE · OPTIONAL</string>
+    <string name="debt_due_none">None</string>
+    <string name="debt_person_placeholder">Name</string>
+    <string name="debt_person_counter">%1$d/%2$d</string>
+    <string name="debt_currency_usd">USD</string>
+    <string name="debt_save_record">Save record</string>
+    <string name="debt_conflict_title">%1$s already has a record</string>
+    <string name="debt_conflict_body">%1$s is on your %2$s list. Do you want to add this %3$s record too?</string>
+    <string name="debt_continue">Continue</string>
+    <string name="debt_cancel">Cancel</string>
+    <string name="debt_delete">Delete</string>
+    <string name="debt_delete_title">Delete this record?</string>
+    <string name="debt_delete_body">Removing %1$s\'s settled record can\'t be undone.</string>
+    <plurals name="debt_active_count">
+        <item quantity="one">%1$d active</item>
+        <item quantity="other">%1$d active</item>
+    </plurals>
 </resources>
 

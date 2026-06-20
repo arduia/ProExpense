@@ -12,6 +12,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -45,6 +46,7 @@ fun SegmentedToggle(
                 text = label,
                 style = if (selected) typography.bodySemiBold else typography.bodyMedium,
                 color = if (selected) selectedContent else colors.onSurfaceVariant,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = dimens.touchTargetMin)
