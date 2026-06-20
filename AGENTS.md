@@ -560,6 +560,7 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
   screenshot verify green before push — see Step 6 UI change gate
 - End every implementation task with the **Workflow status** block (Step 7.5) — flag Step 6 and push explicitly
 - **Do not create pull requests** — push only; PRs are opened manually (not as draft, not as ready) unless the user explicitly asks
+- **PR creation requires intentional user request** — never create or update any pull request (including draft PRs) unless the user clearly and intentionally requests PR action in that session.
 - **v2 migration PRs:** target `refactor/v2-migration`, not `main` — see [v2 migration base branch](#v2-migration-base-branch-mandatory-until-migration-completes)
 - Never force-push to `main` without explicit user permission
 - Never leave work unpushed when task is complete
@@ -569,6 +570,7 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 
 - **Default:** agent pushes branch, user opens the PR in GitHub/GitLab.
 - **Never** auto-open draft PRs or use PR-management tooling on task completion.
+- Treat PR tooling as **opt-in only**: if the user did not intentionally ask for PR creation/update, do not call PR-management tools.
 - **Only** create or update a PR when the user explicitly requests it in that session (then follow their ready/draft preference).
 
 #### v2 migration base branch (mandatory until migration completes)
