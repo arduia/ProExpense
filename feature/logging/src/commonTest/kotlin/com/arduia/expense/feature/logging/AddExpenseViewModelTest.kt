@@ -1,3 +1,8 @@
+/**
+ * Domain rules (quick log / A1):
+ * - Selected @ tag (event/debt) persisted on save.
+ * - Save uses home currency amount from amount input.
+ */
 package com.arduia.expense.feature.logging
 
 import com.arduia.expense.data.DebtRepository
@@ -42,7 +47,7 @@ class AddExpenseViewModelTest {
             eventRepository = FakeEventRepository(listOf(event)),
             debtRepository = FakeDebtRepository(),
             homeCurrencyCode = "USD",
-            scope = scope.backgroundScope,
+            scope = this,
             nowEpochMillis = { 1_700_000_000_000L },
             onSaved = { saved = true },
             onSaveFailed = {},

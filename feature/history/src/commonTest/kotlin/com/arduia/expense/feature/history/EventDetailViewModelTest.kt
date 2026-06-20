@@ -1,3 +1,8 @@
+/**
+ * Domain rules (design plan Screen 08):
+ * - Delete warns when linked expenses exist (linkedExpenseCount).
+ * - Confirm delete removes event after user confirms.
+ */
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.EventRepository
@@ -10,7 +15,6 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -20,7 +24,6 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class EventDetailViewModelTest {
     private val dispatcher = StandardTestDispatcher()
-    private val scope = TestScope(dispatcher)
 
     @Test
     fun onConfirmDelete_invokesCallbackAfterDelete() = runTest(dispatcher) {
@@ -41,7 +44,7 @@ class EventDetailViewModelTest {
             formatter = FakeRecordDateFormatter(),
             homeCurrencyCode = "USD",
             categoryLabel = { "Food" },
-            scope = scope.backgroundScope,
+            scope = this,
             onDeleted = { deleted = true },
         )
         advanceUntilIdle()
@@ -71,6 +74,7 @@ class EventDetailViewModelTest {
                 homeCurrencyAmount = Amount(500),
                 categoryId = "food",
                 type = RecordType.EXPENSE,
+                note = null,
                 recordedAtEpochMillis = 1L,
                 tagType = ExpenseTagType.EVENT,
                 tagId = "event_1",
@@ -83,7 +87,7 @@ class EventDetailViewModelTest {
             formatter = FakeRecordDateFormatter(),
             homeCurrencyCode = "USD",
             categoryLabel = { "Food" },
-            scope = scope.backgroundScope,
+            scope = this,
         )
         advanceUntilIdle()
 

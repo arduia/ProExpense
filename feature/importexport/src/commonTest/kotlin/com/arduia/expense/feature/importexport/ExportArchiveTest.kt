@@ -1,3 +1,9 @@
+/**
+ * Domain rules (design plan B4/B5):
+ * - Export manifest includes schema version and HMAC signature over counts + CSV payloads.
+ * - Wrong password or tampered payload → InvalidPasswordOrCorrupt.
+ * - Schema newer than app → SchemaTooNew (distinct from corrupt/password errors).
+ */
 package com.arduia.expense.feature.importexport
 
 import kotlin.test.Test
@@ -30,6 +36,37 @@ class ExportArchiveTest {
             ExportVerificationResult.InvalidPasswordOrCorrupt,
             ExportArchive.verifyArchive("wrong", payload),
         )
+    }
+
+    @Test
+    fun verifyArchive_rejectsTamperedCsv() {
+        val payload = ExportArchive.buildArchive(
+            password = "secret",
+            records = emptyList(),
+            events = emptyList(),
+            debts = emptyList(),
+            sharedCosts = emptyList(),
+        )
+        val tampered = payload.copy(recordsCsv = "tampered")
+        assertEquals(
+            ExportVerificationResult.InvalidPasswordOrCorrupt,
+            ExportArchive.verifyArchive("secret", tampered),
+        )
+    }
+
+    @Test
+    fun verifyArchive_rejectsSchemaTooNew() {
+        val payload = ExportArchive.buildArchive(
+            password = "pw",
+            records = emptyList(),
+            events = emptyList(),
+            debts = emptyList(),
+            sharedCosts = emptyList(),
+        )
+        val future = payload.copy(
+            manifest = payload.manifest.copy(schemaVersion = ExportArchive.SCHEMA_VERSION + 1),
+        )
+        assertEquals(ExportVerificationResult.SchemaTooNew, ExportArchive.verifyArchive("pw", future))
     }
 
     @Test

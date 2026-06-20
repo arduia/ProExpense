@@ -1,6 +1,12 @@
+/**
+ * Domain rules (design plan Screen 14 / C6):
+ * - PIN must be 6 digits; confirm must match enter step.
+ * - Security question + answer required before PIN is saved.
+ * - Biometric offer shown only when platform biometric is available.
+ * - PIN save triggers key rotation (via PinAuthRepository).
+ */
 package com.arduia.expense.feature.auth
 
-import com.arduia.expense.data.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -8,6 +14,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PinSetupViewModelTest {
@@ -18,9 +26,9 @@ class PinSetupViewModelTest {
     fun onContinueSecurity_movesToBiometricWhenAvailable() = runTest(dispatcher) {
         var completed = false
         val viewModel = PinSetupViewModel(
-            pinAuthRepository = FakePinAuthRepository(),
-            biometricAvailability = FakeBiometricAvailability(available = true),
-            scope = scope.backgroundScope,
+            pinAuthRepository = AuthFakePinAuthRepository(),
+            biometricAvailability = AuthFakeBiometricAvailability(available = true),
+            scope = this,
             onComplete = { completed = true },
         )
 
@@ -31,40 +39,67 @@ class PinSetupViewModelTest {
         advanceUntilIdle()
 
         assertEquals(PinSetupStep.BIOMETRIC_OFFER, viewModel.uiState.value.step)
-        assertEquals(false, completed)
+        assertFalse(completed)
 
         viewModel.onBiometricOffered(true)
         advanceUntilIdle()
-        assertEquals(true, completed)
+        assertTrue(completed)
     }
-}
 
-private class FakeBiometricAvailability(
-    private val available: Boolean,
-) : BiometricAvailability {
-    override fun isAvailable(): Boolean = available
-}
+    @Test
+    fun confirmMismatch_showsErrorAndStaysOnConfirm() = runTest(dispatcher) {
+        val viewModel = PinSetupViewModel(
+            pinAuthRepository = AuthFakePinAuthRepository(),
+            biometricAvailability = AuthFakeBiometricAvailability(available = false),
+            scope = this,
+            onComplete = {},
+        )
 
-private class FakePinAuthRepository : PinAuthRepository {
-    override suspend fun isPinConfigured(): Result<Boolean> = Result.Success(false)
+        repeat(6) { viewModel.onDigit(1) }
+        repeat(5) { viewModel.onDigit(2) }
+        viewModel.onDigit(3)
+        advanceUntilIdle()
 
-    override suspend fun setPin(pin: String): Result<Unit> = Result.Success(Unit)
+        assertEquals(PinSetupStep.CONFIRM, viewModel.uiState.value.step)
+        assertTrue(viewModel.uiState.value.mismatchError)
+        assertEquals(0, viewModel.uiState.value.filledDots)
+    }
 
-    override suspend fun verifyPin(pin: String): Result<Boolean> = Result.Success(true)
+    @Test
+    fun blankSecurityAnswer_doesNotAdvance() = runTest(dispatcher) {
+        val repository = AuthFakePinAuthRepository()
+        val viewModel = PinSetupViewModel(
+            pinAuthRepository = repository,
+            biometricAvailability = AuthFakeBiometricAvailability(available = false),
+            scope = this,
+            onComplete = {},
+        )
 
-    override suspend fun clearPin(): Result<Unit> = Result.Success(Unit)
+        repeat(6) { viewModel.onDigit(1) }
+        repeat(6) { viewModel.onDigit(1) }
+        viewModel.onContinueSecurity()
+        advanceUntilIdle()
 
-    override suspend fun changePin(newPin: String): Result<Unit> = Result.Success(Unit)
+        assertEquals(PinSetupStep.SECURITY_QUESTION, viewModel.uiState.value.step)
+        assertFalse(repository.pinSaved)
+    }
 
-    override suspend fun setSecurityAnswer(questionId: String, answer: String): Result<Unit> = Result.Success(Unit)
+    @Test
+    fun noBiometric_skipsOfferAndCompletes() = runTest(dispatcher) {
+        var completed = false
+        val viewModel = PinSetupViewModel(
+            pinAuthRepository = AuthFakePinAuthRepository(),
+            biometricAvailability = AuthFakeBiometricAvailability(available = false),
+            scope = this,
+            onComplete = { completed = true },
+        )
 
-    override suspend fun verifySecurityAnswer(answer: String): Result<Boolean> = Result.Success(true)
+        repeat(6) { viewModel.onDigit(1) }
+        repeat(6) { viewModel.onDigit(1) }
+        viewModel.onSecurityAnswerChange("answer")
+        viewModel.onContinueSecurity()
+        advanceUntilIdle()
 
-    override suspend fun isBiometricEnrolled(): Boolean = false
-
-    override suspend fun setBiometricEnrolled(enabled: Boolean): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun unlockWithBiometric(): Result<Boolean> = Result.Success(true)
-
-    override suspend fun getSecurityQuestionId(): String? = null
+        assertTrue(completed)
+    }
 }

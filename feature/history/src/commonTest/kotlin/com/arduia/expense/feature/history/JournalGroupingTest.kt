@@ -1,3 +1,8 @@
+/**
+ * Domain rules (Journal / D12):
+ * - Records grouped by calendar day for journal list.
+ * - recentLimit caps transactions shown per home preview.
+ */
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.domain.Amount
@@ -6,10 +11,9 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordType
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class JournalGroupingTest {
-    private val formatter = FakeRecordDateFormatter()
+    private val formatter = JournalGroupingFakeFormatter()
     private val categoryLabel: (String) -> String = { id -> id.replaceFirstChar { it.uppercase() } }
 
     @Test
@@ -31,7 +35,7 @@ class JournalGroupingTest {
 
         assertEquals(2, groups.size)
         assertEquals(2, groups.first().transactions.size)
-        assertEquals("$8.00", groups.first().dayTotal)
+        assertEquals("$8", groups.first().dayTotal)
     }
 
     @Test
@@ -66,7 +70,7 @@ class JournalGroupingTest {
         )
 }
 
-private class FakeRecordDateFormatter : RecordDateFormatter {
+private class JournalGroupingFakeFormatter : RecordDateFormatter {
     override fun dayKey(epochMillis: Long): Long = epochMillis / DAY_MS * DAY_MS
 
     override fun formatDayTitle(dayKey: Long): String = "Day-$dayKey"

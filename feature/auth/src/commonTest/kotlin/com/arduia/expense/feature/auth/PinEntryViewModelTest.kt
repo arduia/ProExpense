@@ -1,3 +1,13 @@
+/**
+ * Domain rules (design plan C6/C8 / PIN Entry Screen 15):
+ * - 6-digit PIN entry; verify on sixth digit.
+ * - 5 failed attempts → 30s lockout (LOCKOUT mode).
+ * - Biometric auto-trigger only when enrolled and not locked out.
+ * - Biometric failure counts as a failed attempt.
+ * - Biometric unlock blocked during lockout.
+ * - Correct PIN or biometric success resets lockout and calls onUnlocked.
+ * - Security answer recovery resets lockout on success.
+ */
 package com.arduia.expense.feature.auth
 
 import com.arduia.expense.data.LockoutState
@@ -9,6 +19,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -19,10 +30,10 @@ class PinEntryViewModelTest {
     @Test
     fun onScreenLoaded_setsBiometricTriggerWhenEnrolled() = runTest(dispatcher) {
         val viewModel = PinEntryViewModel(
-            pinAuthRepository = FakePinAuthRepository(biometricEnrolled = true),
+            pinAuthRepository = AuthFakePinAuthRepository(biometricEnrolled = true),
             lockoutRepository = FakeLockoutRepository(),
             nowEpochMillis = { 1_000L },
-            scope = scope.backgroundScope,
+            scope = this,
             onUnlocked = {},
             onRecoverySuccess = {},
         )
@@ -36,10 +47,10 @@ class PinEntryViewModelTest {
     @Test
     fun onScreenLoaded_skipsBiometricWhenLockedOut() = runTest(dispatcher) {
         val viewModel = PinEntryViewModel(
-            pinAuthRepository = FakePinAuthRepository(biometricEnrolled = true),
+            pinAuthRepository = AuthFakePinAuthRepository(biometricEnrolled = true),
             lockoutRepository = FakeLockoutRepository(lockedOut = true, lockoutUntil = 10_000L),
             nowEpochMillis = { 1_000L },
-            scope = scope.backgroundScope,
+            scope = this,
             onUnlocked = {},
             onRecoverySuccess = {},
         )
@@ -48,17 +59,17 @@ class PinEntryViewModelTest {
         advanceUntilIdle()
 
         assertEquals(PinEntryMode.LOCKOUT, viewModel.uiState.value.mode)
-        assertEquals(false, viewModel.uiState.value.biometricShouldTrigger)
+        assertFalse(viewModel.uiState.value.biometricShouldTrigger)
     }
 
     @Test
     fun onBiometricFailed_entersWrongPinMode() = runTest(dispatcher) {
         val lockout = FakeLockoutRepository()
         val viewModel = PinEntryViewModel(
-            pinAuthRepository = FakePinAuthRepository(),
+            pinAuthRepository = AuthFakePinAuthRepository(),
             lockoutRepository = lockout,
             nowEpochMillis = { 1_000L },
-            scope = scope.backgroundScope,
+            scope = this,
             onUnlocked = {},
             onRecoverySuccess = {},
         )
@@ -69,32 +80,89 @@ class PinEntryViewModelTest {
         assertEquals(PinEntryMode.WRONG, viewModel.uiState.value.mode)
         assertEquals(1, lockout.failedAttempts)
     }
-}
 
-private class FakePinAuthRepository(
-    private val biometricEnrolled: Boolean = false,
-) : PinAuthRepository {
-    override suspend fun isPinConfigured(): Result<Boolean> = Result.Success(true)
+    @Test
+    fun fiveWrongPins_triggersLockout() = runTest(dispatcher) {
+        val lockout = FakeLockoutRepository()
+        val viewModel = PinEntryViewModel(
+            pinAuthRepository = AuthFakePinAuthRepository(verifyPinResult = false),
+            lockoutRepository = lockout,
+            nowEpochMillis = { 1_000L },
+            scope = this,
+            onUnlocked = {},
+            onRecoverySuccess = {},
+        )
 
-    override suspend fun setPin(pin: String): Result<Unit> = Result.Success(Unit)
+        repeat(5) {
+            repeat(6) { viewModel.onDigit(1) }
+            advanceUntilIdle()
+        }
 
-    override suspend fun verifyPin(pin: String): Result<Boolean> = Result.Success(false)
+        assertEquals(PinEntryMode.LOCKOUT, viewModel.uiState.value.mode)
+        assertEquals(5, lockout.failedAttempts)
+    }
 
-    override suspend fun clearPin(): Result<Unit> = Result.Success(Unit)
+    @Test
+    fun correctPin_unlocksAndResetsLockout() = runTest(dispatcher) {
+        val lockout = FakeLockoutRepository()
+        var unlocked = false
+        val viewModel = PinEntryViewModel(
+            pinAuthRepository = AuthFakePinAuthRepository(verifyPinResult = true),
+            lockoutRepository = lockout,
+            nowEpochMillis = { 1_000L },
+            scope = this,
+            onUnlocked = { unlocked = true },
+            onRecoverySuccess = {},
+        )
 
-    override suspend fun changePin(newPin: String): Result<Unit> = Result.Success(Unit)
+        lockout.failedAttempts = 2
+        repeat(6) { viewModel.onDigit(1) }
+        advanceUntilIdle()
 
-    override suspend fun setSecurityAnswer(questionId: String, answer: String): Result<Unit> = Result.Success(Unit)
+        assertTrue(unlocked)
+        assertEquals(0, lockout.failedAttempts)
+    }
 
-    override suspend fun verifySecurityAnswer(answer: String): Result<Boolean> = Result.Success(false)
+    @Test
+    fun onBiometricUnlock_whileLockedOut_isIgnored() = runTest(dispatcher) {
+        var unlocked = false
+        val viewModel = PinEntryViewModel(
+            pinAuthRepository = AuthFakePinAuthRepository(biometricEnrolled = true, biometricUnlock = true),
+            lockoutRepository = FakeLockoutRepository(lockedOut = true, lockoutUntil = 20_000L),
+            nowEpochMillis = { 1_000L },
+            scope = this,
+            onUnlocked = { unlocked = true },
+            onRecoverySuccess = {},
+        )
 
-    override suspend fun isBiometricEnrolled(): Boolean = biometricEnrolled
+        viewModel.onBiometricUnlock()
+        advanceUntilIdle()
 
-    override suspend fun setBiometricEnrolled(enabled: Boolean): Result<Unit> = Result.Success(Unit)
+        assertFalse(unlocked)
+        assertEquals(PinEntryMode.LOCKOUT, viewModel.uiState.value.mode)
+    }
 
-    override suspend fun unlockWithBiometric(): Result<Boolean> = Result.Success(false)
+    @Test
+    fun onUnlockRecovery_successResetsLockout() = runTest(dispatcher) {
+        val lockout = FakeLockoutRepository()
+        var recovered = false
+        val viewModel = PinEntryViewModel(
+            pinAuthRepository = AuthFakePinAuthRepository(verifySecurityAnswer = true),
+            lockoutRepository = lockout,
+            nowEpochMillis = { 1_000L },
+            scope = this,
+            onUnlocked = {},
+            onRecoverySuccess = { recovered = true },
+        )
 
-    override suspend fun getSecurityQuestionId(): String? = null
+        lockout.failedAttempts = 3
+        viewModel.onRecoveryAnswerChange("answer")
+        viewModel.onUnlockRecovery()
+        advanceUntilIdle()
+
+        assertTrue(recovered)
+        assertEquals(0, lockout.failedAttempts)
+    }
 }
 
 private class FakeLockoutRepository(
@@ -113,13 +181,21 @@ private class FakeLockoutRepository(
         maxAttempts: Int,
         lockoutDurationMs: Long,
     ): LockoutState {
+        if (lockedOut) {
+            val seconds = ((lockoutUntil!! - nowEpochMillis) / 1000).toInt().coerceAtLeast(1)
+            return LockoutState(isLockedOut = true, secondsRemaining = seconds, failedAttempts = failedAttempts)
+        }
         failedAttempts += 1
         if (failedAttempts >= maxAttempts) {
             lockedOut = true
             lockoutUntil = nowEpochMillis + lockoutDurationMs
-            return LockoutState(isLockedOut = true, secondsRemaining = (lockoutDurationMs / 1000).toInt())
+            return LockoutState(
+                isLockedOut = true,
+                secondsRemaining = (lockoutDurationMs / 1000).toInt(),
+                failedAttempts = failedAttempts,
+            )
         }
-        return LockoutState(isLockedOut = false, secondsRemaining = 0)
+        return LockoutState(isLockedOut = false, secondsRemaining = 0, failedAttempts = failedAttempts)
     }
 
     override suspend fun resetLockout() {

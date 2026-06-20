@@ -1,8 +1,14 @@
+/**
+ * Domain rules (PRD import/export):
+ * - CSV/JSON import maps to FinanceRecord with home amount in cents.
+ * - Invalid or missing rows are skipped; malformed amounts do not parse.
+ */
 package com.arduia.expense.feature.importexport
 
 import com.arduia.expense.domain.RecordType
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ImportParserTest {
     @Test
@@ -27,5 +33,20 @@ class ImportParserTest {
         assertEquals("rec2", records[0].id)
         assertEquals(500L, records[0].homeCurrencyAmount.valueInCents)
         assertEquals("transport", records[0].categoryId)
+    }
+
+    @Test
+    fun parseCsv_skipsHeaderOnly() {
+        val csv = "id,amountCents,categoryId,note,recordedAt"
+        assertTrue(ImportParser.parseCsv(csv).isEmpty())
+    }
+
+    @Test
+    fun parseCsv_skipsInvalidAmountRows() {
+        val csv = """
+            id,amountCents,categoryId,note,recordedAt
+            bad,not-a-number,food,,1700000000000
+        """.trimIndent()
+        assertTrue(ImportParser.parseCsv(csv).isEmpty())
     }
 }

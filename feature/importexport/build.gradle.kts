@@ -28,6 +28,10 @@ kotlin {
             implementation(project(":core:storage"))
             implementation(libs.zip4j)
         }
+        androidUnitTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
+        }
     }
 }
 

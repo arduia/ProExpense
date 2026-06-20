@@ -1,3 +1,8 @@
+/**
+ * Domain rules (design plan Screen 14 recovery):
+ * - Five predefined security questions (no custom questions).
+ * - Questions identified by stable id for storage.
+ */
 package com.arduia.expense.feature.auth
 
 import kotlin.test.Test
@@ -19,5 +24,10 @@ class SecurityQuestionsTest {
     @Test
     fun byId_returnsNullForUnknownId() {
         assertNull(SecurityQuestions.byId("unknown"))
+    }
+
+    @Test
+    fun all_idsAreUnique() {
+        assertEquals(5, SecurityQuestions.all.map { it.id }.distinct().size)
     }
 }

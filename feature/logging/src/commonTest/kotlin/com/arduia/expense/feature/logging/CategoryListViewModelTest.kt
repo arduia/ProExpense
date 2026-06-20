@@ -4,7 +4,6 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Category
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -14,14 +13,13 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class CategoryListViewModelTest {
     private val dispatcher = StandardTestDispatcher()
-    private val scope = TestScope(dispatcher)
 
     @Test
     fun onAddCategory_rejectsDuplicateNames() = runTest(dispatcher) {
         val repository = FakeCategoryRepository(
             listOf(Category(id = "food", name = "Food")),
         )
-        val viewModel = CategoryListViewModel(repository, scope.backgroundScope)
+        val viewModel = CategoryListViewModel(repository, this)
 
         advanceUntilIdle()
         viewModel.onNewCategoryChange("Food")
@@ -35,7 +33,7 @@ class CategoryListViewModelTest {
     @Test
     fun onAddCategory_enforcesTwentyCharacterLimit() = runTest(dispatcher) {
         val repository = FakeCategoryRepository(emptyList())
-        val viewModel = CategoryListViewModel(repository, scope.backgroundScope)
+        val viewModel = CategoryListViewModel(repository, this)
 
         viewModel.onNewCategoryChange("A".repeat(25))
         assertEquals(20, viewModel.uiState.value.newCategoryName.length)
