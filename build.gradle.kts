@@ -10,8 +10,11 @@ plugins {
 
 tasks.register("verifyAll") {
     group = "verification"
-    description = "Build devDebug APK for the scaffold shell."
-    dependsOn(":app:assembleDevDebug")
+    description = "Build devDebug APK and verify design system screenshots."
+    dependsOn(
+        ":app:assembleDevDebug",
+        ":shared:testDebugUnitTest",
+    )
 }
 
 tasks.register("clean", Delete::class) {
