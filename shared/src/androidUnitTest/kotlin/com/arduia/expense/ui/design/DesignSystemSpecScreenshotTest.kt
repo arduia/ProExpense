@@ -76,4 +76,10 @@ class DesignSystemSpecScreenshotTest {
     @Test fun toast() = captureSpec { SpecToastCapture() }
 
     @Test fun icons() = captureSpec { SpecIconsCapture() }
+
+    @Test fun empty_state() = captureSpec { SpecEmptyStateCapture() }
+
+    @Test fun empty_state_add_hint() = captureSpec { SpecEmptyStateAddHintCapture() }
+
+    @Test fun notice_banner() = captureSpec { SpecNoticeBannerCapture() }
 }

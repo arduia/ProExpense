@@ -127,6 +127,15 @@ fun DesignSystemGalleryScreen(modifier: Modifier = Modifier) {
             GalleryStage("Set") { SpecIconsCapture() }
         }
 
+        GallerySection(number = "13", title = "Empty state") {
+            GalleryStage("Home empty") { SpecEmptyStateCapture() }
+            GalleryStage("Add hint") { SpecEmptyStateAddHintCapture() }
+        }
+
+        GallerySection(number = "14", title = "Notice banner") {
+            GalleryStage("PIN setup") { SpecNoticeBannerCapture() }
+        }
+
         GallerySection(number = "—", title = "Interactive samples") {
             GalleryStage("Logging") { ProDesignSystemLoggingContent() }
             GalleryStage("Auth") { ProDesignSystemAuthContent() }

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,17 +28,15 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.DayHeader
+import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.HeroGreeting
-import com.arduia.expense.ui.design.ProButton
-import com.arduia.expense.ui.design.ProButtonSize
-import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.NoticeBanner
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.QuickAccessTile
@@ -92,9 +89,12 @@ fun HomeScreenContent(
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             if (showPinSetupBanner) {
-                PinSetupBanner(
-                    onTap = onPinBannerTap,
+                NoticeBanner(
+                    title = stringResource(R.string.home_pin_banner_title),
+                    body = stringResource(R.string.home_pin_banner_body),
+                    onClick = onPinBannerTap,
                     onDismiss = onPinBannerDismiss,
+                    dismissContentDescription = stringResource(R.string.dismiss),
                 )
             }
 
@@ -427,94 +427,15 @@ private fun HomeEmptyContent(
     onLogFirstExpense: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-    val emptyTitleStyle = typography.bodySemiBold.copy(
-        fontSize = typography.sectionHead.fontSize,
-        lineHeight = typography.sectionHead.lineHeight,
-        letterSpacing = typography.sectionHead.letterSpacing,
-    )
-
-    Column(
-        modifier = modifier.padding(horizontal = dimens.space8),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        HomeEmptyIllustration(
-            modifier = Modifier
-                .width(180.dp)
-                .height(140.dp),
-        )
-        Text(
-            text = stringResource(R.string.home_empty_title),
-            style = emptyTitleStyle,
-            color = colors.onSurface,
-            modifier = Modifier.padding(top = dimens.space18),
-        )
-        Text(
-            text = stringResource(R.string.home_empty_subtitle),
-            style = typography.body,
-            color = colors.onSurfaceMuted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = dimens.space8),
-        )
-        ProButton(
-            text = stringResource(R.string.home_log_first_expense),
-            onClick = onLogFirstExpense,
-            variant = ProButtonVariant.Primary,
-            size = ProButtonSize.Lg,
-            fillMaxWidth = true,
-            leading = {
-                ProIcon(
-                    glyph = ProIconGlyph.Plus,
-                    contentDescription = null,
-                    tint = colors.onPrimaryWarm,
-                    size = dimens.iconInline,
-                )
-            },
-            modifier = Modifier.padding(top = dimens.space20),
-        )
-        HomeEmptyTapAddHint(modifier = Modifier.padding(top = dimens.space10))
-    }
-}
-
-@Composable
-private fun HomeEmptyTapAddHint(modifier: Modifier = Modifier) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-
-    Row(
+    EmptyStateContent(
+        title = stringResource(R.string.home_empty_title),
+        subtitle = stringResource(R.string.home_empty_subtitle),
+        actionLabel = stringResource(R.string.home_log_first_expense),
+        onActionClick = onLogFirstExpense,
+        addHintPrefix = stringResource(R.string.home_empty_tap_add_prefix),
+        addHintSuffix = stringResource(R.string.home_empty_tap_add_suffix),
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(dimens.space4),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = stringResource(R.string.home_empty_tap_add_prefix),
-            style = typography.caption,
-            color = colors.onSurfaceMuted,
-        )
-        Box(
-            modifier = Modifier
-                .size(20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(colors.primary),
-            contentAlignment = Alignment.Center,
-        ) {
-            ProIcon(
-                glyph = ProIconGlyph.Plus,
-                contentDescription = null,
-                tint = colors.onPrimaryWarm,
-                size = 12.dp,
-            )
-        }
-        Text(
-            text = stringResource(R.string.home_empty_tap_add_suffix),
-            style = typography.caption,
-            color = colors.onSurfaceMuted,
-        )
-    }
+    )
 }
 
 @Composable

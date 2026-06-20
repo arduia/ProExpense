@@ -70,6 +70,10 @@ data class ProDimens(
     val navSurfaceAlpha: Float,
     val quickAccessIconSize: Dp,
     val keypadKeyRadius: Dp,
+    val emptyIllustrationWidth: Dp,
+    val emptyIllustrationHeight: Dp,
+    val addHintChipSize: Dp,
+    val addHintIconSize: Dp,
 )
 
 val LocalProDimens = staticCompositionLocalOf { ProDefaultDimens }
@@ -140,4 +144,8 @@ val ProDefaultDimens = ProDimens(
     navSurfaceAlpha = 0.86f,
     quickAccessIconSize = 36.dp,
     keypadKeyRadius = 12.dp,
+    emptyIllustrationWidth = 180.dp,
+    emptyIllustrationHeight = 140.dp,
+    addHintChipSize = 20.dp,
+    addHintIconSize = 12.dp,
 )

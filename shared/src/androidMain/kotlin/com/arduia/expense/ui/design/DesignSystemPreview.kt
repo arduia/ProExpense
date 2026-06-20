@@ -157,6 +157,18 @@ fun ProDesignSystemAuthContent() {
 }
 
 @Composable
+fun ProDesignSystemEmptyStateContent() {
+    EmptyStateContent(
+        title = "No expenses yet",
+        subtitle = "Start by logging your first one — it takes about five seconds.",
+        actionLabel = "Log your first expense",
+        onActionClick = {},
+        addHintPrefix = "or tap ",
+        addHintSuffix = " below",
+    )
+}
+
+@Composable
 fun ProDesignSystemNavContent() {
     HomeBottomNav(
         selectedTab = HomeNavTab.Home,
@@ -237,6 +249,7 @@ fun ProDesignSystemComponents() {
         DesignSystemSection(title = "LOGGING") { ProDesignSystemLoggingContent() }
         DesignSystemSection(title = "AUTH") { ProDesignSystemAuthContent() }
         DesignSystemSection(title = "CHROME") { ProDesignSystemChromeContent() }
+        DesignSystemSection(title = "EMPTY STATE") { ProDesignSystemEmptyStateContent() }
         DesignSystemSection(title = "NAVIGATION") { ProDesignSystemNavContent() }
         DesignSystemSection(title = "SHEETS") { ProDesignSystemSheetContent() }
     }

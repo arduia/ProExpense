@@ -422,6 +422,38 @@ fun SpecIconsCapture() {
     }
 }
 
+@Composable
+fun SpecEmptyStateCapture() {
+    EmptyStateContent(
+        title = "No expenses yet",
+        subtitle = "Start by logging your first one — it takes about five seconds.",
+        actionLabel = "Log your first expense",
+        onActionClick = {},
+        addHintPrefix = "or tap ",
+        addHintSuffix = " below",
+        modifier = Modifier.width(360.dp),
+    )
+}
+
+@Composable
+fun SpecEmptyStateAddHintCapture() {
+    EmptyStateAddHint(
+        prefix = "or tap ",
+        suffix = " below",
+    )
+}
+
+@Composable
+fun SpecNoticeBannerCapture() {
+    NoticeBanner(
+        title = "Protect your data with a PIN",
+        body = "Set a 6-digit PIN so only you can open the app.",
+        onClick = {},
+        onDismiss = {},
+        modifier = Modifier.width(360.dp),
+    )
+}
+
 private fun categoryLabel(id: String): String = when (id) {
     "food" -> "Food"
     "transport" -> "Transport"

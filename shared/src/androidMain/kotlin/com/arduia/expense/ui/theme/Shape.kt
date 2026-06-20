@@ -20,6 +20,7 @@ data class ProShapes(
     val navBar: Shape,
     val toast: Shape,
     val phone: Shape,
+    val addHintChip: Shape,
 )
 
 val LocalProShapes = staticCompositionLocalOf { ProDefaultShapes }
@@ -37,4 +38,5 @@ val ProDefaultShapes = ProShapes(
     navBar = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
     toast = RoundedCornerShape(999.dp),
     phone = RoundedCornerShape(54.dp),
+    addHintChip = RoundedCornerShape(4.dp),
 )
