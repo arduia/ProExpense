@@ -70,13 +70,13 @@ fun EventBudgetCard(
                     modifier = Modifier
                         .size(dimens.quickAccessIconSize)
                         .clip(ProExpenseTheme.shapes.tile)
-                        .background(colors.highlightSoft),
+                        .background(colors.primaryTint),
                     contentAlignment = Alignment.Center,
                 ) {
                     ProIcon(
                         glyph = ProIconGlyph.FeatEvents,
                         contentDescription = null,
-                        tint = colors.highlightDeep,
+                        tint = colors.primaryDeep,
                         size = dimens.iconInline + 4.dp,
                     )
                 }

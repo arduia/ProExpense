@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.events.EventsFlow
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
@@ -29,16 +30,31 @@ class MainActivity : ComponentActivity() {
                 var onboardingComplete by rememberSaveable { mutableStateOf(false) }
                 var showQuickLog by rememberSaveable { mutableStateOf(false) }
                 var showSharedCosts by rememberSaveable { mutableStateOf(false) }
+                var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
+
+                val onTabSelected: (HomeNavTab) -> Unit = { tab ->
+                    if (tab == HomeNavTab.Home || tab == HomeNavTab.Budget) {
+                        selectedTab = tab
+                    }
+                }
 
                 Box(Modifier.fillMaxSize()) {
                     if (onboardingComplete) {
-                        HomeShell(
-                            state = previewHomeCasual,
-                            selectedTab = HomeNavTab.Home,
-                            onTabSelected = {},
-                            onAddClick = { showQuickLog = true },
-                            onSplitClick = { showSharedCosts = true },
-                        )
+                        if (selectedTab == HomeNavTab.Budget) {
+                            EventsFlow(
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                            )
+                        } else {
+                            HomeShell(
+                                state = previewHomeCasual,
+                                selectedTab = selectedTab,
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                                onSplitClick = { showSharedCosts = true },
+                                onEventsClick = { selectedTab = HomeNavTab.Budget },
+                            )
+                        }
                     } else {
                         FirstLaunchFlow(
                             onComplete = { _, _ -> onboardingComplete = true },
