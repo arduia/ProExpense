@@ -7,6 +7,7 @@ on:
       - develop
       - refactor/v2-migration
       - v2-migration
+      - cursor/v2-migration-work-6788
       - 'cursor/**'
   workflow_dispatch:
 
@@ -18,7 +19,7 @@ env:
   APK_ARTIFACT_NAME: pro-expense-dev-debug
   APK_DOWNLOAD_NAME: pro-expense-dev-debug.apk
   # Only these branches post APK build results to Slack.
-  APK_SLACK_NOTIFY_BRANCHES: main,develop,v2-migration
+  APK_SLACK_NOTIFY_BRANCHES: main,develop,v2-migration,refactor/v2-migration,cursor/v2-migration-work-6788
 
 permissions:
   contents: write
