@@ -25,7 +25,8 @@ Compose implementation workflow — run in order for new UI; linked from `AGENTS
 
 | Step | Skill | Path |
 |------|-------|------|
-| 1 — Build | `design-handoff-to-compose` | `.agents/skills/design-handoff-to-compose/SKILL.md` |
+| 1 — Build | `design-spec-to-compose` | `.agents/skills/design-spec-to-compose/SKILL.md` |
+| 1 — Build (legacy handoff bundle) | `design-handoff-to-compose` | `.agents/skills/design-handoff-to-compose/SKILL.md` |
 | 2 — Polish | `compose-motion-polish` | `.agents/skills/compose-motion-polish/SKILL.md` |
 | 3 — Audit | `compose-product-auditor` | `.agents/skills/compose-product-auditor/SKILL.md` |
 
@@ -39,7 +40,8 @@ Project `AGENTS.md` takes precedence over skill guidance when they conflict.
 
 | Skill | When to use |
 |---|---|
-| **`design-handoff-to-compose`** | **Step 1 — Building Compose UI from `design_handoff_pro_expense/` mockups, PNGs, or HTML prototype** |
+| **`design-spec-to-compose`** | **Step 1 — Building Compose UI from `design-system-spec/` screen + component specs and PNGs** |
+| **`design-handoff-to-compose`** | **Step 1 (legacy) — Building from `design_handoff_pro_expense/` when spec MD is absent** |
 | **`compose-motion-polish`** | **Step 2 — Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
 | **`compose-product-auditor`** | **Step 3 — Pre-merge audit: states, wiring, a11y, i18n, performance, sensitive data** |
 | `android-cli` | SDK, emulator, docs search, layout inspection |
