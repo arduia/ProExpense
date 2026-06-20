@@ -197,7 +197,6 @@ private fun HomeHeader(
         Box(
             modifier = Modifier
                 .size(dimens.touchTargetMin)
-                .padding(2.dp)
                 .clip(CircleShape)
                 .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
                 .background(colors.surface)

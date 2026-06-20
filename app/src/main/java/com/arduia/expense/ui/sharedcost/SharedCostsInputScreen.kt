@@ -71,7 +71,8 @@ fun SharedCostsInputScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.screenPadding),
+            .padding(horizontal = dimens.screenPadding)
+            .padding(bottom = dimens.space18),
     ) {
         ProTopBar(
             title = stringResource(R.string.shared_costs_title),
@@ -163,7 +164,7 @@ fun SharedCostsInputScreen(
                 nextLabel = stringResource(R.string.shared_save_split),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = dimens.space16, bottom = dimens.space18),
+                    .padding(top = dimens.space16),
             )
         } else {
             ProButton(
@@ -172,8 +173,7 @@ fun SharedCostsInputScreen(
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,
                 enabled = canProceed,
-                modifier = Modifier
-                    .padding(top = dimens.space16, bottom = dimens.space18),
+                modifier = Modifier.padding(top = dimens.space16),
             )
         }
     }

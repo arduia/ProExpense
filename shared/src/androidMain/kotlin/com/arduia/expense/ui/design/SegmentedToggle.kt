@@ -5,8 +5,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +47,8 @@ fun SegmentedToggle(
                 color = if (selected) selectedContent else colors.onSurfaceVariant,
                 modifier = Modifier
                     .weight(1f)
+                    .defaultMinSize(minHeight = dimens.touchTargetMin)
+                    .minimumInteractiveComponentSize()
                     .clip(containerShape)
                     .background(if (selected) selectedBackground else colors.surface)
                     .proClickable(onClick = { onSelected(index) }, shape = containerShape)

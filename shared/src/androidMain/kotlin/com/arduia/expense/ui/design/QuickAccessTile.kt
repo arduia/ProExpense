@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,6 +42,7 @@ fun QuickAccessTile(
 
     Column(
         modifier = modifier
+            .defaultMinSize(minHeight = dimens.touchTargetMin)
             .proPressScale(interactionSource)
             .clip(tileShape)
             .border(BorderStroke(1.dp, colors.line), tileShape)
@@ -48,12 +50,12 @@ fun QuickAccessTile(
             .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
             .padding(horizontal = dimens.space4, vertical = dimens.space12),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(7.dp),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         Box(
             modifier = Modifier
-                .size(36.dp)
-                .clip(RoundedCornerShape(11.dp))
+                .size(dimens.quickAccessIconSize)
+                .clip(RoundedCornerShape(dimens.tileRadius))
                 .background(resolvedIconBackground),
             contentAlignment = Alignment.Center,
         ) {
@@ -61,7 +63,7 @@ fun QuickAccessTile(
                 glyph = icon,
                 contentDescription = null,
                 tint = resolvedIconTint,
-                size = 18.dp,
+                size = dimens.iconNav,
             )
         }
         Text(

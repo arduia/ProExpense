@@ -1,12 +1,14 @@
 package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,11 +16,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +59,7 @@ fun SharedCostPeopleCard(
                 .clip(shape)
                 .border(BorderStroke(1.dp, colors.line), shape)
                 .background(colors.surface)
-                .padding(horizontal = dimens.space16, vertical = dimens.space14),
+                .padding(horizontal = dimens.space16, vertical = dimens.rowPaddingV),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -121,9 +125,12 @@ private fun SharedCostStepperButton(
         else -> colors.muted2
     }
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     Box(
         modifier = modifier
             .size(dimens.touchTargetMin)
+            .proPressScale(interactionSource, enabled = enabled)
             .clip(shape)
             .then(
                 if (!filled) {
@@ -133,7 +140,22 @@ private fun SharedCostStepperButton(
                 },
             )
             .background(background)
-            .proIconClickable(onClick = onClick, enabled = enabled),
+            .then(
+                if (filled) {
+                    Modifier.proRippleClickable(
+                        onClick = onClick,
+                        enabled = enabled,
+                        interactionSource = interactionSource,
+                        role = Role.Button,
+                    )
+                } else {
+                    Modifier.proIconClickable(
+                        onClick = onClick,
+                        enabled = enabled,
+                        interactionSource = interactionSource,
+                    )
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(
@@ -239,11 +261,12 @@ fun SharedCostHistoryRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .defaultMinSize(minHeight = dimens.touchTargetMin)
             .clip(shape)
             .border(BorderStroke(1.dp, colors.line), shape)
             .background(colors.surface)
             .proClickable(onClick = onClick, shape = shape)
-            .padding(dimens.space14),
+            .padding(dimens.cardPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -348,7 +371,7 @@ fun SharedCostPerPersonCard(
             .clip(shape)
             .border(BorderStroke(1.dp, colors.line), shape)
             .background(colors.surface)
-            .padding(dimens.space14),
+            .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
@@ -390,7 +413,7 @@ fun SharedCostCustomSplitCard(
             .clip(shape)
             .border(BorderStroke(1.dp, colors.line), shape)
             .background(colors.surface)
-            .padding(horizontal = dimens.space14),
+            .padding(horizontal = dimens.cardPadding),
     ) {
         participants.forEachIndexed { index, (name, amount) ->
             SharedCostParticipantRow(
@@ -408,11 +431,12 @@ fun SharedCostCustomSplitCard(
 @Composable
 private fun SharedCostPeopleCardPreview() {
     ProExpenseTheme {
+        val dimens = ProExpenseTheme.dimensions
         SharedCostPeopleCard(
             count = 4,
             onDecrement = {},
             onIncrement = {},
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(dimens.space16),
         )
     }
 }
@@ -421,7 +445,8 @@ private fun SharedCostPeopleCardPreview() {
 @Composable
 private fun SharedCostParticipantRowPreview() {
     ProExpenseTheme {
-        Column(Modifier.padding(16.dp)) {
+        val dimens = ProExpenseTheme.dimensions
+        Column(Modifier.padding(dimens.space16)) {
             SharedCostParticipantRow(
                 index = 1,
                 name = "Aiko",

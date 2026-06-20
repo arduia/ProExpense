@@ -47,7 +47,6 @@ fun ProTopBar(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val shapes = ProExpenseTheme.shapes
 
     Box(
         modifier = modifier
@@ -56,29 +55,30 @@ fun ProTopBar(
         contentAlignment = Alignment.Center,
     ) {
         if (onBack != null) {
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .proClickable(
-                        onClick = onBack,
-                        shape = shapes.searchField,
-                    )
-                    .padding(horizontal = dimens.space8, vertical = dimens.space4),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimens.space4),
-            ) {
+            if (backLabel != null) {
+                ProTextAction(
+                    text = backLabel,
+                    onClick = onBack,
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    style = typography.bodyMedium,
+                    color = colors.onSurface,
+                    leading = {
+                        ProIcon(
+                            glyph = ProIconGlyph.Back,
+                            contentDescription = null,
+                            tint = colors.onSurface,
+                        )
+                    },
+                )
+            } else {
                 ProIcon(
                     glyph = ProIconGlyph.Back,
-                    contentDescription = if (backLabel == null) "Back" else null,
+                    contentDescription = "Back",
                     tint = colors.onSurface,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .proIconClickable(onClick = onBack),
                 )
-                if (backLabel != null) {
-                    Text(
-                        text = backLabel,
-                        style = typography.bodyMedium,
-                        color = colors.onSurface,
-                    )
-                }
             }
         }
 

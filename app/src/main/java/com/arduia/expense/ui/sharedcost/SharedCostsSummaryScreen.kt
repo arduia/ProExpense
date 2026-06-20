@@ -62,7 +62,8 @@ fun SharedCostsSummaryScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.screenPadding),
+            .padding(horizontal = dimens.screenPadding)
+            .padding(bottom = dimens.space18),
     ) {
         ProTopBar(
             title = stringResource(R.string.shared_summary_title),
@@ -98,7 +99,7 @@ fun SharedCostsSummaryScreen(
                 .clip(shape)
                 .border(BorderStroke(1.dp, colors.line), shape)
                 .background(colors.surface)
-                .padding(horizontal = dimens.space14),
+                .padding(horizontal = dimens.cardPadding),
         ) {
             state.participants.forEachIndexed { index, participant ->
                 SharedCostParticipantRow(
@@ -135,8 +136,7 @@ fun SharedCostsSummaryScreen(
             onClick = onSave,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
-            modifier = Modifier
-                .padding(top = dimens.space24, bottom = dimens.space18),
+            modifier = Modifier.padding(top = dimens.space24),
         )
     }
 }
