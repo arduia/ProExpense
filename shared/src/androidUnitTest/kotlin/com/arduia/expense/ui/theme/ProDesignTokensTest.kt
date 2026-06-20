@@ -5,6 +5,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -144,13 +145,16 @@ class ProDesignTokensTest {
     fun eyebrow_and_timestamp_use_geist_mono() {
         assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.eyebrow.fontFamily)
         assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.tabTimestamp.fontFamily)
-        assertEquals(0.04.em, ProDefaultTypography.tabTimestamp.letterSpacing)
+        assertEquals(0.08.em, ProDefaultTypography.tabTimestamp.letterSpacing)
+        assertEquals(0.10.em, ProDefaultTypography.eyebrow.letterSpacing)
     }
 
     @Test
-    fun nav_label_uses_manrope() {
-        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.navLabel.fontFamily)
+    fun nav_label_uses_geist_mono() {
+        assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.navLabel.fontFamily)
         assertEquals(10f, ProDefaultTypography.navLabel.fontSize.value)
+        assertEquals(0.08.em, ProDefaultTypography.navLabel.letterSpacing)
+        assertEquals(FontWeight.Medium, ProDefaultTypography.navLabel.fontWeight)
     }
 
     @Test
@@ -162,6 +166,22 @@ class ProDesignTokensTest {
     @Test
     fun keypad_key_uses_instrument_serif() {
         assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.keypadKey.fontFamily)
+    }
+
+    @Test
+    fun manrope_is_primary_ui_typeface() {
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.body.fontFamily)
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.button.fontFamily)
+        assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.searchField.fontFamily)
+        assertEquals(FontWeight.Medium, ProDefaultTypography.bodyMedium.fontWeight)
+        assertEquals(FontWeight.SemiBold, ProDefaultTypography.bodySemiBold.fontWeight)
+    }
+
+    @Test
+    fun geist_mono_covers_label_weights() {
+        assertEquals(FontWeight.Medium, ProDefaultTypography.eyebrow.fontWeight)
+        assertEquals(FontWeight.Normal, ProDefaultTypography.tabTimestamp.fontWeight)
+        assertNotNull(ProDefaultTypography.monoFamily)
     }
 
     @Test

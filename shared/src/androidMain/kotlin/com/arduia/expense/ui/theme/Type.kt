@@ -52,6 +52,7 @@ data class ProTypography(
     val bodyMedium: TextStyle,
     val bodySemiBold: TextStyle,
     val caption: TextStyle,
+    val captionMedium: TextStyle,
     val eyebrow: TextStyle,
     val button: TextStyle,
     val tabTimestamp: TextStyle,
@@ -136,6 +137,12 @@ val ProDefaultTypography = ProTypography(
         lineHeight = proLineHeight(11.5f, 1.4f),
         fontWeight = FontWeight.Normal,
     ),
+    captionMedium = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 11.5.sp,
+        lineHeight = proLineHeight(11.5f, 1.4f),
+        fontWeight = FontWeight.Medium,
+    ),
     eyebrow = TextStyle(
         fontFamily = GeistMonoFamily,
         fontSize = 11.sp,
@@ -154,7 +161,7 @@ val ProDefaultTypography = ProTypography(
         fontFamily = GeistMonoFamily,
         fontSize = 12.sp,
         lineHeight = proLineHeight(12f, 1.3f),
-        letterSpacing = 0.04.em,
+        letterSpacing = 0.08.em,
         fontWeight = FontWeight.Normal,
         fontFeatureSettings = "tnum",
     ),
@@ -165,9 +172,10 @@ val ProDefaultTypography = ProTypography(
         fontWeight = FontWeight.Normal,
     ),
     navLabel = TextStyle(
-        fontFamily = ManropeFamily,
+        fontFamily = GeistMonoFamily,
         fontSize = 10.sp,
         lineHeight = proLineHeight(10f, 1.2f),
+        letterSpacing = 0.08.em,
         fontWeight = FontWeight.Medium,
     ),
     searchField = TextStyle(
