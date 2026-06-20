@@ -23,7 +23,6 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 14
         versionName = "1.0.0-beta08"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     flavorDimensions += "environment"
@@ -56,11 +55,6 @@ android {
         compose = true
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -68,6 +62,11 @@ android {
                 it.systemProperties["robolectric.pixelCopyRenderMode"] = "hardware"
             }
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     packaging {
@@ -117,28 +116,16 @@ dependencies {
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
     testImplementation(libs.roborazzi.junit.rule)
-
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.core)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(composeBom)
-    androidTestImplementation(libs.compose.ui.test.junit4)
 }
 
 roborazzi {
     outputDir.set(file("src/test/screenshots"))
 }
 
-// Robolectric Compose UI tests (screenshots + smoke) rely on the compose ui-test-manifest, which is
-// only merged into the debug variant (debugImplementation). devDebug is the documented screenshot
-// gate, so exclude these categories from the release unit-test variant to keep `./gradlew test` green.
 tasks.withType<Test>().configureEach {
     if (name.endsWith("ReleaseUnitTest")) {
         useJUnit {
-            excludeCategories(
-                "com.arduia.expense.testing.ScreenshotTests",
-                "com.arduia.expense.testing.ComposeUiTests",
-            )
+            excludeCategories("com.arduia.expense.testing.ScreenshotTests")
         }
     }
 }

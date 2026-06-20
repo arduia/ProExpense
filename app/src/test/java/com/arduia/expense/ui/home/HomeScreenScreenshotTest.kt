@@ -1,11 +1,19 @@
 package com.arduia.expense.ui.home
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.testing.ScreenshotTests
-import com.arduia.expense.testing.testAppGraph
-import com.arduia.expense.ui.ExpenseApp
+import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.preview.previewHomeBudget
+import com.arduia.expense.ui.preview.previewHomeCasual
+import com.arduia.expense.ui.preview.previewHomeEmpty
+import com.arduia.expense.ui.preview.previewHomeEvent
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -18,20 +26,102 @@ import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [33], qualifiers = "w427dp-h952dp")
+@Config(
+    sdk = [33],
+    qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
+)
 @Category(ScreenshotTests::class)
 class HomeScreenScreenshotTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun home_screen_with_bottom_nav() {
+    private fun captureHome(content: @androidx.compose.runtime.Composable () -> Unit) {
         composeTestRule.setContent {
             ProExpenseTheme {
-                ExpenseApp(appGraph = testAppGraph())
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(ProExpenseTheme.colors.paper),
+                ) {
+                    content()
+                }
             }
         }
         composeTestRule.onRoot().captureRoboImage()
+    }
+
+    @Test
+    fun home_casual() {
+        captureHome {
+            HomeShell(
+                state = previewHomeCasual,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    fun home_budget() {
+        captureHome {
+            HomeShell(
+                state = previewHomeBudget,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    fun home_event() {
+        captureHome {
+            HomeShell(
+                state = previewHomeEvent,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    fun home_empty() {
+        captureHome {
+            HomeShell(
+                state = previewHomeEmpty,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    fun home_casual_with_pin_banner() {
+        captureHome {
+            HomeShell(
+                state = previewHomeCasual,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+                showPinSetupBanner = true,
+            )
+        }
+    }
+
+    @Test
+    fun home_content_only_casual() {
+        captureHome {
+            HomeScreenContent(
+                state = previewHomeCasual,
+                onReportsClick = {},
+                onDebtClick = {},
+                onSplitClick = {},
+                onEventsClick = {},
+            )
+        }
     }
 }

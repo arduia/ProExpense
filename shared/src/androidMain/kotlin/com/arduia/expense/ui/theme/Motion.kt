@@ -16,6 +16,7 @@ data class ProMotion(
     val toastDurationMillis: Int,
     val standardEasing: Easing,
     val pressedScale: Float,
+    val pressedOpacity: Float,
     val disabledOpacity: Float,
     val keypadDisabledOpacity: Float,
 )
@@ -34,6 +35,7 @@ val ProDefaultMotion = ProMotion(
     toastDurationMillis = 2400,
     standardEasing = ProStandardEasing,
     pressedScale = 0.97f,
+    pressedOpacity = 0.92f,
     disabledOpacity = 0.4f,
     keypadDisabledOpacity = 0.55f,
 )

@@ -3,8 +3,11 @@ package com.arduia.expense.ui.design
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -13,8 +16,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -45,6 +51,9 @@ fun ProButton(
     variant: ProButtonVariant = ProButtonVariant.Primary,
     size: ProButtonSize = ProButtonSize.Md,
     enabled: Boolean = true,
+    fillMaxWidth: Boolean = false,
+    leading: (@Composable () -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -63,6 +72,7 @@ fun ProButton(
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed && enabled) motion.pressedScale else 1f
+    val pressedAlpha = if (pressed && enabled) motion.pressedOpacity else 1f
     val textStyle = typography.button.merge(
         TextStyle(
             fontSize = buttonSize.fontSizeSp.sp,
@@ -74,7 +84,22 @@ fun ProButton(
         vertical = buttonSize.verticalPadding,
     )
     val scaledModifier = modifier
+        .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
+        .then(
+            if (variant == ProButtonVariant.Primary && fillMaxWidth) {
+                val shadowColor = colors.primary.copy(alpha = 0.25f)
+                Modifier.shadow(
+                    elevation = 6.dp,
+                    shape = shape,
+                    spotColor = shadowColor,
+                    ambientColor = shadowColor,
+                )
+            } else {
+                Modifier
+            },
+        )
         .scale(scale)
+        .alpha(pressedAlpha)
         .defaultMinSize(minHeight = buttonSize.height)
 
     when (variant) {
@@ -94,7 +119,12 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                Text(text = text, style = textStyle)
+                ProButtonLabel(
+                    text = text,
+                    textStyle = textStyle,
+                    leading = leading,
+                    trailing = trailing,
+                )
             }
         }
         ProButtonVariant.PrimaryDeep -> {
@@ -113,7 +143,7 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                Text(text = text, style = textStyle)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
             }
         }
         ProButtonVariant.Success -> {
@@ -132,7 +162,7 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                Text(text = text, style = textStyle)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
             }
         }
         ProButtonVariant.Dark -> {
@@ -144,14 +174,14 @@ fun ProButton(
                 border = BorderStroke(dimens.buttonBorderWidth, colors.onSurface),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colors.onSurface,
-                    contentColor = colors.onPrimaryWarm,
+                    contentColor = colors.paper,
                     disabledContainerColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                    disabledContentColor = colors.paper.copy(alpha = motion.disabledOpacity),
                 ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                Text(text = text, style = textStyle)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
             }
         }
         ProButtonVariant.Secondary -> {
@@ -169,7 +199,7 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                Text(text = text, style = textStyle)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
             }
         }
         ProButtonVariant.Ghost -> {
@@ -186,8 +216,31 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                Text(text = text, style = textStyle)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
             }
         }
+    }
+}
+
+@Composable
+private fun ProButtonLabel(
+    text: String,
+    textStyle: TextStyle,
+    leading: (@Composable () -> Unit)?,
+    trailing: (@Composable () -> Unit)?,
+) {
+    if (leading == null && trailing == null) {
+        Text(text = text, style = textStyle)
+        return
+    }
+
+    val dimens = ProExpenseTheme.dimensions
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(dimens.space8, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        leading?.invoke()
+        Text(text = text, style = textStyle)
+        trailing?.invoke()
     }
 }

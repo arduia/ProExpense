@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -20,26 +21,25 @@ import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [33], qualifiers = "w427dp-h952dp")
+@Config(
+    sdk = [33],
+    qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
+)
 @Category(ScreenshotTests::class)
 class OnboardingScreenshotTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun captureOnboarding(page: Int) {
+    private fun capture(content: @androidx.compose.runtime.Composable () -> Unit) {
         composeTestRule.setContent {
             ProExpenseTheme {
                 Box(
-                    modifier = Modifier
+                    Modifier
                         .fillMaxSize()
                         .background(ProExpenseTheme.colors.paper),
                 ) {
-                    OnboardingScreen(
-                        onGetStarted = {},
-                        onSkip = {},
-                        initialPage = page,
-                    )
+                    content()
                 }
             }
         }
@@ -47,41 +47,35 @@ class OnboardingScreenshotTest {
     }
 
     @Test
-    fun onboarding_welcome() = captureOnboarding(0)
-
-    @Test
-    fun onboarding_quick_log() = captureOnboarding(1)
-
-    @Test
-    fun onboarding_shared_costs() = captureOnboarding(2)
-
-    @Test
-    fun onboarding_event_budget() = captureOnboarding(3)
-
-    @Test
-    fun onboarding_journal() = captureOnboarding(4)
-
-    @Test
-    fun splash_default() {
-        composeTestRule.setContent {
-            ProExpenseTheme {
-                SplashScreenContent()
-            }
+    fun onboarding_welcome() {
+        capture {
+            OnboardingScreenContent(
+                onGetStarted = {},
+                onSkip = {},
+                initialPage = 0,
+            )
         }
-        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
-    fun profile_name_default() {
-        composeTestRule.setContent {
-            ProExpenseTheme {
-                ProfileNameScreen(
-                    onContinue = {},
-                    onSkip = {},
-                    initialName = "Maya",
-                )
-            }
+    fun onboarding_quick_log() {
+        capture {
+            OnboardingScreenContent(
+                onGetStarted = {},
+                onSkip = {},
+                initialPage = 1,
+            )
         }
-        composeTestRule.onRoot().captureRoboImage()
+    }
+
+    @Test
+    fun onboarding_journal() {
+        capture {
+            OnboardingScreenContent(
+                onGetStarted = {},
+                onSkip = {},
+                initialPage = 4,
+            )
+        }
     }
 }

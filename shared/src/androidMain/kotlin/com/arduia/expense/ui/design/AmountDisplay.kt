@@ -32,6 +32,8 @@ fun AmountDisplay(
     isZero: Boolean = amountText.toDoubleOrNull()?.let { it <= 0.0 } ?: true,
     showZeroValidation: Boolean = false,
     zeroHelperMessage: String = "Amount must be greater than $0",
+    eyebrowText: String? = null,
+    usePrimaryAmount: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -54,10 +56,10 @@ fun AmountDisplay(
                 animationSpec = keyframes {
                     durationMillis = motion.shakeDurationMillis
                     0f at 0
-                    8f at (motion.shakeDurationMillis * 0.2f).toInt()
-                    (-8f) at (motion.shakeDurationMillis * 0.4f).toInt()
-                    6f at (motion.shakeDurationMillis * 0.6f).toInt()
-                    (-6f) at (motion.shakeDurationMillis * 0.8f).toInt()
+                    4f at (motion.shakeDurationMillis * 0.2f).toInt()
+                    (-4f) at (motion.shakeDurationMillis * 0.4f).toInt()
+                    3f at (motion.shakeDurationMillis * 0.6f).toInt()
+                    (-3f) at (motion.shakeDurationMillis * 0.8f).toInt()
                     0f at motion.shakeDurationMillis
                 },
             )
@@ -69,7 +71,7 @@ fun AmountDisplay(
         horizontalAlignment = Alignment.Start,
     ) {
         Text(
-            text = "AMOUNT · $currencyCode",
+            text = eyebrowText ?: "AMOUNT · $currencyCode",
             style = typography.eyebrow,
             color = colors.muted,
         )
@@ -79,10 +81,15 @@ fun AmountDisplay(
                 amountText = amountText,
                 isZero = isZero,
                 primaryColor = colors.primary,
-                amountColor = if (isZero) colors.muted2 else colors.onSurface,
+                amountColor = when {
+                    isZero -> colors.muted2
+                    usePrimaryAmount -> colors.primary
+                    else -> colors.onSurface
+                },
                 decimalColor = colors.onSurfaceMuted,
+                serifFamily = typography.serifFamily,
             ),
-            style = typography.displayAmount,
+            style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
             autoSize = amountAutoSize,
             maxLines = 1,
             softWrap = false,
@@ -94,7 +101,7 @@ fun AmountDisplay(
         if (isZero && showZeroValidation) {
             Text(
                 text = zeroHelperMessage,
-                style = typography.bodyMedium,
+                style = typography.caption.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium),
                 color = colors.primary,
                 modifier = Modifier.padding(top = dimens.space8),
             )
@@ -109,26 +116,27 @@ private fun buildAmountLine(
     primaryColor: Color,
     amountColor: Color,
     decimalColor: Color,
+    serifFamily: androidx.compose.ui.text.font.FontFamily,
 ) = buildAnnotatedString {
-    withStyle(SpanStyle(color = primaryColor)) {
+    withStyle(SpanStyle(color = primaryColor, fontFamily = serifFamily)) {
         append(currencySymbol)
     }
     if (isZero) {
-        withStyle(SpanStyle(color = amountColor)) {
+        withStyle(SpanStyle(color = amountColor, fontFamily = serifFamily)) {
             append(amountText)
         }
         return@buildAnnotatedString
     }
     val decimalIndex = amountText.indexOf('.')
     if (decimalIndex < 0) {
-        withStyle(SpanStyle(color = amountColor)) {
+        withStyle(SpanStyle(color = amountColor, fontFamily = serifFamily)) {
             append(amountText)
         }
     } else {
-        withStyle(SpanStyle(color = amountColor)) {
+        withStyle(SpanStyle(color = amountColor, fontFamily = serifFamily)) {
             append(amountText.substring(0, decimalIndex))
         }
-        withStyle(SpanStyle(color = decimalColor)) {
+        withStyle(SpanStyle(color = decimalColor, fontFamily = serifFamily)) {
             append(amountText.substring(decimalIndex))
         }
     }

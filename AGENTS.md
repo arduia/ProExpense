@@ -151,6 +151,20 @@ working branch is settled.
 3. Always read `app/build.gradle.kts`
 4. `grep` for APIs/classes being introduced
 
+### Step 2.1 — Compose spec skill (mandatory for spec-driven UI)
+
+**Gate:** For new or materially changed Compose screens, the agent has read
+[`.agents/skills/design-spec-to-compose/SKILL.md`](.agents/skills/design-spec-to-compose/SKILL.md)
+**in full** and is following it for the rest of the session.
+
+**Else:** Open the screen markdown and every listed state PNG under
+`design-system-spec/screenshots/screens/`, then read the skill file before Step 3.
+Do not implement spec-backed UI from memory or general Compose knowledge alone.
+If no entry exists in `design-system-spec/screens/`, add or extend the spec before implementing.
+
+**Push is blocked** for spec-driven UI until the skill’s per-screen checklist is satisfied
+(previews, Roborazzi baselines, `verifyAll`, tokenized styling — see skill body).
+
 ### Step 2.5 — Confirm External APIs
 
 **Gate:** No new dependency — or API already used in codebase.
@@ -423,21 +437,24 @@ workaround). Never explain WHAT the code does. One short line max.
 #### Compose skills workflow (mandatory for new UI)
 
 For every new or materially changed Compose screen, follow this order. Full skill bodies live under
-`.agents/skills/` — read the linked file at each step.
+`.agents/skills/` — **read the linked file at each step; do not skip Step 1.**
 
 | Step | When | Skill | Path |
 |------|------|-------|------|
-| **1 — Build** | Implementing from mockup / handoff or adding a new screen | Design handoff → Compose | [`.agents/skills/design-handoff-to-compose/SKILL.md`](.agents/skills/design-handoff-to-compose/SKILL.md) |
+| **1 — Build** | New or materially changed Compose screen | Design spec → Compose | [`.agents/skills/design-spec-to-compose/SKILL.md`](.agents/skills/design-spec-to-compose/SKILL.md) |
 | **2 — Polish** | Affordances, animations, navigation transitions feel abrupt or static | Motion, navigation & interaction polish | [`.agents/skills/compose-motion-polish/SKILL.md`](.agents/skills/compose-motion-polish/SKILL.md) |
 | **3 — Audit** | Screen wired and before merge / push; or when asked to review quality | Compose product auditor | [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md) |
 
-Step 1 is required when building from `design_handoff_pro_expense/`. Step 2 applies during polish
-passes or when touch targets, ripple, or transitions are in scope. Step 3 is the pre-merge gate —
-produce a findings report; do not rewrite unless asked to fix.
+**Step 1 is mandatory** for spec-backed UI. Open every state PNG listed in
+`design-system-spec/screens/<id>-<name>.md` before writing composables. Step 2 applies during
+polish passes or when touch targets, ripple, or transitions are in scope. Step 3 is the pre-merge
+gate — produce a findings report; do not rewrite unless asked to fix.
 
-**Quick references (step 1):** bundle paths `design-tokens.json`, `components.yaml`,
-`screens-manifest.yaml`, `reference-images/`. Build order: tokens → atoms → molecules → organisms →
-screen → verify.
+**Quick references (step 1):** `design-system-spec/screens/*.md`,
+`design-system-spec/screenshots/screens/*.png`, `design-system-spec/components/`,
+`design-system-spec/tokens.md`. Build order: scope states → reuse `ui/design/` → bottom-up
+components → screen content → flow → preview fakes → Roborazzi. See skill for do/don’t patterns
+(`ProTextAction`, `ProBottomSheetHost(visible = …)`, `AmountInput`, etc.).
 
 **Quick references (step 2):** reuse `Interaction.kt` (`proIconClickable`, `proClickable`),
 `NavMotion.kt`, `ProNavTransitions.kt`, `rememberProReduceMotion()` — no magic durations or bare-icon
@@ -460,7 +477,8 @@ preview-fake wiring from real ViewModel/repository integration when reporting fi
     of missing production wiring.
 - Pair every new/changed screen with a Roborazzi screenshot test (`captureRoboImage`) in
   `app/src/test/`; verify (and record when intentional) before push
-- Use `ProExpenseTheme` and components from `ui/design/` — see `design_handoff_pro_expense/DESIGN-SYSTEM.md`
+- Use `ProExpenseTheme` and components from `ui/design/` — authoritative visual reference:
+  `design-system-spec/` (screens, PNGs, tokens)
 
 #### Design system alignment
 
@@ -560,6 +578,7 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
   screenshot verify green before push — see Step 6 UI change gate
 - End every implementation task with the **Workflow status** block (Step 7.5) — flag Step 6 and push explicitly
 - **Do not create pull requests** — push only; PRs are opened manually (not as draft, not as ready) unless the user explicitly asks
+- **PR creation requires intentional user request** — never create or update any pull request (including draft PRs) unless the user clearly and intentionally requests PR action in that session.
 - **v2 migration PRs:** target `refactor/v2-migration`, not `main` — see [v2 migration base branch](#v2-migration-base-branch-mandatory-until-migration-completes)
 - Never force-push to `main` without explicit user permission
 - Never leave work unpushed when task is complete
@@ -569,6 +588,7 @@ Retry on network failure: up to 4 times with exponential backoff (4s, 8s, 16s, 3
 
 - **Default:** agent pushes branch, user opens the PR in GitHub/GitLab.
 - **Never** auto-open draft PRs or use PR-management tooling on task completion.
+- Treat PR tooling as **opt-in only**: if the user did not intentionally ask for PR creation/update, do not call PR-management tools.
 - **Only** create or update a PR when the user explicitly requests it in that session (then follow their ready/draft preference).
 
 #### v2 migration base branch (mandatory until migration completes)
@@ -670,12 +690,12 @@ The Cursor `session-start` hook installs skills automatically when `.agents/skil
 ### When to use
 
 Agents should consult relevant skills for specialized Android workflows (testing setup, edge-to-edge,
-navigation, R8 analysis, AGP upgrades, **design handoff → Compose**, etc.). **This file and product
+navigation, R8 analysis, AGP upgrades, **design spec → Compose**, etc.). **This file and product
 docs take precedence** when they conflict with a skill.
 
 | Skill | Relevance |
 |---|---|
-| **`design-handoff-to-compose`** | **Step 1 — Implementing UI from `design_handoff_pro_expense/` (tokens-first, bottom-up, PNG verify)** |
+| **`design-spec-to-compose`** | **Step 1 — Implementing UI from `design-system-spec/` screen + component specs and PNGs** |
 | **`compose-motion-polish`** | **Step 2 — Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
 | **`compose-product-auditor`** | **Step 3 — Pre-merge product audit (states, wiring, a11y, i18n, resilience)** |
 | `android-cli` | SDK, emulator, docs, layout inspection |
@@ -711,14 +731,14 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `docs/project_philosophy.md` | Project goal, beliefs, decision framework (derived from PRD) |
 | `docs/finance_tracker_product.md` | Authoritative product vision, MVP scope, roadmap |
 | `docs/module_structure.md` | KMP module map and dependency rules |
-| `design/DESIGN-SYSTEM.md` | Legacy path — use `design_handoff_pro_expense/DESIGN-SYSTEM.md` |
-| `design_handoff_pro_expense/` | Design handoff bundle (tokens, components, screens, reference PNGs) |
-| `.agents/skills/design-handoff-to-compose/` | Step 1 — Design handoff → Compose workflow |
+| `design/DESIGN-SYSTEM.md` | Legacy path — use `design-system-spec/tokens.md` |
+| `design-system-spec/` | **Authoritative screen specs** (markdown + PNGs + component specs + tokens) |
+| `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
 | `.agents/skills/compose-product-auditor/` | Step 3 — Pre-merge Compose product auditor |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
-| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project Compose workflow (`design-handoff-to-compose`, `compose-motion-polish`, `compose-product-auditor`) |
+| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project Compose workflow (`design-spec-to-compose`, `compose-motion-polish`, `compose-product-auditor`) |
 | `.cursor/context/project_codebase.md` | Live codebase snapshot |
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |

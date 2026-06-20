@@ -74,9 +74,7 @@ fun HomeBottomNav(
     val navElevation = ProExpenseTheme.elevation.nav.firstOrNull()
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(dimens.navFabOffset + dimens.navBarHeight),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Surface(
             modifier = Modifier
@@ -104,8 +102,10 @@ fun HomeBottomNav(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        horizontal = dimens.space8,
-                        vertical = dimens.navItemPaddingVertical,
+                        start = dimens.space12,
+                        end = dimens.space12,
+                        top = dimens.navItemPaddingVertical,
+                        bottom = dimens.space16,
                     ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -131,8 +131,10 @@ fun HomeBottomNav(
         HomeAddFab(
             onClick = onAddClick,
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = dimens.navFabDropOffset),
+                .align(Alignment.BottomCenter)
+                .offset(
+                    y = -(dimens.navBarHeight - dimens.fabSize + dimens.navFabProtrusion),
+                ),
         )
     }
 }
@@ -151,12 +153,9 @@ private fun HomeNavSlot(
     val tint = if (selected) colors.primary else colors.navInactive
     val label = stringResource(item.labelRes)
     val labelStyle = if (selected) {
-        typography.caption.copy(
-            fontFamily = typography.monoFamily,
-            fontWeight = FontWeight.SemiBold,
-        )
+        typography.navLabel.copy(fontWeight = FontWeight.SemiBold)
     } else {
-        typography.caption.copy(fontFamily = typography.monoFamily)
+        typography.navLabel
     }
 
     Column(
@@ -229,6 +228,7 @@ private fun HomeAddFab(
                     },
                 )
                 .clip(CircleShape)
+                .border(BorderStroke(3.dp, colors.primary.copy(alpha = 0.8f)), CircleShape)
                 .background(colors.primary)
                 .semantics { contentDescription = addContentDescription }
                 .proCircularRippleClickable(
@@ -246,11 +246,11 @@ private fun HomeAddFab(
                     glyph = ProIconGlyph.Plus,
                     contentDescription = null,
                     tint = colors.onPrimaryWarm,
-                    size = dimens.iconNav,
+                    size = 26.dp,
                 )
                 Text(
                     text = stringResource(R.string.nav_add),
-                    style = typography.caption.copy(fontFamily = typography.monoFamily),
+                    style = typography.navLabel.copy(fontWeight = FontWeight.SemiBold),
                     color = colors.onPrimaryWarm,
                 )
             }

@@ -1,14 +1,17 @@
 package com.arduia.expense.ui.theme
 
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.shared.R
@@ -32,30 +35,81 @@ private val ManropeFamily = FontFamily(
 private val GeistMonoFamily = FontFamily(
     variableFont(R.font.geist_mono_variable, FontWeight.Normal),
     variableFont(R.font.geist_mono_variable, FontWeight.Medium),
+    variableFont(R.font.geist_mono_variable, FontWeight.SemiBold),
 )
 
 private val InstrumentSerifFamily = FontFamily(
     Font(R.font.instrument_serif_regular, FontWeight.Normal),
     Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
-    variableFont(R.font.manrope_variable, FontWeight.Normal),
+)
+
+private val FigmaAlignedPlatform = PlatformTextStyle(includeFontPadding = false)
+
+private val FigmaAlignedLineHeight = LineHeightStyle(
+    alignment = LineHeightStyle.Alignment.Center,
+    trim = LineHeightStyle.Trim.Both,
+)
+
+@OptIn(ExperimentalTextApi::class)
+private fun titleTextStyle(
+    fontFamily: FontFamily,
+    fontSizeSp: Float,
+    lineHeightSp: Float,
+    letterSpacingEm: Float = 0f,
+    fontWeight: FontWeight = FontWeight.Normal,
+    fontStyle: FontStyle = FontStyle.Normal,
+): TextStyle = TextStyle(
+    fontFamily = fontFamily,
+    fontSize = fontSizeSp.sp,
+    lineHeight = lineHeightSp.sp,
+    letterSpacing = letterSpacingEm.em,
+    fontWeight = fontWeight,
+    fontStyle = fontStyle,
+    platformStyle = FigmaAlignedPlatform,
+    lineHeightStyle = FigmaAlignedLineHeight,
+)
+
+@OptIn(ExperimentalTextApi::class)
+private fun amountTextStyle(
+    fontSizeSp: Float,
+    lineHeightSp: Float,
+    letterSpacingEm: Float,
+): TextStyle = titleTextStyle(
+    fontFamily = InstrumentSerifFamily,
+    fontSizeSp = fontSizeSp,
+    lineHeightSp = lineHeightSp,
+    letterSpacingEm = letterSpacingEm,
+    fontWeight = FontWeight.Normal,
 )
 
 @Immutable
 data class ProTypography(
     val displayAmount: TextStyle,
     val summaryAmount: TextStyle,
+    val detailsAmount: TextStyle,
     val listAmount: TextStyle,
-    val screenTitle: TextStyle,
+    val appBarTitle: TextStyle,
+    val heroGreeting: TextStyle,
+    val heroGreetingEmphasis: TextStyle,
+    val sheetTitle: TextStyle,
     val sectionHead: TextStyle,
-    val displayFlourish: TextStyle,
+    val screenHeaderTitle: TextStyle,
+    val onboardingSlideTitle: TextStyle,
+    val onboardingBody: TextStyle,
+    val profileScreenTitle: TextStyle,
+    val navAction: TextStyle,
     val body: TextStyle,
     val bodyMedium: TextStyle,
     val bodySemiBold: TextStyle,
     val caption: TextStyle,
+    val captionMedium: TextStyle,
     val eyebrow: TextStyle,
     val button: TextStyle,
     val tabTimestamp: TextStyle,
+    val monoFigure: TextStyle,
     val keypadKey: TextStyle,
+    val navLabel: TextStyle,
+    val searchField: TextStyle,
     val sansFamily: FontFamily,
     val serifFamily: FontFamily,
     val monoFamily: FontFamily,
@@ -67,51 +121,86 @@ internal fun proLineHeight(fontSizeSp: Float, multiplier: Float) =
     (fontSizeSp * multiplier).sp
 
 val ProDefaultTypography = ProTypography(
-    displayAmount = TextStyle(
-        fontFamily = GeistMonoFamily,
-        fontSize = 64.sp,
-        lineHeight = proLineHeight(64f, 1f),
-        letterSpacing = (-0.025).em,
-        fontWeight = FontWeight.Normal,
-        fontFeatureSettings = "tnum",
+    displayAmount = amountTextStyle(
+        fontSizeSp = 64f,
+        lineHeightSp = 64f,
+        letterSpacingEm = -0.025f,
     ),
-    summaryAmount = TextStyle(
-        fontFamily = GeistMonoFamily,
-        fontSize = 40.sp,
-        lineHeight = proLineHeight(40f, 1f),
-        letterSpacing = (-0.02).em,
-        fontWeight = FontWeight.Normal,
-        fontFeatureSettings = "tnum",
+    summaryAmount = amountTextStyle(
+        fontSizeSp = 40f,
+        lineHeightSp = 40f,
+        letterSpacingEm = -0.02f,
     ),
-    listAmount = TextStyle(
-        fontFamily = GeistMonoFamily,
-        fontSize = 18.sp,
-        lineHeight = proLineHeight(18f, 1.1f),
-        letterSpacing = (-0.01).em,
-        fontWeight = FontWeight.Normal,
-        fontFeatureSettings = "tnum",
+    detailsAmount = amountTextStyle(
+        fontSizeSp = 26f,
+        lineHeightSp = 28f,
+        letterSpacingEm = -0.01f,
     ),
-    screenTitle = TextStyle(
+    listAmount = amountTextStyle(
+        fontSizeSp = 18f,
+        lineHeightSp = 18f,
+        letterSpacingEm = 0f,
+    ),
+    appBarTitle = titleTextStyle(
         fontFamily = ManropeFamily,
-        fontSize = 32.sp,
-        lineHeight = proLineHeight(32f, 1f),
-        letterSpacing = (-0.015).em,
-        fontWeight = FontWeight.SemiBold,
+        fontSizeSp = 17f,
+        lineHeightSp = 20.4f,
+        fontWeight = FontWeight.Medium,
     ),
-    sectionHead = TextStyle(
+    heroGreeting = titleTextStyle(
         fontFamily = ManropeFamily,
-        fontSize = 18.sp,
-        lineHeight = proLineHeight(18f, 1.1f),
-        letterSpacing = (-0.01).em,
-        fontWeight = FontWeight.SemiBold,
+        fontSizeSp = 30f,
+        lineHeightSp = 32f,
+        letterSpacingEm = -0.015f,
     ),
-    displayFlourish = TextStyle(
+    heroGreetingEmphasis = titleTextStyle(
         fontFamily = InstrumentSerifFamily,
-        fontSize = 32.sp,
-        lineHeight = proLineHeight(32f, 1f),
-        letterSpacing = (-0.015).em,
-        fontWeight = FontWeight.Normal,
+        fontSizeSp = 30f,
+        lineHeightSp = 32f,
+        letterSpacingEm = -0.015f,
         fontStyle = FontStyle.Italic,
+    ),
+    sheetTitle = titleTextStyle(
+        fontFamily = InstrumentSerifFamily,
+        fontSizeSp = 22f,
+        lineHeightSp = 24f,
+        letterSpacingEm = -0.01f,
+    ),
+    sectionHead = titleTextStyle(
+        fontFamily = InstrumentSerifFamily,
+        fontSizeSp = 18f,
+        lineHeightSp = 20f,
+        letterSpacingEm = -0.01f,
+    ),
+    screenHeaderTitle = titleTextStyle(
+        fontFamily = InstrumentSerifFamily,
+        fontSizeSp = 17f,
+        lineHeightSp = 20f,
+        letterSpacingEm = 0f,
+    ),
+    onboardingSlideTitle = titleTextStyle(
+        fontFamily = InstrumentSerifFamily,
+        fontSizeSp = 38f,
+        lineHeightSp = 40f,
+        letterSpacingEm = -0.02f,
+    ),
+    onboardingBody = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 15.sp,
+        lineHeight = proLineHeight(15f, 1.45f),
+        fontWeight = FontWeight.Normal,
+    ),
+    profileScreenTitle = titleTextStyle(
+        fontFamily = InstrumentSerifFamily,
+        fontSizeSp = 28f,
+        lineHeightSp = 30f,
+        letterSpacingEm = -0.01f,
+    ),
+    navAction = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 13.sp,
+        lineHeight = proLineHeight(13f, 1.4f),
+        fontWeight = FontWeight.Medium,
     ),
     body = TextStyle(
         fontFamily = ManropeFamily,
@@ -137,12 +226,18 @@ val ProDefaultTypography = ProTypography(
         lineHeight = proLineHeight(11.5f, 1.4f),
         fontWeight = FontWeight.Normal,
     ),
+    captionMedium = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 11.5.sp,
+        lineHeight = proLineHeight(11.5f, 1.4f),
+        fontWeight = FontWeight.Medium,
+    ),
     eyebrow = TextStyle(
         fontFamily = GeistMonoFamily,
         fontSize = 11.sp,
         lineHeight = proLineHeight(11f, 1.3f),
-        letterSpacing = 0.10.em,
-        fontWeight = FontWeight.Medium,
+        letterSpacing = 0.12.em,
+        fontWeight = FontWeight.SemiBold,
     ),
     button = TextStyle(
         fontFamily = ManropeFamily,
@@ -159,14 +254,46 @@ val ProDefaultTypography = ProTypography(
         fontWeight = FontWeight.Normal,
         fontFeatureSettings = "tnum",
     ),
-    keypadKey = TextStyle(
+    monoFigure = TextStyle(
         fontFamily = GeistMonoFamily,
-        fontSize = 22.sp,
-        lineHeight = proLineHeight(22f, 1f),
-        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = proLineHeight(12f, 1.3f),
+        letterSpacing = 0.04.em,
+        fontWeight = FontWeight.Medium,
         fontFeatureSettings = "tnum",
+    ),
+    keypadKey = amountTextStyle(
+        fontSizeSp = 22f,
+        lineHeightSp = 22f,
+        letterSpacingEm = 0f,
+    ),
+    navLabel = TextStyle(
+        fontFamily = GeistMonoFamily,
+        fontSize = 10.sp,
+        lineHeight = proLineHeight(10f, 1.2f),
+        letterSpacing = 0.08.em,
+        fontWeight = FontWeight.Medium,
+    ),
+    searchField = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 13.sp,
+        lineHeight = proLineHeight(13f, 1.4f),
+        fontWeight = FontWeight.Normal,
     ),
     sansFamily = ManropeFamily,
     serifFamily = InstrumentSerifFamily,
     monoFamily = GeistMonoFamily,
+)
+
+fun ProTypography.toMaterialTypography(): Typography = Typography(
+    displayLarge = displayAmount,
+    headlineMedium = heroGreeting,
+    titleLarge = sheetTitle,
+    titleMedium = sectionHead,
+    bodyLarge = body,
+    bodyMedium = bodyMedium,
+    bodySmall = caption,
+    labelLarge = button,
+    labelMedium = eyebrow,
+    labelSmall = navLabel,
 )

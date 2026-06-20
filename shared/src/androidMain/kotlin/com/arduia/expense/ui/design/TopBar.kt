@@ -9,7 +9,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+
+@Preview(
+    name = "ProTopBar — app bar title",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    showBackground = true,
+)
+@Composable
+private fun ProTopBarPreview() {
+    ProExpenseTheme {
+        ProTopBar(
+            title = "New expense",
+            onBack = {},
+            backLabel = "Back",
+        )
+    }
+}
 
 enum class ProTopBarAction {
     None,
@@ -29,7 +47,6 @@ fun ProTopBar(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val shapes = ProExpenseTheme.shapes
 
     Box(
         modifier = modifier
@@ -38,36 +55,37 @@ fun ProTopBar(
         contentAlignment = Alignment.Center,
     ) {
         if (onBack != null) {
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .proClickable(
-                        onClick = onBack,
-                        shape = shapes.searchField,
-                    )
-                    .padding(horizontal = dimens.space8, vertical = dimens.space4),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimens.space4),
-            ) {
+            if (backLabel != null) {
+                ProTextAction(
+                    text = backLabel,
+                    onClick = onBack,
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    style = typography.bodyMedium,
+                    color = colors.onSurface,
+                    leading = {
+                        ProIcon(
+                            glyph = ProIconGlyph.Back,
+                            contentDescription = null,
+                            tint = colors.onSurface,
+                        )
+                    },
+                )
+            } else {
                 ProIcon(
                     glyph = ProIconGlyph.Back,
-                    contentDescription = if (backLabel == null) "Back" else null,
+                    contentDescription = "Back",
                     tint = colors.onSurface,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .proIconClickable(onClick = onBack),
                 )
-                if (backLabel != null) {
-                    Text(
-                        text = backLabel,
-                        style = typography.bodyMedium,
-                        color = colors.onSurface,
-                    )
-                }
             }
         }
 
         if (title.isNotEmpty()) {
             Text(
                 text = title,
-                style = typography.sectionHead,
+                style = typography.appBarTitle,
                 color = colors.onSurface,
                 modifier = Modifier.align(Alignment.Center),
             )

@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pro Expense — Android Screen Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --clay:#039BE5; --clay-deep:#0288D1; --clay-tint:#E1F5FE;
+    --ink:#212121; --ink2:#424242; --ink3:#757575; --muted:#9E9E9E; --muted2:#BDBDBD;
+    --paper:#F4F2ED; --card:#FFFFFF; --line:rgba(33,33,33,.10); --line2:rgba(33,33,33,.06);
+    --line-strong:#E0E0E0;
+    --sage:#4CAF50; --danger:#EF5350; --tag:#FB8C00; --amber:#b26a00;
+    --sans:"Manrope",-apple-system,system-ui,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+    --serif:"Instrument Serif","Plus Jakarta Sans",Georgia,serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;line-height:1.5;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 40px 120px;}
+
+  /* ── cover ── */
+  .cover{padding:88px 0 40px;border-bottom:1px solid var(--line);}
+  .cover .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--clay);font-weight:600;}
+  .cover h1{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1.0;letter-spacing:-.02em;margin:18px 0 6px;}
+  .cover .sub{font-size:17px;color:var(--ink2);max-width:660px;}
+  .cover .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;}
+  .pill{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink2);
+    background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 12px;}
+  .pill b{color:var(--ink);font-weight:600;}
+
+  /* ── foundations ── */
+  .found{margin-top:56px;}
+  .found h2,.idx h2{font-family:var(--serif);font-weight:400;font-size:30px;letter-spacing:-.01em;margin:0 0 4px;}
+  .found .lead{color:var(--ink3);font-size:14px;margin:0 0 24px;}
+  .fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .fcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;
+    box-shadow:0 1px 0 rgba(33,33,33,.03),0 6px 16px rgba(33,33,33,.03);}
+  .fcard h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:0 0 14px;}
+  .trow{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0;border-top:1px solid var(--line2);}
+  .trow:first-of-type{border-top:none;}
+  .trow .nm{font-family:var(--serif);font-size:20px;color:var(--ink);}
+  .trow .sp{font-family:var(--mono);font-size:11px;color:var(--ink3);text-align:right;white-space:nowrap;}
+  .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .sw{display:flex;flex-direction:column;gap:6px;}
+  .sw .chip{height:42px;border-radius:10px;border:1px solid var(--line);}
+  .sw .lbl{font-family:var(--mono);font-size:9.5px;color:var(--ink3);line-height:1.3;}
+  .sw .lbl b{display:block;color:var(--ink);font-size:10px;}
+  .maprow{display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line2);font-size:12.5px;}
+  .maprow:first-of-type{border-top:none;}
+  .maprow .k{flex:0 0 142px;font-family:var(--mono);font-size:11px;color:var(--clay-deep);}
+  .maprow .v{color:var(--ink2);}
+
+  /* ── index ── */
+  .idx{margin-top:56px;}
+  .idxgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;}
+  .idxgrid a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:border-color .15s;}
+  .idxgrid a:hover{border-color:var(--clay);}
+  .idxgrid .n{font-family:var(--mono);font-size:11px;color:var(--clay);font-weight:600;min-width:30px;}
+  .idxgrid .t{font-weight:600;font-size:13.5px;}
+  .idxgrid .f{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:1px;}
+
+  /* ── screen section ── */
+  .screen{margin-top:60px;padding-top:34px;border-top:2px solid var(--ink);}
+  .screen .head{display:flex;align-items:flex-start;gap:20px;}
+  .screen .num{font-family:var(--serif);font-size:60px;line-height:.8;color:var(--clay);min-width:96px;letter-spacing:-.02em;}
+  .screen .htext{flex:1;}
+  .screen h2{font-family:var(--serif);font-weight:400;font-size:38px;letter-spacing:-.015em;margin:0;line-height:1;}
+  .screen .flow{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-top:8px;}
+  .screen .purpose{font-size:15.5px;color:var(--ink2);max-width:680px;margin-top:12px;text-wrap:pretty;}
+
+  .states{display:flex;flex-wrap:wrap;gap:22px;margin:30px 0 8px;}
+  .ph{display:flex;flex-direction:column;gap:9px;}
+  .ph img{width:218px;height:457px;object-fit:cover;border-radius:24px;border:1px solid var(--line);
+    background:#F5F5F5;box-shadow:0 1px 0 rgba(33,33,33,.04),0 10px 26px rgba(33,33,33,.08);display:block;}
+  .ph .cap{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.02em;}
+  .ph.sm img{width:170px;height:357px;border-radius:20px;}
+
+  .spec{display:grid;grid-template-columns:1.15fr 1fr;gap:30px;margin-top:14px;}
+  .block h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-deep);font-weight:600;margin:0 0 12px;}
+  ul.beh{margin:0;padding:0;list-style:none;}
+  ul.beh li{position:relative;padding:0 0 9px 18px;font-size:13.5px;color:var(--ink2);text-wrap:pretty;}
+  ul.beh li:before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:99px;background:var(--clay);}
+  table.cmp{width:100%;border-collapse:collapse;}
+  table.cmp td{font-size:12.5px;padding:7px 8px;border-top:1px solid var(--line2);vertical-align:top;}
+  table.cmp tr:first-child td{border-top:none;}
+  table.cmp .c{font-weight:600;color:var(--ink);width:38%;}
+  table.cmp .r{color:var(--ink3);width:34%;}
+  table.cmp .m{font-family:var(--mono);font-size:10.5px;color:var(--clay-deep);width:28%;}
+
+  .tok{margin-top:18px;}
+  .tokgroup{margin-bottom:12px;}
+  .tokgroup .gl{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .tokgroup .items{display:flex;flex-wrap:wrap;gap:6px;}
+  .tokgroup .items span{font-family:var(--mono);font-size:11px;color:var(--ink2);background:var(--card);
+    border:1px solid var(--line);border-radius:7px;padding:4px 8px;}
+
+  .edges{margin-top:30px;}
+  .edges .etitle{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--danger);font-weight:600;margin:0 0 16px;}
+  .edgegrid{display:flex;flex-wrap:wrap;gap:24px;}
+  .edge{display:flex;gap:16px;align-items:flex-start;width:calc(50% - 12px);}
+  .edge .note{flex:1;}
+  .edge .note .el{font-weight:700;font-size:13.5px;margin-bottom:5px;}
+  .edge .note .ed{font-size:12.5px;color:var(--ink2);text-wrap:pretty;}
+
+  footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);font-family:var(--mono);}
+
+  @media print{
+    body{background:#fff;}
+    .wrap{max-width:none;padding:0 18px 0;}
+    .screen{break-inside:avoid;page-break-inside:avoid;border-top:1.5px solid var(--ink);}
+    .spec,.states,.edgegrid{break-inside:avoid;}
+    .idxgrid a:hover{border-color:var(--line);}
+    .cover{padding-top:24px;}
+  }
+  @media(max-width:900px){
+    .wrap{padding:0 20px 80px;}
+    .fgrid,.spec{grid-template-columns:1fr;}
+    .idxgrid{grid-template-columns:1fr;}
+    .edge{width:100%;}
+    .cover h1{font-size:52px;}
+  }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" fill="#039BE5"/>
+    <rect x="36" y="22" width="28" height="56" rx="6" fill="#fff"/>
+    <rect x="42" y="30" width="16" height="3" rx="1.5" fill="#039BE5"/>
+    <rect x="42" y="38" width="16" height="3" rx="1.5" fill="#B3E5FC"/>
+    <circle cx="50" cy="62" r="7" fill="#039BE5"/>
+  </svg>
+</template>
+
+<div class="wrap">
+  <header class="cover">
+    <div class="kicker">Pro Expense · Jetpack Compose handoff</div>
+    <h1>Android Screen Spec</h1>
+    <p class="sub">Every screen of the Finance Tracker MVP — captured at 414 × 868 dp, paired with expected behaviors, component composition, applied design tokens, and edge/error states. Screenshots and spec are generated from the same shipped build, so they stay aligned.</p>
+    <div class="meta">
+      <span class="pill"><b>15</b> screens + first-run profile setup</span>
+      <span class="pill"><b>58</b> states &amp; edge cases</span>
+      <span class="pill">Single <b>light</b> theme</span>
+      <span class="pill"><b>1 px = 1 dp</b></span>
+      <span class="pill">Source: PRD screen flows + design-system spec</span>
+    </div>
+  </header>
+
+  <section class="found">
+    <h2>Foundations</h2>
+    <p class="lead">The shared language behind every screen below. Full reference: <span style="font-family:var(--mono);font-size:13px">tokens.md</span> · component specs in <span style="font-family:var(--mono);font-size:13px">components/</span>.</p>
+    <div class="fgrid">
+      <div class="fcard">
+        <h3>Type — three families, one job each</h3>
+        <div class="trow"><span class="nm">Display amount</span><span class="sp">Instrument Serif · 64 / -0.025em</span></div>
+        <div class="trow"><span class="nm">Card amount</span><span class="sp">Instrument Serif · 40 / -0.02em</span></div>
+        <div class="trow"><span class="nm">Hero greeting</span><span class="sp">Instrument Serif · 30 / -0.015em</span></div>
+        <div class="trow"><span class="nm">Section / day head</span><span class="sp">Instrument Serif · 18 / -0.01em</span></div>
+        <div class="trow"><span class="nm" style="font-family:var(--sans);font-size:14px;font-weight:600">Body / button</span><span class="sp">Manrope · 14 / 400–600</span></div>
+        <div class="trow"><span class="nm" style="font-family:var(--mono);font-size:12px">EYEBROW · LABEL</span><span class="sp">Geist Mono · 11 / 0.10–0.12em</span></div>
+      </div>
+      <div class="fcard">
+        <h3>Color — primary blue + soft signals</h3>
+        <div class="swatches">
+          <div class="sw"><div class="chip" style="background:#039BE5"></div><div class="lbl"><b>clay / primary</b>#039BE5</div></div>
+          <div class="sw"><div class="chip" style="background:#B3E5FC"></div><div class="lbl"><b>blue100 tint</b>#B3E5FC</div></div>
+          <div class="sw"><div class="chip" style="background:#4CAF50"></div><div class="lbl"><b>sage / lent</b>#4CAF50</div></div>
+          <div class="sw"><div class="chip" style="background:#EF5350"></div><div class="lbl"><b>danger / owe</b>#EF5350</div></div>
+          <div class="sw"><div class="chip" style="background:#FB8C00"></div><div class="lbl"><b>tag (events)</b>#FB8C00</div></div>
+          <div class="sw"><div class="chip" style="background:#212121"></div><div class="lbl"><b>ink</b>#212121</div></div>
+          <div class="sw"><div class="chip" style="background:#757575"></div><div class="lbl"><b>ink3</b>#757575</div></div>
+          <div class="sw"><div class="chip" style="background:#F5F5F5"></div><div class="lbl"><b>paper</b>#F5F5F5</div></div>
+        </div>
+      </div>
+      <div class="fcard">
+        <h3>M3 ColorScheme &amp; Typography mapping</h3>
+        <div class="maprow"><span class="k">primary</span><span class="v">blue500 #039BE5 · onPrimary warm white #FFFDF6</span></div>
+        <div class="maprow"><span class="k">surface / bg</span><span class="v">white / paper · no tonal elevation (shadow only)</span></div>
+        <div class="maprow"><span class="k">error / tertiary</span><span class="v">danger #EF5350 / tag #FB8C00</span></div>
+        <div class="maprow"><span class="k">displayLarge</span><span class="v">display amount · headlineMedium → screen title</span></div>
+        <div class="maprow"><span class="k">titleMedium</span><span class="v">section head · bodyMedium → body · labelMedium → eyebrow</span></div>
+      </div>
+      <div class="fcard">
+        <h3>Shape · spacing · motion</h3>
+        <div class="maprow"><span class="k">radius</span><span class="v">card 16–18 · field/tile 14 · key 12 · sheet top 22 · chip/FAB full</span></div>
+        <div class="maprow"><span class="k">spacing</span><span class="v">8dp rhythm · card pad 18 · row 12×8 · touch ≥ 44</span></div>
+        <div class="maprow"><span class="k">elevation</span><span class="v">drop-shadow only · FAB 0 4 10 rgba(3,155,229,.25)</span></div>
+        <div class="maprow"><span class="k">motion</span><span class="v">screen 280ms · sheet 340ms · tap scale .97 · curve (.22,.61,.36,1)</span></div>
+        <div class="maprow"><span class="k">amounts</span><span class="v">always serif · $ glyph ≈0.47× in clay · decimals in ink3</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="idx">
+    <h2>Screens</h2>
+    <div class="idxgrid" id="index"></div>
+  </section>
+
+  <main id="screens"></main>
+
+  <footer id="footer"></footer>
+</div>
+
+<script src="screen-specs.js"></script>
+<script>
+(function(){
+  const S = window.SCREEN_SPECS || [];
+  const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+  // index
+  document.getElementById('index').innerHTML = S.map(s =>
+    `<a href="#s-${s.id}"><span class="n">${esc(s.num)}</span><span><span class="t">${esc(s.title)}</span><span class="f">${esc(s.flow)}</span></span></a>`
+  ).join('');
+
+  // sections
+  document.getElementById('screens').innerHTML = S.map(s => {
+    const states = s.shots.map(sh =>
+      `<div class="ph"><img src="${sh.src}" alt="${esc(sh.label)}" loading="lazy"><span class="cap">${esc(sh.label)}</span></div>`
+    ).join('');
+
+    const beh = `<ul class="beh">${s.behaviors.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>`;
+
+    const cmp = `<table class="cmp">${s.relations.map(r=>
+      `<tr><td class="c">${esc(r.c)}</td><td class="r">${esc(r.role)}</td><td class="m">${esc(r.m3)}</td></tr>`).join('')}</table>`;
+
+    const tokGroup = (lbl, arr) => arr && arr.length
+      ? `<div class="tokgroup"><div class="gl">${lbl}</div><div class="items">${arr.map(t=>`<span>${esc(t)}</span>`).join('')}</div></div>` : '';
+    const tok = `<div class="tok">${tokGroup('Type', s.tokens.type)}${tokGroup('Color', s.tokens.color)}${tokGroup('Shape · spacing', s.tokens.dims)}</div>`;
+
+    const edges = (s.edges && s.edges.length) ? `
+      <div class="edges">
+        <div class="etitle">Edge cases &amp; error states</div>
+        <div class="edgegrid">${s.edges.map(e=>
+          `<div class="edge"><div class="ph sm"><img src="${e.src}" alt="${esc(e.label)}" loading="lazy"></div><div class="note"><div class="el">${esc(e.label)}</div><div class="ed">${esc(e.note)}</div></div></div>`
+        ).join('')}</div>
+      </div>` : '';
+
+    return `
+      <section class="screen" id="s-${s.id}">
+        <div class="head">
+          <div class="num">${esc(s.num)}</div>
+          <div class="htext">
+            <h2>${esc(s.title)}</h2>
+            <div class="flow">${esc(s.flow)}</div>
+            <p class="purpose">${esc(s.purpose)}</p>
+          </div>
+        </div>
+        <div class="states">${states}</div>
+        <div class="spec">
+          <div class="block"><h3>Behavior &amp; interactions</h3>${beh}</div>
+          <div class="block"><h3>Component composition · M3 mapping</h3>${cmp}${tok}</div>
+        </div>
+        ${edges}
+      </section>`;
+  }).join('');
+
+  document.getElementById('footer').textContent =
+    'Pro Expense · Android screen specification · ' + S.length + ' screens · light theme · 1 px = 1 dp · generated from the shipped Hi-Fi build.';
+})();
+</script>
+</body>
+</html>

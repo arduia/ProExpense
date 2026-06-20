@@ -7,14 +7,15 @@ CREATE TABLE app_meta (
     security_answer_hash TEXT,
     security_question_id TEXT,
     biometric_enrolled INTEGER NOT NULL,
-    biometric_wrapped_key BLOB
+    biometric_wrapped_key BLOB,
+    display_name TEXT NOT NULL DEFAULT ''
 );
 
 insertMeta:
 INSERT OR REPLACE INTO app_meta(
     id, monthly_budget_cents, home_currency_code, failed_attempt_count, lockout_until,
-    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key, display_name
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectMeta:
 SELECT * FROM app_meta WHERE id = 1;

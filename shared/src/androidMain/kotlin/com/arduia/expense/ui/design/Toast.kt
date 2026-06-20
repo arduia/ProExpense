@@ -33,21 +33,22 @@ fun ProToast(
 
     Row(
         modifier = modifier
+            .proToastShadow()
             .background(colors.onSurface, ProExpenseTheme.shapes.toast)
-            .padding(horizontal = dimens.space18, vertical = dimens.space12),
+            .padding(horizontal = dimens.space16, vertical = dimens.space10),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         ProIcon(
             glyph = ProIconGlyph.Check,
             contentDescription = stringResource(R.string.toast_check_icon),
-            tint = colors.success,
+            tint = colors.successSoft,
             size = dimens.iconInline,
         )
         Text(
             text = message,
-            style = typography.bodySemiBold,
-            color = colors.onPrimaryWarm,
+            style = typography.searchField,
+            color = colors.paper,
         )
     }
 }

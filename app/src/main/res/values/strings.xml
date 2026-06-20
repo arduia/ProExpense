@@ -10,7 +10,7 @@
     <string name="statistics">Statistics</string>
     <string name="free">Free</string>
     <string name="home">Home</string>
-    <string name="home_empty_hint">No spending logged yet</string>
+    <string name="home_empty_hint">No spending logged yet this month</string>
     <string name="expenses_in_this_week">Expenses in this Week</string>
     <string name="mmk">MMK</string>
     <string name="date">Date</string>
@@ -148,6 +148,11 @@
     <string name="onboarding_event_budget_subtitle">Plan and track any event budget — trips, weddings, parties.</string>
     <string name="onboarding_journal_title">Journal</string>
     <string name="onboarding_journal_subtitle">Review your spending like a diary, day by day.</string>
+    <string name="onboarding_get_started_title">You are all set</string>
+    <string name="onboarding_get_started_subtitle">Start logging in seconds. Your notebook stays on your device.</string>
+    <string name="journal_empty">No records yet — tap + to log your first expense</string>
+    <string name="pin_change_title">Change your PIN</string>
+    <string name="shared_history">History</string>
     <string name="profile_setup_step">PROFILE · %1$d OF %2$d</string>
     <string name="profile_setup_title">Set up your profile</string>
     <string name="profile_setup_description">Your name personalizes the app — greeting you on the home screen and identifying your records and exports. No account needed; everything stays on your device.</string>
@@ -172,14 +177,27 @@
     <!-- Home -->
     <string name="home_greeting">Hi, %1$s</string>
     <string name="home_greeting_prefix">Hi, </string>
+    <string name="home_welcome_prefix">Welcome, </string>
     <string name="home_spend_this_month">Spent this month</string>
+    <string name="home_spent_period">SPENT · %1$s</string>
+    <string name="home_date_header">WED · MAY 25</string>
+    <string name="quick_access_section">QUICK ACCESS</string>
+    <string name="customize">Customize</string>
+    <string name="see_all">See all</string>
+    <string name="notifications">Notifications</string>
     <string name="home_pin_banner_title">Protect your records with a PIN</string>
     <string name="home_pin_banner_body">Set a 6-digit PIN so only you can open Pro Expense.</string>
     <string name="dismiss">Dismiss</string>
     <string name="quick_access_reports">Reports</string>
-    <string name="quick_access_debt">Debts</string>
+    <string name="quick_access_debt">Debt</string>
     <string name="quick_access_split">Split</string>
     <string name="quick_access_events">Events</string>
+    <string name="home_empty_title">No expenses yet</string>
+    <string name="home_empty_subtitle">Start by logging your first one — it takes about five seconds.</string>
+    <string name="home_log_first_expense">Log your first expense</string>
+    <string name="home_empty_tap_add_prefix">or tap </string>
+    <string name="home_empty_tap_add_suffix"> below</string>
+    <string name="recent_section">RECENT</string>
 
     <!-- Journal -->
     <string name="journal">Journal</string>
@@ -193,17 +211,27 @@
 
     <!-- More hub -->
     <string name="more_hub">More</string>
+    <string name="more_hub_eyebrow">SETTINGS &amp; EXTRAS</string>
+    <string name="more_features_section">FEATURES</string>
+    <string name="more_settings_section">SETTINGS</string>
+    <string name="more_profile_subtitle">All data local · no account</string>
     <string name="more_reports">Reports</string>
-    <string name="more_reports_sub">Monthly category breakdown</string>
-    <string name="more_categories">Categories</string>
-    <string name="more_categories_sub">Default and custom categories</string>
-    <string name="more_currency">Home currency</string>
+    <string name="more_debt">Debt Tracker</string>
+    <string name="more_shared_costs">Shared Costs</string>
+    <string name="more_monthly_budget">Monthly budget</string>
+    <string name="more_language">Language</string>
+    <string name="more_currency">Currency</string>
     <string name="more_currency_sub">Change your default currency</string>
+    <string name="more_reports_sub">Monthly category breakdown</string>
+    <string name="more_categories">Category List</string>
+    <string name="more_categories_sub">Default and custom categories</string>
     <string name="more_export">Export data</string>
     <string name="more_export_sub">Download records as CSV</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
     <string name="more_clear">Clear all data</string>
     <string name="more_clear_sub">Remove all records from this device</string>
-    <string name="more_security">Security</string>
+    <string name="more_security">PIN authentication</string>
     <string name="more_security_sub">PIN, biometrics, and recovery</string>
     <string name="more_import_sub">Restore records from CSV</string>
 
@@ -217,15 +245,23 @@
 
     <!-- Categories -->
     <string name="categories_title">Categories</string>
+    <string name="categories_default_header">DEFAULT · ALWAYS FIRST</string>
+    <string name="categories_locked_hint">locked</string>
+    <string name="categories_custom_header">CUSTOM · DRAG TO REORDER</string>
+    <string name="categories_custom_count">%1$d categories</string>
+    <string name="create_new_category">Create new category</string>
+    <string name="categories_order_hint">Order here mirrors chip order in Add Expense</string>
     <string name="add_category">Add category</string>
     <string name="category_name_hint">Category name</string>
     <string name="category_duplicate_error">A category with this name already exists</string>
 
     <!-- Currency -->
-    <string name="profile_currency_title">Choose home currency</string>
-    <string name="profile_currency_description">Your home currency converts all entries for summaries and exports.</string>
+    <string name="profile_currency_title">Pick your home currency</string>
+    <string name="profile_currency_description">All entries default to this. You can still log in any currency per-expense.</string>
     <string name="currency_setting_title">Home currency</string>
-    <string name="currency_picker_title">Select currency</string>
+    <string name="currency_picker_title">All currencies</string>
+    <string name="search_currency_placeholder">Search currency...</string>
+    <string name="start_tracking">Start tracking</string>
     <string name="continue_label">Continue</string>
 
     <!-- Data -->
@@ -282,6 +318,39 @@
     <string name="event_edit">Edit</string>
     <string name="event_close">Close event</string>
     <string name="event_delete_warning">This event has %1$d linked expenses. Delete anyway?</string>
+    <string name="events_eyebrow">BUDGET TRACKER</string>
+    <string name="events_title">Events</string>
+    <string name="event_new">New event</string>
+    <string name="events_back">Events</string>
+    <string name="event_empty_heading">No active events</string>
+    <string name="event_empty_body">Set a budget for a trip, wedding or party — then tag expenses to track it in real time.</string>
+    <string name="event_create_cta">Create event</string>
+    <string name="event_name_label">EVENT NAME</string>
+    <string name="event_name_placeholder">e.g. Bali Trip</string>
+    <string name="event_dates_label">DATES</string>
+    <string name="event_total_budget_label">TOTAL BUDGET</string>
+    <string name="event_name_counter">%1$d/%2$d</string>
+    <string name="event_name_duplicate">An event with this name already exists</string>
+    <string name="event_budget_positive_error">Budget must be greater than $0</string>
+    <string name="event_currency_usd">USD</string>
+    <string name="event_status_active">ACTIVE</string>
+    <string name="event_status_closed">CLOSED</string>
+    <string name="event_remaining">REMAINING</string>
+    <string name="event_final_remaining">FINAL · REMAINING</string>
+    <string name="event_over_budget_eyebrow">OVER BUDGET</string>
+    <string name="event_spent_label">Spent</string>
+    <string name="event_budget_label">Budget</string>
+    <string name="event_over_budget_by">Over budget by %1$s (%2$d%%)</string>
+    <string name="event_percent_spent">%1$d%% spent</string>
+    <string name="event_daily_pace">%1$s/day pace</string>
+    <string name="event_days_left">%1$d days left</string>
+    <string name="event_linked_expenses_count">LINKED EXPENSES · %1$d</string>
+    <string name="event_add_tagged">Add tagged</string>
+    <string name="event_add_expense">Add expense</string>
+    <string name="event_readonly_notice">Read-only — the 24-hour edit window has passed. No new expenses can be linked.</string>
+    <string name="event_meta_active">%1$s · active</string>
+    <string name="event_meta_archived">%1$s · archived</string>
+    <string name="event_more">More options</string>
 
     <!-- Debt -->
     <string name="debt_tracker_title">Debt tracker</string>
@@ -315,9 +384,40 @@
     <string name="shared_split_even">Even split</string>
     <string name="shared_split_custom">Custom split</string>
     <string name="shared_person_amount">Person %1$d amount</string>
+    <string name="shared_bill_splitter">BILL SPLITTER</string>
+    <string name="shared_costs_heading">Shared Costs</string>
+    <string name="shared_new_split">+ New split</string>
+    <string name="shared_recent_splits">RECENT SPLITS</string>
+    <string name="shared_total_bill">TOTAL BILL</string>
+    <string name="shared_each_person_pays">EACH PERSON PAYS</string>
+    <string name="shared_summary_meta">%1$s total · split %2$d ways · %3$s</string>
+    <string name="shared_split_mode_equal">equal</string>
+    <string name="shared_switch_to_custom">Switch to custom</string>
+    <string name="shared_switch_to_equal">Switch to equal</string>
+    <string name="shared_custom_split">CUSTOM SPLIT</string>
+    <string name="shared_max_people">Maximum of 20 people reached</string>
+    <string name="shared_total_zero_error">Total amount must be greater than $0</string>
+    <string name="shared_save_split_amount">Save split · %1$s</string>
+    <string name="shared_history_meta">%1$d people · %2$s each · %3$s</string>
+    <string name="shared_uneven_split_prompt">Need an uneven split?</string>
+    <string name="shared_back_more">More</string>
+    <string name="shared_back_split">Split</string>
+    <string name="shared_note_placeholder">Dinner at Nobu</string>
     <string name="date_time_picker_title">Date and time</string>
     <string name="add_event_tag">Link event or debt</string>
     <string name="event_tag_format">@%1$s</string>
+    <string name="draft_restore_title">Unfinished expense</string>
+    <string name="draft_restore_body">You had %1$s in progress when the app closed. Continue where you left off, or discard it?</string>
+    <string name="draft_continue">Continue</string>
+    <string name="draft_discard">Discard</string>
+    <string name="note_max_length_error">Note can\'t exceed 200 characters</string>
+    <string name="link_to_title">Link to…</string>
+    <string name="link_to_subtitle">Pick one event or one debt — not both. Choosing one greys out the other.</string>
+    <string name="link_events_section">EVENTS</string>
+    <string name="link_debts_section">DEBTS</string>
+    <string name="link_debts_unavailable">· unavailable while an event is selected</string>
+    <string name="today_date_sample">Today, May 25</string>
+    <string name="time_sample">12:30 PM</string>
     <string name="pin_biometric_cd">Unlock with biometrics</string>
     <string name="pin_biometric_offer_title">Enable biometrics?</string>
     <string name="pin_biometric_offer_subtitle">Unlock faster with fingerprint or face on this device.</string>

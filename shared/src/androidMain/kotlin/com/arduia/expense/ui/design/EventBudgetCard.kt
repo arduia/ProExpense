@@ -25,6 +25,7 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 data class EventBudgetCardState(
+    val id: String = "",
     val title: String,
     val dateRange: String,
     val spentLabel: String,
@@ -69,13 +70,13 @@ fun EventBudgetCard(
                     modifier = Modifier
                         .size(dimens.quickAccessIconSize)
                         .clip(ProExpenseTheme.shapes.tile)
-                        .background(colors.highlightSoft),
+                        .background(colors.primaryTint),
                     contentAlignment = Alignment.Center,
                 ) {
                     ProIcon(
                         glyph = ProIconGlyph.FeatEvents,
                         contentDescription = null,
-                        tint = colors.highlightDeep,
+                        tint = colors.primaryDeep,
                         size = dimens.iconInline + 4.dp,
                     )
                 }
