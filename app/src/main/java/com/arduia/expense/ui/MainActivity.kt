@@ -4,7 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.arduia.expense.ExpenseApplication
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.arduia.expense.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,10 +19,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val appGraph = (application as ExpenseApplication).appGraph
         setContent {
             ProExpenseTheme {
-                FirstLaunchFlow(appGraph = appGraph)
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Text(
+                        text = stringResource(R.string.app_welcome),
+                        modifier = Modifier.padding(innerPadding),
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                }
             }
         }
     }

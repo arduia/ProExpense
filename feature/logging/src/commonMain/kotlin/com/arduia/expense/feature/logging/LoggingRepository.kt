@@ -14,14 +14,10 @@ data class LogRecordInput(
     val type: RecordType = RecordType.EXPENSE,
     val note: String? = null,
     val recordedAtEpochMillis: Long,
-    val tagType: com.arduia.expense.domain.ExpenseTagType? = null,
-    val tagId: String? = null,
 )
 
 interface LoggingRepository {
     suspend fun createRecord(input: LogRecordInput): Result<FinanceRecord>
-
-    suspend fun getRecord(id: String): Result<FinanceRecord?>
 
     suspend fun updateRecord(record: FinanceRecord): Result<Unit>
 

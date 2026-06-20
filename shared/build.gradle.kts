@@ -17,21 +17,12 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.coroutines.core)
         }
-        commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.coroutines.test)
-        }
         androidMain.dependencies {
             api(project.dependencies.platform(libs.compose.bom))
             api(libs.compose.ui)
             api(libs.compose.foundation)
             api(libs.compose.material3)
             api(libs.compose.ui.tooling.preview)
-        }
-        val androidUnitTest by getting {
-            dependencies {
-                implementation(libs.junit)
-            }
         }
     }
 }

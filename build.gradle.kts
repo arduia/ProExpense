@@ -4,25 +4,14 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.roborazzi) apply false
 }
 
 tasks.register("verifyAll") {
     group = "verification"
-    description = "Build devDebug, run all unit tests, and verify Roborazzi screenshots."
-    dependsOn(
-        ":app:assembleDevDebug",
-        ":app:testDevDebugUnitTest",
-        ":app:verifyRoborazziDevDebug",
-    )
-}
-
-subprojects {
-    tasks.matching { it.name == "test" }.configureEach {
-        rootProject.tasks.named("verifyAll").configure {
-            dependsOn(this@configureEach)
-        }
-    }
+    description = "Build devDebug APK for the scaffold shell."
+    dependsOn(":app:assembleDevDebug")
 }
 
 tasks.register("clean", Delete::class) {

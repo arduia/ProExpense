@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.roborazzi)
 }
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -23,7 +22,6 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 14
         versionName = "1.0.0-beta08"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     flavorDimensions += "environment"
@@ -61,24 +59,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            all {
-                it.systemProperties["robolectric.pixelCopyRenderMode"] = "hardware"
-                if (project.hasProperty("handoffReference")) {
-                    it.useJUnit {
-                        includeCategories("com.arduia.expense.testing.HandoffReferenceTests")
-                    }
-                } else {
-                    it.useJUnit {
-                        excludeCategories("com.arduia.expense.testing.HandoffReferenceTests")
-                    }
-                }
-            }
-        }
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -114,63 +94,4 @@ dependencies {
 
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
-
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.coroutines.test)
-    testImplementation(libs.androidx.test.ext.junit)
-    testImplementation(libs.androidx.test.core)
-    testImplementation(composeBom)
-    testImplementation(libs.compose.ui.test.junit4)
-    testImplementation(libs.roborazzi)
-    testImplementation(libs.roborazzi.compose)
-    testImplementation(libs.roborazzi.junit.rule)
-
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.core)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(composeBom)
-    androidTestImplementation(libs.compose.ui.test.junit4)
-}
-
-roborazzi {
-    outputDir.set(file("src/test/screenshots"))
-}
-
-tasks.register<Exec>("syncHandoffReferenceGoldens") {
-    group = "verification"
-    description = "Copy design_handoff_pro_expense/reference-images into Roborazzi goldens."
-    commandLine("bash", rootProject.file("scripts/sync-handoff-reference-goldens.sh").absolutePath)
-}
-
-tasks.register<Exec>("verifyHandoffReference") {
-    group = "verification"
-    description = "Sync handoff goldens and compare Compose renders at 414×868 against reference PNGs."
-    dependsOn("syncHandoffReferenceGoldens")
-    workingDir = rootProject.projectDir
-    commandLine(
-        "./gradlew",
-        "-PhandoffReference",
-        ":app:testDevDebugUnitTest",
-        "--tests",
-        "com.arduia.expense.ui.handoff.HandoffReferenceScreenshotTest",
-        ":app:finalizeTestRoborazziDevDebug",
-        ":app:compareRoborazziDevDebug",
-    )
-}
-
-// Robolectric Compose UI tests (screenshots + smoke) rely on the compose ui-test-manifest, which is
-// only merged into the debug variant (debugImplementation). devDebug is the documented screenshot
-// gate, so exclude these categories from the release unit-test variant to keep `./gradlew test` green.
-tasks.withType<Test>().configureEach {
-    if (name.endsWith("ReleaseUnitTest")) {
-        useJUnit {
-            excludeCategories(
-                "com.arduia.expense.testing.ScreenshotTests",
-                "com.arduia.expense.testing.ComposeUiTests",
-                "com.arduia.expense.testing.HandoffReferenceTests",
-            )
-        }
-    }
 }
