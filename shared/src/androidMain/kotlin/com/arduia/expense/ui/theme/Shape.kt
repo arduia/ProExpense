@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 data class ProShapes(
     val chip: Shape,
     val tile: Shape,
+    val quickAccessChip: Shape,
     val card: Shape,
     val sheet: Shape,
     val buttonSm: Shape,
@@ -28,6 +29,7 @@ val LocalProShapes = staticCompositionLocalOf { ProDefaultShapes }
 val ProDefaultShapes = ProShapes(
     chip = RoundedCornerShape(999.dp),
     tile = RoundedCornerShape(14.dp),
+    quickAccessChip = RoundedCornerShape(11.dp),
     card = RoundedCornerShape(16.dp),
     sheet = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
     buttonSm = RoundedCornerShape(10.dp),

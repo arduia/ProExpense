@@ -126,16 +126,17 @@ fun HomeScreenContent(
                     ),
                 )
             }
-
-            HomeQuickAccessSection(
-                showCustomize = !state.isEmpty,
-                onCustomize = onCustomizeQuickAccess,
-                onReportsClick = onReportsClick,
-                onDebtClick = onDebtClick,
-                onSplitClick = onSplitClick,
-                onEventsClick = onEventsClick,
-            )
         }
+
+        HomeQuickAccessSection(
+            showCustomize = !state.isEmpty,
+            onCustomize = onCustomizeQuickAccess,
+            onReportsClick = onReportsClick,
+            onDebtClick = onDebtClick,
+            onSplitClick = onSplitClick,
+            onEventsClick = onEventsClick,
+            modifier = Modifier.padding(top = dimens.space24),
+        )
 
         if (state.isEmpty) {
             HomeEmptyContent(
@@ -151,7 +152,7 @@ fun HomeScreenContent(
                 onSeeAll = onSeeAll,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(top = dimens.space24),
+                    .padding(top = dimens.space26),
             )
         }
     }
@@ -253,7 +254,6 @@ private fun MonthSpendCard(
             .border(BorderStroke(1.dp, colors.line), cardShape)
             .background(colors.surface)
             .padding(dimens.cardPadding),
-        verticalArrangement = Arrangement.spacedBy(dimens.space6),
     ) {
         Text(
             text = periodLabel,
@@ -261,7 +261,9 @@ private fun MonthSpendCard(
             color = colors.onSurfaceVariant,
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = dimens.space4),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -283,6 +285,7 @@ private fun MonthSpendCard(
                 text = "${budgetSummary.statusLabel} · ${budgetSummary.spentLabel} ${budgetSummary.budgetLabel}",
                 style = typography.bodyMedium,
                 color = if (budgetSummary.isOverBudget) colors.danger else colors.onSurfaceMuted,
+                modifier = Modifier.padding(top = dimens.space6),
             )
         }
         when {
@@ -292,6 +295,7 @@ private fun MonthSpendCard(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(dimens.space4),
                     verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = dimens.space6),
                 ) {
                     Text(
                         text = if (isIncrease) "↑" else "↓",
@@ -310,6 +314,7 @@ private fun MonthSpendCard(
                     text = stringResource(R.string.home_empty_hint),
                     style = typography.body,
                     color = colors.onSurfaceMuted,
+                    modifier = Modifier.padding(top = dimens.space6),
                 )
             }
         }
@@ -390,7 +395,7 @@ private fun HomeQuickAccessSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = dimens.space10),
-            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
             QuickAccessTile(
                 label = stringResource(R.string.quick_access_reports),

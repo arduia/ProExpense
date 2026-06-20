@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -34,6 +33,7 @@ fun QuickAccessTile(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val shapes = ProExpenseTheme.shapes
     val typography = ProExpenseTheme.typography
     val interactionSource = remember { MutableInteractionSource() }
     val tileShape = ProExpenseTheme.shapes.tile
@@ -50,12 +50,12 @@ fun QuickAccessTile(
             .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
             .padding(horizontal = dimens.space4, vertical = dimens.space12),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+        verticalArrangement = Arrangement.spacedBy(dimens.space7),
     ) {
         Box(
             modifier = Modifier
                 .size(dimens.quickAccessIconSize)
-                .clip(RoundedCornerShape(dimens.tileRadius))
+                .clip(shapes.quickAccessChip)
                 .background(resolvedIconBackground),
             contentAlignment = Alignment.Center,
         ) {
@@ -63,7 +63,7 @@ fun QuickAccessTile(
                 glyph = icon,
                 contentDescription = null,
                 tint = resolvedIconTint,
-                size = dimens.iconNav,
+                size = dimens.quickAccessIconGlyph,
             )
         }
         Text(
