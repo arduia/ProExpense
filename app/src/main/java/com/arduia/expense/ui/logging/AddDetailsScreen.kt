@@ -54,6 +54,7 @@ fun AddDetailsScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
     onDateTimeClick: () -> Unit = {},
+    onTagFieldClick: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -172,6 +173,32 @@ fun AddDetailsScreen(
                         text = stringResource(R.string.event_tag_format, eventTag),
                         style = typography.bodyMedium,
                         color = colors.tag,
+                    )
+                }
+            } else {
+                DetailFieldCard(
+                    leading = {
+                        ProIcon(
+                            glyph = ProIconGlyph.At,
+                            contentDescription = null,
+                            tint = colors.muted,
+                            size = dimens.iconNav,
+                        )
+                    },
+                    trailing = {
+                        ProIcon(
+                            glyph = ProIconGlyph.ChevronRight,
+                            contentDescription = stringResource(R.string.more),
+                            tint = colors.muted,
+                            size = dimens.iconInline,
+                        )
+                    },
+                    onClick = onTagFieldClick,
+                ) {
+                    Text(
+                        text = stringResource(R.string.add_event_tag),
+                        style = typography.bodyMedium,
+                        color = colors.onSurfaceMuted,
                     )
                 }
             }

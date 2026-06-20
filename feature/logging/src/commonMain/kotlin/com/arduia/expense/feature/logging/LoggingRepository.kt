@@ -14,6 +14,8 @@ data class LogRecordInput(
     val type: RecordType = RecordType.EXPENSE,
     val note: String? = null,
     val recordedAtEpochMillis: Long,
+    val tagType: com.arduia.expense.domain.ExpenseTagType? = null,
+    val tagId: String? = null,
 )
 
 interface LoggingRepository {

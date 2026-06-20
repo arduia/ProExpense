@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.testAppGraph
 import com.arduia.expense.ui.ExpenseApp
 import com.arduia.expense.ui.auth.PinEntryMode
 import com.arduia.expense.ui.auth.PinEntryScreenContent
@@ -108,6 +109,9 @@ class HandoffScreensScreenshotTest {
             step = PinSetupStep.Create,
             filledDots = 3,
             mismatchError = false,
+            securityQuestions = listOf("pet" to "What was your first pet's name?"),
+            selectedQuestionId = "pet",
+            onSecurityQuestionSelected = {},
             securityAnswer = "",
             onSecurityAnswerChange = {},
             onDigit = {},
@@ -150,7 +154,7 @@ class HandoffScreensScreenshotTest {
         )
     }
 
-    @Test fun expense_app_home() = capture { ExpenseApp() }
+    @Test fun expense_app_home() = capture { ExpenseApp(appGraph = testAppGraph()) }
 
     @Test fun add_amount_zero() = capture {
         AddAmountScreen(
@@ -215,6 +219,8 @@ class HandoffScreensScreenshotTest {
             onCategoriesClick = {},
             onCurrencyClick = {},
             onExportClick = {},
+            onImportClick = {},
+            onSecurityClick = {},
             onClearClick = {},
         )
     }
@@ -252,7 +258,14 @@ class HandoffScreensScreenshotTest {
         )
     }
 
-    @Test fun data_export() = capture { DataExportScreenContent(onBack = {}, onExport = {}) }
+    @Test fun data_export() = capture {
+        DataExportScreenContent(
+            exportPassword = "",
+            onExportPasswordChange = {},
+            onBack = {},
+            onExport = {},
+        )
+    }
 
     @Test fun clear_data() = capture {
         ClearDataScreenContent(

@@ -24,6 +24,8 @@ fun MoreHubScreenContent(
     onCategoriesClick: () -> Unit,
     onCurrencyClick: () -> Unit,
     onExportClick: () -> Unit,
+    onImportClick: () -> Unit,
+    onSecurityClick: () -> Unit,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -74,12 +76,28 @@ fun MoreHubScreenContent(
             onClick = onCurrencyClick,
         )
         MoreHubRow(
+            title = stringResource(R.string.more_security),
+            subtitle = stringResource(R.string.more_security_sub),
+            icon = ProIconGlyph.Fingerprint,
+            iconTint = colors.primaryDeep,
+            iconBackground = colors.primaryTint,
+            onClick = onSecurityClick,
+        )
+        MoreHubRow(
             title = stringResource(R.string.more_export),
             subtitle = stringResource(R.string.more_export_sub),
             icon = ProIconGlyph.Note,
             iconTint = colors.success,
             iconBackground = colors.successTint,
             onClick = onExportClick,
+        )
+        MoreHubRow(
+            title = stringResource(R.string.import_data),
+            subtitle = stringResource(R.string.more_import_sub),
+            icon = ProIconGlyph.Note,
+            iconTint = colors.onSurface,
+            iconBackground = colors.paperAlt,
+            onClick = onImportClick,
         )
         MoreHubRow(
             title = stringResource(R.string.more_clear),
@@ -106,6 +124,8 @@ private fun MoreHubPreview() {
             onCategoriesClick = {},
             onCurrencyClick = {},
             onExportClick = {},
+            onImportClick = {},
+            onSecurityClick = {},
             onClearClick = {},
         )
     }

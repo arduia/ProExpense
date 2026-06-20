@@ -5,21 +5,49 @@ object AppRoutes {
     const val CATEGORIES = "categories"
     const val CURRENCY = "currency"
     const val EXPORT = "export"
+    const val IMPORT = "import"
+    const val SECURITY = "security"
     const val CLEAR = "clear"
-    const val JOURNAL_DETAIL = "journal_detail"
+    const val JOURNAL_DETAIL_PREFIX = "journal_detail:"
+
+    fun journalDetail(recordId: String): String = "$JOURNAL_DETAIL_PREFIX$recordId"
+
+    fun journalDetailId(route: String): String? =
+        route.removePrefix(JOURNAL_DETAIL_PREFIX).takeIf { route.startsWith(JOURNAL_DETAIL_PREFIX) }
     const val EVENT_CREATE = "event_create"
     const val DEBT_TRACKER = "debt_tracker"
-    const val DEBT_ADD = "debt_add"
-    const val DEBT_DETAIL = "debt_detail"
+    const val DEBT_ADD_PREFIX = "debt_add:"
+
+    fun debtAdd(isLent: Boolean): String = "$DEBT_ADD_PREFIX${if (isLent) "lent" else "owe"}"
+
+    fun debtAddIsLent(route: String): Boolean? =
+        when (route) {
+            "${DEBT_ADD_PREFIX}lent" -> true
+            "${DEBT_ADD_PREFIX}owe" -> false
+            else -> null
+        }
+
+    const val DEBT_DETAIL_PREFIX = "debt_detail:"
+
+    fun debtDetail(debtId: String): String = "$DEBT_DETAIL_PREFIX$debtId"
+
+    fun debtDetailId(route: String): String? =
+        route.removePrefix(DEBT_DETAIL_PREFIX).takeIf { route.startsWith(DEBT_DETAIL_PREFIX) }
     const val SHARED_INPUT = "shared_input"
-    const val SHARED_SUMMARY = "shared_summary"
+    const val SHARED_SUMMARY_PREFIX = "shared_summary:"
+
+    fun sharedSummary(sharedCostId: String): String = "$SHARED_SUMMARY_PREFIX$sharedCostId"
+
+    fun sharedSummaryId(route: String): String? =
+        route.removePrefix(SHARED_SUMMARY_PREFIX).takeIf { route.startsWith(SHARED_SUMMARY_PREFIX) }
+
     const val SHARED_HISTORY = "shared_history"
 
     private const val EVENT_DETAIL_PREFIX = "event_detail:"
 
-    fun eventDetail(title: String): String = "$EVENT_DETAIL_PREFIX$title"
+    fun eventDetail(eventId: String): String = "$EVENT_DETAIL_PREFIX$eventId"
 
-    fun eventDetailTitle(route: String): String? =
+    fun eventDetailId(route: String): String? =
         route.removePrefix(EVENT_DETAIL_PREFIX).takeIf { route.startsWith(EVENT_DETAIL_PREFIX) }
 }
 

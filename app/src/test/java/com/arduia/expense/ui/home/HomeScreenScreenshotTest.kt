@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.testAppGraph
 import com.arduia.expense.ui.ExpenseApp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -28,7 +29,7 @@ class HomeScreenScreenshotTest {
     fun home_screen_with_bottom_nav() {
         composeTestRule.setContent {
             ProExpenseTheme {
-                ExpenseApp()
+                ExpenseApp(appGraph = testAppGraph())
             }
         }
         composeTestRule.onRoot().captureRoboImage()

@@ -3,13 +3,13 @@ package com.arduia.expense.feature.history
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.storage.InMemoryFinanceStore
+import com.arduia.expense.storage.EntityDataStore
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class InMemoryHistoryRepository(
-    private val store: InMemoryFinanceStore,
+    private val store: EntityDataStore,
     private val zoneId: ZoneId = ZoneId.systemDefault(),
 ) : HistoryRepository {
     override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> {
@@ -18,11 +18,19 @@ class InMemoryHistoryRepository(
                 (filter.currency == null || record.currency == filter.currency) &&
                 (filter.fromEpochMillis == null || record.recordedAtEpochMillis >= filter.fromEpochMillis) &&
                 (filter.toEpochMillis == null || record.recordedAtEpochMillis <= filter.toEpochMillis) &&
-                (filter.query.isNullOrBlank() ||
-                    record.note?.contains(filter.query, ignoreCase = true) == true ||
-                    record.categoryId.contains(filter.query, ignoreCase = true))
+                matchesQuery(record, filter.query)
         }
-        return Result.Success(records)
+        return Result.Success(records.sortedByDescending { it.recordedAtEpochMillis })
+    }
+
+    override suspend fun getById(id: String): Result<FinanceRecord?> {
+        val record = store.allRecords().firstOrNull { it.id == id }
+        return Result.Success(record)
+    }
+
+    override suspend fun deleteRecord(id: String): Result<Unit> {
+        store.deleteRecord(id)
+        return Result.Success(Unit)
     }
 
     override suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary> {
@@ -39,6 +47,17 @@ class InMemoryHistoryRepository(
                 recordCount = records.size,
             ),
         )
+    }
+
+    private fun matchesQuery(record: FinanceRecord, query: String?): Boolean {
+        if (query.isNullOrBlank()) return true
+        val normalized = query.trim()
+        if (record.note?.contains(normalized, ignoreCase = true) == true) return true
+        if (record.categoryId.contains(normalized, ignoreCase = true)) return true
+        val cents = record.homeCurrencyAmount.valueInCents
+        val amountString = cents.toString()
+        val displayAmount = (cents / 100.0).toString()
+        return amountString.contains(normalized) || displayAmount.contains(normalized)
     }
 
     private fun periodBounds(period: SummaryPeriod, anchor: ZonedDateTime): Pair<Long, Long> {

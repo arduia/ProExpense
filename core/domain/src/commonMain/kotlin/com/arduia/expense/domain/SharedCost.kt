@@ -7,4 +7,5 @@ data class SharedCost(
     val currency: CurrencyCode,
     val participants: List<Participant>,
     val recordedAtEpochMillis: Long,
+    val customShareCents: List<Long>? = null,
 )

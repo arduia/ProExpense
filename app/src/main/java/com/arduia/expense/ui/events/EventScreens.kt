@@ -24,6 +24,7 @@ import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.TransactionRow
@@ -176,6 +177,18 @@ fun EventDetailScreenContent(
     transactions: List<HomeTransactionItem>,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    dailyAverageLabel: String = "",
+    isEditing: Boolean = false,
+    editName: String = "",
+    onEditNameChange: (String) -> Unit = {},
+    showDeleteConfirm: Boolean = false,
+    linkedExpenseCount: Int = 0,
+    onEditToggle: () -> Unit = {},
+    onSaveEdit: () -> Unit = {},
+    onCloseEvent: () -> Unit = {},
+    onDeleteRequest: () -> Unit = {},
+    onCancelDelete: () -> Unit = {},
+    onConfirmDelete: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -210,6 +223,75 @@ fun EventDetailScreenContent(
                         isOverBudget = progress > 1f,
                     ),
                 )
+            }
+            if (dailyAverageLabel.isNotBlank()) {
+                item {
+                    Text(text = dailyAverageLabel, style = typography.caption, color = colors.muted)
+                }
+            }
+            if (isEditing) {
+                item {
+                    ProfileNameField(
+                        value = editName,
+                        onValueChange = onEditNameChange,
+                        placeholder = stringResource(R.string.event_name_hint),
+                    )
+                    ProButton(
+                        text = stringResource(R.string.save),
+                        onClick = onSaveEdit,
+                        size = ProButtonSize.Lg,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            } else {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                    ) {
+                        ProButton(
+                            text = stringResource(R.string.event_edit),
+                            onClick = onEditToggle,
+                            variant = ProButtonVariant.Secondary,
+                            modifier = Modifier.weight(1f),
+                        )
+                        if (!isClosed) {
+                            ProButton(
+                                text = stringResource(R.string.event_close),
+                                onClick = onCloseEvent,
+                                variant = ProButtonVariant.Ghost,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        ProButton(
+                            text = stringResource(R.string.delete),
+                            onClick = onDeleteRequest,
+                            variant = ProButtonVariant.Ghost,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+            }
+            if (showDeleteConfirm) {
+                item {
+                    Text(
+                        text = stringResource(R.string.event_delete_warning, linkedExpenseCount),
+                        style = typography.caption,
+                        color = colors.danger,
+                    )
+                    ProButton(
+                        text = stringResource(R.string.delete_confirm),
+                        onClick = onConfirmDelete,
+                        variant = ProButtonVariant.Ghost,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    ProButton(
+                        text = stringResource(R.string.cancel),
+                        onClick = onCancelDelete,
+                        variant = ProButtonVariant.Secondary,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             }
             if (isClosed) {
                 item {

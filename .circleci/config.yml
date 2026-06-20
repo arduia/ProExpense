@@ -1,5 +1,10 @@
 version: 2.1
 
+parameters:
+  run_firebase_test_lab:
+    type: boolean
+    default: false
+
 orbs:
   android: circleci/android@3.0.1
 
@@ -42,7 +47,55 @@ jobs:
           path: app/build/outputs
           destination: build-outputs
 
+  firebase_test_lab:
+    executor: android-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - android-sdk-v1-{{ checksum "scripts/setup-android-toolchain.sh" }}-{{ checksum "gradle/libs.versions.toml" }}
+            - android-sdk-v1-
+      - run:
+          name: Install Android toolchain and download dependencies
+          command: bash scripts/setup-android-toolchain.sh
+      - save_cache:
+          key: android-sdk-v1-{{ checksum "scripts/setup-android-toolchain.sh" }}-{{ checksum "gradle/libs.versions.toml" }}
+          paths:
+            - android-sdk
+            - ~/.gradle
+            - ~/.android
+      - run:
+          name: Install Google Cloud SDK
+          command: |
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq apt-transport-https ca-certificates gnupg curl
+            curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+            echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq google-cloud-cli
+      - run:
+          name: Authenticate with Google Cloud
+          command: |
+            if [[ -z "${FIREBASE_SERVICE_ACCOUNT_JSON:-}" || -z "${FIREBASE_PROJECT_ID:-}" ]]; then
+              echo "FIREBASE_SERVICE_ACCOUNT_JSON and FIREBASE_PROJECT_ID must be set in CircleCI project/context secrets."
+              exit 1
+            fi
+            echo "$FIREBASE_SERVICE_ACCOUNT_JSON" > /tmp/gcp-key.json
+            gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+            gcloud config set project "$FIREBASE_PROJECT_ID"
+      - run:
+          name: Run instrumentation tests on Firebase Test Lab
+          command: |
+            export FIREBASE_TEST_RESULTS_DIR="firebase-test-lab/${CIRCLE_SHA1:-local}"
+            export CI_COMMIT="${CIRCLE_SHA1:-local}"
+            bash scripts/run-firebase-test-lab.sh
+
 workflows:
   build_and_test:
     jobs:
       - build_and_test
+  firebase_test_lab:
+    when:
+      equal: [ true, << pipeline.parameters.run_firebase_test_lab >> ]
+    jobs:
+      - firebase_test_lab

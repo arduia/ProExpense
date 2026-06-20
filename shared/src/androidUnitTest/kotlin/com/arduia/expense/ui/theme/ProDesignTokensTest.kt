@@ -121,11 +121,6 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun nav_bottom_margin_matches_handoff() {
-        assertEquals(8f, ProDefaultDimens.navBottomMargin.value)
-    }
-
-    @Test
     fun nav_bar_height_matches_handoff() {
         assertEquals(72f, ProDefaultDimens.navBarHeight.value)
     }

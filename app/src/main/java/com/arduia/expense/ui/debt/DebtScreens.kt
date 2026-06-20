@@ -130,6 +130,9 @@ fun DebtAddScreenContent(
     onClose: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
+    warningMessage: String? = null,
+    errorMessage: String? = null,
+    onConfirmWarning: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -152,6 +155,18 @@ fun DebtAddScreenContent(
                 placeholder = stringResource(R.string.amount),
             )
             Text(text = dueDate, style = typography.caption, color = colors.onSurfaceMuted)
+            if (warningMessage != null) {
+                Text(text = warningMessage, style = typography.caption, color = colors.highlightDeep)
+                ProButton(
+                    text = stringResource(R.string.debt_save_anyway),
+                    onClick = onConfirmWarning,
+                    size = ProButtonSize.Lg,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            if (errorMessage != null) {
+                Text(text = errorMessage, style = typography.caption, color = colors.danger)
+            }
             ProButton(
                 text = stringResource(R.string.save),
                 onClick = onSave,

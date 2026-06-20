@@ -1,0 +1,19 @@
+CREATE TABLE shared_cost (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    total_cents INTEGER NOT NULL,
+    currency_code TEXT NOT NULL,
+    recorded_at INTEGER NOT NULL,
+    participants_json TEXT NOT NULL,
+    custom_shares_json TEXT
+);
+
+insertSharedCost:
+INSERT OR REPLACE INTO shared_cost(id, title, total_cents, currency_code, recorded_at, participants_json, custom_shares_json)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+selectAllSharedCosts:
+SELECT * FROM shared_cost ORDER BY recorded_at DESC;
+
+deleteAllSharedCosts:
+DELETE FROM shared_cost;

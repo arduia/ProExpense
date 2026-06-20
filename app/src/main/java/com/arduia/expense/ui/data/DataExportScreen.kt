@@ -16,11 +16,14 @@ import com.arduia.expense.R
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
 fun DataExportScreenContent(
+    exportPassword: String,
+    onExportPasswordChange: (String) -> Unit,
     onBack: () -> Unit,
     onExport: () -> Unit,
     modifier: Modifier = Modifier,
@@ -51,9 +54,18 @@ fun DataExportScreenContent(
                 style = typography.body,
                 color = colors.onSurfaceMuted,
             )
+            ProfileNameField(
+                value = exportPassword,
+                onValueChange = onExportPasswordChange,
+                placeholder = stringResource(R.string.export_password_hint),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space16),
+            )
             ProButton(
-                text = stringResource(R.string.export_csv),
+                text = stringResource(R.string.export_encrypted),
                 onClick = onExport,
+                enabled = exportPassword.isNotBlank(),
                 size = ProButtonSize.Lg,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,6 +84,11 @@ fun DataExportScreenContent(
 @Composable
 private fun DataExportPreview() {
     ProExpenseTheme {
-        DataExportScreenContent(onBack = {}, onExport = {})
+        DataExportScreenContent(
+            exportPassword = "",
+            onExportPasswordChange = {},
+            onBack = {},
+            onExport = {},
+        )
     }
 }

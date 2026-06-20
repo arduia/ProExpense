@@ -12,6 +12,8 @@ data class SharedCostInput(
     val currency: CurrencyCode,
     val participants: List<Participant>,
     val recordedAtEpochMillis: Long,
+    val splitMode: SplitMode = SplitMode.EVEN,
+    val customShareCents: List<Long>? = null,
 )
 
 data class SettlementLine(

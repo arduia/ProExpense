@@ -28,5 +28,9 @@ data class RecordSummary(
 interface HistoryRepository {
     suspend fun getRecords(filter: RecordHistoryFilter = RecordHistoryFilter()): Result<List<FinanceRecord>>
 
+    suspend fun getById(id: String): Result<FinanceRecord?>
+
+    suspend fun deleteRecord(id: String): Result<Unit>
+
     suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary>
 }

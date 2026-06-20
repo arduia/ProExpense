@@ -7,6 +7,7 @@ on:
       - develop
       - refactor/v2-migration
       - v2-migration
+      - cursor/v2-migration-work-6788
       - 'cursor/**'
   workflow_dispatch:
 
@@ -17,6 +18,8 @@ concurrency:
 env:
   APK_ARTIFACT_NAME: pro-expense-dev-debug
   APK_DOWNLOAD_NAME: pro-expense-dev-debug.apk
+  # Only these branches post APK build results to Slack.
+  APK_SLACK_NOTIFY_BRANCHES: main,develop,v2-migration,refactor/v2-migration,cursor/v2-migration-work-6788
 
 permissions:
   contents: write
@@ -38,6 +41,25 @@ jobs:
             git log -1 --pretty=%s
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
+
+      - name: Resolve Slack notify eligibility
+        id: slack
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          IFS=',' read -r -a NOTIFY_BRANCHES <<< "${{ env.APK_SLACK_NOTIFY_BRANCHES }}"
+          SHOULD_NOTIFY=false
+          for allowed in "${NOTIFY_BRANCHES[@]}"; do
+            if [[ "$BRANCH" == "$allowed" ]]; then
+              SHOULD_NOTIFY=true
+              break
+            fi
+          done
+          echo "should_notify=$SHOULD_NOTIFY" >> "$GITHUB_OUTPUT"
+          if [[ "$SHOULD_NOTIFY" == true ]]; then
+            echo "Slack notifications enabled for branch: $BRANCH"
+          else
+            echo "Slack notifications skipped for branch: $BRANCH"
+          fi
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -108,7 +130,7 @@ jobs:
             --prerelease
 
       - name: Notify Slack on success
-        if: success()
+        if: success() && steps.slack.outputs.should_notify == 'true'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
@@ -124,7 +146,7 @@ jobs:
             "${{ steps.upload_apk.outputs.artifact-url }}"
 
       - name: Notify Slack on failure
-        if: failure()
+        if: failure() && steps.slack.outputs.should_notify == 'true'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |

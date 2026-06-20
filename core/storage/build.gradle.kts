@@ -3,6 +3,15 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.sqldelight)
+}
+
+sqldelight {
+    databases {
+        create("ProExpenseDatabase") {
+            packageName.set("com.arduia.expense.storage.db")
+        }
+    }
 }
 
 kotlin {
@@ -15,6 +24,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:domain"))
+            implementation(project(":core:data"))
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
         }
@@ -24,6 +34,15 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.coroutines.core)
+            implementation(libs.sqldelight.android.driver)
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.androidx.sqlite)
+            implementation(libs.androidx.sqlite.framework)
+            implementation(libs.sqlcipher.android)
+            implementation(libs.androidx.security.crypto)
+        }
+        androidUnitTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }

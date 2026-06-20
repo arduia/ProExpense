@@ -33,6 +33,7 @@ enum class PinSetupStep {
     Create,
     Confirm,
     SecurityQuestion,
+    BiometricOffer,
 }
 
 @Composable
@@ -40,16 +41,22 @@ fun PinSetupScreenContent(
     step: PinSetupStep,
     filledDots: Int,
     mismatchError: Boolean,
+    securityQuestions: List<Pair<String, String>>,
+    selectedQuestionId: String,
+    onSecurityQuestionSelected: (String) -> Unit,
     securityAnswer: String,
     onSecurityAnswerChange: (String) -> Unit,
     onDigit: (Int) -> Unit,
     onBackspace: () -> Unit,
     onContinueSecurity: () -> Unit,
+    onBiometricAccepted: () -> Unit = {},
+    onBiometricSkipped: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val shapes = ProExpenseTheme.shapes
     val keypadState = if (mismatchError) PinKeypadState.Error else PinKeypadState.Default
 
     Column(
@@ -67,6 +74,7 @@ fun PinSetupScreenContent(
                 PinSetupStep.Create -> stringResource(R.string.pin_setup_title)
                 PinSetupStep.Confirm -> stringResource(R.string.pin_confirm_title)
                 PinSetupStep.SecurityQuestion -> stringResource(R.string.pin_security_title)
+                PinSetupStep.BiometricOffer -> stringResource(R.string.pin_biometric_offer_title)
             },
             style = typography.screenTitle,
             color = colors.onSurface,
@@ -77,6 +85,7 @@ fun PinSetupScreenContent(
                 PinSetupStep.Create -> stringResource(R.string.pin_setup_subtitle)
                 PinSetupStep.Confirm -> stringResource(R.string.pin_setup_subtitle)
                 PinSetupStep.SecurityQuestion -> stringResource(R.string.pin_security_subtitle)
+                PinSetupStep.BiometricOffer -> stringResource(R.string.pin_biometric_offer_subtitle)
             },
             style = typography.body,
             color = colors.onSurfaceMuted,
@@ -85,13 +94,36 @@ fun PinSetupScreenContent(
         )
 
         if (step == PinSetupStep.SecurityQuestion) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space24),
+                verticalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                securityQuestions.forEach { (id, label) ->
+                    val selected = id == selectedQuestionId
+                    Text(
+                        text = label,
+                        style = typography.body,
+                        color = if (selected) colors.onSurface else colors.onSurfaceMuted,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .proClickable(
+                                onClick = { onSecurityQuestionSelected(id) },
+                                shape = shapes.tile,
+                            )
+                            .padding(vertical = dimens.space8),
+                        textAlign = TextAlign.Start,
+                    )
+                }
+            }
             ProfileNameField(
                 value = securityAnswer,
                 onValueChange = onSecurityAnswerChange,
                 placeholder = stringResource(R.string.pin_security_hint),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = dimens.space32),
+                    .padding(top = dimens.space16),
             )
             Spacer(modifier = Modifier.weight(1f))
             ProButton(
@@ -102,6 +134,23 @@ fun PinSetupScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = dimens.space24),
+            )
+        } else if (step == PinSetupStep.BiometricOffer) {
+            Spacer(modifier = Modifier.weight(1f))
+            ProButton(
+                text = stringResource(R.string.pin_biometric_enable),
+                onClick = onBiometricAccepted,
+                size = ProButtonSize.Lg,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            ProButton(
+                text = stringResource(R.string.pin_biometric_skip),
+                onClick = onBiometricSkipped,
+                variant = com.arduia.expense.ui.design.ProButtonVariant.Ghost,
+                size = ProButtonSize.Lg,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space12, bottom = dimens.space24),
             )
         } else {
             if (mismatchError) {
@@ -254,6 +303,9 @@ private fun PinSetupPreview() {
             step = PinSetupStep.Create,
             filledDots = 3,
             mismatchError = false,
+            securityQuestions = listOf("pet" to "What was your first pet's name?"),
+            selectedQuestionId = "pet",
+            onSecurityQuestionSelected = {},
             securityAnswer = "",
             onSecurityAnswerChange = {},
             onDigit = {},
@@ -271,6 +323,9 @@ private fun PinSecurityPreview() {
             step = PinSetupStep.SecurityQuestion,
             filledDots = 0,
             mismatchError = false,
+            securityQuestions = listOf("pet" to "What was your first pet's name?"),
+            selectedQuestionId = "pet",
+            onSecurityQuestionSelected = {},
             securityAnswer = "",
             onSecurityAnswerChange = {},
             onDigit = {},
