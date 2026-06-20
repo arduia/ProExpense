@@ -64,7 +64,7 @@ Before writing UI, grep `shared/src/androidMain/kotlin/com/arduia/expense/ui/des
 | Text links (See all, Skip, + More) | `ProTextAction` — **never** bare `Text` + tiny padding |
 | Sheets | `ProBottomSheetHost(visible = …)` + `ProBottomSheet` |
 | Lists / rows | `TransactionRow`, `DayGroup(cardWrapped = …)` |
-| Amount / keypad | `AmountDisplay`, `NumericKeypad`, `AmountInput` — see [Numeric keypad fidelity](#numeric-keypad-fidelity-mandatory) |
+| Amount / keypad | `AmountDisplay`, `NumericKeypad`, `AmountInput` |
 | Categories | `CategoryPicker`, `CategoryChip` |
 | Detail fields | `DetailFieldCard`, `DetailNoteField`, `DetailDateTimeField`, `DetailTagField` |
 | Top bar | `ProTopBar`, `ProTopBarAction` |
@@ -126,6 +126,17 @@ class MyScreenScreenshotTest {
   under `app/src/test/screenshots/`
 - Gate: `./gradlew :app:verifyRoborazziDevDebug` or `./gradlew verifyAll` before push
 
+### Step 5 — Screen fidelity verification (mandatory before push)
+
+**Gate:** Every implemented state has been compared side-by-side to its **screen** PNG from
+`design-system-spec/screenshots/screens/` and mismatches are fixed or explicitly accepted.
+
+**Else:** Do not push. Open each PNG referenced in the screen markdown (`## States`, `## Edge
+cases`) and walk the checklist in [Screen fidelity verification](#screen-fidelity-verification-mandatory).
+
+Roborazzi baselines prove regression protection; they **do not replace** opening the spec PNGs
+during implementation.
+
 ---
 
 ## Patterns learned (do / don't)
@@ -144,11 +155,11 @@ class MyScreenScreenshotTest {
 
 | Do | Don't |
 |---|---|
+| **Verify every state against its screen PNG** — full layout in context on `paper` | Trust component gallery PNGs or markdown alone |
 | Read PNG — home recent list is **flat** (`DayGroup(cardWrapped = false)`) | Default `cardWrapped = true` everywhere |
 | Match spec section structure (DEFAULT / CUSTOM, eyebrow labels) | Invent alternate information architecture |
+| Match container vs key-level surfaces (what is `paper` vs `surface` / card) | Wrap sub-regions in `ProCard` when the screen PNG shows none |
 | `AmountInput` for keypad rules (7 whole, 2 fraction, comma display) | `(text.toDouble() * 100).toLong()` or ad-hoc parsers |
-| **`NumericKeypad` on transparent container** — keys sit on `paper`; only each key cell is white | `ProCard` / `surface` wrapper around the whole keypad grid |
-| Verify keypad against **screen** PNG (`add-amount.png`) when embedded in a flow | Rely on isolated component PNG alone (`keypad.png`) |
 | `stringResource(R.string.…)` for all user-visible copy | Hardcoded English in composables |
 
 ### Navigation & motion
@@ -182,22 +193,37 @@ app/src/test/.../            ← *ScreenshotTest + baselines
 
 ---
 
-## Numeric keypad fidelity (mandatory)
+## Screen fidelity verification (mandatory)
 
-When a screen embeds `NumericKeypad` (Add Expense amount, Shared Costs zero-total entry, etc.):
+**Screen PNGs are the ship gate.** Component specs (`design-system-spec/components/`,
+`design-system-spec/screenshots/<component>.png`) describe atoms in isolation. **Embedded layout
+always follows the screen PNG** — backgrounds, wrappers, spacing, and what sits on `paper` vs
+`surface`.
 
-1. **Open the screen PNG** — e.g. `design-system-spec/screenshots/screens/add-amount.png`.
-   The keypad area uses the app **`paper`** background; there is no white card shelf behind the
-   grid.
-2. **Container is transparent** — `NumericKeypad` is a padded `Column` only (16dp padding per
-   `amount-entry.md`). Do **not** wrap it in `ProCard`, `Surface`, or `.background(surface)`.
-3. **Keys stay white** — each key cell keeps `surface` + `line` border (radius 12dp); Save/Next
-   sit below the grid unchanged.
-4. **Screenshot gate** — if keypad container styling changes, re-record
-   `AddExpenseScreenshotTest.add_amount` (and any screen test that shows the keypad) before push.
+Before marking a screen done, for **each** state listed in the screen markdown:
 
-**Anti-pattern caught in review:** `ProCard { NumericKeypad(...) }` adds a bordered white panel
-that does not appear on `add-amount.png`.
+1. **Open the screen PNG** — path is in the markdown, usually
+   `design-system-spec/screenshots/screens/<state>.png` (e.g. `add-amount.png`,
+   `shared-input.png`, `edge-shared-zero.png`).
+2. **Compare full layout** — not just individual widgets:
+   - App background (`paper`) visible where the PNG shows it
+   - Card / sheet / bordered regions only where the PNG shows them
+   - Section order, eyebrows, empty vs filled fields, disabled actions
+   - Edge states show only the UI the PNG shows (e.g. minimal zero-validation layout)
+3. **Resolve conflicts** — when a component gallery PNG disagrees with the screen PNG, **the
+   screen PNG wins** for in-flow placement and container styling.
+4. **Encode in tests** — Roborazzi test + baseline per state; re-record after intentional fixes.
+
+**Examples of screen-PNG-only details (easy to miss without opening the PNG):**
+
+| Screen PNG | Detail the screen shows (not always in component spec) |
+|---|---|
+| `add-amount.png` | Keypad grid on `paper`; no outer card shelf — only key cells are white |
+| `home-*.png` | Recent list flat — no card wrap around day groups |
+| `edge-shared-zero.png` | Minimal layout — amount, validation, disabled save only |
+
+**Anti-pattern:** Implementing from `components/amount-entry.md` or `screenshots/keypad.png` alone
+and adding a `ProCard` wrapper that never appears on `add-amount.png`.
 
 ---
 
@@ -205,13 +231,15 @@ that does not appear on `add-amount.png`.
 
 Before marking a screen done:
 
+- [ ] **Every spec state PNG opened and compared** — layout, backgrounds, wrappers, section order,
+  and edge-case minimalism match `design-system-spec/screenshots/screens/` (screen wins over
+  component gallery when they differ)
 - [ ] Every spec state has a `@Preview`
 - [ ] Every spec state has a Roborazzi test + committed baseline PNG
 - [ ] `./gradlew verifyAll` green in session
 - [ ] No new hardcoded colors/dp/fonts where theme tokens exist
 - [ ] Text actions use `ProTextAction`
 - [ ] Sheets use animated `ProBottomSheetHost(visible = …)`
-- [ ] **Numeric keypad (if present): container transparent on `paper`; no `ProCard` wrapper; verified against screen PNG (`add-amount.png` or equivalent)**
 - [ ] Strings in `app/src/main/res/values/strings.xml` (and shared if design component)
 - [ ] Run **`compose-product-auditor`** — fix Blockers/High before push
 
@@ -224,6 +252,9 @@ For atoms/molecules, optionally align with `DesignSystemSpecScreenshotTest` in `
 - Add `SpecMyComponentCapture()` to `DesignSystemSpecCaptures.kt`
 - Add `@Test fun my_component()` to `DesignSystemSpecScreenshotTest`
 - Compare against `design-system-spec/screenshots/<component>.png`
+
+**Screen PNGs override component PNGs** for anything about placement, wrappers, and backgrounds
+in a real flow. Component gallery proves the atom; screen Roborazzi proves the ship target.
 
 Screens use **full-device** captures in `:app`; components use **SpecCaptureHost** width in
 `:shared`.
@@ -254,9 +285,6 @@ Screens use **full-device** captures in `:app`; components use **SpecCaptureHost
 
 Files: `AddExpenseAmountScreen.kt`, `AddExpenseDetailsScreen.kt`, `QuickLogFlow.kt`,
 `ExpenseEntryPreviewData.kt`, `AddExpenseScreenshotTest.kt`.
-
-**Keypad note:** `NumericKeypad.kt` uses a transparent container; `add_amount` screenshot is the
-regression guard for embedded keypad layout on `paper`.
 
 ---
 
