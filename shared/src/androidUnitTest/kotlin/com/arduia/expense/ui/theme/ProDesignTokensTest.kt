@@ -1,7 +1,12 @@
 package com.arduia.expense.ui.theme
 
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import org.junit.Assert.assertEquals
@@ -9,6 +14,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@OptIn(ExperimentalTextApi::class, ExperimentalComposeUiApi::class)
 class ProDesignTokensTest {
 
     @Test
@@ -200,6 +206,50 @@ class ProDesignTokensTest {
         assertEquals(FontWeight.Medium, ProDefaultTypography.eyebrow.fontWeight)
         assertEquals(FontWeight.Normal, ProDefaultTypography.tabTimestamp.fontWeight)
         assertNotNull(ProDefaultTypography.monoFamily)
+    }
+
+    @Test
+    fun instrument_serif_emphasis_uses_italic_regular_face() {
+        val emphasis = ProDefaultTypography.heroGreetingEmphasis
+        assertEquals(ProDefaultTypography.serifFamily, emphasis.fontFamily)
+        assertEquals(FontWeight.Normal, emphasis.fontWeight)
+        assertEquals(FontStyle.Italic, emphasis.fontStyle)
+    }
+
+    @Test
+    fun serif_title_and_amount_styles_never_request_bold() {
+        val serifStyles = listOf(
+            ProDefaultTypography.displayAmount,
+            ProDefaultTypography.summaryAmount,
+            ProDefaultTypography.listAmount,
+            ProDefaultTypography.heroGreetingEmphasis,
+            ProDefaultTypography.sheetTitle,
+            ProDefaultTypography.sectionHead,
+            ProDefaultTypography.keypadKey,
+        )
+        serifStyles.forEach { style ->
+            assertEquals(FontWeight.Normal, style.fontWeight)
+        }
+    }
+
+    @Test
+    fun title_and_amount_styles_use_figma_line_metrics() {
+        val alignedStyles = listOf(
+            ProDefaultTypography.displayAmount,
+            ProDefaultTypography.summaryAmount,
+            ProDefaultTypography.listAmount,
+            ProDefaultTypography.appBarTitle,
+            ProDefaultTypography.heroGreeting,
+            ProDefaultTypography.heroGreetingEmphasis,
+            ProDefaultTypography.sheetTitle,
+            ProDefaultTypography.sectionHead,
+            ProDefaultTypography.keypadKey,
+        )
+        alignedStyles.forEach { style ->
+            assertEquals(PlatformTextStyle(includeFontPadding = false), style.platformStyle)
+            assertEquals(LineHeightStyle.Alignment.Center, style.lineHeightStyle?.alignment)
+            assertEquals(LineHeightStyle.Trim.Both, style.lineHeightStyle?.trim)
+        }
     }
 
     @Test
