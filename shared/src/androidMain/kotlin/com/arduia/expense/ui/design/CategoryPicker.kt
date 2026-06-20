@@ -45,14 +45,11 @@ fun CategoryPicker(
             title = stringResource(R.string.category_section_default),
             trailing = if (onMoreClick != null && !showCustomSection) {
                 {
-                    Text(
+                    ProTextAction(
                         text = stringResource(R.string.category_picker_more),
+                        onClick = onMoreClick,
                         style = typography.bodyMedium,
                         color = colors.primary,
-                        modifier = Modifier.proClickable(
-                            onClick = onMoreClick,
-                            shape = ProExpenseTheme.shapes.chip,
-                        ),
                     )
                 }
             } else {

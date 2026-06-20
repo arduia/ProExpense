@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,14 +46,11 @@ fun ProfileStepHeader(
         ) {
             ProfileStepProgressBar(currentStep = step, totalSteps = totalSteps)
             if (onSkip != null) {
-                Text(
+                ProTextAction(
                     text = skipLabel,
+                    onClick = onSkip,
                     style = typography.navAction,
                     color = colors.muted,
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .minimumInteractiveComponentSize()
-                        .proRippleClickable(onClick = onSkip),
                 )
             }
         }

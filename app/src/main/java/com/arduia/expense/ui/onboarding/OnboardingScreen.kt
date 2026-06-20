@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.OnboardingIllustration
 import com.arduia.expense.ui.design.OnboardingPageIndicator
@@ -29,7 +27,7 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.proRippleClickable
+import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.launch
@@ -76,15 +74,12 @@ fun OnboardingScreenContent(
                 .padding(top = dimens.space8, bottom = dimens.space16),
         ) {
             if (pagerState.currentPage < lastPage) {
-                Text(
+                ProTextAction(
                     text = stringResource(R.string.skip),
+                    onClick = onSkip,
+                    modifier = Modifier.align(Alignment.CenterEnd),
                     style = typography.navAction,
                     color = colors.muted,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(2.dp)
-                        .minimumInteractiveComponentSize()
-                        .proRippleClickable(onClick = onSkip),
                 )
             }
         }
@@ -126,29 +121,23 @@ fun OnboardingScreenContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (pagerState.currentPage > 0) {
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .proRippleClickable(
-                            onClick = {
-                                scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                            },
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimens.space4),
-                ) {
-                    ProIcon(
-                        glyph = ProIconGlyph.Back,
-                        contentDescription = null,
-                        tint = colors.muted,
-                        size = dimens.iconInline,
-                    )
-                    Text(
-                        text = stringResource(R.string.back),
-                        style = typography.navAction,
-                        color = colors.muted,
-                    )
-                }
+                ProTextAction(
+                    text = stringResource(R.string.back),
+                    onClick = {
+                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+                    },
+                    modifier = Modifier.weight(1f),
+                    style = typography.navAction,
+                    color = colors.muted,
+                    leading = {
+                        ProIcon(
+                            glyph = ProIconGlyph.Back,
+                            contentDescription = null,
+                            tint = colors.muted,
+                            size = dimens.iconInline,
+                        )
+                    },
+                )
             } else {
                 Box(modifier = Modifier.weight(1f))
             }
@@ -160,36 +149,28 @@ fun OnboardingScreenContent(
 
             if (pagerState.currentPage < lastPage) {
                 Row(
-                    modifier = Modifier
-                        .weight(1f),
+                    modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .minimumInteractiveComponentSize()
-                            .proRippleClickable(
-                                onClick = {
-                                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                                },
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.next),
-                            style = typography.navAction.copy(
-                                fontWeight = typography.bodySemiBold.fontWeight,
-                            ),
-                            color = colors.onSurface,
-                        )
-                        ProIcon(
-                            glyph = ProIconGlyph.ChevronRight,
-                            contentDescription = null,
-                            tint = colors.onSurface,
-                            size = dimens.iconInline,
-                        )
-                    }
+                    ProTextAction(
+                        text = stringResource(R.string.next),
+                        onClick = {
+                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                        },
+                        style = typography.navAction.copy(
+                            fontWeight = typography.bodySemiBold.fontWeight,
+                        ),
+                        color = colors.onSurface,
+                        trailing = {
+                            ProIcon(
+                                glyph = ProIconGlyph.ChevronRight,
+                                contentDescription = null,
+                                tint = colors.onSurface,
+                                size = dimens.iconInline,
+                            )
+                        },
+                    )
                 }
             } else {
                 Box(modifier = Modifier.weight(1f))

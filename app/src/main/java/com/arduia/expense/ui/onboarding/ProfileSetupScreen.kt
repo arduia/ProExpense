@@ -2,6 +2,7 @@ package com.arduia.expense.ui.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +29,7 @@ import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.ProfileStepHeader
 import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.design.defaultCurrencyOptions
-import com.arduia.expense.ui.design.proRippleClickable
+import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -166,15 +167,12 @@ fun ProfileSetupScreenContent(
                                 },
                             )
                         }
-                        Text(
+                        ProTextAction(
                             text = stringResource(R.string.currency_picker_title),
+                            onClick = onOpenCurrencySheet,
                             style = typography.bodySemiBold,
                             color = colors.primary,
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .minimumInteractiveComponentSize()
-                                .padding(top = dimens.space4)
-                                .proRippleClickable(onClick = onOpenCurrencySheet),
+                            modifier = Modifier.padding(top = dimens.space4),
                         )
                     }
                     ProButton(
@@ -199,15 +197,14 @@ private fun BoxWithSheet(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    androidx.compose.foundation.layout.Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
         content()
-        if (showSheet) {
-            ProBottomSheetHost(
-                title = sheetTitle,
-                onClose = onCloseSheet,
-                sheetContent = sheetContent,
-            )
-        }
+        ProBottomSheetHost(
+            visible = showSheet,
+            title = sheetTitle,
+            onClose = onCloseSheet,
+            sheetContent = sheetContent,
+        )
     }
 }
 

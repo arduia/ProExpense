@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +15,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
@@ -38,12 +41,11 @@ fun ProTextAction(
     style: TextStyle = ProExpenseTheme.typography.navAction,
     color: Color = ProExpenseTheme.colors.onSurface,
     enabled: Boolean = true,
+    leading: (@Composable () -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
 ) {
     val dimens = ProExpenseTheme.dimensions
-    Text(
-        text = text,
-        style = style,
-        color = color,
+    Row(
         modifier = modifier
             .padding(horizontal = dimens.space8, vertical = dimens.space6)
             .minimumInteractiveComponentSize()
@@ -52,7 +54,13 @@ fun ProTextAction(
                 shape = ProExpenseTheme.shapes.searchField,
                 enabled = enabled,
             ),
-    )
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space4),
+    ) {
+        leading?.invoke()
+        Text(text = text, style = style, color = color)
+        trailing?.invoke()
+    }
 }
 
 @Composable

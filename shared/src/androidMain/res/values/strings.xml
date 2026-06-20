@@ -15,4 +15,8 @@
     <string name="category_picker_add">+ Add</string>
     <string name="event_over_budget">OVER BUDGET</string>
     <string name="toast_check_icon">Success</string>
+    <string name="link_to_subtitle">Pick one event or one debt — not both. Choosing one greys out the other.</string>
+    <string name="link_events_section">EVENTS</string>
+    <string name="link_debts_section">DEBTS</string>
+    <string name="link_debts_unavailable">· unavailable while an event is selected</string>
 </resources>

@@ -1,0 +1,147 @@
+package com.arduia.expense.ui.logging
+
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onRoot
+import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.ui.preview.previewExpenseAmountTyped
+import com.arduia.expense.ui.preview.previewExpenseAmountZeroValidation
+import com.arduia.expense.ui.preview.previewExpenseDetails
+import com.arduia.expense.ui.preview.previewExpenseDetailsNoteLimit
+import com.arduia.expense.ui.theme.ProArtboard
+import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.Rule
+import org.junit.Test
+import org.junit.experimental.categories.Category
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+
+@RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(
+    sdk = [33],
+    qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
+)
+@Category(ScreenshotTests::class)
+class AddExpenseScreenshotTest {
+
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    private fun capture(content: @androidx.compose.runtime.Composable () -> Unit) {
+        composeTestRule.setContent {
+            ProExpenseTheme {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(ProExpenseTheme.colors.paper),
+                ) {
+                    content()
+                }
+            }
+        }
+        composeTestRule.onRoot().captureRoboImage()
+    }
+
+    @Test
+    fun add_amount() {
+        capture {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountTyped,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_zero() {
+        capture {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountZeroValidation,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_details() {
+        capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetails,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun edge_draft() {
+        capture {
+            QuickLogFlow(
+                onDismiss = {},
+                showDraftPrompt = true,
+                draftAmountLabel = "$12.50",
+            )
+        }
+    }
+
+    @Test
+    fun edge_note() {
+        capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetailsNoteLimit,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun edge_tag() {
+        capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetails.copy(showTagSheet = true),
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+}

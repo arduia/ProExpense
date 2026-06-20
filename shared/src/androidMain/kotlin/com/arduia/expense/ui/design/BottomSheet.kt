@@ -5,6 +5,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +31,6 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.sheetEnter
 import com.arduia.expense.ui.theme.sheetExit
-import androidx.compose.animation.core.tween
 
 @Composable
 fun ProBottomSheet(
@@ -113,6 +114,7 @@ fun ProBottomSheet(
 
 @Composable
 fun ProBottomSheetHost(
+    visible: Boolean,
     title: String,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -122,39 +124,47 @@ fun ProBottomSheetHost(
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
 
-    AnimatedVisibility(
-        visible = true,
-        modifier = modifier.fillMaxSize(),
-        enter = fadeIn(
-            animationSpec = tween(
-                durationMillis = motion.fadeDurationMillis,
-                easing = motion.standardEasing,
+    Box(modifier = modifier.fillMaxSize()) {
+        AnimatedVisibility(
+            visible = visible,
+            modifier = Modifier.fillMaxSize(),
+            enter = fadeIn(
+                animationSpec = tween(
+                    durationMillis = motion.fadeDurationMillis,
+                    easing = motion.standardEasing,
+                ),
             ),
-        ),
-        exit = fadeOut(
-            animationSpec = tween(
-                durationMillis = motion.fadeDurationMillis,
-                easing = motion.standardEasing,
+            exit = fadeOut(
+                animationSpec = tween(
+                    durationMillis = motion.fadeDurationMillis,
+                    easing = motion.standardEasing,
+                ),
             ),
-        ),
-    ) {
-        Box(
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colors.scrim)
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null,
+                        onClick = onClose,
+                    ),
+            )
+        }
+        AnimatedVisibility(
+            visible = visible,
             modifier = Modifier
                 .fillMaxSize()
-                .background(colors.scrim),
+                .align(Alignment.BottomCenter),
+            enter = motion.sheetEnter(reduceMotion),
+            exit = motion.sheetExit(reduceMotion),
         ) {
-            AnimatedVisibility(
-                visible = true,
-                modifier = Modifier.align(Alignment.BottomCenter),
-                enter = motion.sheetEnter(reduceMotion),
-                exit = motion.sheetExit(reduceMotion),
+            ProBottomSheet(
+                title = title,
+                onClose = onClose,
             ) {
-                ProBottomSheet(
-                    title = title,
-                    onClose = onClose,
-                ) {
-                    sheetContent()
-                }
+                sheetContent()
             }
         }
     }
