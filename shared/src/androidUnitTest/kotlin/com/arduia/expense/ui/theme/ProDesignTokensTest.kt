@@ -72,6 +72,8 @@ class ProDesignTokensTest {
     @Test
     fun list_amount_uses_instrument_serif() {
         assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.listAmount.fontFamily)
+        assertEquals(18f, ProDefaultTypography.listAmount.fontSize.value)
+        assertEquals(0.em, ProDefaultTypography.listAmount.letterSpacing)
     }
 
     @Test
@@ -104,6 +106,7 @@ class ProDesignTokensTest {
         val head = ProDefaultTypography.sectionHead
         assertEquals(ProDefaultTypography.serifFamily, head.fontFamily)
         assertEquals(18f, head.fontSize.value)
+        assertEquals(20f, head.lineHeight.value)
         assertEquals((-0.01).em, head.letterSpacing)
     }
 
@@ -132,7 +135,7 @@ class ProDesignTokensTest {
 
     @Test
     fun nav_surface_alpha_matches_spec_glass() {
-        assertEquals(0.86f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
+        assertEquals(0.92f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
     }
 
     @Test
@@ -170,7 +173,7 @@ class ProDesignTokensTest {
         assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.eyebrow.fontFamily)
         assertEquals(ProDefaultTypography.monoFamily, ProDefaultTypography.tabTimestamp.fontFamily)
         assertEquals(0.08.em, ProDefaultTypography.tabTimestamp.letterSpacing)
-        assertEquals(0.10.em, ProDefaultTypography.eyebrow.letterSpacing)
+        assertEquals(0.12.em, ProDefaultTypography.eyebrow.letterSpacing)
     }
 
     @Test
@@ -203,8 +206,9 @@ class ProDesignTokensTest {
 
     @Test
     fun geist_mono_covers_label_weights() {
-        assertEquals(FontWeight.Medium, ProDefaultTypography.eyebrow.fontWeight)
+        assertEquals(FontWeight.SemiBold, ProDefaultTypography.eyebrow.fontWeight)
         assertEquals(FontWeight.Normal, ProDefaultTypography.tabTimestamp.fontWeight)
+        assertEquals(FontWeight.Medium, ProDefaultTypography.monoFigure.fontWeight)
         assertNotNull(ProDefaultTypography.monoFamily)
     }
 

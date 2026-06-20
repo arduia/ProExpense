@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.theme
 
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.ExperimentalTextApi
@@ -85,12 +86,14 @@ private fun amountTextStyle(
 data class ProTypography(
     val displayAmount: TextStyle,
     val summaryAmount: TextStyle,
+    val detailsAmount: TextStyle,
     val listAmount: TextStyle,
     val appBarTitle: TextStyle,
     val heroGreeting: TextStyle,
     val heroGreetingEmphasis: TextStyle,
     val sheetTitle: TextStyle,
     val sectionHead: TextStyle,
+    val screenHeaderTitle: TextStyle,
     val body: TextStyle,
     val bodyMedium: TextStyle,
     val bodySemiBold: TextStyle,
@@ -99,6 +102,7 @@ data class ProTypography(
     val eyebrow: TextStyle,
     val button: TextStyle,
     val tabTimestamp: TextStyle,
+    val monoFigure: TextStyle,
     val keypadKey: TextStyle,
     val navLabel: TextStyle,
     val searchField: TextStyle,
@@ -123,10 +127,15 @@ val ProDefaultTypography = ProTypography(
         lineHeightSp = 40f,
         letterSpacingEm = -0.02f,
     ),
+    detailsAmount = amountTextStyle(
+        fontSizeSp = 26f,
+        lineHeightSp = 28f,
+        letterSpacingEm = -0.01f,
+    ),
     listAmount = amountTextStyle(
         fontSizeSp = 18f,
         lineHeightSp = 18f,
-        letterSpacingEm = -0.01f,
+        letterSpacingEm = 0f,
     ),
     appBarTitle = titleTextStyle(
         fontFamily = ManropeFamily,
@@ -150,14 +159,20 @@ val ProDefaultTypography = ProTypography(
     sheetTitle = titleTextStyle(
         fontFamily = InstrumentSerifFamily,
         fontSizeSp = 22f,
-        lineHeightSp = 24.2f,
+        lineHeightSp = 24f,
         letterSpacingEm = -0.01f,
     ),
     sectionHead = titleTextStyle(
         fontFamily = InstrumentSerifFamily,
         fontSizeSp = 18f,
-        lineHeightSp = 19.8f,
+        lineHeightSp = 20f,
         letterSpacingEm = -0.01f,
+    ),
+    screenHeaderTitle = titleTextStyle(
+        fontFamily = InstrumentSerifFamily,
+        fontSizeSp = 17f,
+        lineHeightSp = 20f,
+        letterSpacingEm = 0f,
     ),
     body = TextStyle(
         fontFamily = ManropeFamily,
@@ -193,8 +208,8 @@ val ProDefaultTypography = ProTypography(
         fontFamily = GeistMonoFamily,
         fontSize = 11.sp,
         lineHeight = proLineHeight(11f, 1.3f),
-        letterSpacing = 0.10.em,
-        fontWeight = FontWeight.Medium,
+        letterSpacing = 0.12.em,
+        fontWeight = FontWeight.SemiBold,
     ),
     button = TextStyle(
         fontFamily = ManropeFamily,
@@ -209,6 +224,14 @@ val ProDefaultTypography = ProTypography(
         lineHeight = proLineHeight(12f, 1.3f),
         letterSpacing = 0.08.em,
         fontWeight = FontWeight.Normal,
+        fontFeatureSettings = "tnum",
+    ),
+    monoFigure = TextStyle(
+        fontFamily = GeistMonoFamily,
+        fontSize = 12.sp,
+        lineHeight = proLineHeight(12f, 1.3f),
+        letterSpacing = 0.04.em,
+        fontWeight = FontWeight.Medium,
         fontFeatureSettings = "tnum",
     ),
     keypadKey = amountTextStyle(
@@ -232,4 +255,17 @@ val ProDefaultTypography = ProTypography(
     sansFamily = ManropeFamily,
     serifFamily = InstrumentSerifFamily,
     monoFamily = GeistMonoFamily,
+)
+
+fun ProTypography.toMaterialTypography(): Typography = Typography(
+    displayLarge = displayAmount,
+    headlineMedium = heroGreeting,
+    titleLarge = sheetTitle,
+    titleMedium = sectionHead,
+    bodyLarge = body,
+    bodyMedium = bodyMedium,
+    bodySmall = caption,
+    labelLarge = button,
+    labelMedium = eyebrow,
+    labelSmall = navLabel,
 )

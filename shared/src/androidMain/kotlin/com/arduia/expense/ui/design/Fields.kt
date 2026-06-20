@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -112,6 +113,59 @@ fun SearchField(
 }
 
 @Composable
+fun SearchFieldShell(
+    query: String,
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "Search notes, amount, category…",
+    onClick: () -> Unit = {},
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val interactionSource = remember { MutableInteractionSource() }
+    val shellShape = ProExpenseTheme.shapes.searchField
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shellShape)
+            .border(BorderStroke(1.dp, colors.line), shellShape)
+            .background(colors.surface)
+            .proClickable(
+                onClick = onClick,
+                shape = shellShape,
+                interactionSource = interactionSource,
+            )
+            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space10),
+    ) {
+        ProIcon(
+            glyph = ProIconGlyph.Search,
+            contentDescription = null,
+            tint = colors.muted,
+            size = dimens.iconInline,
+        )
+        Text(
+            text = query.ifEmpty { placeholder },
+            style = typography.searchField,
+            color = if (query.isEmpty()) colors.muted else colors.onSurface,
+            modifier = Modifier.weight(1f),
+        )
+        if (query.isNotEmpty()) {
+            ProIcon(
+                glyph = ProIconGlyph.Close,
+                contentDescription = "Clear",
+                tint = colors.muted,
+                size = dimens.iconInline,
+                modifier = Modifier.proIconClickable(onClick = onClear),
+            )
+        }
+    }
+}
+
+@Composable
 fun FilterChip(
     label: String,
     selected: Boolean,
@@ -139,5 +193,20 @@ fun FilterChip(
             .border(BorderStroke(1.dp, borderColor), chipShape)
             .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
             .padding(horizontal = dimens.space12, vertical = dimens.space6),
+    )
+}
+
+@Composable
+fun ProFilterChip(
+    label: String,
+    active: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FilterChip(
+        label = label,
+        selected = active,
+        onClick = onClick,
+        modifier = modifier,
     )
 }

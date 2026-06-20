@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
-import com.arduia.expense.ui.design.DayHeader
+import com.arduia.expense.ui.design.DayGroup
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
@@ -39,8 +38,8 @@ import com.arduia.expense.ui.design.HeroGreeting
 import com.arduia.expense.ui.design.NoticeBanner
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.QuickAccessTile
-import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.preview.HomeUiState
@@ -264,11 +263,11 @@ private fun MonthSpendCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = monthSpend,
-                style = typography.summaryAmount,
-                color = colors.onSurface,
-            )
+                Text(
+                    text = monthSpend,
+                    style = typography.summaryAmount.copy(fontFamily = typography.serifFamily),
+                    color = colors.onSurface,
+                )
             if (showSparkline) {
                 SpendSparkline(
                     modifier = Modifier
@@ -478,19 +477,20 @@ private fun HomeRecentSection(
             verticalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
             groups.forEach { group ->
-                item(key = "home-header-${group.dayTitle}") {
-                    DayHeader(title = group.dayTitle, total = group.dayTotal)
-                }
-                items(
-                    items = group.transactions,
-                    key = { "${group.dayTitle}-${it.note}-${it.amount}" },
-                ) { item ->
-                    TransactionRow(
-                        categoryId = item.categoryId,
-                        note = item.note,
-                        meta = item.meta,
-                        amount = item.amount,
-                        tag = item.tag,
+                item(key = "home-day-${group.dayTitle}") {
+                    DayGroup(
+                        title = group.dayTitle,
+                        total = group.dayTotal,
+                        transactions = group.transactions.mapIndexed { index, item ->
+                            ProTransactionRowModel(
+                                id = "${group.dayTitle}-${item.note}-${item.amount}-$index",
+                                categoryId = item.categoryId,
+                                note = item.note,
+                                meta = item.meta,
+                                amount = item.amount,
+                                tag = item.tag,
+                            )
+                        },
                     )
                 }
             }

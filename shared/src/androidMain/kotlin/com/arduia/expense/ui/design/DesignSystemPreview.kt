@@ -103,23 +103,27 @@ fun ProDesignSystemFieldsContent() {
 
 @Composable
 fun ProDesignSystemListsContent() {
-    Column {
-        DayHeader(title = "Today · May 25", total = "$80.90")
-        TransactionRow(
-            categoryId = "food",
-            note = "Lunch with M.",
-            meta = "Food · 12:30 PM",
-            amount = "$12.40",
-        )
-        TransactionRow(
-            categoryId = "entertainment",
-            note = "Movie · Dune",
-            meta = "Entertainment · 08:10 PM",
-            amount = "$18.00",
-            tag = "Bali Trip",
-            showDivider = false,
-        )
-    }
+    DayGroup(
+        title = "Today · May 25",
+        total = "$80.90",
+        transactions = listOf(
+            ProTransactionRowModel(
+                id = "food-lunch",
+                categoryId = "food",
+                note = "Lunch with M.",
+                meta = "Food · 12:30 PM",
+                amount = "$12.40",
+            ),
+            ProTransactionRowModel(
+                id = "entertainment-movie",
+                categoryId = "entertainment",
+                note = "Movie · Dune",
+                meta = "Entertainment · 08:10 PM",
+                amount = "$18.00",
+                tag = "Bali Trip",
+            ),
+        ),
+    )
 }
 
 @Composable

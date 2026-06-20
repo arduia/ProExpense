@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -132,50 +134,35 @@ fun SpecFilterChipsCapture() {
 
 @Composable
 fun SpecTransactionDayGroupCapture() {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val shape = ProExpenseTheme.shapes.card
-    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
-    Column(
-        modifier = Modifier
-            .width(360.dp)
-            .then(
-                if (cardElevation != null) {
-                    Modifier.shadow(
-                        elevation = cardElevation.blur,
-                        shape = shape,
-                        spotColor = cardElevation.color,
-                        ambientColor = cardElevation.color,
-                    )
-                } else {
-                    Modifier
-                },
-            )
-            .background(colors.surface, shape)
-            .padding(horizontal = 14.dp, vertical = 6.dp),
-    ) {
-        DayHeader(title = "Today · May 25", total = "$42")
-        TransactionRow(
-            categoryId = "food",
-            note = "Lunch with M.",
-            meta = "Food · 12:30 PM",
-            amount = "$12.40",
-        )
-        TransactionRow(
-            categoryId = "coffee",
-            note = "Oat latte",
-            meta = "Coffee runs · 08:40 AM",
-            amount = "$5.00",
-        )
-        TransactionRow(
-            categoryId = "entertainment",
-            note = "Movie · Dune",
-            meta = "Entertainment",
-            amount = "$18.00",
-            tag = "Bali Trip",
-            showDivider = false,
-        )
-    }
+    DayGroup(
+        title = "Today · May 25",
+        total = "$42",
+        transactions = listOf(
+            ProTransactionRowModel(
+                id = "food-lunch",
+                categoryId = "food",
+                note = "Lunch with M.",
+                meta = "Food · 12:30 PM",
+                amount = "$12.40",
+            ),
+            ProTransactionRowModel(
+                id = "coffee-latte",
+                categoryId = "coffee",
+                note = "Oat latte",
+                meta = "Coffee runs · 08:40 AM",
+                amount = "$5.00",
+            ),
+            ProTransactionRowModel(
+                id = "entertainment-movie",
+                categoryId = "entertainment",
+                note = "Movie · Dune",
+                meta = "Entertainment",
+                amount = "$18.00",
+                tag = "Bali Trip",
+            ),
+        ),
+        modifier = Modifier.width(360.dp),
+    )
 }
 
 @Composable
@@ -290,18 +277,34 @@ fun SpecValidationCapture() {
             .padding(22.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(
-                text = "$",
-                style = typography.summaryAmount.copy(fontSize = 22.sp),
-                color = colors.primary,
-            )
-            Text(
-                text = "0",
-                style = typography.summaryAmount.copy(fontSize = 44.sp, letterSpacing = (-0.025).em),
-                color = colors.muted2,
-            )
-        }
+        Text(
+            text = buildAnnotatedString {
+                withStyle(
+                    ProExpenseTheme.typography.displayAmount
+                        .copy(
+                            fontSize = 22.sp,
+                            fontFamily = typography.serifFamily,
+                        )
+                        .toSpanStyle()
+                        .copy(color = colors.primary),
+                ) {
+                    append("$")
+                }
+                withStyle(
+                    typography.displayAmount
+                        .copy(
+                            fontSize = 44.sp,
+                            letterSpacing = (-0.025).em,
+                            fontFamily = typography.serifFamily,
+                        )
+                        .toSpanStyle()
+                        .copy(color = colors.muted2),
+                ) {
+                    append("0")
+                }
+            },
+            style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+        )
         Text(
             text = "Amount must be greater than $0",
             style = typography.caption,
@@ -366,7 +369,9 @@ fun SpecBottomSheetCapture() {
             )
             Text(
                 text = "Edit expense",
-                style = ProExpenseTheme.typography.sheetTitle,
+                style = ProExpenseTheme.typography.sectionHead.copy(
+                    fontFamily = ProExpenseTheme.typography.serifFamily,
+                ),
                 color = colors.onSurface,
             )
             Row(

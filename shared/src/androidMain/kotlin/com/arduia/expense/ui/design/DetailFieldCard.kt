@@ -142,6 +142,10 @@ fun DetailAmountSummaryCard(
                 Text(text = "Edit", style = typography.bodyMedium, color = colors.primary)
             }
         }
-        Text(text = amountLabel, style = typography.sectionHead, color = colors.onSurface)
+        Text(
+            text = amountLabel,
+            style = typography.detailsAmount.copy(fontFamily = typography.serifFamily),
+            color = colors.onSurface,
+        )
     }
 }

@@ -3,6 +3,7 @@ package com.arduia.expense.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -30,6 +31,7 @@ fun ProExpenseTheme(
     ) {
         MaterialTheme(
             colorScheme = materialColors,
+            typography = typography.toMaterialTypography(),
             content = content,
         )
     }
