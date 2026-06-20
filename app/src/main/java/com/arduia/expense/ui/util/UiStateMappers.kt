@@ -57,6 +57,7 @@ fun EventListItemState.toEventBudgetCardState(): EventBudgetCardState = EventBud
     progress = progress,
     isOverBudget = isOverBudget,
     overAmountLabel = overAmountLabel,
+    dailyAverageLabel = dailyAverageLabel,
 )
 
 fun DebtRecordUiState.toDebtRecordItem(): com.arduia.expense.ui.preview.DebtRecordItem =

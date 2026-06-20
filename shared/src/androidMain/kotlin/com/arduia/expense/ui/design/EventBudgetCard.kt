@@ -32,6 +32,7 @@ data class EventBudgetCardState(
     val progress: Float,
     val isOverBudget: Boolean = false,
     val overAmountLabel: String? = null,
+    val dailyAverageLabel: String? = null,
 )
 
 @Composable
@@ -127,6 +128,13 @@ fun EventBudgetCard(
                     style = typography.caption,
                     color = colors.onSurfaceMuted,
                 )
+                if (!state.dailyAverageLabel.isNullOrBlank()) {
+                    Text(
+                        text = state.dailyAverageLabel,
+                        style = typography.caption,
+                        color = colors.muted,
+                    )
+                }
             }
         }
 

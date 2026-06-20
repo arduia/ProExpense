@@ -16,6 +16,7 @@ import com.arduia.expense.R
 import androidx.compose.runtime.collectAsState
 import com.arduia.expense.di.AppGraph
 import com.arduia.expense.feature.importexport.ExportFormat
+import com.arduia.expense.ui.auth.PinBiometricEffect
 import com.arduia.expense.ui.auth.PinEntryScreenContent
 import com.arduia.expense.ui.auth.SecuritySettingsScreenContent
 import com.arduia.expense.ui.categories.CategoryListScreenContent
@@ -685,6 +686,12 @@ fun PinEntryRouteHost(
     LaunchedEffect(Unit) {
         viewModel.onScreenLoaded()
     }
+
+    PinBiometricEffect(
+        shouldTrigger = state.biometricShouldTrigger && state.mode == com.arduia.expense.feature.auth.PinEntryMode.ENTRY,
+        onSuccess = viewModel::onBiometricUnlock,
+        onFailure = viewModel::onBiometricFailed,
+    )
 
     PinEntryScreenContent(
         modifier = modifier,

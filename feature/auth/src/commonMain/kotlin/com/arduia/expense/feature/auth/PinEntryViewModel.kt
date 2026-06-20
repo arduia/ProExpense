@@ -114,6 +114,11 @@ class PinEntryViewModel(
         }
     }
 
+    fun onBiometricFailed() {
+        if (_uiState.value.mode == PinEntryMode.LOCKOUT) return
+        scope.launch { handleWrongPin() }
+    }
+
     private suspend fun verifyPin(pin: String) {
         if (lockoutRepository.isLockedOut(nowEpochMillis())) {
             refreshLockoutState()
