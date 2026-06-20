@@ -64,7 +64,7 @@ Before writing UI, grep `shared/src/androidMain/kotlin/com/arduia/expense/ui/des
 | Text links (See all, Skip, + More) | `ProTextAction` — **never** bare `Text` + tiny padding |
 | Sheets | `ProBottomSheetHost(visible = …)` + `ProBottomSheet` |
 | Lists / rows | `TransactionRow`, `DayGroup(cardWrapped = …)` |
-| Amount / keypad | `AmountDisplay`, `NumericKeypad`, `AmountInput` |
+| Amount / keypad | `AmountDisplay`, `NumericKeypad`, `AmountInput` — see [Numeric keypad fidelity](#numeric-keypad-fidelity-mandatory) |
 | Categories | `CategoryPicker`, `CategoryChip` |
 | Detail fields | `DetailFieldCard`, `DetailNoteField`, `DetailDateTimeField`, `DetailTagField` |
 | Top bar | `ProTopBar`, `ProTopBarAction` |
@@ -147,6 +147,8 @@ class MyScreenScreenshotTest {
 | Read PNG — home recent list is **flat** (`DayGroup(cardWrapped = false)`) | Default `cardWrapped = true` everywhere |
 | Match spec section structure (DEFAULT / CUSTOM, eyebrow labels) | Invent alternate information architecture |
 | `AmountInput` for keypad rules (7 whole, 2 fraction, comma display) | `(text.toDouble() * 100).toLong()` or ad-hoc parsers |
+| **`NumericKeypad` on transparent container** — keys sit on `paper`; only each key cell is white | `ProCard` / `surface` wrapper around the whole keypad grid |
+| Verify keypad against **screen** PNG (`add-amount.png`) when embedded in a flow | Rely on isolated component PNG alone (`keypad.png`) |
 | `stringResource(R.string.…)` for all user-visible copy | Hardcoded English in composables |
 
 ### Navigation & motion
@@ -180,6 +182,25 @@ app/src/test/.../            ← *ScreenshotTest + baselines
 
 ---
 
+## Numeric keypad fidelity (mandatory)
+
+When a screen embeds `NumericKeypad` (Add Expense amount, Shared Costs zero-total entry, etc.):
+
+1. **Open the screen PNG** — e.g. `design-system-spec/screenshots/screens/add-amount.png`.
+   The keypad area uses the app **`paper`** background; there is no white card shelf behind the
+   grid.
+2. **Container is transparent** — `NumericKeypad` is a padded `Column` only (16dp padding per
+   `amount-entry.md`). Do **not** wrap it in `ProCard`, `Surface`, or `.background(surface)`.
+3. **Keys stay white** — each key cell keeps `surface` + `line` border (radius 12dp); Save/Next
+   sit below the grid unchanged.
+4. **Screenshot gate** — if keypad container styling changes, re-record
+   `AddExpenseScreenshotTest.add_amount` (and any screen test that shows the keypad) before push.
+
+**Anti-pattern caught in review:** `ProCard { NumericKeypad(...) }` adds a bordered white panel
+that does not appear on `add-amount.png`.
+
+---
+
 ## Per-screen checklist
 
 Before marking a screen done:
@@ -190,6 +211,7 @@ Before marking a screen done:
 - [ ] No new hardcoded colors/dp/fonts where theme tokens exist
 - [ ] Text actions use `ProTextAction`
 - [ ] Sheets use animated `ProBottomSheetHost(visible = …)`
+- [ ] **Numeric keypad (if present): container transparent on `paper`; no `ProCard` wrapper; verified against screen PNG (`add-amount.png` or equivalent)**
 - [ ] Strings in `app/src/main/res/values/strings.xml` (and shared if design component)
 - [ ] Run **`compose-product-auditor`** — fix Blockers/High before push
 
@@ -232,6 +254,9 @@ Screens use **full-device** captures in `:app`; components use **SpecCaptureHost
 
 Files: `AddExpenseAmountScreen.kt`, `AddExpenseDetailsScreen.kt`, `QuickLogFlow.kt`,
 `ExpenseEntryPreviewData.kt`, `AddExpenseScreenshotTest.kt`.
+
+**Keypad note:** `NumericKeypad.kt` uses a transparent container; `add_amount` screenshot is the
+regression guard for embedded keypad layout on `paper`.
 
 ---
 
