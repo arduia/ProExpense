@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -169,6 +170,7 @@ fun ProfileSetupScreenContent(
                             style = typography.bodySemiBold,
                             color = colors.primary,
                             modifier = Modifier
+                                .minimumInteractiveComponentSize()
                                 .padding(top = dimens.space4)
                                 .proRippleClickable(onClick = onOpenCurrencySheet),
                         )
