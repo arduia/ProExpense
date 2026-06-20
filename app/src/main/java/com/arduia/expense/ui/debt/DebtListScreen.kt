@@ -138,7 +138,7 @@ private fun DebtSummaryCard(
             .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
             .background(colors.surface)
             .padding(dimens.cardPadding),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
             modifier = Modifier.weight(1f),
