@@ -19,4 +19,5 @@
     <string name="link_events_section">EVENTS</string>
     <string name="link_debts_section">DEBTS</string>
     <string name="link_debts_unavailable">· unavailable while an event is selected</string>
+    <string name="shared_people_word">PEOPLE</string>
 </resources>

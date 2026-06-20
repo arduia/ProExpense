@@ -19,6 +19,7 @@ fun SegmentedToggle(
     selectedIndex: Int,
     onSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    usePrimarySelection: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -36,14 +37,16 @@ fun SegmentedToggle(
     ) {
         options.forEachIndexed { index, label ->
             val selected = index == selectedIndex
+            val selectedBackground = if (usePrimarySelection) colors.primary else colors.onSurface
+            val selectedContent = if (usePrimarySelection) colors.onPrimaryWarm else colors.onPrimaryWarm
             Text(
                 text = label,
                 style = if (selected) typography.bodySemiBold else typography.bodyMedium,
-                color = if (selected) colors.onPrimaryWarm else colors.onSurfaceVariant,
+                color = if (selected) selectedContent else colors.onSurfaceVariant,
                 modifier = Modifier
                     .weight(1f)
                     .clip(containerShape)
-                    .background(if (selected) colors.onSurface else colors.surface)
+                    .background(if (selected) selectedBackground else colors.surface)
                     .proClickable(onClick = { onSelected(index) }, shape = containerShape)
                     .padding(vertical = dimens.space8),
             )

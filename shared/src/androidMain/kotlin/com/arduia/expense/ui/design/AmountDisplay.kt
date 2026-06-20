@@ -32,6 +32,8 @@ fun AmountDisplay(
     isZero: Boolean = amountText.toDoubleOrNull()?.let { it <= 0.0 } ?: true,
     showZeroValidation: Boolean = false,
     zeroHelperMessage: String = "Amount must be greater than $0",
+    eyebrowText: String? = null,
+    usePrimaryAmount: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -69,7 +71,7 @@ fun AmountDisplay(
         horizontalAlignment = Alignment.Start,
     ) {
         Text(
-            text = "AMOUNT · $currencyCode",
+            text = eyebrowText ?: "AMOUNT · $currencyCode",
             style = typography.eyebrow,
             color = colors.muted,
         )
@@ -79,7 +81,11 @@ fun AmountDisplay(
                 amountText = amountText,
                 isZero = isZero,
                 primaryColor = colors.primary,
-                amountColor = if (isZero) colors.muted2 else colors.onSurface,
+                amountColor = when {
+                    isZero -> colors.muted2
+                    usePrimaryAmount -> colors.primary
+                    else -> colors.onSurface
+                },
                 decimalColor = colors.onSurfaceMuted,
                 serifFamily = typography.serifFamily,
             ),

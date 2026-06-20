@@ -15,6 +15,7 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
+import com.arduia.expense.ui.sharedcost.SharedCostsFlow
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
             ProExpenseTheme {
                 var onboardingComplete by rememberSaveable { mutableStateOf(false) }
                 var showQuickLog by rememberSaveable { mutableStateOf(false) }
+                var showSharedCosts by rememberSaveable { mutableStateOf(false) }
 
                 Box(Modifier.fillMaxSize()) {
                     if (onboardingComplete) {
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
                             selectedTab = HomeNavTab.Home,
                             onTabSelected = {},
                             onAddClick = { showQuickLog = true },
+                            onSplitClick = { showSharedCosts = true },
                         )
                     } else {
                         FirstLaunchFlow(
@@ -46,6 +49,12 @@ class MainActivity : ComponentActivity() {
                         QuickLogFlow(
                             onDismiss = { showQuickLog = false },
                             onSaved = { showQuickLog = false },
+                        )
+                    }
+
+                    if (showSharedCosts) {
+                        SharedCostsFlow(
+                            onDismiss = { showSharedCosts = false },
                         )
                     }
                 }
