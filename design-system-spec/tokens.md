@@ -61,8 +61,10 @@ Three families, each with one job. Load as Compose `FontFamily` from bundled ass
 |---|---|---|---|---|
 | Display amount | Instrument Serif | 64 / 64 | -0.025em | Regular |
 | Card amount | Instrument Serif | 40 / 1.0 | -0.02em | Regular |
-| Screen title | Instrument Serif | 32 / 1.0 | -0.015em | Regular |
-| Section head | Instrument Serif | 18 / 1.1 | -0.01em | Regular |
+| Hero greeting | Instrument Serif | 30 / 1.05 | -0.015em | Regular |
+| Sheet title | Instrument Serif | 22 / 1.1 | -0.01em | Regular |
+| Section / day head | Instrument Serif | 18 / 1.1 | -0.01em | Regular |
+| Screen header / app-bar | Instrument Serif | 17 / 1.15 | 0 | Regular |
 | Body | Manrope | 14 / 1.4 | 0 | 400 / 500 |
 | Emphasis / button | Manrope | 14 / 1.4 | -0.005em | 600 |
 | Caption | Manrope | 11.5 / 1.4 | 0 | 400 / 500 |
@@ -72,6 +74,66 @@ Three families, each with one job. Load as Compose `FontFamily` from bundled ass
 > **Family clarity:** `--sans` resolves to **Manrope** (the in-app reference doc mislabels it "Geist" — the loaded webfont is Manrope, so use **Manrope** in Compose). `--mono` is **Geist Mono**. `--serif` is **Instrument Serif** (display only — never body or controls). Tracking is in `em`; convert with `letterSpacing = (-0.025).em` etc.
 
 > **M3 `Typography` mapping:** `displayLarge`→display amount, `headlineMedium`→screen title, `titleMedium`→section head, `bodyMedium`→body, `labelMedium`→eyebrow, `bodySmall`→caption.
+
+### 2a. Android spec — Titles & Amounts (Instrument Serif)
+
+> **Android rendering note (match the web/Figma metrics):** Compose adds vertical font padding by default, so Instrument Serif sits lower and the line box looks taller. On every title/amount `TextStyle` set `platformStyle = PlatformTextStyle(includeFontPadding = false)` and `lineHeightStyle = LineHeightStyle(alignment = Center, trim = Both)`. Also confirm Instrument Serif actually loaded (else it falls back to Noto Serif) — it ships **Regular + Italic only**, so never request bold (it synthesizes/thickens). `sp` follows the system font scale; compare at 1.0× for a pixel match.
+
+Both titles and amounts share one family — **Instrument Serif**, `FontWeight.Normal`. Provide it via the Google Fonts provider (`androidx.compose.ui.text.googlefonts.GoogleFont("Instrument Serif")`) or a bundled `res/font/instrument_serif.ttf`. The display character comes from size + serif, **never bold**. Compose `letterSpacing` in `.em` maps 1:1 to the CSS `em` values below.
+
+**Titles** — all Instrument Serif, `FontWeight.Normal`. There are four distinct title roles; the **screen-header / app-bar title is `17.sp`** (not large), the hero greeting is the big one.
+
+| Role | Example | `fontFamily` | `fontSize` | `lineHeight` | `letterSpacing` | `fontWeight` |
+|---|---|---|---|---|---|---|
+| Hero greeting | "Hi, *Maya*" | InstrumentSerif | `30.sp` | `32.sp` (1.05) | `(-0.015).em` | `Normal` |
+| Sheet title | "Link to…", "Date & time" | InstrumentSerif | `22.sp` | `24.sp` (1.1) | `(-0.01).em` | `Normal` |
+| Section / day head | "Today · May 25" | InstrumentSerif | `18.sp` | `20.sp` (1.1) | `(-0.01).em` | `Normal` |
+| Screen header / app-bar | "New expense", "Details" | InstrumentSerif | `17.sp` | `20.sp` (1.15) | `0` (none) | `Normal` |
+
+Color: `onSurface` `#212121` (event/persona accents may recolor to `Primary`). Titles are single-line — truncate with ellipsis, never wrap. The **hero greeting's emphasis word** ("Maya") is **Instrument Serif _italic_** in `Primary` `#039BE5`. Screen-header titles are **center-aligned** in the top bar (back/close on the left, equal spacer on the right).
+
+**Amounts**
+| Role | `fontFamily` | `fontSize` | `lineHeight` | `letterSpacing` | `fontWeight` |
+|---|---|---|---|---|---|
+| Display amount (Add screen) | InstrumentSerif | `64.sp` | `64.sp` (1.0) | `(-0.025).em` | `Normal` |
+| Card amount ("Spent today") | InstrumentSerif | `40.sp` | `40.sp` (1.0) | `(-0.02).em` | `Normal` |
+| Row amount (transaction) | InstrumentSerif | `18.sp` | `18.sp` | `0` | `Normal` |
+| Read-only amount (Details) | InstrumentSerif | `26.sp` | `28.sp` | `(-0.01).em` | `Normal` |
+| Keypad keys | InstrumentSerif | `22.sp` | — | `0` | `Normal` |
+
+An amount is **not one flat string** — compose it with `AnnotatedString`/`buildAnnotatedString` or a `Row(verticalAlignment = Alignment.Top)`:
+
+- **`$` glyph** — smaller (≈ `0.47×` the figure: `30.sp` at 64, `20.sp` at 40), color `Primary` `#039BE5`, cap/top-aligned to the figure.
+- **Whole number** — `onSurface` `#212121`, thousands grouped with commas (`NumberFormat`/`%,d`). Max 7 integer digits.
+- **Decimal `.00`** — `onSurfaceVariant` `#757575`, always 2 digits, slightly de-emphasized.
+- **Empty / placeholder** — whole figure in `muted2` `#BDBDBD`, `$` stays `Primary`.
+
+```kotlin
+// example TextStyle (drop into Typography or use inline)
+val DisplayAmount = TextStyle(
+    fontFamily = InstrumentSerif,
+    fontWeight = FontWeight.Normal,
+    fontSize = 64.sp,
+    lineHeight = 64.sp,
+    letterSpacing = (-0.025).em,
+)
+val ScreenHeaderTitle = TextStyle(   // app-bar title — "New expense", "Details"
+    fontFamily = InstrumentSerif,
+    fontWeight = FontWeight.Normal,
+    fontSize = 17.sp,
+    lineHeight = 20.sp,
+    letterSpacing = 0.sp,
+)
+val HeroGreeting = TextStyle(         // "Hi, Maya"
+    fontFamily = InstrumentSerif,
+    fontWeight = FontWeight.Normal,
+    fontSize = 30.sp,
+    lineHeight = 32.sp,
+    letterSpacing = (-0.015).em,
+)
+```
+
+See [`amount-entry.md`](components/amount-entry.md) for the input/format/validation behavior that drives the display amount.
 
 ---
 

@@ -78,7 +78,7 @@ fun ProBottomSheet(
                         .width(dimens.sheetHandleWidth)
                         .height(dimens.sheetHandleHeight)
                         .clip(RoundedCornerShape(999.dp))
-                        .background(Color(0x2E2B1F17)),
+                        .background(colors.onSurface.copy(alpha = 0.18f)),
                 )
             }
             Row(

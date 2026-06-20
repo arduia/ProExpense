@@ -87,11 +87,12 @@ fun ProButton(
         .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
         .then(
             if (variant == ProButtonVariant.Primary && fillMaxWidth) {
+                val shadowColor = colors.primary.copy(alpha = 0.25f)
                 Modifier.shadow(
                     elevation = 6.dp,
                     shape = shape,
-                    spotColor = Color(0x40039BE5),
-                    ambientColor = Color(0x40039BE5),
+                    spotColor = shadowColor,
+                    ambientColor = shadowColor,
                 )
             } else {
                 Modifier

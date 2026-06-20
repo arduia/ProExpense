@@ -4,6 +4,8 @@ The amount-entry primitive auto-opens on the Add screen so logging takes under 5
 
 ![Numeric keypad](../screenshots/keypad.png)
 
+> **Type:** display amount + serif keys follow [tokens.md §2a — Titles & Amounts (Android)](../tokens.md#2a-android-spec--titles--amounts-instrument-serif).
+
 ## Keypad
 - 3-column grid, gap 8dp, card padding 16dp, max width 300dp.
 - **Keys are serif** (money is always serif): Instrument Serif 22sp, `ink`, on white cards (1dp `line`, radius 12dp, padding 13dp vertical).

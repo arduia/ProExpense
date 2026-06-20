@@ -20,6 +20,8 @@ The core list unit. Transactions are grouped under a day header carrying a serif
 | **Tag** *(optional)* | `tag` orange `#FB8C00`, prefixed by 10dp `at` icon |
 | **Amount** | Instrument Serif 18sp, `ink`, right-aligned |
 
+> **Type:** serif amount + day header follow [tokens.md §2a — Titles & Amounts (Android)](../tokens.md#2a-android-spec--titles--amounts-instrument-serif).
+
 - Money is **always serif**. The event tag is the only warm accent in the row.
 
 ## Behavior
