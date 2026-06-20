@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ import com.arduia.expense.ui.design.NoticeBanner
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTransactionRowModel
+import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
@@ -379,14 +379,11 @@ private fun HomeQuickAccessSection(
                 color = colors.onSurfaceVariant,
             )
             if (showCustomize) {
-                Text(
+                ProTextAction(
                     text = stringResource(R.string.customize),
+                    onClick = onCustomize,
                     style = typography.caption,
                     color = colors.onSurfaceMuted,
-                    modifier = Modifier.proClickable(
-                        onClick = onCustomize,
-                        shape = ProExpenseTheme.shapes.searchField,
-                    ),
                 )
             }
         }
@@ -463,17 +460,11 @@ private fun HomeRecentSection(
                 style = typography.eyebrow,
                 color = colors.onSurface,
             )
-            Text(
+            ProTextAction(
                 text = stringResource(R.string.see_all),
+                onClick = onSeeAll,
                 style = typography.caption.copy(fontWeight = FontWeight.SemiBold),
                 color = colors.primary,
-                modifier = Modifier
-                    .padding(2.dp)
-                    .minimumInteractiveComponentSize()
-                    .proClickable(
-                        onClick = onSeeAll,
-                        shape = ProExpenseTheme.shapes.searchField,
-                    ),
             )
         }
 
@@ -498,6 +489,7 @@ private fun HomeRecentSection(
                             tag = item.tag,
                         )
                     },
+                    cardWrapped = false,
                 )
             }
         }
