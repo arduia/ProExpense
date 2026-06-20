@@ -159,28 +159,34 @@ fun OnboardingScreenContent(
             if (pagerState.currentPage < lastPage) {
                 Row(
                     modifier = Modifier
-                        .weight(1f)
-                        .proRippleClickable(
-                            onClick = {
-                                scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                            },
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .weight(1f),
                     horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        text = stringResource(R.string.next),
-                        style = typography.navAction.copy(
-                            fontWeight = typography.bodySemiBold.fontWeight,
-                        ),
-                        color = colors.onSurface,
-                    )
-                    ProIcon(
-                        glyph = ProIconGlyph.ChevronRight,
-                        contentDescription = null,
-                        tint = colors.onSurface,
-                        size = dimens.iconInline,
-                    )
+                    Row(
+                        modifier = Modifier
+                            .minimumInteractiveComponentSize()
+                            .proRippleClickable(
+                                onClick = {
+                                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                                },
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.next),
+                            style = typography.navAction.copy(
+                                fontWeight = typography.bodySemiBold.fontWeight,
+                            ),
+                            color = colors.onSurface,
+                        )
+                        ProIcon(
+                            glyph = ProIconGlyph.ChevronRight,
+                            contentDescription = null,
+                            tint = colors.onSurface,
+                            size = dimens.iconInline,
+                        )
+                    }
                 }
             } else {
                 Box(modifier = Modifier.weight(1f))

@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -465,10 +466,12 @@ private fun HomeRecentSection(
                 text = stringResource(R.string.see_all),
                 style = typography.caption.copy(fontWeight = FontWeight.SemiBold),
                 color = colors.primary,
-                modifier = Modifier.proClickable(
-                    onClick = onSeeAll,
-                    shape = ProExpenseTheme.shapes.searchField,
-                ),
+                modifier = Modifier
+                    .minimumInteractiveComponentSize()
+                    .proClickable(
+                        onClick = onSeeAll,
+                        shape = ProExpenseTheme.shapes.searchField,
+                    ),
             )
         }
 
