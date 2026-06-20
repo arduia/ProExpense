@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -117,7 +116,7 @@ fun TransactionRow(
                 Text(
                     text = meta,
                     style = typography.caption,
-                    color = colors.onSurfaceMuted,
+                    color = colors.muted,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -131,7 +130,7 @@ fun TransactionRow(
                         glyph = ProIconGlyph.At,
                         contentDescription = null,
                         tint = colors.tag,
-                        size = dimens.iconInline,
+                        size = dimens.iconTag,
                     )
                     Text(
                         text = tag,
@@ -196,7 +195,6 @@ fun DayGroup(
     onRowClick: ((ProTransactionRowModel) -> Unit)? = null,
     cardWrapped: Boolean = true,
 ) {
-    val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
 
     val groupContent: @Composable () -> Unit = {
@@ -220,15 +218,9 @@ fun DayGroup(
                     amount = item.amount,
                     tag = item.tag,
                     fresh = item.id == freshRowId,
-                    showDivider = !cardWrapped && index < transactions.lastIndex,
+                    showDivider = index < transactions.lastIndex,
                     onClick = onRowClick?.let { click -> { click(item) } },
                 )
-                if (cardWrapped && index < transactions.lastIndex) {
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = colors.lineSoft,
-                    )
-                }
             }
         }
     }

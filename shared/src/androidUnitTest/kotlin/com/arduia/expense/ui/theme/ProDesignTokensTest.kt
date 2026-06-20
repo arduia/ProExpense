@@ -135,7 +135,7 @@ class ProDesignTokensTest {
 
     @Test
     fun nav_surface_alpha_matches_spec_glass() {
-        assertEquals(0.92f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
+        assertEquals(0.86f, ProDefaultDimens.navSurfaceAlpha, 0.001f)
     }
 
     @Test
@@ -145,8 +145,16 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun nav_fab_drop_offset_matches_handoff() {
-        assertEquals(4f, ProDefaultDimens.navFabDropOffset.value)
+    fun nav_fab_protrusion_matches_spec() {
+        assertEquals(4f, ProDefaultDimens.navFabProtrusion.value)
+    }
+
+    @Test
+    fun nav_fab_offset_is_fab_size_minus_protrusion() {
+        assertEquals(
+            ProDefaultDimens.fabSize - ProDefaultDimens.navFabProtrusion,
+            ProDefaultDimens.navFabOffset,
+        )
     }
 
     @Test
@@ -157,7 +165,7 @@ class ProDesignTokensTest {
     @Test
     fun nav_shell_bottom_inset_accounts_for_fab_raise() {
         assertEquals(
-            ProDefaultDimens.navBarHeight + ProDefaultDimens.navFabOffset,
+            ProDefaultDimens.navBarHeight + ProDefaultDimens.fabSize + ProDefaultDimens.navFabProtrusion,
             ProDefaultDimens.navShellBottomInset,
         )
     }

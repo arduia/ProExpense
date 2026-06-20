@@ -3,10 +3,11 @@ package com.arduia.expense.ui.home
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
-import com.arduia.expense.ui.design.DayGroup
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
@@ -38,8 +37,8 @@ import com.arduia.expense.ui.design.HeroGreeting
 import com.arduia.expense.ui.design.NoticeBanner
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.QuickAccessTile
+import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.preview.HomeUiState
@@ -73,7 +72,7 @@ fun HomeScreenContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = dimens.space18)
+            .padding(horizontal = dimens.screenPadding)
             .padding(top = dimens.space14),
     ) {
         HomeHeader(
@@ -447,7 +446,12 @@ private fun HomeRecentSection(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = dimens.navShellBottomInset),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -458,7 +462,7 @@ private fun HomeRecentSection(
             Text(
                 text = stringResource(R.string.recent_section),
                 style = typography.eyebrow,
-                color = colors.onSurfaceVariant,
+                color = colors.onSurface,
             )
             Text(
                 text = stringResource(R.string.see_all),
@@ -471,29 +475,16 @@ private fun HomeRecentSection(
             )
         }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = dimens.navShellBottomInset),
-            verticalArrangement = Arrangement.spacedBy(dimens.space8),
-        ) {
-            groups.forEach { group ->
-                item(key = "home-day-${group.dayTitle}") {
-                    DayGroup(
-                        title = group.dayTitle,
-                        total = group.dayTotal,
-                        transactions = group.transactions.mapIndexed { index, item ->
-                            ProTransactionRowModel(
-                                id = "${group.dayTitle}-${item.note}-${item.amount}-$index",
-                                categoryId = item.categoryId,
-                                note = item.note,
-                                meta = item.meta,
-                                amount = item.amount,
-                                tag = item.tag,
-                            )
-                        },
-                    )
-                }
-            }
+        val transactions = groups.flatMap { it.transactions }
+        transactions.forEach { item ->
+            TransactionRow(
+                categoryId = item.categoryId,
+                note = item.note,
+                meta = item.meta,
+                amount = item.amount,
+                tag = item.tag,
+                showDivider = false,
+            )
         }
     }
 }

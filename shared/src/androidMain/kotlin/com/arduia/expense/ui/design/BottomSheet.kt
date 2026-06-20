@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -69,7 +70,7 @@ fun ProBottomSheet(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = dimens.space12, bottom = dimens.space8),
+                    .padding(top = dimens.space10, bottom = dimens.space14),
                 contentAlignment = Alignment.Center,
             ) {
                 Box(
@@ -77,13 +78,13 @@ fun ProBottomSheet(
                         .width(dimens.sheetHandleWidth)
                         .height(dimens.sheetHandleHeight)
                         .clip(RoundedCornerShape(999.dp))
-                        .background(colors.onSurface.copy(alpha = 0.18f)),
+                        .background(Color(0x2E2B1F17)),
                 )
             }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimens.space18, vertical = dimens.space8),
+                    .padding(horizontal = dimens.space20, vertical = dimens.space8),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {

@@ -54,10 +54,10 @@ fun AmountDisplay(
                 animationSpec = keyframes {
                     durationMillis = motion.shakeDurationMillis
                     0f at 0
-                    8f at (motion.shakeDurationMillis * 0.2f).toInt()
-                    (-8f) at (motion.shakeDurationMillis * 0.4f).toInt()
-                    6f at (motion.shakeDurationMillis * 0.6f).toInt()
-                    (-6f) at (motion.shakeDurationMillis * 0.8f).toInt()
+                    4f at (motion.shakeDurationMillis * 0.2f).toInt()
+                    (-4f) at (motion.shakeDurationMillis * 0.4f).toInt()
+                    3f at (motion.shakeDurationMillis * 0.6f).toInt()
+                    (-3f) at (motion.shakeDurationMillis * 0.8f).toInt()
                     0f at motion.shakeDurationMillis
                 },
             )
@@ -95,7 +95,7 @@ fun AmountDisplay(
         if (isZero && showZeroValidation) {
             Text(
                 text = zeroHelperMessage,
-                style = typography.bodyMedium,
+                style = typography.caption.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium),
                 color = colors.primary,
                 modifier = Modifier.padding(top = dimens.space8),
             )

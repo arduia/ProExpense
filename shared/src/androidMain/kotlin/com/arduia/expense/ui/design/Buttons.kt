@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -71,6 +72,7 @@ fun ProButton(
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed && enabled) motion.pressedScale else 1f
+    val pressedAlpha = if (pressed && enabled) motion.pressedOpacity else 1f
     val textStyle = typography.button.merge(
         TextStyle(
             fontSize = buttonSize.fontSizeSp.sp,
@@ -96,6 +98,7 @@ fun ProButton(
             },
         )
         .scale(scale)
+        .alpha(pressedAlpha)
         .defaultMinSize(minHeight = buttonSize.height)
 
     when (variant) {
@@ -170,9 +173,9 @@ fun ProButton(
                 border = BorderStroke(dimens.buttonBorderWidth, colors.onSurface),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colors.onSurface,
-                    contentColor = colors.onPrimaryWarm,
+                    contentColor = colors.paper,
                     disabledContainerColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                    disabledContentColor = colors.paper.copy(alpha = motion.disabledOpacity),
                 ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,

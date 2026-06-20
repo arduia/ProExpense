@@ -28,8 +28,8 @@ val LocalProElevation = staticCompositionLocalOf { ProDefaultElevation }
 
 val ProDefaultElevation = ProElevation(
     card = listOf(
-        ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, Color(0x0A212121)),
-        ProShadowLayer(0.dp, 6.dp, 14.dp, 0.dp, Color(0x0A212121)),
+        ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, Color(0x08212121)),
+        ProShadowLayer(0.dp, 6.dp, 16.dp, 0.dp, Color(0x0A212121)),
     ),
     sheet = listOf(
         ProShadowLayer(0.dp, (-8).dp, 24.dp, 0.dp, Color(0x26000000)),
@@ -41,6 +41,6 @@ val ProDefaultElevation = ProElevation(
         ProShadowLayer(0.dp, (-6).dp, 24.dp, 0.dp, Color(0x1A000000)),
     ),
     fab = listOf(
-        ProShadowLayer(0.dp, 4.dp, 8.dp, 0.dp, Color(0x33000000)),
+        ProShadowLayer(0.dp, 4.dp, 10.dp, 0.dp, Color(0x40039BE5)),
     ),
 )

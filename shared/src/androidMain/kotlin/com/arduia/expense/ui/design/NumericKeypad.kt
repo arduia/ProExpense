@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -42,51 +41,55 @@ fun NumericKeypad(
     saveLabel: String = "Save",
     nextLabel: String = "Next",
 ) {
-    val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
     val actionAlpha = if (actionsEnabled) 1f else motion.keypadDisabledOpacity
 
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimens.space8),
-    ) {
-        keypadKeys.forEach { row ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-            ) {
-                row.forEach { key ->
-                    KeypadKey(
-                        label = key,
-                        onClick = {
-                            if (key == "backspace") onBackspace() else onKey(key)
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
+    ProCard(modifier = modifier, padding = dimens.space16) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(dimens.space8),
+        ) {
+            keypadKeys.forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    row.forEach { key ->
+                        KeypadKey(
+                            label = key,
+                            onClick = {
+                                if (key == "backspace") onBackspace() else onKey(key)
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
             }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8)
-                .alpha(actionAlpha),
-            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-        ) {
-            ProButton(
-                text = saveLabel,
-                onClick = onSave,
-                modifier = Modifier.weight(1f),
-                variant = ProButtonVariant.Secondary,
-                enabled = actionsEnabled,
-            )
-            ProButton(
-                text = nextLabel,
-                onClick = onNext,
-                modifier = Modifier.weight(1f),
-                enabled = actionsEnabled,
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8)
+                    .alpha(actionAlpha),
+                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                ProButton(
+                    text = saveLabel,
+                    onClick = onSave,
+                    modifier = Modifier.weight(1f),
+                    variant = ProButtonVariant.Secondary,
+                    size = ProButtonSize.Lg,
+                    enabled = actionsEnabled,
+                )
+                ProButton(
+                    text = nextLabel,
+                    onClick = onNext,
+                    modifier = Modifier.weight(1f),
+                    size = ProButtonSize.Lg,
+                    enabled = actionsEnabled,
+                    fillMaxWidth = true,
+                )
+            }
         }
     }
 }
@@ -103,46 +106,28 @@ private fun KeypadKey(
     val interactionSource = remember { MutableInteractionSource() }
     val keyShape = ProExpenseTheme.shapes.keypadKey
     val isBackspace = label == "backspace"
-    val rippleShape = if (isBackspace) CircleShape else keyShape
 
     Box(
         modifier = modifier
             .aspectRatio(1.45f)
             .proPressScale(interactionSource)
-            .clip(rippleShape)
-            .then(
-                if (isBackspace) {
-                    Modifier
-                } else {
-                    Modifier
-                        .border(BorderStroke(1.dp, colors.line), keyShape)
-                        .background(colors.surface)
-                },
-            )
-            .then(
-                if (isBackspace) {
-                    Modifier.proCircularRippleClickable(
-                        onClick = onClick,
-                        interactionSource = interactionSource,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier.proRippleClickable(
-                        onClick = onClick,
-                        interactionSource = interactionSource,
-                        role = Role.Button,
-                    )
-                },
+            .clip(keyShape)
+            .border(BorderStroke(1.dp, colors.line), keyShape)
+            .background(colors.surface)
+            .proRippleClickable(
+                onClick = onClick,
+                interactionSource = interactionSource,
+                role = Role.Button,
             )
             .defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,
     ) {
-        if (label == "backspace") {
+        if (isBackspace) {
             ProIcon(
                 glyph = ProIconGlyph.Backspace,
                 contentDescription = "Backspace",
-                tint = colors.onSurface,
-                size = dimens.iconNav,
+                tint = colors.onSurfaceVariant,
+                size = 18.dp,
             )
         } else {
             Text(

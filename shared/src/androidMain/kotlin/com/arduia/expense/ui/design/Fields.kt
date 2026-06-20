@@ -93,6 +93,7 @@ fun SearchField(
         decorationBox = { inner ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimens.space10),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 ProIcon(
@@ -101,11 +102,20 @@ fun SearchField(
                     tint = colors.muted,
                     size = dimens.iconInline,
                 )
-                Box(modifier = Modifier.padding(start = dimens.space8)) {
+                Box(modifier = Modifier.weight(1f)) {
                     if (value.isEmpty()) {
                         Text(text = placeholder, style = typography.searchField, color = colors.muted)
                     }
                     inner()
+                }
+                if (value.isNotEmpty()) {
+                    ProIcon(
+                        glyph = ProIconGlyph.Close,
+                        contentDescription = "Clear",
+                        tint = colors.muted,
+                        size = dimens.iconClear,
+                        modifier = Modifier.proIconClickable(onClick = { onValueChange("") }),
+                    )
                 }
             }
         },
@@ -158,7 +168,7 @@ fun SearchFieldShell(
                 glyph = ProIconGlyph.Close,
                 contentDescription = "Clear",
                 tint = colors.muted,
-                size = dimens.iconInline,
+                size = dimens.iconClear,
                 modifier = Modifier.proIconClickable(onClick = onClear),
             )
         }
@@ -178,7 +188,7 @@ fun FilterChip(
     val interactionSource = remember { MutableInteractionSource() }
     val chipShape = ProExpenseTheme.shapes.chip
     val background = if (selected) colors.onSurface else Color.Transparent
-    val contentColor = if (selected) colors.onPrimaryWarm else colors.onSurfaceVariant
+    val contentColor = if (selected) colors.paper else colors.onSurfaceVariant
     val borderColor = if (selected) colors.onSurface else colors.lineStrong
     val textStyle = if (selected) typography.bodySemiBold.copy(fontSize = 12.sp) else typography.bodyMedium.copy(fontSize = 12.sp)
 

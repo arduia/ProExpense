@@ -64,7 +64,7 @@ val previewHomeCasual = HomeUiState(
     showEmptyHint = false,
     dayGroups = listOf(
         HomeDayGroup(
-            dayTitle = "Today",
+            dayTitle = "Today · May 25",
             dayTotal = "$81.40",
             transactions = listOf(
                 HomeTransactionItem("food", "Lunch with M.", "Food · 12:30 PM", "$12.40"),

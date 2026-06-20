@@ -28,7 +28,7 @@ val LocalProShapes = staticCompositionLocalOf { ProDefaultShapes }
 val ProDefaultShapes = ProShapes(
     chip = RoundedCornerShape(999.dp),
     tile = RoundedCornerShape(14.dp),
-    card = RoundedCornerShape(18.dp),
+    card = RoundedCornerShape(16.dp),
     sheet = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
     buttonSm = RoundedCornerShape(10.dp),
     buttonMd = RoundedCornerShape(12.dp),

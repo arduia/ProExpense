@@ -18,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.delay
@@ -34,6 +33,7 @@ fun ProToast(
 
     Row(
         modifier = modifier
+            .proToastShadow()
             .background(colors.onSurface, ProExpenseTheme.shapes.toast)
             .padding(horizontal = dimens.space16, vertical = dimens.space10),
         verticalAlignment = Alignment.CenterVertically,
@@ -42,12 +42,12 @@ fun ProToast(
         ProIcon(
             glyph = ProIconGlyph.Check,
             contentDescription = stringResource(R.string.toast_check_icon),
-            tint = colors.success,
+            tint = colors.successSoft,
             size = dimens.iconInline,
         )
         Text(
             text = message,
-            style = typography.bodySemiBold.copy(fontSize = 13.sp),
+            style = typography.searchField,
             color = colors.paper,
         )
     }

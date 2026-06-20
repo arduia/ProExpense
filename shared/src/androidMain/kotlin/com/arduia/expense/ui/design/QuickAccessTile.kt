@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -35,8 +36,8 @@ fun QuickAccessTile(
     val typography = ProExpenseTheme.typography
     val interactionSource = remember { MutableInteractionSource() }
     val tileShape = ProExpenseTheme.shapes.tile
-    val resolvedIconTint = iconTint ?: quickAccessIconTint(icon, colors)
-    val resolvedIconBackground = iconBackground ?: quickAccessIconBackground(icon, colors)
+    val resolvedIconTint = iconTint ?: colors.primaryDeep
+    val resolvedIconBackground = iconBackground ?: colors.primaryTint
 
     Column(
         modifier = modifier
@@ -65,29 +66,9 @@ fun QuickAccessTile(
         }
         Text(
             text = label,
-            style = typography.caption,
+            style = typography.caption.copy(fontSize = 11.sp),
             color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
     }
-}
-
-private fun quickAccessIconTint(icon: ProIconGlyph, colors: com.arduia.expense.ui.theme.ProColors): Color =
-    when (icon) {
-        ProIconGlyph.FeatReports -> colors.primaryDeep
-        ProIconGlyph.FeatDebt -> colors.success
-        ProIconGlyph.FeatSplit -> colors.tagDeep
-        ProIconGlyph.FeatEvents -> colors.highlightDeep
-        else -> colors.primary
-    }
-
-private fun quickAccessIconBackground(
-    icon: ProIconGlyph,
-    colors: com.arduia.expense.ui.theme.ProColors,
-): Color = when (icon) {
-    ProIconGlyph.FeatReports -> colors.primaryTint
-    ProIconGlyph.FeatDebt -> colors.successTint
-    ProIconGlyph.FeatSplit -> colors.tagTint
-    ProIconGlyph.FeatEvents -> colors.highlightSoft
-    else -> colors.primarySoft
 }

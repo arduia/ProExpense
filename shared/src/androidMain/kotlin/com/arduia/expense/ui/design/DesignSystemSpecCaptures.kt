@@ -209,60 +209,10 @@ fun SpecSearchFilledCapture() {
 @Composable
 fun SpecQuickAccessCapture() {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        SpecQuickAccessTile(
-            label = "Reports",
-            icon = ProIconGlyph.FeatReports,
-            iconTint = ProExpenseTheme.colors.primaryDeep,
-            iconBackground = ProExpenseTheme.colors.primaryTint,
-        )
-        SpecQuickAccessTile(
-            label = "Debts",
-            icon = ProIconGlyph.FeatDebt,
-            iconTint = ProExpenseTheme.colors.success,
-            iconBackground = ProExpenseTheme.colors.successTint,
-        )
-        SpecQuickAccessTile(
-            label = "Split",
-            icon = ProIconGlyph.FeatSplit,
-            iconTint = ProExpenseTheme.colors.tagDeep,
-            iconBackground = ProExpenseTheme.colors.tagTint,
-        )
-        SpecQuickAccessTile(
-            label = "Events",
-            icon = ProIconGlyph.FeatEvents,
-            iconTint = ProExpenseTheme.colors.highlightDeep,
-            iconBackground = ProExpenseTheme.colors.highlightSoft,
-        )
-    }
-}
-
-@Composable
-private fun SpecQuickAccessTile(
-    label: String,
-    icon: ProIconGlyph,
-    iconTint: Color,
-    iconBackground: Color,
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-    Column(
-        modifier = Modifier
-            .width(78.dp)
-            .background(colors.surface, ProExpenseTheme.shapes.tile)
-            .padding(horizontal = 4.dp, vertical = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(7.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .size(36.dp)
-                .background(iconBackground, androidx.compose.foundation.shape.RoundedCornerShape(11.dp)),
-            contentAlignment = Alignment.Center,
-        ) {
-            ProIcon(glyph = icon, contentDescription = null, tint = iconTint, size = 18.dp)
-        }
-        Text(text = label, style = typography.caption, color = colors.onSurfaceVariant, textAlign = TextAlign.Center)
+        QuickAccessTile(label = "Reports", icon = ProIconGlyph.FeatReports, onClick = {}, modifier = Modifier.width(78.dp))
+        QuickAccessTile(label = "Debts", icon = ProIconGlyph.FeatDebt, onClick = {}, modifier = Modifier.width(78.dp))
+        QuickAccessTile(label = "Split", icon = ProIconGlyph.FeatSplit, onClick = {}, modifier = Modifier.width(78.dp))
+        QuickAccessTile(label = "Events", icon = ProIconGlyph.FeatEvents, onClick = {}, modifier = Modifier.width(78.dp))
     }
 }
 

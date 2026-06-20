@@ -30,18 +30,29 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
 fun Modifier.proCardShadow(shape: Shape = ProExpenseTheme.shapes.card): Modifier {
-    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
-    return then(
-        if (cardElevation != null) {
-            Modifier.shadow(
-                elevation = cardElevation.blur,
+    val layers = ProExpenseTheme.elevation.card
+    return layers.fold(this) { modifier, layer ->
+        if (layer.blur > 0.dp) {
+            modifier.shadow(
+                elevation = layer.blur,
                 shape = shape,
-                spotColor = cardElevation.color,
-                ambientColor = cardElevation.color,
+                spotColor = layer.color,
+                ambientColor = layer.color,
             )
         } else {
-            Modifier
-        },
+            modifier
+        }
+    }
+}
+
+@Composable
+fun Modifier.proToastShadow(shape: Shape = ProExpenseTheme.shapes.toast): Modifier {
+    val layer = ProExpenseTheme.elevation.toast.firstOrNull() ?: return this
+    return shadow(
+        elevation = layer.blur,
+        shape = shape,
+        spotColor = layer.color,
+        ambientColor = layer.color,
     )
 }
 
