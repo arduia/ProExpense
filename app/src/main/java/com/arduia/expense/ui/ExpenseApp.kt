@@ -30,6 +30,7 @@ import com.arduia.expense.ui.home.HomeScreenContent
 import com.arduia.expense.ui.journal.JournalScreenContent
 import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.more.MoreHubScreenContent
+import com.arduia.expense.ui.preview.MoreHubUiState
 import com.arduia.expense.ui.navigation.AppNavState
 import com.arduia.expense.ui.navigation.AppNavigator
 import com.arduia.expense.ui.navigation.AppRouteHost
@@ -179,13 +180,39 @@ fun ExpenseApp(
                             },
                         )
                         HomeNavTab.More -> MoreHubScreenContent(
+                            state = MoreHubUiState(
+                                profileName = homeState.greetingName.ifBlank { "Guest" },
+                                profileInitial = homeState.greetingName.firstOrNull()?.uppercaseChar()?.toString()
+                                    ?: "G",
+                                currencyCode = appGraph.homeCurrency(),
+                            ),
                             onReportsClick = { navigator.push(AppRoutes.REPORTS) },
+                            onDebtClick = { navigator.push(AppRoutes.DEBT_TRACKER) },
+                            onSharedCostsClick = { navigator.push(AppRoutes.SHARED_INPUT) },
                             onCategoriesClick = { navigator.push(AppRoutes.CATEGORIES) },
                             onCurrencyClick = { navigator.push(AppRoutes.CURRENCY) },
+                            onBudgetClick = { selectedTab = HomeNavTab.Budget },
+                            onSecurityClick = { navigator.push(AppRoutes.SECURITY) },
+                            onLanguageClick = {},
                             onExportClick = { navigator.push(AppRoutes.EXPORT) },
                             onImportClick = { navigator.push(AppRoutes.IMPORT) },
-                            onSecurityClick = { navigator.push(AppRoutes.SECURITY) },
                             onClearClick = { navigator.push(AppRoutes.CLEAR) },
+                            onAddClick = {
+                                appGraph.prewarmAddExpenseViewModel(
+                                    onSaved = {
+                                        appGraph.refreshAfterDataChange()
+                                        quickLogOpen = false
+                                        saveToastMessage = savedToast
+                                    },
+                                    onSaveFailed = { message -> saveErrorToast = message },
+                                )
+                                quickLogOpen = true
+                            },
+                            onTabSelected = { tab ->
+                                if (tab != HomeNavTab.Add) {
+                                    selectedTab = tab
+                                }
+                            },
                         )
                         HomeNavTab.Add -> Unit
                     }

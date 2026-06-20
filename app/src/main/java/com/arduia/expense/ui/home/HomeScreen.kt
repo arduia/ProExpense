@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -22,6 +23,7 @@ import com.arduia.expense.R
 import com.arduia.expense.ui.design.DayHeader
 import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
+import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.TransactionRow
@@ -47,6 +49,8 @@ fun HomeScreenContent(
     onPinBannerTap: () -> Unit = {},
     onPinBannerDismiss: () -> Unit = {},
     onActiveEventClick: (String) -> Unit = {},
+    onSeeAllRecentClick: () -> Unit = {},
+    onCustomizeQuickAccessClick: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -65,6 +69,24 @@ fun HomeScreenContent(
     ) {
         item(key = "home-summary") {
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = state.dateHeader.ifBlank { stringResource(R.string.home_date_header) },
+                        style = typography.eyebrow,
+                        color = colors.muted,
+                    )
+                    ProIcon(
+                        glyph = ProIconGlyph.Bell,
+                        contentDescription = stringResource(R.string.notifications),
+                        tint = colors.onSurface,
+                        size = dimens.iconNav,
+                    )
+                }
+
                 if (state.greetingName.isNotBlank()) {
                     val greetingPrefix = stringResource(R.string.home_greeting_prefix)
                     val flourish = typography.displayFlourish
@@ -111,7 +133,11 @@ fun HomeScreenContent(
                     verticalArrangement = Arrangement.spacedBy(dimens.space8),
                 ) {
                     Text(
-                        text = stringResource(R.string.home_spend_this_month),
+                        text = if (state.spendPeriodLabel.isNotBlank()) {
+                            stringResource(R.string.home_spent_period, state.spendPeriodLabel)
+                        } else {
+                            stringResource(R.string.home_spend_this_month)
+                        },
                         style = typography.eyebrow,
                         color = colors.muted,
                     )
@@ -163,6 +189,27 @@ fun HomeScreenContent(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(R.string.quick_access_section),
+                        style = typography.eyebrow,
+                        color = colors.muted,
+                    )
+                    Text(
+                        text = stringResource(R.string.customize),
+                        style = typography.caption,
+                        color = colors.muted,
+                        modifier = Modifier.proClickable(
+                            onClick = onCustomizeQuickAccessClick,
+                            shape = ProExpenseTheme.shapes.chip,
+                        ),
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(dimens.space8),
                 ) {
                     QuickAccessTile(
@@ -203,12 +250,28 @@ fun HomeScreenContent(
 
         if (state.dayGroups.isNotEmpty()) {
             item(key = "home-recent-title") {
-                Text(
-                    text = stringResource(R.string.recent),
-                    style = typography.sectionHead,
-                    color = colors.onSurface,
-                    modifier = Modifier.padding(top = dimens.space8),
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space8),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(R.string.recent),
+                        style = typography.sectionHead,
+                        color = colors.onSurface,
+                    )
+                    Text(
+                        text = stringResource(R.string.see_all),
+                        style = typography.bodyMedium,
+                        color = colors.primary,
+                        modifier = Modifier.proClickable(
+                            onClick = onSeeAllRecentClick,
+                            shape = ProExpenseTheme.shapes.chip,
+                        ),
+                    )
+                }
             }
             state.dayGroups.forEach { group ->
                 item(key = "home-header-${group.dayTitle}") {

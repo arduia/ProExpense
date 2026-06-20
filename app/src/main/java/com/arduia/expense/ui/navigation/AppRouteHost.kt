@@ -20,7 +20,10 @@ import com.arduia.expense.feature.importexport.ExportFormat
 import com.arduia.expense.ui.auth.PinBiometricEffect
 import com.arduia.expense.ui.auth.PinEntryScreenContent
 import com.arduia.expense.ui.auth.SecuritySettingsScreenContent
+import com.arduia.expense.ui.categories.AddCategoryDialog
 import com.arduia.expense.ui.categories.CategoryListScreenContent
+import com.arduia.expense.ui.categories.CategoryListScreenState
+import com.arduia.expense.ui.categories.CategoryRowState
 import com.arduia.expense.ui.currency.CurrencySettingScreenContent
 import com.arduia.expense.ui.data.ClearDataScreenContent
 import com.arduia.expense.ui.data.DataImportScreenContent
@@ -262,18 +265,43 @@ private fun CategoriesRoute(
     modifier: Modifier = Modifier,
 ) {
     val state by appGraph.categoryListViewModel.uiState.collectAsState()
+    var showAddDialog by rememberSaveable { mutableStateOf(false) }
+    var pendingAdd by rememberSaveable { mutableStateOf(false) }
 
     CategoryListScreenContent(
         modifier = modifier,
-        categories = state.categories,
-        selectedCategoryId = state.selectedCategoryId,
-        onCategorySelected = appGraph.categoryListViewModel::onCategorySelected,
-        newCategoryName = state.newCategoryName,
-        onNewCategoryChange = appGraph.categoryListViewModel::onNewCategoryChange,
-        duplicateError = state.duplicateError,
+        state = CategoryListScreenState(
+            defaultCategories = state.defaultCategories.map { CategoryRowState(it.id, it.name) },
+            customCategories = state.customCategories.map { CategoryRowState(it.id, it.name) },
+        ),
         onBack = onBack,
-        onAddCategory = appGraph.categoryListViewModel::onAddCategory,
+        onAddClick = { showAddDialog = true },
+        onCreateCategoryClick = { showAddDialog = true },
     )
+
+    if (showAddDialog) {
+        AddCategoryDialog(
+            name = state.newCategoryName,
+            duplicateError = state.duplicateError,
+            onNameChange = appGraph.categoryListViewModel::onNewCategoryChange,
+            onDismiss = {
+                showAddDialog = false
+                pendingAdd = false
+                appGraph.categoryListViewModel.onNewCategoryChange("")
+            },
+            onConfirm = {
+                pendingAdd = true
+                appGraph.categoryListViewModel.onAddCategory()
+            },
+        )
+    }
+
+    LaunchedEffect(state.duplicateError, state.newCategoryName, pendingAdd) {
+        if (pendingAdd && !state.duplicateError && state.newCategoryName.isBlank()) {
+            showAddDialog = false
+            pendingAdd = false
+        }
+    }
 }
 
 @Composable

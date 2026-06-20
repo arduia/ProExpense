@@ -1,47 +1,65 @@
 package com.arduia.expense.ui.categories
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import com.arduia.expense.ui.design.GenericTextField
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
-import com.arduia.expense.ui.design.GenericTextField
-import com.arduia.expense.ui.design.LogCategoryBadge
-import com.arduia.expense.ui.design.ProButton
-import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.CategoryListCard
+import com.arduia.expense.ui.design.CategoryListDivider
+import com.arduia.expense.ui.design.CategoryListRow
+import com.arduia.expense.ui.design.CategorySectionHeader
+import com.arduia.expense.ui.design.CreateCategoryButton
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.preview.previewCategoryItems
+import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.preview.previewCategoryHandoffState
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
+data class CategoryRowState(
+    val id: String,
+    val label: String,
+)
+
+data class CategoryListScreenState(
+    val defaultCategories: List<CategoryRowState>,
+    val customCategories: List<CategoryRowState>,
+)
+
 @Composable
 fun CategoryListScreenContent(
-    categories: List<Pair<String, String>>,
-    selectedCategoryId: String?,
-    onCategorySelected: (String) -> Unit,
-    newCategoryName: String,
-    onNewCategoryChange: (String) -> Unit,
-    duplicateError: Boolean,
+    state: CategoryListScreenState,
     onBack: () -> Unit,
-    onAddCategory: () -> Unit,
+    onAddClick: () -> Unit,
+    onCreateCategoryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val customCountLabel = stringResource(
+        R.string.categories_custom_count,
+        state.customCategories.size,
+    )
 
     Column(
         modifier = modifier
@@ -53,6 +71,9 @@ fun CategoryListScreenContent(
         ProTopBar(
             title = stringResource(R.string.categories_title),
             onBack = onBack,
+            backLabel = stringResource(R.string.more_hub),
+            action = ProTopBarAction.Add,
+            onAction = onAddClick,
             modifier = Modifier.padding(horizontal = dimens.space18),
         )
         Column(
@@ -61,91 +82,125 @@ fun CategoryListScreenContent(
                 .padding(horizontal = dimens.space18, vertical = dimens.space16),
             verticalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
-            categories.forEach { (id, label) ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimens.space12),
-                ) {
-                    LogCategoryBadge(categoryId = id)
-                    Text(
-                        text = label,
-                        style = typography.bodySemiBold,
-                        color = colors.onSurface,
-                        modifier = Modifier.weight(1f),
+            CategorySectionHeader(
+                title = stringResource(R.string.categories_default_header),
+                trailing = stringResource(R.string.categories_locked_hint),
+            )
+            CategoryListCard {
+                state.defaultCategories.forEachIndexed { index, category ->
+                    if (index > 0) {
+                        CategoryListDivider()
+                    }
+                    CategoryListRow(
+                        categoryId = category.id,
+                        label = category.label,
+                        showLockedTag = true,
                     )
                 }
             }
 
-            Text(
-                text = stringResource(R.string.add_category),
-                style = typography.eyebrow,
-                color = colors.primary,
-                modifier = Modifier.padding(top = dimens.space16),
+            CategorySectionHeader(
+                title = stringResource(R.string.categories_custom_header),
+                trailing = customCountLabel,
             )
-            GenericTextField(
-                value = newCategoryName,
-                onValueChange = onNewCategoryChange,
-                placeholder = stringResource(R.string.category_name_hint),
-            )
-            if (duplicateError) {
-                Text(
-                    text = stringResource(R.string.category_duplicate_error),
-                    style = typography.caption,
-                    color = colors.danger,
-                )
+            CategoryListCard {
+                state.customCategories.forEachIndexed { index, category ->
+                    if (index > 0) {
+                        CategoryListDivider()
+                    }
+                    CategoryListRow(
+                        categoryId = category.id,
+                        label = category.label,
+                        showDragHandle = true,
+                    )
+                }
             }
-            ProButton(
-                text = stringResource(R.string.add_category),
-                onClick = onAddCategory,
-                enabled = newCategoryName.isNotBlank(),
-                size = ProButtonSize.Md,
-                modifier = Modifier.fillMaxWidth(),
+
+            CreateCategoryButton(
+                label = stringResource(R.string.create_new_category),
+                onClick = onCreateCategoryClick,
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = colors.lineStrong,
+                        shape = ProExpenseTheme.shapes.card,
+                    ),
+            )
+
+            Text(
+                text = stringResource(R.string.categories_order_hint),
+                style = typography.caption,
+                color = colors.onSurfaceMuted,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = dimens.space8),
             )
         }
     }
 }
 
+@Composable
+fun AddCategoryDialog(
+    name: String,
+    duplicateError: Boolean,
+    onNameChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    val colors = ProExpenseTheme.colors
+    val typography = ProExpenseTheme.typography
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(R.string.add_category),
+                style = typography.sectionHead,
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(ProExpenseTheme.dimensions.space8)) {
+                GenericTextField(
+                    value = name,
+                    onValueChange = onNameChange,
+                    placeholder = stringResource(R.string.category_name_hint),
+                )
+                if (duplicateError) {
+                    Text(
+                        text = stringResource(R.string.category_duplicate_error),
+                        style = typography.caption,
+                        color = colors.danger,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm, enabled = name.isNotBlank()) {
+                Text(stringResource(R.string.add_category))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+    )
+}
+
 @Preview(
-    name = "Categories — list",
-    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
-    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    name = "Categories — handoff",
+    widthDp = ProArtboard.HANDOFF_WIDTH_DP,
+    heightDp = ProArtboard.HANDOFF_HEIGHT_DP,
     showBackground = true,
 )
 @Composable
 private fun CategoryListPreview() {
     ProExpenseTheme {
         CategoryListScreenContent(
-            categories = previewCategoryItems,
-            selectedCategoryId = "food",
-            onCategorySelected = {},
-            newCategoryName = "",
-            onNewCategoryChange = {},
-            duplicateError = false,
+            state = previewCategoryHandoffState,
             onBack = {},
-            onAddCategory = {},
-        )
-    }
-}
-
-@Preview(
-    name = "Categories — duplicate",
-    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
-    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
-    showBackground = true,
-)
-@Composable
-private fun CategoryDuplicatePreview() {
-    ProExpenseTheme {
-        CategoryListScreenContent(
-            categories = previewCategoryItems,
-            selectedCategoryId = null,
-            onCategorySelected = {},
-            newCategoryName = "Food",
-            onNewCategoryChange = {},
-            duplicateError = true,
-            onBack = {},
-            onAddCategory = {},
+            onAddClick = {},
+            onCreateCategoryClick = {},
         )
     }
 }

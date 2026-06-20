@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 data class CategoryListUiState(
-    val categories: List<Pair<String, String>> = emptyList(),
+    val defaultCategories: List<Category> = emptyList(),
+    val customCategories: List<Category> = emptyList(),
     val selectedCategoryId: String? = null,
     val newCategoryName: String = "",
     val duplicateError: Boolean = false,
@@ -34,9 +35,11 @@ class CategoryListViewModel(
         scope.launch {
             when (val result = categoryRepository.getAll()) {
                 is Result.Success -> {
+                    val categories = result.data
                     _uiState.update {
                         it.copy(
-                            categories = result.data.map { category -> category.id to category.name },
+                            defaultCategories = categories.filterNot(Category::isCustom),
+                            customCategories = categories.filter(Category::isCustom),
                             isLoading = false,
                         )
                     }
@@ -59,7 +62,8 @@ class CategoryListViewModel(
     fun onAddCategory() {
         val trimmed = _uiState.value.newCategoryName.trim()
         if (trimmed.isBlank()) return
-        val exists = _uiState.value.categories.any { it.second.equals(trimmed, ignoreCase = true) }
+        val allCategories = _uiState.value.defaultCategories + _uiState.value.customCategories
+        val exists = allCategories.any { it.name.equals(trimmed, ignoreCase = true) }
         if (exists) {
             _uiState.update { it.copy(duplicateError = true) }
             return

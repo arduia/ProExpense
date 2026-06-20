@@ -36,7 +36,8 @@ import com.arduia.expense.ui.more.MoreHubScreenContent
 import com.arduia.expense.ui.onboarding.OnboardingScreen
 import com.arduia.expense.ui.onboarding.ProfileNameScreen
 import com.arduia.expense.ui.onboarding.SplashScreen
-import com.arduia.expense.ui.preview.previewCategoryItems
+import com.arduia.expense.ui.preview.previewCategoryHandoffState
+import com.arduia.expense.ui.preview.previewMoreHubState
 import com.arduia.expense.ui.preview.previewDebtLent
 import com.arduia.expense.ui.preview.previewDebtOwe
 import com.arduia.expense.ui.preview.previewEventDetailTransactions
@@ -215,13 +216,20 @@ class HandoffScreensScreenshotTest {
 
     @Test fun more_hub() = capture {
         MoreHubScreenContent(
+            state = previewMoreHubState.copy(showBottomNav = false),
             onReportsClick = {},
+            onDebtClick = {},
+            onSharedCostsClick = {},
             onCategoriesClick = {},
             onCurrencyClick = {},
+            onBudgetClick = {},
+            onSecurityClick = {},
+            onLanguageClick = {},
             onExportClick = {},
             onImportClick = {},
-            onSecurityClick = {},
             onClearClick = {},
+            onAddClick = {},
+            onTabSelected = {},
         )
     }
 
@@ -236,14 +244,10 @@ class HandoffScreensScreenshotTest {
 
     @Test fun categories_list() = capture {
         CategoryListScreenContent(
-            categories = previewCategoryItems,
-            selectedCategoryId = "food",
-            onCategorySelected = {},
-            newCategoryName = "",
-            onNewCategoryChange = {},
-            duplicateError = false,
+            state = previewCategoryHandoffState,
             onBack = {},
-            onAddCategory = {},
+            onAddClick = {},
+            onCreateCategoryClick = {},
         )
     }
 

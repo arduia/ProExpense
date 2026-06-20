@@ -27,6 +27,8 @@ The visual sources here are **design references**, not production code. The HTML
 2. **Primitives** — build `components.yaml` items in `ui/design/` (Buttons, Icons, Fields, Category, TopBar, BottomSheet, Toast) + `HomeBottomNav`.
 3. **Screens** — implement per `screens-manifest.yaml`, flow by flow; cover **every** listed state (default / empty / filled / error / disabled), not just the happy path.
 4. **Tests** — add a Roborazzi golden per state; target = matching `reference-images/` file.
+   - Sync goldens: `./gradlew :app:syncHandoffReferenceGoldens`
+   - Verify against handoff PNGs (414×868): `./gradlew :app:verifyHandoffReference`
 
 ## Non-negotiable rules (from the brief)
 - **Manrope for UI and headings.** **Geist Mono for amounts and tabular figures.** **Instrument Serif for occasional flourishes only** (e.g. italic name on Home). Reference PNGs may still show serif amounts from the Hi-Fi export; the Android build uses mono for figures.

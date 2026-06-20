@@ -1,6 +1,11 @@
 package com.arduia.expense.ui.preview
 
+import com.arduia.expense.ui.categories.CategoryListScreenState
+import com.arduia.expense.ui.categories.CategoryRowState
 import com.arduia.expense.ui.design.EventBudgetCardState
+import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.feature.logging.customLogCategories
+import com.arduia.expense.feature.logging.defaultLogCategories
 
 data class HomeTransactionItem(
     val categoryId: String,
@@ -18,6 +23,8 @@ data class HomeDayGroup(
 
 data class HomeUiState(
     val greetingName: String = "",
+    val dateHeader: String = "",
+    val spendPeriodLabel: String = "",
     val monthSpend: String = "$0",
     val monthDelta: String? = null,
     val dayGroups: List<HomeDayGroup> = emptyList(),
@@ -51,6 +58,8 @@ val previewHomeEmpty = HomeUiState(
 
 val previewHomeCasual = HomeUiState(
     greetingName = "Maya",
+    dateHeader = "WED · MAY 25",
+    spendPeriodLabel = "MAY",
     monthSpend = "$80.90",
     monthDelta = "-12% from last month",
     showEmptyHint = false,
@@ -71,6 +80,8 @@ val previewHomeCasual = HomeUiState(
 
 val previewHomeBudget = HomeUiState(
     greetingName = "Siti",
+    dateHeader = "WED · MAY 25",
+    spendPeriodLabel = "MAY",
     monthSpend = "$420.00",
     monthDelta = "-8% from last month",
     showEmptyHint = false,
@@ -86,6 +97,8 @@ val previewHomeBudget = HomeUiState(
 
 val previewHomeEvent = HomeUiState(
     greetingName = "Carlos",
+    dateHeader = "WED · MAY 25",
+    spendPeriodLabel = "MAY",
     monthSpend = "$1,240.00",
     monthDelta = "+5% from last month",
     showEmptyHint = false,
@@ -157,6 +170,33 @@ val previewCategoryItems = listOf(
     "entertainment" to "Entertainment",
     "coffee" to "Coffee",
     "shopping" to "Shopping",
+)
+
+val previewCategoryHandoffState = CategoryListScreenState(
+    defaultCategories = defaultLogCategories.map { CategoryRowState(it.id, it.label) },
+    customCategories = customLogCategories.map { CategoryRowState(it.id, it.label) },
+)
+
+data class MoreHubUiState(
+    val profileName: String = "",
+    val profileInitial: String = "",
+    val currencyCode: String = "USD",
+    val budgetEnabled: Boolean = false,
+    val pinEnabled: Boolean = false,
+    val languageLabel: String = "English",
+    val activeTab: HomeNavTab = HomeNavTab.More,
+    val showBottomNav: Boolean = false,
+)
+
+val previewMoreHubState = MoreHubUiState(
+    profileName = "Maya",
+    profileInitial = "M",
+    currencyCode = "USD",
+    budgetEnabled = false,
+    pinEnabled = false,
+    languageLabel = "English",
+    activeTab = HomeNavTab.More,
+    showBottomNav = true,
 )
 
 data class DebtRecordItem(

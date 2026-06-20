@@ -6,6 +6,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 object ProArtboard {
+    const val HANDOFF_WIDTH_DP = 414
+    const val HANDOFF_HEIGHT_DP = 868
     const val PIXEL_9_PRO_WIDTH_DP = 427
     const val PIXEL_9_PRO_HEIGHT_DP = 952
 }

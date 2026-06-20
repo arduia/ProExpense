@@ -66,6 +66,15 @@ android {
             isIncludeAndroidResources = true
             all {
                 it.systemProperties["robolectric.pixelCopyRenderMode"] = "hardware"
+                if (project.hasProperty("handoffReference")) {
+                    it.useJUnit {
+                        includeCategories("com.arduia.expense.testing.HandoffReferenceTests")
+                    }
+                } else {
+                    it.useJUnit {
+                        excludeCategories("com.arduia.expense.testing.HandoffReferenceTests")
+                    }
+                }
             }
         }
     }
@@ -129,6 +138,28 @@ roborazzi {
     outputDir.set(file("src/test/screenshots"))
 }
 
+tasks.register<Exec>("syncHandoffReferenceGoldens") {
+    group = "verification"
+    description = "Copy design_handoff_pro_expense/reference-images into Roborazzi goldens."
+    commandLine("bash", rootProject.file("scripts/sync-handoff-reference-goldens.sh").absolutePath)
+}
+
+tasks.register<Exec>("verifyHandoffReference") {
+    group = "verification"
+    description = "Sync handoff goldens and compare Compose renders at 414×868 against reference PNGs."
+    dependsOn("syncHandoffReferenceGoldens")
+    workingDir = rootProject.projectDir
+    commandLine(
+        "./gradlew",
+        "-PhandoffReference",
+        ":app:testDevDebugUnitTest",
+        "--tests",
+        "com.arduia.expense.ui.handoff.HandoffReferenceScreenshotTest",
+        ":app:finalizeTestRoborazziDevDebug",
+        ":app:compareRoborazziDevDebug",
+    )
+}
+
 // Robolectric Compose UI tests (screenshots + smoke) rely on the compose ui-test-manifest, which is
 // only merged into the debug variant (debugImplementation). devDebug is the documented screenshot
 // gate, so exclude these categories from the release unit-test variant to keep `./gradlew test` green.
@@ -138,6 +169,7 @@ tasks.withType<Test>().configureEach {
             excludeCategories(
                 "com.arduia.expense.testing.ScreenshotTests",
                 "com.arduia.expense.testing.ComposeUiTests",
+                "com.arduia.expense.testing.HandoffReferenceTests",
             )
         }
     }

@@ -176,11 +176,17 @@
     <string name="home_greeting">Hi, %1$s</string>
     <string name="home_greeting_prefix">Hi, </string>
     <string name="home_spend_this_month">Spent this month</string>
+    <string name="home_spent_period">SPENT · %1$s</string>
+    <string name="home_date_header">WED · MAY 25</string>
+    <string name="quick_access_section">QUICK ACCESS</string>
+    <string name="customize">Customize</string>
+    <string name="see_all">See all</string>
+    <string name="notifications">Notifications</string>
     <string name="home_pin_banner_title">Protect your records with a PIN</string>
     <string name="home_pin_banner_body">Set a 6-digit PIN so only you can open Pro Expense.</string>
     <string name="dismiss">Dismiss</string>
     <string name="quick_access_reports">Reports</string>
-    <string name="quick_access_debt">Debts</string>
+    <string name="quick_access_debt">Debt</string>
     <string name="quick_access_split">Split</string>
     <string name="quick_access_events">Events</string>
 
@@ -196,17 +202,27 @@
 
     <!-- More hub -->
     <string name="more_hub">More</string>
+    <string name="more_hub_eyebrow">SETTINGS &amp; EXTRAS</string>
+    <string name="more_features_section">FEATURES</string>
+    <string name="more_settings_section">SETTINGS</string>
+    <string name="more_profile_subtitle">All data local · no account</string>
     <string name="more_reports">Reports</string>
-    <string name="more_reports_sub">Monthly category breakdown</string>
-    <string name="more_categories">Categories</string>
-    <string name="more_categories_sub">Default and custom categories</string>
-    <string name="more_currency">Home currency</string>
+    <string name="more_debt">Debt Tracker</string>
+    <string name="more_shared_costs">Shared Costs</string>
+    <string name="more_monthly_budget">Monthly budget</string>
+    <string name="more_language">Language</string>
+    <string name="more_currency">Currency</string>
     <string name="more_currency_sub">Change your default currency</string>
+    <string name="more_reports_sub">Monthly category breakdown</string>
+    <string name="more_categories">Category List</string>
+    <string name="more_categories_sub">Default and custom categories</string>
     <string name="more_export">Export data</string>
     <string name="more_export_sub">Download records as CSV</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
     <string name="more_clear">Clear all data</string>
     <string name="more_clear_sub">Remove all records from this device</string>
-    <string name="more_security">Security</string>
+    <string name="more_security">PIN authentication</string>
     <string name="more_security_sub">PIN, biometrics, and recovery</string>
     <string name="more_import_sub">Restore records from CSV</string>
 
@@ -220,6 +236,12 @@
 
     <!-- Categories -->
     <string name="categories_title">Categories</string>
+    <string name="categories_default_header">DEFAULT · ALWAYS FIRST</string>
+    <string name="categories_locked_hint">locked</string>
+    <string name="categories_custom_header">CUSTOM · DRAG TO REORDER</string>
+    <string name="categories_custom_count">%1$d categories</string>
+    <string name="create_new_category">Create new category</string>
+    <string name="categories_order_hint">Order here mirrors chip order in Add Expense</string>
     <string name="add_category">Add category</string>
     <string name="category_name_hint">Category name</string>
     <string name="category_duplicate_error">A category with this name already exists</string>

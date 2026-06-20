@@ -2,12 +2,18 @@ package com.arduia.expense.ui.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -43,6 +49,8 @@ fun SplashScreen(
 @Composable
 fun SplashScreenContent(modifier: Modifier = Modifier) {
     val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
 
     Box(
         modifier = modifier
@@ -51,12 +59,45 @@ fun SplashScreenContent(modifier: Modifier = Modifier) {
             .statusBarsPadding()
             .navigationBarsPadding(),
     ) {
-        LauncherAppIcon(
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            LauncherAppIcon(
+                modifier = Modifier.size(88.dp),
+                contentDescription = stringResource(R.string.app_name),
+            )
+            Text(
+                text = stringResource(R.string.app_name),
+                style = typography.screenTitle,
+                color = colors.onSurface,
+                modifier = Modifier.padding(top = dimens.space24),
+            )
+            Text(
+                text = stringResource(R.string.splash_tagline),
+                style = typography.body,
+                color = colors.onSurfaceMuted,
+                modifier = Modifier.padding(top = dimens.space8),
+            )
+        }
+
+        Row(
             modifier = Modifier
-                .align(Alignment.Center)
-                .size(88.dp),
-            contentDescription = stringResource(R.string.app_name),
-        )
+                .align(Alignment.BottomCenter)
+                .padding(bottom = dimens.space44),
+            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+        ) {
+            repeat(3) { index ->
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (index == 1) colors.primary else colors.primaryTint,
+                        ),
+                )
+            }
+        }
     }
 }
 
