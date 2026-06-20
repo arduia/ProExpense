@@ -80,6 +80,9 @@ Walk every dimension. For each, the question is "what happens to the user whenâ€
 - Reuses design-system components and tokens; no one-off duplicates of existing components.
 - Matches established patterns for similar screens (spacing scale, component variants, nav patterns).
 - Affordances and transitions present per the motion/navigation rule (no hard cut-overs, adequate ripple).
+- **Mandatory interaction quality gate:** every tappable text/icon action must expose a visibly large enough
+  interaction surface and a clearly perceptible ripple/press affordance. Tiny, cramped, or hard-to-trigger
+  touch areas are a defect and must be fixed before merge.
 
 ### 10. Sensitive data & security UI (apply when the screen handles PII, credentials, or payments)
 - Secure input where required (password/PIN masking, `KeyboardType` correct, no autofill leaks of secrets).
