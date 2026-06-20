@@ -15,6 +15,7 @@ import com.arduia.expense.ui.debt.DebtFlow
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.events.EventsFlow
 import com.arduia.expense.ui.home.HomeShell
+import com.arduia.expense.ui.journal.JournalFlow
 import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
 import com.arduia.expense.ui.sharedcost.SharedCostsFlow
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
 
                 val onTabSelected: (HomeNavTab) -> Unit = { tab ->
-                    if (tab == HomeNavTab.Home || tab == HomeNavTab.Budget) {
+                    if (tab == HomeNavTab.Home || tab == HomeNavTab.Budget || tab == HomeNavTab.Journal) {
                         selectedTab = tab
                     }
                 }
@@ -44,6 +45,12 @@ class MainActivity : ComponentActivity() {
                     if (onboardingComplete) {
                         if (selectedTab == HomeNavTab.Budget) {
                             EventsFlow(
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                            )
+                        } else if (selectedTab == HomeNavTab.Journal) {
+                            JournalFlow(
+                                selectedTab = selectedTab,
                                 onTabSelected = onTabSelected,
                                 onAddClick = { showQuickLog = true },
                             )
