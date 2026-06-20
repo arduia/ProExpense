@@ -45,51 +45,51 @@ fun NumericKeypad(
     val motion = ProExpenseTheme.motion
     val actionAlpha = if (actionsEnabled) 1f else motion.keypadDisabledOpacity
 
-    ProCard(modifier = modifier, padding = dimens.space16) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(dimens.space8),
-        ) {
-            keypadKeys.forEach { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-                ) {
-                    row.forEach { key ->
-                        KeypadKey(
-                            label = key,
-                            onClick = {
-                                if (key == "backspace") onBackspace() else onKey(key)
-                            },
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-                }
-            }
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(dimens.space16),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        keypadKeys.forEach { row ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8)
-                    .alpha(actionAlpha),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.space8),
             ) {
-                ProButton(
-                    text = saveLabel,
-                    onClick = onSave,
-                    modifier = Modifier.weight(1f),
-                    variant = ProButtonVariant.Secondary,
-                    size = ProButtonSize.Lg,
-                    enabled = actionsEnabled,
-                )
-                ProButton(
-                    text = nextLabel,
-                    onClick = onNext,
-                    modifier = Modifier.weight(1f),
-                    size = ProButtonSize.Lg,
-                    enabled = actionsEnabled,
-                    fillMaxWidth = true,
-                )
+                row.forEach { key ->
+                    KeypadKey(
+                        label = key,
+                        onClick = {
+                            if (key == "backspace") onBackspace() else onKey(key)
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = dimens.space8)
+                .alpha(actionAlpha),
+            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+        ) {
+            ProButton(
+                text = saveLabel,
+                onClick = onSave,
+                modifier = Modifier.weight(1f),
+                variant = ProButtonVariant.Secondary,
+                size = ProButtonSize.Lg,
+                enabled = actionsEnabled,
+            )
+            ProButton(
+                text = nextLabel,
+                onClick = onNext,
+                modifier = Modifier.weight(1f),
+                size = ProButtonSize.Lg,
+                enabled = actionsEnabled,
+                fillMaxWidth = true,
+            )
         }
     }
 }
