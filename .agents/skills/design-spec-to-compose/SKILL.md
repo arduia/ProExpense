@@ -31,14 +31,23 @@ transitions) and **`compose-product-auditor`** (pre-merge gate).
 
 | Priority | Path | Purpose |
 |---|---|---|
-| 1 | `design-system-spec/screens/<id>-<name>.md` | States, behavior, composition table, edge cases |
-| 2 | `design-system-spec/screenshots/screens/<state>.png` | Pixel truth for each state |
-| 3 | `design-system-spec/components/<name>.md` | Atom/molecule rules (button, keypad, sheet, …) |
-| 4 | `design-system-spec/tokens.md` | Color, type, shape, spacing, motion |
+| 1 | `design-system-spec/screens/<id>-<name>.md` | States, behavior, composition, **spacing/padding tokens**, edge cases |
+| 2 | `design-system-spec/screenshots/screens/<state>.png` | Layout structure — what appears, order, backgrounds, variants (not dp measure) |
+| 3 | `design-system-spec/components/<name>.md` | Atom/molecule rules + **dims** (button, keypad, sheet, …) |
+| 4 | `design-system-spec/tokens.md` | Color, type, shape, **spacing rhythm**, motion |
 | 5 | Existing `shared/.../ui/design/*.kt` | Reuse before inventing |
 
-Open **every PNG** for the states you implement. The markdown describes behavior; the PNG
-decides layout nuance (flat list vs card wrap, spacing, which variant is selected).
+**Authority split (do not mix them up):**
+
+| Question | Source of truth |
+|---|---|
+| Padding, gaps, margins, touch-target minimums | **Markdown** — screen MD, component MD, `tokens.md`, `ProExpenseTheme.dimensions` |
+| What is on screen, flat vs card, `paper` vs `surface`, section order | **Screen PNG** |
+| Typography / color tokens | **Markdown** (`tokens.md` + theme) |
+
+Open **every screen PNG** for the states you implement. PNGs show composition and surfaces; **do not
+measure spacing from PNGs** — captures can differ in padding from the written spec. When PNG and MD
+disagree on **spacing**, follow the MD spec and theme tokens.
 
 ---
 
@@ -68,11 +77,14 @@ Before writing UI, grep `shared/src/androidMain/kotlin/com/arduia/expense/ui/des
 | Categories | `CategoryPicker`, `CategoryChip` |
 | Detail fields | `DetailFieldCard`, `DetailNoteField`, `DetailDateTimeField`, `DetailTagField` |
 | Top bar | `ProTopBar`, `ProTopBarAction` |
+| Touch / ripple | `Interaction.kt` — `proClickable`, `proIconClickable`, `proRippleClickable`, `ProTextAction` |
 | Toast | `ProToastHost` |
 | Motion | `ProExpenseTheme.motion`, `NavMotion.kt` (`stepTransition`, `sheetEnter`/`sheetExit`) |
 
 **Extend tokens first** (`shared/.../ui/theme/Type.kt`, `Dimensions.kt`, `Color.kt`,
 `Motion.kt`) when a spec value has no token — do not hardcode dp/colors/fonts in screens.
+Read **Tokens applied**, **Shape · spacing**, and **Component composition** sections in the
+screen MD before picking padding values.
 
 ### Step 2 — Bottom-up, then screen
 
@@ -141,17 +153,37 @@ during implementation.
 
 ## Patterns learned (do / don't)
 
-### Interaction affordances
+### Interaction affordances & accessibility (mandatory)
+
+Every tappable control must be easy to hit and give visible press feedback.
 
 | Do | Don't |
 |---|---|
-| `ProTextAction` for inline text buttons | `Text` + `padding(2.dp)` + `clickable` |
-| `proClickable` / `proIconClickable` with theme shapes | Bare `clickable` on icons |
-| `minimumInteractiveComponentSize()` inside `ProTextAction` | Touch targets smaller than 44dp |
+| `proClickable(onClick, shape = …)` — bounded ripple + optional press scale | Bare `Modifier.clickable { }` without `indication` |
+| `proIconClickable` for icon-only controls — unbounded ripple + 44dp min | Icon sized to glyph only with no hit expansion |
+| `ProTextAction` for inline text buttons — includes `minimumInteractiveComponentSize()` | `Text` + tiny padding + `clickable` |
+| `minimumInteractiveComponentSize()` or `size(dimens.touchTargetMin)` where the visible asset is smaller than 44dp | Touch targets under **44dp** (`ProExpenseTheme.dimensions.touchTargetMin`) |
+| `proRippleClickable` / `proBoundedRipple()` on rows, chips, keys | Silent taps with no ripple on primary interactive surfaces |
+| `proPressScale` on keys and buttons (via `proClickable` / `ProButton`) | Static controls with no press feedback |
 | Sheet: `ProBottomSheetHost(visible = showSheet, …)` always mounted | `if (showSheet) { ProBottomSheetHost(...) }` — kills exit animation |
 | Scrim tap → `onClose` on sheets | Sheet only closable via X |
 
-### Layout fidelity
+Reuse helpers in `shared/.../ui/design/Interaction.kt` — do not reimplement ripple/indication
+per screen. For polish details see **`compose-motion-polish`**.
+
+### Spacing & padding (mandatory)
+
+| Do | Don't |
+|---|---|
+| Read **Tokens applied** / **Shape · spacing** in the screen MD and `tokens.md` | Measure gaps from PNG screenshots |
+| Use `ProExpenseTheme.dimensions` (`space8`, `screenPadding`, `rowPaddingV`, `cardPadding`, …) | Inline magic `dp` for standard rhythm (6 / 8 / 10 / 12 / 16 / 18 / 26) |
+| Match component MD **dims** rows (e.g. keypad gap 8dp, card inner 18dp) | Copy spacing from Roborazzi baselines when they drift from spec |
+| Add a named dimension token when the spec introduces a new semantic spacing | One-off `padding(13.dp)` without checking component spec first |
+
+Base rhythm from `tokens.md`: **8dp** grid; card inner **18dp**; row **12dp** vertical / **8dp**
+horizontal; touch targets **≥ 44dp**.
+
+### Layout fidelity (screen PNG)
 
 | Do | Don't |
 |---|---|
@@ -195,10 +227,10 @@ app/src/test/.../            ← *ScreenshotTest + baselines
 
 ## Screen fidelity verification (mandatory)
 
-**Screen PNGs are the ship gate.** Component specs (`design-system-spec/components/`,
-`design-system-spec/screenshots/<component>.png`) describe atoms in isolation. **Embedded layout
-always follows the screen PNG** — backgrounds, wrappers, spacing, and what sits on `paper` vs
-`surface`.
+**Screen PNGs are the ship gate for composition.** Component specs describe atoms in isolation.
+**Embedded layout** (backgrounds, wrappers, what sits on `paper` vs `surface`, section order)
+follows the screen PNG. **Padding and gaps follow markdown + theme tokens**, not PNG measure —
+screenshots may crop or compress spacing differently from the written spec.
 
 Before marking a screen done, for **each** state listed in the screen markdown:
 
@@ -210,8 +242,11 @@ Before marking a screen done, for **each** state listed in the screen markdown:
    - Card / sheet / bordered regions only where the PNG shows them
    - Section order, eyebrows, empty vs filled fields, disabled actions
    - Edge states show only the UI the PNG shows (e.g. minimal zero-validation layout)
-3. **Resolve conflicts** — when a component gallery PNG disagrees with the screen PNG, **the
-   screen PNG wins** for in-flow placement and container styling.
+   - **Spacing:** confirm implementation uses screen MD + `tokens.md` + `dimensions` — do not
+     adjust dp to match PNG pixel measure
+3. **Resolve conflicts:**
+   - **Composition** (backgrounds, wrappers, flat vs card) → **screen PNG wins**
+   - **Padding / gaps / touch targets** → **markdown + theme tokens win**
 4. **Encode in tests** — Roborazzi test + baseline per state; re-record after intentional fixes.
 
 **Examples of screen-PNG-only details (easy to miss without opening the PNG):**
@@ -231,9 +266,13 @@ and adding a `ProCard` wrapper that never appears on `add-amount.png`.
 
 Before marking a screen done:
 
-- [ ] **Every spec state PNG opened and compared** — layout, backgrounds, wrappers, section order,
-  and edge-case minimalism match `design-system-spec/screenshots/screens/` (screen wins over
-  component gallery when they differ)
+- [ ] **Every spec state PNG opened and compared** — composition, backgrounds, wrappers, section
+  order, and edge-case minimalism match `design-system-spec/screenshots/screens/` (screen wins over
+  component gallery for **layout structure** when they differ)
+- [ ] **Padding & spacing from spec MD + `tokens.md`** — `ProExpenseTheme.dimensions` and component
+  **dims** rows; not measured from PNGs
+- [ ] **Clickable targets ≥ 44dp** with ripple (`proClickable`, `proIconClickable`, `ProTextAction`,
+  or `ProButton`) — no bare `clickable` without indication
 - [ ] Every spec state has a `@Preview`
 - [ ] Every spec state has a Roborazzi test + committed baseline PNG
 - [ ] `./gradlew verifyAll` green in session
