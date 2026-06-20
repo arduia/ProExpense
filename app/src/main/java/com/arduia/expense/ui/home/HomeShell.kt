@@ -30,6 +30,9 @@ fun HomeShell(
     onSplitClick: () -> Unit = {},
     onEventsClick: () -> Unit = {},
     onActiveEventClick: (String) -> Unit = {},
+    onLogFirstExpense: () -> Unit = {},
+    onSeeAll: () -> Unit = {},
+    onCustomizeQuickAccess: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
 
@@ -49,6 +52,9 @@ fun HomeShell(
             onPinBannerTap = onPinBannerTap,
             onPinBannerDismiss = onPinBannerDismiss,
             onActiveEventClick = onActiveEventClick,
+            onLogFirstExpense = onLogFirstExpense,
+            onSeeAll = onSeeAll,
+            onCustomizeQuickAccess = onCustomizeQuickAccess,
         )
 
         if (selectedTab == HomeNavTab.Home) {

@@ -16,13 +16,18 @@ data class HomeDayGroup(
 
 data class HomeUiState(
     val greetingName: String = "",
+    val dateLabel: String = "",
+    val monthLabel: String = "",
     val monthSpend: String = "$0",
     val monthDelta: String? = null,
     val dayGroups: List<HomeDayGroup> = emptyList(),
     val showEmptyHint: Boolean = true,
     val budgetSummary: HomeBudgetSummaryState? = null,
     val activeEvent: HomeActiveEventState? = null,
-)
+) {
+    val isEmpty: Boolean get() = dayGroups.isEmpty() && showEmptyHint
+    val greetingPrefixRes: String get() = if (isEmpty) "welcome" else "hi"
+}
 
 data class HomeBudgetSummaryState(
     val spentLabel: String,
@@ -43,12 +48,17 @@ data class HomeActiveEventState(
 )
 
 val previewHomeEmpty = HomeUiState(
+    greetingName = "Maya",
+    dateLabel = "WED · MAY 25",
+    monthLabel = "MAY",
     monthSpend = "$0",
     showEmptyHint = true,
 )
 
 val previewHomeCasual = HomeUiState(
     greetingName = "Maya",
+    dateLabel = "WED · MAY 25",
+    monthLabel = "MAY",
     monthSpend = "$80.90",
     monthDelta = "-12% from last month",
     showEmptyHint = false,
@@ -69,6 +79,8 @@ val previewHomeCasual = HomeUiState(
 
 val previewHomeBudget = HomeUiState(
     greetingName = "Siti",
+    dateLabel = "WED · MAY 25",
+    monthLabel = "MAY",
     monthSpend = "$420.00",
     monthDelta = "-8% from last month",
     showEmptyHint = false,
@@ -84,6 +96,8 @@ val previewHomeBudget = HomeUiState(
 
 val previewHomeEvent = HomeUiState(
     greetingName = "Carlos",
+    dateLabel = "WED · MAY 25",
+    monthLabel = "MAY",
     monthSpend = "$1,240.00",
     monthDelta = "+5% from last month",
     showEmptyHint = false,

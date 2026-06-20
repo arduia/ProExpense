@@ -10,7 +10,7 @@
     <string name="statistics">Statistics</string>
     <string name="free">Free</string>
     <string name="home">Home</string>
-    <string name="home_empty_hint">No spending logged yet</string>
+    <string name="home_empty_hint">No spending logged yet this month</string>
     <string name="expenses_in_this_week">Expenses in this Week</string>
     <string name="mmk">MMK</string>
     <string name="date">Date</string>
@@ -175,6 +175,7 @@
     <!-- Home -->
     <string name="home_greeting">Hi, %1$s</string>
     <string name="home_greeting_prefix">Hi, </string>
+    <string name="home_welcome_prefix">Welcome, </string>
     <string name="home_spend_this_month">Spent this month</string>
     <string name="home_spent_period">SPENT · %1$s</string>
     <string name="home_date_header">WED · MAY 25</string>
@@ -189,6 +190,12 @@
     <string name="quick_access_debt">Debt</string>
     <string name="quick_access_split">Split</string>
     <string name="quick_access_events">Events</string>
+    <string name="home_empty_title">No expenses yet</string>
+    <string name="home_empty_subtitle">Start by logging your first one — it takes about five seconds.</string>
+    <string name="home_log_first_expense">Log your first expense</string>
+    <string name="home_empty_tap_add_prefix">or tap </string>
+    <string name="home_empty_tap_add_suffix"> below</string>
+    <string name="recent_section">RECENT</string>
 
     <!-- Journal -->
     <string name="journal">Journal</string>
