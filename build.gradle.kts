@@ -13,6 +13,7 @@ tasks.register("verifyAll") {
     description = "Build devDebug APK and verify design system screenshots."
     dependsOn(
         ":app:assembleDevDebug",
+        ":app:testDevDebugUnitTest",
         ":shared:testDebugUnitTest",
     )
 }

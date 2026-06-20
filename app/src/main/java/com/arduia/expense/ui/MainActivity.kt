@@ -4,10 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.ui.Modifier
-import com.arduia.expense.ui.design.DesignSystemGalleryScreen
+import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.home.HomeShell
+import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,10 +16,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProExpenseTheme {
-                DesignSystemGalleryScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding(),
+                HomeShell(
+                    state = previewHomeCasual,
+                    selectedTab = HomeNavTab.Home,
+                    onTabSelected = {},
+                    onAddClick = {},
                 )
             }
         }

@@ -1,0 +1,351 @@
+package com.arduia.expense.ui.home
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.arduia.expense.R
+import com.arduia.expense.ui.design.DayHeader
+import com.arduia.expense.ui.design.EventBudgetCard
+import com.arduia.expense.ui.design.EventBudgetCardState
+import com.arduia.expense.ui.design.HeroGreeting
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.QuickAccessTile
+import com.arduia.expense.ui.design.TransactionRow
+import com.arduia.expense.ui.design.proClickable
+import com.arduia.expense.ui.preview.HomeUiState
+import com.arduia.expense.ui.preview.previewHomeBudget
+import com.arduia.expense.ui.preview.previewHomeCasual
+import com.arduia.expense.ui.preview.previewHomeEmpty
+import com.arduia.expense.ui.preview.previewHomeEvent
+import com.arduia.expense.ui.theme.ProArtboard
+import com.arduia.expense.ui.theme.ProExpenseTheme
+
+@Composable
+fun HomeScreenContent(
+    state: HomeUiState,
+    onReportsClick: () -> Unit,
+    onDebtClick: () -> Unit,
+    onSplitClick: () -> Unit,
+    onEventsClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    showPinSetupBanner: Boolean = false,
+    onPinBannerTap: () -> Unit = {},
+    onPinBannerDismiss: () -> Unit = {},
+    onActiveEventClick: (String) -> Unit = {},
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val cardShape = ProExpenseTheme.shapes.card
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            start = dimens.space18,
+            end = dimens.space18,
+            top = dimens.space24,
+            bottom = dimens.space24 + dimens.navShellBottomInset,
+        ),
+        verticalArrangement = Arrangement.spacedBy(dimens.space16),
+    ) {
+        item(key = "home-summary") {
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
+                if (state.greetingName.isNotBlank()) {
+                    HeroGreeting(name = state.greetingName)
+                }
+
+                if (showPinSetupBanner) {
+                    PinSetupBanner(
+                        onTap = onPinBannerTap,
+                        onDismiss = onPinBannerDismiss,
+                    )
+                }
+
+                MonthSpendCard(
+                    monthSpend = state.monthSpend,
+                    budgetSummary = state.budgetSummary,
+                    monthDelta = state.monthDelta,
+                    showEmptyHint = state.showEmptyHint,
+                )
+
+                state.activeEvent?.let { event ->
+                    EventBudgetCard(
+                        state = EventBudgetCardState(
+                            id = event.eventId,
+                            title = event.title,
+                            dateRange = event.dateRange,
+                            spentLabel = event.spentLabel,
+                            budgetLabel = event.budgetLabel,
+                            progress = event.progress,
+                            isOverBudget = event.isOverBudget,
+                        ),
+                        modifier = Modifier.proClickable(
+                            onClick = { onActiveEventClick(event.eventId) },
+                            shape = cardShape,
+                        ),
+                    )
+                }
+
+                HomeQuickAccessRow(
+                    onReportsClick = onReportsClick,
+                    onDebtClick = onDebtClick,
+                    onSplitClick = onSplitClick,
+                    onEventsClick = onEventsClick,
+                )
+            }
+        }
+
+        if (state.dayGroups.isNotEmpty()) {
+            item(key = "home-recent-title") {
+                Text(
+                    text = stringResource(R.string.recent),
+                    style = typography.sectionHead,
+                    color = colors.onSurface,
+                    modifier = Modifier.padding(top = dimens.space8),
+                )
+            }
+            state.dayGroups.forEach { group ->
+                item(key = "home-header-${group.dayTitle}") {
+                    DayHeader(title = group.dayTitle, total = group.dayTotal)
+                }
+                items(
+                    items = group.transactions,
+                    key = { "${group.dayTitle}-${it.note}-${it.amount}" },
+                ) { item ->
+                    TransactionRow(
+                        categoryId = item.categoryId,
+                        note = item.note,
+                        meta = item.meta,
+                        amount = item.amount,
+                        tag = item.tag,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MonthSpendCard(
+    monthSpend: String,
+    budgetSummary: com.arduia.expense.ui.preview.HomeBudgetSummaryState?,
+    monthDelta: String?,
+    showEmptyHint: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val cardShape = ProExpenseTheme.shapes.card
+    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .then(
+                if (cardElevation != null) {
+                    Modifier.shadow(
+                        elevation = cardElevation.blur,
+                        shape = cardShape,
+                        spotColor = cardElevation.color,
+                        ambientColor = cardElevation.color,
+                    )
+                } else {
+                    Modifier
+                },
+            )
+            .clip(cardShape)
+            .border(BorderStroke(1.dp, colors.line), cardShape)
+            .background(colors.surface)
+            .padding(dimens.cardPadding),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        Text(
+            text = stringResource(R.string.home_spend_this_month),
+            style = typography.eyebrow,
+            color = colors.muted,
+        )
+        Text(
+            text = monthSpend,
+            style = typography.summaryAmount,
+            color = colors.onSurface,
+        )
+        if (budgetSummary != null) {
+            Text(
+                text = "${budgetSummary.statusLabel} · ${budgetSummary.spentLabel} ${budgetSummary.budgetLabel}",
+                style = typography.bodyMedium,
+                color = if (budgetSummary.isOverBudget) colors.danger else colors.onSurfaceMuted,
+            )
+        }
+        when {
+            monthDelta != null -> {
+                Text(
+                    text = monthDelta,
+                    style = typography.caption,
+                    color = if (monthDelta.startsWith("+")) colors.danger else colors.success,
+                )
+            }
+            showEmptyHint -> {
+                Text(
+                    text = stringResource(R.string.home_empty_hint),
+                    style = typography.body,
+                    color = colors.onSurfaceMuted,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeQuickAccessRow(
+    onReportsClick: () -> Unit,
+    onDebtClick: () -> Unit,
+    onSplitClick: () -> Unit,
+    onEventsClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val dimens = ProExpenseTheme.dimensions
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        QuickAccessTile(
+            label = stringResource(R.string.quick_access_reports),
+            icon = ProIconGlyph.FeatReports,
+            onClick = onReportsClick,
+            modifier = Modifier.weight(1f),
+        )
+        QuickAccessTile(
+            label = stringResource(R.string.quick_access_debt),
+            icon = ProIconGlyph.FeatDebt,
+            onClick = onDebtClick,
+            modifier = Modifier.weight(1f),
+        )
+        QuickAccessTile(
+            label = stringResource(R.string.quick_access_split),
+            icon = ProIconGlyph.FeatSplit,
+            onClick = onSplitClick,
+            modifier = Modifier.weight(1f),
+        )
+        QuickAccessTile(
+            label = stringResource(R.string.quick_access_events),
+            icon = ProIconGlyph.FeatEvents,
+            onClick = onEventsClick,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Preview(
+    name = "Home — casual",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeCasualPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeCasual,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — budget",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeBudgetPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeBudget,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — event",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeEventPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeEvent,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — empty",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeEmptyPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeEmpty,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — casual with PIN banner",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeCasualWithPinBannerPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeCasual,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+            showPinSetupBanner = true,
+        )
+    }
+}
