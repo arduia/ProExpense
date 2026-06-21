@@ -12,10 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.FeatureUiRegistry
-import com.arduia.expense.ui.categories.CategoryListFlow
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.preview.previewMoreHub
-import com.arduia.expense.ui.reports.ReportsFlow
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -100,10 +98,10 @@ fun MoreFlow(
                 MoreStep.Clear -> features.importExport.ClearDataFlow(
                     onBack = { step = MoreStep.Hub },
                 )
-                MoreStep.Reports -> ReportsFlow(
+                MoreStep.Reports -> features.reports.ReportsFlow(
                     onBack = { step = MoreStep.Hub },
                 )
-                MoreStep.Categories -> CategoryListFlow(
+                MoreStep.Categories -> features.categories.CategoryListFlow(
                     onBack = { step = MoreStep.Hub },
                 )
             }

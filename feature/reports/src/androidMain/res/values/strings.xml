@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="reports_title">Reports</string>
+<string name="reports_back">More</string>
+<string name="reports_total_spent">TOTAL SPENT</string>
+<string name="reports_period_total">%1$s · TOTAL SPENT</string>
+<string name="reports_daily_avg_prefix">Daily avg</string>
+<string name="reports_by_category">BY CATEGORY</string>
+<string name="reports_top_categories">TOP CATEGORIES</string>
+<string name="reports_uncategorized_label">Uncategorized</string>
+<string name="reports_uncategorized_tip">Tip: categorize your expenses to unlock a spending breakdown by category.</string>
+<string name="reports_prev_period">Previous month</string>
+<string name="reports_next_period">Next month</string>
+<string name="reports_empty_title">No data yet</string>
+<string name="reports_empty_subtitle">Log a few expenses and your monthly spending breakdown will appear here.</string>
+<string name="reports_empty_action">Log your first expense</string>
+<string name="next">Next</string>
+<string name="skip">Skip</string>
+<string name="get_started">Get started</string>
+<string name="back">Back</string>
+<string name="currency_picker_title">All currencies</string>
+<string name="search_currency_placeholder">Search currency...</string>
+<string name="start_tracking">Start tracking</string>
+<string name="continue_label">Continue</string>
+</resources>

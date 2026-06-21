@@ -13,17 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
-import com.arduia.expense.ui.debt.DebtFlow
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
-import com.arduia.expense.ui.events.EventsFlow
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.more.MoreFlow
-import com.arduia.expense.ui.onboarding.FirstLaunchFlow
 import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
 import com.arduia.expense.ui.preview.previewHomeEmpty
-import com.arduia.expense.ui.reports.ReportsFlow
 import com.arduia.expense.ui.splash.SplashScreen
 import java.util.Locale
 import kotlinx.coroutines.delay
@@ -105,7 +101,7 @@ fun ExpenseApp(
         } else {
             if (onboardingComplete) {
                 when (selectedTab) {
-                    HomeNavTab.Budget -> EventsFlow(
+                    HomeNavTab.Budget -> features.eventBudget.EventsTab(
                         onTabSelected = onTabSelected,
                         onAddClick = { showQuickLog = true },
                     )
@@ -136,9 +132,9 @@ fun ExpenseApp(
                     )
                 }
             } else {
-                FirstLaunchFlow(
-                    onComplete = { name, _ ->
-                        userName = name
+                features.onboarding.FirstLaunchFlow(
+                    onComplete = { handoff ->
+                        userName = handoff.profileName
                         onboardingComplete = true
                     },
                 )
@@ -158,7 +154,7 @@ fun ExpenseApp(
             }
 
             if (showDebt) {
-                DebtFlow(onDismiss = { showDebt = false })
+                features.debt.DebtOverlay(onDismiss = { showDebt = false })
             }
 
             if (showPinSetup) {
@@ -168,7 +164,7 @@ fun ExpenseApp(
             }
 
             if (showReports) {
-                ReportsFlow(
+                features.reports.ReportsFlow(
                     onBack = { showReports = false },
                     empty = loggedItems.isEmpty(),
                     onLogFirstExpense = {
