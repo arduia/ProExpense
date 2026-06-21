@@ -55,40 +55,40 @@ Reference values for a Jetpack **Compose** implementation. The shipped app is bu
 
 ## 2. Typography
 
-Three UI families plus **Inter** for money figures. Load as Compose `FontFamily` from bundled assets.
+Three UI families with **Inter** for display titles and amounts. Load as Compose `FontFamily` from bundled assets.
 
 | Role | Family | Size / Line height | Tracking | Weight |
 |---|---|---|---|---|
 | Display amount | Inter | 64 / 64 | -0.025em | Regular |
 | Card amount | Inter | 40 / 1.0 | -0.02em | Regular |
-| Hero greeting | Instrument Serif | 30 / 1.05 | -0.015em | Regular |
-| Sheet title | Instrument Serif | 22 / 1.1 | -0.01em | Regular |
-| Section / day head | Instrument Serif | 18 / 1.1 | -0.01em | Regular |
-| Screen header / app-bar | Instrument Serif | 17 / 1.15 | 0 | Regular |
+| Hero greeting | Inter | 30 / 1.05 | -0.015em | Regular |
+| Sheet title | Inter | 22 / 1.1 | -0.01em | Regular |
+| Section / day head | Inter | 18 / 1.1 | -0.01em | Regular |
+| Screen header / app-bar | Inter | 17 / 1.15 | 0 | Regular |
 | Body | Manrope | 14 / 1.4 | 0 | 400 / 500 |
 | Emphasis / button | Manrope | 14 / 1.4 | -0.005em | 600 |
 | Caption | Manrope | 11.5 / 1.4 | 0 | 400 / 500 |
 | Eyebrow / label | Geist Mono | 11 / 1.3 | 0.10–0.12em (uppercase) | 500 / 600 |
 | Timestamp / figures | Geist Mono | 11.5–12 | 0.04em | 400 / 500 |
 
-> **Family clarity:** `--sans` resolves to **Manrope** (the in-app reference doc mislabels it "Geist" — the loaded webfont is Manrope, so use **Manrope** in Compose). `--mono` is **Geist Mono**. `--serif` is **Instrument Serif** (titles only — never body, controls, or amounts). `--amount` is **Inter** (money figures only). Tracking is in `em`; convert with `letterSpacing = (-0.025).em` etc.
+> **Family clarity:** `--sans` = **Manrope** (body, controls, app-bar labels). `--mono` = **Geist Mono** (eyebrows, timestamps). `--display` / `amountFamily` = **Inter** (titles, amounts, keypad keys). Tracking is in `em`; convert with `letterSpacing = (-0.025).em` etc.
 
 > **M3 `Typography` mapping:** `displayLarge`→display amount, `headlineMedium`→screen title, `titleMedium`→section head, `bodyMedium`→body, `labelMedium`→eyebrow, `bodySmall`→caption.
 
-### 2a. Android spec — Titles (Instrument Serif) & Amounts (Inter)
+### 2a. Android spec — Display type (Inter)
 
-> **Android rendering note (match the web/Figma metrics):** Compose adds vertical font padding by default, so title/amount text sits lower and the line box looks taller. On every title/amount `TextStyle` set `platformStyle = PlatformTextStyle(includeFontPadding = false)` and `lineHeightStyle = LineHeightStyle(alignment = Center, trim = Both)`. Instrument Serif ships **Regular + Italic only** — never request bold on titles (it synthesizes/thickens). Inter is bundled as a variable font; amount styles use **Regular (400) only**. `sp` follows the system font scale; compare at 1.0× for a pixel match.
+> **Android rendering note (match the web/Figma metrics):** Compose adds vertical font padding by default, so display text sits lower and the line box looks taller. On every title/amount `TextStyle` set `platformStyle = PlatformTextStyle(includeFontPadding = false)` and `lineHeightStyle = LineHeightStyle(alignment = Center, trim = Both)`. Inter ships as bundled variable fonts (`inter_variable.ttf`, `inter_variable_italic.ttf`); display styles use **Regular (400)** — hero emphasis uses **Italic**. `sp` follows the system font scale; compare at 1.0× for a pixel match.
 
-**Titles** use **Instrument Serif**, `FontWeight.Normal`. Provide it via a bundled `res/font/instrument_serif_*.ttf`. Compose `letterSpacing` in `.em` maps 1:1 to the CSS `em` values below.
+**Titles** use **Inter**, `FontWeight.Normal`. Provide it via a bundled `res/font/inter_*.ttf`. Compose `letterSpacing` in `.em` maps 1:1 to the CSS `em` values below.
 
 | Role | Example | `fontFamily` | `fontSize` | `lineHeight` | `letterSpacing` | `fontWeight` |
 |---|---|---|---|---|---|---|
-| Hero greeting | "Hi, *Maya*" | InstrumentSerif | `30.sp` | `32.sp` (1.05) | `(-0.015).em` | `Normal` |
-| Sheet title | "Link to…", "Date & time" | InstrumentSerif | `22.sp` | `24.sp` (1.1) | `(-0.01).em` | `Normal` |
-| Section / day head | "Today · May 25" | InstrumentSerif | `18.sp` | `20.sp` (1.1) | `(-0.01).em` | `Normal` |
-| Screen header / app-bar | "New expense", "Details" | InstrumentSerif | `17.sp` | `20.sp` (1.15) | `0` (none) | `Normal` |
+| Hero greeting | "Hi, *Maya*" | Inter | `30.sp` | `32.sp` (1.05) | `(-0.015).em` | `Normal` |
+| Sheet title | "Link to…", "Date & time" | Inter | `22.sp` | `24.sp` (1.1) | `(-0.01).em` | `Normal` |
+| Section / day head | "Today · May 25" | Inter | `18.sp` | `20.sp` (1.1) | `(-0.01).em` | `Normal` |
+| Screen header / app-bar | "New expense", "Details" | Inter | `17.sp` | `20.sp` (1.15) | `0` (none) | `Normal` |
 
-Color: `onSurface` `#212121` (event/persona accents may recolor to `Primary`). Titles are single-line — truncate with ellipsis, never wrap. The **hero greeting's emphasis word** ("Maya") is **Instrument Serif _italic_** in `Primary` `#039BE5`. Screen-header titles are **center-aligned** in the top bar (back/close on the left, equal spacer on the right).
+Color: `onSurface` `#212121` (event/persona accents may recolor to `Primary`). Titles are single-line — truncate with ellipsis, never wrap. The **hero greeting's emphasis word** ("Maya") is **Inter _italic_** in `Primary` `#039BE5`. Screen-header titles are **center-aligned** in the top bar (back/close on the left, equal spacer on the right).
 
 **Amounts** use **Inter**, `FontWeight.Normal`. Provide via bundled `res/font/inter_variable.ttf`.
 | Role | `fontFamily` | `fontSize` | `lineHeight` | `letterSpacing` | `fontWeight` |
@@ -116,14 +116,14 @@ val DisplayAmount = TextStyle(
     letterSpacing = (-0.025).em,
 )
 val ScreenHeaderTitle = TextStyle(   // app-bar title — "New expense", "Details"
-    fontFamily = InstrumentSerif,
+    fontFamily = Inter,
     fontWeight = FontWeight.Normal,
     fontSize = 17.sp,
     lineHeight = 20.sp,
     letterSpacing = 0.sp,
 )
 val HeroGreeting = TextStyle(         // "Hi, Maya"
-    fontFamily = InstrumentSerif,
+    fontFamily = Inter,
     fontWeight = FontWeight.Normal,
     fontSize = 30.sp,
     lineHeight = 32.sp,

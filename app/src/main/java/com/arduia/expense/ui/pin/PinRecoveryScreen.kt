@@ -84,7 +84,7 @@ fun PinRecoveryScreen(
             }
             Text(
                 text = stringResource(R.string.pin_recover_heading),
-                style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                style = typography.profileScreenTitle,
                 color = colors.onSurface,
             )
 

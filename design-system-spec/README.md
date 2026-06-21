@@ -27,6 +27,6 @@ Implementation reference for the **Pro Expense** finance tracker, extracted from
 - **1 CSS px = 1 dp.** Tracking values are `em`.
 - Single **light** theme. Surfaces are pure white; elevation is drop-shadow only (no M3 tonal tint).
 - `onPrimary` / on-filled text is warm white **`#FFFDF6`**, not `#FFFFFF`.
-- `--sans` = **Manrope**, `--mono` = **Geist Mono**, `--serif` = **Instrument Serif** (display only).
+- `--sans` = **Manrope**, `--mono` = **Geist Mono**, `--display` = **Inter** (titles + amounts).
 
 _Screenshots in [`screenshots/`](screenshots/) are captured from the live components._

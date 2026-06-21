@@ -319,9 +319,7 @@ fun SpecBottomSheetCapture() {
             )
             Text(
                 text = "Edit expense",
-                style = ProExpenseTheme.typography.sectionHead.copy(
-                    fontFamily = ProExpenseTheme.typography.serifFamily,
-                ),
+                style = ProExpenseTheme.typography.sectionHead,
                 color = colors.onSurface,
             )
             Row(

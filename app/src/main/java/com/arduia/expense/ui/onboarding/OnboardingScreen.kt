@@ -99,7 +99,7 @@ fun OnboardingScreenContent(
                 OnboardingIllustration(type = slide.illustration)
                 Text(
                     text = stringResource(slide.titleRes),
-                    style = typography.onboardingSlideTitle.copy(fontFamily = typography.serifFamily),
+                    style = typography.onboardingSlideTitle,
                     color = colors.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = dimens.space28),

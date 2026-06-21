@@ -68,7 +68,7 @@ fun SplashScreen(modifier: Modifier = Modifier) {
             }
             Text(
                 text = stringResource(R.string.app_name),
-                style = typography.heroGreeting.copy(fontFamily = typography.serifFamily),
+                style = typography.heroGreeting.copy(fontFamily = typography.amountFamily),
                 color = colors.onSurface,
                 textAlign = TextAlign.Center,
             )

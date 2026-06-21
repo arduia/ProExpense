@@ -63,7 +63,7 @@ fun MoreHubScreen(
                 )
                 Text(
                     text = stringResource(R.string.more_title),
-                    style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                    style = typography.profileScreenTitle,
                     color = colors.onSurface,
                 )
             }

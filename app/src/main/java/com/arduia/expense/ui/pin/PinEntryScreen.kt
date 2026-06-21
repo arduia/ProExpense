@@ -92,7 +92,7 @@ fun PinEntryScreen(
         PinBrandTile()
         Text(
             text = title,
-            style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+            style = typography.profileScreenTitle,
             color = titleColor,
             modifier = Modifier.padding(top = dimens.space18),
         )

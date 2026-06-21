@@ -92,7 +92,7 @@ fun ProBottomSheet(
                 ) {
                     Text(
                         text = title,
-                        style = typography.sectionHead.copy(fontFamily = typography.serifFamily),
+                        style = typography.sectionHead,
                         color = colors.onSurface,
                     )
                     ProIcon(

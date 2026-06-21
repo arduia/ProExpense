@@ -68,10 +68,10 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 |---|---|---|---|---|
 | Display amount | Inter | 64 / 64 | -0.025em | Regular |
 | Card amount | Inter | 40 / 40 | -0.02em | Regular |
-| Hero greeting | Instrument Serif | 30 / 32 | -0.015em | Regular |
-| Sheet title | Instrument Serif | 22 / 24 | -0.01em | Regular |
-| Section / day head | Instrument Serif | 18 / 20 | -0.01em | Regular |
-| Screen header / app-bar | Instrument Serif | 17 / 20 | 0 | Regular |
+| Hero greeting | Inter | 30 / 32 | -0.015em | Regular |
+| Sheet title | Inter | 22 / 24 | -0.01em | Regular |
+| Section / day head | Inter | 18 / 20 | -0.01em | Regular |
+| Screen header / app-bar | Inter | 17 / 20 | 0 | Regular |
 | Body / emphasis / button | Manrope | 14 / 1.4 | 0 / -0.005em | 400–600 |
 | Caption | Manrope | 11.5 / 1.4 | 0 | 400–500 |
 | Eyebrow / label | Geist Mono | 11 / 1.3 | 0.10–0.12em (upper) | 500–600 |
@@ -141,7 +141,7 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 
 - Single **light** theme. Surfaces pure white on warm-grey paper; **1 px = 1 dp**; tracking values in `em`.
 - Wire as a custom `ProExpenseTheme` wrapping `MaterialTheme` with overridden `ColorScheme`, `Typography`, and custom `Dimens` / `Shapes`.
-- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--serif` = **Instrument Serif** (titles only — never body, controls, or amounts).
+- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--display` = **Inter** (titles + amounts — never body or controls).
 
 ---
 

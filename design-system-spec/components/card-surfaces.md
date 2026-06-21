@@ -7,7 +7,7 @@ White cards float on warm paper with a hairline border and a soft two-layer shad
 ## Card
 - Background `card` `#FFFFFF`, border **1dp `line`**, radius **16–18dp**, padding **18dp**.
 - Shadow: `0 1px 0 rgba(33,33,33,.03)`, `0 6px 16px rgba(33,33,33,.04)` — subtle, never tonal.
-- Example anatomy: mono eyebrow (`ink3`, uppercase, tracking 0.08em) → serif amount (40sp, `-0.02em`) → optional inline sparkline (`clay`, 1.6dp stroke).
+- Example anatomy: mono eyebrow (`ink3`, uppercase, tracking 0.08em) → Inter amount (40sp, `-0.02em`) → optional inline sparkline (`clay`, 1.6dp stroke).
 
 ## Radius scale
 | Element | dp |

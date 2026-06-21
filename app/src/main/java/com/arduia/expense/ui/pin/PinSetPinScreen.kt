@@ -60,7 +60,7 @@ fun PinSetPinScreen(
 
         Text(
             text = stringResource(R.string.pin_confirm_heading),
-            style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+            style = typography.profileScreenTitle,
             color = colors.onSurface,
             modifier = Modifier.padding(top = dimens.space24),
         )

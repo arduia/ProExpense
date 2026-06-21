@@ -62,7 +62,7 @@ fun ProfileStepHeader(
             )
             Text(
                 text = title,
-                style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                style = typography.profileScreenTitle,
                 color = colors.onSurface,
             )
             Text(

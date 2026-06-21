@@ -79,7 +79,7 @@ fun PinSecurityQuestionScreen(
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
                 Text(
                     text = stringResource(R.string.pin_security_heading),
-                    style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                    style = typography.profileScreenTitle,
                     color = colors.onSurface,
                 )
                 Text(

@@ -157,7 +157,7 @@ private fun DebtDetailHeader(state: DebtDetailUiState) {
         )
         Text(
             text = state.name,
-            style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+            style = typography.profileScreenTitle,
             color = colors.onSurface,
             maxLines = 1,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
