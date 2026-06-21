@@ -539,6 +539,9 @@
     <string name="reports_uncategorized_tip">Tip: categorize your expenses to unlock a spending breakdown by category.</string>
     <string name="reports_prev_period">Previous month</string>
     <string name="reports_next_period">Next month</string>
+    <string name="reports_empty_title">No data yet</string>
+    <string name="reports_empty_subtitle">Log a few expenses and your monthly spending breakdown will appear here.</string>
+    <string name="reports_empty_action">Log your first expense</string>
 
     <!-- Category list -->
     <string name="categories_back">More</string>
@@ -558,6 +561,17 @@
     <string name="categories_duplicate_error">A category with this name already exists</string>
     <string name="categories_icon_label">Icon</string>
     <string name="categories_add">Add category</string>
+    <string name="categories_edit_title">Edit category</string>
+    <string name="categories_save">Save changes</string>
+    <string name="categories_action_edit_title">Edit category</string>
+    <string name="categories_action_edit_subtitle">Rename or change the icon</string>
+    <string name="categories_action_delete_title">Delete category</string>
+    <string name="categories_action_delete_subtitle">Expenses move to Uncategorized</string>
+    <string name="categories_action_cancel">Cancel</string>
+    <string name="categories_delete_title">Delete category?</string>
+    <string name="categories_delete_body">Its expenses will move to Uncategorized. This can\'t be undone.</string>
+    <string name="categories_delete_confirm">Delete</string>
+    <string name="categories_delete_cancel">Cancel</string>
 
     <string name="debt_delete_body">Removing %1$s\'s settled record can\'t be undone.</string>
     <plurals name="debt_active_count">

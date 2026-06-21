@@ -15,6 +15,7 @@ data class ReportsUiState(
     val daysLabel: String,
     val categories: List<ReportsCategoryUi>,
     val uncategorized: Boolean = false,
+    val empty: Boolean = false,
 )
 
 val previewReports = ReportsUiState(
@@ -38,4 +39,13 @@ val previewReportsUncategorized = ReportsUiState(
     daysLabel = "25 days in",
     categories = emptyList(),
     uncategorized = true,
+)
+
+val previewReportsEmpty = ReportsUiState(
+    periodLabel = "",
+    totalLabel = "",
+    dailyAvgLabel = "",
+    daysLabel = "",
+    categories = emptyList(),
+    empty = true,
 )

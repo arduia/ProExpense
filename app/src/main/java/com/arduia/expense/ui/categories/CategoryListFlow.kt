@@ -10,10 +10,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.preview.CategoryNewFormState
+import com.arduia.expense.ui.preview.CategoryRowUi
 import com.arduia.expense.ui.preview.previewCategoryList
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -24,13 +29,20 @@ fun CategoryListFlow(
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
-    val state = previewCategoryList
-    val existingNames = remember(state) {
-        (state.defaults + state.custom).map { it.label.lowercase() }.toSet()
-    }
+    val defaults = remember { previewCategoryList.defaults }
+    var custom by remember { mutableStateOf(previewCategoryList.custom) }
 
-    var showNew by remember { mutableStateOf(false) }
+    var showSheet by remember { mutableStateOf(false) }
+    var editingRow by remember { mutableStateOf<CategoryRowUi?>(null) }
+    var actionsRow by remember { mutableStateOf<CategoryRowUi?>(null) }
+    var deleteRow by remember { mutableStateOf<CategoryRowUi?>(null) }
     var form by remember { mutableStateOf(CategoryNewFormState()) }
+
+    fun takenNames(excluding: CategoryRowUi?): Set<String> =
+        (defaults + custom)
+            .filter { it.label != excluding?.label }
+            .map { it.label.lowercase() }
+            .toSet()
 
     Box(
         modifier = modifier
@@ -38,31 +50,102 @@ fun CategoryListFlow(
             .background(colors.paper),
     ) {
         CategoryListScreen(
-            state = state,
+            state = previewCategoryList.copy(custom = custom),
             onBack = onBack,
             onCreate = {
+                editingRow = null
                 form = CategoryNewFormState()
-                showNew = true
+                showSheet = true
+            },
+            onCustomRowClick = { actionsRow = it },
+            onReorder = { from, to ->
+                custom = custom.toMutableList().apply { add(to, removeAt(from)) }
             },
         )
 
         ProBottomSheetHost(
-            visible = showNew,
-            title = stringResource(R.string.categories_new_title),
-            onClose = { showNew = false },
+            visible = showSheet,
+            title = stringResource(
+                if (editingRow == null) R.string.categories_new_title else R.string.categories_edit_title,
+            ),
+            onClose = { showSheet = false },
         ) {
             CategoryNewSheetContent(
                 form = form,
                 onNameChange = { name ->
+                    val taken = takenNames(editingRow)
                     form = form.copy(
                         name = name,
-                        duplicate = name.isNotBlank() && name.trim().lowercase() in existingNames,
+                        duplicate = name.isNotBlank() && name.trim().lowercase() in taken,
                     )
                 },
                 onIconSelected = { form = form.copy(selectedIconId = it) },
-                onAdd = { if (form.canAdd) showNew = false },
+                onAdd = {
+                    if (form.canAdd) {
+                        val edited = editingRow
+                        val newRow = CategoryRowUi(
+                            categoryId = form.selectedIconId,
+                            label = form.name.trim(),
+                        )
+                        custom = if (edited == null) {
+                            custom + newRow
+                        } else {
+                            custom.map { if (it.label == edited.label) newRow else it }
+                        }
+                        showSheet = false
+                        editingRow = null
+                    }
+                },
+                confirmLabel = stringResource(
+                    if (editingRow == null) R.string.categories_add else R.string.categories_save,
+                ),
             )
         }
+
+        ProBottomSheetHost(
+            visible = actionsRow != null,
+            title = null,
+            onClose = { actionsRow = null },
+        ) {
+            actionsRow?.let { row ->
+                CategoryActionsSheetContent(
+                    row = row,
+                    onEdit = {
+                        editingRow = row
+                        form = CategoryNewFormState(
+                            name = row.label,
+                            selectedIconId = row.categoryId,
+                            iconOptions = (listOf(row.categoryId) +
+                                CategoryNewFormState().iconOptions).distinct().take(4),
+                        )
+                        actionsRow = null
+                        showSheet = true
+                    },
+                    onDelete = {
+                        deleteRow = row
+                        actionsRow = null
+                    },
+                    onCancel = { actionsRow = null },
+                )
+            }
+        }
+
+        ProAlertDialog(
+            visible = deleteRow != null,
+            icon = ProIconGlyph.Close,
+            iconTint = colors.danger,
+            iconBackground = colors.dangerTint,
+            title = stringResource(R.string.categories_delete_title),
+            body = buildAnnotatedString { append(stringResource(R.string.categories_delete_body)) },
+            confirmLabel = stringResource(R.string.categories_delete_confirm),
+            onConfirm = {
+                deleteRow?.let { row -> custom = custom.filter { it.label != row.label } }
+                deleteRow = null
+            },
+            dismissLabel = stringResource(R.string.categories_delete_cancel),
+            onDismiss = { deleteRow = null },
+            confirmVariant = ProButtonVariant.Danger,
+        )
     }
 }
 

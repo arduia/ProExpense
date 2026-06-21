@@ -3,6 +3,7 @@ package com.arduia.expense.ui.categories
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,14 +22,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
@@ -38,6 +50,7 @@ import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.preview.CategoryListUiState
 import com.arduia.expense.ui.preview.CategoryRowUi
 import com.arduia.expense.ui.preview.previewCategoryList
@@ -50,6 +63,8 @@ fun CategoryListScreen(
     onBack: () -> Unit,
     onCreate: () -> Unit,
     modifier: Modifier = Modifier,
+    onCustomRowClick: (CategoryRowUi) -> Unit = {},
+    onReorder: (Int, Int) -> Unit = { _, _ -> },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -96,9 +111,11 @@ fun CategoryListScreen(
                     state.custom.size,
                 ),
             )
-            CategoryGroupCard(rows = state.custom) { row ->
-                CategoryRow(row = row, locked = false)
-            }
+            ReorderableCustomGroup(
+                rows = state.custom,
+                onRowClick = onCustomRowClick,
+                onReorder = onReorder,
+            )
 
             ProButton(
                 text = stringResource(R.string.categories_create),
@@ -195,6 +212,107 @@ private fun CategoryRow(row: CategoryRowUi, locked: Boolean) {
                     .padding(horizontal = dimens.space10, vertical = dimens.space4),
             )
         } else {
+            DragHandle()
+        }
+    }
+}
+
+@Composable
+private fun ReorderableCustomGroup(
+    rows: List<CategoryRowUi>,
+    onRowClick: (CategoryRowUi) -> Unit,
+    onReorder: (Int, Int) -> Unit,
+) {
+    val colors = ProExpenseTheme.colors
+
+    var draggingIndex by remember { mutableStateOf<Int?>(null) }
+    var dragOffsetY by remember { mutableFloatStateOf(0f) }
+    var itemHeightPx by remember { mutableFloatStateOf(0f) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(ProExpenseTheme.shapes.card)
+            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+            .background(colors.surface),
+    ) {
+        rows.forEachIndexed { index, item ->
+            key(item.label) {
+                val dragging = index == draggingIndex
+                Column(
+                    modifier = Modifier
+                        .zIndex(if (dragging) 1f else 0f)
+                        .graphicsLayer { translationY = if (dragging) dragOffsetY else 0f }
+                        .onSizeChanged { if (it.height > 0) itemHeightPx = it.height.toFloat() },
+                ) {
+                    if (index > 0) {
+                        Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
+                    }
+                    CustomCategoryRow(
+                        row = item,
+                        onClick = { onRowClick(item) },
+                        dragHandleModifier = Modifier.pointerInput(rows.size) {
+                            detectDragGesturesAfterLongPress(
+                                onDragStart = { draggingIndex = index; dragOffsetY = 0f },
+                                onDragEnd = { draggingIndex = null; dragOffsetY = 0f },
+                                onDragCancel = { draggingIndex = null; dragOffsetY = 0f },
+                                onDrag = { change, drag ->
+                                    change.consume()
+                                    val from = draggingIndex
+                                    if (from != null) {
+                                        dragOffsetY += drag.y
+                                        val h = itemHeightPx
+                                        if (h > 0f) {
+                                            if (dragOffsetY > h / 2f && from < rows.lastIndex) {
+                                                onReorder(from, from + 1)
+                                                draggingIndex = from + 1
+                                                dragOffsetY -= h
+                                            } else if (dragOffsetY < -h / 2f && from > 0) {
+                                                onReorder(from, from - 1)
+                                                draggingIndex = from - 1
+                                                dragOffsetY += h
+                                            }
+                                        }
+                                    }
+                                },
+                            )
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CustomCategoryRow(
+    row: CategoryRowUi,
+    onClick: () -> Unit,
+    dragHandleModifier: Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .proClickable(onClick = onClick, shape = RectangleShape, scaleOnPress = false)
+            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
+    ) {
+        LogCategoryBadge(categoryId = row.categoryId, size = dimens.iconBadge)
+        Text(
+            text = row.label,
+            style = typography.bodyMedium,
+            color = colors.onSurface,
+            modifier = Modifier.weight(1f),
+        )
+        Box(
+            modifier = dragHandleModifier.padding(start = dimens.space8, top = dimens.space4, bottom = dimens.space4),
+            contentAlignment = Alignment.Center,
+        ) {
             DragHandle()
         }
     }

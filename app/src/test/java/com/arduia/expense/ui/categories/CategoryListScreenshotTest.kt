@@ -12,6 +12,8 @@ import androidx.compose.ui.test.onRoot
 import com.arduia.expense.R
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.preview.CategoryNewFormState
+import com.arduia.expense.ui.preview.CategoryRowUi
 import com.arduia.expense.ui.preview.previewCategoryList
 import com.arduia.expense.ui.preview.previewCategoryNewDuplicate
 import com.arduia.expense.ui.theme.ProArtboard
@@ -71,6 +73,41 @@ class CategoryListScreenshotTest {
                     onNameChange = {},
                     onIconSelected = {},
                     onAdd = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun cat_actions() = capture {
+        Box(Modifier.fillMaxSize()) {
+            CategoryListScreen(previewCategoryList, {}, {})
+            ProBottomSheetHost(visible = true, title = null, onClose = {}) {
+                CategoryActionsSheetContent(
+                    row = CategoryRowUi("coffee", "Coffee runs"),
+                    onEdit = {},
+                    onDelete = {},
+                    onCancel = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun cat_edit() = capture {
+        Box(Modifier.fillMaxSize()) {
+            CategoryListScreen(previewCategoryList, {}, {})
+            ProBottomSheetHost(
+                visible = true,
+                title = stringResource(R.string.categories_edit_title),
+                onClose = {},
+            ) {
+                CategoryNewSheetContent(
+                    form = CategoryNewFormState(name = "Coffee runs", selectedIconId = "coffee"),
+                    onNameChange = {},
+                    onIconSelected = {},
+                    onAdd = {},
+                    confirmLabel = stringResource(R.string.categories_save),
                 )
             }
         }

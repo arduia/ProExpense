@@ -44,6 +44,7 @@ fun CategoryNewSheetContent(
     onIconSelected: (String) -> Unit,
     onAdd: () -> Unit,
     modifier: Modifier = Modifier,
+    confirmLabel: String = stringResource(R.string.categories_add),
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -130,7 +131,7 @@ fun CategoryNewSheetContent(
         }
 
         ProButton(
-            text = stringResource(R.string.categories_add),
+            text = confirmLabel,
             onClick = onAdd,
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,

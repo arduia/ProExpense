@@ -21,9 +21,10 @@ import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
 import com.arduia.expense.ui.pin.PinSetupFlow
+import com.arduia.expense.ui.reports.ReportsFlow
 import com.arduia.expense.ui.sharedcost.SharedCostsFlow
 import com.arduia.expense.ui.splash.SplashScreen
-import com.arduia.expense.ui.preview.previewHomeCasual
+import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 private const val SPLASH_DURATION_MILLIS = 1800L
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
                 var showSharedCosts by rememberSaveable { mutableStateOf(false) }
                 var showDebt by rememberSaveable { mutableStateOf(false) }
                 var showPinSetup by rememberSaveable { mutableStateOf(false) }
+                var showReports by rememberSaveable { mutableStateOf(false) }
                 var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
 
                 val onTabSelected: (HomeNavTab) -> Unit = { tab ->
@@ -83,13 +85,15 @@ class MainActivity : ComponentActivity() {
                             )
                         } else {
                             HomeShell(
-                                state = previewHomeCasual,
+                                state = previewHomeEmpty,
                                 selectedTab = selectedTab,
                                 onTabSelected = onTabSelected,
                                 onAddClick = { showQuickLog = true },
+                                onReportsClick = { showReports = true },
                                 onDebtClick = { showDebt = true },
                                 onSplitClick = { showSharedCosts = true },
                                 onEventsClick = { selectedTab = HomeNavTab.Budget },
+                                onLogFirstExpense = { showQuickLog = true },
                             )
                         }
                     } else {
@@ -120,6 +124,17 @@ class MainActivity : ComponentActivity() {
                     if (showPinSetup) {
                         PinSetupFlow(
                             onDismiss = { showPinSetup = false },
+                        )
+                    }
+
+                    if (showReports) {
+                        ReportsFlow(
+                            onBack = { showReports = false },
+                            empty = true,
+                            onLogFirstExpense = {
+                                showReports = false
+                                showQuickLog = true
+                            },
                         )
                     }
                     }

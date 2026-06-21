@@ -20,8 +20,7 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.categories.CategoryListFlow
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.preview.MoreSettingKind
-import com.arduia.expense.ui.preview.previewReports
-import com.arduia.expense.ui.reports.ReportsScreen
+import com.arduia.expense.ui.reports.ReportsFlow
 import com.arduia.expense.ui.preview.previewMoreClearOptions
 import com.arduia.expense.ui.preview.previewMoreCurrencies
 import com.arduia.expense.ui.preview.previewMoreExportFiles
@@ -120,11 +119,8 @@ fun MoreFlow(
                     onClear = { showClearConfirm = true },
                     onBack = { step = MoreStep.Hub },
                 )
-                MoreStep.Reports -> ReportsScreen(
-                    state = previewReports,
+                MoreStep.Reports -> ReportsFlow(
                     onBack = { step = MoreStep.Hub },
-                    onPrevPeriod = {},
-                    onNextPeriod = {},
                 )
                 MoreStep.Categories -> CategoryListFlow(
                     onBack = { step = MoreStep.Hub },

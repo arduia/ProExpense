@@ -10,6 +10,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.preview.previewReports
+import com.arduia.expense.ui.preview.previewReportsEmpty
 import com.arduia.expense.ui.preview.previewReportsUncategorized
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -57,5 +58,10 @@ class ReportsScreenshotTest {
     @Test
     fun edge_reports_unc() = capture {
         ReportsScreen(previewReportsUncategorized, {}, {}, {})
+    }
+
+    @Test
+    fun edge_reports_empty() = capture {
+        ReportsScreen(previewReportsEmpty, {}, {}, {})
     }
 }

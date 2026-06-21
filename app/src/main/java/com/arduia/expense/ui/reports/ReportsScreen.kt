@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
@@ -43,6 +44,7 @@ import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.preview.ReportsCategoryUi
 import com.arduia.expense.ui.preview.ReportsUiState
 import com.arduia.expense.ui.preview.previewReports
+import com.arduia.expense.ui.preview.previewReportsEmpty
 import com.arduia.expense.ui.preview.previewReportsUncategorized
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -54,6 +56,7 @@ fun ReportsScreen(
     onPrevPeriod: () -> Unit,
     onNextPeriod: () -> Unit,
     modifier: Modifier = Modifier,
+    onLogFirstExpense: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -72,6 +75,23 @@ fun ReportsScreen(
                 onBack = onBack,
                 backLabel = stringResource(R.string.reports_back),
             )
+        }
+
+        if (state.empty) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.screenPadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                EmptyStateContent(
+                    title = stringResource(R.string.reports_empty_title),
+                    subtitle = stringResource(R.string.reports_empty_subtitle),
+                    actionLabel = stringResource(R.string.reports_empty_action),
+                    onActionClick = onLogFirstExpense,
+                )
+            }
+            return@Column
         }
 
         Column(
@@ -364,5 +384,18 @@ private fun ReportsPreview() {
 private fun ReportsUncategorizedPreview() {
     ProExpenseTheme {
         ReportsScreen(previewReportsUncategorized, {}, {}, {})
+    }
+}
+
+@Preview(
+    name = "Reports — no data yet",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsEmptyPreview() {
+    ProExpenseTheme {
+        ReportsScreen(previewReportsEmpty, {}, {}, {})
     }
 }
