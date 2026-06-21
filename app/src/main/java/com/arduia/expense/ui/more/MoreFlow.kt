@@ -10,20 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import com.arduia.expense.R
+import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.HomeNavTab
-import com.arduia.expense.ui.design.ProAlertDialog
-import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.categories.CategoryListFlow
-import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.preview.MoreSettingKind
-import com.arduia.expense.ui.reports.ReportsFlow
-import com.arduia.expense.ui.preview.previewMoreClearOptions
-import com.arduia.expense.ui.preview.previewMoreCurrencies
-import com.arduia.expense.ui.preview.previewMoreExportFiles
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -34,6 +23,7 @@ private enum class MoreStep { Hub, Currency, Export, Clear, Reports, Categories 
 
 @Composable
 fun MoreFlow(
+    features: FeatureUiRegistry,
     selectedTab: HomeNavTab,
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
@@ -48,8 +38,6 @@ fun MoreFlow(
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
-    var clearChecked by remember { mutableStateOf(setOf("expenses")) }
-    var showClearConfirm by remember { mutableStateOf(false) }
 
     val hubState = remember(selectedCurrency) {
         previewMoreHub.copy(
@@ -99,52 +87,25 @@ fun MoreFlow(
                     onTabSelected = onTabSelected,
                     onAddClick = onAddClick,
                 )
-                MoreStep.Currency -> MoreCurrencyScreen(
-                    items = previewMoreCurrencies,
+                MoreStep.Currency -> features.currency.SettingsFlow(
                     selectedCode = selectedCurrency,
                     onSelect = { selectedCurrency = it },
                     onBack = { step = MoreStep.Hub },
                 )
-                MoreStep.Export -> MoreExportScreen(
-                    files = previewMoreExportFiles,
-                    onExport = {},
+                MoreStep.Export -> features.importExport.ExportFlow(
                     onBack = { step = MoreStep.Hub },
                 )
-                MoreStep.Clear -> MoreClearScreen(
-                    options = previewMoreClearOptions,
-                    checkedIds = clearChecked,
-                    onToggle = { id ->
-                        clearChecked = if (id in clearChecked) clearChecked - id else clearChecked + id
-                    },
-                    onClear = { showClearConfirm = true },
+                MoreStep.Clear -> features.importExport.ClearDataFlow(
                     onBack = { step = MoreStep.Hub },
                 )
-                MoreStep.Reports -> ReportsFlow(
+                MoreStep.Reports -> features.reports.ReportsFlow(
                     onBack = { step = MoreStep.Hub },
                 )
-                MoreStep.Categories -> CategoryListFlow(
+                MoreStep.Categories -> features.categories.CategoryListFlow(
                     onBack = { step = MoreStep.Hub },
                 )
             }
         }
-
-        ProAlertDialog(
-            visible = showClearConfirm,
-            icon = ProIconGlyph.Close,
-            iconTint = colors.danger,
-            iconBackground = colors.dangerTint,
-            title = stringResource(R.string.more_clear_confirm_title),
-            body = buildAnnotatedString { append(stringResource(R.string.more_clear_confirm_body)) },
-            confirmLabel = stringResource(R.string.more_clear_confirm_action),
-            onConfirm = {
-                showClearConfirm = false
-                clearChecked = emptySet()
-                step = MoreStep.Hub
-            },
-            dismissLabel = stringResource(R.string.more_clear_confirm_cancel),
-            onDismiss = { showClearConfirm = false },
-            confirmVariant = ProButtonVariant.Danger,
-        )
     }
 }
 
@@ -158,6 +119,7 @@ fun MoreFlow(
 private fun MoreFlowPreview() {
     ProExpenseTheme {
         MoreFlow(
+            features = FeatureUiRegistry(),
             selectedTab = HomeNavTab.More,
             onTabSelected = {},
             onAddClick = {},

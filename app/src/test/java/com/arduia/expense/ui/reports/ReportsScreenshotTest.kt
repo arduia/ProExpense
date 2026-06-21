@@ -8,10 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.reports.ui.ReportsScreen
 import com.arduia.expense.testing.ScreenshotTests
-import com.arduia.expense.ui.preview.previewReports
-import com.arduia.expense.ui.preview.previewReportsEmpty
-import com.arduia.expense.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.reports.ui.preview.previewReports
+import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
+import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage

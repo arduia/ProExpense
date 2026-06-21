@@ -87,6 +87,11 @@ dependencies {
     implementation(project(":feature:sharedcost"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:importexport"))
+    implementation(project(":feature:debt"))
+    implementation(project(":feature:eventbudget"))
+    implementation(project(":feature:reports"))
+    implementation(project(":feature:categories"))
+    implementation(project(":feature:onboarding"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

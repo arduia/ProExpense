@@ -32,24 +32,6 @@ data class MoreHubUiState(
     val settings: List<MoreSettingRowUi>,
 )
 
-data class MoreCurrencyItemUi(
-    val code: String,
-    val name: String,
-    val symbol: String,
-)
-
-data class MoreExportFileUi(
-    val fileName: String,
-    val subtitle: String,
-)
-
-data class MoreClearOptionUi(
-    val id: String,
-    val label: String,
-    val subtitle: String,
-    val destructive: Boolean = false,
-)
-
 val previewMoreHub = MoreHubUiState(
     profile = MoreProfileUi(
         initial = "M",
@@ -74,28 +56,4 @@ val previewMoreHub = MoreHubUiState(
         MoreSettingRowUi("clear", ProIconGlyph.Close, "Clear data", kind = MoreSettingKind.Nav),
         MoreSettingRowUi("version", ProIconGlyph.Bell, "App version", value = "2.0.0", kind = MoreSettingKind.Value),
     ),
-)
-
-val previewMoreCurrencies = listOf(
-    MoreCurrencyItemUi("USD", "US Dollar", "$"),
-    MoreCurrencyItemUi("EUR", "Euro", "€"),
-    MoreCurrencyItemUi("GBP", "British Pound", "£"),
-    MoreCurrencyItemUi("JPY", "Japanese Yen", "¥"),
-    MoreCurrencyItemUi("INR", "Indian Rupee", "₹"),
-    MoreCurrencyItemUi("AED", "UAE Dirham", "د.إ"),
-)
-
-val previewMoreExportFiles = listOf(
-    MoreExportFileUi("expenses.csv", "All logged expenses + @ tags"),
-    MoreExportFileUi("events.csv", "Event budgets & status"),
-    MoreExportFileUi("debts.csv", "Lent / owed records"),
-    MoreExportFileUi("shared_costs.csv", "Saved bill splits"),
-)
-
-val previewMoreClearOptions = listOf(
-    MoreClearOptionUi("expenses", "Expenses", "All logged entries"),
-    MoreClearOptionUi("events", "Events", "Budgets & linked tags"),
-    MoreClearOptionUi("debts", "Debts", "Lent / owed records"),
-    MoreClearOptionUi("shared", "Shared costs", "Saved splits"),
-    MoreClearOptionUi("everything", "Everything", "Reset the app fully", destructive = true),
 )

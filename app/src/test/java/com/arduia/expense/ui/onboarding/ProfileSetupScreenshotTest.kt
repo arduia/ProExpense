@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.onboarding.ui.ProfileSetupScreenContent
+import com.arduia.expense.feature.onboarding.ui.ProfileSetupState
+import com.arduia.expense.feature.onboarding.ui.ProfileSetupStep
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
