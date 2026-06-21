@@ -7,4 +7,8 @@
     <string name="more_clear_title">Clear Data</string>
     <string name="more_clear_subtitle">Choose what to wipe. Each clear asks for confirmation and can\'t be undone.</string>
     <string name="more_clear_action">Clear selected…</string>
+    <string name="more_clear_confirm_title">Clear selected data?</string>
+    <string name="more_clear_confirm_body">This permanently removes the selected records from this device. It can\'t be undone.</string>
+    <string name="more_clear_confirm_action">Clear</string>
+    <string name="more_clear_confirm_cancel">Cancel</string>
 </resources>
