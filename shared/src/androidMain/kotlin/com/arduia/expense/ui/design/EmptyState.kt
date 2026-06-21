@@ -1,20 +1,16 @@
 package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -98,7 +94,6 @@ fun EmptyStateAddHint(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val chipShape = ProExpenseTheme.shapes.addHintChip
 
     Row(
         modifier = modifier,
@@ -110,20 +105,7 @@ fun EmptyStateAddHint(
             style = typography.caption,
             color = colors.onSurfaceMuted,
         )
-        Box(
-            modifier = Modifier
-                .size(dimens.addHintChipSize)
-                .clip(chipShape)
-                .background(colors.primary),
-            contentAlignment = Alignment.Center,
-        ) {
-            ProIcon(
-                glyph = ProIconGlyph.Plus,
-                contentDescription = null,
-                tint = colors.onPrimaryWarm,
-                size = dimens.addHintIconSize,
-            )
-        }
+        AddHintChip()
         Text(
             text = suffix,
             style = typography.caption,
