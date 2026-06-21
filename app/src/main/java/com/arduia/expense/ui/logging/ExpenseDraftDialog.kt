@@ -53,7 +53,7 @@ fun ExpenseDraftDialog(
             }
             Text(
                 text = stringResource(R.string.draft_restore_title),
-                style = typography.sectionHead.copy(fontFamily = typography.serifFamily),
+                style = typography.sectionHead,
                 color = colors.onSurface,
             )
             Text(

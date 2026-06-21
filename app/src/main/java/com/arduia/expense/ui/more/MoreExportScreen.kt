@@ -84,7 +84,7 @@ fun MoreExportScreen(
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
                 Text(
                     text = stringResource(R.string.more_export_heading),
-                    style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                    style = typography.profileScreenTitle,
                     color = colors.onSurface,
                 )
                 Text(

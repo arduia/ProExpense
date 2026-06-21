@@ -72,7 +72,7 @@ fun SharedCostPeopleCard(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = count.toString(),
-                    style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+                    style = typography.displayAmount,
                     color = colors.onSurface,
                     textAlign = TextAlign.Center,
                 )
@@ -228,7 +228,7 @@ fun SharedCostParticipantRow(
                 onValueChange = onAmountChange,
                 textStyle = typography.listAmount.copy(
                     color = colors.onSurface,
-                    fontFamily = typography.serifFamily,
+                    fontFamily = typography.amountFamily,
                     textAlign = TextAlign.End,
                 ),
                 cursorBrush = SolidColor(colors.primary),
@@ -238,7 +238,7 @@ fun SharedCostParticipantRow(
         } else {
             Text(
                 text = amount,
-                style = typography.listAmount.copy(fontFamily = typography.serifFamily),
+                style = typography.listAmount,
                 color = colors.onSurface,
             )
         }
@@ -303,7 +303,7 @@ fun SharedCostHistoryRow(
         }
         Text(
             text = total,
-            style = typography.listAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.listAmount,
             color = colors.onSurface,
         )
     }
@@ -382,7 +382,7 @@ fun SharedCostPerPersonCard(
             )
             Text(
                 text = perPersonAmount,
-                style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+                style = typography.displayAmount,
                 color = colors.primary,
             )
         }

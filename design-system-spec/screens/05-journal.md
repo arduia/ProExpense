@@ -14,7 +14,7 @@
 ## Behavior & interactions
 
 - Entries grouped by expense date (days always expanded — no collapsing). Within a day, newest-created first.
-- Each day header shows a serif date + mono daily total.
+- Each day header shows a Inter date + mono daily total.
 - Search (keyword / note / amount) + category filter chips at the top.
 - When search is active the list flattens (no day grouping); rows show amount, category, date, note.
 - Tap an entry → Journal Detail. Long-press an entry → Quick-note bottom sheet (type + save without leaving the list).
@@ -34,10 +34,10 @@
 
 **Type**
 
-- Screen title — Instrument Serif 28sp
-- Day header — Instrument Serif 18sp / -0.01em
+- Screen title — Inter 28sp
+- Day header — Inter 18sp / -0.01em
 - Daily total — Geist Mono 12sp muted
-- Row amount — Instrument Serif 18sp
+- Row amount — Inter 18sp
 - Meta — Manrope 11.5sp muted
 
 **Color**
@@ -76,18 +76,18 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 
 | Role | Family | Size / Line | Tracking | Weight |
 |---|---|---|---|---|
-| Display amount | Instrument Serif | 64 / 64 | -0.025em | Regular |
-| Card amount | Instrument Serif | 40 / 40 | -0.02em | Regular |
-| Hero greeting | Instrument Serif | 30 / 32 | -0.015em | Regular |
-| Sheet title | Instrument Serif | 22 / 24 | -0.01em | Regular |
-| Section / day head | Instrument Serif | 18 / 20 | -0.01em | Regular |
-| Screen header / app-bar | Instrument Serif | 17 / 20 | 0 | Regular |
+| Display amount | Inter | 64 / 64 | -0.025em | Regular |
+| Card amount | Inter | 40 / 40 | -0.02em | Regular |
+| Hero greeting | Inter | 30 / 32 | -0.015em | Regular |
+| Sheet title | Inter | 22 / 24 | -0.01em | Regular |
+| Section / day head | Inter | 18 / 20 | -0.01em | Regular |
+| Screen header / app-bar | Inter | 17 / 20 | 0 | Regular |
 | Body / emphasis / button | Manrope | 14 / 1.4 | 0 / -0.005em | 400–600 |
 | Caption | Manrope | 11.5 / 1.4 | 0 | 400–500 |
 | Eyebrow / label | Geist Mono | 11 / 1.3 | 0.10–0.12em (upper) | 500–600 |
 | Timestamp / figures | Geist Mono | 11.5–12 | 0.04em | 400–500 |
 
-> Amounts are **always Instrument Serif**. Compose: `PlatformTextStyle(includeFontPadding = false)` + `LineHeightStyle(Center, Both)` on every title/amount; Instrument Serif ships **Regular + Italic only — never request bold**. The `$` glyph is ≈0.47× the figure in `clay`; decimals (`.00`) sit in `ink3`.
+> Amounts are **always Inter**. Compose: `PlatformTextStyle(includeFontPadding = false)` + `LineHeightStyle(Center, Both)` on every title/amount; Inter amount styles use **Regular only** via bundled variable font. The `$` glyph is ≈0.47× the figure in `clay`; decimals (`.00`) sit in `ink3`.
 
 ### Color
 
@@ -151,7 +151,7 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 
 - Single **light** theme. Surfaces pure white on warm-grey paper; **1 px = 1 dp**; tracking values in `em`.
 - Wire as a custom `ProExpenseTheme` wrapping `MaterialTheme` with overridden `ColorScheme`, `Typography`, and custom `Dimens` / `Shapes`.
-- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--serif` = **Instrument Serif** (display only — never body or controls).
+- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--display` = **Inter** (titles + amounts — never body or controls).
 
 ---
 

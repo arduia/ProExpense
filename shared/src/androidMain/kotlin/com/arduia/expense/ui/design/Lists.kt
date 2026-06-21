@@ -144,7 +144,7 @@ fun TransactionRow(
         }
         Text(
             text = amount,
-            style = typography.listAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.listAmount,
             color = colors.onSurface,
         )
     }
@@ -174,7 +174,7 @@ fun DayHeader(
     ) {
         Text(
             text = title,
-            style = typography.sectionHead.copy(fontFamily = typography.serifFamily),
+            style = typography.sectionHead,
             color = colors.onSurface,
         )
         Text(

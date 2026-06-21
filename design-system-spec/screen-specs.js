@@ -23,7 +23,7 @@ window.SCREEN_SPECS = [
       { c: "Wordmark", role: "“Pro Expense” under the mark", m3: "Text · displaySmall-ish" },
     ],
     tokens: {
-      type: ["Wordmark — Instrument Serif 30sp / -0.015em (Hero greeting role)"],
+      type: ["Wordmark — Inter 30sp / -0.015em (Hero greeting role)"],
       color: ["background = paper #F5F5F5", "logo fill = primary #039BE5", "ink #212121"],
       dims: ["Logo tile radius 14dp", "vertical stack gap 18dp"],
     },
@@ -55,7 +55,7 @@ window.SCREEN_SPECS = [
       { c: "Text button", role: "Skip / Back / Next", m3: "TextButton" },
     ],
     tokens: {
-      type: ["Slide title — Instrument Serif 38sp / -0.02em (white-space: nowrap)", "Body — Manrope 15sp / 1.45 ink2", "Nav labels — Manrope 13sp"],
+      type: ["Slide title — Inter 38sp / -0.02em (white-space: nowrap)", "Body — Manrope 15sp / 1.45 ink2", "Nav labels — Manrope 13sp"],
       color: ["active dot = clay #039BE5", "idle dot = rgba(43,31,23,.18)", "illustration palette: blue100 #B3E5FC tints"],
       dims: ["Illustration box 280dp", "CTA = Button lg (radius 14dp)", "nav row marginBottom 48dp clears CTA"],
     },
@@ -85,7 +85,7 @@ window.SCREEN_SPECS = [
       { c: "Bottom sheet + Search field", role: "Full currency picker", m3: "ModalBottomSheet" },
     ],
     tokens: {
-      type: ["Screen title — Instrument Serif 28sp", "Eyebrow — Geist Mono 11sp / 0.12em upper", "Field text — Manrope 14sp"],
+      type: ["Screen title — Inter 28sp", "Eyebrow — Geist Mono 11sp / 0.12em upper", "Field text — Manrope 14sp"],
       color: ["selected row tint = blue100 #B3E5FC wash + clay border", "check = clay #039BE5"],
       dims: ["Field radius 14dp", "row padding 12dp", "sheet top corners 22dp"],
     },
@@ -119,7 +119,7 @@ window.SCREEN_SPECS = [
       { c: "Empty state", role: "Fresh-user illustration + CTA", m3: "Column + Image + Button" },
     ],
     tokens: {
-      type: ["Greeting — Instrument Serif 30sp, emphasis word italic in clay", "Card amount — Instrument Serif 40sp / -0.02em", "Eyebrow — Geist Mono 11sp upper", "Row amount — Instrument Serif 18sp"],
+      type: ["Greeting — Inter 30sp, emphasis word italic in clay", "Card amount — Inter 40sp / -0.02em", "Eyebrow — Geist Mono 11sp upper", "Row amount — Inter 18sp"],
       color: ["primary clay #039BE5 (amount $, links, active nav, FAB)", "ink #212121 / ink3 #757575", "card #FFFFFF on paper #F5F5F5", "tile tint blue100 #B3E5FC"],
       dims: ["Card radius 16–18dp, padding 18dp", "tile radius 14dp, icon box 36dp", "FAB 64dp raised -24dp", "row pad 12×8dp"],
     },
@@ -155,7 +155,7 @@ window.SCREEN_SPECS = [
       { c: "Button (primary, lg)", role: "Save on Details", m3: "Button" },
     ],
     tokens: {
-      type: ["Display amount — Instrument Serif 64sp / -0.025em", "Keypad keys — Instrument Serif 22sp", "$ glyph ≈0.47× figure in clay", "decimal .00 in ink3", "Read-only amount (Details) — Instrument Serif 26sp"],
+      type: ["Display amount — Inter 64sp / -0.025em", "Keypad keys — Inter 22sp", "$ glyph ≈0.47× figure in clay", "decimal .00 in ink3", "Read-only amount (Details) — Inter 26sp"],
       color: ["empty figure = muted2 #BDBDBD, $ stays clay", "helper / shake text = clay (error affordance)", "tag = #FB8C00"],
       dims: ["Keypad 3-col grid, gap 8dp, key radius 12dp", "Save/Next radius 14dp", "FAB shadow 0 4 10 rgba(3,155,229,.25)"],
     },
@@ -187,7 +187,7 @@ window.SCREEN_SPECS = [
       { c: "Bottom sheet — Quick note", role: "Long-press inline note", m3: "ModalBottomSheet" },
     ],
     tokens: {
-      type: ["Screen title — Instrument Serif 28sp", "Day header — Instrument Serif 18sp / -0.01em", "Daily total — Geist Mono 12sp muted", "Row amount — Instrument Serif 18sp", "Meta — Manrope 11.5sp muted"],
+      type: ["Screen title — Inter 28sp", "Day header — Inter 18sp / -0.01em", "Daily total — Geist Mono 12sp muted", "Row amount — Inter 18sp", "Meta — Manrope 11.5sp muted"],
       color: ["filter chip active = ink fill / paper-warm text", "event tag = #FB8C00", "divider line2 rgba(33,33,33,.06)"],
       dims: ["Search field radius 14dp", "filter chip radius 99dp", "row pad 12×8dp, badge 38dp"],
     },
@@ -221,7 +221,7 @@ window.SCREEN_SPECS = [
       { c: "Confirm dialog", role: "Delete guard", m3: "AlertDialog" },
     ],
     tokens: {
-      type: ["Detail amount — Instrument Serif 26sp / -0.01em", "Header title — Instrument Serif 17sp (app-bar)", "Note — Manrope 14sp italic in card", "Labels — Geist Mono 11sp upper"],
+      type: ["Detail amount — Inter 26sp / -0.01em", "Header title — Inter 17sp (app-bar)", "Note — Manrope 14sp italic in card", "Labels — Geist Mono 11sp upper"],
       color: ["Delete action = danger #EF5350", "tag card tint = tagTint #FFE0B2", "ink / ink3"],
       dims: ["Sheet top corners 22dp, grab handle 36×4dp", "action buttons gap 10dp weight 1f"],
     },
@@ -255,7 +255,7 @@ window.SCREEN_SPECS = [
       { c: "Empty state + Button", role: "Fresh-user CTA", m3: "Column + Button" },
     ],
     tokens: {
-      type: ["Screen title — Instrument Serif 30sp", "Card amount — Instrument Serif 40sp", "Eyebrow — Geist Mono 11sp upper"],
+      type: ["Screen title — Inter 30sp", "Card amount — Inter 40sp", "Eyebrow — Geist Mono 11sp upper"],
       color: ["on-track bar = soft blue #B3D4E8", "over = warm yellow #F5E6A3 → soft red #E07070", "tag accent #FB8C00"],
       dims: ["Card radius 16dp, padding 18dp", "progress bar h 8dp radius 99dp", "sheet corners 22dp"],
     },
@@ -285,7 +285,7 @@ window.SCREEN_SPECS = [
       { c: "Bottom sheet — Edit / Close", role: "Edit fields, close event", m3: "ModalBottomSheet" },
     ],
     tokens: {
-      type: ["Event title — Instrument Serif (hero)", "Remaining — Instrument Serif 40sp", "Warning text — Manrope 14sp / 600"],
+      type: ["Event title — Inter (hero)", "Remaining — Inter 40sp", "Warning text — Manrope 14sp / 600"],
       color: ["bar states #B3D4E8 / #F5E6A3 / #E07070", "warning copy in amber #b26a00 / danger #EF5350"],
       dims: ["bar h 8dp", "card radius 16dp pad 18dp"],
     },
@@ -322,7 +322,7 @@ window.SCREEN_SPECS = [
       { c: "Confirm dialog", role: "Delete settled guard", m3: "AlertDialog" },
     ],
     tokens: {
-      type: ["Person amount — Instrument Serif (row/detail)", "Summary amount — Instrument Serif 40sp", "Labels — Geist Mono 11sp upper"],
+      type: ["Person amount — Inter (row/detail)", "Summary amount — Inter 40sp", "Labels — Geist Mono 11sp upper"],
       color: ["I Lent = sage #4CAF50 (success family)", "I Owe = danger #EF5350", "settled rows alpha ~0.5"],
       dims: ["avatar 38–52dp circle", "row pad 12dp", "sheet corners 22dp"],
     },
@@ -358,7 +358,7 @@ window.SCREEN_SPECS = [
       { c: "Button (primary)", role: "Save split", m3: "Button" },
     ],
     tokens: {
-      type: ["Total / per-person — Instrument Serif 40–64sp", "Eyebrow — Geist Mono 11sp upper", "names — Manrope 14sp"],
+      type: ["Total / per-person — Inter 40–64sp", "Eyebrow — Geist Mono 11sp upper", "names — Manrope 14sp"],
       color: ["per-person figure = clay #039BE5", "stepper disabled glyph = muted2 #BDBDBD"],
       dims: ["stepper hit target ≥ 44dp", "row pad 12dp"],
     },
@@ -418,7 +418,7 @@ window.SCREEN_SPECS = [
       { c: "Empty state", role: "No-data illustration", m3: "Column" },
     ],
     tokens: {
-      type: ["Total spent — Instrument Serif (display/40–64sp)", "ranks — Manrope 14sp + Geist Mono figures", "eyebrow mono 11sp"],
+      type: ["Total spent — Inter (display/40–64sp)", "ranks — Manrope 14sp + Geist Mono figures", "eyebrow mono 11sp"],
       color: ["donut segments use category accents", "uncategorized = muted grey ring"],
       dims: ["donut diameter ~160dp", "rank row pad 12dp"],
     },
@@ -454,7 +454,7 @@ window.SCREEN_SPECS = [
       { c: "Confirm dialog", role: "Clear-data guard", m3: "AlertDialog" },
     ],
     tokens: {
-      type: ["Screen title — Instrument Serif 30sp", "section eyebrow — Geist Mono 11sp upper", "row label — Manrope 14sp, value — mono/ink3"],
+      type: ["Screen title — Inter 30sp", "section eyebrow — Geist Mono 11sp upper", "row label — Manrope 14sp, value — mono/ink3"],
       color: ["Clear-selected = danger #EF5350", "Export = primary clay", "toggle on = clay"],
       dims: ["row pad 12dp", "field/list radius 14dp", "icon 18–20dp"],
     },
@@ -486,7 +486,7 @@ window.SCREEN_SPECS = [
       { c: "Button (primary)", role: "Save / Enable PIN", m3: "Button" },
     ],
     tokens: {
-      type: ["Title — Instrument Serif 22–24sp (white-space: nowrap)", "helper — Manrope 13sp ink3", "error — Manrope 13sp danger"],
+      type: ["Title — Inter 22–24sp (white-space: nowrap)", "helper — Manrope 13sp ink3", "error — Manrope 13sp danger"],
       color: ["filled dots = clay; empty = outline", "error copy = danger #EF5350", "PIN icon tint = clay"],
       dims: ["PIN dot 14dp, gap 14dp", "keypad keys radius 12dp"],
     },
@@ -520,7 +520,7 @@ window.SCREEN_SPECS = [
       { c: "Lockout countdown", role: "Disabled state timer", m3: "Text + state" },
     ],
     tokens: {
-      type: ["Title — Instrument Serif 26–28sp (white-space: nowrap)", "countdown — Geist Mono", "helper — Manrope 13sp"],
+      type: ["Title — Inter 26–28sp (white-space: nowrap)", "countdown — Geist Mono", "helper — Manrope 13sp"],
       color: ["normal = ink/clay", "locked = amber #b26a00 (title + helper)", "error = danger"],
       dims: ["dot 14dp gap 14dp", "keypad keys radius 12dp", "disabled keypad alpha"],
     },

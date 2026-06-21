@@ -16,7 +16,7 @@
     --sage:#4CAF50; --danger:#EF5350; --tag:#FB8C00; --amber:#b26a00;
     --sans:"Manrope",-apple-system,system-ui,sans-serif;
     --mono:"Geist Mono",ui-monospace,monospace;
-    --serif:"Instrument Serif","Plus Jakarta Sans",Georgia,serif;
+    --display:"Inter","Plus Jakarta Sans",Georgia,serif;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
@@ -26,7 +26,7 @@
   /* ── cover ── */
   .cover{padding:88px 0 40px;border-bottom:1px solid var(--line);}
   .cover .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--clay);font-weight:600;}
-  .cover h1{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1.0;letter-spacing:-.02em;margin:18px 0 6px;}
+  .cover h1{font-family:var(--display);font-weight:400;font-size:72px;line-height:1.0;letter-spacing:-.02em;margin:18px 0 6px;}
   .cover .sub{font-size:17px;color:var(--ink2);max-width:660px;}
   .cover .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;}
   .pill{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink2);
@@ -35,7 +35,7 @@
 
   /* ── foundations ── */
   .found{margin-top:56px;}
-  .found h2,.idx h2{font-family:var(--serif);font-weight:400;font-size:30px;letter-spacing:-.01em;margin:0 0 4px;}
+  .found h2,.idx h2{font-family:var(--display);font-weight:400;font-size:30px;letter-spacing:-.01em;margin:0 0 4px;}
   .found .lead{color:var(--ink3);font-size:14px;margin:0 0 24px;}
   .fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
   .fcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;
@@ -43,7 +43,7 @@
   .fcard h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:0 0 14px;}
   .trow{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0;border-top:1px solid var(--line2);}
   .trow:first-of-type{border-top:none;}
-  .trow .nm{font-family:var(--serif);font-size:20px;color:var(--ink);}
+  .trow .nm{font-family:var(--display);font-size:20px;color:var(--ink);}
   .trow .sp{font-family:var(--mono);font-size:11px;color:var(--ink3);text-align:right;white-space:nowrap;}
   .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
   .sw{display:flex;flex-direction:column;gap:6px;}
@@ -68,9 +68,9 @@
   /* ── screen section ── */
   .screen{margin-top:60px;padding-top:34px;border-top:2px solid var(--ink);}
   .screen .head{display:flex;align-items:flex-start;gap:20px;}
-  .screen .num{font-family:var(--serif);font-size:60px;line-height:.8;color:var(--clay);min-width:96px;letter-spacing:-.02em;}
+  .screen .num{font-family:var(--display);font-size:60px;line-height:.8;color:var(--clay);min-width:96px;letter-spacing:-.02em;}
   .screen .htext{flex:1;}
-  .screen h2{font-family:var(--serif);font-weight:400;font-size:38px;letter-spacing:-.015em;margin:0;line-height:1;}
+  .screen h2{font-family:var(--display);font-weight:400;font-size:38px;letter-spacing:-.015em;margin:0;line-height:1;}
   .screen .flow{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-top:8px;}
   .screen .purpose{font-size:15.5px;color:var(--ink2);max-width:680px;margin-top:12px;text-wrap:pretty;}
 
@@ -158,10 +158,10 @@
     <div class="fgrid">
       <div class="fcard">
         <h3>Type — three families, one job each</h3>
-        <div class="trow"><span class="nm">Display amount</span><span class="sp">Instrument Serif · 64 / -0.025em</span></div>
-        <div class="trow"><span class="nm">Card amount</span><span class="sp">Instrument Serif · 40 / -0.02em</span></div>
-        <div class="trow"><span class="nm">Hero greeting</span><span class="sp">Instrument Serif · 30 / -0.015em</span></div>
-        <div class="trow"><span class="nm">Section / day head</span><span class="sp">Instrument Serif · 18 / -0.01em</span></div>
+        <div class="trow"><span class="nm">Display amount</span><span class="sp">Inter · 64 / -0.025em</span></div>
+        <div class="trow"><span class="nm">Card amount</span><span class="sp">Inter · 40 / -0.02em</span></div>
+        <div class="trow"><span class="nm">Hero greeting</span><span class="sp">Inter · 30 / -0.015em</span></div>
+        <div class="trow"><span class="nm">Section / day head</span><span class="sp">Inter · 18 / -0.01em</span></div>
         <div class="trow"><span class="nm" style="font-family:var(--sans);font-size:14px;font-weight:600">Body / button</span><span class="sp">Manrope · 14 / 400–600</span></div>
         <div class="trow"><span class="nm" style="font-family:var(--mono);font-size:12px">EYEBROW · LABEL</span><span class="sp">Geist Mono · 11 / 0.10–0.12em</span></div>
       </div>

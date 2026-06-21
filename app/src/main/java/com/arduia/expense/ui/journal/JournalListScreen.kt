@@ -82,7 +82,7 @@ fun JournalListScreen(
                     }
                     Text(
                         text = stringResource(R.string.journal_title),
-                        style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                        style = typography.profileScreenTitle,
                         color = colors.onSurface,
                     )
                 }

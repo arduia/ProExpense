@@ -269,7 +269,7 @@ private fun MonthSpendCard(
         ) {
                 Text(
                     text = monthSpend,
-                    style = typography.summaryAmount.copy(fontFamily = typography.serifFamily),
+                    style = typography.summaryAmount,
                     color = colors.onSurface,
                 )
             if (showSparkline) {

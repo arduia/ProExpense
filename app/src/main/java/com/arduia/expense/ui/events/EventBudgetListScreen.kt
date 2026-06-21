@@ -77,7 +77,7 @@ fun EventBudgetListScreen(
                     )
                     Text(
                         text = stringResource(R.string.events_title),
-                        style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                        style = typography.profileScreenTitle,
                         color = colors.onSurface,
                     )
                 }

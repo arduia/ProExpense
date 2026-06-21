@@ -7,7 +7,7 @@ Slides up over a scrim for create / edit flows.
 - Scrim: `rgba(43,31,23,0.42)`, fades in 200ms.
 - Sheet: `card` white, **top corners 22dp**, shadow `0 -8px 24px rgba(0,0,0,.15)`, max-height 78%.
 - **Grab handle:** 36 × 4 dp pill, `rgba(43,31,23,.18)`, centered, margin `10 / auto / 14`.
-- Title: Instrument Serif 18sp.
+- Title: Inter 18sp.
 - Footer actions: two buttons, gap 10dp, each `weight(1f)` — typically `ghost` Cancel + `primary` Save.
 
 ## Motion

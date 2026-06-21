@@ -96,7 +96,7 @@ fun JournalDetailScreen(
                 )
                 Text(
                     text = state.amountLabel,
-                    style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+                    style = typography.displayAmount,
                     color = colors.onSurface,
                 )
                 Text(

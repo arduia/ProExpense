@@ -4,11 +4,11 @@ The amount-entry primitive auto-opens on the Add screen so logging takes under 5
 
 ![Numeric keypad](../screenshots/keypad.png)
 
-> **Type:** display amount + serif keys follow [tokens.md §2a — Titles & Amounts (Android)](../tokens.md#2a-android-spec--titles--amounts-instrument-serif).
+> **Type:** display amount + Inter keys follow [tokens.md §2a — Titles & Amounts (Android)](../tokens.md#2a-android-spec--titles--amounts-instrument-serif).
 
 ## Keypad
 - 3-column grid, gap 8dp, card padding 16dp, max width 300dp.
-- **Keys are serif** (money is always serif): Instrument Serif 22sp, `ink`, on white cards (1dp `line`, radius 12dp, padding 13dp vertical).
+- **Money keys use Inter** (money is always serif): Inter 22sp, `ink`, on white cards (1dp `line`, radius 12dp, padding 13dp vertical).
 - Keys: `1–9`, `.`, `0`, `⌫` (backspace = `back` icon, 18dp, `ink2`).
 - Two thumb-range actions below, gap 8dp, radius 14dp, padding 14dp:
   - **Save** — secondary (transparent, 1.4dp `lineStrong`, `ink`, 600) — quick-log.
@@ -17,7 +17,7 @@ The amount-entry primitive auto-opens on the Add screen so logging takes under 5
 ## Validation
 ![Validation state](../screenshots/validation.png)
 
-- Display amount: serif, `muted2` when zero; the `$` glyph stays `clay`.
+- Display amount: Inter, `muted2` when zero; the `$` glyph stays `clay`.
 - Below-threshold (`≤ $0`): helper text `clay`, both actions drop to `alpha 0.55`, and the field **shakes** (±4dp, 280ms) on submit attempt.
 - Max display: `999,999,999.99`. Thousands grouped with commas as you type.
 
@@ -37,4 +37,4 @@ The amount-entry primitive auto-opens on the Add screen so logging takes under 5
 **Draft persistence:** any non-empty amount marks an in-progress draft (persisted). On relaunch with a saved draft, a **restore prompt** offers *Continue* (resume at amount) or *Discard*.
 
 ## Compose notes
-Custom composable — no M3 keypad exists. `LazyVerticalGrid(columns = Fixed(3))` or nested `Row`s of weighted key cells; each key is a `Surface(onClick)` with serif `Text`. Hoist amount state as a `String`; format with a grouping `NumberFormat`. Drive shake with an `Animatable` offset. Disable actions when `amount.toDoubleOrNull() ?: 0.0 <= 0`.
+Custom composable — no M3 keypad exists. `LazyVerticalGrid(columns = Fixed(3))` or nested `Row`s of weighted key cells; each key is a `Surface(onClick)` with Inter `Text`. Hoist amount state as a `String`; format with a grouping `NumberFormat`. Drive shake with an `Animatable` offset. Disable actions when `amount.toDoubleOrNull() ?: 0.0 <= 0`.

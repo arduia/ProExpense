@@ -157,7 +157,7 @@ private fun DebtDetailHeader(state: DebtDetailUiState) {
         )
         Text(
             text = state.name,
-            style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+            style = typography.profileScreenTitle,
             color = colors.onSurface,
             maxLines = 1,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
@@ -170,7 +170,7 @@ private fun DebtDetailHeader(state: DebtDetailUiState) {
         )
         Text(
             text = state.amountLabel,
-            style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.displayAmount,
             color = accent,
         )
     }
@@ -313,7 +313,7 @@ private fun DebtLinkedExpenseSection(state: DebtDetailUiState) {
             }
             Text(
                 text = expense.amountLabel,
-                style = typography.listAmount.copy(fontFamily = typography.serifFamily),
+                style = typography.listAmount,
                 color = colors.onSurface,
             )
         }
