@@ -467,8 +467,7 @@
     <string name="debt_delete">Delete</string>
     <string name="debt_delete_title">Delete this record?</string>
     <!-- Journal -->
-    <string name="journal_eyebrow">DIARY VIEW</string>
-    <string name="journal_title">Journal</string>
+    <string name="journal_eyebrow">DIARY VIEW</string>    <string name="journal_title">Journal</string>
     <string name="journal_search_placeholder">Search notes, amount, category…</string>
     <string name="journal_no_matches_title">No matches</string>
     <string name="journal_no_matches_body">Nothing found for \"%1$s.\" Try a different keyword, amount, or note.</string>
@@ -487,6 +486,26 @@
     <string name="journal_action_cancel">Cancel</string>
     <string name="journal_delete_title">Delete this expense?</string>
     <string name="journal_delete_body">This removes the record and updates any linked event or debt.</string>
+
+    <!-- More / Settings -->
+    <string name="more_eyebrow">SETTINGS &amp; EXTRAS</string>
+    <string name="more_title">More</string>
+    <string name="more_features">FEATURES</string>
+    <string name="more_settings">SETTINGS</string>
+    <string name="more_back">More</string>
+    <string name="more_currency_title">Currency</string>
+    <string name="more_currency_subtitle">Your home currency. Applied to all entries — multi-currency per entry comes later.</string>
+    <string name="more_export_title">Data Export</string>
+    <string name="more_export_heading">Export your data</string>
+    <string name="more_export_subtitle">One zip with a CSV per feature. Everything stays on your device — nothing is uploaded.</string>
+    <string name="more_export_action">Export as ZIP</string>
+    <string name="more_clear_title">Clear Data</string>
+    <string name="more_clear_subtitle">Choose what to wipe. Each clear asks for confirmation and can\'t be undone.</string>
+    <string name="more_clear_action">Clear selected…</string>
+    <string name="more_clear_confirm_title">Clear selected data?</string>
+    <string name="more_clear_confirm_body">This permanently removes the selected records from this device. It can\'t be undone.</string>
+    <string name="more_clear_confirm_action">Clear</string>
+    <string name="more_clear_confirm_cancel">Cancel</string>
 
     <string name="debt_delete_body">Removing %1$s\'s settled record can\'t be undone.</string>
     <plurals name="debt_active_count">

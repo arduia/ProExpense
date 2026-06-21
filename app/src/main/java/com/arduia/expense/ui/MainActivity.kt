@@ -18,6 +18,7 @@ import com.arduia.expense.ui.events.EventsFlow
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.journal.JournalFlow
 import com.arduia.expense.ui.logging.QuickLogFlow
+import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
 import com.arduia.expense.ui.sharedcost.SharedCostsFlow
 import com.arduia.expense.ui.splash.SplashScreen
@@ -41,7 +42,9 @@ class MainActivity : ComponentActivity() {
                 var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
 
                 val onTabSelected: (HomeNavTab) -> Unit = { tab ->
-                    if (tab == HomeNavTab.Home || tab == HomeNavTab.Budget || tab == HomeNavTab.Journal) {
+                    if (tab == HomeNavTab.Home || tab == HomeNavTab.Budget ||
+                        tab == HomeNavTab.Journal || tab == HomeNavTab.More
+                    ) {
                         selectedTab = tab
                     }
                 }
@@ -66,6 +69,14 @@ class MainActivity : ComponentActivity() {
                                 selectedTab = selectedTab,
                                 onTabSelected = onTabSelected,
                                 onAddClick = { showQuickLog = true },
+                            )
+                        } else if (selectedTab == HomeNavTab.More) {
+                            MoreFlow(
+                                selectedTab = selectedTab,
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                                onDebtClick = { showDebt = true },
+                                onSharedClick = { showSharedCosts = true },
                             )
                         } else {
                             HomeShell(
