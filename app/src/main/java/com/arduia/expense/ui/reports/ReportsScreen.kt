@@ -39,6 +39,7 @@ import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.preview.ReportsCategoryUi
 import com.arduia.expense.ui.preview.ReportsUiState
 import com.arduia.expense.ui.preview.previewReports
@@ -190,7 +191,7 @@ private fun ReportsPeriodPill(
             contentDescription = stringResource(R.string.reports_prev_period),
             tint = colors.onSurfaceMuted,
             size = dimens.iconInline,
-            modifier = Modifier.padding(start = dimens.space4),
+            modifier = Modifier.proIconClickable(onClick = onPrev),
         )
         Text(
             text = label,
@@ -203,7 +204,7 @@ private fun ReportsPeriodPill(
             contentDescription = stringResource(R.string.reports_next_period),
             tint = colors.onSurfaceMuted,
             size = dimens.iconInline,
-            modifier = Modifier.padding(end = dimens.space4),
+            modifier = Modifier.proIconClickable(onClick = onNext),
         )
     }
 }

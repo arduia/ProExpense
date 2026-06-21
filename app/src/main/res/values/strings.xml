@@ -237,23 +237,9 @@
 
     <!-- Reports -->
     <string name="reports_title">Reports</string>
-    <string name="reports_monthly">May 2025</string>
-    <string name="reports_total_spend">Total spend</string>
-    <string name="reports_uncategorized">No categorized spending yet</string>
-    <string name="previous_month">Previous month</string>
-    <string name="next_month">Next month</string>
 
     <!-- Categories -->
     <string name="categories_title">Categories</string>
-    <string name="categories_default_header">DEFAULT · ALWAYS FIRST</string>
-    <string name="categories_locked_hint">locked</string>
-    <string name="categories_custom_header">CUSTOM · DRAG TO REORDER</string>
-    <string name="categories_custom_count">%1$d categories</string>
-    <string name="create_new_category">Create new category</string>
-    <string name="categories_order_hint">Order here mirrors chip order in Add Expense</string>
-    <string name="add_category">Add category</string>
-    <string name="category_name_hint">Category name</string>
-    <string name="category_duplicate_error">A category with this name already exists</string>
 
     <!-- Currency -->
     <string name="profile_currency_title">Pick your home currency</string>
@@ -560,7 +546,10 @@
     <string name="categories_custom_label">CUSTOM · DRAG TO REORDER</string>
     <string name="categories_locked_word">locked</string>
     <string name="categories_locked_pill">LOCKED</string>
-    <string name="categories_count">%1$d categories</string>
+    <plurals name="categories_count">
+        <item quantity="one">%1$d category</item>
+        <item quantity="other">%1$d categories</item>
+    </plurals>
     <string name="categories_create">Create new category</string>
     <string name="categories_footer">Order here mirrors chip order in Add Expense</string>
     <string name="categories_new_title">New category</string>
