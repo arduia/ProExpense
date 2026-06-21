@@ -542,6 +542,34 @@
     <string name="pin_recover_attempts">%1$d of %2$d attempts used</string>
     <string name="pin_recover_action">Verify &amp; reset PIN</string>
 
+    <!-- Reports -->
+    <string name="reports_back">More</string>
+    <string name="reports_total_spent">TOTAL SPENT</string>
+    <string name="reports_period_total">%1$s · TOTAL SPENT</string>
+    <string name="reports_daily_avg_prefix">Daily avg</string>
+    <string name="reports_by_category">BY CATEGORY</string>
+    <string name="reports_top_categories">TOP CATEGORIES</string>
+    <string name="reports_uncategorized_label">Uncategorized</string>
+    <string name="reports_uncategorized_tip">Tip: categorize your expenses to unlock a spending breakdown by category.</string>
+    <string name="reports_prev_period">Previous month</string>
+    <string name="reports_next_period">Next month</string>
+
+    <!-- Category list -->
+    <string name="categories_back">More</string>
+    <string name="categories_default_label">DEFAULT · ALWAYS FIRST</string>
+    <string name="categories_custom_label">CUSTOM · DRAG TO REORDER</string>
+    <string name="categories_locked_word">locked</string>
+    <string name="categories_locked_pill">LOCKED</string>
+    <string name="categories_count">%1$d categories</string>
+    <string name="categories_create">Create new category</string>
+    <string name="categories_footer">Order here mirrors chip order in Add Expense</string>
+    <string name="categories_new_title">New category</string>
+    <string name="categories_name_placeholder">Category name</string>
+    <string name="categories_name_counter">%1$d/%2$d</string>
+    <string name="categories_duplicate_error">A category with this name already exists</string>
+    <string name="categories_icon_label">Icon</string>
+    <string name="categories_add">Add category</string>
+
     <string name="debt_delete_body">Removing %1$s\'s settled record can\'t be undone.</string>
     <plurals name="debt_active_count">
         <item quantity="one">%1$d active</item>

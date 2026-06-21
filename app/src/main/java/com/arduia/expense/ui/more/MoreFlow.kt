@@ -17,8 +17,11 @@ import com.arduia.expense.R
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.categories.CategoryListFlow
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.preview.MoreSettingKind
+import com.arduia.expense.ui.preview.previewReports
+import com.arduia.expense.ui.reports.ReportsScreen
 import com.arduia.expense.ui.preview.previewMoreClearOptions
 import com.arduia.expense.ui.preview.previewMoreCurrencies
 import com.arduia.expense.ui.preview.previewMoreExportFiles
@@ -28,7 +31,7 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
 
-private enum class MoreStep { Hub, Currency, Export, Clear }
+private enum class MoreStep { Hub, Currency, Export, Clear, Reports, Categories }
 
 @Composable
 fun MoreFlow(
@@ -80,6 +83,8 @@ fun MoreFlow(
                         when (id) {
                             "debt" -> onDebtClick()
                             "shared" -> onSharedClick()
+                            "reports" -> step = MoreStep.Reports
+                            "categories" -> step = MoreStep.Categories
                         }
                     },
                     onSettingClick = { id ->
@@ -113,6 +118,15 @@ fun MoreFlow(
                         clearChecked = if (id in clearChecked) clearChecked - id else clearChecked + id
                     },
                     onClear = { showClearConfirm = true },
+                    onBack = { step = MoreStep.Hub },
+                )
+                MoreStep.Reports -> ReportsScreen(
+                    state = previewReports,
+                    onBack = { step = MoreStep.Hub },
+                    onPrevPeriod = {},
+                    onNextPeriod = {},
+                )
+                MoreStep.Categories -> CategoryListFlow(
                     onBack = { step = MoreStep.Hub },
                 )
             }

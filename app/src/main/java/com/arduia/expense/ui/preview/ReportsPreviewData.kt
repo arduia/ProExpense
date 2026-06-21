@@ -1,0 +1,41 @@
+package com.arduia.expense.ui.preview
+
+data class ReportsCategoryUi(
+    val categoryId: String,
+    val label: String,
+    val percentLabel: String,
+    val amountLabel: String,
+    val fraction: Float,
+)
+
+data class ReportsUiState(
+    val periodLabel: String,
+    val totalLabel: String,
+    val dailyAvgLabel: String,
+    val daysLabel: String,
+    val categories: List<ReportsCategoryUi>,
+    val uncategorized: Boolean = false,
+)
+
+val previewReports = ReportsUiState(
+    periodLabel = "May 2026",
+    totalLabel = "$1,247",
+    dailyAvgLabel = "$50",
+    daysLabel = "25 days in",
+    categories = listOf(
+        ReportsCategoryUi("food", "Food", "38%", "$478", 0.38f),
+        ReportsCategoryUi("transport", "Transport", "22%", "$274", 0.22f),
+        ReportsCategoryUi("shopping", "Shopping", "18%", "$224", 0.18f),
+        ReportsCategoryUi("bills", "Bills", "14%", "$170", 0.14f),
+        ReportsCategoryUi("entertainment", "Entertainment", "8%", "$101", 0.08f),
+    ),
+)
+
+val previewReportsUncategorized = ReportsUiState(
+    periodLabel = "May 2026",
+    totalLabel = "$1,247",
+    dailyAvgLabel = "$50",
+    daysLabel = "25 days in",
+    categories = emptyList(),
+    uncategorized = true,
+)
