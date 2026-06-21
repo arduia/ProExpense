@@ -117,7 +117,7 @@ fun SpentTodayCard(
                 )
                 Text(
                     text = amount,
-                    style = typography.summaryAmount.copy(fontFamily = typography.serifFamily),
+                    style = typography.summaryAmount,
                     color = colors.onSurface,
                     modifier = Modifier.padding(top = dimens.space4),
                 )

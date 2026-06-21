@@ -87,9 +87,9 @@ fun AmountDisplay(
                     else -> colors.onSurface
                 },
                 decimalColor = colors.onSurfaceMuted,
-                serifFamily = typography.serifFamily,
+                amountFamily = typography.amountFamily,
             ),
-            style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.displayAmount,
             autoSize = amountAutoSize,
             maxLines = 1,
             softWrap = false,
@@ -116,27 +116,27 @@ private fun buildAmountLine(
     primaryColor: Color,
     amountColor: Color,
     decimalColor: Color,
-    serifFamily: androidx.compose.ui.text.font.FontFamily,
+    amountFamily: androidx.compose.ui.text.font.FontFamily,
 ) = buildAnnotatedString {
-    withStyle(SpanStyle(color = primaryColor, fontFamily = serifFamily)) {
+    withStyle(SpanStyle(color = primaryColor, fontFamily = amountFamily)) {
         append(currencySymbol)
     }
     if (isZero) {
-        withStyle(SpanStyle(color = amountColor, fontFamily = serifFamily)) {
+        withStyle(SpanStyle(color = amountColor, fontFamily = amountFamily)) {
             append(amountText)
         }
         return@buildAnnotatedString
     }
     val decimalIndex = amountText.indexOf('.')
     if (decimalIndex < 0) {
-        withStyle(SpanStyle(color = amountColor, fontFamily = serifFamily)) {
+        withStyle(SpanStyle(color = amountColor, fontFamily = amountFamily)) {
             append(amountText)
         }
     } else {
-        withStyle(SpanStyle(color = amountColor, fontFamily = serifFamily)) {
+        withStyle(SpanStyle(color = amountColor, fontFamily = amountFamily)) {
             append(amountText.substring(0, decimalIndex))
         }
-        withStyle(SpanStyle(color = decimalColor, fontFamily = serifFamily)) {
+        withStyle(SpanStyle(color = decimalColor, fontFamily = amountFamily)) {
             append(amountText.substring(decimalIndex))
         }
     }

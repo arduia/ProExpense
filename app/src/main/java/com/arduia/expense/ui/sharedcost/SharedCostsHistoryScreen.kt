@@ -67,7 +67,7 @@ fun SharedCostsHistoryScreen(
                 )
                 Text(
                     text = stringResource(R.string.shared_costs_heading),
-                    style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                    style = typography.profileScreenTitle,
                     color = colors.onSurface,
                 )
             }

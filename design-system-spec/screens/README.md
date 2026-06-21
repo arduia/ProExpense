@@ -5,7 +5,7 @@ Per-screen specifications for the Finance Tracker MVP, built for a **Jetpack Com
 - **Foundations:** [`../tokens.md`](../tokens.md) — color, type, shape, spacing, motion, M3 mapping.
 - **Components:** [`../components/`](../components/) — per-component specs.
 - **Screenshots:** [`../screenshots/screens/`](../screenshots/screens/) — one PNG per state, named by state id.
-- **Conventions:** single **light** theme · 1 px = 1 dp · amounts always **Instrument Serif** · on-filled text warm white `#FFFDF6`.
+- **Conventions:** single **light** theme · 1 px = 1 dp · amounts always **Inter** · on-filled text warm white `#FFFDF6`.
 
 ---
 

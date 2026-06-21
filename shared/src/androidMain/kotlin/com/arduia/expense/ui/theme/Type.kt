@@ -38,9 +38,11 @@ private val GeistMonoFamily = FontFamily(
     variableFont(R.font.geist_mono_variable, FontWeight.SemiBold),
 )
 
-private val InstrumentSerifFamily = FontFamily(
-    Font(R.font.instrument_serif_regular, FontWeight.Normal),
-    Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
+private val InterFamily = FontFamily(
+    variableFont(R.font.inter_variable, FontWeight.Normal),
+    variableFont(R.font.inter_variable, FontWeight.Medium),
+    variableFont(R.font.inter_variable, FontWeight.SemiBold),
+    Font(R.font.inter_variable_italic, FontWeight.Normal, FontStyle.Italic),
 )
 
 private val FigmaAlignedPlatform = PlatformTextStyle(includeFontPadding = false)
@@ -75,7 +77,7 @@ private fun amountTextStyle(
     lineHeightSp: Float,
     letterSpacingEm: Float,
 ): TextStyle = titleTextStyle(
-    fontFamily = InstrumentSerifFamily,
+    fontFamily = InterFamily,
     fontSizeSp = fontSizeSp,
     lineHeightSp = lineHeightSp,
     letterSpacingEm = letterSpacingEm,
@@ -111,7 +113,7 @@ data class ProTypography(
     val navLabel: TextStyle,
     val searchField: TextStyle,
     val sansFamily: FontFamily,
-    val serifFamily: FontFamily,
+    val amountFamily: FontFamily,
     val monoFamily: FontFamily,
 )
 
@@ -154,32 +156,32 @@ val ProDefaultTypography = ProTypography(
         letterSpacingEm = -0.015f,
     ),
     heroGreetingEmphasis = titleTextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = InterFamily,
         fontSizeSp = 30f,
         lineHeightSp = 32f,
         letterSpacingEm = -0.015f,
         fontStyle = FontStyle.Italic,
     ),
     sheetTitle = titleTextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = InterFamily,
         fontSizeSp = 22f,
         lineHeightSp = 24f,
         letterSpacingEm = -0.01f,
     ),
     sectionHead = titleTextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = InterFamily,
         fontSizeSp = 18f,
         lineHeightSp = 20f,
         letterSpacingEm = -0.01f,
     ),
     screenHeaderTitle = titleTextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = InterFamily,
         fontSizeSp = 17f,
         lineHeightSp = 20f,
         letterSpacingEm = 0f,
     ),
     onboardingSlideTitle = titleTextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = InterFamily,
         fontSizeSp = 38f,
         lineHeightSp = 40f,
         letterSpacingEm = -0.02f,
@@ -191,7 +193,7 @@ val ProDefaultTypography = ProTypography(
         fontWeight = FontWeight.Normal,
     ),
     profileScreenTitle = titleTextStyle(
-        fontFamily = InstrumentSerifFamily,
+        fontFamily = InterFamily,
         fontSizeSp = 28f,
         lineHeightSp = 30f,
         letterSpacingEm = -0.01f,
@@ -281,7 +283,7 @@ val ProDefaultTypography = ProTypography(
         fontWeight = FontWeight.Normal,
     ),
     sansFamily = ManropeFamily,
-    serifFamily = InstrumentSerifFamily,
+    amountFamily = InterFamily,
     monoFamily = GeistMonoFamily,
 )
 

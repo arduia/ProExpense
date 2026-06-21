@@ -34,7 +34,7 @@ import com.arduia.expense.ui.theme.sheetExit
 
 @Composable
 fun ProBottomSheet(
-    title: String,
+    title: String?,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
@@ -82,24 +82,26 @@ fun ProBottomSheet(
                         .background(colors.onSurface.copy(alpha = 0.18f)),
                 )
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimens.space20, vertical = dimens.space8),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = title,
-                    style = typography.sectionHead.copy(fontFamily = typography.serifFamily),
-                    color = colors.onSurface,
-                )
-                ProIcon(
-                    glyph = ProIconGlyph.Close,
-                    contentDescription = "Close",
-                    tint = colors.onSurface,
-                    modifier = Modifier.proIconClickable(onClick = onClose),
-                )
+            if (title != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimens.space20, vertical = dimens.space8),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = title,
+                        style = typography.sectionHead,
+                        color = colors.onSurface,
+                    )
+                    ProIcon(
+                        glyph = ProIconGlyph.Close,
+                        contentDescription = "Close",
+                        tint = colors.onSurface,
+                        modifier = Modifier.proIconClickable(onClick = onClose),
+                    )
+                }
             }
             Box(
                 modifier = Modifier
@@ -115,7 +117,7 @@ fun ProBottomSheet(
 @Composable
 fun ProBottomSheetHost(
     visible: Boolean,
-    title: String,
+    title: String?,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     sheetContent: @Composable () -> Unit,

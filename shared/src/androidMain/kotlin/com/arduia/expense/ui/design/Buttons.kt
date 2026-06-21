@@ -32,6 +32,9 @@ enum class ProButtonVariant {
     Primary,
     PrimaryDeep,
     Success,
+    Danger,
+    DangerOutline,
+    Warning,
     Dark,
     Secondary,
     Ghost,
@@ -157,6 +160,62 @@ fun ProButton(
                     containerColor = colors.success,
                     contentColor = colors.onPrimaryWarm,
                     disabledContainerColor = colors.success.copy(alpha = motion.disabledOpacity),
+                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                ),
+                contentPadding = contentPadding,
+                interactionSource = interactionSource,
+            ) {
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+            }
+        }
+        ProButtonVariant.Danger -> {
+            Button(
+                onClick = onClick,
+                modifier = scaledModifier,
+                enabled = enabled,
+                shape = shape,
+                border = BorderStroke(dimens.buttonBorderWidth, colors.danger),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.danger,
+                    contentColor = colors.onPrimaryWarm,
+                    disabledContainerColor = colors.danger.copy(alpha = motion.disabledOpacity),
+                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                ),
+                contentPadding = contentPadding,
+                interactionSource = interactionSource,
+            ) {
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+            }
+        }
+        ProButtonVariant.DangerOutline -> {
+            OutlinedButton(
+                onClick = onClick,
+                modifier = scaledModifier,
+                enabled = enabled,
+                shape = shape,
+                border = BorderStroke(dimens.buttonBorderWidth, colors.danger),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = colors.danger,
+                    disabledContentColor = colors.danger.copy(alpha = motion.disabledOpacity),
+                ),
+                contentPadding = contentPadding,
+                interactionSource = interactionSource,
+            ) {
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+            }
+        }
+        ProButtonVariant.Warning -> {
+            Button(
+                onClick = onClick,
+                modifier = scaledModifier,
+                enabled = enabled,
+                shape = shape,
+                border = BorderStroke(dimens.buttonBorderWidth, colors.warning),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.warning,
+                    contentColor = colors.onPrimaryWarm,
+                    disabledContainerColor = colors.warning.copy(alpha = motion.disabledOpacity),
                     disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
                 ),
                 contentPadding = contentPadding,

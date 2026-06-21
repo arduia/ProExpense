@@ -191,7 +191,7 @@ private fun EventDetailHeader(state: EventDetailUiState) {
         ) {
             Text(
                 text = state.title,
-                style = typography.profileScreenTitle.copy(fontFamily = typography.serifFamily),
+                style = typography.profileScreenTitle,
                 color = colors.onSurface,
             )
             if (state.statusInlineChip != null) {

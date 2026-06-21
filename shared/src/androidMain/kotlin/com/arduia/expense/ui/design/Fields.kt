@@ -73,10 +73,12 @@ fun SearchField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    active: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val borderColor = if (active) colors.primary else colors.line
 
     BasicTextField(
         value = value,
@@ -84,7 +86,7 @@ fun SearchField(
         modifier = modifier
             .fillMaxWidth()
             .clip(ProExpenseTheme.shapes.searchField)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.searchField)
+            .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
             .background(colors.surface)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.searchField.copy(color = colors.onSurface),

@@ -1,14 +1,17 @@
 package com.arduia.expense.ui.design
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -33,6 +36,7 @@ enum class ProTopBarAction {
     None,
     More,
     Close,
+    Add,
 }
 
 @Composable
@@ -108,6 +112,22 @@ fun ProTopBar(
                     .align(Alignment.CenterEnd)
                     .proIconClickable(onClick = onAction),
             )
+            ProTopBarAction.Add -> Box(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .size(dimens.touchTargetMin)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(colors.primary)
+                    .proIconClickable(onClick = onAction),
+                contentAlignment = Alignment.Center,
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.Plus,
+                    contentDescription = "Add",
+                    tint = colors.onPrimaryWarm,
+                    size = dimens.iconNav,
+                )
+            }
             ProTopBarAction.None -> Unit
         }
     }

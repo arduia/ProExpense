@@ -65,13 +65,13 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun display_amount_uses_instrument_serif() {
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.displayAmount.fontFamily)
+    fun display_amount_uses_inter() {
+        assertEquals(ProDefaultTypography.amountFamily, ProDefaultTypography.displayAmount.fontFamily)
     }
 
     @Test
-    fun list_amount_uses_instrument_serif() {
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.listAmount.fontFamily)
+    fun list_amount_uses_inter() {
+        assertEquals(ProDefaultTypography.amountFamily, ProDefaultTypography.listAmount.fontFamily)
         assertEquals(18f, ProDefaultTypography.listAmount.fontSize.value)
         assertEquals(0.em, ProDefaultTypography.listAmount.letterSpacing)
     }
@@ -85,26 +85,26 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun hero_greeting_uses_manrope_with_serif_emphasis() {
+    fun hero_greeting_uses_manrope_with_inter_emphasis() {
         assertEquals(ProDefaultTypography.sansFamily, ProDefaultTypography.heroGreeting.fontFamily)
         assertEquals(30f, ProDefaultTypography.heroGreeting.fontSize.value)
         assertEquals(32f, ProDefaultTypography.heroGreeting.lineHeight.value)
         assertEquals((-0.015).em, ProDefaultTypography.heroGreeting.letterSpacing)
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.heroGreetingEmphasis.fontFamily)
+        assertEquals(ProDefaultTypography.amountFamily, ProDefaultTypography.heroGreetingEmphasis.fontFamily)
     }
 
     @Test
-    fun sheet_title_uses_instrument_serif_at_22sp() {
+    fun sheet_title_uses_inter_at_22sp() {
         val title = ProDefaultTypography.sheetTitle
-        assertEquals(ProDefaultTypography.serifFamily, title.fontFamily)
+        assertEquals(ProDefaultTypography.amountFamily, title.fontFamily)
         assertEquals(22f, title.fontSize.value)
         assertEquals((-0.01).em, title.letterSpacing)
     }
 
     @Test
-    fun section_head_uses_instrument_serif_at_18sp() {
+    fun section_head_uses_inter_at_18sp() {
         val head = ProDefaultTypography.sectionHead
-        assertEquals(ProDefaultTypography.serifFamily, head.fontFamily)
+        assertEquals(ProDefaultTypography.amountFamily, head.fontFamily)
         assertEquals(18f, head.fontSize.value)
         assertEquals(20f, head.lineHeight.value)
         assertEquals((-0.01).em, head.letterSpacing)
@@ -139,8 +139,8 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun summary_amount_uses_instrument_serif() {
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.summaryAmount.fontFamily)
+    fun summary_amount_uses_inter() {
+        assertEquals(ProDefaultTypography.amountFamily, ProDefaultTypography.summaryAmount.fontFamily)
         assertEquals(40f, ProDefaultTypography.summaryAmount.fontSize.value)
     }
 
@@ -199,8 +199,8 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun keypad_key_uses_instrument_serif() {
-        assertEquals(ProDefaultTypography.serifFamily, ProDefaultTypography.keypadKey.fontFamily)
+    fun keypad_key_uses_inter() {
+        assertEquals(ProDefaultTypography.amountFamily, ProDefaultTypography.keypadKey.fontFamily)
     }
 
     @Test
@@ -221,25 +221,38 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun instrument_serif_emphasis_uses_italic_regular_face() {
+    fun inter_emphasis_uses_italic_regular_face() {
         val emphasis = ProDefaultTypography.heroGreetingEmphasis
-        assertEquals(ProDefaultTypography.serifFamily, emphasis.fontFamily)
+        assertEquals(ProDefaultTypography.amountFamily, emphasis.fontFamily)
         assertEquals(FontWeight.Normal, emphasis.fontWeight)
         assertEquals(FontStyle.Italic, emphasis.fontStyle)
     }
 
     @Test
-    fun serif_title_and_amount_styles_never_request_bold() {
-        val serifStyles = listOf(
+    fun amount_styles_never_request_bold() {
+        val amountStyles = listOf(
             ProDefaultTypography.displayAmount,
             ProDefaultTypography.summaryAmount,
+            ProDefaultTypography.detailsAmount,
             ProDefaultTypography.listAmount,
+            ProDefaultTypography.keypadKey,
+        )
+        amountStyles.forEach { style ->
+            assertEquals(FontWeight.Normal, style.fontWeight)
+        }
+    }
+
+    @Test
+    fun inter_title_styles_never_request_bold() {
+        val interTitleStyles = listOf(
             ProDefaultTypography.heroGreetingEmphasis,
             ProDefaultTypography.sheetTitle,
             ProDefaultTypography.sectionHead,
-            ProDefaultTypography.keypadKey,
+            ProDefaultTypography.screenHeaderTitle,
+            ProDefaultTypography.onboardingSlideTitle,
+            ProDefaultTypography.profileScreenTitle,
         )
-        serifStyles.forEach { style ->
+        interTitleStyles.forEach { style ->
             assertEquals(FontWeight.Normal, style.fontWeight)
         }
     }

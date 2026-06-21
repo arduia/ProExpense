@@ -58,6 +58,7 @@ fun PinDots(
         PinKeypadState.Error -> colors.danger
         else -> colors.primary
     }
+    val emptyBorderColor = if (state == PinKeypadState.Error) colors.danger else colors.lineStrong
 
     LaunchedEffect(state) {
         if (state == PinKeypadState.Error) {
@@ -93,7 +94,7 @@ fun PinDots(
                         if (filled) {
                             Modifier.background(dotColor)
                         } else {
-                            Modifier.border(BorderStroke(1.5.dp, colors.lineStrong), CircleShape)
+                            Modifier.border(BorderStroke(1.5.dp, emptyBorderColor), CircleShape)
                         },
                     ),
             )
@@ -134,24 +135,45 @@ fun PinKeypad(
                 .alpha(keypadAlpha),
             verticalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
-            pinRows.forEach { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-                ) {
-                    row.forEach { key ->
-                        if (key == null) {
-                            Box(modifier = Modifier.weight(1f))
-                        } else {
-                            PinKey(
-                                label = key,
-                                enabled = state != PinKeypadState.Locked,
-                                onClick = {
-                                    if (key == "backspace") onBackspace() else onDigit(key.toInt())
-                                },
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
+            PinKeypadGrid(
+                onDigit = onDigit,
+                onBackspace = onBackspace,
+                enabled = state != PinKeypadState.Locked,
+            )
+        }
+    }
+}
+
+@Composable
+fun PinKeypadGrid(
+    onDigit: (Int) -> Unit,
+    onBackspace: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    val dimens = ProExpenseTheme.dimensions
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        pinRows.forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                row.forEach { key ->
+                    if (key == null) {
+                        Box(modifier = Modifier.weight(1f))
+                    } else {
+                        PinKey(
+                            label = key,
+                            enabled = enabled,
+                            onClick = {
+                                if (key == "backspace") onBackspace() else onDigit(key.toInt())
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
                     }
                 }
             }
