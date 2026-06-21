@@ -1,0 +1,30 @@
+<resources>
+    <string name="shared_costs_title">Split a bill</string>
+    <string name="shared_summary_title">Split summary</string>
+    <string name="shared_per_person">Per person</string>
+    <string name="shared_save_split">Save split</string>
+    <string name="shared_split_even">Even split</string>
+    <string name="shared_split_custom">Custom split</string>
+    <string name="shared_bill_splitter">BILL SPLITTER</string>
+    <string name="shared_costs_heading">Shared Costs</string>
+    <string name="shared_new_split">+ New split</string>
+    <string name="shared_recent_splits">RECENT SPLITS</string>
+    <string name="shared_total_bill">TOTAL BILL</string>
+    <string name="shared_each_person_pays">EACH PERSON PAYS</string>
+    <string name="shared_summary_meta">%1$s total · split %2$d ways · %3$s</string>
+    <string name="shared_split_mode_equal">equal</string>
+    <string name="shared_switch_to_custom">Switch to custom</string>
+    <string name="shared_switch_to_equal">Switch to equal</string>
+    <string name="shared_custom_split">CUSTOM SPLIT</string>
+    <string name="shared_max_people">Maximum of 20 people reached</string>
+    <string name="shared_total_zero_error">Total amount must be greater than $0</string>
+    <string name="shared_save_split_amount">Save split · %1$s</string>
+    <string name="shared_history_meta">%1$d people · %2$s each · %3$s</string>
+    <string name="shared_uneven_split_prompt">Need an uneven split?</string>
+    <string name="shared_back_more">More</string>
+    <string name="shared_back_split">Split</string>
+    <string name="shared_note_placeholder">Dinner at Nobu</string>
+    <string name="shared_split_default_title">Shared split</string>
+    <string name="shared_split_just_now">Just now</string>
+    <string name="shared_people_word">PEOPLE</string>
+</resources>

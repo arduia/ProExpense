@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsHistoryScreen
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
 import com.arduia.expense.testing.ScreenshotTests
-import com.arduia.expense.ui.preview.previewSharedCustomLimits
-import com.arduia.expense.ui.preview.previewSharedInputEqual
-import com.arduia.expense.ui.preview.previewSharedSummary
-import com.arduia.expense.ui.preview.previewSharedZeroValidation
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -85,7 +89,7 @@ class SharedCostsScreenshotTest {
     fun shared_history() {
         capture {
             SharedCostsHistoryScreen(
-                items = com.arduia.expense.ui.preview.previewSharedHistoryItems,
+                items = previewSharedHistoryItems,
                 onNewSplit = {},
                 onItemClick = {},
             )

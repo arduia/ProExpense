@@ -15,18 +15,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
+import com.arduia.expense.feature.auth.ui.PinSetupFlow
+import com.arduia.expense.feature.history.ui.JournalFlow
+import com.arduia.expense.feature.logging.ui.QuickLogFlow
+import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
 import com.arduia.expense.ui.debt.DebtFlow
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.events.EventsFlow
 import com.arduia.expense.ui.home.HomeShell
-import com.arduia.expense.ui.journal.JournalFlow
-import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
-import com.arduia.expense.ui.pin.PinSetupFlow
 import com.arduia.expense.ui.reports.ReportsFlow
-import com.arduia.expense.ui.sharedcost.SharedCostsFlow
 import com.arduia.expense.ui.splash.SplashScreen
 import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
@@ -80,7 +81,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                val onExpenseSaved: (com.arduia.expense.ui.preview.ExpenseEntryState) -> Unit = { entry ->
+                val onExpenseSaved: (ExpenseEntryState) -> Unit = { entry ->
                     loggedTotal += AmountInput.numericValue(entry.rawAmount) ?: 0.0
                     loggedItems = listOf(
                         HomeTransactionItem(
