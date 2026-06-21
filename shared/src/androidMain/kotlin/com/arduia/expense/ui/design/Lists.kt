@@ -144,7 +144,7 @@ fun TransactionRow(
         }
         Text(
             text = amount,
-            style = typography.listAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.listAmount,
             color = colors.onSurface,
         )
     }

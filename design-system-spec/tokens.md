@@ -55,12 +55,12 @@ Reference values for a Jetpack **Compose** implementation. The shipped app is bu
 
 ## 2. Typography
 
-Three families, each with one job. Load as Compose `FontFamily` from bundled assets.
+Three UI families plus **Inter** for money figures. Load as Compose `FontFamily` from bundled assets.
 
 | Role | Family | Size / Line height | Tracking | Weight |
 |---|---|---|---|---|
-| Display amount | Instrument Serif | 64 / 64 | -0.025em | Regular |
-| Card amount | Instrument Serif | 40 / 1.0 | -0.02em | Regular |
+| Display amount | Inter | 64 / 64 | -0.025em | Regular |
+| Card amount | Inter | 40 / 1.0 | -0.02em | Regular |
 | Hero greeting | Instrument Serif | 30 / 1.05 | -0.015em | Regular |
 | Sheet title | Instrument Serif | 22 / 1.1 | -0.01em | Regular |
 | Section / day head | Instrument Serif | 18 / 1.1 | -0.01em | Regular |
@@ -71,17 +71,15 @@ Three families, each with one job. Load as Compose `FontFamily` from bundled ass
 | Eyebrow / label | Geist Mono | 11 / 1.3 | 0.10–0.12em (uppercase) | 500 / 600 |
 | Timestamp / figures | Geist Mono | 11.5–12 | 0.04em | 400 / 500 |
 
-> **Family clarity:** `--sans` resolves to **Manrope** (the in-app reference doc mislabels it "Geist" — the loaded webfont is Manrope, so use **Manrope** in Compose). `--mono` is **Geist Mono**. `--serif` is **Instrument Serif** (display only — never body or controls). Tracking is in `em`; convert with `letterSpacing = (-0.025).em` etc.
+> **Family clarity:** `--sans` resolves to **Manrope** (the in-app reference doc mislabels it "Geist" — the loaded webfont is Manrope, so use **Manrope** in Compose). `--mono` is **Geist Mono**. `--serif` is **Instrument Serif** (titles only — never body, controls, or amounts). `--amount` is **Inter** (money figures only). Tracking is in `em`; convert with `letterSpacing = (-0.025).em` etc.
 
 > **M3 `Typography` mapping:** `displayLarge`→display amount, `headlineMedium`→screen title, `titleMedium`→section head, `bodyMedium`→body, `labelMedium`→eyebrow, `bodySmall`→caption.
 
-### 2a. Android spec — Titles & Amounts (Instrument Serif)
+### 2a. Android spec — Titles (Instrument Serif) & Amounts (Inter)
 
-> **Android rendering note (match the web/Figma metrics):** Compose adds vertical font padding by default, so Instrument Serif sits lower and the line box looks taller. On every title/amount `TextStyle` set `platformStyle = PlatformTextStyle(includeFontPadding = false)` and `lineHeightStyle = LineHeightStyle(alignment = Center, trim = Both)`. Also confirm Instrument Serif actually loaded (else it falls back to Noto Serif) — it ships **Regular + Italic only**, so never request bold (it synthesizes/thickens). `sp` follows the system font scale; compare at 1.0× for a pixel match.
+> **Android rendering note (match the web/Figma metrics):** Compose adds vertical font padding by default, so title/amount text sits lower and the line box looks taller. On every title/amount `TextStyle` set `platformStyle = PlatformTextStyle(includeFontPadding = false)` and `lineHeightStyle = LineHeightStyle(alignment = Center, trim = Both)`. Instrument Serif ships **Regular + Italic only** — never request bold on titles (it synthesizes/thickens). Inter is bundled as a variable font; amount styles use **Regular (400) only**. `sp` follows the system font scale; compare at 1.0× for a pixel match.
 
-Both titles and amounts share one family — **Instrument Serif**, `FontWeight.Normal`. Provide it via the Google Fonts provider (`androidx.compose.ui.text.googlefonts.GoogleFont("Instrument Serif")`) or a bundled `res/font/instrument_serif.ttf`. The display character comes from size + serif, **never bold**. Compose `letterSpacing` in `.em` maps 1:1 to the CSS `em` values below.
-
-**Titles** — all Instrument Serif, `FontWeight.Normal`. There are four distinct title roles; the **screen-header / app-bar title is `17.sp`** (not large), the hero greeting is the big one.
+**Titles** use **Instrument Serif**, `FontWeight.Normal`. Provide it via a bundled `res/font/instrument_serif_*.ttf`. Compose `letterSpacing` in `.em` maps 1:1 to the CSS `em` values below.
 
 | Role | Example | `fontFamily` | `fontSize` | `lineHeight` | `letterSpacing` | `fontWeight` |
 |---|---|---|---|---|---|---|
@@ -92,14 +90,14 @@ Both titles and amounts share one family — **Instrument Serif**, `FontWeight.N
 
 Color: `onSurface` `#212121` (event/persona accents may recolor to `Primary`). Titles are single-line — truncate with ellipsis, never wrap. The **hero greeting's emphasis word** ("Maya") is **Instrument Serif _italic_** in `Primary` `#039BE5`. Screen-header titles are **center-aligned** in the top bar (back/close on the left, equal spacer on the right).
 
-**Amounts**
+**Amounts** use **Inter**, `FontWeight.Normal`. Provide via bundled `res/font/inter_variable.ttf`.
 | Role | `fontFamily` | `fontSize` | `lineHeight` | `letterSpacing` | `fontWeight` |
 |---|---|---|---|---|---|
-| Display amount (Add screen) | InstrumentSerif | `64.sp` | `64.sp` (1.0) | `(-0.025).em` | `Normal` |
-| Card amount ("Spent today") | InstrumentSerif | `40.sp` | `40.sp` (1.0) | `(-0.02).em` | `Normal` |
-| Row amount (transaction) | InstrumentSerif | `18.sp` | `18.sp` | `0` | `Normal` |
-| Read-only amount (Details) | InstrumentSerif | `26.sp` | `28.sp` | `(-0.01).em` | `Normal` |
-| Keypad keys | InstrumentSerif | `22.sp` | — | `0` | `Normal` |
+| Display amount (Add screen) | Inter | `64.sp` | `64.sp` (1.0) | `(-0.025).em` | `Normal` |
+| Card amount ("Spent today") | Inter | `40.sp` | `40.sp` (1.0) | `(-0.02).em` | `Normal` |
+| Row amount (transaction) | Inter | `18.sp` | `18.sp` | `0` | `Normal` |
+| Read-only amount (Details) | Inter | `26.sp` | `28.sp` | `(-0.01).em` | `Normal` |
+| Keypad keys | Inter | `22.sp` | — | `0` | `Normal` |
 
 An amount is **not one flat string** — compose it with `AnnotatedString`/`buildAnnotatedString` or a `Row(verticalAlignment = Alignment.Top)`:
 
@@ -111,7 +109,7 @@ An amount is **not one flat string** — compose it with `AnnotatedString`/`buil
 ```kotlin
 // example TextStyle (drop into Typography or use inline)
 val DisplayAmount = TextStyle(
-    fontFamily = InstrumentSerif,
+    fontFamily = Inter,
     fontWeight = FontWeight.Normal,
     fontSize = 64.sp,
     lineHeight = 64.sp,

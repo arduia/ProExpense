@@ -233,7 +233,7 @@ fun SpecValidationCapture() {
                     ProExpenseTheme.typography.displayAmount
                         .copy(
                             fontSize = 22.sp,
-                            fontFamily = typography.serifFamily,
+                            fontFamily = typography.amountFamily,
                         )
                         .toSpanStyle()
                         .copy(color = colors.primary),
@@ -245,7 +245,7 @@ fun SpecValidationCapture() {
                         .copy(
                             fontSize = 44.sp,
                             letterSpacing = (-0.025).em,
-                            fontFamily = typography.serifFamily,
+                            fontFamily = typography.amountFamily,
                         )
                         .toSpanStyle()
                         .copy(color = colors.muted2),
@@ -253,7 +253,7 @@ fun SpecValidationCapture() {
                     append("0")
                 }
             },
-            style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.displayAmount,
         )
         Text(
             text = "Amount must be greater than $0",

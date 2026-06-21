@@ -96,7 +96,7 @@ fun ReportsScreen(
                     )
                     Text(
                         text = state.totalLabel,
-                        style = typography.displayAmount.copy(fontFamily = typography.serifFamily),
+                        style = typography.displayAmount,
                         color = colors.onSurface,
                         modifier = Modifier.padding(top = dimens.space8),
                     )
@@ -123,7 +123,7 @@ fun ReportsScreen(
                     )
                     Text(
                         text = state.totalLabel,
-                        style = typography.summaryAmount.copy(fontFamily = typography.serifFamily),
+                        style = typography.summaryAmount,
                         color = colors.onSurface,
                         modifier = Modifier.padding(top = dimens.space8),
                     )
@@ -263,7 +263,7 @@ private fun ReportsDonut(
                 )
                 Text(
                     text = categories.size.toString(),
-                    style = typography.summaryAmount.copy(fontFamily = typography.serifFamily),
+                    style = typography.summaryAmount,
                     color = colors.onSurface,
                 )
             }
@@ -305,7 +305,7 @@ private fun ReportsRankRow(category: ReportsCategoryUi) {
         )
         Text(
             text = category.amountLabel,
-            style = typography.listAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.listAmount,
             color = colors.onSurface,
         )
     }

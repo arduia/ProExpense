@@ -81,8 +81,8 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 
 | Role | Family | Size / Line | Tracking | Weight |
 |---|---|---|---|---|
-| Display amount | Instrument Serif | 64 / 64 | -0.025em | Regular |
-| Card amount | Instrument Serif | 40 / 40 | -0.02em | Regular |
+| Display amount | Inter | 64 / 64 | -0.025em | Regular |
+| Card amount | Inter | 40 / 40 | -0.02em | Regular |
 | Hero greeting | Instrument Serif | 30 / 32 | -0.015em | Regular |
 | Sheet title | Instrument Serif | 22 / 24 | -0.01em | Regular |
 | Section / day head | Instrument Serif | 18 / 20 | -0.01em | Regular |
@@ -92,7 +92,7 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 | Eyebrow / label | Geist Mono | 11 / 1.3 | 0.10–0.12em (upper) | 500–600 |
 | Timestamp / figures | Geist Mono | 11.5–12 | 0.04em | 400–500 |
 
-> Amounts are **always Instrument Serif**. Compose: `PlatformTextStyle(includeFontPadding = false)` + `LineHeightStyle(Center, Both)` on every title/amount; Instrument Serif ships **Regular + Italic only — never request bold**. The `$` glyph is ≈0.47× the figure in `clay`; decimals (`.00`) sit in `ink3`.
+> Amounts are **always Inter**. Compose: `PlatformTextStyle(includeFontPadding = false)` + `LineHeightStyle(Center, Both)` on every title/amount; Inter amount styles use **Regular only** via bundled variable font. The `$` glyph is ≈0.47× the figure in `clay`; decimals (`.00`) sit in `ink3`.
 
 ### Color
 
@@ -156,7 +156,7 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 
 - Single **light** theme. Surfaces pure white on warm-grey paper; **1 px = 1 dp**; tracking values in `em`.
 - Wire as a custom `ProExpenseTheme` wrapping `MaterialTheme` with overridden `ColorScheme`, `Typography`, and custom `Dimens` / `Shapes`.
-- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--serif` = **Instrument Serif** (display only — never body or controls).
+- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--serif` = **Instrument Serif** (titles only — never body, controls, or amounts).
 
 ---
 

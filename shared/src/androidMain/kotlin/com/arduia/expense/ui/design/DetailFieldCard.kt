@@ -265,7 +265,7 @@ fun DetailAmountSummaryCard(
         }
         Text(
             text = amountLabel,
-            style = typography.detailsAmount.copy(fontFamily = typography.serifFamily),
+            style = typography.detailsAmount,
             color = colors.onSurface,
         )
     }

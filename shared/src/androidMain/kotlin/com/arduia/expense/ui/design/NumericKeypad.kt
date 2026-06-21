@@ -132,7 +132,7 @@ private fun KeypadKey(
         } else {
             Text(
                 text = label,
-                style = typography.keypadKey.copy(fontFamily = typography.serifFamily),
+                style = typography.keypadKey,
                 color = colors.onSurface,
             )
         }

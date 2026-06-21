@@ -147,7 +147,7 @@ private fun DebtSummaryCard(
             Text(text = eyebrow, style = typography.eyebrow, color = colors.muted)
             Text(
                 text = state.netLabel,
-                style = typography.summaryAmount.copy(fontFamily = typography.serifFamily),
+                style = typography.summaryAmount,
                 color = accent,
             )
         }
@@ -285,7 +285,7 @@ private fun DebtRecordRow(
         } else {
             Text(
                 text = record.amountLabel,
-                style = typography.listAmount.copy(fontFamily = typography.serifFamily),
+                style = typography.listAmount,
                 color = accent,
             )
         }

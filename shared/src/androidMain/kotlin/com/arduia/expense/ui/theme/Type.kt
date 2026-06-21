@@ -38,6 +38,12 @@ private val GeistMonoFamily = FontFamily(
     variableFont(R.font.geist_mono_variable, FontWeight.SemiBold),
 )
 
+private val InterFamily = FontFamily(
+    variableFont(R.font.inter_variable, FontWeight.Normal),
+    variableFont(R.font.inter_variable, FontWeight.Medium),
+    variableFont(R.font.inter_variable, FontWeight.SemiBold),
+)
+
 private val InstrumentSerifFamily = FontFamily(
     Font(R.font.instrument_serif_regular, FontWeight.Normal),
     Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
@@ -75,7 +81,7 @@ private fun amountTextStyle(
     lineHeightSp: Float,
     letterSpacingEm: Float,
 ): TextStyle = titleTextStyle(
-    fontFamily = InstrumentSerifFamily,
+    fontFamily = InterFamily,
     fontSizeSp = fontSizeSp,
     lineHeightSp = lineHeightSp,
     letterSpacingEm = letterSpacingEm,
@@ -111,6 +117,7 @@ data class ProTypography(
     val navLabel: TextStyle,
     val searchField: TextStyle,
     val sansFamily: FontFamily,
+    val amountFamily: FontFamily,
     val serifFamily: FontFamily,
     val monoFamily: FontFamily,
 )
@@ -281,6 +288,7 @@ val ProDefaultTypography = ProTypography(
         fontWeight = FontWeight.Normal,
     ),
     sansFamily = ManropeFamily,
+    amountFamily = InterFamily,
     serifFamily = InstrumentSerifFamily,
     monoFamily = GeistMonoFamily,
 )
