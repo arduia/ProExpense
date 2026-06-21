@@ -6,16 +6,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.R
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.SharedCostSplitLogic
 import com.arduia.expense.ui.design.SharedSplitMode
+import com.arduia.expense.ui.preview.SharedCostHistoryItemUi
 import com.arduia.expense.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.preview.previewSharedHistoryItems
@@ -79,6 +83,11 @@ fun SharedCostsFlow(
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     var draft by remember { mutableStateOf(SharedCostDraft().withParticipants()) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
+    val history = remember {
+        mutableStateListOf<SharedCostHistoryItemUi>().apply { addAll(previewSharedHistoryItems) }
+    }
+    val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
+    val justNowLabel = stringResource(R.string.shared_split_just_now)
 
     val currentStep = SharedCostStep.valueOf(step)
     val uiState = draft.toUiState()
@@ -102,7 +111,7 @@ fun SharedCostsFlow(
             when (target) {
                 SharedCostStep.History -> {
                     SharedCostsHistoryScreen(
-                        items = previewSharedHistoryItems,
+                        items = history,
                         onNewSplit = {
                             draft = SharedCostDraft().withParticipants()
                             step = SharedCostStep.Input.name
@@ -178,6 +187,25 @@ fun SharedCostsFlow(
                             step = SharedCostStep.Input.name
                         },
                         onSave = {
+                            val totalValue = AmountInput.numericValue(draft.rawTotal) ?: 0.0
+                            val perPerson = if (draft.peopleCount > 0) {
+                                totalValue / draft.peopleCount
+                            } else {
+                                0.0
+                            }
+                            history.add(
+                                0,
+                                SharedCostHistoryItemUi(
+                                    id = "split-" + System.currentTimeMillis(),
+                                    title = draft.note.trim().ifEmpty { defaultSplitTitle },
+                                    peopleCount = draft.peopleCount,
+                                    perPersonLabel = "$" + AmountInput.formatDisplay(
+                                        String.format(java.util.Locale.US, "%.2f", perPerson),
+                                    ),
+                                    dateLabel = justNowLabel,
+                                    totalLabel = "$" + AmountInput.formatDisplay(draft.rawTotal),
+                                ),
+                            )
                             toastMessage = savedToastMessage
                             onSaved()
                             draft = SharedCostDraft().withParticipants()

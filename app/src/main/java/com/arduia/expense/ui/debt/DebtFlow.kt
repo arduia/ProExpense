@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
@@ -50,12 +51,36 @@ fun DebtFlow(
     var addForm by remember { mutableStateOf(DebtAddFormState()) }
     var conflictPerson by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<DebtRecordUi?>(null) }
+    var lentList by remember { mutableStateOf(previewDebtLent) }
+    var oweList by remember { mutableStateOf(previewDebtOwe) }
 
-    val listState = listStateFor(side)
+    val listState = if (side == DebtSide.Lent) lentList else oweList
 
     fun otherSideName(name: String): Boolean {
-        val other = if (side == DebtSide.Lent) previewDebtOwe else previewDebtLent
+        val other = if (addForm.side == DebtSide.Lent) oweList else lentList
         return name.isNotBlank() && other.active.any { it.name.equals(name.trim(), ignoreCase = true) }
+    }
+
+    fun commitNewRecord() {
+        val record = DebtRecordUi(
+            id = "rec-" + System.currentTimeMillis(),
+            name = addForm.person.trim(),
+            dateLabel = addForm.dateLabel,
+            amountLabel = "$" + AmountInput.formatDisplay(addForm.amountRaw),
+        )
+        if (addForm.side == DebtSide.Lent) {
+            lentList = lentList.copy(
+                active = listOf(record) + lentList.active,
+                activeCount = lentList.activeCount + 1,
+            )
+        } else {
+            oweList = oweList.copy(
+                active = listOf(record) + oweList.active,
+                activeCount = oweList.activeCount + 1,
+            )
+        }
+        side = addForm.side
+        showAdd = false
     }
 
     Box(
@@ -119,7 +144,7 @@ fun DebtFlow(
                     if (otherSideName(addForm.person)) {
                         conflictPerson = addForm.person.trim()
                     } else {
-                        showAdd = false
+                        commitNewRecord()
                     }
                 },
             )
@@ -138,7 +163,7 @@ fun DebtFlow(
             confirmLabel = stringResource(R.string.debt_continue),
             onConfirm = {
                 conflictPerson = null
-                showAdd = false
+                commitNewRecord()
             },
             dismissLabel = stringResource(R.string.debt_cancel),
             onDismiss = { conflictPerson = null },
@@ -194,9 +219,6 @@ private fun conflictBody(person: String, addingSide: DebtSide) = buildAnnotatedS
         cursor = start + token.length
     }
 }
-
-private fun listStateFor(side: DebtSide): DebtListUiState =
-    if (side == DebtSide.Lent) previewDebtLent else previewDebtOwe
 
 private fun detailStateFor(
     id: String,

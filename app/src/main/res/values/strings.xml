@@ -574,6 +574,10 @@
     <string name="categories_delete_cancel">Cancel</string>
 
     <string name="debt_delete_body">Removing %1$s\'s settled record can\'t be undone.</string>
+    <string name="home_logged_note_fallback">New expense</string>
+    <string name="home_today_section">Today</string>
+    <string name="shared_split_default_title">Shared split</string>
+    <string name="shared_split_just_now">Just now</string>
     <plurals name="debt_active_count">
         <item quantity="one">%1$d active</item>
         <item quantity="other">%1$d active</item>

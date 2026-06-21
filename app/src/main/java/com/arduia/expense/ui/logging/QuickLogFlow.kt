@@ -39,7 +39,7 @@ fun QuickLogFlow(
     startState: ExpenseEntryState = ExpenseEntryState(),
     showDraftPrompt: Boolean = false,
     draftAmountLabel: String? = null,
-    onSaved: () -> Unit = onDismiss,
+    onSaved: (ExpenseEntryState) -> Unit = { onDismiss() },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -115,7 +115,7 @@ fun QuickLogFlow(
                         onSave = {
                             if (AmountInput.canProceed(state.rawAmount)) {
                                 toastMessage = savedMessage
-                                onSaved()
+                                onSaved(state)
                             } else {
                                 state = state.copy(showZeroValidation = true)
                             }
@@ -156,7 +156,7 @@ fun QuickLogFlow(
                         },
                         onSave = {
                             toastMessage = savedMessage
-                            onSaved()
+                            onSaved(state)
                         },
                     )
                 }
