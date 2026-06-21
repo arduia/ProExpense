@@ -46,14 +46,16 @@ fun ProTextAction(
 ) {
     val dimens = ProExpenseTheme.dimensions
     Row(
+        // Clip + ripple sit outermost so the ripple covers the padded touch area, not just the text;
+        // padding/min-size stay inside to preserve the component's overall footprint.
         modifier = modifier
-            .padding(horizontal = dimens.space8, vertical = dimens.space6)
-            .minimumInteractiveComponentSize()
             .proClickable(
                 onClick = onClick,
                 shape = ProExpenseTheme.shapes.searchField,
                 enabled = enabled,
-            ),
+            )
+            .padding(horizontal = dimens.space8, vertical = dimens.space6)
+            .minimumInteractiveComponentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {

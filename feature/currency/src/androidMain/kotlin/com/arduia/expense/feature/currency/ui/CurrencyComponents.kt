@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.currency.ui.preview.MoreCurrencyItemUi
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.centeredGlyph
 
 @Composable
 fun CurrencyCard(
@@ -56,8 +58,9 @@ fun CurrencyCard(
         ) {
             Text(
                 text = item.symbol,
-                style = typography.bodySemiBold,
+                style = typography.bodySemiBold.centeredGlyph(),
                 color = if (selected) colors.primary else colors.onSurfaceVariant,
+                textAlign = TextAlign.Center,
             )
         }
         Column(modifier = Modifier.weight(1f)) {

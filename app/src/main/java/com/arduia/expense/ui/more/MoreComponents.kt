@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.ProIcon
@@ -30,6 +31,7 @@ import com.arduia.expense.ui.preview.MoreProfileUi
 import com.arduia.expense.ui.preview.MoreSettingKind
 import com.arduia.expense.ui.preview.MoreSettingRowUi
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.centeredGlyph
 
 @Composable
 fun MoreProfileCard(
@@ -57,7 +59,12 @@ fun MoreProfileCard(
                 .background(colors.primaryTint),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text = profile.initial, style = typography.bodySemiBold, color = colors.primary)
+            Text(
+                text = profile.initial,
+                style = typography.bodySemiBold.centeredGlyph(),
+                color = colors.primary,
+                textAlign = TextAlign.Center,
+            )
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(text = profile.name, style = typography.bodySemiBold, color = colors.onSurface)

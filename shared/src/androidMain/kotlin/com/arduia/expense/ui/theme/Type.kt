@@ -52,6 +52,15 @@ private val FigmaAlignedLineHeight = LineHeightStyle(
     trim = LineHeightStyle.Trim.Both,
 )
 
+/**
+ * Strips font padding and re-centers line height so a single glyph (e.g. an avatar initial)
+ * sits dead-center inside a fixed box. Use for non-title text rendered in a circle/badge.
+ */
+fun TextStyle.centeredGlyph(): TextStyle = copy(
+    platformStyle = FigmaAlignedPlatform,
+    lineHeightStyle = FigmaAlignedLineHeight,
+)
+
 @OptIn(ExperimentalTextApi::class)
 private fun titleTextStyle(
     fontFamily: FontFamily,

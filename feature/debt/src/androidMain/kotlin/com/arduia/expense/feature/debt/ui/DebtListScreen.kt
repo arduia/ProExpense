@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.centeredGlyph
 
 @Composable
 fun DebtListScreen(
@@ -310,8 +312,9 @@ internal fun DebtAvatar(
     ) {
         Text(
             text = initial,
-            style = typography.bodySemiBold,
+            style = typography.bodySemiBold.centeredGlyph(),
             color = tint,
+            textAlign = TextAlign.Center,
         )
     }
 }

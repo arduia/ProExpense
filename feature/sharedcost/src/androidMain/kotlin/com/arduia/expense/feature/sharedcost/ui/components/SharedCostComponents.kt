@@ -37,6 +37,7 @@ import com.arduia.expense.ui.design.proPressScale
 import com.arduia.expense.ui.design.proRippleClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.centeredGlyph
 
 @Composable
 fun SharedCostPeopleCard(
@@ -204,8 +205,9 @@ fun SharedCostParticipantRow(
         ) {
             Text(
                 text = index.toString(),
-                style = typography.bodySemiBold,
+                style = typography.bodySemiBold.centeredGlyph(),
                 color = colors.primary,
+                textAlign = TextAlign.Center,
             )
         }
         Row(
