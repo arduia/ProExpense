@@ -20,6 +20,7 @@ import com.arduia.expense.ui.journal.JournalFlow
 import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
+import com.arduia.expense.ui.pin.PinSetupFlow
 import com.arduia.expense.ui.sharedcost.SharedCostsFlow
 import com.arduia.expense.ui.splash.SplashScreen
 import com.arduia.expense.ui.preview.previewHomeCasual
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
                 var showQuickLog by rememberSaveable { mutableStateOf(false) }
                 var showSharedCosts by rememberSaveable { mutableStateOf(false) }
                 var showDebt by rememberSaveable { mutableStateOf(false) }
+                var showPinSetup by rememberSaveable { mutableStateOf(false) }
                 var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
 
                 val onTabSelected: (HomeNavTab) -> Unit = { tab ->
@@ -77,6 +79,7 @@ class MainActivity : ComponentActivity() {
                                 onAddClick = { showQuickLog = true },
                                 onDebtClick = { showDebt = true },
                                 onSharedClick = { showSharedCosts = true },
+                                onPinClick = { showPinSetup = true },
                             )
                         } else {
                             HomeShell(
@@ -111,6 +114,12 @@ class MainActivity : ComponentActivity() {
                     if (showDebt) {
                         DebtFlow(
                             onDismiss = { showDebt = false },
+                        )
+                    }
+
+                    if (showPinSetup) {
+                        PinSetupFlow(
+                            onDismiss = { showPinSetup = false },
                         )
                     }
                     }

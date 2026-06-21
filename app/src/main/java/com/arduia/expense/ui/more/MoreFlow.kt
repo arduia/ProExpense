@@ -38,6 +38,7 @@ fun MoreFlow(
     onDebtClick: () -> Unit,
     onSharedClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onPinClick: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -86,6 +87,7 @@ fun MoreFlow(
                             "currency" -> step = MoreStep.Currency
                             "export" -> step = MoreStep.Export
                             "clear" -> step = MoreStep.Clear
+                            "pin" -> onPinClick()
                         }
                     },
                     onSettingToggle = { _, _ -> },
