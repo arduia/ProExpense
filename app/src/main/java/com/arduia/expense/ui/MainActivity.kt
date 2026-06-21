@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -19,8 +20,11 @@ import com.arduia.expense.ui.journal.JournalFlow
 import com.arduia.expense.ui.logging.QuickLogFlow
 import com.arduia.expense.ui.onboarding.FirstLaunchFlow
 import com.arduia.expense.ui.sharedcost.SharedCostsFlow
+import com.arduia.expense.ui.splash.SplashScreen
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.theme.ProExpenseTheme
+
+private const val SPLASH_DURATION_MILLIS = 1800L
 
 class MainActivity : ComponentActivity() {
 
@@ -29,6 +33,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProExpenseTheme {
+                var showSplash by rememberSaveable { mutableStateOf(true) }
                 var onboardingComplete by rememberSaveable { mutableStateOf(false) }
                 var showQuickLog by rememberSaveable { mutableStateOf(false) }
                 var showSharedCosts by rememberSaveable { mutableStateOf(false) }
@@ -41,7 +46,15 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                LaunchedEffect(Unit) {
+                    kotlinx.coroutines.delay(SPLASH_DURATION_MILLIS)
+                    showSplash = false
+                }
+
                 Box(Modifier.fillMaxSize()) {
+                    if (showSplash) {
+                        SplashScreen()
+                    } else {
                     if (onboardingComplete) {
                         if (selectedTab == HomeNavTab.Budget) {
                             EventsFlow(
@@ -88,6 +101,7 @@ class MainActivity : ComponentActivity() {
                         DebtFlow(
                             onDismiss = { showDebt = false },
                         )
+                    }
                     }
                 }
             }
