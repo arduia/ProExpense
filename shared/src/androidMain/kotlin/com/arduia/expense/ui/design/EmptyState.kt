@@ -33,8 +33,10 @@ fun EmptyStateIllustration(modifier: Modifier = Modifier) {
             .width(dimens.emptyIllustrationWidth)
             .height(dimens.emptyIllustrationHeight),
     ) {
-        val sx = size.width / dimens.emptyIllustrationWidth.toPx()
-        val sy = size.height / dimens.emptyIllustrationHeight.toPx()
+        // Artwork coordinates are authored in dp against emptyIllustration{Width,Height};
+        // scale by density (px per dp) so the wallet fills the box on every screen, not just mdpi.
+        val sx = size.width / dimens.emptyIllustrationWidth.value
+        val sy = size.height / dimens.emptyIllustrationHeight.value
         val s = sx
 
         fun pt(x: Float, y: Float) = Offset(x * sx, y * sy)
