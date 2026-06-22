@@ -39,11 +39,35 @@ object DateLabels {
     private val dayMonth = SimpleDateFormat("MMM d", Locale.US)
     private val weekdayMonth = SimpleDateFormat("EEE · MMM d", Locale.US)
     private val detailDateTime = SimpleDateFormat("EEE, MMM d · h:mm a", Locale.US)
+    private val monthYear = SimpleDateFormat("MMM yyyy", Locale.US)
+    private val monthKeyFormat = SimpleDateFormat("yyyy-MM", Locale.US)
     private val time = SimpleDateFormat("h:mm a", Locale.US)
 
     fun topBar(nowMillis: Long): String = topBar.format(Date(nowMillis)).uppercase(Locale.US)
 
     fun monthLabel(nowMillis: Long): String = month.format(Date(nowMillis)).uppercase(Locale.US)
+
+    /** "May 2026" — the Reports period heading. */
+    fun monthYearLabel(millis: Long): String = monthYear.format(Date(millis))
+
+    /** "yyyy-MM" — stable key for bucketing records by calendar month. */
+    fun monthKey(millis: Long): String = monthKeyFormat.format(Date(millis))
+
+    /**
+     * Days counted toward a month's daily average: the elapsed day-of-month for the current month,
+     * otherwise the full length of that (past) month.
+     */
+    fun daysElapsedInMonth(monthMillis: Long, nowMillis: Long): Int {
+        val monthCal = Calendar.getInstance().apply { timeInMillis = monthMillis }
+        val nowCal = Calendar.getInstance().apply { timeInMillis = nowMillis }
+        val sameMonth = monthCal.get(Calendar.YEAR) == nowCal.get(Calendar.YEAR) &&
+            monthCal.get(Calendar.MONTH) == nowCal.get(Calendar.MONTH)
+        return if (sameMonth) {
+            nowCal.get(Calendar.DAY_OF_MONTH)
+        } else {
+            monthCal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        }
+    }
 
     fun timeLabel(millis: Long): String = time.format(Date(millis))
 

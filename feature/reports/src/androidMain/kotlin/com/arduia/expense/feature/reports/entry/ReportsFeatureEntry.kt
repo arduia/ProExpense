@@ -3,6 +3,7 @@ package com.arduia.expense.feature.reports.entry
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arduia.expense.feature.reports.ui.ReportsFlow
+import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 
 interface ReportsFeatureEntry {
     @Composable
@@ -11,6 +12,7 @@ interface ReportsFeatureEntry {
         modifier: Modifier = Modifier,
         empty: Boolean = false,
         onLogFirstExpense: () -> Unit = {},
+        periods: List<ReportsUiState>? = null,
     )
 }
 
@@ -21,13 +23,24 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         modifier: Modifier,
         empty: Boolean,
         onLogFirstExpense: () -> Unit,
+        periods: List<ReportsUiState>?,
     ) {
-        com.arduia.expense.feature.reports.ui.ReportsFlow(
-            onBack = onBack,
-            modifier = modifier,
-            empty = empty,
-            onLogFirstExpense = onLogFirstExpense,
-        )
+        if (periods == null) {
+            ReportsFlow(
+                onBack = onBack,
+                modifier = modifier,
+                empty = empty,
+                onLogFirstExpense = onLogFirstExpense,
+            )
+        } else {
+            ReportsFlow(
+                onBack = onBack,
+                modifier = modifier,
+                empty = empty,
+                onLogFirstExpense = onLogFirstExpense,
+                periods = periods,
+            )
+        }
     }
 }
 

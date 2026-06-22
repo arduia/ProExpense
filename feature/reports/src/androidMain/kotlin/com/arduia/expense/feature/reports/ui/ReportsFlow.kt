@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
@@ -17,8 +18,9 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
- * Mockup host for Reports. With data, the period chevrons cycle the demo months so every
- * state is reachable for testing; [empty] launches the new-user "no data yet" state.
+ * Host for Reports. The period chevrons cycle the supplied [periods] (one per month with spend);
+ * [empty] launches the new-user "no data yet" state. Defaults to the demo months so previews and
+ * screenshot tests render without a wired ViewModel.
  */
 @Composable
 fun ReportsFlow(
@@ -26,10 +28,12 @@ fun ReportsFlow(
     modifier: Modifier = Modifier,
     empty: Boolean = false,
     onLogFirstExpense: () -> Unit = {},
+    periods: List<ReportsUiState> = remember { listOf(previewReports, previewReportsUncategorized) },
 ) {
     val colors = ProExpenseTheme.colors
-    val periods = remember { listOf(previewReports, previewReportsUncategorized) }
-    var index by remember { mutableIntStateOf(0) }
+    var index by remember(periods) { mutableIntStateOf(0) }
+    val showEmpty = empty || periods.isEmpty()
+    val safeIndex = index.coerceIn(0, (periods.size - 1).coerceAtLeast(0))
 
     Box(
         modifier = modifier
@@ -37,10 +41,10 @@ fun ReportsFlow(
             .background(colors.paper),
     ) {
         ReportsScreen(
-            state = if (empty) previewReportsEmpty else periods[index],
+            state = if (showEmpty) previewReportsEmpty else periods[safeIndex],
             onBack = onBack,
-            onPrevPeriod = { index = (index - 1 + periods.size) % periods.size },
-            onNextPeriod = { index = (index + 1) % periods.size },
+            onPrevPeriod = { if (periods.isNotEmpty()) index = (safeIndex - 1 + periods.size) % periods.size },
+            onNextPeriod = { if (periods.isNotEmpty()) index = (safeIndex + 1) % periods.size },
             onLogFirstExpense = onLogFirstExpense,
         )
     }
