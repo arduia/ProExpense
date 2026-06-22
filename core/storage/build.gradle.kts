@@ -43,6 +43,10 @@ kotlin {
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
+            // In-memory JDBC driver runs the real generated schema on the JVM, so repository
+            // tests exercise actual SQL + mappers without an emulator or SQLCipher.
+            implementation(libs.sqldelight.sqlite.driver)
         }
     }
 }

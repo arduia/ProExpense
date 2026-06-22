@@ -1,21 +1,34 @@
 CREATE TABLE app_meta (
     id INTEGER NOT NULL PRIMARY KEY,
     monthly_budget_cents INTEGER,
-    home_currency_code TEXT NOT NULL,
-    failed_attempt_count INTEGER NOT NULL,
+    home_currency_code TEXT NOT NULL DEFAULT 'USD',
+    failed_attempt_count INTEGER NOT NULL DEFAULT 0,
     lockout_until INTEGER,
     security_answer_hash TEXT,
     security_question_id TEXT,
-    biometric_enrolled INTEGER NOT NULL,
+    biometric_enrolled INTEGER NOT NULL DEFAULT 0,
     biometric_wrapped_key BLOB,
-    display_name TEXT NOT NULL DEFAULT ''
+    display_name TEXT NOT NULL DEFAULT '',
+    pin_configured INTEGER NOT NULL DEFAULT 0
 );
 
-insertMeta:
-INSERT OR REPLACE INTO app_meta(
-    id, monthly_budget_cents, home_currency_code, failed_attempt_count, lockout_until,
-    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key, display_name
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+-- The app keeps one metadata row (id = 1). ensureMeta guarantees it exists before any
+-- read/update so callers never have to special-case a missing row; granular UPDATE
+-- statements then mutate single fields without clobbering the rest of the row.
+ensureMeta:
+INSERT OR IGNORE INTO app_meta(id) VALUES (1);
 
 selectMeta:
 SELECT * FROM app_meta WHERE id = 1;
+
+updateMonthlyBudget:
+UPDATE app_meta SET monthly_budget_cents = ? WHERE id = 1;
+
+updateHomeCurrency:
+UPDATE app_meta SET home_currency_code = ? WHERE id = 1;
+
+updateLockout:
+UPDATE app_meta SET failed_attempt_count = ?, lockout_until = ? WHERE id = 1;
+
+updatePinConfigured:
+UPDATE app_meta SET pin_configured = ? WHERE id = 1;

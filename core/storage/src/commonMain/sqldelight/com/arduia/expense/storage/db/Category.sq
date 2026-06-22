@@ -1,0 +1,23 @@
+-- Table is named category_record (not category) to avoid a generated-class name clash
+-- with the com.arduia.expense.domain.Category model.
+CREATE TABLE category_record (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    is_custom INTEGER NOT NULL
+);
+
+insertCategory:
+INSERT OR REPLACE INTO category_record(id, name, is_custom)
+VALUES (?, ?, ?);
+
+deleteCategory:
+DELETE FROM category_record WHERE id = ?;
+
+selectAllCategories:
+SELECT * FROM category_record ORDER BY is_custom ASC, name ASC;
+
+countCategories:
+SELECT COUNT(*) FROM category_record;
+
+deleteAllCategories:
+DELETE FROM category_record;

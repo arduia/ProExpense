@@ -20,5 +20,8 @@ SELECT * FROM debt_record ORDER BY person_name;
 selectDebtById:
 SELECT * FROM debt_record WHERE id = ?;
 
+selectDebtsByPerson:
+SELECT * FROM debt_record WHERE person_name = ? ORDER BY person_name;
+
 deleteAllDebts:
 DELETE FROM debt_record;
