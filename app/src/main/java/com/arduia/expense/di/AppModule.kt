@@ -3,6 +3,7 @@ package com.arduia.expense.di
 import com.arduia.expense.data.DatabaseKeyProvider
 import com.arduia.expense.storage.StorageComponent
 import com.arduia.expense.storage.db.DatabaseDriverFactory
+import com.arduia.expense.ui.categories.CategoriesViewModel
 import com.arduia.expense.ui.currency.CurrencyViewModel
 import com.arduia.expense.ui.debt.DebtViewModel
 import com.arduia.expense.ui.events.EventsViewModel
@@ -73,6 +74,9 @@ val viewModelModule = module {
             profileRepository = get(),
             scope = scope,
         )
+    }
+    factory { (scope: CoroutineScope) ->
+        CategoriesViewModel(categoryRepository = get(), scope = scope)
     }
     factoryOf(::ExpenseEntryViewModel)
 }

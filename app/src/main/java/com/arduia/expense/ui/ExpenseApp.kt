@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
+import com.arduia.expense.ui.categories.CategoriesViewModel
 import com.arduia.expense.ui.currency.CurrencyViewModel
 import com.arduia.expense.ui.debt.DebtViewModel
 import com.arduia.expense.ui.design.HomeNavTab
@@ -44,6 +45,7 @@ fun ExpenseApp(
     val currencyViewModel = koinInject<CurrencyViewModel> { parametersOf(scope) }
     val eventsViewModel = koinInject<EventsViewModel> { parametersOf(scope) }
     val debtViewModel = koinInject<DebtViewModel> { parametersOf(scope) }
+    val categoriesViewModel = koinInject<CategoriesViewModel> { parametersOf(scope) }
     val entryViewModel = koinInject<ExpenseEntryViewModel>()
 
     val homeState by homeViewModel.state.collectAsState()
@@ -51,6 +53,7 @@ fun ExpenseApp(
     val reportsState by reportsViewModel.state.collectAsState()
     val eventsState by eventsViewModel.state.collectAsState()
     val debtState by debtViewModel.state.collectAsState()
+    val categoriesState by categoriesViewModel.state.collectAsState()
     val selectedCurrency by currencyViewModel.selectedCode.collectAsState()
 
     var splashElapsed by rememberSaveable { mutableStateOf(false) }
@@ -147,6 +150,14 @@ fun ExpenseApp(
                             reportsViewModel.refresh()
                         },
                         reportsPeriods = reportsState.periods,
+                        categoriesState = categoriesState.list,
+                        onCategoryCreate = { iconId, label ->
+                            categoriesViewModel.create(iconId, label)
+                        },
+                        onCategoryUpdate = { oldId, iconId, label ->
+                            categoriesViewModel.update(oldId, iconId, label)
+                        },
+                        onCategoryDelete = { id -> categoriesViewModel.delete(id) },
                     )
                     else -> HomeShell(
                         state = homeState.home,

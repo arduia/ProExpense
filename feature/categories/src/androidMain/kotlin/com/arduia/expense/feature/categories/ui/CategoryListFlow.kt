@@ -17,6 +17,7 @@ import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
 import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
 import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
@@ -27,10 +28,15 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 fun CategoryListFlow(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    state: CategoryListUiState = previewCategoryList,
+    onCreate: (iconId: String, label: String) -> Unit = { _, _ -> },
+    onUpdate: (oldId: String, iconId: String, label: String) -> Unit = { _, _, _ -> },
+    onDelete: (id: String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
-    val defaults = remember { previewCategoryList.defaults }
-    var custom by remember { mutableStateOf(previewCategoryList.custom) }
+    val defaults = state.defaults
+    // Local copy drives drag-reorder; order is not persisted (no order column).
+    var custom by remember(state.custom) { mutableStateOf(state.custom) }
 
     var showSheet by remember { mutableStateOf(false) }
     var editingRow by remember { mutableStateOf<CategoryRowUi?>(null) }
@@ -40,7 +46,7 @@ fun CategoryListFlow(
 
     fun takenNames(excluding: CategoryRowUi?): Set<String> =
         (defaults + custom)
-            .filter { it.label != excluding?.label }
+            .filter { it.categoryId != excluding?.categoryId }
             .map { it.label.lowercase() }
             .toSet()
 
@@ -50,7 +56,7 @@ fun CategoryListFlow(
             .background(colors.paper),
     ) {
         CategoryListScreen(
-            state = previewCategoryList.copy(custom = custom),
+            state = state.copy(custom = custom),
             onBack = onBack,
             onCreate = {
                 editingRow = null
@@ -83,14 +89,10 @@ fun CategoryListFlow(
                 onAdd = {
                     if (form.canAdd) {
                         val edited = editingRow
-                        val newRow = CategoryRowUi(
-                            categoryId = form.selectedIconId,
-                            label = form.name.trim(),
-                        )
-                        custom = if (edited == null) {
-                            custom + newRow
+                        if (edited == null) {
+                            onCreate(form.selectedIconId, form.name.trim())
                         } else {
-                            custom.map { if (it.label == edited.label) newRow else it }
+                            onUpdate(edited.categoryId, form.selectedIconId, form.name.trim())
                         }
                         showSheet = false
                         editingRow = null
@@ -139,7 +141,7 @@ fun CategoryListFlow(
             body = buildAnnotatedString { append(stringResource(R.string.categories_delete_body)) },
             confirmLabel = stringResource(R.string.categories_delete_confirm),
             onConfirm = {
-                deleteRow?.let { row -> custom = custom.filter { it.label != row.label } }
+                deleteRow?.let { row -> onDelete(row.categoryId) }
                 deleteRow = null
             },
             dismissLabel = stringResource(R.string.categories_delete_cancel),

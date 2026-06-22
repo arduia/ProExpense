@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
+import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.HomeNavTab
@@ -35,6 +37,10 @@ fun MoreFlow(
     selectedCurrency: String = "USD",
     onCurrencySelect: (String) -> Unit = {},
     reportsPeriods: List<ReportsUiState>? = null,
+    categoriesState: CategoryListUiState? = null,
+    onCategoryCreate: (iconId: String, label: String) -> Unit = { _, _ -> },
+    onCategoryUpdate: (oldId: String, iconId: String, label: String) -> Unit = { _, _, _ -> },
+    onCategoryDelete: (id: String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -108,6 +114,10 @@ fun MoreFlow(
                 )
                 MoreStep.Categories -> features.categories.CategoryListFlow(
                     onBack = { step = MoreStep.Hub },
+                    state = categoriesState ?: previewCategoryList,
+                    onCreate = onCategoryCreate,
+                    onUpdate = onCategoryUpdate,
+                    onDelete = onCategoryDelete,
                 )
             }
         }
