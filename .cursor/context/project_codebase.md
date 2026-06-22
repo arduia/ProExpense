@@ -4,7 +4,7 @@
 > Do not edit by hand — it is overwritten. Authoritative prose lives in `AGENTS.md` and `docs/`.
 
 - **Last updated:** 2026-06-22
-- **Branch:** `claude/youthful-brown-9jxm86`
+- **Branch:** `cursor/v2-migration-work-6788`
 - **Stack:** Kotlin Multiplatform · Jetpack Compose (Android) · offline-first
 - **PR base (v2 migration):** PRs target `refactor/v2-migration` until the migration completes — not `main`.
 

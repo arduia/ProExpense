@@ -217,7 +217,7 @@ fun SharedCostParticipantRow(
         ) {
             Text(
                 text = name,
-                style = typography.bodyMedium,
+                style = typography.captionMedium,
                 color = colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
