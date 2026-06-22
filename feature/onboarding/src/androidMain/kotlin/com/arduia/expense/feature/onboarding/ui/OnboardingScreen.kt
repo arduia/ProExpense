@@ -65,8 +65,7 @@ fun OnboardingScreenContent(
             .fillMaxSize()
             .background(colors.paper)
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = dimens.screenPadding),
+            .navigationBarsPadding(),
     ) {
         Box(
             modifier = Modifier
@@ -121,23 +120,28 @@ fun OnboardingScreenContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (pagerState.currentPage > 0) {
-                ProTextAction(
-                    text = stringResource(R.string.back),
-                    onClick = {
-                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                    },
+                Row(
                     modifier = Modifier.weight(1f),
-                    style = typography.navAction,
-                    color = colors.muted,
-                    leading = {
-                        ProIcon(
-                            glyph = ProIconGlyph.Back,
-                            contentDescription = null,
-                            tint = colors.muted,
-                            size = dimens.iconInline,
-                        )
-                    },
-                )
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    ProTextAction(
+                        text = stringResource(R.string.back),
+                        onClick = {
+                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+                        },
+                        style = typography.navAction,
+                        color = colors.muted,
+                        leading = {
+                            ProIcon(
+                                glyph = ProIconGlyph.Back,
+                                contentDescription = null,
+                                tint = colors.muted,
+                                size = dimens.iconInline,
+                            )
+                        },
+                    )
+                }
             } else {
                 Box(modifier = Modifier.weight(1f))
             }

@@ -54,7 +54,7 @@
 | Screen specs (`design-system-spec/screens/`) | 16 |
 | Roborazzi baselines (`app/src/test/screenshots/`) | 61 |
 | App test sources (`app/src/test/`) | 17 |
-| Files with `@Composable` | 113 |
+| Files with `@Composable` | 114 |
 
 ## Screen specs
 
