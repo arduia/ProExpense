@@ -17,6 +17,7 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.home.AppRoute
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.HomeViewModel
+import com.arduia.expense.ui.journal.JournalViewModel
 import com.arduia.expense.ui.logging.ExpenseEntryViewModel
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.splash.SplashScreen
@@ -34,9 +35,11 @@ fun ExpenseApp(
 ) {
     val scope = rememberCoroutineScope()
     val homeViewModel = koinInject<HomeViewModel> { parametersOf(scope) }
+    val journalViewModel = koinInject<JournalViewModel> { parametersOf(scope) }
     val entryViewModel = koinInject<ExpenseEntryViewModel>()
 
     val homeState by homeViewModel.state.collectAsState()
+    val journalState by journalViewModel.state.collectAsState()
 
     var splashElapsed by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
@@ -101,6 +104,13 @@ fun ExpenseApp(
                         selectedTab = selectedTab,
                         onTabSelected = onTabSelected,
                         onAddClick = openNewEntry,
+                        days = journalState.days,
+                        detailFor = { id -> journalState.details[id] },
+                        onEditRecord = openEditEntry,
+                        onDeleteRecord = { id ->
+                            journalViewModel.delete(id)
+                            homeViewModel.refresh()
+                        },
                     )
                     HomeNavTab.More -> MoreFlow(
                         features = features,
@@ -140,6 +150,7 @@ fun ExpenseApp(
                     scope.launch {
                         entryViewModel.submit(handoff)
                         homeViewModel.refresh()
+                        journalViewModel.refresh()
                     }
                     showQuickLog = false
                     entryStart = null

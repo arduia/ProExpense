@@ -20,6 +20,7 @@ import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTransactionRowModel
+import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
@@ -36,6 +37,10 @@ fun JournalFlow(
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
+    days: List<JournalDayUi> = previewJournalList.days,
+    detailFor: (String) -> JournalDetailUiState? = ::previewDetailFor,
+    onEditRecord: (String) -> Unit = {},
+    onDeleteRecord: (String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -50,11 +55,11 @@ fun JournalFlow(
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
     val searchActive = query.isNotBlank()
+    val visibleDays = filterJournalDays(days, query, selectedFilterId)
     val listState = JournalListUiState(
         query = query,
         selectedFilterId = selectedFilterId,
-        // Preview-fake search: any query yields the no-results state.
-        days = if (searchActive) emptyList() else previewJournalList.days,
+        days = visibleDays,
         searchActive = searchActive,
     )
 
@@ -89,14 +94,17 @@ fun JournalFlow(
                     onAddClick = onAddClick,
                 )
             } else {
-                JournalDetailScreen(
-                    state = detailStateFor(rowId),
-                    onBack = { selectedRowId = null },
-                    onActions = { showActions = true },
-                    onLinkedTagClick = {},
-                    onEdit = {},
-                    onDelete = { showDeleteConfirm = true },
-                )
+                val detail = detailFor(rowId)
+                if (detail != null) {
+                    JournalDetailScreen(
+                        state = detail,
+                        onBack = { selectedRowId = null },
+                        onActions = { showActions = true },
+                        onLinkedTagClick = {},
+                        onEdit = { onEditRecord(rowId) },
+                        onDelete = { showDeleteConfirm = true },
+                    )
+                }
             }
         }
 
@@ -121,7 +129,10 @@ fun JournalFlow(
             onClose = { showActions = false },
         ) {
             JournalActionsSheetContent(
-                onEdit = { showActions = false },
+                onEdit = {
+                    showActions = false
+                    selectedRowId?.let(onEditRecord)
+                },
                 onDelete = {
                     showActions = false
                     showDeleteConfirm = true
@@ -142,6 +153,7 @@ fun JournalFlow(
             confirmLabel = stringResource(R.string.journal_delete_action),
             onConfirm = {
                 showDeleteConfirm = false
+                selectedRowId?.let(onDeleteRecord)
                 selectedRowId = null
             },
             dismissLabel = stringResource(R.string.journal_action_cancel),
@@ -151,7 +163,38 @@ fun JournalFlow(
     }
 }
 
-private fun detailStateFor(rowId: String): JournalDetailUiState = when (rowId) {
+/**
+ * Client-side journal filtering over the supplied days: free-text search across note + meta, and the
+ * category filter chips ("more" = any category outside the named chips). Empty days are dropped.
+ */
+private fun filterJournalDays(
+    days: List<JournalDayUi>,
+    query: String,
+    selectedFilterId: String,
+): List<JournalDayUi> {
+    val trimmed = query.trim()
+    if (trimmed.isBlank() && selectedFilterId == "all") return days
+    return days.mapNotNull { day ->
+        val rows = day.rows.filter { row ->
+            matchesFilter(row.categoryId, selectedFilterId) &&
+                (trimmed.isBlank() ||
+                    row.note.contains(trimmed, ignoreCase = true) ||
+                    row.meta.contains(trimmed, ignoreCase = true))
+        }
+        if (rows.isEmpty()) null else day.copy(rows = rows)
+    }
+}
+
+private val namedJournalFilters = setOf("food", "transport", "bills")
+
+private fun matchesFilter(categoryId: String, selectedFilterId: String): Boolean = when (selectedFilterId) {
+    "all" -> true
+    "more" -> categoryId !in namedJournalFilters
+    else -> categoryId == selectedFilterId
+}
+
+/** Preview/screenshot fallback detail resolver used when no real record source is wired. */
+private fun previewDetailFor(rowId: String): JournalDetailUiState = when (rowId) {
     "t1" -> previewJournalDetail
     else -> {
         val row = previewJournalList.days

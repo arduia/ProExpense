@@ -38,6 +38,7 @@ object DateLabels {
     private val month = SimpleDateFormat("MMM", Locale.US)
     private val dayMonth = SimpleDateFormat("MMM d", Locale.US)
     private val weekdayMonth = SimpleDateFormat("EEE · MMM d", Locale.US)
+    private val detailDateTime = SimpleDateFormat("EEE, MMM d · h:mm a", Locale.US)
     private val time = SimpleDateFormat("h:mm a", Locale.US)
 
     fun topBar(nowMillis: Long): String = topBar.format(Date(nowMillis)).uppercase(Locale.US)
@@ -45,6 +46,9 @@ object DateLabels {
     fun monthLabel(nowMillis: Long): String = month.format(Date(nowMillis)).uppercase(Locale.US)
 
     fun timeLabel(millis: Long): String = time.format(Date(millis))
+
+    /** "Wed, May 25 · 12:30 PM" — the journal detail header stamp. */
+    fun detailDateTime(millis: Long): String = detailDateTime.format(Date(millis))
 
     /** "Today · May 25" / "Yesterday · May 24" / "Mon · May 23". */
     fun dayGroupTitle(dayMillis: Long, nowMillis: Long): String = when (dayDelta(dayMillis, nowMillis)) {

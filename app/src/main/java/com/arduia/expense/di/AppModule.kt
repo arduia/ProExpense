@@ -4,6 +4,7 @@ import com.arduia.expense.data.DatabaseKeyProvider
 import com.arduia.expense.storage.StorageComponent
 import com.arduia.expense.storage.db.DatabaseDriverFactory
 import com.arduia.expense.ui.home.HomeViewModel
+import com.arduia.expense.ui.journal.JournalViewModel
 import com.arduia.expense.ui.logging.ExpenseEntryViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.android.ext.koin.androidContext
@@ -34,6 +35,13 @@ val viewModelModule = module {
             budgetRepository = get(),
             profileRepository = get(),
             securityStateReader = get(),
+            scope = scope,
+        )
+    }
+    factory { (scope: CoroutineScope) ->
+        JournalViewModel(
+            financeRepository = get(),
+            profileRepository = get(),
             scope = scope,
         )
     }
