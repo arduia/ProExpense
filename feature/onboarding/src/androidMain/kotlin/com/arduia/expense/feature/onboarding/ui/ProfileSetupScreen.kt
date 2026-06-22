@@ -97,27 +97,29 @@ fun ProfileSetupScreenContent(
         sheetTitle = stringResource(R.string.currency_picker_title),
         onCloseSheet = onCloseCurrencySheet,
         sheetContent = {
-            SearchField(
-                value = state.currencySearchQuery,
-                onValueChange = onCurrencySearchChange,
-                placeholder = stringResource(R.string.search_currency_placeholder),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimens.space12),
-            )
-            val filtered = currencyOptions.filter { option ->
-                state.currencySearchQuery.isBlank() ||
-                    option.code.contains(state.currencySearchQuery, ignoreCase = true) ||
-                    option.label.contains(state.currencySearchQuery, ignoreCase = true)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                SearchField(
+                    value = state.currencySearchQuery,
+                    onValueChange = onCurrencySearchChange,
+                    placeholder = stringResource(R.string.search_currency_placeholder),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = dimens.space12),
+                )
+                val filtered = currencyOptions.filter { option ->
+                    state.currencySearchQuery.isBlank() ||
+                        option.code.contains(state.currencySearchQuery, ignoreCase = true) ||
+                        option.label.contains(state.currencySearchQuery, ignoreCase = true)
+                }
+                CurrencyPickerContent(
+                    options = filtered,
+                    selectedCode = state.selectedCurrencyCode,
+                    onSelected = { code ->
+                        onCurrencySelected(code)
+                        onCloseCurrencySheet()
+                    },
+                )
             }
-            CurrencyPickerContent(
-                options = filtered,
-                selectedCode = state.selectedCurrencyCode,
-                onSelected = { code ->
-                    onCurrencySelected(code)
-                    onCloseCurrencySheet()
-                },
-            )
         },
         modifier = modifier,
     ) {

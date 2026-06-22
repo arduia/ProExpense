@@ -157,8 +157,8 @@ fun ProBottomSheetHost(
         AnimatedVisibility(
             visible = visible,
             modifier = Modifier
-                .fillMaxSize()
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
             enter = motion.sheetEnter(reduceMotion),
             exit = motion.sheetExit(reduceMotion),
         ) {
