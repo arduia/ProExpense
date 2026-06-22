@@ -4,11 +4,13 @@ import com.arduia.expense.ui.design.TagLinkKind
 import com.arduia.expense.ui.design.TagLinkOption
 
 data class ExpenseEntryState(
+    val id: String? = null,
     val rawAmount: String = "",
     val selectedCategoryId: String = "food",
     val note: String = "",
     val dateLabel: String = "Today, May 25",
     val timeLabel: String = "12:30 PM",
+    val recordedAtEpochMillis: Long? = null,
     val linkedTagId: String? = null,
     val linkedTagKind: TagLinkKind? = null,
     val linkedTagLabel: String? = null,

@@ -18,9 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProToastHost
+import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDraft
+import com.arduia.expense.feature.logging.ui.preview.previewTagDebts
+import com.arduia.expense.feature.logging.ui.preview.previewTagEvents
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -39,6 +42,8 @@ fun QuickLogFlow(
     startState: ExpenseEntryState = ExpenseEntryState(),
     showDraftPrompt: Boolean = false,
     draftAmountLabel: String? = null,
+    tagEvents: List<TagLinkOption> = previewTagEvents,
+    tagDebts: List<TagLinkOption> = previewTagDebts,
     onSaved: (ExpenseEntryState) -> Unit = { onDismiss() },
 ) {
     val colors = ProExpenseTheme.colors
@@ -132,6 +137,9 @@ fun QuickLogFlow(
                 QuickLogStep.Details -> {
                     AddExpenseDetailsScreen(
                         state = state,
+                        tagEvents = tagEvents,
+                        tagDebts = tagDebts,
+                        showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
                         onBackToAmount = { step = QuickLogStep.Amount.name },
                         onCategorySelected = { categoryId ->
                             state = state.copy(selectedCategoryId = categoryId)

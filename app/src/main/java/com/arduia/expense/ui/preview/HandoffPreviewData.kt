@@ -6,6 +6,7 @@ data class HomeTransactionItem(
     val meta: String,
     val amount: String,
     val tag: String? = null,
+    val id: String = "",
 )
 
 data class HomeDayGroup(

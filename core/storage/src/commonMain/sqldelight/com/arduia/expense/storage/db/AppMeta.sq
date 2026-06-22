@@ -9,7 +9,8 @@ CREATE TABLE app_meta (
     biometric_enrolled INTEGER NOT NULL DEFAULT 0,
     biometric_wrapped_key BLOB,
     display_name TEXT NOT NULL DEFAULT '',
-    pin_configured INTEGER NOT NULL DEFAULT 0
+    pin_configured INTEGER NOT NULL DEFAULT 0,
+    onboarding_completed INTEGER NOT NULL DEFAULT 0
 );
 
 -- The app keeps one metadata row (id = 1). ensureMeta guarantees it exists before any
@@ -32,3 +33,9 @@ UPDATE app_meta SET failed_attempt_count = ?, lockout_until = ? WHERE id = 1;
 
 updatePinConfigured:
 UPDATE app_meta SET pin_configured = ? WHERE id = 1;
+
+updateProfile:
+UPDATE app_meta SET display_name = ?, home_currency_code = ? WHERE id = 1;
+
+updateOnboardingCompleted:
+UPDATE app_meta SET onboarding_completed = ? WHERE id = 1;

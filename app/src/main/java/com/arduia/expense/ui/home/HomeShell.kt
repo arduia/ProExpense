@@ -34,6 +34,7 @@ fun HomeShell(
     onLogFirstExpense: () -> Unit = {},
     onSeeAll: () -> Unit = {},
     onCustomizeQuickAccess: () -> Unit = {},
+    onTransactionClick: (String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
 
@@ -57,6 +58,7 @@ fun HomeShell(
             onLogFirstExpense = onLogFirstExpense,
             onSeeAll = onSeeAll,
             onCustomizeQuickAccess = onCustomizeQuickAccess,
+            onTransactionClick = onTransactionClick,
         )
 
         if (selectedTab == HomeNavTab.Home) {

@@ -5,3 +5,6 @@ sealed class Result<out T> {
 
     data class Error(val message: String, val cause: Throwable? = null) : Result<Nothing>()
 }
+
+fun <T> Result<T>.getOrNull(): T? = (this as? Result.Success)?.data
+

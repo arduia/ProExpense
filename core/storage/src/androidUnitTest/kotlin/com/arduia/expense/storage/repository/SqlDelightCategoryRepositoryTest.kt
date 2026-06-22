@@ -40,6 +40,13 @@ class SqlDelightCategoryRepositoryTest {
         assertTrue(repository.getAll().getOrFail().none { it.isCustom })
     }
 
+    // Rule: default IDs match the design-system catalogue so badges resolve without a lookup.
+    @Test
+    fun seededDefaults_useDesignSystemIds() = runTest {
+        val ids = repository.getAll().getOrFail().map { it.id }.toSet()
+        assertTrue(ids.containsAll(listOf("food", "transport", "shopping", "bills", "health", "entertainment")))
+    }
+
     // Rule: delete removes a category.
     @Test
     fun delete_removesCategory() = runTest {

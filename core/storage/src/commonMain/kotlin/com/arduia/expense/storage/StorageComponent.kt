@@ -6,6 +6,7 @@ import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.LockoutRepository
+import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.storage.db.DatabaseDriverFactory
 import com.arduia.expense.storage.db.ProExpenseDatabase
@@ -16,6 +17,7 @@ import com.arduia.expense.storage.repository.SqlDelightDebtRepository
 import com.arduia.expense.storage.repository.SqlDelightEventRepository
 import com.arduia.expense.storage.repository.SqlDelightFinanceRecordRepository
 import com.arduia.expense.storage.repository.SqlDelightLockoutRepository
+import com.arduia.expense.storage.repository.SqlDelightProfileRepository
 import com.arduia.expense.storage.repository.SqlDelightSecurityStateReader
 
 /**
@@ -47,6 +49,9 @@ class StorageComponent private constructor(
     }
     val securityStateReader: SecurityStateReader by lazy {
         SqlDelightSecurityStateReader(database)
+    }
+    val profileRepository: ProfileRepository by lazy {
+        SqlDelightProfileRepository(database)
     }
 
     companion object {
