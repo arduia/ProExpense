@@ -46,6 +46,23 @@ fun Modifier.proCardShadow(shape: Shape = ProExpenseTheme.shapes.card): Modifier
 }
 
 @Composable
+fun Modifier.proIdentityCardShadow(shape: Shape = ProExpenseTheme.shapes.identityCard): Modifier {
+    val layers = ProExpenseTheme.elevation.identityCard
+    return layers.fold(this) { modifier, layer ->
+        if (layer.blur > 0.dp) {
+            modifier.shadow(
+                elevation = layer.blur,
+                shape = shape,
+                spotColor = layer.color,
+                ambientColor = layer.color,
+            )
+        } else {
+            modifier
+        }
+    }
+}
+
+@Composable
 fun Modifier.proToastShadow(shape: Shape = ProExpenseTheme.shapes.toast): Modifier {
     val layer = ProExpenseTheme.elevation.toast.firstOrNull() ?: return this
     return shadow(

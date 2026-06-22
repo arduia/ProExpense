@@ -39,7 +39,7 @@ fun ProfileIdentityCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .proCardShadow(ProExpenseTheme.shapes.identityCard)
+            .proIdentityCardShadow(ProExpenseTheme.shapes.identityCard)
             .clip(ProExpenseTheme.shapes.identityCard)
             .background(Brush.linearGradient(listOf(colors.primaryDeep, colors.primary)))
             .padding(horizontal = dimens.space18, vertical = dimens.space18),

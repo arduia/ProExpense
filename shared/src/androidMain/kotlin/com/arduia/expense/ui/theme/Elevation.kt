@@ -18,6 +18,7 @@ data class ProShadowLayer(
 @Immutable
 data class ProElevation(
     val card: List<ProShadowLayer>,
+    val identityCard: List<ProShadowLayer>,
     val sheet: List<ProShadowLayer>,
     val toast: List<ProShadowLayer>,
     val nav: List<ProShadowLayer>,
@@ -30,6 +31,9 @@ val ProDefaultElevation = ProElevation(
     card = listOf(
         ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, Color(0x08212121)),
         ProShadowLayer(0.dp, 6.dp, 16.dp, 0.dp, Color(0x0A212121)),
+    ),
+    identityCard = listOf(
+        ProShadowLayer(0.dp, 8.dp, 20.dp, 0.dp, Color(0x47039BE5)),
     ),
     sheet = listOf(
         ProShadowLayer(0.dp, (-8).dp, 24.dp, 0.dp, Color(0x26000000)),
