@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.debt.R
-import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
@@ -40,6 +39,12 @@ import com.arduia.expense.ui.theme.stepTransition
 fun DebtFlow(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    lentList: DebtListUiState = previewDebtLent,
+    oweList: DebtListUiState = previewDebtOwe,
+    detailFor: (String) -> DebtDetailUiState? = ::previewDebtDetailFor,
+    onCreateRecord: (side: DebtSide, person: String, amountRaw: String) -> Unit = { _, _, _ -> },
+    onMarkSettled: (String) -> Unit = {},
+    onDeleteRecord: (String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -51,8 +56,6 @@ fun DebtFlow(
     var addForm by remember { mutableStateOf(DebtAddFormState()) }
     var conflictPerson by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<DebtRecordUi?>(null) }
-    var lentList by remember { mutableStateOf(previewDebtLent) }
-    var oweList by remember { mutableStateOf(previewDebtOwe) }
 
     val listState = if (side == DebtSide.Lent) lentList else oweList
 
@@ -62,23 +65,7 @@ fun DebtFlow(
     }
 
     fun commitNewRecord() {
-        val record = DebtRecordUi(
-            id = "rec-" + System.currentTimeMillis(),
-            name = addForm.person.trim(),
-            dateLabel = addForm.dateLabel,
-            amountLabel = "$" + AmountInput.formatDisplay(addForm.amountRaw),
-        )
-        if (addForm.side == DebtSide.Lent) {
-            lentList = lentList.copy(
-                active = listOf(record) + lentList.active,
-                activeCount = lentList.activeCount + 1,
-            )
-        } else {
-            oweList = oweList.copy(
-                active = listOf(record) + oweList.active,
-                activeCount = oweList.activeCount + 1,
-            )
-        }
+        onCreateRecord(addForm.side, addForm.person.trim(), addForm.amountRaw)
         side = addForm.side
         showAdd = false
     }
@@ -118,13 +105,19 @@ fun DebtFlow(
                     onBack = onDismiss,
                 )
             } else {
-                DebtDetailScreen(
-                    state = detailStateFor(recordId, side, listState),
-                    onBack = { selectedRecordId = null },
-                    onMore = {},
-                    onEdit = {},
-                    onMarkSettled = { selectedRecordId = null },
-                )
+                val detail = detailFor(recordId)
+                if (detail != null) {
+                    DebtDetailScreen(
+                        state = detail,
+                        onBack = { selectedRecordId = null },
+                        onMore = {},
+                        onEdit = {},
+                        onMarkSettled = {
+                            onMarkSettled(recordId)
+                            selectedRecordId = null
+                        },
+                    )
+                }
             }
         }
 
@@ -180,7 +173,10 @@ fun DebtFlow(
                 append(stringResource(R.string.debt_delete_body, deleteTarget?.name.orEmpty()))
             },
             confirmLabel = stringResource(R.string.debt_delete),
-            onConfirm = { deleteTarget = null },
+            onConfirm = {
+                deleteTarget?.let { onDeleteRecord(it.id) }
+                deleteTarget = null
+            },
             dismissLabel = stringResource(R.string.debt_cancel),
             onDismiss = { deleteTarget = null },
             confirmVariant = ProButtonVariant.Danger,
@@ -220,27 +216,10 @@ private fun conflictBody(person: String, addingSide: DebtSide) = buildAnnotatedS
     }
 }
 
-private fun detailStateFor(
-    id: String,
-    side: DebtSide,
-    listState: DebtListUiState,
-): DebtDetailUiState = when (id) {
-    "john" -> previewDebtLentDetail
+/** Preview/screenshot fallback detail resolver used when no real debt source is wired. */
+private fun previewDebtDetailFor(id: String): DebtDetailUiState = when (id) {
     "david" -> previewDebtOweDetail
-    else -> {
-        val record = listState.active.firstOrNull { it.id == id }
-        DebtDetailUiState(
-            id = id,
-            side = side,
-            name = record?.name.orEmpty(),
-            amountLabel = record?.amountLabel.orEmpty(),
-            dateRecordedLabel = record?.dateLabel.orEmpty(),
-            dueLabel = "No due date",
-            statusLabel = "Active",
-            settled = false,
-            note = record?.subtitle,
-        )
-    }
+    else -> previewDebtLentDetail.copy(id = id)
 }
 
 @Preview(

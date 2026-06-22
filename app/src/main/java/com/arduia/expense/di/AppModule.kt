@@ -4,6 +4,7 @@ import com.arduia.expense.data.DatabaseKeyProvider
 import com.arduia.expense.storage.StorageComponent
 import com.arduia.expense.storage.db.DatabaseDriverFactory
 import com.arduia.expense.ui.currency.CurrencyViewModel
+import com.arduia.expense.ui.debt.DebtViewModel
 import com.arduia.expense.ui.events.EventsViewModel
 import com.arduia.expense.ui.home.HomeViewModel
 import com.arduia.expense.ui.journal.JournalViewModel
@@ -62,6 +63,13 @@ val viewModelModule = module {
         EventsViewModel(
             eventRepository = get(),
             financeRepository = get(),
+            profileRepository = get(),
+            scope = scope,
+        )
+    }
+    factory { (scope: CoroutineScope) ->
+        DebtViewModel(
+            debtRepository = get(),
             profileRepository = get(),
             scope = scope,
         )

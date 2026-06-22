@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.currency.CurrencyViewModel
+import com.arduia.expense.ui.debt.DebtViewModel
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.events.EventsViewModel
 import com.arduia.expense.ui.home.AppRoute
@@ -42,12 +43,14 @@ fun ExpenseApp(
     val reportsViewModel = koinInject<ReportsViewModel> { parametersOf(scope) }
     val currencyViewModel = koinInject<CurrencyViewModel> { parametersOf(scope) }
     val eventsViewModel = koinInject<EventsViewModel> { parametersOf(scope) }
+    val debtViewModel = koinInject<DebtViewModel> { parametersOf(scope) }
     val entryViewModel = koinInject<ExpenseEntryViewModel>()
 
     val homeState by homeViewModel.state.collectAsState()
     val journalState by journalViewModel.state.collectAsState()
     val reportsState by reportsViewModel.state.collectAsState()
     val eventsState by eventsViewModel.state.collectAsState()
+    val debtState by debtViewModel.state.collectAsState()
     val selectedCurrency by currencyViewModel.selectedCode.collectAsState()
 
     var splashElapsed by rememberSaveable { mutableStateOf(false) }
@@ -192,7 +195,17 @@ fun ExpenseApp(
         }
 
         if (showDebt) {
-            features.debt.DebtOverlay(onDismiss = { showDebt = false })
+            features.debt.DebtOverlay(
+                onDismiss = { showDebt = false },
+                lentList = debtState.lent,
+                oweList = debtState.owe,
+                detailFor = { id -> debtState.details[id] },
+                onCreateRecord = { side, person, amountRaw ->
+                    debtViewModel.create(side, person, amountRaw)
+                },
+                onMarkSettled = { id -> debtViewModel.markSettled(id) },
+                onDeleteRecord = { id -> debtViewModel.delete(id) },
+            )
         }
 
         if (showPinSetup) {

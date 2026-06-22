@@ -41,6 +41,7 @@ object DateLabels {
     private val detailDateTime = SimpleDateFormat("EEE, MMM d · h:mm a", Locale.US)
     private val monthYear = SimpleDateFormat("MMM yyyy", Locale.US)
     private val monthKeyFormat = SimpleDateFormat("yyyy-MM", Locale.US)
+    private val fullDate = SimpleDateFormat("MMM d, yyyy", Locale.US)
     private val time = SimpleDateFormat("h:mm a", Locale.US)
 
     fun topBar(nowMillis: Long): String = topBar.format(Date(nowMillis)).uppercase(Locale.US)
@@ -73,6 +74,12 @@ object DateLabels {
 
     /** "Wed, May 25 · 12:30 PM" — the journal detail header stamp. */
     fun detailDateTime(millis: Long): String = detailDateTime.format(Date(millis))
+
+    /** "May 12" — compact day + month. */
+    fun shortDate(millis: Long): String = dayMonth.format(Date(millis))
+
+    /** "May 30, 2026" — a full due/recorded date. */
+    fun fullDate(millis: Long): String = fullDate.format(Date(millis))
 
     /** "May 12 — May 26" (or a single day when start == end) — event date ranges. */
     fun eventRange(startMillis: Long, endMillis: Long): String {
