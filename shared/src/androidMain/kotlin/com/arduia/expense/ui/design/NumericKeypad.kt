@@ -48,7 +48,9 @@ fun NumericKeypad(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimens.space16),
+            // Vertical breathing room only — horizontal must stay flush with the screen's
+            // content padding so the keys/actions align with the amount and category chips above.
+            .padding(vertical = dimens.space16),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         keypadKeys.forEach { row ->
