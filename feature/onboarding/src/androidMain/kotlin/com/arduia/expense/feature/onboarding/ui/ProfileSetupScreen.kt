@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -12,34 +14,41 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.onboarding.R
 import com.arduia.expense.ui.design.CurrencyOption
 import com.arduia.expense.ui.design.CurrencyPickerContent
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProfileCurrencyRow
+import com.arduia.expense.ui.design.ProfileIdentityCard
 import com.arduia.expense.ui.design.ProfileNameField
 import com.arduia.expense.ui.design.ProfileStepHeader
 import com.arduia.expense.ui.design.SearchField
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.defaultCurrencyOptions
-import com.arduia.expense.ui.design.ProTextAction
+import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-enum class ProfileSetupStep {
-    Name,
-    Currency,
-}
+private const val CURRENCY_QUICK_PICKS = 4
 
 data class ProfileSetupState(
-    val step: ProfileSetupStep = ProfileSetupStep.Name,
     val name: String = "",
     val selectedCurrencyCode: String = "USD",
     val showCurrencySheet: Boolean = false,
@@ -50,7 +59,6 @@ data class ProfileSetupState(
 fun ProfileSetupScreenContent(
     state: ProfileSetupState,
     onNameChange: (String) -> Unit,
-    onContinue: () -> Unit,
     onStartTracking: () -> Unit,
     onSkip: () -> Unit,
     onCurrencySelected: (String) -> Unit,
@@ -63,6 +71,26 @@ fun ProfileSetupScreenContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+
+    val selectedOption = currencyOptions.firstOrNull { it.code == state.selectedCurrencyCode }
+    val currencyLabel = selectedOption?.label ?: state.selectedCurrencyCode
+    val trimmedName = state.name.trim()
+    val greeting = if (trimmedName.isEmpty()) {
+        stringResource(R.string.profile_identity_greeting_empty)
+    } else {
+        stringResource(R.string.profile_identity_greeting, trimmedName)
+    }
+
+    // The four most common currencies, but always surface the selected one so it can stay checked.
+    val quickPicks = remember(currencyOptions, state.selectedCurrencyCode) {
+        val base = currencyOptions.take(CURRENCY_QUICK_PICKS).toMutableList()
+        if (base.none { it.code == state.selectedCurrencyCode }) {
+            currencyOptions.firstOrNull { it.code == state.selectedCurrencyCode }?.let { picked ->
+                if (base.isNotEmpty()) base[base.lastIndex] = picked
+            }
+        }
+        base.toList()
+    }
 
     BoxWithSheet(
         showSheet = state.showCurrencySheet,
@@ -99,92 +127,171 @@ fun ProfileSetupScreenContent(
                 .background(colors.paper)
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = dimens.screenPadding)
                 .padding(bottom = dimens.space18),
-            verticalArrangement = Arrangement.spacedBy(dimens.space24),
         ) {
-            when (state.step) {
-                ProfileSetupStep.Name -> {
-                    ProfileStepHeader(
-                        step = 1,
-                        totalSteps = 2,
-                        eyebrow = stringResource(R.string.profile_setup_step, 1, 2),
-                        title = stringResource(R.string.profile_setup_title),
-                        subtitle = stringResource(R.string.profile_setup_description),
-                        onSkip = onSkip,
-                        skipLabel = stringResource(R.string.skip),
-                        modifier = Modifier.padding(top = dimens.space8),
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(dimens.space20),
+            ) {
+                ProfileStepHeader(
+                    step = 1,
+                    totalSteps = 1,
+                    eyebrow = stringResource(R.string.profile_setup_eyebrow),
+                    title = stringResource(R.string.profile_setup_title),
+                    subtitle = stringResource(R.string.profile_setup_description),
+                    onSkip = onSkip,
+                    skipLabel = stringResource(R.string.skip),
+                    modifier = Modifier.padding(top = dimens.space8),
+                )
+
+                ProfileIdentityCard(
+                    eyebrow = stringResource(R.string.profile_identity_eyebrow),
+                    greeting = greeting,
+                    trackingLabel = stringResource(
+                        R.string.profile_identity_tracking,
+                        currencyLabel,
+                        state.selectedCurrencyCode,
+                    ),
+                    currencySymbol = currencySymbol(state.selectedCurrencyCode),
+                )
+
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                    Text(
+                        text = stringResource(R.string.profile_name_label),
+                        style = typography.eyebrow,
+                        color = colors.primary,
                     )
-                    Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                    ProfileNameField(
+                        value = state.name,
+                        onValueChange = onNameChange,
+                        placeholder = stringResource(R.string.profile_name_hint),
+                    )
+                }
+
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space12)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Text(
-                            text = stringResource(R.string.profile_name_label),
+                            text = stringResource(R.string.profile_currency_label),
                             style = typography.eyebrow,
                             color = colors.primary,
                         )
-                        ProfileNameField(
-                            value = state.name,
-                            onValueChange = onNameChange,
-                            placeholder = stringResource(R.string.profile_name_hint),
-                        )
                         Text(
-                            text = stringResource(R.string.profile_name_helper),
+                            text = stringResource(R.string.profile_currency_hint),
                             style = typography.caption,
                             color = colors.muted,
                         )
                     }
-                    ProButton(
-                        text = stringResource(R.string.continue_label),
-                        onClick = onContinue,
-                        size = ProButtonSize.Lg,
-                        fillMaxWidth = true,
-                        modifier = Modifier.padding(top = dimens.space24),
+                    CurrencyQuickGrid(
+                        options = quickPicks,
+                        selectedCode = state.selectedCurrencyCode,
+                        onSelected = onCurrencySelected,
                     )
-                }
-                ProfileSetupStep.Currency -> {
-                    ProfileStepHeader(
-                        step = 2,
-                        totalSteps = 2,
-                        eyebrow = stringResource(R.string.profile_setup_step, 2, 2),
-                        title = stringResource(R.string.profile_currency_title),
-                        subtitle = stringResource(R.string.profile_currency_description),
-                        onSkip = onSkip,
-                        skipLabel = stringResource(R.string.skip),
-                        modifier = Modifier.padding(top = dimens.space8),
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-                        currencyOptions.forEach { option ->
-                            ProfileCurrencyRow(
-                                code = option.code,
-                                label = option.label,
-                                selected = option.code == state.selectedCurrencyCode,
-                                onClick = {
-                                    if (option.code == state.selectedCurrencyCode) {
-                                        onOpenCurrencySheet()
-                                    } else {
-                                        onCurrencySelected(option.code)
-                                    }
-                                },
-                            )
-                        }
-                        ProTextAction(
-                            text = stringResource(R.string.currency_picker_title),
-                            onClick = onOpenCurrencySheet,
-                            style = typography.bodySemiBold,
-                            color = colors.primary,
-                            modifier = Modifier.padding(top = dimens.space4),
-                        )
-                    }
-                    ProButton(
-                        text = stringResource(R.string.start_tracking),
-                        onClick = onStartTracking,
-                        size = ProButtonSize.Lg,
-                        fillMaxWidth = true,
-                        modifier = Modifier.padding(top = dimens.space24),
+                    MoreCurrenciesButton(
+                        text = stringResource(R.string.profile_more_currencies),
+                        onClick = onOpenCurrencySheet,
                     )
                 }
             }
+
+            ProButton(
+                text = stringResource(R.string.start_tracking),
+                onClick = onStartTracking,
+                size = ProButtonSize.Lg,
+                fillMaxWidth = true,
+                modifier = Modifier.padding(top = dimens.space16),
+            )
         }
+    }
+}
+
+@Composable
+private fun CurrencyQuickGrid(
+    options: List<CurrencyOption>,
+    selectedCode: String,
+    onSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val dimens = ProExpenseTheme.dimensions
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimens.space10),
+    ) {
+        options.chunked(2).forEach { rowItems ->
+            Row(horizontalArrangement = Arrangement.spacedBy(dimens.space10)) {
+                rowItems.forEach { option ->
+                    ProfileCurrencyRow(
+                        code = option.code,
+                        label = option.label,
+                        selected = option.code == selectedCode,
+                        onClick = { onSelected(option.code) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                if (rowItems.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MoreCurrenciesButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val shape = ProExpenseTheme.shapes.searchField
+    val strokeWidth = dimens.buttonBorderWidth
+    val cornerRadius = dimens.tileRadius
+    val dashOn = dimens.space8
+    val dashOff = dimens.space6
+    val borderColor = colors.lineStrong
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .drawBehind {
+                val sw = strokeWidth.toPx()
+                val r = cornerRadius.toPx()
+                drawRoundRect(
+                    color = borderColor,
+                    topLeft = Offset(sw / 2f, sw / 2f),
+                    size = Size(size.width - sw, size.height - sw),
+                    cornerRadius = CornerRadius(r, r),
+                    style = Stroke(
+                        width = sw,
+                        pathEffect = PathEffect.dashPathEffect(
+                            floatArrayOf(dashOn.toPx(), dashOff.toPx()),
+                            0f,
+                        ),
+                    ),
+                )
+            }
+            .proClickable(onClick = onClick, shape = shape)
+            .padding(horizontal = dimens.space14, vertical = dimens.space14),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space8, Alignment.CenterHorizontally),
+    ) {
+        ProIcon(
+            glyph = ProIconGlyph.Search,
+            contentDescription = null,
+            tint = colors.primary,
+            size = dimens.iconInline,
+        )
+        Text(text = text, style = typography.bodySemiBold, color = colors.primary)
     }
 }
 
@@ -209,18 +316,17 @@ private fun BoxWithSheet(
 }
 
 @Preview(
-    name = "Profile setup — name",
+    name = "Profile setup — merged",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
     showBackground = true,
 )
 @Composable
-private fun ProfileSetupNamePreview() {
+private fun ProfileSetupMergedPreview() {
     ProExpenseTheme {
         ProfileSetupScreenContent(
             state = ProfileSetupState(name = "Maya"),
             onNameChange = {},
-            onContinue = {},
             onStartTracking = {},
             onSkip = {},
             onCurrencySelected = {},
@@ -232,18 +338,17 @@ private fun ProfileSetupNamePreview() {
 }
 
 @Preview(
-    name = "Profile setup — currency",
+    name = "Profile setup — empty name",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
     showBackground = true,
 )
 @Composable
-private fun ProfileSetupCurrencyPreview() {
+private fun ProfileSetupEmptyPreview() {
     ProExpenseTheme {
         ProfileSetupScreenContent(
-            state = ProfileSetupState(step = ProfileSetupStep.Currency),
+            state = ProfileSetupState(selectedCurrencyCode = "EUR"),
             onNameChange = {},
-            onContinue = {},
             onStartTracking = {},
             onSkip = {},
             onCurrencySelected = {},
@@ -264,12 +369,8 @@ private fun ProfileSetupCurrencyPreview() {
 private fun ProfileSetupCurrencySheetPreview() {
     ProExpenseTheme {
         ProfileSetupScreenContent(
-            state = ProfileSetupState(
-                step = ProfileSetupStep.Currency,
-                showCurrencySheet = true,
-            ),
+            state = ProfileSetupState(showCurrencySheet = true),
             onNameChange = {},
-            onContinue = {},
             onStartTracking = {},
             onSkip = {},
             onCurrencySelected = {},

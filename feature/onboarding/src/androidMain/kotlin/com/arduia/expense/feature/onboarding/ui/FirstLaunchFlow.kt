@@ -21,17 +21,14 @@ fun FirstLaunchFlow(
     modifier: Modifier = Modifier,
 ) {
     var stepName by rememberSaveable { mutableStateOf(FirstLaunchStep.Onboarding.name) }
-    var profileStepName by rememberSaveable { mutableStateOf(ProfileSetupStep.Name.name) }
     var name by rememberSaveable { mutableStateOf("") }
     var selectedCurrencyCode by rememberSaveable { mutableStateOf("USD") }
     var showCurrencySheet by rememberSaveable { mutableStateOf(false) }
     var currencySearchQuery by rememberSaveable { mutableStateOf("") }
 
     val step = FirstLaunchStep.valueOf(stepName)
-    val profileStep = ProfileSetupStep.valueOf(profileStepName)
 
     val profileState = ProfileSetupState(
-        step = profileStep,
         name = name,
         selectedCurrencyCode = selectedCurrencyCode,
         showCurrencySheet = showCurrencySheet,
@@ -51,7 +48,6 @@ fun FirstLaunchFlow(
                 modifier = modifier,
                 state = profileState,
                 onNameChange = { name = it },
-                onContinue = { profileStepName = ProfileSetupStep.Currency.name },
                 onStartTracking = { onComplete(name.trim(), selectedCurrencyCode) },
                 onSkip = { onComplete(name.trim(), selectedCurrencyCode) },
                 onCurrencySelected = { selectedCurrencyCode = it },
@@ -91,7 +87,6 @@ private fun FirstLaunchProfilePreview() {
         ProfileSetupScreenContent(
             state = ProfileSetupState(name = "Maya"),
             onNameChange = {},
-            onContinue = {},
             onStartTracking = {},
             onSkip = {},
             onCurrencySelected = {},

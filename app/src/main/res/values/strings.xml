@@ -154,11 +154,19 @@
     <string name="pin_change_title">Change your PIN</string>
     <string name="shared_history">History</string>
     <string name="profile_setup_step">PROFILE · %1$d OF %2$d</string>
-    <string name="profile_setup_title">Set up your profile</string>
-    <string name="profile_setup_description">Your name personalizes the app — greeting you on the home screen and identifying your records and exports. No account needed; everything stays on your device.</string>
+    <string name="profile_setup_eyebrow">PROFILE · ALL SET IN ONE STEP</string>
+    <string name="profile_setup_title">Make it yours</string>
+    <string name="profile_setup_description">Your name and home currency together make up your profile — no account, all on your device.</string>
+    <string name="profile_identity_eyebrow">YOUR PROFILE</string>
+    <string name="profile_identity_greeting">Hi, %1$s</string>
+    <string name="profile_identity_greeting_empty">Hi there</string>
+    <string name="profile_identity_tracking">Tracking in %1$s · %2$s</string>
     <string name="profile_name_label">PROFILE NAME</string>
     <string name="profile_name_hint">Your name</string>
     <string name="profile_name_helper">Used on your home screen and CSV exports.</string>
+    <string name="profile_currency_label">HOME CURRENCY</string>
+    <string name="profile_currency_hint">Default for every entry</string>
+    <string name="profile_more_currencies">More currencies</string>
 
     <!-- Quick log / expense entry -->
     <string name="new_expense">New expense</string>

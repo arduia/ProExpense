@@ -40,10 +40,10 @@
 
 **Type**
 
-- Screen title — Instrument Serif 30sp
-- Identity greeting — Instrument Serif 24sp on clay
+- Screen title — Inter 28sp
+- Identity greeting — Inter 22sp on clay
 - Eyebrow — Geist Mono 11sp / 0.10–0.12em upper
-- Field text — Manrope 17sp · tile text 14sp
+- Field text — Manrope 14sp · tile text 14sp
 
 **Color**
 

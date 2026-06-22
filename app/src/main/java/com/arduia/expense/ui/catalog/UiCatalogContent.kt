@@ -66,7 +66,6 @@ import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLi
 import com.arduia.expense.feature.onboarding.ui.OnboardingScreenContent
 import com.arduia.expense.feature.onboarding.ui.ProfileSetupScreenContent
 import com.arduia.expense.feature.onboarding.ui.ProfileSetupState
-import com.arduia.expense.feature.onboarding.ui.ProfileSetupStep
 import com.arduia.expense.feature.reports.ui.ReportsScreen
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
@@ -141,24 +140,10 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
             UiCatalogEntry("onboarding_journal", "Onboarding · journal") {
                 OnboardingScreenContent(onGetStarted = {}, onSkip = {}, initialPage = 4)
             },
-            UiCatalogEntry("profile_name", "Profile · name") {
+            UiCatalogEntry("profile_merged", "Profile · setup") {
                 ProfileSetupScreenContent(
                     state = ProfileSetupState(name = "Maya"),
                     onNameChange = {},
-                    onContinue = {},
-                    onStartTracking = {},
-                    onSkip = {},
-                    onCurrencySelected = {},
-                    onOpenCurrencySheet = {},
-                    onCloseCurrencySheet = {},
-                    onCurrencySearchChange = {},
-                )
-            },
-            UiCatalogEntry("profile_currency", "Profile · currency") {
-                ProfileSetupScreenContent(
-                    state = ProfileSetupState(step = ProfileSetupStep.Currency),
-                    onNameChange = {},
-                    onContinue = {},
                     onStartTracking = {},
                     onSkip = {},
                     onCurrencySelected = {},
@@ -170,11 +155,10 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
             UiCatalogEntry("profile_currency_sheet", "Profile · currency sheet", edge = true) {
                 ProfileSetupScreenContent(
                     state = ProfileSetupState(
-                        step = ProfileSetupStep.Currency,
+                        name = "Maya",
                         showCurrencySheet = true,
                     ),
                     onNameChange = {},
-                    onContinue = {},
                     onStartTracking = {},
                     onSkip = {},
                     onCurrencySelected = {},

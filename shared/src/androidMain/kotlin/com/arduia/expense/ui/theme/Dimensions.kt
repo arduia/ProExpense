@@ -90,6 +90,7 @@ data class ProDimens(
     val profileStepBarWidth: Dp,
     val profileStepBarHeight: Dp,
     val currencySymbolSize: Dp,
+    val identityCardEmblem: Dp,
 )
 
 val LocalProDimens = staticCompositionLocalOf { ProDefaultDimens }
@@ -180,4 +181,5 @@ val ProDefaultDimens = ProDimens(
     profileStepBarWidth = 28.dp,
     profileStepBarHeight = 4.dp,
     currencySymbolSize = 36.dp,
+    identityCardEmblem = 52.dp,
 )
