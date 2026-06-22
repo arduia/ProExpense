@@ -3,7 +3,6 @@ package com.arduia.expense.feature.sharedcost.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -11,9 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +20,6 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
-import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostCustomSplitCard
@@ -56,7 +52,6 @@ fun SharedCostsInputScreen(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
     val displayAmount = AmountInput.formatDisplay(state.rawTotal.ifEmpty { "0" })
     val canProceed = SharedCostSplitLogic.canSave(state.rawTotal)
     val isZero = !canProceed
@@ -70,49 +65,52 @@ fun SharedCostsInputScreen(
             .background(colors.paper)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
             .padding(horizontal = dimens.screenPadding)
             .padding(bottom = dimens.space18),
     ) {
-        ProTopBar(
-            title = stringResource(R.string.shared_costs_title),
-            onBack = onBack,
-            backLabel = stringResource(R.string.shared_back_more),
-        )
-
-        AmountDisplay(
-            amountText = displayAmount,
-            isZero = isZero,
-            showZeroValidation = state.showZeroValidation,
-            zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
-            eyebrowText = stringResource(R.string.shared_total_bill),
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
-        )
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            ProTopBar(
+                title = stringResource(R.string.shared_costs_title),
+                onBack = onBack,
+                backLabel = stringResource(R.string.shared_back_more),
+            )
 
-        if (showDetails) {
-            Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
-                SharedCostNoteField(
-                    value = state.note,
-                    onValueChange = onNoteChange,
-                    placeholder = stringResource(R.string.shared_note_placeholder),
-                )
+            AmountDisplay(
+                amountText = displayAmount,
+                isZero = isZero,
+                showZeroValidation = state.showZeroValidation,
+                zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
+                eyebrowText = stringResource(R.string.shared_total_bill),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
+            )
 
-                SharedCostPeopleCard(
-                    count = state.peopleCount,
-                    onDecrement = onDecrementPeople,
-                    onIncrement = onIncrementPeople,
-                    maxReachedHint = stringResource(R.string.shared_max_people),
-                )
+            if (showDetails) {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
+                    SharedCostNoteField(
+                        value = state.note,
+                        onValueChange = onNoteChange,
+                        placeholder = stringResource(R.string.shared_note_placeholder),
+                    )
 
-                if (state.mode == SharedSplitMode.Equal) {
+                    SharedCostPeopleCard(
+                        count = state.peopleCount,
+                        onDecrement = onDecrementPeople,
+                        onIncrement = onIncrementPeople,
+                        maxReachedHint = stringResource(R.string.shared_max_people),
+                    )
+
                     SegmentedToggle(
                         options = listOf(
                             stringResource(R.string.shared_split_even),
                             stringResource(R.string.shared_split_custom),
                         ),
-                        selectedIndex = 0,
+                        selectedIndex = if (state.mode == SharedSplitMode.Equal) 0 else 1,
                         onSelected = { index ->
                             onModeSelected(
                                 if (index == 0) SharedSplitMode.Equal else SharedSplitMode.Custom,
@@ -121,34 +119,18 @@ fun SharedCostsInputScreen(
                         usePrimarySelection = true,
                     )
 
-                    SharedCostPerPersonCard(
-                        perPersonAmount = perPersonAmount,
-                        participants = participants,
-                        perPersonEyebrow = stringResource(R.string.shared_per_person),
-                    )
-                } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.shared_custom_split),
-                            style = typography.eyebrow,
-                            color = colors.muted,
+                    if (state.mode == SharedSplitMode.Equal) {
+                        SharedCostPerPersonCard(
+                            perPersonAmount = perPersonAmount,
+                            participants = participants,
+                            perPersonEyebrow = stringResource(R.string.shared_per_person),
                         )
-                        ProTextAction(
-                            text = stringResource(R.string.shared_switch_to_equal),
-                            onClick = { onModeSelected(SharedSplitMode.Equal) },
-                            style = typography.caption,
-                            color = colors.primary,
+                    } else {
+                        SharedCostCustomSplitCard(
+                            participants = participants,
+                            onShareChange = onShareChange,
                         )
                     }
-
-                    SharedCostCustomSplitCard(
-                        participants = participants,
-                        onShareChange = onShareChange,
-                    )
                 }
             }
         }
