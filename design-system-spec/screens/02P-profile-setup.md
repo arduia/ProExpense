@@ -1,58 +1,60 @@
 # 02·P · Profile Setup
 
 **Flow:** First launch · between Onboarding & Home  
-**Purpose:** Account-free personalization — name + home currency. No login; everything stays on-device.
+**Purpose:** Account-free personalization — name + home currency on **one merged screen**. No login; everything stays on-device.
+
+> **Optimization (Jun 2026):** the former two-step wizard (P1 Name → P2 Home currency) is consolidated into a single screen. A live **identity card** fuses both inputs — the chosen currency symbol becomes the avatar emblem and the name becomes the greeting — so the user sees their profile assemble in real time. Cuts first-run from 2 steps to 1.
 
 ---
 
 ## States
 
-### P1 · Name
+### P1 · Profile + currency (merged)
 
-![P1 · Name](../screenshots/screens/prof-name.png)
+![P1 · Profile + currency](../screenshots/screens/prof-merged.png)
 
-### P2 · Home currency
+### P1 · Currency picker
 
-![P2 · Home currency](../screenshots/screens/prof-currency.png)
-
-### P2 · Currency picker
-
-![P2 · Currency picker](../screenshots/screens/prof-currency-sheet.png)
+![P1 · Currency picker](../screenshots/screens/prof-currency-sheet.png)
 
 ## Behavior & interactions
 
-- Step 1 — Name personalizes the Home greeting (“Hi, Maya”) and CSV exports. Optional; Continue always enabled.
-- Step 2 — Home currency applies to every entry (single-currency MVP). Defaults to USD.
-- Tapping the selected currency row, or “All currencies”, opens a searchable picker bottom sheet.
-- Selecting a currency in the sheet applies and closes in one tap.
-- “Start tracking” completes setup and lands on Home.
+- **Identity card** (top) is a live preview: greeting updates from the name field, the emblem + “Tracking in … · CODE” line updates from the selected currency.
+- **Name** personalizes the Home greeting (“Hi, Maya”) and CSV exports. Optional; the field is pre-focused and the primary action is always enabled.
+- **Home currency** applies to every entry (single-currency MVP). Shown as a 2×2 quick grid of the four most common currencies (USD default, selected).
+- **“More currencies”** opens the searchable picker bottom sheet; selecting a row applies and closes in one tap, updating the grid + identity card.
+- **“Start tracking”** completes setup and lands on Home.
 
 ## Component composition · M3 mapping
 
 | Component | Role | Compose / M3 |
 |---|---|---|
-| Stepper header | “PROFILE · 1 OF 2” progress | `Text · labelMedium (mono)` |
+| Stepper header | “PROFILE · ALL SET IN ONE STEP” | `Text · labelMedium (mono)` |
+| Identity card | Live name + currency preview, gradient surface | `custom Surface` (clay→clayDeep gradient) |
 | Text field | Name input with leading user icon | `OutlinedTextField / BasicTextField` |
-| Selectable list row | Currency options, check on selected | `custom Surface(onClick)` |
+| Selectable tile | Currency quick-pick, check on selected | `custom Surface(onClick)` · 2-col grid |
+| Dashed action | “More currencies” → opens picker | `OutlinedButton` (dashed outline) |
 | Bottom sheet + Search field | Full currency picker | `ModalBottomSheet` |
 
 ## Tokens applied
 
 **Type**
 
-- Screen title — Inter 28sp
-- Eyebrow — Geist Mono 11sp / 0.12em upper
-- Field text — Manrope 14sp
+- Screen title — Instrument Serif 30sp
+- Identity greeting — Instrument Serif 24sp on clay
+- Eyebrow — Geist Mono 11sp / 0.10–0.12em upper
+- Field text — Manrope 17sp · tile text 14sp
 
 **Color**
 
-- selected row tint = blue100 #B3E5FC wash + clay border
+- identity card = `clayDeep #0288D1 → clay #039BE5` 135° gradient · `onPrimary` text/emblem at 16–82% white
+- selected tile tint = blue100 #B3E5FC wash + clay border
 - check = clay #039BE5
 
 **Shape · spacing**
 
-- Field radius 14dp
-- row padding 12dp
+- Identity card radius 20dp · field & tile radius 13–14dp
+- tile padding 11dp · grid gap 10dp
 - sheet top corners 22dp
 
 ---
@@ -65,18 +67,18 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 
 | Role | Family | Size / Line | Tracking | Weight |
 |---|---|---|---|---|
-| Display amount | Inter | 64 / 64 | -0.025em | Regular |
-| Card amount | Inter | 40 / 40 | -0.02em | Regular |
-| Hero greeting | Inter | 30 / 32 | -0.015em | Regular |
-| Sheet title | Inter | 22 / 24 | -0.01em | Regular |
-| Section / day head | Inter | 18 / 20 | -0.01em | Regular |
-| Screen header / app-bar | Inter | 17 / 20 | 0 | Regular |
+| Display amount | Instrument Serif | 64 / 64 | -0.025em | Regular |
+| Card amount | Instrument Serif | 40 / 40 | -0.02em | Regular |
+| Hero greeting | Instrument Serif | 30 / 32 | -0.015em | Regular |
+| Sheet title | Instrument Serif | 22 / 24 | -0.01em | Regular |
+| Section / day head | Instrument Serif | 18 / 20 | -0.01em | Regular |
+| Screen header / app-bar | Instrument Serif | 17 / 20 | 0 | Regular |
 | Body / emphasis / button | Manrope | 14 / 1.4 | 0 / -0.005em | 400–600 |
 | Caption | Manrope | 11.5 / 1.4 | 0 | 400–500 |
 | Eyebrow / label | Geist Mono | 11 / 1.3 | 0.10–0.12em (upper) | 500–600 |
 | Timestamp / figures | Geist Mono | 11.5–12 | 0.04em | 400–500 |
 
-> Amounts are **always Inter**. Compose: `PlatformTextStyle(includeFontPadding = false)` + `LineHeightStyle(Center, Both)` on every title/amount; Inter amount styles use **Regular only** via bundled variable font. The `$` glyph is ≈0.47× the figure in `clay`; decimals (`.00`) sit in `ink3`.
+> Amounts are **always Instrument Serif**. Compose: `PlatformTextStyle(includeFontPadding = false)` + `LineHeightStyle(Center, Both)` on every title/amount; Instrument Serif ships **Regular + Italic only — never request bold**. The `$` glyph is ≈0.47× the figure in `clay`; decimals (`.00`) sit in `ink3`.
 
 ### Color
 
@@ -140,7 +142,7 @@ Applies to every screen. Full source: [`../tokens.md`](../tokens.md) · componen
 
 - Single **light** theme. Surfaces pure white on warm-grey paper; **1 px = 1 dp**; tracking values in `em`.
 - Wire as a custom `ProExpenseTheme` wrapping `MaterialTheme` with overridden `ColorScheme`, `Typography`, and custom `Dimens` / `Shapes`.
-- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--display` = **Inter** (titles + amounts — never body or controls).
+- `--sans` = **Manrope** · `--mono` = **Geist Mono** · `--serif` = **Instrument Serif** (display only — never body or controls).
 
 ---
 
