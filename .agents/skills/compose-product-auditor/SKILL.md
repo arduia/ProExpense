@@ -25,6 +25,8 @@ Pairs with: the design-spec-to-compose rule (build order, fidelity) and the moti
 State what you have and flag gaps:
 1. **Intent** — what is this feature/screen supposed to do for the user? (spec, ticket, or a one-line summary.)
 2. **States** — what states can it be in? (loading, content, empty, error, offline, partial, first-run.)
+   Include **transient states** that only exist mid-interaction: pager/carousel swipe, drag, scroll
+   edges/overscroll, press. A settled screenshot hides these — exercise them.
 3. **Data wiring** — where does its state come from? (ViewModel, repository, API, cache.)
 4. **Design reference** — the mockup/PNG, if visual fidelity is in scope.
 
@@ -58,7 +60,10 @@ Walk every dimension. For each, the question is "what happens to the user when�
 - Missing/null fields; slow network; rapid repeated taps (debounce / disable while in-flight).
 
 ### 5. Accessibility
-- Touch targets ≥ 48dp; real `contentDescription` (or explicit `null` for decorative).
+- Touch targets ≥ 48dp — **but bounded to the element**: a tap/ripple surface stretched far past its
+  label/icon (via `weight(1f)`, `fillMaxWidth()`, or `minimumInteractiveComponentSize()` on a small
+  text/icon action) mis-targets taps and shows an oversized ripple — flag it.
+- Real `contentDescription` (or explicit `null` for decorative).
 - `semantics` correct: roles, state descriptions, logical traversal/merge order for TalkBack.
 - Honors large font scale (no clipping at 200%); sufficient color contrast; not color-only signaling.
 
@@ -80,9 +85,18 @@ Walk every dimension. For each, the question is "what happens to the user when�
 - Reuses design-system components and tokens; no one-off duplicates of existing components.
 - Matches established patterns for similar screens (spacing scale, component variants, nav patterns).
 - Affordances and transitions present per the motion/navigation rule (no hard cut-overs, adequate ripple).
-- **Mandatory interaction quality gate:** every tappable text/icon action must expose a visibly large enough
-  interaction surface and a clearly perceptible ripple/press affordance. Tiny, cramped, or hard-to-trigger
-  touch areas are a defect and must be fixed before merge.
+- **Mandatory interaction quality gate (two-sided):** every tappable text/icon action must expose a
+  clearly perceptible ripple/press affordance whose surface **matches the visual element**. Both extremes
+  are defects to fix before merge:
+  - *Too small* — tiny, cramped, hard-to-trigger touch areas.
+  - *Too large* — a ripple/clickable that spills well past the label/icon because the action was given
+    `weight(1f)`, `fillMaxWidth()`, or a 48dp min-size box. Reserve space with a wrapper (e.g. a weighted
+    `Row`/`Box` around the action), not by stretching the clickable itself.
+- **Audit transient states, not just settled ones.** A correct resting screenshot can still hide padding,
+  peek, or clipping that only appears *during* a transition. For a `HorizontalPager`/carousel: pages must
+  swipe edge-to-edge — an inset pager viewport (e.g. the pager sits inside a parent's horizontal padding)
+  shows side padding mid-swipe. Keep the pager full-width and pad the page **content**, not the pager.
+  Check drag, fling, and overscroll edges too.
 
 ### 10. Sensitive data & security UI (apply when the screen handles PII, credentials, or payments)
 - Secure input where required (password/PIN masking, `KeyboardType` correct, no autofill leaks of secrets).
