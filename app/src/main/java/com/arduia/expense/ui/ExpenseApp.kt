@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
+import com.arduia.expense.ui.currency.CurrencyViewModel
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.home.AppRoute
 import com.arduia.expense.ui.home.HomeShell
@@ -38,11 +39,13 @@ fun ExpenseApp(
     val homeViewModel = koinInject<HomeViewModel> { parametersOf(scope) }
     val journalViewModel = koinInject<JournalViewModel> { parametersOf(scope) }
     val reportsViewModel = koinInject<ReportsViewModel> { parametersOf(scope) }
+    val currencyViewModel = koinInject<CurrencyViewModel> { parametersOf(scope) }
     val entryViewModel = koinInject<ExpenseEntryViewModel>()
 
     val homeState by homeViewModel.state.collectAsState()
     val journalState by journalViewModel.state.collectAsState()
     val reportsState by reportsViewModel.state.collectAsState()
+    val selectedCurrency by currencyViewModel.selectedCode.collectAsState()
 
     var splashElapsed by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
@@ -124,6 +127,14 @@ fun ExpenseApp(
                         onDebtClick = { showDebt = true },
                         onSharedClick = { showSharedCosts = true },
                         onPinClick = { showPinSetup = true },
+                        selectedCurrency = selectedCurrency,
+                        onCurrencySelect = { code ->
+                            currencyViewModel.select(code)
+                            homeViewModel.refresh()
+                            journalViewModel.refresh()
+                            reportsViewModel.refresh()
+                        },
+                        reportsPeriods = reportsState.periods,
                     )
                     else -> HomeShell(
                         state = homeState.home,

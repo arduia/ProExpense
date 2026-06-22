@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.preview.previewMoreHub
@@ -31,13 +32,15 @@ fun MoreFlow(
     onSharedClick: () -> Unit,
     modifier: Modifier = Modifier,
     onPinClick: () -> Unit = {},
+    selectedCurrency: String = "USD",
+    onCurrencySelect: (String) -> Unit = {},
+    reportsPeriods: List<ReportsUiState>? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
-    var selectedCurrency by remember { mutableStateOf("USD") }
 
     val hubState = remember(selectedCurrency) {
         previewMoreHub.copy(
@@ -89,7 +92,7 @@ fun MoreFlow(
                 )
                 MoreStep.Currency -> features.currency.SettingsFlow(
                     selectedCode = selectedCurrency,
-                    onSelect = { selectedCurrency = it },
+                    onSelect = onCurrencySelect,
                     onBack = { step = MoreStep.Hub },
                 )
                 MoreStep.Export -> features.importExport.ExportFlow(
@@ -100,6 +103,8 @@ fun MoreFlow(
                 )
                 MoreStep.Reports -> features.reports.ReportsFlow(
                     onBack = { step = MoreStep.Hub },
+                    empty = reportsPeriods?.isEmpty() ?: false,
+                    periods = reportsPeriods,
                 )
                 MoreStep.Categories -> features.categories.CategoryListFlow(
                     onBack = { step = MoreStep.Hub },
