@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="categories_title">Categories</string>
+<string name="categories_back">More</string>
+<string name="categories_default_label">DEFAULT · ALWAYS FIRST</string>
+<string name="categories_custom_label">CUSTOM · DRAG TO REORDER</string>
+<string name="categories_locked_word">locked</string>
+<string name="categories_locked_pill">LOCKED</string>
+<plurals name="categories_count">
+        <item quantity="one">%1$d category</item>
+        <item quantity="other">%1$d categories</item>
+    </plurals>
+<string name="categories_create">Create new category</string>
+<string name="categories_footer">Order here mirrors chip order in Add Expense</string>
+<string name="categories_new_title">New category</string>
+<string name="categories_name_placeholder">Category name</string>
+<string name="categories_name_counter">%1$d/%2$d</string>
+<string name="categories_duplicate_error">A category with this name already exists</string>
+<string name="categories_icon_label">Icon</string>
+<string name="categories_add">Add category</string>
+<string name="categories_edit_title">Edit category</string>
+<string name="categories_save">Save changes</string>
+<string name="categories_action_edit_title">Edit category</string>
+<string name="categories_action_edit_subtitle">Rename or change the icon</string>
+<string name="categories_action_delete_title">Delete category</string>
+<string name="categories_action_delete_subtitle">Expenses move to Uncategorized</string>
+<string name="categories_action_cancel">Cancel</string>
+<string name="categories_delete_title">Delete category?</string>
+<string name="categories_delete_body">Its expenses will move to Uncategorized. This can\'t be undone.</string>
+<string name="categories_delete_confirm">Delete</string>
+<string name="categories_delete_cancel">Cancel</string>
+<string name="next">Next</string>
+<string name="skip">Skip</string>
+<string name="get_started">Get started</string>
+<string name="back">Back</string>
+<string name="currency_picker_title">All currencies</string>
+<string name="search_currency_placeholder">Search currency...</string>
+<string name="start_tracking">Start tracking</string>
+<string name="continue_label">Continue</string>
+</resources>

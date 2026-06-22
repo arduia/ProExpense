@@ -8,11 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.currency.ui.MoreCurrencyScreen
+import com.arduia.expense.feature.importexport.ui.MoreClearScreen
+import com.arduia.expense.feature.importexport.ui.MoreExportScreen
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.design.HomeNavTab
-import com.arduia.expense.ui.preview.previewMoreClearOptions
-import com.arduia.expense.ui.preview.previewMoreCurrencies
-import com.arduia.expense.ui.preview.previewMoreExportFiles
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreClearOptions
+import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme

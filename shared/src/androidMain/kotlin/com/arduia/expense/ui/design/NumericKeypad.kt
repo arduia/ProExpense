@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +47,9 @@ fun NumericKeypad(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimens.space16),
+            // Vertical breathing room only — horizontal must stay flush with the screen's
+            // content padding so the keys/actions align with the amount and category chips above.
+            .padding(vertical = dimens.space16),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         keypadKeys.forEach { row ->
@@ -113,8 +114,8 @@ private fun KeypadKey(
             .proPressScale(interactionSource)
             .clip(keyShape)
             .border(BorderStroke(1.dp, colors.line), keyShape)
-            .background(colors.surface)
-            .proRippleClickable(
+            .proPressBackground(interactionSource, keyShape)
+            .proNoRippleClickable(
                 onClick = onClick,
                 interactionSource = interactionSource,
                 role = Role.Button,

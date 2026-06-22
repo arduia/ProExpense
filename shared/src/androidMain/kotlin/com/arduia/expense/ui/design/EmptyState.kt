@@ -1,20 +1,16 @@
 package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -37,8 +33,10 @@ fun EmptyStateIllustration(modifier: Modifier = Modifier) {
             .width(dimens.emptyIllustrationWidth)
             .height(dimens.emptyIllustrationHeight),
     ) {
-        val sx = size.width / dimens.emptyIllustrationWidth.toPx()
-        val sy = size.height / dimens.emptyIllustrationHeight.toPx()
+        // Artwork coordinates are authored in dp against emptyIllustration{Width,Height};
+        // scale by density (px per dp) so the wallet fills the box on every screen, not just mdpi.
+        val sx = size.width / dimens.emptyIllustrationWidth.value
+        val sy = size.height / dimens.emptyIllustrationHeight.value
         val s = sx
 
         fun pt(x: Float, y: Float) = Offset(x * sx, y * sy)
@@ -98,7 +96,6 @@ fun EmptyStateAddHint(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val chipShape = ProExpenseTheme.shapes.addHintChip
 
     Row(
         modifier = modifier,
@@ -110,20 +107,7 @@ fun EmptyStateAddHint(
             style = typography.caption,
             color = colors.onSurfaceMuted,
         )
-        Box(
-            modifier = Modifier
-                .size(dimens.addHintChipSize)
-                .clip(chipShape)
-                .background(colors.primary),
-            contentAlignment = Alignment.Center,
-        ) {
-            ProIcon(
-                glyph = ProIconGlyph.Plus,
-                contentDescription = null,
-                tint = colors.onPrimaryWarm,
-                size = dimens.addHintIconSize,
-            )
-        }
+        AddHintChip()
         Text(
             text = suffix,
             style = typography.caption,
@@ -170,12 +154,9 @@ fun EmptyStateContent(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = dimens.space8),
         )
-        ProButton(
+        ProPillButton(
             text = actionLabel,
             onClick = onActionClick,
-            variant = ProButtonVariant.Primary,
-            size = ProButtonSize.Lg,
-            fillMaxWidth = true,
             leading = {
                 ProIcon(
                     glyph = ProIconGlyph.Plus,

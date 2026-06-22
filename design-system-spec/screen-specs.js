@@ -65,29 +65,30 @@ window.SCREEN_SPECS = [
   // ──────────────────────────────────────────────────── PROFILE SETUP (first-run)
   {
     num: "02·P", id: "profile-setup", title: "Profile Setup", flow: "First launch · between Onboarding & Home",
-    purpose: "Account-free personalization — name + home currency. No login; everything stays on-device.",
+    purpose: "Account-free personalization — name + home currency on one merged screen, with a live identity card that fuses both inputs. No login; everything stays on-device.",
     shots: [
-      { src: SHOT("prof-name"), label: "P1 · Name" },
-      { src: SHOT("prof-currency"), label: "P2 · Home currency" },
-      { src: SHOT("prof-currency-sheet"), label: "P2 · Currency picker" },
+      { src: SHOT("prof-merged"), label: "P1 · Profile + currency" },
+      { src: SHOT("prof-currency-sheet"), label: "P1 · Currency picker" },
     ],
     behaviors: [
-      "Step 1 — Name personalizes the Home greeting (“Hi, Maya”) and CSV exports. Optional; Continue always enabled.",
-      "Step 2 — Home currency applies to every entry (single-currency MVP). Defaults to USD.",
-      "Tapping the selected currency row, or “All currencies”, opens a searchable picker bottom sheet.",
-      "Selecting a currency in the sheet applies and closes in one tap.",
+      "Identity card (top) is a live preview: greeting updates from the name field, the emblem + “Tracking in … · CODE” line updates from the selected currency.",
+      "Name personalizes the Home greeting (“Hi, Maya”) and CSV exports. Optional; the field is pre-focused and the primary action is always enabled.",
+      "Home currency applies to every entry (single-currency MVP). Shown as a 2×2 quick grid of the four most common currencies (USD default, selected).",
+      "“More currencies” opens the searchable picker bottom sheet; selecting a row applies and closes in one tap, updating the grid + identity card.",
       "“Start tracking” completes setup and lands on Home.",
     ],
     relations: [
-      { c: "Stepper header", role: "“PROFILE · 1 OF 2” progress", m3: "Text · labelMedium (mono)" },
+      { c: "Stepper header", role: "“PROFILE · ALL SET IN ONE STEP”", m3: "Text · labelMedium (mono)" },
+      { c: "Identity card", role: "Live name + currency preview, gradient surface", m3: "custom Surface (clay→clayDeep gradient)" },
       { c: "Text field", role: "Name input with leading user icon", m3: "OutlinedTextField / BasicTextField" },
-      { c: "Selectable list row", role: "Currency options, check on selected", m3: "custom Surface(onClick)" },
+      { c: "Selectable tile", role: "Currency quick-pick, check on selected", m3: "custom Surface(onClick) · 2-col grid" },
+      { c: "Dashed action", role: "“More currencies” → opens picker", m3: "OutlinedButton (dashed outline)" },
       { c: "Bottom sheet + Search field", role: "Full currency picker", m3: "ModalBottomSheet" },
     ],
     tokens: {
-      type: ["Screen title — Inter 28sp", "Eyebrow — Geist Mono 11sp / 0.12em upper", "Field text — Manrope 14sp"],
-      color: ["selected row tint = blue100 #B3E5FC wash + clay border", "check = clay #039BE5"],
-      dims: ["Field radius 14dp", "row padding 12dp", "sheet top corners 22dp"],
+      type: ["Screen title — Inter 28sp", "Identity greeting — Inter 22sp on clay", "Eyebrow — Geist Mono 11sp / 0.10–0.12em upper", "Field text — Manrope 14sp · tile text 14sp"],
+      color: ["identity card = clayDeep #0288D1 → clay #039BE5 gradient · onPrimary text/emblem at 16–82% white", "selected tile tint = blue100 #B3E5FC wash + clay border", "check = clay #039BE5"],
+      dims: ["Identity card radius 20dp · field & tile radius 14dp", "tile grid gap 10dp", "sheet top corners 22dp"],
     },
     edges: [],
   },
@@ -157,7 +158,7 @@ window.SCREEN_SPECS = [
     tokens: {
       type: ["Display amount — Inter 64sp / -0.025em", "Keypad keys — Inter 22sp", "$ glyph ≈0.47× figure in clay", "decimal .00 in ink3", "Read-only amount (Details) — Inter 26sp"],
       color: ["empty figure = muted2 #BDBDBD, $ stays clay", "helper / shake text = clay (error affordance)", "tag = #FB8C00"],
-      dims: ["Keypad 3-col grid, gap 8dp, key radius 12dp", "Save/Next radius 14dp", "FAB shadow 0 4 10 rgba(3,155,229,.25)"],
+      dims: ["Keypad 3-col grid, gap 8dp, key radius 12dp", "Save/Next radius 14dp", "FAB shadow 0 8 20 rgba(3,155,229,.28)"],
     },
     edges: [
       { src: SHOT("edge-draft"), label: "Draft restore", note: "App force-closed mid-entry → draft auto-saved. On relaunch, before PIN: Continue / Discard (no auth required)." },

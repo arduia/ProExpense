@@ -41,13 +41,16 @@ transitions) and **`compose-product-auditor`** (pre-merge gate).
 
 | Question | Source of truth |
 |---|---|
-| Padding, gaps, margins, touch-target minimums | **Markdown** — screen MD, component MD, `tokens.md`, `ProExpenseTheme.dimensions` |
+| Padding, gaps, margins, touch-target minimums (absolute dp) | **Markdown** — screen MD, component MD, `tokens.md`, `ProExpenseTheme.dimensions` |
+| **Relative alignment — which elements share a left/right edge / column margin** | **Screen PNG** — the PNG shows what lines up; the absolute dp still comes from MD/tokens |
 | What is on screen, flat vs card, `paper` vs `surface`, section order | **Screen PNG** |
 | Typography / color tokens | **Markdown** (`tokens.md` + theme) |
 
 Open **every screen PNG** for the states you implement. PNGs show composition and surfaces; **do not
 measure spacing from PNGs** — captures can differ in padding from the written spec. When PNG and MD
-disagree on **spacing**, follow the MD spec and theme tokens.
+disagree on **spacing**, follow the MD spec and theme tokens. **But relative alignment is
+authoritative in the PNG:** if the keys, chips, and buttons share one left/right margin in the PNG,
+they must share it in code — read the dp from tokens, read *what lines up* from the PNG.
 
 ---
 
@@ -179,9 +182,16 @@ per screen. For polish details see **`compose-motion-polish`**.
 | Use `ProExpenseTheme.dimensions` (`space8`, `screenPadding`, `rowPaddingV`, `cardPadding`, …) | Inline magic `dp` for standard rhythm (6 / 8 / 10 / 12 / 16 / 18 / 26) |
 | Match component MD **dims** rows (e.g. keypad gap 8dp, card inner 18dp) | Copy spacing from Roborazzi baselines when they drift from spec |
 | Add a named dimension token when the spec introduces a new semantic spacing | One-off `padding(13.dp)` without checking component spec first |
+| **The screen owns edge padding** (`screenPadding`); reusable `ui/design/` components apply only *internal* spacing (gaps between their own parts) and **`fillMaxWidth()`** to the column width | A shared component baking outer/edge `.padding(all)` — it **stacks** with the screen's `screenPadding` and double-insets the component past its siblings (the `NumericKeypad` keypad-margin bug) |
+| Need outer padding inside a component? Take it from the caller's `modifier`, or use `vertical = …` only | `.padding(dimens.space16)` (all sides) on a component already placed in a `screenPadding` column |
 
 Base rhythm from `tokens.md`: **8dp** grid; card inner **18dp**; row **12dp** vertical / **8dp**
 horizontal; touch targets **≥ 44dp**.
+
+**Shared-margin invariant:** within one screen column, every primary block (eyebrow, amount, chips,
+keypad, action row) lines up on the **same** left/right edge unless the PNG shows otherwise. If a
+block is inset further than its siblings, suspect a component that bakes its own outer padding on top
+of `screenPadding`.
 
 ### Layout fidelity (screen PNG)
 
@@ -271,6 +281,9 @@ Before marking a screen done:
   component gallery for **layout structure** when they differ)
 - [ ] **Padding & spacing from spec MD + `tokens.md`** — `ProExpenseTheme.dimensions` and component
   **dims** rows; not measured from PNGs
+- [ ] **Shared-margin alignment** — primary blocks (eyebrow, amount, chips, keypad, action row) line
+  up on one left/right edge per the PNG; no reusable component baking outer `.padding(all)` on top of
+  the screen's `screenPadding`
 - [ ] **Clickable targets ≥ 44dp** with ripple (`proClickable`, `proIconClickable`, `ProTextAction`,
   or `ProButton`) — no bare `clickable` without indication
 - [ ] Every spec state has a `@Preview`

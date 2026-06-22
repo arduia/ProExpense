@@ -1,5 +1,8 @@
 package com.arduia.expense.ui.design
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,14 +49,15 @@ fun ProTextAction(
 ) {
     val dimens = ProExpenseTheme.dimensions
     Row(
+        // Clip + ripple sit outermost so the ripple covers the label + its padding. No 48dp
+        // minimum-size box — that ballooned the ripple far past short labels like "Skip"/"Back".
         modifier = modifier
-            .padding(horizontal = dimens.space8, vertical = dimens.space6)
-            .minimumInteractiveComponentSize()
             .proClickable(
                 onClick = onClick,
                 shape = ProExpenseTheme.shapes.searchField,
                 enabled = enabled,
-            ),
+            )
+            .padding(horizontal = dimens.space8, vertical = dimens.space6),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
@@ -72,6 +76,42 @@ fun Modifier.proPressScale(
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed && enabled) motion.pressedScale else 1f
     return scale(scale)
+}
+
+// Discrete press feedback for rapid, repeated taps (keypad). A ripple is a continuous
+// animation that lags behind fast sequential presses; an animated background fill snaps to
+// each new press state instead, so it never queues or overlaps.
+@Composable
+fun Modifier.proNoRippleClickable(
+    onClick: () -> Unit,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true,
+    role: Role? = null,
+): Modifier = clickable(
+    interactionSource = interactionSource,
+    indication = null,
+    enabled = enabled,
+    role = role,
+    onClick = onClick,
+)
+
+@Composable
+fun Modifier.proPressBackground(
+    interactionSource: InteractionSource,
+    shape: Shape,
+    enabled: Boolean = true,
+    restingColor: Color = ProExpenseTheme.colors.surface,
+    pressedColor: Color = ProExpenseTheme.colors.keypadKeyPressed,
+): Modifier {
+    val motion = ProExpenseTheme.motion
+    val pressed by interactionSource.collectIsPressedAsState()
+    val target = if (pressed && enabled) pressedColor else restingColor
+    val color by animateColorAsState(
+        targetValue = target,
+        animationSpec = tween(durationMillis = motion.tapDurationMillis, easing = motion.standardEasing),
+        label = "proPressBackground",
+    )
+    return background(color, shape)
 }
 
 @Composable

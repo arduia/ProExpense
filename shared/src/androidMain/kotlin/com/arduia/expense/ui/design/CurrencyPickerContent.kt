@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,11 +41,13 @@ fun CurrencyPickerContent(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
-    LazyColumn(
-        modifier = modifier.fillMaxWidth(),
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
-        items(items = options, key = { it.code }) { option ->
+        options.forEach { option ->
             val selected = option.code == selectedCode
             Row(
                 modifier = Modifier

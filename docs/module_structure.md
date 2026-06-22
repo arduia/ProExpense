@@ -18,7 +18,12 @@ feature/
 ├── history/                 Record History (MVP)
 ├── sharedcost/              Shared Costs (MVP)
 ├── auth/                    PIN Auth (MVP)
-└── importexport/            Secure Import & Export (MVP)
+├── importexport/            Secure Import & Export (MVP)
+├── debt/                    Debt & Lending Tracker (Phase 2 UI)
+├── eventbudget/             Event Budget (Phase 2 UI)
+├── reports/                 Spending reports (Phase 2 UI)
+├── categories/              Category management (Phase 2 UI)
+└── onboarding/              First-launch onboarding flow
 iosApp/                      SwiftUI shell (future)
 ```
 
@@ -57,10 +62,10 @@ iosApp/                      SwiftUI shell (future)
 
 Add as new `feature:*` modules when implementing Phase 2:
 
-- `feature:journal` — Financial Journal
-- `feature:eventbudget` — Event Budget
-- `feature:debt` — Debt & Lending Tracker
+- `feature:journal` — Financial Journal *(UI lives in `:feature:history` today)*
 - `feature:localization` — Localization experience
+
+Phase 2 UI modules already scaffolded: `feature:debt`, `feature:eventbudget`, `feature:reports`, `feature:categories`, `feature:onboarding`.
 
 ## Platform Implementations (upcoming)
 

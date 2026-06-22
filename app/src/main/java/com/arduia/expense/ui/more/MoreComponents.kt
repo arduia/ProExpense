@@ -20,18 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.ui.preview.MoreClearOptionUi
-import com.arduia.expense.ui.preview.MoreCurrencyItemUi
 import com.arduia.expense.ui.preview.MoreFeatureRowUi
 import com.arduia.expense.ui.preview.MoreProfileUi
 import com.arduia.expense.ui.preview.MoreSettingKind
 import com.arduia.expense.ui.preview.MoreSettingRowUi
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.centeredGlyph
 
 @Composable
 fun MoreProfileCard(
@@ -59,7 +59,12 @@ fun MoreProfileCard(
                 .background(colors.primaryTint),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text = profile.initial, style = typography.bodySemiBold, color = colors.primary)
+            Text(
+                text = profile.initial,
+                style = typography.bodySemiBold.centeredGlyph(),
+                color = colors.primary,
+                textAlign = TextAlign.Center,
+            )
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(text = profile.name, style = typography.bodySemiBold, color = colors.onSurface)
@@ -237,164 +242,6 @@ fun MoreSettingRow(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun MoreCurrencyCard(
-    item: MoreCurrencyItemUi,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-    val borderColor = if (selected) colors.primary else colors.line
-    val background = if (selected) colors.primaryTint else colors.surface
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
-            .background(background)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
-    ) {
-        Box(
-            modifier = Modifier
-                .size(dimens.iconBadge)
-                .clip(CircleShape)
-                .background(if (selected) colors.surface else colors.paperAlt),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = item.symbol,
-                style = typography.bodySemiBold,
-                color = if (selected) colors.primary else colors.onSurfaceVariant,
-            )
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = item.code, style = typography.bodySemiBold, color = colors.onSurface)
-            Text(
-                text = item.name,
-                style = typography.caption,
-                color = colors.onSurfaceMuted,
-                modifier = Modifier.padding(top = dimens.space2),
-            )
-        }
-        if (selected) {
-            ProIcon(
-                glyph = ProIconGlyph.Check,
-                contentDescription = null,
-                tint = colors.primary,
-                size = dimens.iconNav,
-            )
-        }
-    }
-}
-
-@Composable
-fun MoreClearCard(
-    option: MoreClearOptionUi,
-    checked: Boolean,
-    onToggle: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-    val labelColor = if (option.destructive) colors.danger else colors.onSurface
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .proClickable(onClick = onToggle, shape = ProExpenseTheme.shapes.card)
-            .padding(dimens.space14),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = option.label, style = typography.bodySemiBold, color = labelColor)
-            Text(
-                text = option.subtitle,
-                style = typography.caption,
-                color = colors.onSurfaceMuted,
-                modifier = Modifier.padding(top = dimens.space2),
-            )
-        }
-        MoreCheckBox(checked = checked)
-    }
-}
-
-@Composable
-private fun MoreCheckBox(checked: Boolean) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val shape = androidx.compose.foundation.shape.RoundedCornerShape(dimens.space7)
-
-    Box(
-        modifier = Modifier
-            .size(dimens.space24)
-            .clip(shape)
-            .then(
-                if (checked) {
-                    Modifier.background(colors.primary)
-                } else {
-                    Modifier.border(BorderStroke(1.5.dp, colors.lineStrong), shape)
-                },
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (checked) {
-            ProIcon(
-                glyph = ProIconGlyph.Check,
-                contentDescription = null,
-                tint = colors.onPrimaryWarm,
-                size = dimens.iconInline,
-            )
-        }
-    }
-}
-
-@Composable
-fun MoreExportFileRow(
-    fileName: String,
-    subtitle: String,
-    modifier: Modifier = Modifier,
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(dimens.space14),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
-    ) {
-        ProIcon(
-            glyph = ProIconGlyph.Note,
-            contentDescription = null,
-            tint = colors.muted,
-            size = dimens.iconNav,
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = fileName, style = typography.monoFigure, color = colors.onSurface)
-            Text(
-                text = subtitle,
-                style = typography.caption,
-                color = colors.onSurfaceMuted,
-                modifier = Modifier.padding(top = dimens.space2),
-            )
         }
     }
 }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.onboarding.ui.ProfileSetupScreenContent
+import com.arduia.expense.feature.onboarding.ui.ProfileSetupState
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -47,29 +49,11 @@ class ProfileSetupScreenshotTest {
     }
 
     @Test
-    fun profile_name() {
+    fun profile_merged() {
         capture {
             ProfileSetupScreenContent(
                 state = ProfileSetupState(name = "Maya"),
                 onNameChange = {},
-                onContinue = {},
-                onStartTracking = {},
-                onSkip = {},
-                onCurrencySelected = {},
-                onOpenCurrencySheet = {},
-                onCloseCurrencySheet = {},
-                onCurrencySearchChange = {},
-            )
-        }
-    }
-
-    @Test
-    fun profile_currency() {
-        capture {
-            ProfileSetupScreenContent(
-                state = ProfileSetupState(step = ProfileSetupStep.Currency),
-                onNameChange = {},
-                onContinue = {},
                 onStartTracking = {},
                 onSkip = {},
                 onCurrencySelected = {},
@@ -85,11 +69,10 @@ class ProfileSetupScreenshotTest {
         capture {
             ProfileSetupScreenContent(
                 state = ProfileSetupState(
-                    step = ProfileSetupStep.Currency,
+                    name = "Maya",
                     showCurrencySheet = true,
                 ),
                 onNameChange = {},
-                onContinue = {},
                 onStartTracking = {},
                 onSkip = {},
                 onCurrencySelected = {},
