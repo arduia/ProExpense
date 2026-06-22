@@ -84,6 +84,11 @@ Walk every dimension. For each, the question is "what happens to the user whenâ€
 ### 9. Consistency
 - Reuses design-system components and tokens; no one-off duplicates of existing components.
 - Matches established patterns for similar screens (spacing scale, component variants, nav patterns).
+- **Shared-margin alignment.** Trace one vertical edge down the screen: every primary block (eyebrow,
+  amount, chips, list, keypad, action row) should share the same left/right margin unless the design
+  intends otherwise. A block inset further than its siblings is usually a reusable component baking its
+  own outer `.padding(all)` that stacks with the screen's content padding â€” double-inset, misaligned.
+  Don't trust a recorded screenshot baseline as proof: the baseline can bless the misalignment.
 - Affordances and transitions present per the motion/navigation rule (no hard cut-overs, adequate ripple).
 - **Mandatory interaction quality gate (two-sided):** every tappable text/icon action must expose a
   clearly perceptible ripple/press affordance whose surface **matches the visual element**. Both extremes
