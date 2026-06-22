@@ -154,12 +154,9 @@ fun EmptyStateContent(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = dimens.space8),
         )
-        ProButton(
+        ProPillButton(
             text = actionLabel,
             onClick = onActionClick,
-            variant = ProButtonVariant.Primary,
-            size = ProButtonSize.Lg,
-            fillMaxWidth = true,
             leading = {
                 ProIcon(
                     glyph = ProIconGlyph.Plus,
