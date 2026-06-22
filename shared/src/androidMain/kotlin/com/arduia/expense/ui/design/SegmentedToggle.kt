@@ -3,13 +3,14 @@ package com.arduia.expense.ui.design
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
@@ -41,21 +42,24 @@ fun SegmentedToggle(
         options.forEachIndexed { index, label ->
             val selected = index == selectedIndex
             val selectedBackground = if (usePrimarySelection) colors.primary else colors.onSurface
-            val selectedContent = if (usePrimarySelection) colors.onPrimaryWarm else colors.onPrimaryWarm
-            Text(
-                text = label,
-                style = if (selected) typography.bodySemiBold else typography.bodyMedium,
-                color = if (selected) selectedContent else colors.onSurfaceVariant,
-                textAlign = TextAlign.Center,
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = dimens.touchTargetMin)
-                    .minimumInteractiveComponentSize()
                     .clip(containerShape)
                     .background(if (selected) selectedBackground else colors.surface)
                     .proClickable(onClick = { onSelected(index) }, shape = containerShape)
                     .padding(vertical = dimens.space8),
-            )
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = label,
+                    style = if (selected) typography.bodySemiBold else typography.bodyMedium,
+                    color = if (selected) colors.onPrimaryWarm else colors.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }
