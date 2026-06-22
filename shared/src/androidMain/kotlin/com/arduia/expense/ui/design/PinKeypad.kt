@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -203,29 +204,23 @@ private fun PinKey(
             .clip(rippleShape)
             .then(
                 if (isBackspace) {
-                    Modifier
+                    Modifier.proPressBackground(
+                        interactionSource = interactionSource,
+                        shape = CircleShape,
+                        enabled = enabled,
+                        restingColor = Color.Transparent,
+                    )
                 } else {
                     Modifier
                         .border(BorderStroke(1.dp, colors.line), keyShape)
-                        .background(colors.surface)
+                        .proPressBackground(interactionSource, keyShape, enabled = enabled)
                 },
             )
-            .then(
-                if (isBackspace) {
-                    Modifier.proCircularRippleClickable(
-                        onClick = onClick,
-                        interactionSource = interactionSource,
-                        enabled = enabled,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier.proRippleClickable(
-                        onClick = onClick,
-                        interactionSource = interactionSource,
-                        enabled = enabled,
-                        role = Role.Button,
-                    )
-                },
+            .proNoRippleClickable(
+                onClick = onClick,
+                interactionSource = interactionSource,
+                enabled = enabled,
+                role = Role.Button,
             )
             .defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,

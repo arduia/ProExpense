@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -115,8 +114,8 @@ private fun KeypadKey(
             .proPressScale(interactionSource)
             .clip(keyShape)
             .border(BorderStroke(1.dp, colors.line), keyShape)
-            .background(colors.surface)
-            .proRippleClickable(
+            .proPressBackground(interactionSource, keyShape)
+            .proNoRippleClickable(
                 onClick = onClick,
                 interactionSource = interactionSource,
                 role = Role.Button,
