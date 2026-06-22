@@ -2,6 +2,7 @@ package com.arduia.expense.feature.logging.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,29 +63,11 @@ fun AddExpenseDetailsScreen(
     val formattedSaveAmount = "$${displayAmount}"
     val atNoteLimit = state.note.length >= NOTE_MAX_LENGTH
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(colors.paper),
     ) {
-        ProBottomSheetHost(
-            visible = state.showTagSheet,
-            title = stringResource(R.string.link_to_title),
-            onClose = onCloseTagSheet,
-            sheetContent = {
-                TagPickerContent(
-                    events = tagEvents,
-                    debts = tagDebts,
-                    selectedId = state.linkedTagId,
-                    selectedKind = state.linkedTagKind,
-                    onSelected = { option ->
-                        onTagSelected(option)
-                        onCloseTagSheet()
-                    },
-                )
-            },
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -154,6 +137,25 @@ fun AddExpenseDetailsScreen(
                 modifier = Modifier.padding(top = dimens.space8),
             )
         }
+
+        // Overlay the tag picker on top of the content; it must not take layout space when hidden.
+        ProBottomSheetHost(
+            visible = state.showTagSheet,
+            title = stringResource(R.string.link_to_title),
+            onClose = onCloseTagSheet,
+            sheetContent = {
+                TagPickerContent(
+                    events = tagEvents,
+                    debts = tagDebts,
+                    selectedId = state.linkedTagId,
+                    selectedKind = state.linkedTagKind,
+                    onSelected = { option ->
+                        onTagSelected(option)
+                        onCloseTagSheet()
+                    },
+                )
+            },
+        )
     }
 }
 
