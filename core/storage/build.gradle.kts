@@ -27,6 +27,7 @@ kotlin {
             implementation(project(":core:data"))
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
+            api(libs.koin.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

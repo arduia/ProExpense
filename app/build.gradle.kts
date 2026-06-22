@@ -101,6 +101,9 @@ dependencies {
     implementation(libs.androidx.security.crypto)
     implementation(libs.material)
 
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
     implementation(libs.compose.ui)

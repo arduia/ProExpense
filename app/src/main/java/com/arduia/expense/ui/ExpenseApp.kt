@@ -12,8 +12,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.arduia.expense.ExpenseApplication
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.home.AppRoute
@@ -24,6 +22,8 @@ import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.splash.SplashScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 private const val SPLASH_DURATION_MILLIS = 1800L
 
@@ -32,26 +32,9 @@ fun ExpenseApp(
     features: FeatureUiRegistry = FeatureUiRegistry(),
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val container = remember(context) {
-        (context.applicationContext as ExpenseApplication).container
-    }
     val scope = rememberCoroutineScope()
-    val homeViewModel = remember {
-        HomeViewModel(
-            financeRepository = container.financeRecordRepository,
-            budgetRepository = container.budgetRepository,
-            profileRepository = container.profileRepository,
-            securityStateReader = container.securityStateReader,
-            scope = scope,
-        )
-    }
-    val entryViewModel = remember {
-        ExpenseEntryViewModel(
-            financeRepository = container.financeRecordRepository,
-            profileRepository = container.profileRepository,
-        )
-    }
+    val homeViewModel = koinInject<HomeViewModel> { parametersOf(scope) }
+    val entryViewModel = koinInject<ExpenseEntryViewModel>()
 
     val homeState by homeViewModel.state.collectAsState()
 
