@@ -74,6 +74,13 @@ object DateLabels {
     /** "Wed, May 25 · 12:30 PM" — the journal detail header stamp. */
     fun detailDateTime(millis: Long): String = detailDateTime.format(Date(millis))
 
+    /** "May 12 — May 26" (or a single day when start == end) — event date ranges. */
+    fun eventRange(startMillis: Long, endMillis: Long): String {
+        val start = dayMonth.format(Date(startMillis))
+        val end = dayMonth.format(Date(endMillis))
+        return if (start == end) start else "$start — $end"
+    }
+
     /** "Today · May 25" / "Yesterday · May 24" / "Mon · May 23". */
     fun dayGroupTitle(dayMillis: Long, nowMillis: Long): String = when (dayDelta(dayMillis, nowMillis)) {
         0 -> "Today · ${dayMonth.format(Date(dayMillis))}"
