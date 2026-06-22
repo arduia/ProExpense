@@ -70,6 +70,7 @@ fun OnboardingScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = dimens.screenPadding)
                 .padding(top = dimens.space8, bottom = dimens.space16),
         ) {
             if (pagerState.currentPage < lastPage) {
@@ -116,6 +117,7 @@ fun OnboardingScreenContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = dimens.screenPadding)
                 .padding(bottom = dimens.onboardingNavBottomMargin),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -186,7 +188,9 @@ fun OnboardingScreenContent(
             onClick = onGetStarted,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
-            modifier = Modifier.padding(bottom = dimens.space18),
+            modifier = Modifier
+                .padding(horizontal = dimens.screenPadding)
+                .padding(bottom = dimens.space18),
         )
     }
 }
