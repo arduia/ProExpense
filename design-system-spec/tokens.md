@@ -158,7 +158,7 @@ See [`amount-entry.md`](components/amount-entry.md) for the input/format/validat
 | Surface | Shadow |
 |---|---|
 | Card | `0 1px 0 rgba(33,33,33,.03)`, `0 6px 16px rgba(33,33,33,.04)` |
-| FAB / Add | `0 4px 10px rgba(3,155,229,.25)` |
+| Identity card / FAB / Add (primary hero) | `0 8px 20px rgba(3,155,229,.28)` |
 | Bottom nav | `0 -6px 24px rgba(0,0,0,.10)` |
 | Bottom sheet | `0 -8px 24px rgba(0,0,0,.15)` |
 | Toast | `0 8px 18px rgba(0,0,0,.18)` |

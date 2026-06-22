@@ -158,7 +158,7 @@ window.SCREEN_SPECS = [
     tokens: {
       type: ["Display amount — Inter 64sp / -0.025em", "Keypad keys — Inter 22sp", "$ glyph ≈0.47× figure in clay", "decimal .00 in ink3", "Read-only amount (Details) — Inter 26sp"],
       color: ["empty figure = muted2 #BDBDBD, $ stays clay", "helper / shake text = clay (error affordance)", "tag = #FB8C00"],
-      dims: ["Keypad 3-col grid, gap 8dp, key radius 12dp", "Save/Next radius 14dp", "FAB shadow 0 4 10 rgba(3,155,229,.25)"],
+      dims: ["Keypad 3-col grid, gap 8dp, key radius 12dp", "Save/Next radius 14dp", "FAB shadow 0 8 20 rgba(3,155,229,.28)"],
     },
     edges: [
       { src: SHOT("edge-draft"), label: "Draft restore", note: "App force-closed mid-entry → draft auto-saved. On relaunch, before PIN: Continue / Discard (no auth required)." },
