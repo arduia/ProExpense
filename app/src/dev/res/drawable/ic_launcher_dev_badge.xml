@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Dev-only "DEV" badge overlaid on the launcher foreground. A red pill sits inside the adaptive
+  safe-zone circle (centred on 54,54, ~33dp radius) with stroked white D/E/V glyphs, so it survives
+  both square and circular launcher masks.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="#D7263D"
+        android:pathData="M46,62 L62,62 Q70,62 70,70 Q70,78 62,78 L46,78 Q38,78 38,70 Q38,62 46,62 Z" />
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFDF6"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M44,74 L44,66 L47,66 C50,67.2 50,72.8 47,74 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFDF6"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M57,66 L52,66 L52,74 L57,74 M52,70 L56,70" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFDF6"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M59,66 L62,74 L65,66" />
+</vector>
