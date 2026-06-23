@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Dev-only "DEV" badge overlaid on the launcher foreground. A red pill sits inside the adaptive
-  safe-zone circle (centred on 54,54, ~33dp radius) with stroked white D/E/V glyphs, so it survives
-  both square and circular launcher masks.
+  Dev-only mark: an orange ribbon rotated 45° across the bottom-right corner with stroked white
+  "DEV" glyphs. Drawn inside a rotated group pivoted near the corner so the band and text share the
+  same diagonal. (Adaptive corner ribbons are partially cropped by circular launcher masks.)
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -10,29 +10,35 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <path
-        android:fillColor="#D7263D"
-        android:pathData="M46,62 L62,62 Q70,62 70,70 Q70,78 62,78 L46,78 Q38,78 38,70 Q38,62 46,62 Z" />
+    <group
+        android:rotation="-45"
+        android:pivotX="80"
+        android:pivotY="80">
 
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FFFDF6"
-        android:strokeWidth="2.2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M44,74 L44,66 L47,66 C50,67.2 50,72.8 47,74 Z" />
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FFFDF6"
-        android:strokeWidth="2.2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M57,66 L52,66 L52,74 L57,74 M52,70 L56,70" />
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FFFDF6"
-        android:strokeWidth="2.2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M59,66 L62,74 L65,66" />
+        <path
+            android:fillColor="#F57C00"
+            android:pathData="M50,71 L110,71 L110,89 L50,89 Z" />
+
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FFFDF6"
+            android:strokeWidth="2.2"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M70,84 L70,76 L73,76 C76,77.2 76,82.8 73,84 Z" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FFFDF6"
+            android:strokeWidth="2.2"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M83,76 L78,76 L78,84 L83,84 M78,80 L82,80" />
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FFFDF6"
+            android:strokeWidth="2.2"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M85,76 L88,84 L91,76" />
+    </group>
 </vector>
