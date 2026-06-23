@@ -15,5 +15,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
 selectAllSharedCosts:
 SELECT * FROM shared_cost ORDER BY recorded_at DESC;
 
+deleteSharedCost:
+DELETE FROM shared_cost WHERE id = ?;
+
 deleteAllSharedCosts:
 DELETE FROM shared_cost;

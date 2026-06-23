@@ -11,6 +11,7 @@ import com.arduia.expense.ui.home.HomeViewModel
 import com.arduia.expense.ui.journal.JournalViewModel
 import com.arduia.expense.ui.logging.ExpenseEntryViewModel
 import com.arduia.expense.ui.reports.ReportsViewModel
+import com.arduia.expense.ui.sharedcost.SharedCostViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.factoryOf
@@ -77,6 +78,13 @@ val viewModelModule = module {
     }
     factory { (scope: CoroutineScope) ->
         CategoriesViewModel(categoryRepository = get(), scope = scope)
+    }
+    factory { (scope: CoroutineScope) ->
+        SharedCostViewModel(
+            sharedCostRepository = get(),
+            profileRepository = get(),
+            scope = scope,
+        )
     }
     factoryOf(::ExpenseEntryViewModel)
 }

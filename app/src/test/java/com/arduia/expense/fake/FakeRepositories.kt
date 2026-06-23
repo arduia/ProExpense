@@ -8,6 +8,7 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SecurityStateReader
+import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.data.UserProfile
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.Category
@@ -15,6 +16,7 @@ import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.SharedCost
 
 class FakeFinanceRecordRepository(
     initial: List<FinanceRecord> = emptyList(),
@@ -76,6 +78,23 @@ class FakeEventRepository(initial: List<Event> = emptyList()) : EventRepository 
     override suspend fun getById(id: String): Result<Event?> = Result.Success(store[id])
     override suspend fun upsert(event: Event): Result<Unit> {
         store[event.id] = event
+        return Result.Success(Unit)
+    }
+
+    override suspend fun delete(id: String): Result<Unit> {
+        store.remove(id)
+        return Result.Success(Unit)
+    }
+}
+
+class FakeSharedCostRepository(initial: List<SharedCost> = emptyList()) : SharedCostRepository {
+    val store = linkedMapOf<String, SharedCost>().apply { initial.forEach { put(it.id, it) } }
+
+    override suspend fun getAll(): Result<List<SharedCost>> =
+        Result.Success(store.values.sortedByDescending { it.recordedAtEpochMillis })
+
+    override suspend fun upsert(sharedCost: SharedCost): Result<Unit> {
+        store[sharedCost.id] = sharedCost
         return Result.Success(Unit)
     }
 

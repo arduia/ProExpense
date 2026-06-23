@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,6 +27,7 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
+import kotlin.math.roundToLong
 
 private enum class SharedCostStep {
     History,
@@ -74,6 +74,9 @@ fun SharedCostsFlow(
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
+    history: List<SharedCostHistoryItemUi> = previewSharedHistoryItems,
+    onCreateSplit: (title: String, totalCents: Long, names: List<String>, customShareCents: List<Long>?) -> Unit =
+        { _, _, _, _ -> },
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -83,11 +86,7 @@ fun SharedCostsFlow(
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     var draft by remember { mutableStateOf(SharedCostDraft().withParticipants()) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
-    val history = remember {
-        mutableStateListOf<SharedCostHistoryItemUi>().apply { addAll(previewSharedHistoryItems) }
-    }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
-    val justNowLabel = stringResource(R.string.shared_split_just_now)
 
     val currentStep = SharedCostStep.valueOf(step)
     val uiState = draft.toUiState()
@@ -187,24 +186,21 @@ fun SharedCostsFlow(
                             step = SharedCostStep.Input.name
                         },
                         onSave = {
-                            val totalValue = AmountInput.numericValue(draft.rawTotal) ?: 0.0
-                            val perPerson = if (draft.peopleCount > 0) {
-                                totalValue / draft.peopleCount
+                            val totalCents = ((AmountInput.numericValue(draft.rawTotal) ?: 0.0) * 100)
+                                .roundToLong()
+                            val names = SharedCostSplitLogic.syncNames(draft.names, draft.peopleCount)
+                            val customShareCents = if (draft.mode == SharedSplitMode.Custom) {
+                                draft.customShareRaws.take(draft.peopleCount).map { raw ->
+                                    ((AmountInput.numericValue(raw) ?: 0.0) * 100).roundToLong()
+                                }
                             } else {
-                                0.0
+                                null
                             }
-                            history.add(
-                                0,
-                                SharedCostHistoryItemUi(
-                                    id = "split-" + System.currentTimeMillis(),
-                                    title = draft.note.trim().ifEmpty { defaultSplitTitle },
-                                    peopleCount = draft.peopleCount,
-                                    perPersonLabel = "$" + AmountInput.formatDisplay(
-                                        String.format(java.util.Locale.US, "%.2f", perPerson),
-                                    ),
-                                    dateLabel = justNowLabel,
-                                    totalLabel = "$" + AmountInput.formatDisplay(draft.rawTotal),
-                                ),
+                            onCreateSplit(
+                                draft.note.trim().ifEmpty { defaultSplitTitle },
+                                totalCents,
+                                names,
+                                customShareCents,
                             )
                             toastMessage = savedToastMessage
                             onSaved()

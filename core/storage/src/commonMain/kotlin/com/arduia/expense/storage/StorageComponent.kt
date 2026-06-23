@@ -8,6 +8,7 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
+import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.storage.db.DatabaseDriverFactory
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import com.arduia.expense.storage.db.createProExpenseDatabase
@@ -19,6 +20,7 @@ import com.arduia.expense.storage.repository.SqlDelightFinanceRecordRepository
 import com.arduia.expense.storage.repository.SqlDelightLockoutRepository
 import com.arduia.expense.storage.repository.SqlDelightProfileRepository
 import com.arduia.expense.storage.repository.SqlDelightSecurityStateReader
+import com.arduia.expense.storage.repository.SqlDelightSharedCostRepository
 
 /**
  * The public face of the data layer (F17): the app/DI constructs this once with a platform
@@ -52,6 +54,9 @@ class StorageComponent private constructor(
     }
     val profileRepository: ProfileRepository by lazy {
         SqlDelightProfileRepository(database)
+    }
+    val sharedCostRepository: SharedCostRepository by lazy {
+        SqlDelightSharedCostRepository(database)
     }
 
     companion object {

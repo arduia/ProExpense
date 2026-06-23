@@ -8,6 +8,7 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
+import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.storage.StorageComponent
 import org.koin.dsl.module
 
@@ -26,4 +27,5 @@ val repositoryModule = module {
     single<LockoutRepository> { get<StorageComponent>().lockoutRepository }
     single<SecurityStateReader> { get<StorageComponent>().securityStateReader }
     single<ProfileRepository> { get<StorageComponent>().profileRepository }
+    single<SharedCostRepository> { get<StorageComponent>().sharedCostRepository }
 }

@@ -25,6 +25,7 @@ import com.arduia.expense.ui.journal.JournalViewModel
 import com.arduia.expense.ui.logging.ExpenseEntryViewModel
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.reports.ReportsViewModel
+import com.arduia.expense.ui.sharedcost.SharedCostViewModel
 import com.arduia.expense.ui.splash.SplashScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,6 +47,7 @@ fun ExpenseApp(
     val eventsViewModel = koinInject<EventsViewModel> { parametersOf(scope) }
     val debtViewModel = koinInject<DebtViewModel> { parametersOf(scope) }
     val categoriesViewModel = koinInject<CategoriesViewModel> { parametersOf(scope) }
+    val sharedCostViewModel = koinInject<SharedCostViewModel> { parametersOf(scope) }
     val entryViewModel = koinInject<ExpenseEntryViewModel>()
 
     val homeState by homeViewModel.state.collectAsState()
@@ -54,6 +56,7 @@ fun ExpenseApp(
     val eventsState by eventsViewModel.state.collectAsState()
     val debtState by debtViewModel.state.collectAsState()
     val categoriesState by categoriesViewModel.state.collectAsState()
+    val sharedCostState by sharedCostViewModel.state.collectAsState()
     val selectedCurrency by currencyViewModel.selectedCode.collectAsState()
 
     var splashElapsed by rememberSaveable { mutableStateOf(false) }
@@ -202,6 +205,10 @@ fun ExpenseApp(
         if (showSharedCosts) {
             features.sharedCost.SharedCostsOverlay(
                 onDismiss = { showSharedCosts = false },
+                history = sharedCostState.history,
+                onCreateSplit = { title, totalCents, names, customShareCents ->
+                    sharedCostViewModel.create(title, totalCents, names, customShareCents)
+                },
             )
         }
 

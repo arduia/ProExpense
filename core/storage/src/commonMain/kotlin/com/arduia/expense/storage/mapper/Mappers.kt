@@ -10,10 +10,12 @@ import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.ExpenseTagType
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.storage.db.Category_record
 import com.arduia.expense.storage.db.Debt_record
 import com.arduia.expense.storage.db.Event_record
 import com.arduia.expense.storage.db.Finance_record
+import com.arduia.expense.storage.db.Shared_cost
 
 // Booleans are stored as 0/1 INTEGER columns (SQLite has no native boolean type).
 internal fun Boolean.toDb(): Long = if (this) 1L else 0L
@@ -55,4 +57,14 @@ internal fun Category_record.toDomain(): Category = Category(
     id = id,
     name = name,
     isCustom = is_custom.toBoolean(),
+)
+
+internal fun Shared_cost.toDomain(): SharedCost = SharedCost(
+    id = id,
+    title = title,
+    totalAmount = Amount(total_cents),
+    currency = CurrencyCode(currency_code),
+    participants = SharedCostJson.decodeParticipants(participants_json),
+    recordedAtEpochMillis = recorded_at,
+    customShareCents = SharedCostJson.decodeShares(custom_shares_json),
 )
