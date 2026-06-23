@@ -31,3 +31,8 @@
 -keepclassmembers class * extends androidx.work.Worker {
     public <init>(android.content.Context,androidx.work.WorkerParameters);
 }
+
+# Tink (via androidx.security-crypto) references JSR-305/JCIP annotations
+# that are compile-time only and not present at runtime.
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.concurrent.GuardedBy
