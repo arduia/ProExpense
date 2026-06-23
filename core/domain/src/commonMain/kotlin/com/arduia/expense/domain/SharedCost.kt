@@ -1,11 +1,21 @@
 package com.arduia.expense.domain
 
 data class SharedCost(
-    val id: String,
+    val id: SharedCostId,
     val title: String,
-    val totalAmount: Amount,
-    val currency: CurrencyCode,
+    val total: Money,
     val participants: List<Participant>,
+    val splitStrategy: SplitStrategy,
     val recordedAtEpochMillis: Long,
-    val customShareCents: List<Long>? = null,
-)
+) {
+    init {
+        require(title.isNotBlank()) { "SharedCost title must not be blank" }
+        require(participants.isNotEmpty()) { "SharedCost must have at least one participant" }
+        require(participants.map { it.id }.toSet().size == participants.size) {
+            "SharedCost participants must have unique ids"
+        }
+        SplitStrategy.resolve(splitStrategy, participants, total)
+    }
+
+    fun shares(): Map<ParticipantId, Money> = SplitStrategy.resolve(splitStrategy, participants, total)
+}

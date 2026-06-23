@@ -1,26 +1,27 @@
 package com.arduia.expense.feature.sharedcost
 
 import com.arduia.expense.data.Result
-import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.Participant
 import com.arduia.expense.domain.SharedCost
+import com.arduia.expense.domain.SharedCostId
+import com.arduia.expense.domain.SplitStrategy
 
 data class SharedCostInput(
     val title: String,
-    val totalAmount: Amount,
-    val currency: CurrencyCode,
+    val total: Money,
     val participants: List<Participant>,
+    val splitStrategy: SplitStrategy = SplitStrategy.EqualSplit,
     val recordedAtEpochMillis: Long,
 )
 
 data class SettlementLine(
     val participant: Participant,
-    val owedAmount: Amount,
+    val owedAmount: Money,
 )
 
 data class SettlementSummary(
-    val sharedCostId: String,
+    val sharedCostId: SharedCostId,
     val lines: List<SettlementLine>,
 )
 
@@ -29,5 +30,5 @@ interface SharedCostRepository {
 
     suspend fun getAll(): Result<List<SharedCost>>
 
-    suspend fun getSettlement(sharedCostId: String): Result<SettlementSummary>
+    suspend fun getSettlement(sharedCostId: SharedCostId): Result<SettlementSummary>
 }

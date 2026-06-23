@@ -3,6 +3,7 @@ package com.arduia.expense.feature.currency
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.Money
 
 data class CurrencySettings(
     val homeCurrency: CurrencyCode,
@@ -20,7 +21,7 @@ interface CurrencyRepository {
     suspend fun setHomeCurrency(currency: CurrencyCode): Result<Unit>
 }
 
-fun convertToHomeCurrency(amount: Amount, exchangeRate: Double): Amount {
+fun convertToHomeCurrency(money: Money, exchangeRate: Double, homeCurrency: CurrencyCode): Money {
     require(exchangeRate > 0) { "Exchange rate must be positive" }
-    return Amount((amount.valueInCents * exchangeRate).toLong())
+    return Money(Amount((money.amount.valueInCents * exchangeRate).toLong()), homeCurrency)
 }

@@ -1,9 +1,9 @@
 package com.arduia.expense.data
 
-import com.arduia.expense.domain.Amount
+import com.arduia.expense.domain.Money
 
 interface BudgetRepository {
-    suspend fun getMonthlyBudget(): Result<Amount?>
+    suspend fun getMonthlyBudget(): Result<Money?>
 
-    suspend fun setMonthlyBudget(amount: Amount?): Result<Unit>
+    suspend fun setMonthlyBudget(money: Money?): Result<Unit>
 }
