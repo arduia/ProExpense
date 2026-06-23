@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -72,10 +74,14 @@ fun HomeScreenContent(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val emptyScrollState = rememberScrollState()
 
     Column(
         modifier = modifier
             .fillMaxSize()
+            // The empty state has no inner LazyColumn, so scroll the whole screen to keep its
+            // illustration + CTA reachable on short screens instead of clipping.
+            .then(if (state.isEmpty) Modifier.verticalScroll(emptyScrollState) else Modifier)
             .padding(horizontal = dimens.screenPadding)
             .padding(top = dimens.space14),
     ) {
@@ -143,9 +149,8 @@ fun HomeScreenContent(
             HomeEmptyContent(
                 onLogFirstExpense = onLogFirstExpense,
                 modifier = Modifier
-                    .weight(1f)
                     .fillMaxWidth()
-                    .padding(bottom = dimens.navShellBottomInset),
+                    .padding(top = dimens.space32, bottom = dimens.navShellBottomInset),
             )
         } else {
             HomeRecentSection(

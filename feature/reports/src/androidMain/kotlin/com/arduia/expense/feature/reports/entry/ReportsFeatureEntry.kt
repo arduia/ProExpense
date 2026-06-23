@@ -2,7 +2,7 @@ package com.arduia.expense.feature.reports.entry
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.arduia.expense.feature.reports.ui.ReportsFlow
+import com.arduia.expense.feature.reports.ui.ReportsFlow as ReportsFlowContent
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 
 interface ReportsFeatureEntry {
@@ -26,14 +26,14 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         periods: List<ReportsUiState>?,
     ) {
         if (periods == null) {
-            ReportsFlow(
+            ReportsFlowContent(
                 onBack = onBack,
                 modifier = modifier,
                 empty = empty,
                 onLogFirstExpense = onLogFirstExpense,
             )
         } else {
-            ReportsFlow(
+            ReportsFlowContent(
                 onBack = onBack,
                 modifier = modifier,
                 empty = empty,

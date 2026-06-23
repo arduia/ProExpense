@@ -2,7 +2,7 @@ package com.arduia.expense.feature.categories.entry
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.arduia.expense.feature.categories.ui.CategoryListFlow
+import com.arduia.expense.feature.categories.ui.CategoryListFlow as CategoryListFlowContent
 import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
 
@@ -28,7 +28,7 @@ internal class CategoriesFeatureEntryImpl : CategoriesFeatureEntry {
         onUpdate: (oldId: String, iconId: String, label: String) -> Unit,
         onDelete: (id: String) -> Unit,
     ) {
-        CategoryListFlow(
+        CategoryListFlowContent(
             onBack = onBack,
             modifier = modifier,
             state = state,
