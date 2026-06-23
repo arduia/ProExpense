@@ -2,7 +2,7 @@ package com.arduia.expense.feature.importexport.entry
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.arduia.expense.feature.importexport.ui.ClearDataFlow
+import com.arduia.expense.feature.importexport.ui.ClearDataFlow as ClearDataFlowContent
 import com.arduia.expense.feature.importexport.ui.ExportSettingsFlow
 
 interface ImportExportFeatureEntry {
@@ -28,7 +28,7 @@ internal class ImportExportFeatureEntryImpl : ImportExportFeatureEntry {
 
     @Composable
     override fun ClearDataFlow(onBack: () -> Unit, modifier: Modifier) {
-        ClearDataFlow(onBack = onBack, modifier = modifier)
+        ClearDataFlowContent(onBack = onBack, modifier = modifier)
     }
 }
 
