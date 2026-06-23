@@ -586,6 +586,9 @@
     <string name="home_today_section">Today</string>
     <string name="shared_split_default_title">Shared split</string>
     <string name="shared_split_just_now">Just now</string>
+    <string name="expense_save_error">Couldn\'t save the expense — please try again.</string>
+    <string name="expense_delete_error">Couldn\'t delete the expense — please try again.</string>
+    <string name="data_load_error">Something went wrong loading your data.</string>
     <plurals name="debt_active_count">
         <item quantity="one">%1$d active</item>
         <item quantity="other">%1$d active</item>

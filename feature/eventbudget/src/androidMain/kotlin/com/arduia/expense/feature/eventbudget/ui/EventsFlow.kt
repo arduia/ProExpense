@@ -35,6 +35,7 @@ fun EventsFlow(
     events: List<EventBudgetCardState> = previewEventList,
     detailFor: (String) -> EventDetailUiState? = ::previewEventDetailFor,
     onCreateEvent: (name: String, budgetRaw: String) -> Unit = { _, _ -> },
+    onAddTaggedExpense: (eventId: String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -82,7 +83,7 @@ fun EventsFlow(
                         state = detail,
                         onBack = { selectedEventId = null },
                         onMore = {},
-                        onAddTagged = onAddClick,
+                        onAddTagged = { onAddTaggedExpense(targetId) },
                         onExpenseClick = {},
                     )
                 }

@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.reports
 
+import com.arduia.expense.R
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.getOrNull
@@ -7,9 +8,11 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
+import com.arduia.expense.ui.UiMessageBus
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.format.DateLabels
 import com.arduia.expense.ui.format.MoneyFormatter
+import com.arduia.expense.ui.orPost
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +33,7 @@ class ReportsViewModel(
     private val financeRepository: FinanceRecordRepository,
     private val profileRepository: ProfileRepository,
     private val scope: CoroutineScope,
+    private val uiMessages: UiMessageBus = UiMessageBus(),
     private val clock: () -> Long = { System.currentTimeMillis() },
 ) {
     private val _state = MutableStateFlow(ReportsScreenState())
@@ -45,7 +49,8 @@ class ReportsViewModel(
 
     private suspend fun reload() {
         val currency = profileRepository.getProfile().getOrNull()?.homeCurrency?.code ?: "USD"
-        val expenses = financeRepository.getAll().getOrNull().orEmpty()
+        val expenses = financeRepository.getAll()
+            .orPost(uiMessages, R.string.data_load_error, emptyList())
             .filter { it.type == RecordType.EXPENSE }
         val now = clock()
 

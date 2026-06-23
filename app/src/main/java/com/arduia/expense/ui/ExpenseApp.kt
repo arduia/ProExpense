@@ -12,11 +12,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.arduia.expense.R
+import com.arduia.expense.data.Result
+import com.arduia.expense.domain.ExpenseTagType
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.categories.CategoriesViewModel
 import com.arduia.expense.ui.currency.CurrencyViewModel
 import com.arduia.expense.ui.debt.DebtViewModel
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.events.EventsViewModel
 import com.arduia.expense.ui.home.AppRoute
 import com.arduia.expense.ui.home.HomeShell
@@ -49,6 +54,7 @@ fun ExpenseApp(
     val categoriesViewModel = koinInject<CategoriesViewModel> { parametersOf(scope) }
     val sharedCostViewModel = koinInject<SharedCostViewModel> { parametersOf(scope) }
     val entryViewModel = koinInject<ExpenseEntryViewModel>()
+    val uiMessages = koinInject<UiMessageBus>()
 
     val homeState by homeViewModel.state.collectAsState()
     val journalState by journalViewModel.state.collectAsState()
@@ -68,10 +74,25 @@ fun ExpenseApp(
     var showDebt by rememberSaveable { mutableStateOf(false) }
     var showPinSetup by rememberSaveable { mutableStateOf(false) }
     var showReports by rememberSaveable { mutableStateOf(false) }
+    var toastResId by remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(uiMessages) {
+        uiMessages.messages.collect { resId -> toastResId = resId }
+    }
 
     val openNewEntry: () -> Unit = {
         scope.launch {
             entryStart = entryViewModel.newEntryStart()
+            showQuickLog = true
+        }
+    }
+    val openTaggedEntry: (ExpenseTagType, String, String?) -> Unit = { tagType, tagId, label ->
+        scope.launch {
+            entryStart = entryViewModel.newEntryStart(
+                tagType = tagType,
+                tagId = tagId,
+                linkedTagLabel = label,
+            )
             showQuickLog = true
         }
     }
@@ -121,6 +142,13 @@ fun ExpenseApp(
                         detailFor = { id -> eventsState.details[id] },
                         onCreateEvent = { name, budgetRaw ->
                             eventsViewModel.create(name, budgetRaw)
+                        },
+                        onAddTaggedExpense = { eventId ->
+                            openTaggedEntry(
+                                ExpenseTagType.EVENT,
+                                eventId,
+                                eventsState.details[eventId]?.title,
+                            )
                         },
                     )
                     HomeNavTab.Journal -> features.history.JournalTab(
@@ -189,14 +217,18 @@ fun ExpenseApp(
                 },
                 onSaved = { handoff ->
                     scope.launch {
-                        entryViewModel.submit(handoff)
-                        homeViewModel.refresh()
-                        journalViewModel.refresh()
-                        reportsViewModel.refresh()
-                        eventsViewModel.refresh()
+                        when (entryViewModel.submit(handoff)) {
+                            is Result.Success -> {
+                                showQuickLog = false
+                                entryStart = null
+                                homeViewModel.refresh()
+                                journalViewModel.refresh()
+                                reportsViewModel.refresh()
+                                eventsViewModel.refresh()
+                            }
+                            is Result.Error -> uiMessages.post(R.string.expense_save_error)
+                        }
                     }
-                    showQuickLog = false
-                    entryStart = null
                 },
                 start = entryStart,
             )
@@ -243,5 +275,10 @@ fun ExpenseApp(
                 periods = reportsState.periods,
             )
         }
+
+        ProToastHost(
+            message = toastResId?.let { stringResource(it) },
+            onDismiss = { toastResId = null },
+        )
     }
 }

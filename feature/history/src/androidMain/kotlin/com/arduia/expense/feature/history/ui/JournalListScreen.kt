@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.history.R
 import com.arduia.expense.ui.design.DayHeader
+import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.FilterChip
 import com.arduia.expense.ui.design.HomeBottomNav
 import com.arduia.expense.ui.design.HomeNavTab
@@ -112,9 +113,19 @@ fun JournalListScreen(
                 }
             }
 
-            if (state.searchActive && state.days.isEmpty()) {
+            if (state.days.isEmpty() && state.searchActive) {
                 JournalNoResults(
                     query = state.query,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                )
+            } else if (state.days.isEmpty()) {
+                EmptyStateContent(
+                    title = stringResource(R.string.journal_empty_title),
+                    subtitle = stringResource(R.string.journal_empty_body),
+                    actionLabel = stringResource(R.string.journal_empty_action),
+                    onActionClick = onAddClick,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth(),
@@ -221,6 +232,28 @@ private fun JournalListPreview() {
     ProExpenseTheme {
         JournalListScreen(
             state = previewJournalList,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Journal — empty (no entries)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalEmptyPreview() {
+    ProExpenseTheme {
+        JournalListScreen(
+            state = JournalListUiState(),
             onQueryChange = {},
             onFilterSelected = {},
             onRowClick = {},

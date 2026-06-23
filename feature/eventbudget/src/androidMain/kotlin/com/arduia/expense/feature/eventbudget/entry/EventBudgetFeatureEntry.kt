@@ -16,6 +16,7 @@ interface EventBudgetFeatureEntry {
         events: List<EventBudgetCardState> = previewEventList,
         detailFor: (String) -> EventDetailUiState? = { null },
         onCreateEvent: (name: String, budgetRaw: String) -> Unit = { _, _ -> },
+        onAddTaggedExpense: (eventId: String) -> Unit = {},
         modifier: Modifier = Modifier,
     )
 }
@@ -28,6 +29,7 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         events: List<EventBudgetCardState>,
         detailFor: (String) -> EventDetailUiState?,
         onCreateEvent: (name: String, budgetRaw: String) -> Unit,
+        onAddTaggedExpense: (eventId: String) -> Unit,
         modifier: Modifier,
     ) {
         EventsFlow(
@@ -36,6 +38,7 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
             events = events,
             detailFor = detailFor,
             onCreateEvent = onCreateEvent,
+            onAddTaggedExpense = onAddTaggedExpense,
             modifier = modifier,
         )
     }

@@ -4,6 +4,8 @@ import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.fake.FakeDebtRepository
+import com.arduia.expense.fake.FakeEventRepository
 import com.arduia.expense.fake.FakeFinanceRecordRepository
 import com.arduia.expense.fake.FakeProfileRepository
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +47,8 @@ class JournalViewModelTest {
     ) = JournalViewModel(
         financeRepository = finance,
         profileRepository = FakeProfileRepository(currency = CurrencyCode("USD"), onboardingCompleted = true),
+        eventRepository = FakeEventRepository(),
+        debtRepository = FakeDebtRepository(),
         scope = CoroutineScope(UnconfinedTestDispatcher(testScheduler)),
         clock = { now },
     )
@@ -82,6 +86,39 @@ class JournalViewModelTest {
         val detail = vm.state.value.details["rec-1"]
         assertNotNull(detail)
         assertTrue(detail.amountLabel.contains("12.40"))
+    }
+
+    // Rule: a record tagged to an event surfaces that event as its linked tag in the detail.
+    @Test
+    fun resolvesEventLinkedTag() = runTest {
+        val events = FakeEventRepository(
+            listOf(
+                com.arduia.expense.domain.Event(
+                    id = "bali",
+                    name = "Bali Trip",
+                    startEpochMillis = now,
+                    endEpochMillis = now + 14L * 24 * 60 * 60 * 1000,
+                    budgetAmount = Amount(200_000),
+                ),
+            ),
+        )
+        val tagged = record("t1", 1800, now).copy(
+            tagType = com.arduia.expense.domain.ExpenseTagType.EVENT,
+            tagId = "bali",
+        )
+        val vm = JournalViewModel(
+            financeRepository = FakeFinanceRecordRepository(listOf(tagged)),
+            profileRepository = FakeProfileRepository(currency = CurrencyCode("USD"), onboardingCompleted = true),
+            eventRepository = events,
+            debtRepository = FakeDebtRepository(),
+            scope = CoroutineScope(UnconfinedTestDispatcher(testScheduler)),
+            clock = { now },
+        )
+
+        val tag = vm.state.value.details["t1"]?.linkedTag
+        assertNotNull(tag)
+        assertEquals("Bali Trip", tag.title)
+        assertTrue(tag.meta.startsWith("Event"))
     }
 
     // Rule: deleting a record removes it from the projection (primary failure-free write path).

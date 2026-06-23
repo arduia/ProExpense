@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.debt
 
+import com.arduia.expense.R
 import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.getOrNull
@@ -10,9 +11,12 @@ import com.arduia.expense.feature.debt.ui.preview.DebtDetailUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
+import com.arduia.expense.ui.UiMessageBus
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.format.DateLabels
 import com.arduia.expense.ui.format.MoneyFormatter
+import com.arduia.expense.ui.orPost
+import com.arduia.expense.ui.postIfError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +48,7 @@ class DebtViewModel(
     private val debtRepository: DebtRepository,
     private val profileRepository: ProfileRepository,
     private val scope: CoroutineScope,
+    private val uiMessages: UiMessageBus = UiMessageBus(),
     private val idGenerator: () -> String = { java.util.UUID.randomUUID().toString() },
 ) {
     private val _state = MutableStateFlow(DebtScreenState())
@@ -70,7 +75,7 @@ class DebtViewModel(
                     dueEpochMillis = null,
                     isSettled = false,
                 ),
-            )
+            ).postIfError(uiMessages, R.string.data_load_error)
             reload()
         }
     }
@@ -78,21 +83,21 @@ class DebtViewModel(
     fun markSettled(id: String) {
         scope.launch {
             val debt = debtRepository.getById(id).getOrNull() ?: return@launch
-            debtRepository.upsert(debt.copy(isSettled = true))
+            debtRepository.upsert(debt.copy(isSettled = true)).postIfError(uiMessages, R.string.data_load_error)
             reload()
         }
     }
 
     fun delete(id: String) {
         scope.launch {
-            debtRepository.delete(id)
+            debtRepository.delete(id).postIfError(uiMessages, R.string.expense_delete_error)
             reload()
         }
     }
 
     private suspend fun reload() {
         val currency = profileRepository.getProfile().getOrNull()?.homeCurrency?.code ?: "USD"
-        val debts = debtRepository.getAll().getOrNull().orEmpty()
+        val debts = debtRepository.getAll().orPost(uiMessages, R.string.data_load_error, emptyList())
 
         _state.value = DebtScreenState(
             lent = debts.filter { it.direction == DebtDirection.OWED_TO_ME }.toListState(DebtSide.Lent, currency),

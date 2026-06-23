@@ -1,8 +1,11 @@
 package com.arduia.expense.ui.currency
 
+import com.arduia.expense.R
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.getOrNull
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.ui.UiMessageBus
+import com.arduia.expense.ui.postIfError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +20,7 @@ import kotlinx.coroutines.launch
 class CurrencyViewModel(
     private val profileRepository: ProfileRepository,
     private val scope: CoroutineScope,
+    private val uiMessages: UiMessageBus = UiMessageBus(),
 ) {
     private var name: String = ""
     private val _selectedCode = MutableStateFlow("USD")
@@ -37,8 +41,9 @@ class CurrencyViewModel(
     fun select(code: String) {
         scope.launch {
             val currency = parseCurrency(code)
-            profileRepository.saveProfile(name, currency)
-            _selectedCode.value = currency.code
+            if (profileRepository.saveProfile(name, currency).postIfError(uiMessages, R.string.data_load_error)) {
+                _selectedCode.value = currency.code
+            }
         }
     }
 

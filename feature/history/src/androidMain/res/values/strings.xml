@@ -19,4 +19,7 @@
     <string name="journal_action_cancel">Cancel</string>
     <string name="journal_delete_title">Delete this expense?</string>
     <string name="journal_delete_body">This removes the record and updates any linked event or debt.</string>
+    <string name="journal_empty_title">No entries yet</string>
+    <string name="journal_empty_body">Your logged expenses will appear here as a daily journal.</string>
+    <string name="journal_empty_action">Log your first expense</string>
 </resources>

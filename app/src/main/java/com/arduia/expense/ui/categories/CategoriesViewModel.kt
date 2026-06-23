@@ -1,10 +1,13 @@
 package com.arduia.expense.ui.categories
 
+import com.arduia.expense.R
 import com.arduia.expense.data.CategoryRepository
-import com.arduia.expense.data.getOrNull
 import com.arduia.expense.domain.Category
 import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
 import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
+import com.arduia.expense.ui.UiMessageBus
+import com.arduia.expense.ui.orPost
+import com.arduia.expense.ui.postIfError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +27,7 @@ data class CategoriesScreenState(
 class CategoriesViewModel(
     private val categoryRepository: CategoryRepository,
     private val scope: CoroutineScope,
+    private val uiMessages: UiMessageBus = UiMessageBus(),
 ) {
     private val _state = MutableStateFlow(CategoriesScreenState())
     val state: StateFlow<CategoriesScreenState> = _state.asStateFlow()
@@ -39,6 +43,7 @@ class CategoriesViewModel(
     fun create(iconId: String, label: String) {
         scope.launch {
             categoryRepository.upsert(Category(id = iconId, name = label.trim(), isCustom = true))
+                .postIfError(uiMessages, R.string.data_load_error)
             reload()
         }
     }
@@ -47,19 +52,20 @@ class CategoriesViewModel(
         scope.launch {
             if (oldId != iconId) categoryRepository.delete(oldId)
             categoryRepository.upsert(Category(id = iconId, name = label.trim(), isCustom = true))
+                .postIfError(uiMessages, R.string.data_load_error)
             reload()
         }
     }
 
     fun delete(id: String) {
         scope.launch {
-            categoryRepository.delete(id)
+            categoryRepository.delete(id).postIfError(uiMessages, R.string.data_load_error)
             reload()
         }
     }
 
     private suspend fun reload() {
-        val categories = categoryRepository.getAll().getOrNull().orEmpty()
+        val categories = categoryRepository.getAll().orPost(uiMessages, R.string.data_load_error, emptyList())
         _state.value = CategoriesScreenState(
             list = CategoryListUiState(
                 defaults = categories.filter { !it.isCustom }.map { it.toRow() },

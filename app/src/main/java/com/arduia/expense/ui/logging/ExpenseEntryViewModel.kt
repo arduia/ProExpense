@@ -6,6 +6,7 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.data.getOrNull
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.ExpenseTagType
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
@@ -26,8 +27,15 @@ class ExpenseEntryViewModel(
     private val idGenerator: () -> String = { java.util.UUID.randomUUID().toString() },
 ) {
 
-    /** A blank entry stamped with the home currency + current time (the "+" Add path). */
-    suspend fun newEntryStart(): LoggedExpenseHandoff {
+    /**
+     * A blank entry stamped with the home currency + current time (the "+" Add path). Optionally
+     * pre-linked to an event/debt so logging "from" that screen tags the new record.
+     */
+    suspend fun newEntryStart(
+        tagType: ExpenseTagType? = null,
+        tagId: String? = null,
+        linkedTagLabel: String? = null,
+    ): LoggedExpenseHandoff {
         val currency = profileRepository.getProfile().getOrNull()?.homeCurrency?.code ?: "USD"
         val now = clock()
         return LoggedExpenseHandoff(
@@ -38,6 +46,9 @@ class ExpenseEntryViewModel(
             currencyCode = currency,
             recordedAtEpochMillis = null,
             timeLabel = DateLabels.timeLabel(now),
+            tagType = tagType,
+            tagId = tagId,
+            linkedTagLabel = linkedTagLabel,
         )
     }
 

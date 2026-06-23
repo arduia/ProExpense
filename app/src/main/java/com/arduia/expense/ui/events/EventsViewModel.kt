@@ -1,5 +1,6 @@
 package com.arduia.expense.ui.events
 
+import com.arduia.expense.R
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ProfileRepository
@@ -16,8 +17,11 @@ import com.arduia.expense.ui.design.eventBudgetTone
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventLinkedExpenseUi
+import com.arduia.expense.ui.UiMessageBus
 import com.arduia.expense.ui.format.DateLabels
 import com.arduia.expense.ui.format.MoneyFormatter
+import com.arduia.expense.ui.orPost
+import com.arduia.expense.ui.postIfError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +45,7 @@ class EventsViewModel(
     private val financeRepository: FinanceRecordRepository,
     private val profileRepository: ProfileRepository,
     private val scope: CoroutineScope,
+    private val uiMessages: UiMessageBus = UiMessageBus(),
     private val clock: () -> Long = { System.currentTimeMillis() },
     private val idGenerator: () -> String = { java.util.UUID.randomUUID().toString() },
 ) {
@@ -60,7 +65,7 @@ class EventsViewModel(
             val now = clock()
             val budgetCents = (AmountInput.numericValue(budgetRaw) ?: 0.0)
                 .times(100).roundToLong().coerceIn(0L, Amount.MAX_VALUE_IN_CENTS)
-            eventRepository.upsert(
+            val saved = eventRepository.upsert(
                 Event(
                     id = idGenerator(),
                     name = name.trim(),
@@ -70,14 +75,14 @@ class EventsViewModel(
                     status = EventStatus.ACTIVE,
                 ),
             )
-            reload()
+            if (saved.postIfError(uiMessages, R.string.data_load_error)) reload()
         }
     }
 
     private suspend fun reload() {
         val currency = profileRepository.getProfile().getOrNull()?.homeCurrency?.code ?: "USD"
-        val events = eventRepository.getAll().getOrNull().orEmpty()
-        val byEvent = financeRepository.getAll().getOrNull().orEmpty()
+        val events = eventRepository.getAll().orPost(uiMessages, R.string.data_load_error, emptyList())
+        val byEvent = financeRepository.getAll().orPost(uiMessages, R.string.data_load_error, emptyList())
             .filter { it.tagType == ExpenseTagType.EVENT && it.tagId != null }
             .groupBy { it.tagId!! }
 

@@ -10,6 +10,7 @@ import com.arduia.expense.ui.events.EventsViewModel
 import com.arduia.expense.ui.home.HomeViewModel
 import com.arduia.expense.ui.journal.JournalViewModel
 import com.arduia.expense.ui.logging.ExpenseEntryViewModel
+import com.arduia.expense.ui.UiMessageBus
 import com.arduia.expense.ui.reports.ReportsViewModel
 import com.arduia.expense.ui.sharedcost.SharedCostViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +35,7 @@ val platformStorageModule = module {
  * can hand in the composition scope (`rememberCoroutineScope()`); tests construct them directly.
  */
 val viewModelModule = module {
+    single { UiMessageBus() }
     factory { (scope: CoroutineScope) ->
         HomeViewModel(
             financeRepository = get(),
@@ -47,7 +49,10 @@ val viewModelModule = module {
         JournalViewModel(
             financeRepository = get(),
             profileRepository = get(),
+            eventRepository = get(),
+            debtRepository = get(),
             scope = scope,
+            uiMessages = get(),
         )
     }
     factory { (scope: CoroutineScope) ->
@@ -55,10 +60,11 @@ val viewModelModule = module {
             financeRepository = get(),
             profileRepository = get(),
             scope = scope,
+            uiMessages = get(),
         )
     }
     factory { (scope: CoroutineScope) ->
-        CurrencyViewModel(profileRepository = get(), scope = scope)
+        CurrencyViewModel(profileRepository = get(), scope = scope, uiMessages = get())
     }
     factory { (scope: CoroutineScope) ->
         EventsViewModel(
@@ -66,6 +72,7 @@ val viewModelModule = module {
             financeRepository = get(),
             profileRepository = get(),
             scope = scope,
+            uiMessages = get(),
         )
     }
     factory { (scope: CoroutineScope) ->
@@ -73,16 +80,18 @@ val viewModelModule = module {
             debtRepository = get(),
             profileRepository = get(),
             scope = scope,
+            uiMessages = get(),
         )
     }
     factory { (scope: CoroutineScope) ->
-        CategoriesViewModel(categoryRepository = get(), scope = scope)
+        CategoriesViewModel(categoryRepository = get(), scope = scope, uiMessages = get())
     }
     factory { (scope: CoroutineScope) ->
         SharedCostViewModel(
             sharedCostRepository = get(),
             profileRepository = get(),
             scope = scope,
+            uiMessages = get(),
         )
     }
     factory {

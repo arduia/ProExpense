@@ -7,9 +7,13 @@ import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Participant
 import com.arduia.expense.domain.SharedCost
+import com.arduia.expense.R
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
+import com.arduia.expense.ui.UiMessageBus
 import com.arduia.expense.ui.format.DateLabels
 import com.arduia.expense.ui.format.MoneyFormatter
+import com.arduia.expense.ui.orPost
+import com.arduia.expense.ui.postIfError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +33,7 @@ class SharedCostViewModel(
     private val sharedCostRepository: SharedCostRepository,
     private val profileRepository: ProfileRepository,
     private val scope: CoroutineScope,
+    private val uiMessages: UiMessageBus = UiMessageBus(),
     private val clock: () -> Long = { System.currentTimeMillis() },
     private val idGenerator: () -> String = { java.util.UUID.randomUUID().toString() },
 ) {
@@ -61,14 +66,14 @@ class SharedCostViewModel(
                     recordedAtEpochMillis = clock(),
                     customShareCents = customShareCents,
                 ),
-            )
+            ).postIfError(uiMessages, R.string.data_load_error)
             reload()
         }
     }
 
     private suspend fun reload() {
         val currency = currencyCode()
-        val items = sharedCostRepository.getAll().getOrNull().orEmpty()
+        val items = sharedCostRepository.getAll().orPost(uiMessages, R.string.data_load_error, emptyList())
             .map { it.toHistoryItem(currency) }
         _state.value = SharedCostScreenState(history = items)
     }
