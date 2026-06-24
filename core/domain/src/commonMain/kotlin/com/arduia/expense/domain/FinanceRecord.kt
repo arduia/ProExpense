@@ -9,6 +9,11 @@ data class FinanceRecord(
     val note: String?,
     val recordedAtEpochMillis: Long,
     val link: RecordLink = RecordLink.None,
+    /**
+     * Tamper/corruption-detection checksum over the record's content. Stamped by the data layer on
+     * write and re-derived on read; `null` for records that predate integrity stamping.
+     */
+    val integrity: RecordChecksum? = null,
 ) {
     init {
         note?.let {

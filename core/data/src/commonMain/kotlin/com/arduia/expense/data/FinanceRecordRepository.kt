@@ -15,4 +15,11 @@ interface FinanceRecordRepository {
 
     /** Live, ordered view of every record — backs auto-updating screens (Home, Journal). */
     fun observeAll(): Flow<List<FinanceRecord>>
+
+    /**
+     * Re-derives the stored record's checksum and compares it to the persisted one.
+     * `Success(true)` = intact; `Success(false)` = tampered/corrupt or no checksum; `Error` when the
+     * record is missing or the read fails.
+     */
+    suspend fun verifyIntegrity(id: RecordId): Result<Boolean>
 }

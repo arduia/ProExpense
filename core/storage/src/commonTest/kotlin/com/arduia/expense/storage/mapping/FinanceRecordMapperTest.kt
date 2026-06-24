@@ -27,6 +27,8 @@ class FinanceRecordMapperTest {
             recorded_at = 1_700_000_000_000,
             tag_type = null,
             tag_id = null,
+            integrity_algo = "SHA-256",
+            integrity_hash = "abc123",
         )
 
         val record = row.toDomain()
@@ -42,6 +44,15 @@ class FinanceRecordMapperTest {
         assertEquals("lunch", record.note)
         assertEquals(1_700_000_000_000, record.recordedAtEpochMillis)
         assertEquals(RecordLink.None, record.link)
+        assertEquals("SHA-256", record.integrity!!.algorithm)
+        assertEquals("abc123", record.integrity!!.value)
+    }
+
+    @Test
+    fun toChecksum_nullColumns_yieldNullIntegrity() {
+        assertNull(toChecksum(null, null))
+        assertNull(toChecksum("SHA-256", null))
+        assertNull(toChecksum(null, "abc"))
     }
 
     @Test

@@ -11,6 +11,7 @@ import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.DEFAULT_CATEGORIES
+import com.arduia.expense.domain.RecordIntegrityVerifier
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import com.arduia.expense.storage.repository.AppMetaBudgetRepository
 import com.arduia.expense.storage.repository.AppMetaCurrencySettingsRepository
@@ -74,11 +75,16 @@ class ProExpenseStorage internal constructor(
             val homeCurrencyCode = database.appMetaQueries.selectMeta().executeAsOneOrNull()
                 ?.home_currency_code ?: DEFAULT_HOME_CURRENCY
             val homeCurrency = CurrencyCode(homeCurrencyCode)
+            val integrityVerifier = RecordIntegrityVerifier()
             return ProExpenseStorage(
                 database = database,
                 appMetaStore = appMetaStore,
                 dispatcher = dispatcher,
-                financeRecordRepository = SqlDelightFinanceRecordRepository(database.financeRecordQueries, dispatcher),
+                financeRecordRepository = SqlDelightFinanceRecordRepository(
+                    queries = database.financeRecordQueries,
+                    integrityVerifier = integrityVerifier,
+                    dispatcher = dispatcher,
+                ),
                 categoryRepository = SqlDelightCategoryRepository(database.categoryQueries, dispatcher),
                 eventRepository = SqlDelightEventRepository(database.eventQueries, homeCurrency, dispatcher),
                 debtRepository = SqlDelightDebtRepository(database.debtQueries, homeCurrency, dispatcher),

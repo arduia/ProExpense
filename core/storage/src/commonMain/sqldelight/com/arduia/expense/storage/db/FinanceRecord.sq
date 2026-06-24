@@ -8,13 +8,15 @@ CREATE TABLE finance_record (
     note TEXT,
     recorded_at INTEGER NOT NULL,
     tag_type TEXT,
-    tag_id TEXT
+    tag_id TEXT,
+    integrity_algo TEXT,
+    integrity_hash TEXT
 );
 
 insertRecord:
 INSERT OR REPLACE INTO finance_record(
-    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, tag_type, tag_id
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, tag_type, tag_id, integrity_algo, integrity_hash
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteRecord:
 DELETE FROM finance_record WHERE id = ?;

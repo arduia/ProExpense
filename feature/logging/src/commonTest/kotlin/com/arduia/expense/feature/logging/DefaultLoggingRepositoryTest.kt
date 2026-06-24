@@ -39,6 +39,9 @@ class DefaultLoggingRepositoryTest {
         }
 
         override fun observeAll(): Flow<List<FinanceRecord>> = stored
+
+        override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> =
+            Result.Success(stored.value.any { it.id == id })
     }
 
     private fun input() = LogRecordInput(

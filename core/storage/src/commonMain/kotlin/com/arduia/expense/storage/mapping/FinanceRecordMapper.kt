@@ -7,6 +7,7 @@ import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordChecksum
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
@@ -33,7 +34,11 @@ internal fun FinanceRecordRow.toDomain(): FinanceRecord =
         note = note,
         recordedAtEpochMillis = recorded_at,
         link = toRecordLink(tag_type, tag_id),
+        integrity = toChecksum(integrity_algo, integrity_hash),
     )
+
+internal fun toChecksum(algorithm: String?, value: String?): RecordChecksum? =
+    if (algorithm != null && value != null) RecordChecksum(algorithm, value) else null
 
 internal fun toRecordLink(tagType: String?, tagId: String?): RecordLink = when (tagType) {
     null -> RecordLink.None

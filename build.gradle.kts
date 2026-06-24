@@ -15,6 +15,7 @@ tasks.register("verifyAll") {
         ":app:assembleDevDebug",
         ":app:testDevDebugUnitTest",
         ":shared:testDebugUnitTest",
+        ":core:domain:testDebugUnitTest",
         ":core:storage:testDebugUnitTest",
         ":feature:logging:testDebugUnitTest",
         ":feature:currency:testDebugUnitTest",

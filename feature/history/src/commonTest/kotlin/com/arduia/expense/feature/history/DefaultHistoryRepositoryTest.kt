@@ -28,6 +28,8 @@ class DefaultHistoryRepositoryTest {
         override suspend fun upsert(record: FinanceRecord): Result<Unit> = Result.Success(Unit)
         override suspend fun delete(id: RecordId): Result<Unit> = Result.Success(Unit)
         override fun observeAll(): Flow<List<FinanceRecord>> = flowOf(records)
+        override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> =
+            Result.Success(records.any { it.id == id })
     }
 
     private val usd = CurrencyCode("USD")

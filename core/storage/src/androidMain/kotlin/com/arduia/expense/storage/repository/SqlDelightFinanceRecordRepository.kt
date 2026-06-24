@@ -6,6 +6,7 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordIntegrityVerifier
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.FinanceRecordQueries
 import com.arduia.expense.storage.mapping.tagId
@@ -19,6 +20,7 @@ import kotlinx.coroutines.withContext
 
 class SqlDelightFinanceRecordRepository(
     private val queries: FinanceRecordQueries,
+    private val integrityVerifier: RecordIntegrityVerifier = RecordIntegrityVerifier(),
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : FinanceRecordRepository {
 
@@ -32,6 +34,8 @@ class SqlDelightFinanceRecordRepository(
 
     override suspend fun upsert(record: FinanceRecord): Result<Unit> = withContext(dispatcher) {
         catchingResult {
+            // Always (re)stamp so the persisted checksum matches the persisted content.
+            val checksum = integrityVerifier.checksumFor(record)
             queries.insertRecord(
                 id = record.id.value,
                 amount_cents = record.money.amount.valueInCents,
@@ -43,6 +47,8 @@ class SqlDelightFinanceRecordRepository(
                 recorded_at = record.recordedAtEpochMillis,
                 tag_type = record.link.tagType(),
                 tag_id = record.link.tagId(),
+                integrity_algo = checksum.algorithm,
+                integrity_hash = checksum.value,
             )
             Unit
         }
@@ -50,6 +56,14 @@ class SqlDelightFinanceRecordRepository(
 
     override suspend fun delete(id: RecordId): Result<Unit> = withContext(dispatcher) {
         catchingResult { queries.deleteRecord(id.value); Unit }
+    }
+
+    override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = withContext(dispatcher) {
+        catchingResult {
+            val record = queries.selectRecordById(id.value).executeAsOneOrNull()?.toDomain()
+                ?: error("No record with id ${id.value}")
+            integrityVerifier.verify(record)
+        }
     }
 
     override fun observeAll(): Flow<List<FinanceRecord>> =
