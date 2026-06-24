@@ -5,6 +5,7 @@ import com.arduia.expense.domain.Participant
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.domain.SplitStrategy
+import kotlinx.coroutines.flow.Flow
 
 data class SharedCostInput(
     val title: String,
@@ -29,5 +30,13 @@ interface SharedCostRepository {
 
     suspend fun getAll(): Result<List<SharedCost>>
 
+    suspend fun getById(id: SharedCostId): Result<SharedCost?>
+
+    suspend fun update(sharedCost: SharedCost): Result<Unit>
+
+    suspend fun delete(id: SharedCostId): Result<Unit>
+
     suspend fun getSettlement(sharedCostId: SharedCostId): Result<SettlementSummary>
+
+    fun observeAll(): Flow<List<SharedCost>>
 }
