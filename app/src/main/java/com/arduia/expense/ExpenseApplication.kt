@@ -4,6 +4,7 @@ import android.app.Application
 import com.arduia.expense.di.appModule
 import com.arduia.expense.feature.auth.di.authModule
 import com.arduia.expense.feature.currency.di.currencyModule
+import com.arduia.expense.feature.history.di.historyModule
 import com.arduia.expense.feature.logging.di.loggingModule
 import com.arduia.expense.storage.ProExpenseStorage
 import com.arduia.expense.storage.di.storageModule
@@ -31,7 +32,7 @@ class ExpenseApplication : Application(), KoinComponent {
         started = true
         startKoin {
             androidContext(this@ExpenseApplication)
-            modules(storageModule, loggingModule, currencyModule, authModule, appModule)
+            modules(storageModule, loggingModule, historyModule, currencyModule, authModule, appModule)
         }
         appScope.launch { get<ProExpenseStorage>().seedDefaultCategories() }
     }

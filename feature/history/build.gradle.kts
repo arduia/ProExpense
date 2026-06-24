@@ -27,6 +27,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(project(":core:storage"))
+            implementation("io.insert-koin:koin-compose:4.1.1")
         }
     }
 }

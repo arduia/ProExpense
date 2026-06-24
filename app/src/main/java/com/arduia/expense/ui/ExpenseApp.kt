@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -12,7 +13,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
+import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ProfileRepository
+import com.arduia.expense.data.Result
+import com.arduia.expense.domain.Category
+import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
@@ -33,6 +39,8 @@ fun ExpenseApp(
     features: FeatureUiRegistry = FeatureUiRegistry(),
     modifier: Modifier = Modifier,
     profileRepository: ProfileRepository = koinInject(),
+    financeRecordRepository: FinanceRecordRepository = koinInject(),
+    categoryRepository: CategoryRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf(false) }
@@ -43,20 +51,44 @@ fun ExpenseApp(
     var showReports by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
     var userName by rememberSaveable { mutableStateOf("") }
-    var loggedItems by remember { mutableStateOf<List<HomeTransactionItem>>(emptyList()) }
-    var loggedTotal by remember { mutableStateOf(0.0) }
+
+    val records by financeRecordRepository.observeAll().collectAsState(emptyList())
+    var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
 
     val noteFallback = stringResource(R.string.home_logged_note_fallback)
     val todaySection = stringResource(R.string.home_today_section)
 
-    val homeState = if (loggedItems.isEmpty()) {
+    LaunchedEffect(Unit) {
+        when (val result = categoryRepository.getAll()) {
+            is Result.Success -> {
+                categoryMap = result.data.associateBy { it.id.value }
+            }
+            is Result.Error -> {
+                // Log error if needed
+            }
+        }
+    }
+
+    val homeState = if (records.isEmpty()) {
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
         )
     } else {
+        val totalCents = records.sumOf { it.money.amount.valueInCents }
         val totalLabel = "$" + AmountInput.formatDisplay(
-            String.format(Locale.US, "%.2f", loggedTotal),
+            String.format(Locale.US, "%.2f", totalCents / 100.0),
         )
+        val items = records.map { record ->
+            HomeTransactionItem(
+                categoryId = record.categoryId.value,
+                note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
+                meta = record.recordedAtEpochMillis.toString(), // TODO: format as date/time
+                amount = "$" + AmountInput.formatDisplay(
+                    String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
+                ),
+                tag = null, // TODO: derive from record.link
+            )
+        }
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
             monthSpend = totalLabel,
@@ -65,23 +97,13 @@ fun ExpenseApp(
                 HomeDayGroup(
                     dayTitle = todaySection,
                     dayTotal = totalLabel,
-                    transactions = loggedItems,
+                    transactions = items,
                 ),
             ),
         )
     }
 
-    val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { entry ->
-        loggedTotal += AmountInput.numericValue(entry.rawAmount) ?: 0.0
-        loggedItems = listOf(
-            HomeTransactionItem(
-                categoryId = entry.categoryId,
-                note = entry.note.trim().ifEmpty { noteFallback },
-                meta = entry.timeLabel,
-                amount = "$" + AmountInput.formatDisplay(entry.rawAmount),
-                tag = entry.linkedTagLabel,
-            ),
-        ) + loggedItems
+    val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { _ ->
         showQuickLog = false
     }
 
@@ -175,7 +197,7 @@ fun ExpenseApp(
             if (showReports) {
                 features.reports.ReportsFlow(
                     onBack = { showReports = false },
-                    empty = loggedItems.isEmpty(),
+                    empty = records.isEmpty(),
                     onLogFirstExpense = {
                         showReports = false
                         showQuickLog = true
