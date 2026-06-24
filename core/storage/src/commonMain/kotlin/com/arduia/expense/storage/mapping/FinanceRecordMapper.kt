@@ -12,6 +12,7 @@ import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCostId
+import com.arduia.expense.domain.toRecordType
 import com.arduia.expense.storage.db.Finance_record as FinanceRecordRow
 
 /**
@@ -28,9 +29,9 @@ internal fun FinanceRecordRow.toDomain(): FinanceRecord =
     FinanceRecord(
         id = RecordId(id),
         money = Money(Amount(amount_cents), CurrencyCode(currency_code)),
-        homeCurrencyMoney = Money(Amount(home_amount_cents), CurrencyCode(currency_code)),
+        homeCurrencyMoney = Money(Amount(home_amount_cents ?: amount_cents), CurrencyCode(currency_code)),
         categoryId = CategoryId(category_id),
-        type = RecordType.valueOf(type),
+        type = type.toRecordType(),
         note = note,
         recordedAtEpochMillis = recorded_at,
         link = toRecordLink(tag_type, tag_id),

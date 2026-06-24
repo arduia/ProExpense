@@ -1,10 +1,12 @@
+-- type: RecordType code (EXPENSE=0, INCOME=1) — explicit codes, never Kotlin .ordinal
+-- home_amount_cents: nullable when currency_code == home_currency (null signals "use amount_cents")
 CREATE TABLE finance_record (
     id TEXT NOT NULL PRIMARY KEY,
     amount_cents INTEGER NOT NULL,
     currency_code TEXT NOT NULL,
-    home_amount_cents INTEGER NOT NULL,
+    home_amount_cents INTEGER,
     category_id TEXT NOT NULL,
-    type TEXT NOT NULL,
+    type INTEGER NOT NULL,
     note TEXT,
     recorded_at INTEGER NOT NULL,
     tag_type TEXT,

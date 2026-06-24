@@ -22,7 +22,7 @@ class FinanceRecordMapperTest {
             currency_code = "EUR",
             home_amount_cents = 11_000,
             category_id = "food",
-            type = "EXPENSE",
+            type = 0L, // EXPENSE
             note = "lunch",
             recorded_at = 1_700_000_000_000,
             tag_type = null,

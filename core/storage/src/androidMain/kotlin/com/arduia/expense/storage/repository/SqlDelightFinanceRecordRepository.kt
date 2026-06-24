@@ -8,6 +8,7 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordIntegrityVerifier
 import com.arduia.expense.domain.RecordLink
+import com.arduia.expense.domain.toCode
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.EventQueries
 import com.arduia.expense.storage.db.FinanceRecordQueries
@@ -47,9 +48,9 @@ class SqlDelightFinanceRecordRepository(
                     id = record.id.value,
                     amount_cents = record.money.amount.valueInCents,
                     currency_code = record.money.currency.code,
-                    home_amount_cents = record.homeCurrencyMoney.amount.valueInCents,
+                    home_amount_cents = if (record.homeCurrencyMoney.amount.valueInCents == record.money.amount.valueInCents) null else record.homeCurrencyMoney.amount.valueInCents,
                     category_id = record.categoryId.value,
-                    type = record.type.name,
+                    type = record.type.toCode(),
                     note = record.note,
                     recorded_at = record.recordedAtEpochMillis,
                     tag_type = record.link.tagType(),
