@@ -9,6 +9,7 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.SecurityStateReader
+import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.DEFAULT_CATEGORIES
 import com.arduia.expense.domain.RecordIntegrityVerifier
@@ -22,6 +23,7 @@ import com.arduia.expense.storage.repository.SqlDelightCategoryRepository
 import com.arduia.expense.storage.repository.SqlDelightDebtRepository
 import com.arduia.expense.storage.repository.SqlDelightEventRepository
 import com.arduia.expense.storage.repository.SqlDelightFinanceRecordRepository
+import com.arduia.expense.storage.repository.SqlDelightSharedCostRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,7 +34,7 @@ import kotlinx.coroutines.withContext
  * builds feature repositories on top of these.
  */
 class ProExpenseStorage internal constructor(
-    private val database: ProExpenseDatabase,
+    val database: ProExpenseDatabase,
     val appMetaStore: AppMetaLocalStore,
     private val dispatcher: CoroutineDispatcher,
     val financeRecordRepository: FinanceRecordRepository,
@@ -43,6 +45,7 @@ class ProExpenseStorage internal constructor(
     val lockoutRepository: LockoutRepository,
     val securityStateReader: SecurityStateReader,
     val currencySettingsRepository: CurrencySettingsRepository,
+    val sharedCostRepository: SharedCostRepository,
 ) {
 
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
@@ -88,6 +91,7 @@ class ProExpenseStorage internal constructor(
                 lockoutRepository = AppMetaLockoutRepository(appMetaStore),
                 securityStateReader = AppMetaSecurityStateReader(appMetaStore),
                 currencySettingsRepository = AppMetaCurrencySettingsRepository(appMetaStore),
+                sharedCostRepository = SqlDelightSharedCostRepository(database.sharedCostQueries, dispatcher),
             )
         }
     }
