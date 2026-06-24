@@ -41,6 +41,31 @@ class SqlDelightCategoryEventDebtRepositoryTest {
     }
 
     @Test
+    fun category_reorder_persistsSortOrder() = runTest {
+        val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)
+        repo.upsert(Category(CategoryId("cat-1"), "First"))
+        repo.upsert(Category(CategoryId("cat-2"), "Second"))
+        repo.upsert(Category(CategoryId("cat-3"), "Third"))
+
+        repo.reorder(listOf(CategoryId("cat-3"), CategoryId("cat-1"), CategoryId("cat-2")))
+
+        val all = repo.getAll()
+        assertTrue(all is Result.Success)
+        assertEquals(listOf("cat-3", "cat-1", "cat-2"), all.data.map { it.id.value })
+    }
+
+    @Test
+    fun category_observeAll_emitsOrdered() = runTest {
+        val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)
+        repo.upsert(Category(CategoryId("cat-1"), "First", sortOrder = 2))
+        repo.upsert(Category(CategoryId("cat-2"), "Second", sortOrder = 0))
+        repo.upsert(Category(CategoryId("cat-3"), "Third", sortOrder = 1))
+
+        val all = repo.observeAll().first()
+        assertEquals(listOf("cat-2", "cat-3", "cat-1"), all.map { it.id.value })
+    }
+
+    @Test
     fun event_roundTripsBudgetInHomeCurrency() = runTest {
         val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, Dispatchers.Unconfined)
         val event = Event(

@@ -1,0 +1,120 @@
+package com.arduia.expense.storage.repository
+
+import com.arduia.expense.data.Result
+import com.arduia.expense.data.SharedCostInput
+import com.arduia.expense.domain.Amount
+import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.Participant
+import com.arduia.expense.domain.ParticipantId
+import com.arduia.expense.domain.SharedCostId
+import com.arduia.expense.domain.SplitStrategy
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+
+class SqlDelightSharedCostRepositoryTest {
+
+    private val home = CurrencyCode("USD")
+
+    @Test
+    fun create_then_getById_returnsSame() = runTest {
+        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val input = SharedCostInput(
+            title = "Dinner",
+            total = Money(Amount(100_00), home),
+            participants = listOf(
+                Participant(ParticipantId("p1"), "Alice"),
+                Participant(ParticipantId("p2"), "Bob"),
+            ),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+
+        val created = repo.create(input)
+        assertTrue(created is Result.Success)
+        val createdId = (created as Result.Success<*>).data.let { it as com.arduia.expense.domain.SharedCost }.id
+
+        val fetched = repo.getById(createdId)
+        assertTrue(fetched is Result.Success)
+        val fetchedData = (fetched as Result.Success<*>).data as com.arduia.expense.domain.SharedCost?
+        assertNotNull(fetchedData)
+        assertEquals(createdId, fetchedData.id)
+        assertEquals("Dinner", fetchedData.title)
+    }
+
+    @Test
+    fun update_replacesFields() = runTest {
+        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val input = SharedCostInput(
+            title = "Original",
+            total = Money(Amount(100_00), home),
+            participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+
+        val created = repo.create(input)
+        assertTrue(created is Result.Success)
+        val createdSharedCost = (created as Result.Success<*>).data as com.arduia.expense.domain.SharedCost
+        val id = createdSharedCost.id
+
+        val updated = createdSharedCost.copy(title = "Updated")
+        val updateResult = repo.update(updated)
+        assertTrue(updateResult is Result.Success)
+
+        val fetched = repo.getById(id)
+        assertTrue(fetched is Result.Success)
+        val fetchedData = (fetched as Result.Success<*>).data as com.arduia.expense.domain.SharedCost?
+        assertEquals("Updated", fetchedData?.title)
+    }
+
+    @Test
+    fun delete_removesRow() = runTest {
+        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val input = SharedCostInput(
+            title = "Dinner",
+            total = Money(Amount(100_00), home),
+            participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+
+        val created = repo.create(input)
+        assertTrue(created is Result.Success)
+        val createdSharedCost = (created as Result.Success<*>).data as com.arduia.expense.domain.SharedCost
+        val id = createdSharedCost.id
+
+        val deleteResult = repo.delete(id)
+        assertTrue(deleteResult is Result.Success)
+
+        val fetched = repo.getById(id)
+        assertTrue(fetched is Result.Success)
+        val fetchedData = (fetched as Result.Success<*>).data as com.arduia.expense.domain.SharedCost?
+        assertNull(fetchedData)
+    }
+
+    @Test
+    fun observeAll_emitsCreated() = runTest {
+        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val input = SharedCostInput(
+            title = "Dinner",
+            total = Money(Amount(100_00), home),
+            participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+
+        val created = repo.create(input)
+        assertTrue(created is Result.Success)
+
+        val all = repo.observeAll().first()
+        assertEquals(1, all.size)
+        assertEquals("Dinner", all.single().title)
+    }
+}
