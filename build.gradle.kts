@@ -17,6 +17,8 @@ tasks.register("verifyAll") {
         ":shared:testDebugUnitTest",
         ":core:storage:testDebugUnitTest",
         ":feature:logging:testDebugUnitTest",
+        ":feature:currency:testDebugUnitTest",
+        ":feature:history:testDebugUnitTest",
     )
 }
 

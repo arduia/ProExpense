@@ -93,4 +93,34 @@ class AppMetaRepositoriesTest {
         val reader = AppMetaSecurityStateReader(store())
         assertFalse(reader.hasPinConfigured())
     }
+
+    @Test
+    fun currency_defaultsToUsd_thenPersistsHomeCurrency() = runTest {
+        val store = store()
+        val repo = AppMetaCurrencySettingsRepository(store)
+
+        val initial = repo.getHomeCurrency()
+        assertTrue(initial is Result.Success)
+        assertEquals("USD", initial.data!!.code)
+
+        repo.setHomeCurrency(CurrencyCode("EUR"))
+
+        val fetched = repo.getHomeCurrency()
+        assertTrue(fetched is Result.Success)
+        assertEquals("EUR", fetched.data!!.code)
+    }
+
+    @Test
+    fun currency_changeDoesNotResetBudgetOrLockout() = runTest {
+        val store = store()
+        AppMetaBudgetRepository(store).setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
+        AppMetaLockoutRepository(store).recordFailedAttempt(0, maxAttempts = 5, lockoutDurationMs = 1_000)
+
+        AppMetaCurrencySettingsRepository(store).setHomeCurrency(CurrencyCode("GBP"))
+
+        val budget = AppMetaBudgetRepository(store).getMonthlyBudget()
+        assertTrue(budget is Result.Success)
+        assertEquals(100, budget.data!!.amount.valueInCents)
+        assertEquals(1, AppMetaLockoutRepository(store).getFailedAttemptCount())
+    }
 }

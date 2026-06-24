@@ -8,6 +8,11 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.SecurityStateReader
+import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.feature.currency.CurrencyRepository
+import com.arduia.expense.feature.currency.DefaultCurrencyRepository
+import com.arduia.expense.feature.history.DefaultHistoryRepository
+import com.arduia.expense.feature.history.HistoryRepository
 import com.arduia.expense.feature.logging.DefaultLoggingRepository
 import com.arduia.expense.feature.logging.LoggingRepository
 import com.arduia.expense.storage.ProExpenseStorage
@@ -30,6 +35,16 @@ class AppContainer(context: Context) {
     val securityStateReader: SecurityStateReader = storage.securityStateReader
 
     val loggingRepository: LoggingRepository = DefaultLoggingRepository(financeRecordRepository)
+    val currencyRepository: CurrencyRepository = DefaultCurrencyRepository(storage.currencySettingsRepository)
+    val historyRepository: HistoryRepository = DefaultHistoryRepository(
+        financeRecordRepository = financeRecordRepository,
+        homeCurrencyProvider = {
+            when (val result = currencyRepository.getSettings()) {
+                is com.arduia.expense.data.Result.Success -> result.data.homeCurrency
+                is com.arduia.expense.data.Result.Error -> CurrencyCode("USD")
+            }
+        },
+    )
 
     /** First-launch data bootstrap — seeds built-in categories. Safe to call on every start. */
     suspend fun initialize() {
