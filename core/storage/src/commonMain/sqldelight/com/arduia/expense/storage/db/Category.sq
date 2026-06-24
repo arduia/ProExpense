@@ -1,0 +1,17 @@
+CREATE TABLE category (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    is_custom INTEGER NOT NULL DEFAULT 0
+);
+
+insertCategory:
+INSERT OR REPLACE INTO category(id, name, is_custom) VALUES (?, ?, ?);
+
+seedCategory:
+INSERT OR IGNORE INTO category(id, name, is_custom) VALUES (?, ?, ?);
+
+deleteCategory:
+DELETE FROM category WHERE id = ?;
+
+selectAllCategories:
+SELECT * FROM category ORDER BY name;
