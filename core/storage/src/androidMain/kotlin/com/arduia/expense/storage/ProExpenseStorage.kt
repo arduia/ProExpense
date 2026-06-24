@@ -7,6 +7,7 @@ import com.arduia.expense.data.CurrencySettingsRepository
 import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.ImportExportRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.data.SharedCostRepository
@@ -23,6 +24,7 @@ import com.arduia.expense.storage.repository.SqlDelightCategoryRepository
 import com.arduia.expense.storage.repository.SqlDelightDebtRepository
 import com.arduia.expense.storage.repository.SqlDelightEventRepository
 import com.arduia.expense.storage.repository.SqlDelightFinanceRecordRepository
+import com.arduia.expense.storage.repository.SqlDelightImportExportRepository
 import com.arduia.expense.storage.repository.SqlDelightSharedCostRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +48,7 @@ class ProExpenseStorage internal constructor(
     val securityStateReader: SecurityStateReader,
     val currencySettingsRepository: CurrencySettingsRepository,
     val sharedCostRepository: SharedCostRepository,
+    val importExportRepository: ImportExportRepository,
 ) {
 
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
@@ -74,16 +77,17 @@ class ProExpenseStorage internal constructor(
             val database = ProExpenseDatabase(driver)
             val appMetaStore = AppMetaLocalStore(database.appMetaQueries, dispatcher)
             val integrityVerifier = RecordIntegrityVerifier()
+            val financeRecordRepository = SqlDelightFinanceRecordRepository(
+                queries = database.financeRecordQueries,
+                eventQueries = database.eventQueries,
+                integrityVerifier = integrityVerifier,
+                dispatcher = dispatcher,
+            )
             return ProExpenseStorage(
                 database = database,
                 appMetaStore = appMetaStore,
                 dispatcher = dispatcher,
-                financeRecordRepository = SqlDelightFinanceRecordRepository(
-                    queries = database.financeRecordQueries,
-                    eventQueries = database.eventQueries,
-                    integrityVerifier = integrityVerifier,
-                    dispatcher = dispatcher,
-                ),
+                financeRecordRepository = financeRecordRepository,
                 categoryRepository = SqlDelightCategoryRepository(database.categoryQueries, dispatcher),
                 eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher),
                 debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher),
@@ -92,6 +96,10 @@ class ProExpenseStorage internal constructor(
                 securityStateReader = AppMetaSecurityStateReader(appMetaStore),
                 currencySettingsRepository = AppMetaCurrencySettingsRepository(appMetaStore),
                 sharedCostRepository = SqlDelightSharedCostRepository(database.sharedCostQueries, dispatcher),
+                importExportRepository = SqlDelightImportExportRepository(
+                    financeRecordRepository = financeRecordRepository,
+                    dispatcher = dispatcher,
+                ),
             )
         }
     }
