@@ -17,6 +17,9 @@ interface EventRepository {
 
     /** Live, ordered view of every event — backs budget summaries that react to new spending. */
     fun observeAll(): Flow<List<Event>>
+
+    /** Reads the cached running total of records linked to this event via [com.arduia.expense.domain.RecordLink.ToEvent]. */
+    suspend fun getSpent(id: EventId): Result<Money>
 }
 
 data class NewEventInput(

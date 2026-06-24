@@ -82,6 +82,7 @@ class ProExpenseStorage internal constructor(
                 dispatcher = dispatcher,
                 financeRecordRepository = SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
+                    eventQueries = database.eventQueries,
                     integrityVerifier = integrityVerifier,
                     dispatcher = dispatcher,
                 ),

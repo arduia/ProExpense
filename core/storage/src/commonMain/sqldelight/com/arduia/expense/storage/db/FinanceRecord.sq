@@ -27,5 +27,8 @@ SELECT * FROM finance_record ORDER BY recorded_at DESC;
 selectRecordById:
 SELECT * FROM finance_record WHERE id = ?;
 
+sumAmountByEventLink:
+SELECT COALESCE(SUM(amount_cents), 0) FROM finance_record WHERE tag_type = 'EVENT' AND tag_id = ?;
+
 deleteAllRecords:
 DELETE FROM finance_record;

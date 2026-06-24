@@ -60,6 +60,57 @@ class SqlDelightCategoryEventDebtRepositoryTest {
     }
 
     @Test
+    fun event_upsert_preservesCacheAndCreatedAt_acrossEdit() = runTest {
+        val database = inMemoryDatabase()
+        val repo = SqlDelightEventRepository(database.eventQueries, home, Dispatchers.Unconfined)
+        val event = Event(
+            id = EventId("evt-1"),
+            name = "Trip",
+            startEpochMillis = 1,
+            endEpochMillis = 100,
+            budget = Money(Amount(200_00), home),
+            status = EventStatus.ACTIVE,
+        )
+        repo.upsert(event)
+        database.eventQueries.updateEventCache(5_00, 42, "evt-1")
+        val createdAtAfterFirstWrite = database.eventQueries.selectEventById("evt-1").executeAsOne().created_at
+
+        repo.upsert(event.copy(name = "Trip renamed"))
+
+        val row = database.eventQueries.selectEventById("evt-1").executeAsOne()
+        assertEquals(500, row.cached_spent_cents)
+        assertEquals(42, row.cache_updated_at)
+        assertEquals(createdAtAfterFirstWrite, row.created_at)
+    }
+
+    @Test
+    fun getSpent_returnsCachedTotalInHomeCurrency() = runTest {
+        val database = inMemoryDatabase()
+        val repo = SqlDelightEventRepository(database.eventQueries, home, Dispatchers.Unconfined)
+        repo.upsert(
+            Event(
+                id = EventId("evt-1"),
+                name = "Trip",
+                startEpochMillis = 1,
+                endEpochMillis = 100,
+                budget = Money(Amount(200_00), home),
+                status = EventStatus.ACTIVE,
+            ),
+        )
+        database.eventQueries.updateEventCache(15_00, 42, "evt-1")
+
+        val spent = repo.getSpent(EventId("evt-1"))
+        assertTrue(spent is Result.Success)
+        assertEquals(Money(Amount(15_00), home), spent.data)
+    }
+
+    @Test
+    fun getSpent_errorWhenEventMissing() = runTest {
+        val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, home, Dispatchers.Unconfined)
+        assertTrue(repo.getSpent(EventId("nope")) is Result.Error)
+    }
+
+    @Test
     fun debt_findByPersonName_returnsMatchingRows() = runTest {
         val repo = SqlDelightDebtRepository(inMemoryDatabase().debtQueries, home, Dispatchers.Unconfined)
         repo.upsert(debt("d1", "Alice"))

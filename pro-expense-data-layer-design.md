@@ -138,11 +138,33 @@ delegate to it rather than touching `AppMetaQueries` independently.
 
 ## 4. Schema Design
 
-### 4.1 Existing tables — reviewed, no changes needed structurally
-`finance_record`, `event_record`, `debt_record`, `shared_cost`, `app_meta` are reasonable and
-already match the domain models closely (denormalized `participants_json`/`custom_shares_json`
-for `SharedCost` is a deliberate, acceptable simplification — no participant table needed since
-`SplitStrategy` is recomputed from the JSON, not queried relationally).
+### 4.1 Existing tables — hardened since Phase 0 landed (no migration needed, nothing has shipped)
+
+`finance_record`, `event_record`, `debt_record`, `shared_cost`, `app_meta` already match the domain
+models closely (denormalized `participants_json`/`custom_shares_json` for `SharedCost` is a
+deliberate, acceptable simplification — no participant table needed since `SplitStrategy` is
+recomputed from the JSON, not queried relationally). Two additions landed directly in the v1
+`CREATE TABLE` statements (there are zero rows anywhere yet, so this is still the free moment to
+reshape them):
+
+- **`finance_record` integrity** — `integrity_algo`/`integrity_hash` columns, stamped and verified by
+  `RecordIntegrityVerifier` (a pluggable digest registry — SHA-256 default, MD5 supported) over a
+  versioned canonical payload (`FinanceRecord.canonicalPayload()`). Exposed via
+  `FinanceRecordRepository.verifyIntegrity(id)`. Deliberately **not** a device-bound Keystore key:
+  the digest is portable, so the same mechanism doubles as the import/export verification hash
+  without a separate scheme.
+- **`event_record` audit + spend cache** — `created_at` (set once on first insert, preserved across
+  edits), plus `cached_spent_cents`/`cache_updated_at` — a denormalized running total of
+  `finance_record` rows linked via `RecordLink.ToEvent`, recomputed from source of truth (not
+  incremented) in the same SQLDelight `transaction { }` as the triggering `FinanceRecordRepository`
+  write, including the case where a record's link moves from one event to another. Exposed via
+  `EventRepository.getSpent(id): Result<Money>`, read in the table's `homeCurrency` (see below).
+
+`event_record`/`debt_record` intentionally do **not** carry a `currency_code` column —
+`budget_cents`/`amount_cents` are interpreted in a single `homeCurrency` supplied by the composition
+root from app settings (`SqlDelightEventRepository`/`SqlDelightDebtRepository`), not stored per row.
+Multi-currency events/debts (e.g. travel) would need that column revisited as a real follow-up, not
+folded in silently here.
 
 ### 4.2 Gap: missing `category` table
 
@@ -426,6 +448,8 @@ erDiagram
         INTEGER recorded_at
         TEXT tag_type
         TEXT tag_id
+        TEXT integrity_algo
+        TEXT integrity_hash
     }
     category {
         TEXT id PK
@@ -439,6 +463,9 @@ erDiagram
         INTEGER end_epoch_millis
         INTEGER budget_cents
         TEXT status
+        INTEGER created_at
+        INTEGER cached_spent_cents
+        INTEGER cache_updated_at
     }
     debt_record {
         TEXT id PK
