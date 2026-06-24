@@ -3,12 +3,14 @@ package com.arduia.expense.storage
 import android.content.Context
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.ClearDataRepository
 import com.arduia.expense.data.CurrencySettingsRepository
 import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ImportExportRepository
 import com.arduia.expense.data.LockoutRepository
+import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.CurrencyCode
@@ -19,8 +21,10 @@ import com.arduia.expense.storage.repository.AppMetaBudgetRepository
 import com.arduia.expense.storage.repository.AppMetaCurrencySettingsRepository
 import com.arduia.expense.storage.repository.AppMetaLocalStore
 import com.arduia.expense.storage.repository.AppMetaLockoutRepository
+import com.arduia.expense.storage.repository.AppMetaProfileRepository
 import com.arduia.expense.storage.repository.AppMetaSecurityStateReader
 import com.arduia.expense.storage.repository.SqlDelightCategoryRepository
+import com.arduia.expense.storage.repository.SqlDelightClearDataRepository
 import com.arduia.expense.storage.repository.SqlDelightDebtRepository
 import com.arduia.expense.storage.repository.SqlDelightEventRepository
 import com.arduia.expense.storage.repository.SqlDelightFinanceRecordRepository
@@ -49,6 +53,8 @@ class ProExpenseStorage internal constructor(
     val currencySettingsRepository: CurrencySettingsRepository,
     val sharedCostRepository: SharedCostRepository,
     val importExportRepository: ImportExportRepository,
+    val clearDataRepository: ClearDataRepository,
+    val profileRepository: ProfileRepository,
 ) {
 
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
@@ -100,6 +106,8 @@ class ProExpenseStorage internal constructor(
                     financeRecordRepository = financeRecordRepository,
                     dispatcher = dispatcher,
                 ),
+                clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
+                profileRepository = AppMetaProfileRepository(appMetaStore),
             )
         }
     }

@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.material)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
+    implementation("io.insert-koin:koin-compose")
 
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)

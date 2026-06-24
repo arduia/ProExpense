@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
+import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
@@ -23,6 +24,7 @@ import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.splash.SplashScreen
 import java.util.Locale
 import kotlinx.coroutines.delay
+import org.koin.compose.koinInject
 
 private const val SPLASH_DURATION_MILLIS = 1800L
 
@@ -30,6 +32,7 @@ private const val SPLASH_DURATION_MILLIS = 1800L
 fun ExpenseApp(
     features: FeatureUiRegistry = FeatureUiRegistry(),
     modifier: Modifier = Modifier,
+    profileRepository: ProfileRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf(false) }
@@ -138,6 +141,12 @@ fun ExpenseApp(
                         onboardingComplete = true
                     },
                 )
+            }
+
+            LaunchedEffect(onboardingComplete) {
+                if (onboardingComplete && userName.isNotBlank()) {
+                    profileRepository.setDisplayName(userName)
+                }
             }
 
             if (showQuickLog) {

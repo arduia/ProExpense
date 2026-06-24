@@ -17,4 +17,6 @@ val storageModule = module {
     single { get<ProExpenseStorage>().currencySettingsRepository }
     single { get<ProExpenseStorage>().sharedCostRepository }
     single { get<ProExpenseStorage>().importExportRepository }
+    single { get<ProExpenseStorage>().clearDataRepository }
+    single { get<ProExpenseStorage>().profileRepository }
 }
