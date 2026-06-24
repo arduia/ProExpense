@@ -60,11 +60,12 @@ class ProExpenseStorage internal constructor(
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
     suspend fun seedDefaultCategories() = withContext(dispatcher) {
         database.categoryQueries.transaction {
-            DEFAULT_CATEGORIES.forEach { category ->
+            DEFAULT_CATEGORIES.forEachIndexed { index, category ->
                 database.categoryQueries.seedCategory(
                     id = category.id.value,
                     name = category.name,
                     is_custom = if (category.isCustom) 1L else 0L,
+                    sort_order = index.toLong(),
                 )
             }
         }

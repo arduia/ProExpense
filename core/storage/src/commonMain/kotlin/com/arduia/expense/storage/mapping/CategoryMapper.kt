@@ -9,4 +9,5 @@ internal fun CategoryRow.toDomain(): Category =
         id = CategoryId(id),
         name = name,
         isCustom = is_custom != 0L,
+        sortOrder = sort_order.toInt(),
     )
