@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
  */
 class ProExpenseStorage internal constructor(
     private val database: ProExpenseDatabase,
-    private val appMetaStore: AppMetaLocalStore,
+    val appMetaStore: AppMetaLocalStore,
     private val dispatcher: CoroutineDispatcher,
     val financeRecordRepository: FinanceRecordRepository,
     val categoryRepository: CategoryRepository,

@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
  * `home_currency_code` defaults to USD only as a placeholder before onboarding sets the real home
  * currency; budgets/amounts elsewhere are interpreted in this currency.
  */
-internal data class AppMetaSnapshot(
+data class AppMetaSnapshot(
     val monthlyBudgetCents: Long?,
     val homeCurrencyCode: String,
     val failedAttemptCount: Long,
@@ -50,12 +50,12 @@ class AppMetaLocalStore(
 ) {
     private val mutex = Mutex()
 
-    internal suspend fun read(): AppMetaSnapshot = withContext(dispatcher) {
+    suspend fun read(): AppMetaSnapshot = withContext(dispatcher) {
         mutex.withLock { currentSnapshot() }
     }
 
     /** Atomically read-modify-write the row; returns the persisted snapshot. */
-    internal suspend fun update(transform: (AppMetaSnapshot) -> AppMetaSnapshot): AppMetaSnapshot =
+    suspend fun update(transform: (AppMetaSnapshot) -> AppMetaSnapshot): AppMetaSnapshot =
         withContext(dispatcher) {
             mutex.withLock {
                 val updated = transform(currentSnapshot())
