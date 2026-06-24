@@ -53,6 +53,7 @@ class SqlDelightFinanceRecordRepository(
                     type = record.type.toCode(),
                     note = record.note,
                     recorded_at = record.recordedAtEpochMillis,
+                    updated_at = System.currentTimeMillis(),
                     tag_type = record.link.tagType(),
                     tag_id = record.link.tagId(),
                     integrity_algo = checksum.algorithm,

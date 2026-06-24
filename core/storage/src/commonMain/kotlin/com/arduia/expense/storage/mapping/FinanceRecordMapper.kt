@@ -31,7 +31,7 @@ internal fun FinanceRecordRow.toDomain(): FinanceRecord =
         money = Money(Amount(amount_cents), CurrencyCode(currency_code)),
         homeCurrencyMoney = Money(Amount(home_amount_cents ?: amount_cents), CurrencyCode(currency_code)),
         categoryId = CategoryId(category_id),
-        type = type.toRecordType(),
+        type = type.toRecordTypeFromCode(),
         note = note,
         recordedAtEpochMillis = recorded_at,
         link = toRecordLink(tag_type, tag_id),
@@ -65,3 +65,18 @@ internal fun RecordLink.tagId(): String? = when (this) {
 
 private fun requireTagId(tagId: String?, tagType: String): String =
     requireNotNull(tagId) { "tag_id must be present when tag_type is $tagType" }
+
+/**
+ * Enum codec for RecordType — explicit stable codes (EXPENSE=0, INCOME=1).
+ * Never use Kotlin .ordinal as that changes when enum members are reordered.
+ */
+internal fun Long.toRecordTypeFromCode(): RecordType = when (this) {
+    0L -> RecordType.EXPENSE
+    1L -> RecordType.INCOME
+    else -> error("Unknown RecordType code: $this")
+}
+
+internal fun RecordType.toCode(): Long = when (this) {
+    RecordType.EXPENSE -> 0L
+    RecordType.INCOME -> 1L
+}

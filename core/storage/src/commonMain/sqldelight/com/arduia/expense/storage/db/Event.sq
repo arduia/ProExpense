@@ -1,3 +1,6 @@
+-- currency_code: closes gap where Event.budget: Money already carries currency but table didn't store it
+-- status: event status code (ACTIVE=0, CLOSED=1) — explicit codes, never Kotlin .ordinal
+-- created_at: when the Event row itself was created (audit metadata, distinct from business date range)
 -- cached_spent_cents/cache_updated_at: denormalized sum of linked finance_record amounts,
 -- recomputed transactionally on every write to a record linked via RecordLink.ToEvent.
 CREATE TABLE event_record (
@@ -6,7 +9,8 @@ CREATE TABLE event_record (
     start_epoch_millis INTEGER NOT NULL,
     end_epoch_millis INTEGER NOT NULL,
     budget_cents INTEGER NOT NULL,
-    status TEXT NOT NULL,
+    currency_code TEXT NOT NULL,
+    status INTEGER NOT NULL,
     created_at INTEGER NOT NULL,
     cached_spent_cents INTEGER NOT NULL DEFAULT 0,
     cache_updated_at INTEGER NOT NULL DEFAULT 0
@@ -14,8 +18,8 @@ CREATE TABLE event_record (
 
 insertEvent:
 INSERT OR REPLACE INTO event_record(
-    id, name, start_epoch_millis, end_epoch_millis, budget_cents, status, created_at, cached_spent_cents, cache_updated_at
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, name, start_epoch_millis, end_epoch_millis, budget_cents, currency_code, status, created_at, cached_spent_cents, cache_updated_at
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteEvent:
 DELETE FROM event_record WHERE id = ?;

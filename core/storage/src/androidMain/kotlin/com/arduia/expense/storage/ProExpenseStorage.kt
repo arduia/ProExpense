@@ -70,11 +70,6 @@ class ProExpenseStorage internal constructor(
             val driver = DatabaseDriverFactory(context.applicationContext).createDriver(passphrase)
             val database = ProExpenseDatabase(driver)
             val appMetaStore = AppMetaLocalStore(database.appMetaQueries, dispatcher)
-            // Budgets/amounts on Event/Debt are interpreted in the stored home currency (design §4.1).
-            // Read once at startup; if onboarding has not run yet the placeholder default applies.
-            val homeCurrencyCode = database.appMetaQueries.selectMeta().executeAsOneOrNull()
-                ?.home_currency_code ?: DEFAULT_HOME_CURRENCY
-            val homeCurrency = CurrencyCode(homeCurrencyCode)
             val integrityVerifier = RecordIntegrityVerifier()
             return ProExpenseStorage(
                 database = database,
@@ -87,8 +82,8 @@ class ProExpenseStorage internal constructor(
                     dispatcher = dispatcher,
                 ),
                 categoryRepository = SqlDelightCategoryRepository(database.categoryQueries, dispatcher),
-                eventRepository = SqlDelightEventRepository(database.eventQueries, homeCurrency, dispatcher),
-                debtRepository = SqlDelightDebtRepository(database.debtQueries, homeCurrency, dispatcher),
+                eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher),
+                debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher),
                 budgetRepository = AppMetaBudgetRepository(appMetaStore),
                 lockoutRepository = AppMetaLockoutRepository(appMetaStore),
                 securityStateReader = AppMetaSecurityStateReader(appMetaStore),

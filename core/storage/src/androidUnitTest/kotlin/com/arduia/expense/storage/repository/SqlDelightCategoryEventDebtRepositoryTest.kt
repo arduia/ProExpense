@@ -42,7 +42,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
 
     @Test
     fun event_roundTripsBudgetInHomeCurrency() = runTest {
-        val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, home, Dispatchers.Unconfined)
+        val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, Dispatchers.Unconfined)
         val event = Event(
             id = EventId("evt-1"),
             name = "Trip",
@@ -62,7 +62,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
     @Test
     fun event_upsert_preservesCacheAndCreatedAt_acrossEdit() = runTest {
         val database = inMemoryDatabase()
-        val repo = SqlDelightEventRepository(database.eventQueries, home, Dispatchers.Unconfined)
+        val repo = SqlDelightEventRepository(database.eventQueries, Dispatchers.Unconfined)
         val event = Event(
             id = EventId("evt-1"),
             name = "Trip",
@@ -86,7 +86,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
     @Test
     fun getSpent_returnsCachedTotalInHomeCurrency() = runTest {
         val database = inMemoryDatabase()
-        val repo = SqlDelightEventRepository(database.eventQueries, home, Dispatchers.Unconfined)
+        val repo = SqlDelightEventRepository(database.eventQueries, Dispatchers.Unconfined)
         repo.upsert(
             Event(
                 id = EventId("evt-1"),
@@ -106,13 +106,13 @@ class SqlDelightCategoryEventDebtRepositoryTest {
 
     @Test
     fun getSpent_errorWhenEventMissing() = runTest {
-        val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, home, Dispatchers.Unconfined)
+        val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, Dispatchers.Unconfined)
         assertTrue(repo.getSpent(EventId("nope")) is Result.Error)
     }
 
     @Test
     fun debt_findByPersonName_returnsMatchingRows() = runTest {
-        val repo = SqlDelightDebtRepository(inMemoryDatabase().debtQueries, home, Dispatchers.Unconfined)
+        val repo = SqlDelightDebtRepository(inMemoryDatabase().debtQueries, Dispatchers.Unconfined)
         repo.upsert(debt("d1", "Alice"))
         repo.upsert(debt("d2", "Bob"))
 

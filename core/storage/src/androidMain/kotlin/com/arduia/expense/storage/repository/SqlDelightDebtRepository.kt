@@ -8,26 +8,22 @@ import com.arduia.expense.domain.DebtId
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.DebtQueries
 import com.arduia.expense.storage.mapping.toDomain
+import com.arduia.expense.storage.mapping.toCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/**
- * `debt_record` stores `amount_cents` without a currency column; amounts are interpreted in
- * [homeCurrency] (design §4.1).
- */
 class SqlDelightDebtRepository(
     private val queries: DebtQueries,
-    private val homeCurrency: CurrencyCode,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : DebtRepository {
 
     override suspend fun getAll(): Result<List<Debt>> = withContext(dispatcher) {
-        catchingResult { queries.selectAllDebts().executeAsList().map { it.toDomain(homeCurrency) } }
+        catchingResult { queries.selectAllDebts().executeAsList().map { it.toDomain() } }
     }
 
     override suspend fun getById(id: DebtId): Result<Debt?> = withContext(dispatcher) {
-        catchingResult { queries.selectDebtById(id.value).executeAsOneOrNull()?.toDomain(homeCurrency) }
+        catchingResult { queries.selectDebtById(id.value).executeAsOneOrNull()?.toDomain() }
     }
 
     override suspend fun upsert(debt: Debt): Result<Unit> = withContext(dispatcher) {
@@ -36,7 +32,8 @@ class SqlDelightDebtRepository(
                 id = debt.id.value,
                 person_name = debt.personName,
                 amount_cents = debt.money.amount.valueInCents,
-                direction = debt.direction.name,
+                currency_code = debt.money.currency.code,
+                direction = debt.direction.toCode(),
                 due_epoch_millis = debt.dueEpochMillis,
                 is_settled = if (debt.isSettled) 1L else 0L,
             )
@@ -51,7 +48,7 @@ class SqlDelightDebtRepository(
     override suspend fun findByPersonName(personName: String): Result<List<Debt>> =
         withContext(dispatcher) {
             catchingResult {
-                queries.selectDebtsByPerson(personName).executeAsList().map { it.toDomain(homeCurrency) }
+                queries.selectDebtsByPerson(personName).executeAsList().map { it.toDomain() }
             }
         }
 }

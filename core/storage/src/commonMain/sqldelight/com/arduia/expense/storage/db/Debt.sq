@@ -1,15 +1,18 @@
+-- currency_code: closes gap where Debt.money: Money already carries currency but table didn't store it
+-- direction: debt direction code (OWED_TO_ME=0, I_OWE=1) — explicit codes, never Kotlin .ordinal
 CREATE TABLE debt_record (
     id TEXT NOT NULL PRIMARY KEY,
     person_name TEXT NOT NULL,
     amount_cents INTEGER NOT NULL,
-    direction TEXT NOT NULL,
+    currency_code TEXT NOT NULL,
+    direction INTEGER NOT NULL,
     due_epoch_millis INTEGER,
     is_settled INTEGER NOT NULL
 );
 
 insertDebt:
-INSERT OR REPLACE INTO debt_record(id, person_name, amount_cents, direction, due_epoch_millis, is_settled)
-VALUES (?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO debt_record(id, person_name, amount_cents, currency_code, direction, due_epoch_millis, is_settled)
+VALUES (?, ?, ?, ?, ?, ?, ?);
 
 deleteDebt:
 DELETE FROM debt_record WHERE id = ?;

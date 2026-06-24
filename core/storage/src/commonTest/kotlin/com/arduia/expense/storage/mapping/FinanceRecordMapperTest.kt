@@ -25,6 +25,7 @@ class FinanceRecordMapperTest {
             type = 0L, // EXPENSE
             note = "lunch",
             recorded_at = 1_700_000_000_000,
+            updated_at = 1_700_000_000_001,
             tag_type = null,
             tag_id = null,
             integrity_algo = "SHA-256",
