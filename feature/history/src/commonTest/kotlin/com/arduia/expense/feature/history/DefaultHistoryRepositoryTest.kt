@@ -83,15 +83,50 @@ class DefaultHistoryRepositoryTest {
         assertEquals(listOf("a"), byQuery.data.map { it.id.value })
     }
 
-    // getSummary tests deferred — implementation pending
-    /* TODO: implement getSummary in DefaultHistoryRepository
     @Test
-    fun getSummary_monthly_sumsExpensesInMonthOnly() = runTest { }
+    fun getSummary_monthly_sumsExpensesInMonthOnly() = runTest {
+        val records = listOf(
+            record("a", atUtc(2026, 6, 5), 100),
+            record("b", atUtc(2026, 6, 15), 200),
+            record("income", atUtc(2026, 6, 20), 9999, type = RecordType.INCOME),
+            record("other-month", atUtc(2026, 7, 1), 300),
+        )
+        val repo = repository(records)
+
+        val result = repo.getSummary(SummaryPeriod.MONTHLY, atUtc(2026, 6, 10))
+        assertTrue(result is Result.Success)
+        assertEquals(2, result.data.recordCount)
+        assertEquals(300L, result.data.totalInHomeCurrency.amount.valueInCents)
+        assertEquals(usd, result.data.totalInHomeCurrency.currency)
+    }
 
     @Test
-    fun getSummary_daily_boundsToAnchorDay() = runTest { }
+    fun getSummary_daily_boundsToAnchorDay() = runTest {
+        val records = listOf(
+            record("a", atUtc(2026, 6, 10, hour = 0), 100),
+            record("b", atUtc(2026, 6, 10, hour = 23), 200),
+            record("before", atUtc(2026, 6, 9, hour = 23), 400),
+            record("after", atUtc(2026, 6, 11, hour = 0), 500),
+        )
+        val repo = repository(records)
+
+        val result = repo.getSummary(SummaryPeriod.DAILY, atUtc(2026, 6, 10))
+        assertTrue(result is Result.Success)
+        assertEquals(2, result.data.recordCount)
+        assertEquals(300L, result.data.totalInHomeCurrency.amount.valueInCents)
+    }
 
     @Test
-    fun getSummary_emptyPeriod_returnsZeroInHomeCurrency() = runTest { }
-    */
+    fun getSummary_emptyPeriod_returnsZeroInHomeCurrency() = runTest {
+        val records = listOf(
+            record("other-month", atUtc(2026, 7, 1), 300),
+        )
+        val repo = repository(records)
+
+        val result = repo.getSummary(SummaryPeriod.MONTHLY, atUtc(2026, 6, 10))
+        assertTrue(result is Result.Success)
+        assertEquals(0, result.data.recordCount)
+        assertEquals(0L, result.data.totalInHomeCurrency.amount.valueInCents)
+        assertEquals(CurrencyCode("USD"), result.data.totalInHomeCurrency.currency)
+    }
 }
