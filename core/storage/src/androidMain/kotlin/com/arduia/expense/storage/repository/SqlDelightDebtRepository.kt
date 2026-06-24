@@ -1,5 +1,7 @@
 package com.arduia.expense.storage.repository
 
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.CurrencyCode
@@ -11,6 +13,8 @@ import com.arduia.expense.storage.mapping.toDomain
 import com.arduia.expense.storage.mapping.toCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class SqlDelightDebtRepository(
@@ -51,4 +55,10 @@ class SqlDelightDebtRepository(
                 queries.selectDebtsByPerson(personName).executeAsList().map { it.toDomain() }
             }
         }
+
+    override fun observeAll(): Flow<List<Debt>> =
+        queries.selectAllDebts()
+            .asFlow()
+            .mapToList(dispatcher)
+            .map { rows -> rows.map { it.toDomain() } }
 }

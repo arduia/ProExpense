@@ -4,6 +4,7 @@ import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.Money
+import kotlinx.coroutines.flow.Flow
 
 interface DebtRepository {
     suspend fun getAll(): Result<List<Debt>>
@@ -15,6 +16,9 @@ interface DebtRepository {
     suspend fun delete(id: DebtId): Result<Unit>
 
     suspend fun findByPersonName(personName: String): Result<List<Debt>>
+
+    /** Live, ordered (by person name) view of every debt — backs auto-updating Debt screens. */
+    fun observeAll(): Flow<List<Debt>>
 }
 
 data class NewDebtInput(

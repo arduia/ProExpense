@@ -121,6 +121,17 @@ class SqlDelightCategoryEventDebtRepositoryTest {
         assertEquals(listOf("d1"), alice.data.map { it.id.value })
     }
 
+    @Test
+    fun debt_observeAll_emitsUpsertedRowsOrderedByPerson() = runTest {
+        val repo = SqlDelightDebtRepository(inMemoryDatabase().debtQueries, Dispatchers.Unconfined)
+        repo.upsert(debt("d1", "Bob"))
+        repo.upsert(debt("d2", "Alice"))
+
+        val all = repo.observeAll().first()
+        assertEquals(2, all.size)
+        assertEquals(listOf("Alice", "Bob"), all.map { it.personName })
+    }
+
     private fun debt(id: String, person: String) = Debt(
         id = DebtId(id),
         personName = person,
