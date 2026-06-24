@@ -100,6 +100,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.biometric)
     implementation(libs.material)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
 
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)

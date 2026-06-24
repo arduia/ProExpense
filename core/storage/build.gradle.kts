@@ -27,6 +27,8 @@ kotlin {
             implementation(project(":core:data"))
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -40,6 +42,7 @@ kotlin {
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.sqlcipher.android)
             implementation(libs.androidx.security.crypto)
+            implementation(libs.koin.android)
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))

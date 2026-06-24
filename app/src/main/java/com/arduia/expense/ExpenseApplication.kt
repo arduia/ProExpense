@@ -1,28 +1,37 @@
 package com.arduia.expense
 
 import android.app.Application
-import com.arduia.expense.di.AppContainer
+import com.arduia.expense.di.appModule
+import com.arduia.expense.feature.currency.di.currencyModule
+import com.arduia.expense.feature.logging.di.loggingModule
+import com.arduia.expense.storage.ProExpenseStorage
+import com.arduia.expense.storage.di.storageModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.context.startKoin
 
-class ExpenseApplication : Application() {
-
-    /**
-     * Built lazily on first access (from the UI entry point), not in [onCreate]. Constructing it
-     * opens the SQLCipher database and touches the Android Keystore, which is unavailable on the
-     * plain JVM used by Robolectric/screenshot tests — eager init there would crash every UI test.
-     */
-    val container: AppContainer by lazy { AppContainer(this) }
+class ExpenseApplication : Application(), KoinComponent {
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var started = false
 
-    /** Idempotently triggers the first-launch data bootstrap. Call from the UI entry point. */
+    /**
+     * Started lazily from the UI entry point, not [onCreate]. Starting Koin here opens the
+     * SQLCipher database and touches the Android Keystore, which is unavailable on the plain JVM
+     * used by Robolectric/screenshot tests — eager init there would crash every UI test.
+     */
     fun ensureStarted() {
         if (started) return
         started = true
-        appScope.launch { container.initialize() }
+        startKoin {
+            androidContext(this@ExpenseApplication)
+            modules(storageModule, loggingModule, currencyModule, appModule)
+        }
+        appScope.launch { get<ProExpenseStorage>().seedDefaultCategories() }
     }
 }
