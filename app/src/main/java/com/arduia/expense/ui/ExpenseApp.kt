@@ -17,6 +17,8 @@ import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
+import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
@@ -44,6 +46,7 @@ fun ExpenseApp(
     profileRepository: ProfileRepository = koinInject(),
     financeRecordRepository: FinanceRecordRepository = koinInject(),
     categoryRepository: CategoryRepository = koinInject(),
+    currencyRepository: CurrencyRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -54,6 +57,7 @@ fun ExpenseApp(
     var showReports by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
     var userName by rememberSaveable { mutableStateOf("") }
+    var userCurrency by rememberSaveable { mutableStateOf("") }
 
     val records by financeRecordRepository.observeAll().collectAsState(emptyList())
     var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
@@ -190,6 +194,7 @@ fun ExpenseApp(
                 features.onboarding.FirstLaunchFlow(
                     onComplete = { handoff ->
                         userName = handoff.profileName
+                        userCurrency = handoff.currencyCode
                         onboardingComplete = true
                     },
                 )
@@ -199,6 +204,9 @@ fun ExpenseApp(
                 if (onboardingComplete == true && userName.isNotBlank()) {
                     profileRepository.setDisplayName(userName)
                     profileRepository.setOnboardingComplete()
+                    if (userCurrency.isNotBlank()) {
+                        currencyRepository.setHomeCurrency(CurrencyCode(userCurrency))
+                    }
                 }
             }
 
