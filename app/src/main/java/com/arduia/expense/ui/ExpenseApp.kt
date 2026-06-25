@@ -174,6 +174,7 @@ fun ExpenseApp(
             if (onboardingComplete == true) {
                 when (selectedTab) {
                     HomeNavTab.Budget -> features.eventBudget.EventsTab(
+                        events = events,
                         onTabSelected = onTabSelected,
                         onAddClick = { showQuickLog = true },
                     )

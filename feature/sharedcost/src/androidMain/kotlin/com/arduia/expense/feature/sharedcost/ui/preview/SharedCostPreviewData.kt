@@ -15,6 +15,7 @@ data class SharedCostUiState(
     val mode: SharedSplitMode = SharedSplitMode.Equal,
     val participants: List<SharedCostParticipantUi> = emptyList(),
     val showZeroValidation: Boolean = false,
+    val shareRaws: List<String> = emptyList(),
 )
 
 data class SharedCostHistoryItemUi(

@@ -2,7 +2,6 @@ package com.arduia.expense.feature.eventbudget.entry
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +33,7 @@ import org.koin.compose.koinInject
 interface EventBudgetFeatureEntry {
     @Composable
     fun EventsTab(
+        events: List<Event>,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
         modifier: Modifier = Modifier,
@@ -43,6 +43,7 @@ interface EventBudgetFeatureEntry {
 internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
     @Composable
     override fun EventsTab(
+        events: List<Event>,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
         modifier: Modifier,
@@ -50,7 +51,6 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         val scope = rememberCoroutineScope()
         val eventRepository: EventRepository = koinInject()
 
-        val events by eventRepository.observeAll().collectAsState(emptyList())
         var spentByEvent by remember { mutableStateOf<Map<String, Money>>(emptyMap()) }
 
         LaunchedEffect(events) {

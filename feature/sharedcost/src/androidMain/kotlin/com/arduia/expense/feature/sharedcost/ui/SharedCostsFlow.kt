@@ -68,6 +68,15 @@ private fun SharedCostDraft.withParticipants(): SharedCostDraft = copy(
     customShareRaws = SharedCostSplitLogic.syncCustomShares(customShareRaws, peopleCount, rawTotal),
 )
 
+private fun SharedCostUiState.toDraft(): SharedCostDraft = SharedCostDraft(
+    rawTotal = rawTotal,
+    note = note,
+    peopleCount = peopleCount,
+    mode = mode,
+    names = participants.map { it.name },
+    customShareRaws = shareRaws,
+).withParticipants()
+
 @Composable
 fun SharedCostsFlow(
     onDismiss: () -> Unit,
@@ -80,6 +89,14 @@ fun SharedCostsFlow(
         names: List<String>,
         customShareRaws: List<String>,
     ) -> Unit = { _, _, _, _, _ -> },
+    onUpdateSplit: (
+        id: String,
+        title: String,
+        rawTotal: String,
+        mode: SharedSplitMode,
+        names: List<String>,
+        customShareRaws: List<String>,
+    ) -> Unit = { _, _, _, _, _, _ -> },
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
@@ -91,7 +108,7 @@ fun SharedCostsFlow(
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     var draft by remember { mutableStateOf(SharedCostDraft().withParticipants()) }
-    var selectedDetail by remember { mutableStateOf<SharedCostUiState?>(null) }
+    var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
@@ -100,11 +117,18 @@ fun SharedCostsFlow(
     BackHandler(enabled = true) {
         when (currentStep) {
             SharedCostStep.Summary -> {
-                selectedDetail = null
-                step = SharedCostStep.Input.name
+                if (viewingId != null) {
+                    viewingId = null
+                    draft = SharedCostDraft().withParticipants()
+                    step = SharedCostStep.History.name
+                } else {
+                    step = SharedCostStep.Input.name
+                }
             }
             SharedCostStep.Input -> {
-                if (startStep == SharedCostStep.History) {
+                if (viewingId != null) {
+                    step = SharedCostStep.Summary.name
+                } else if (startStep == SharedCostStep.History) {
                     step = SharedCostStep.History.name
                 } else {
                     onDismiss()
@@ -137,13 +161,16 @@ fun SharedCostsFlow(
                     SharedCostsHistoryScreen(
                         items = history,
                         onNewSplit = {
-                            selectedDetail = null
+                            viewingId = null
                             draft = SharedCostDraft().withParticipants()
                             step = SharedCostStep.Input.name
                         },
                         onItemClick = { item ->
-                            selectedDetail = sharedCostDetails[item.id]
-                            step = SharedCostStep.Summary.name
+                            sharedCostDetails[item.id]?.let { detail ->
+                                viewingId = item.id
+                                draft = detail.toDraft()
+                                step = SharedCostStep.Summary.name
+                            }
                         },
                     )
                 }
@@ -151,7 +178,9 @@ fun SharedCostsFlow(
                     SharedCostsInputScreen(
                         state = draft.toUiState(),
                         onBack = {
-                            if (startStep == SharedCostStep.History) {
+                            if (viewingId != null) {
+                                step = SharedCostStep.Summary.name
+                            } else if (startStep == SharedCostStep.History) {
                                 step = SharedCostStep.History.name
                             } else {
                                 onDismiss()
@@ -201,21 +230,36 @@ fun SharedCostsFlow(
                 }
                 SharedCostStep.Summary -> {
                     SharedCostsSummaryScreen(
-                        state = selectedDetail ?: draft.toUiState(),
+                        state = draft.toUiState(),
+                        backLabel = if (viewingId != null) {
+                            stringResource(R.string.shared_back_history)
+                        } else {
+                            stringResource(R.string.shared_back_split)
+                        },
                         onBack = {
-                            selectedDetail = null
-                            step = SharedCostStep.Input.name
+                            if (viewingId != null) {
+                                viewingId = null
+                                draft = SharedCostDraft().withParticipants()
+                                step = SharedCostStep.History.name
+                            } else {
+                                step = SharedCostStep.Input.name
+                            }
                         },
                         onSwitchToCustom = {
-                            selectedDetail = null
                             draft = draft.copy(mode = SharedSplitMode.Custom).withParticipants()
                             step = SharedCostStep.Input.name
                         },
                         onSave = {
                             val title = draft.note.trim().ifEmpty { defaultSplitTitle }
-                            onSaveSplit(title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
+                            val id = viewingId
+                            if (id != null) {
+                                onUpdateSplit(id, title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
+                            } else {
+                                onSaveSplit(title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
+                            }
                             toastMessage = savedToastMessage
                             onSaved()
+                            viewingId = null
                             draft = SharedCostDraft().withParticipants()
                             step = SharedCostStep.History.name
                         },

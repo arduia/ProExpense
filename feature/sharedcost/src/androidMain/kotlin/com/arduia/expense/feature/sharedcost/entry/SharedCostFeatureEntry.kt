@@ -53,8 +53,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             sharedCostDetails = sharedCostDetails,
             onSaveSplit = { title, rawTotal, mode, names, customShareRaws ->
                 scope.launch {
-                    val totalCents = ((AmountInput.numericValue(rawTotal) ?: 0.0) * 100).roundToLong()
-                    val total = Money(Amount(totalCents), CurrencyCode("USD"))
+                    val total = parseTotal(rawTotal)
                     val participants = names.mapIndexed { index, name ->
                         Participant(ParticipantId(newParticipantId(name, index)), name)
                     }
@@ -70,12 +69,35 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
                     )
                 }
             },
+            onUpdateSplit = { id, title, rawTotal, mode, names, customShareRaws ->
+                scope.launch {
+                    val existing = sharedCosts.find { it.id.value == id } ?: return@launch
+                    val total = parseTotal(rawTotal)
+                    val participants = names.mapIndexed { index, name ->
+                        Participant(ParticipantId(newParticipantId(name, index)), name)
+                    }
+                    val splitStrategy = buildSplitStrategy(mode, customShareRaws, participants, total)
+                    sharedCostRepository.update(
+                        existing.copy(
+                            title = title,
+                            total = total,
+                            participants = participants,
+                            splitStrategy = splitStrategy,
+                        ),
+                    )
+                }
+            },
             modifier = modifier,
         )
     }
 }
 
 object SharedCostFeatureUi : SharedCostFeatureEntry by SharedCostFeatureEntryImpl()
+
+private fun parseTotal(rawTotal: String): Money {
+    val totalCents = ((AmountInput.numericValue(rawTotal) ?: 0.0) * 100).roundToLong()
+    return Money(Amount(totalCents), CurrencyCode("USD"))
+}
 
 private fun newParticipantId(name: String, index: Int): String =
     name.trim().lowercase(Locale.US).replace(" ", "-") + "-" + index + "-" + System.currentTimeMillis()
@@ -131,6 +153,9 @@ private fun SharedCost.toUiState(): SharedCostUiState {
                 name = participant.name,
                 shareLabel = moneyLabel(shares[participant.id]?.amount?.valueInCents ?: 0L),
             )
+        },
+        shareRaws = participants.map { participant ->
+            String.format(Locale.US, "%.2f", (shares[participant.id]?.amount?.valueInCents ?: 0L) / 100.0)
         },
     )
 }
