@@ -92,6 +92,7 @@ class SharedCostsScreenshotTest {
                 items = previewSharedHistoryItems,
                 onNewSplit = {},
                 onItemClick = {},
+                onBack = {},
             )
         }
     }

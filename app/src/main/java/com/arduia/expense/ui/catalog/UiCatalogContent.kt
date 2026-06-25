@@ -582,6 +582,7 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
                     items = previewSharedHistoryItems,
                     onNewSplit = {},
                     onItemClick = {},
+                    onBack = {},
                 )
             },
             UiCatalogEntry("shared_zero", "Input · zero validation", edge = true) {

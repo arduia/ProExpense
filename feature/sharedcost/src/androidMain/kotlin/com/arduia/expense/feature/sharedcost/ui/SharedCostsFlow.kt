@@ -172,6 +172,7 @@ fun SharedCostsFlow(
                                 step = SharedCostStep.Summary.name
                             }
                         },
+                        onBack = onDismiss,
                     )
                 }
                 SharedCostStep.Input -> {
