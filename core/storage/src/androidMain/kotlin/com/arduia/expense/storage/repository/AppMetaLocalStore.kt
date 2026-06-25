@@ -23,6 +23,7 @@ data class AppMetaSnapshot(
     val biometricEnrolled: Boolean,
     val biometricWrappedKey: ByteArray?,
     val displayName: String,
+    val onboardingCompleted: Boolean,
 ) {
     companion object {
         val DEFAULT = AppMetaSnapshot(
@@ -35,6 +36,7 @@ data class AppMetaSnapshot(
             biometricEnrolled = false,
             biometricWrappedKey = null,
             displayName = "",
+            onboardingCompleted = false,
         )
     }
 }
@@ -76,6 +78,7 @@ class AppMetaLocalStore(
             biometricEnrolled = row.biometric_enrolled != 0L,
             biometricWrappedKey = row.biometric_wrapped_key,
             displayName = row.display_name,
+            onboardingCompleted = row.onboarding_completed != 0L,
         )
     }
 
@@ -91,6 +94,7 @@ class AppMetaLocalStore(
             biometric_enrolled = if (snapshot.biometricEnrolled) 1L else 0L,
             biometric_wrapped_key = snapshot.biometricWrappedKey,
             display_name = snapshot.displayName,
+            onboarding_completed = if (snapshot.onboardingCompleted) 1L else 0L,
         )
     }
 

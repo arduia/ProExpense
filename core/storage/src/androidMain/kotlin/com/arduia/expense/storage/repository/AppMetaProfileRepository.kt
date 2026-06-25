@@ -17,4 +17,14 @@ class AppMetaProfileRepository(
         val snapshot = store.read()
         snapshot.displayName
     }
+
+    override suspend fun isOnboardingComplete(): Result<Boolean> = catchingResult {
+        val snapshot = store.read()
+        snapshot.onboardingCompleted
+    }
+
+    override suspend fun setOnboardingComplete(): Result<Unit> = catchingResult {
+        store.update { it.copy(onboardingCompleted = true) }
+        Unit
+    }
 }

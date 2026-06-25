@@ -44,7 +44,7 @@ fun ExpenseApp(
     categoryRepository: CategoryRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
-    var onboardingComplete by rememberSaveable { mutableStateOf(false) }
+    var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var showQuickLog by rememberSaveable { mutableStateOf(false) }
     var showSharedCosts by rememberSaveable { mutableStateOf(false) }
     var showDebt by rememberSaveable { mutableStateOf(false) }
@@ -66,6 +66,17 @@ fun ExpenseApp(
             }
             is Result.Error -> {
                 // Log error if needed
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        when (val result = profileRepository.isOnboardingComplete()) {
+            is Result.Success -> {
+                onboardingComplete = result.data
+            }
+            is Result.Error -> {
+                onboardingComplete = false
             }
         }
     }
@@ -122,10 +133,10 @@ fun ExpenseApp(
     }
 
     Box(modifier.fillMaxSize()) {
-        if (showSplash) {
+        if (showSplash || onboardingComplete == null) {
             SplashScreen()
         } else {
-            if (onboardingComplete) {
+            if (onboardingComplete == true) {
                 when (selectedTab) {
                     HomeNavTab.Budget -> features.eventBudget.EventsTab(
                         onTabSelected = onTabSelected,
@@ -167,8 +178,9 @@ fun ExpenseApp(
             }
 
             LaunchedEffect(onboardingComplete) {
-                if (onboardingComplete && userName.isNotBlank()) {
+                if (onboardingComplete == true && userName.isNotBlank()) {
                     profileRepository.setDisplayName(userName)
+                    profileRepository.setOnboardingComplete()
                 }
             }
 
