@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -71,6 +70,15 @@ private fun SharedCostDraft.withParticipants(): SharedCostDraft = copy(
 @Composable
 fun SharedCostsFlow(
     onDismiss: () -> Unit,
+    history: List<SharedCostHistoryItemUi> = previewSharedHistoryItems,
+    sharedCostDetails: Map<String, SharedCostUiState> = emptyMap(),
+    onSaveSplit: (
+        title: String,
+        rawTotal: String,
+        mode: SharedSplitMode,
+        names: List<String>,
+        customShareRaws: List<String>,
+    ) -> Unit = { _, _, _, _, _ -> },
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
@@ -82,15 +90,11 @@ fun SharedCostsFlow(
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     var draft by remember { mutableStateOf(SharedCostDraft().withParticipants()) }
+    var selectedDetail by remember { mutableStateOf<SharedCostUiState?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
-    val history = remember {
-        mutableStateListOf<SharedCostHistoryItemUi>().apply { addAll(previewSharedHistoryItems) }
-    }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
-    val justNowLabel = stringResource(R.string.shared_split_just_now)
 
     val currentStep = SharedCostStep.valueOf(step)
-    val uiState = draft.toUiState()
 
     Box(
         modifier = modifier
@@ -113,22 +117,19 @@ fun SharedCostsFlow(
                     SharedCostsHistoryScreen(
                         items = history,
                         onNewSplit = {
+                            selectedDetail = null
                             draft = SharedCostDraft().withParticipants()
                             step = SharedCostStep.Input.name
                         },
                         onItemClick = { item ->
-                            draft = SharedCostDraft(
-                                rawTotal = item.totalLabel.removePrefix("$").replace(",", ""),
-                                note = item.title,
-                                peopleCount = item.peopleCount,
-                            ).withParticipants()
+                            selectedDetail = sharedCostDetails[item.id]
                             step = SharedCostStep.Summary.name
                         },
                     )
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(
-                        state = uiState,
+                        state = draft.toUiState(),
                         onBack = {
                             if (startStep == SharedCostStep.History) {
                                 step = SharedCostStep.History.name
@@ -180,32 +181,19 @@ fun SharedCostsFlow(
                 }
                 SharedCostStep.Summary -> {
                     SharedCostsSummaryScreen(
-                        state = uiState,
-                        onBack = { step = SharedCostStep.Input.name },
+                        state = selectedDetail ?: draft.toUiState(),
+                        onBack = {
+                            selectedDetail = null
+                            step = SharedCostStep.Input.name
+                        },
                         onSwitchToCustom = {
+                            selectedDetail = null
                             draft = draft.copy(mode = SharedSplitMode.Custom).withParticipants()
                             step = SharedCostStep.Input.name
                         },
                         onSave = {
-                            val totalValue = AmountInput.numericValue(draft.rawTotal) ?: 0.0
-                            val perPerson = if (draft.peopleCount > 0) {
-                                totalValue / draft.peopleCount
-                            } else {
-                                0.0
-                            }
-                            history.add(
-                                0,
-                                SharedCostHistoryItemUi(
-                                    id = "split-" + System.currentTimeMillis(),
-                                    title = draft.note.trim().ifEmpty { defaultSplitTitle },
-                                    peopleCount = draft.peopleCount,
-                                    perPersonLabel = "$" + AmountInput.formatDisplay(
-                                        String.format(java.util.Locale.US, "%.2f", perPerson),
-                                    ),
-                                    dateLabel = justNowLabel,
-                                    totalLabel = "$" + AmountInput.formatDisplay(draft.rawTotal),
-                                ),
-                            )
+                            val title = draft.note.trim().ifEmpty { defaultSplitTitle }
+                            onSaveSplit(title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
                             toastMessage = savedToastMessage
                             onSaved()
                             draft = SharedCostDraft().withParticipants()
