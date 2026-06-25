@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.sharedcost.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -95,6 +96,25 @@ fun SharedCostsFlow(
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
     val currentStep = SharedCostStep.valueOf(step)
+
+    BackHandler(enabled = true) {
+        when (currentStep) {
+            SharedCostStep.Summary -> {
+                selectedDetail = null
+                step = SharedCostStep.Input.name
+            }
+            SharedCostStep.Input -> {
+                if (startStep == SharedCostStep.History) {
+                    step = SharedCostStep.History.name
+                } else {
+                    onDismiss()
+                }
+            }
+            SharedCostStep.History -> {
+                onDismiss()
+            }
+        }
+    }
 
     Box(
         modifier = modifier
