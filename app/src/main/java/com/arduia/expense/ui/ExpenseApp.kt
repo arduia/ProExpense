@@ -86,6 +86,15 @@ fun ExpenseApp(
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (userName.isBlank()) {
+            when (val result = profileRepository.getDisplayName()) {
+                is Result.Success -> if (userName.isBlank()) userName = result.data
+                is Result.Error -> Unit
+            }
+        }
+    }
+
     val homeState = if (records.isEmpty()) {
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
