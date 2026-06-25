@@ -37,10 +37,10 @@ fun ReportsFlow(
             .background(colors.paper),
     ) {
         ReportsScreen(
-            state = if (empty) previewReportsEmpty else periods[index],
+            state = if (empty || periods.isEmpty()) previewReportsEmpty else periods[index % periods.size],
             onBack = onBack,
-            onPrevPeriod = { index = (index - 1 + periods.size) % periods.size },
-            onNextPeriod = { index = (index + 1) % periods.size },
+            onPrevPeriod = { if (periods.isNotEmpty()) index = (index - 1 + periods.size) % periods.size },
+            onNextPeriod = { if (periods.isNotEmpty()) index = (index + 1) % periods.size },
             onLogFirstExpense = onLogFirstExpense,
         )
     }
