@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
@@ -17,18 +18,17 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
- * Mockup host for Reports. With data, the period chevrons cycle the demo months so every
- * state is reachable for testing; [empty] launches the new-user "no data yet" state.
+ * Reports UI flow. [periods] cycles via period chevrons; [empty] shows new-user state.
  */
 @Composable
 fun ReportsFlow(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    periods: List<ReportsUiState> = listOf(previewReports, previewReportsUncategorized),
     empty: Boolean = false,
     onLogFirstExpense: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
-    val periods = remember { listOf(previewReports, previewReportsUncategorized) }
     var index by remember { mutableIntStateOf(0) }
 
     Box(

@@ -3,6 +3,9 @@ package com.arduia.expense.feature.reports.entry
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arduia.expense.feature.reports.ui.ReportsFlow
+import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
+import com.arduia.expense.feature.reports.ui.preview.previewReports
+import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 
 interface ReportsFeatureEntry {
     @Composable
@@ -25,6 +28,7 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         com.arduia.expense.feature.reports.ui.ReportsFlow(
             onBack = onBack,
             modifier = modifier,
+            periods = listOf(previewReports, previewReportsUncategorized),
             empty = empty,
             onLogFirstExpense = onLogFirstExpense,
         )

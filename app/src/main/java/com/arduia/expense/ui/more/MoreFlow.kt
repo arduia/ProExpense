@@ -5,12 +5,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.data.ProfileRepository
+import com.arduia.expense.data.Result
 import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.preview.previewMoreHub
@@ -18,6 +21,7 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
+import org.koin.compose.koinInject
 
 private enum class MoreStep { Hub, Currency, Export, Clear, Reports, Categories }
 
@@ -35,12 +39,26 @@ fun MoreFlow(
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
+    val profileRepository: ProfileRepository = koinInject()
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
+    var displayName by remember { mutableStateOf("") }
 
-    val hubState = remember(selectedCurrency) {
+    LaunchedEffect(Unit) {
+        when (val result = profileRepository.getDisplayName()) {
+            is Result.Success -> displayName = result.data
+            is Result.Error -> Unit
+        }
+    }
+
+    val hubState = remember(selectedCurrency, displayName) {
+        val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "M"
         previewMoreHub.copy(
+            profile = previewMoreHub.profile.copy(
+                initial = profileInitial,
+                name = displayName.ifBlank { previewMoreHub.profile.name },
+            ),
             settings = previewMoreHub.settings.map { setting ->
                 if (setting.id == "currency") setting.copy(value = selectedCurrency) else setting
             },

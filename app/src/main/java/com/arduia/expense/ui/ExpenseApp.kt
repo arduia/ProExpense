@@ -29,6 +29,8 @@ import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.splash.SplashScreen
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
@@ -59,6 +61,9 @@ fun ExpenseApp(
     val noteFallback = stringResource(R.string.home_logged_note_fallback)
     val todaySection = stringResource(R.string.home_today_section)
 
+    val dateLabel = remember { buildDateLabel() }
+    val monthLabel = remember { buildMonthLabel() }
+
     LaunchedEffect(Unit) {
         when (val result = categoryRepository.getAll()) {
             is Result.Success -> {
@@ -84,6 +89,8 @@ fun ExpenseApp(
     val homeState = if (records.isEmpty()) {
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
+            dateLabel = dateLabel,
+            monthLabel = monthLabel,
         )
     } else {
         val totalCents = records.sumOf { it.money.amount.valueInCents }
@@ -103,6 +110,8 @@ fun ExpenseApp(
         }
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
+            dateLabel = dateLabel,
+            monthLabel = monthLabel,
             monthSpend = totalLabel,
             showEmptyHint = false,
             dayGroups = listOf(
@@ -219,4 +228,14 @@ fun ExpenseApp(
             }
         }
     }
+}
+
+private fun buildDateLabel(): String {
+    val calendar = Calendar.getInstance()
+    return SimpleDateFormat("EEE · MMM d", Locale.US).format(calendar.time).uppercase()
+}
+
+private fun buildMonthLabel(): String {
+    val calendar = Calendar.getInstance()
+    return SimpleDateFormat("MMM", Locale.US).format(calendar.time).uppercase()
 }
