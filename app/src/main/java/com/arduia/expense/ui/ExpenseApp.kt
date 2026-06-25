@@ -244,6 +244,7 @@ fun ExpenseApp(
             if (showPinSetup) {
                 features.auth.PinSetupFlow(
                     onDismiss = { showPinSetup = false },
+                    modifier = Modifier,
                 )
             }
 
