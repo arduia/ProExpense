@@ -19,4 +19,5 @@
     <string name="journal_action_cancel">Cancel</string>
     <string name="journal_delete_title">Delete this expense?</string>
     <string name="journal_delete_body">This removes the record and updates any linked event or debt.</string>
+    <string name="journal_note_fallback">New expense</string>
 </resources>

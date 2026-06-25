@@ -20,10 +20,10 @@ import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTransactionRowModel
+import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
-import com.arduia.expense.feature.history.ui.preview.previewJournalDetail
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -35,6 +35,9 @@ fun JournalFlow(
     selectedTab: HomeNavTab,
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
+    days: List<JournalDayUi> = previewJournalList.days,
+    onDeleteRecord: (String) -> Unit = {},
+    onUpdateNote: (String, String) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -50,11 +53,18 @@ fun JournalFlow(
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
     val searchActive = query.isNotBlank()
+    val filteredDays = if (searchActive) {
+        days.mapNotNull { day ->
+            val matches = day.rows.filter { it.note.contains(query, ignoreCase = true) }
+            if (matches.isEmpty()) null else day.copy(rows = matches)
+        }
+    } else {
+        days
+    }
     val listState = JournalListUiState(
         query = query,
         selectedFilterId = selectedFilterId,
-        // Preview-fake search: any query yields the no-results state.
-        days = if (searchActive) emptyList() else previewJournalList.days,
+        days = filteredDays,
         searchActive = searchActive,
     )
 
@@ -90,7 +100,7 @@ fun JournalFlow(
                 )
             } else {
                 JournalDetailScreen(
-                    state = detailStateFor(rowId),
+                    state = detailStateFor(rowId, days),
                     onBack = { selectedRowId = null },
                     onActions = { showActions = true },
                     onLinkedTagClick = {},
@@ -110,7 +120,10 @@ fun JournalFlow(
                 JournalQuickNoteSheetContent(
                     state = JournalQuickNoteUiState(row = row, note = quickNoteText),
                     onNoteChange = { quickNoteText = it },
-                    onSave = { quickNoteRow = null },
+                    onSave = {
+                        onUpdateNote(row.id, quickNoteText)
+                        quickNoteRow = null
+                    },
                 )
             }
         }
@@ -142,6 +155,7 @@ fun JournalFlow(
             confirmLabel = stringResource(R.string.journal_delete_action),
             onConfirm = {
                 showDeleteConfirm = false
+                selectedRowId?.let(onDeleteRecord)
                 selectedRowId = null
             },
             dismissLabel = stringResource(R.string.journal_action_cancel),
@@ -151,22 +165,17 @@ fun JournalFlow(
     }
 }
 
-private fun detailStateFor(rowId: String): JournalDetailUiState = when (rowId) {
-    "t1" -> previewJournalDetail
-    else -> {
-        val row = previewJournalList.days
-            .flatMap { it.rows }
-            .firstOrNull { it.id == rowId }
-        JournalDetailUiState(
-            id = rowId,
-            categoryId = row?.categoryId ?: "food",
-            categoryLabel = (row?.categoryId ?: "food").uppercase(),
-            amountLabel = row?.amount.orEmpty(),
-            dateTimeLabel = row?.meta.orEmpty(),
-            note = row?.note.orEmpty(),
-            linkedTag = null,
-        )
-    }
+private fun detailStateFor(rowId: String, days: List<JournalDayUi>): JournalDetailUiState {
+    val row = days.flatMap { it.rows }.firstOrNull { it.id == rowId }
+    return JournalDetailUiState(
+        id = rowId,
+        categoryId = row?.categoryId ?: "food",
+        categoryLabel = (row?.categoryId ?: "food").uppercase(),
+        amountLabel = row?.amount.orEmpty(),
+        dateTimeLabel = row?.meta.orEmpty(),
+        note = row?.note.orEmpty(),
+        linkedTag = null,
+    )
 }
 
 @Preview(

@@ -22,6 +22,7 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.timeLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.preview.HomeDayGroup
@@ -82,7 +83,7 @@ fun ExpenseApp(
             HomeTransactionItem(
                 categoryId = record.categoryId.value,
                 note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
-                meta = record.recordedAtEpochMillis.toString(), // TODO: format as date/time
+                meta = timeLabel(record.recordedAtEpochMillis),
                 amount = "$" + AmountInput.formatDisplay(
                     String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
                 ),
