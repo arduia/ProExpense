@@ -1,8 +1,12 @@
 package com.arduia.expense.feature.logging.entry
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
@@ -17,6 +21,9 @@ import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.TagLinkKind
+import com.arduia.expense.ui.design.TagLinkOption
+import com.arduia.expense.ui.design.shortDateLabel
+import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import kotlin.math.roundToLong
@@ -39,6 +46,30 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
     ) {
         val scope = rememberCoroutineScope()
         val loggingRepository: LoggingRepository = koinInject()
+        val eventRepository: EventRepository = koinInject()
+        val debtRepository: DebtRepository = koinInject()
+
+        val events by eventRepository.observeAll().collectAsState(emptyList())
+        val debts by debtRepository.observeAll().collectAsState(emptyList())
+
+        val tagEvents = events.map { event ->
+            TagLinkOption(
+                id = event.id.value,
+                title = event.name,
+                subtitle = shortDateLabel(event.startEpochMillis) + " - " + shortDateLabel(event.endEpochMillis),
+                kind = TagLinkKind.Event,
+            )
+        }
+
+        val tagDebts = debts.map { debt ->
+            val direction = if (debt.direction == com.arduia.expense.domain.DebtDirection.OWED_TO_ME) "Lent" else "Owe"
+            TagLinkOption(
+                id = debt.id.value,
+                title = "$direction · ${debt.personName}",
+                subtitle = moneyLabel(debt.money.amount.valueInCents),
+                kind = TagLinkKind.Debt,
+            )
+        }
 
         val onHandoff = onSaved
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
@@ -75,6 +106,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                     }
                 }
             },
+            tagEvents = tagEvents,
+            tagDebts = tagDebts,
             modifier = modifier,
         )
     }
@@ -89,3 +122,6 @@ private fun ExpenseEntryState.toHandoff(): LoggedExpenseHandoff = LoggedExpenseH
     timeLabel = timeLabel,
     linkedTagLabel = linkedTagLabel,
 )
+
+private fun moneyLabel(valueInCents: Long): String =
+    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

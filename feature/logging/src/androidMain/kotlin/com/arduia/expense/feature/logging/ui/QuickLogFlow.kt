@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProToastHost
+import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDraft
@@ -40,6 +41,8 @@ fun QuickLogFlow(
     showDraftPrompt: Boolean = false,
     draftAmountLabel: String? = null,
     onSaved: (ExpenseEntryState) -> Unit = { onDismiss() },
+    tagEvents: List<TagLinkOption> = emptyList(),
+    tagDebts: List<TagLinkOption> = emptyList(),
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -158,6 +161,8 @@ fun QuickLogFlow(
                             toastMessage = savedMessage
                             onSaved(state)
                         },
+                        tagEvents = tagEvents,
+                        tagDebts = tagDebts,
                     )
                 }
             }
