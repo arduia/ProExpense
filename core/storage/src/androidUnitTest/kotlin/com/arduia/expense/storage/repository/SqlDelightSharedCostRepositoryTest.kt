@@ -117,4 +117,32 @@ class SqlDelightSharedCostRepositoryTest {
         assertEquals(1, all.size)
         assertEquals("Dinner", all.single().title)
     }
+
+    @Test
+    fun observeAll_skipsRowWithUnmappableParticipants_insteadOfThrowing() = runTest {
+        val database = inMemoryDatabase()
+        val repo = SqlDelightSharedCostRepository(database.sharedCostQueries, Dispatchers.Unconfined)
+        val input = SharedCostInput(
+            title = "Dinner",
+            total = Money(Amount(100_00), home),
+            participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+        repo.create(input)
+        // An empty participants list fails SharedCost's "at least one participant" invariant on
+        // decode — must not take down the whole flow for every other, valid row.
+        database.sharedCostQueries.insertSharedCost(
+            id = "sc-bad",
+            title = "Corrupt",
+            total_cents = 100_00,
+            currency_code = "USD",
+            recorded_at = 1000,
+            participants_json = "[]",
+            custom_shares_json = null,
+        )
+
+        val all = repo.observeAll().first()
+        assertEquals(listOf("Dinner"), all.map { it.title })
+    }
 }

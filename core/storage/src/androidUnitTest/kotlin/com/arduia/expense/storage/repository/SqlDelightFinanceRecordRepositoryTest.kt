@@ -150,6 +150,33 @@ class SqlDelightFinanceRecordRepositoryTest {
     }
 
     @Test
+    fun observeAll_skipsRowWithUnmappableTagType_insteadOfThrowing() = runTest {
+        val database = inMemoryDatabase()
+        val repo = repository(database)
+        repo.upsert(record("rec-1"))
+        // A row a mapper can't decode (e.g. left behind by a future-version downgrade) must not
+        // take down the whole flow for every other, perfectly valid row.
+        database.financeRecordQueries.insertRecord(
+            id = "rec-bad",
+            amount_cents = 100,
+            currency_code = "USD",
+            home_amount_cents = null,
+            category_id = "food",
+            type = 0L,
+            note = null,
+            recorded_at = 1_000,
+            updated_at = 1_000,
+            tag_type = "BOGUS",
+            tag_id = "x",
+            integrity_algo = "SHA-256",
+            integrity_hash = "dummy",
+        )
+
+        val observed = repo.observeAll().first()
+        assertEquals(listOf("rec-1"), observed.map { it.id.value })
+    }
+
+    @Test
     fun upsert_linkedToEvent_recomputesCachedSpent() = runTest {
         val database = inMemoryDatabase()
         seedEvent(database, "evt-1")

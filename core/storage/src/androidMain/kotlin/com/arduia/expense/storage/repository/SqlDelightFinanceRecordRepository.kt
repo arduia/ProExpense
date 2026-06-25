@@ -99,5 +99,5 @@ class SqlDelightFinanceRecordRepository(
         queries.selectAllRecords()
             .asFlow()
             .mapToList(dispatcher)
-            .map { rows -> rows.map { it.toDomain() } }
+            .map { rows -> rows.mapNotNull { runCatching { it.toDomain() }.getOrNull() } }
 }

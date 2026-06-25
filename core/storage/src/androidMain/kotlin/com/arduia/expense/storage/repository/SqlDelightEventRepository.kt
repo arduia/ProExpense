@@ -61,7 +61,7 @@ class SqlDelightEventRepository(
         queries.selectAllEvents()
             .asFlow()
             .mapToList(dispatcher)
-            .map { rows -> rows.map { it.toDomain() } }
+            .map { rows -> rows.mapNotNull { runCatching { it.toDomain() }.getOrNull() } }
 
     override suspend fun getSpent(id: EventId): Result<Money> = withContext(dispatcher) {
         catchingResult {

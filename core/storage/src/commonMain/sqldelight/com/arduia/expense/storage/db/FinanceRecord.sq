@@ -37,3 +37,6 @@ SELECT COALESCE(SUM(amount_cents), 0) FROM finance_record WHERE tag_type = 'EVEN
 
 deleteAllRecords:
 DELETE FROM finance_record;
+
+clearTagsByType:
+UPDATE finance_record SET tag_type = NULL, tag_id = NULL WHERE tag_type = ?;

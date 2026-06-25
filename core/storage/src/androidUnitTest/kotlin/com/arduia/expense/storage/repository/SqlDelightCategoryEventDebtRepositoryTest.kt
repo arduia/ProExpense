@@ -157,6 +157,56 @@ class SqlDelightCategoryEventDebtRepositoryTest {
         assertEquals(listOf("Alice", "Bob"), all.map { it.personName })
     }
 
+    @Test
+    fun event_observeAll_skipsRowWithUnmappableStatus_insteadOfThrowing() = runTest {
+        val database = inMemoryDatabase()
+        val repo = SqlDelightEventRepository(database.eventQueries, Dispatchers.Unconfined)
+        repo.upsert(
+            Event(
+                id = EventId("evt-1"),
+                name = "Trip",
+                startEpochMillis = 1,
+                endEpochMillis = 100,
+                budget = Money(Amount(200_00), home),
+                status = EventStatus.ACTIVE,
+            ),
+        )
+        database.eventQueries.insertEvent(
+            id = "evt-bad",
+            name = "Corrupt",
+            start_epoch_millis = 0,
+            end_epoch_millis = 0,
+            budget_cents = 0,
+            currency_code = "USD",
+            status = 99L,
+            created_at = 0,
+            cached_spent_cents = 0,
+            cache_updated_at = 0,
+        )
+
+        val all = repo.observeAll().first()
+        assertEquals(listOf("evt-1"), all.map { it.id.value })
+    }
+
+    @Test
+    fun debt_observeAll_skipsRowWithUnmappableDirection_insteadOfThrowing() = runTest {
+        val database = inMemoryDatabase()
+        val repo = SqlDelightDebtRepository(database.debtQueries, Dispatchers.Unconfined)
+        repo.upsert(debt("d1", "Alice"))
+        database.debtQueries.insertDebt(
+            id = "d-bad",
+            person_name = "Corrupt",
+            amount_cents = 100,
+            currency_code = "USD",
+            direction = 99L,
+            due_epoch_millis = null,
+            is_settled = 0L,
+        )
+
+        val all = repo.observeAll().first()
+        assertEquals(listOf("d1"), all.map { it.id.value })
+    }
+
     private fun debt(id: String, person: String) = Debt(
         id = DebtId(id),
         personName = person,

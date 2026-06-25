@@ -67,7 +67,7 @@ fun ClearDataFlow(
                         if (checkedIds.contains("expenses")) clearDataRepository.clearExpenses()
                         if (checkedIds.contains("events")) clearDataRepository.clearEvents()
                         if (checkedIds.contains("debts")) clearDataRepository.clearDebts()
-                        if (checkedIds.contains("shared_costs")) clearDataRepository.clearSharedCosts()
+                        if (checkedIds.contains("shared")) clearDataRepository.clearSharedCosts()
                     }
                     showConfirm = false
                     checkedIds = emptySet()

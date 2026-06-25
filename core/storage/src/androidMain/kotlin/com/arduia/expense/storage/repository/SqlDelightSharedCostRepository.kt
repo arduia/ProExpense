@@ -74,7 +74,7 @@ class SqlDelightSharedCostRepository(
         queries.selectAllSharedCosts()
             .asFlow()
             .mapToList(dispatcher)
-            .map { rows -> rows.map { it.toDomain() } }
+            .map { rows -> rows.mapNotNull { runCatching { it.toDomain() }.getOrNull() } }
 
     override suspend fun getSettlement(sharedCostId: SharedCostId): Result<SettlementSummary> =
         withContext(dispatcher) {

@@ -60,5 +60,5 @@ class SqlDelightDebtRepository(
         queries.selectAllDebts()
             .asFlow()
             .mapToList(dispatcher)
-            .map { rows -> rows.map { it.toDomain() } }
+            .map { rows -> rows.mapNotNull { runCatching { it.toDomain() }.getOrNull() } }
 }
