@@ -122,7 +122,7 @@ private fun SharedCost.toHistoryItemUi(): SharedCostHistoryItemUi {
 private fun SharedCost.toUiState(): SharedCostUiState {
     val shares = shares()
     return SharedCostUiState(
-        rawTotal = (total.amount.valueInCents / 100.0).toString(),
+        rawTotal = String.format(Locale.US, "%.2f", total.amount.valueInCents / 100.0),
         note = title,
         peopleCount = participants.size,
         mode = if (splitStrategy is SplitStrategy.CustomSplit) SharedSplitMode.Custom else SharedSplitMode.Equal,

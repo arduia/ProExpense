@@ -14,13 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.R
 import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
-import com.arduia.expense.domain.CurrencyCode
-import com.arduia.expense.feature.currency.CurrencyRepository
+import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.Category
+import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.tagLabel
+import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
@@ -47,6 +51,9 @@ fun ExpenseApp(
     financeRecordRepository: FinanceRecordRepository = koinInject(),
     categoryRepository: CategoryRepository = koinInject(),
     currencyRepository: CurrencyRepository = koinInject(),
+    eventRepository: EventRepository = koinInject(),
+    debtRepository: DebtRepository = koinInject(),
+    sharedCostRepository: SharedCostRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -61,6 +68,12 @@ fun ExpenseApp(
 
     val records by financeRecordRepository.observeAll().collectAsState(emptyList())
     var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
+    val events by eventRepository.observeAll().collectAsState(emptyList())
+    val debts by debtRepository.observeAll().collectAsState(emptyList())
+    val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
+    val eventNames = remember(events) { events.associate { it.id.value to it.name } }
+    val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
+    val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
 
     val noteFallback = stringResource(R.string.home_logged_note_fallback)
     val todaySection = stringResource(R.string.home_today_section)
@@ -118,7 +131,7 @@ fun ExpenseApp(
                 amount = "$" + AmountInput.formatDisplay(
                     String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
                 ),
-                tag = null, // TODO: derive from record.link
+                tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
             )
         }
         previewHomeEmpty.copy(
