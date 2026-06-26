@@ -138,7 +138,7 @@ fun PinSetupScreen(
                     title = stringResource(R.string.pin_setup_toggle_biometric),
                     subtitle = stringResource(R.string.pin_setup_requires_pin),
                     checked = state.biometricOn,
-                    enabled = false,
+                    enabled = state.biometricCapable,
                     onCheckedChange = onToggleBiometric,
                 )
             }

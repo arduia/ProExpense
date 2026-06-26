@@ -164,7 +164,16 @@ class PinAuthRepositoryImpl(
     override suspend fun incrementFailedAttempts(): Result<Unit> = withContext(dispatcher) {
         try {
             appMetaStore.update { snapshot ->
-                snapshot.copy(failedAttemptCount = snapshot.failedAttemptCount + 1)
+                val newCount = snapshot.failedAttemptCount + 1
+                val lockoutDuration = lockoutDurationMs(newCount)
+                snapshot.copy(
+                    failedAttemptCount = newCount,
+                    lockoutUntil = if (lockoutDuration != null) {
+                        System.currentTimeMillis() + lockoutDuration
+                    } else {
+                        snapshot.lockoutUntil
+                    },
+                )
             }
             Result.Success(Unit)
         } catch (e: Exception) {

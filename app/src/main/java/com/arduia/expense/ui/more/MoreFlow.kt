@@ -13,15 +13,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.feature.auth.PinAuthRepository
+import com.arduia.expense.feature.auth.R as AuthR
 import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -44,6 +50,7 @@ fun MoreFlow(
     onSharedClick: () -> Unit,
     modifier: Modifier = Modifier,
     onPinClick: () -> Unit = {},
+    pinConfigured: Boolean? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -59,9 +66,14 @@ fun MoreFlow(
     var selectedCurrency by remember { mutableStateOf("USD") }
     var displayName by remember { mutableStateOf("") }
     var pinEnabled by remember { mutableStateOf(false) }
+    var showDisablePinConfirm by remember { mutableStateOf(false) }
     var monthlyBudgetLabel by remember { mutableStateOf("Off") }
     var appVersion by remember { mutableStateOf("1.0.0") }
     var homeCurrencyCode by remember { mutableStateOf(CurrencyCode("USD")) }
+
+    LaunchedEffect(pinConfigured) {
+        if (pinConfigured != null) pinEnabled = pinConfigured
+    }
 
     LaunchedEffect(Unit) {
         // Load display name
@@ -153,7 +165,7 @@ fun MoreFlow(
                             "currency" -> step = MoreStep.Currency
                             "export" -> step = MoreStep.Export
                             "clear" -> step = MoreStep.Clear
-                            "pin" -> onPinClick()
+                            "pin" -> if (pinEnabled) showDisablePinConfirm = true else onPinClick()
                             "budget" -> step = MoreStep.Budget
                         }
                     },
@@ -203,6 +215,26 @@ fun MoreFlow(
                 )
             }
         }
+
+        ProAlertDialog(
+            visible = showDisablePinConfirm,
+            icon = ProIconGlyph.Close,
+            iconTint = colors.danger,
+            iconBackground = colors.dangerTint,
+            title = stringResource(AuthR.string.pin_disable_confirm_title),
+            body = buildAnnotatedString { append(stringResource(AuthR.string.pin_disable_confirm_body)) },
+            confirmLabel = stringResource(AuthR.string.pin_disable_confirm_action),
+            onConfirm = {
+                scope.launch {
+                    pinAuthRepository.clearPin()
+                    pinEnabled = false
+                    showDisablePinConfirm = false
+                }
+            },
+            dismissLabel = stringResource(AuthR.string.pin_disable_confirm_cancel),
+            onDismiss = { showDisablePinConfirm = false },
+            confirmVariant = ProButtonVariant.Danger,
+        )
     }
 }
 

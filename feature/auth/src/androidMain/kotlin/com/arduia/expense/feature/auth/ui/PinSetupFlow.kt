@@ -11,8 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.fragment.app.FragmentActivity
 import com.arduia.expense.data.Result
+import com.arduia.expense.feature.auth.BiometricAuthenticator
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R
 import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
@@ -38,6 +41,8 @@ fun PinSetupFlow(
     val reduceMotion = rememberProReduceMotion()
     val pinAuthRepository: PinAuthRepository = koinInject()
     val scope = rememberCoroutineScope()
+    val activity = LocalContext.current as? FragmentActivity
+    val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
 
     var step by remember { mutableStateOf(PinSetupStep.Setup) }
     var pinAuthOn by remember { mutableStateOf(true) }
@@ -73,6 +78,7 @@ fun PinSetupFlow(
                     state = PinSetupUiState(
                         pinAuthOn = pinAuthOn,
                         biometricOn = biometricOn,
+                        biometricCapable = biometricCapable,
                         newPinFilled = newPin.length,
                         confirmPinFilled = confirmPin.length,
                     ),

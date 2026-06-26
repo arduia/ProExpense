@@ -40,4 +40,12 @@
     <string name="pin_recover_heading">Answer your security question</string>
     <string name="pin_recover_attempts">%1$d of %2$d attempts used</string>
     <string name="pin_recover_action">Verify &amp; reset PIN</string>
+    <string name="pin_recover_wrong">Answer didn\'t match. Try again.</string>
+    <string name="pin_biometric_prompt_title">Unlock Pro Expense</string>
+    <string name="pin_biometric_prompt_subtitle">Use your fingerprint to continue</string>
+    <string name="pin_biometric_prompt_negative">Use PIN</string>
+    <string name="pin_disable_confirm_title">Turn off PIN?</string>
+    <string name="pin_disable_confirm_body">Your PIN, security question, and biometric unlock will be removed. Anyone with this device can open Pro Expense.</string>
+    <string name="pin_disable_confirm_action">Turn off</string>
+    <string name="pin_disable_confirm_cancel">Cancel</string>
 </resources>

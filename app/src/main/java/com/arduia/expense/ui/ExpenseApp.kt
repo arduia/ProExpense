@@ -3,6 +3,7 @@ package com.arduia.expense.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,7 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.arduia.expense.R
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.DebtRepository
@@ -24,6 +28,7 @@ import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.tagLabel
+import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.design.AmountInput
@@ -54,9 +59,12 @@ fun ExpenseApp(
     eventRepository: EventRepository = koinInject(),
     debtRepository: DebtRepository = koinInject(),
     sharedCostRepository: SharedCostRepository = koinInject(),
+    pinAuthRepository: PinAuthRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var pinConfigured by remember { mutableStateOf<Boolean?>(null) }
+    var unlocked by rememberSaveable { mutableStateOf(false) }
     var showQuickLog by rememberSaveable { mutableStateOf(false) }
     var showSharedCosts by rememberSaveable { mutableStateOf(false) }
     var showDebt by rememberSaveable { mutableStateOf(false) }
@@ -167,42 +175,70 @@ fun ExpenseApp(
         showSplash = false
     }
 
+    LaunchedEffect(onboardingComplete) {
+        if (onboardingComplete == true) {
+            when (val result = pinAuthRepository.isPinConfigured()) {
+                is Result.Success -> pinConfigured = result.data
+                is Result.Error -> pinConfigured = false
+            }
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                unlocked = false
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     Box(modifier.fillMaxSize()) {
         if (showSplash || onboardingComplete == null) {
             SplashScreen()
         } else {
             if (onboardingComplete == true) {
-                when (selectedTab) {
-                    HomeNavTab.Budget -> features.eventBudget.EventsTab(
-                        events = events,
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
+                if (pinConfigured == true && !unlocked) {
+                    features.auth.PinLockFlow(
+                        onUnlocked = { unlocked = true },
+                        modifier = Modifier,
                     )
-                    HomeNavTab.Journal -> features.history.JournalTab(
-                        selectedTab = selectedTab,
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
-                    )
-                    HomeNavTab.More -> MoreFlow(
-                        features = features,
-                        selectedTab = selectedTab,
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
-                        onDebtClick = { showDebt = true },
-                        onSharedClick = { showSharedCosts = true },
-                        onPinClick = { showPinSetup = true },
-                    )
-                    else -> HomeShell(
-                        state = homeState,
-                        selectedTab = selectedTab,
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
-                        onReportsClick = { showReports = true },
-                        onDebtClick = { showDebt = true },
-                        onSplitClick = { showSharedCosts = true },
-                        onEventsClick = { selectedTab = HomeNavTab.Budget },
-                        onLogFirstExpense = { showQuickLog = true },
-                    )
+                } else if (pinConfigured != null) {
+                    when (selectedTab) {
+                        HomeNavTab.Budget -> features.eventBudget.EventsTab(
+                            events = events,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                        )
+                        HomeNavTab.Journal -> features.history.JournalTab(
+                            selectedTab = selectedTab,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                        )
+                        HomeNavTab.More -> MoreFlow(
+                            features = features,
+                            selectedTab = selectedTab,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                            onDebtClick = { showDebt = true },
+                            onSharedClick = { showSharedCosts = true },
+                            onPinClick = { showPinSetup = true },
+                            pinConfigured = pinConfigured,
+                        )
+                        else -> HomeShell(
+                            state = homeState,
+                            selectedTab = selectedTab,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                            onReportsClick = { showReports = true },
+                            onDebtClick = { showDebt = true },
+                            onSplitClick = { showSharedCosts = true },
+                            onEventsClick = { selectedTab = HomeNavTab.Budget },
+                            onLogFirstExpense = { showQuickLog = true },
+                        )
+                    }
                 }
             } else {
                 features.onboarding.FirstLaunchFlow(
@@ -243,9 +279,21 @@ fun ExpenseApp(
 
             if (showPinSetup) {
                 features.auth.PinSetupFlow(
-                    onDismiss = { showPinSetup = false },
+                    onDismiss = {
+                        showPinSetup = false
+                        unlocked = true
+                    },
                     modifier = Modifier,
                 )
+            }
+
+            LaunchedEffect(showPinSetup) {
+                if (!showPinSetup && onboardingComplete == true) {
+                    when (val result = pinAuthRepository.isPinConfigured()) {
+                        is Result.Success -> pinConfigured = result.data
+                        is Result.Error -> Unit
+                    }
+                }
             }
 
             if (showReports) {
