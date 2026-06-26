@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.design.HomeBottomNav
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.preview.HomeUiState
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.theme.ProArtboard
@@ -32,6 +33,7 @@ fun HomeShell(
     onEventsClick: () -> Unit = {},
     onActiveEventClick: (String) -> Unit = {},
     onLogFirstExpense: () -> Unit = {},
+    onRowClick: (ProTransactionRowModel) -> Unit = {},
     onSeeAll: () -> Unit = {},
     onCustomizeQuickAccess: () -> Unit = {},
 ) {
@@ -55,6 +57,7 @@ fun HomeShell(
             onPinBannerDismiss = onPinBannerDismiss,
             onActiveEventClick = onActiveEventClick,
             onLogFirstExpense = onLogFirstExpense,
+            onRowClick = onRowClick,
             onSeeAll = onSeeAll,
             onCustomizeQuickAccess = onCustomizeQuickAccess,
         )

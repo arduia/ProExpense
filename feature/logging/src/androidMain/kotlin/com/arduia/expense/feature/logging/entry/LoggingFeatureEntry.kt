@@ -89,7 +89,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                         categoryId = CategoryId(state.selectedCategoryId),
                         type = RecordType.EXPENSE,
                         note = state.note.ifBlank { null },
-                        recordedAtEpochMillis = System.currentTimeMillis(),
+                        recordedAtEpochMillis = state.recordedAtEpochMillis,
                         link = when (state.linkedTagKind) {
                             TagLinkKind.Event -> RecordLink.ToEvent(
                                 com.arduia.expense.domain.EventId(state.linkedTagId.orEmpty()),

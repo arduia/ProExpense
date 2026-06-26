@@ -3,13 +3,13 @@ package com.arduia.expense.feature.reports.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.launch
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
@@ -29,20 +29,34 @@ fun ReportsFlow(
     onLogFirstExpense: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
-    var index by remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState(pageCount = { periods.size.coerceAtLeast(1) })
+    val scope = rememberCoroutineScope()
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(colors.paper),
     ) {
-        ReportsScreen(
-            state = if (empty || periods.isEmpty()) previewReportsEmpty else periods[index % periods.size],
-            onBack = onBack,
-            onPrevPeriod = { if (periods.isNotEmpty()) index = (index - 1 + periods.size) % periods.size },
-            onNextPeriod = { if (periods.isNotEmpty()) index = (index + 1) % periods.size },
-            onLogFirstExpense = onLogFirstExpense,
-        )
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize(),
+        ) { page ->
+            ReportsScreen(
+                state = if (empty || periods.isEmpty()) previewReportsEmpty else periods[page % periods.size],
+                onBack = onBack,
+                onPrevPeriod = {
+                    scope.launch {
+                        pagerState.animateScrollToPage((pagerState.currentPage - 1 + periods.size) % periods.size.coerceAtLeast(1))
+                    }
+                },
+                onNextPeriod = {
+                    scope.launch {
+                        pagerState.animateScrollToPage((pagerState.currentPage + 1) % periods.size.coerceAtLeast(1))
+                    }
+                },
+                onLogFirstExpense = onLogFirstExpense,
+            )
+        }
     }
 }
 

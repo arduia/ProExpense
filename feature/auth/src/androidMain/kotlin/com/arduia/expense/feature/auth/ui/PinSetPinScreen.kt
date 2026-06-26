@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,7 +25,10 @@ import com.arduia.expense.feature.auth.R
 import com.arduia.expense.ui.design.PinDots
 import com.arduia.expense.ui.design.PinKeypadGrid
 import com.arduia.expense.ui.design.PinKeypadState
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
 import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.previewPinSetConfirmMismatch
@@ -41,6 +48,7 @@ fun PinSetPinScreen(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val isError = state.mode == PinEntryMode.Error
+    var revealed by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -74,11 +82,26 @@ fun PinSetPinScreen(
                 modifier = Modifier.padding(top = dimens.space8),
             )
         }
-        PinDots(
-            filledCount = state.filledDots,
-            state = if (isError) PinKeypadState.Error else PinKeypadState.Default,
-            modifier = Modifier.padding(top = dimens.space16),
-        )
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            PinDots(
+                filledCount = state.filledDots,
+                state = if (isError) PinKeypadState.Error else PinKeypadState.Default,
+                digitsText = if (revealed) state.digits else null,
+                modifier = Modifier.padding(top = dimens.space16),
+            )
+            ProIcon(
+                glyph = if (revealed) ProIconGlyph.EyeOff else ProIconGlyph.Eye,
+                contentDescription = "Toggle PIN reveal",
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(top = dimens.space16, end = dimens.space16)
+                    .proIconClickable(onClick = { revealed = !revealed }),
+                tint = colors.onSurfaceMuted,
+            )
+        }
 
         Spacer(Modifier.weight(1f))
 

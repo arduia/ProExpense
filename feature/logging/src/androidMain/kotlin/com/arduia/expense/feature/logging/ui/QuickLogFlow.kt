@@ -17,8 +17,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.TagLinkOption
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDraft
@@ -57,6 +61,7 @@ fun QuickLogFlow(
     }
     var state by remember { mutableStateOf(startState) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
+    var showDateTimePicker by remember { mutableStateOf(false) }
 
     val currentStep = QuickLogStep.valueOf(step)
 
@@ -140,7 +145,7 @@ fun QuickLogFlow(
                             state = state.copy(selectedCategoryId = categoryId)
                         },
                         onNoteChange = { note -> state = state.copy(note = note) },
-                        onDateClick = {},
+                        onDateClick = { showDateTimePicker = true },
                         onOpenTagSheet = { state = state.copy(showTagSheet = true) },
                         onCloseTagSheet = { state = state.copy(showTagSheet = false) },
                         onTagSelected = { option ->
@@ -171,6 +176,23 @@ fun QuickLogFlow(
         ProToastHost(
             message = toastMessage,
             onDismiss = { toastMessage = null },
+        )
+
+        DateTimePickerSheet(
+            visible = showDateTimePicker,
+            initialEpochMillis = state.recordedAtEpochMillis,
+            onConfirm = { epochMillis ->
+                val calendar = Calendar.getInstance().apply { timeInMillis = epochMillis }
+                val dateFormat = SimpleDateFormat("MMMM d, yyyy", Locale.US)
+                val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
+                state = state.copy(
+                    recordedAtEpochMillis = epochMillis,
+                    dateLabel = dateFormat.format(calendar.time),
+                    timeLabel = timeFormat.format(calendar.time),
+                )
+                showDateTimePicker = false
+            },
+            onDismiss = { showDateTimePicker = false },
         )
     }
 }

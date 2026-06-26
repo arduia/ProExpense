@@ -119,7 +119,7 @@ fun PinSetupFlow(
                     errorMessage = errorMessage,
                 )
                 PinSetupStep.EnterNew -> PinSetPinScreen(
-                    state = PinEntryUiState(filledDots = entryBuffer.length),
+                    state = PinEntryUiState(filledDots = entryBuffer.length, digits = entryBuffer),
                     headingRes = R.string.pin_set_new_heading,
                     onDigit = { digit ->
                         if (entryBuffer.length < 6) {
@@ -140,6 +140,7 @@ fun PinSetupFlow(
                     state = PinEntryUiState(
                         filledDots = entryBuffer.length,
                         mode = if (confirmError) PinEntryMode.Error else PinEntryMode.Default,
+                        digits = entryBuffer,
                     ),
                     headingRes = R.string.pin_confirm_heading,
                     onDigit = { digit ->

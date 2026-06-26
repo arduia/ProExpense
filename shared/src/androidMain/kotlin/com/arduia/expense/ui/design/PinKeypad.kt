@@ -50,10 +50,12 @@ fun PinDots(
     filledCount: Int,
     modifier: Modifier = Modifier,
     state: PinKeypadState = PinKeypadState.Default,
+    digitsText: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
+    val typography = ProExpenseTheme.typography
     val shakeOffset = remember { Animatable(0f) }
     val dotColor = when (state) {
         PinKeypadState.Error -> colors.danger
@@ -87,18 +89,33 @@ fun PinDots(
     ) {
         repeat(PIN_LENGTH) { index ->
             val filled = index < filledCount.coerceIn(0, PIN_LENGTH)
-            Box(
-                modifier = Modifier
-                    .size(dimens.space12)
-                    .clip(CircleShape)
-                    .then(
-                        if (filled) {
-                            Modifier.background(dotColor)
-                        } else {
-                            Modifier.border(BorderStroke(1.5.dp, emptyBorderColor), CircleShape)
-                        },
-                    ),
-            )
+            if (digitsText != null && index < digitsText.length) {
+                Box(
+                    modifier = Modifier
+                        .size(dimens.space12)
+                        .clip(CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = digitsText[index].toString(),
+                        style = typography.keypadKey,
+                        color = colors.onSurface,
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(dimens.space12)
+                        .clip(CircleShape)
+                        .then(
+                            if (filled) {
+                                Modifier.background(dotColor)
+                            } else {
+                                Modifier.border(BorderStroke(1.5.dp, emptyBorderColor), CircleShape)
+                            },
+                        ),
+                )
+            }
         }
     }
 }

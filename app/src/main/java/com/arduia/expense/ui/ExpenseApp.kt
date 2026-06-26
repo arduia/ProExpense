@@ -33,6 +33,8 @@ import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.dayKey
+import com.arduia.expense.ui.design.dayLabel
 import com.arduia.expense.ui.design.timeLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.more.MoreFlow
@@ -71,6 +73,7 @@ fun ExpenseApp(
     var showPinSetup by rememberSaveable { mutableStateOf(false) }
     var showReports by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
+    var homeSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var userName by rememberSaveable { mutableStateOf("") }
     var userCurrency by rememberSaveable { mutableStateOf("") }
 
@@ -131,30 +134,39 @@ fun ExpenseApp(
         val totalLabel = "$" + AmountInput.formatDisplay(
             String.format(Locale.US, "%.2f", totalCents / 100.0),
         )
-        val items = records.map { record ->
-            HomeTransactionItem(
-                categoryId = record.categoryId.value,
-                note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
-                meta = timeLabel(record.recordedAtEpochMillis),
-                amount = "$" + AmountInput.formatDisplay(
-                    String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
-                ),
-                tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
-            )
-        }
+        val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
+        val dayGroups = sorted
+            .groupBy { dayKey(it.recordedAtEpochMillis) }
+            .toSortedMap(compareByDescending { it })
+            .map { (_, dayRecords) ->
+                val dayTotalCents = dayRecords.sumOf { it.money.amount.valueInCents }
+                val dayTotalLabel = "$" + AmountInput.formatDisplay(
+                    String.format(Locale.US, "%.2f", dayTotalCents / 100.0),
+                )
+                HomeDayGroup(
+                    dayTitle = dayLabel(dayRecords.first().recordedAtEpochMillis),
+                    dayTotal = dayTotalLabel,
+                    transactions = dayRecords.map { record ->
+                        HomeTransactionItem(
+                            id = record.id.value,
+                            categoryId = record.categoryId.value,
+                            note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
+                            meta = timeLabel(record.recordedAtEpochMillis),
+                            amount = "$" + AmountInput.formatDisplay(
+                                String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
+                            ),
+                            tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
+                        )
+                    },
+                )
+            }
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
             dateLabel = dateLabel,
             monthLabel = monthLabel,
             monthSpend = totalLabel,
             showEmptyHint = false,
-            dayGroups = listOf(
-                HomeDayGroup(
-                    dayTitle = todaySection,
-                    dayTotal = totalLabel,
-                    transactions = items,
-                ),
-            ),
+            dayGroups = dayGroups,
         )
     }
 
@@ -216,6 +228,7 @@ fun ExpenseApp(
                             selectedTab = selectedTab,
                             onTabSelected = onTabSelected,
                             onAddClick = { showQuickLog = true },
+                            initialSelectedRowId = homeSelectedRecordId,
                         )
                         HomeNavTab.More -> MoreFlow(
                             features = features,
@@ -237,6 +250,10 @@ fun ExpenseApp(
                             onSplitClick = { showSharedCosts = true },
                             onEventsClick = { selectedTab = HomeNavTab.Budget },
                             onLogFirstExpense = { showQuickLog = true },
+                            onRowClick = { row ->
+                                homeSelectedRecordId = row.id
+                                selectedTab = HomeNavTab.Journal
+                            },
                         )
                     }
                 }
@@ -251,12 +268,20 @@ fun ExpenseApp(
             }
 
             LaunchedEffect(onboardingComplete) {
-                if (onboardingComplete == true && userName.isNotBlank()) {
-                    profileRepository.setDisplayName(userName)
+                if (onboardingComplete == true) {
+                    if (userName.isNotBlank()) {
+                        profileRepository.setDisplayName(userName)
+                    }
                     profileRepository.setOnboardingComplete()
                     if (userCurrency.isNotBlank()) {
                         currencyRepository.setHomeCurrency(CurrencyCode(userCurrency))
                     }
+                }
+            }
+
+            LaunchedEffect(selectedTab) {
+                if (selectedTab == HomeNavTab.Journal) {
+                    homeSelectedRecordId = null
                 }
             }
 

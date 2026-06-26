@@ -9,6 +9,7 @@ data class PinEntryUiState(
     val mode: PinEntryMode = PinEntryMode.Default,
     val countdownLabel: String? = null,
     val showBiometric: Boolean = true,
+    val digits: String = "",
 )
 
 data class PinSetupUiState(

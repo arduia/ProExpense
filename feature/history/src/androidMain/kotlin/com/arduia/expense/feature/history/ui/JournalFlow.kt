@@ -36,6 +36,7 @@ fun JournalFlow(
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
     days: List<JournalDayUi> = previewJournalList.days,
+    initialSelectedRowId: String? = null,
     onDeleteRecord: (String) -> Unit = {},
     onUpdateNote: (String, String) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
@@ -46,7 +47,7 @@ fun JournalFlow(
 
     var query by remember { mutableStateOf("") }
     var selectedFilterId by remember { mutableStateOf("all") }
-    var selectedRowId by remember { mutableStateOf<String?>(null) }
+    var selectedRowId by remember { mutableStateOf(initialSelectedRowId) }
     var quickNoteRow by remember { mutableStateOf<ProTransactionRowModel?>(null) }
     var quickNoteText by remember { mutableStateOf("") }
     var showActions by remember { mutableStateOf(false) }

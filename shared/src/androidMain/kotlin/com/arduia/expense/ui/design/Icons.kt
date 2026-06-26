@@ -33,6 +33,7 @@ enum class ProIconGlyph(@DrawableRes val resId: Int) {
     Note(R.drawable.ic_note),
     User(R.drawable.ic_user),
     Eye(R.drawable.ic_eye),
+    EyeOff(R.drawable.ic_eye_off),
     Fingerprint(R.drawable.ic_fingerprint),
     FeatReports(R.drawable.ic_feat_reports),
     FeatDebt(R.drawable.ic_feat_debt),

@@ -43,6 +43,7 @@ private data class SharedCostDraft(
     val names: List<String> = SharedCostSplitLogic.defaultNames(2),
     val customShareRaws: List<String> = emptyList(),
     val showZeroValidation: Boolean = false,
+    val amountConfirmed: Boolean = false,
 ) {
     fun toUiState(): SharedCostUiState {
         val participants = SharedCostSplitLogic.buildParticipants(
@@ -59,6 +60,7 @@ private data class SharedCostDraft(
             mode = mode,
             participants = participants,
             showZeroValidation = showZeroValidation,
+            amountConfirmed = amountConfirmed,
         )
     }
 }
@@ -219,6 +221,13 @@ fun SharedCostsFlow(
                             updated[index] = raw
                             draft = draft.copy(customShareRaws = updated, mode = SharedSplitMode.Custom)
                         },
+                        onConfirmAmount = {
+                            if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
+                                draft = draft.copy(amountConfirmed = true)
+                            } else {
+                                draft = draft.copy(showZeroValidation = true)
+                            }
+                        },
                         onContinue = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
                                 step = SharedCostStep.Summary.name
@@ -226,7 +235,7 @@ fun SharedCostsFlow(
                                 draft = draft.copy(showZeroValidation = true)
                             }
                         },
-                        showKeypad = draft.rawTotal.isEmpty() || !SharedCostSplitLogic.canSave(draft.rawTotal),
+                        showKeypad = true,
                     )
                 }
                 SharedCostStep.Summary -> {

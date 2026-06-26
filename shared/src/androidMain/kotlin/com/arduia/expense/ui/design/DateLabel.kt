@@ -26,3 +26,8 @@ fun shortDateLabel(epochMillis: Long): String =
 
 fun timeLabel(epochMillis: Long): String =
     SimpleDateFormat("h:mm a", Locale.US).format(Calendar.getInstance().apply { timeInMillis = epochMillis }.time)
+
+fun dayKey(epochMillis: Long): String {
+    val calendar = Calendar.getInstance().apply { timeInMillis = epochMillis }
+    return "%04d-%03d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.DAY_OF_YEAR))
+}

@@ -21,6 +21,7 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.dayLabel
+import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.design.timeLabel
 import java.util.Calendar
@@ -34,6 +35,7 @@ interface HistoryFeatureEntry {
         selectedTab: HomeNavTab,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
+        initialSelectedRowId: String?,
         modifier: Modifier = Modifier,
     )
 }
@@ -44,6 +46,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         selectedTab: HomeNavTab,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
+        initialSelectedRowId: String?,
         modifier: Modifier,
     ) {
         val scope = rememberCoroutineScope()
@@ -70,6 +73,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             onTabSelected = onTabSelected,
             onAddClick = onAddClick,
             days = days,
+            initialSelectedRowId = initialSelectedRowId,
             onDeleteRecord = { rowId ->
                 scope.launch { financeRecordRepository.delete(RecordId(rowId)) }
             },
@@ -125,11 +129,6 @@ private fun FinanceRecord.toRowModel(
     amount = moneyLabel(money.amount.valueInCents),
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
 )
-
-private fun dayKey(epochMillis: Long): String {
-    val calendar = Calendar.getInstance().apply { timeInMillis = epochMillis }
-    return "%04d-%03d".format(calendar.get(Calendar.YEAR), calendar.get(Calendar.DAY_OF_YEAR))
-}
 
 private fun moneyLabel(valueInCents: Long): String =
     "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
