@@ -1,29 +1,29 @@
 package com.arduia.expense.feature.auth
 
 import com.arduia.expense.data.Result
-import com.arduia.expense.storage.repository.AppMetaLocalStore
-import com.arduia.expense.storage.repository.AppMetaSnapshot
+import com.arduia.expense.storage.repository.AppMetaStore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.security.SecureRandom
-import java.security.MessageDigest
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
 /**
- * PIN/biometric/security-question authentication backed by AppMetaLocalStore.
+ * PIN/biometric/security-question authentication backed by AppMetaStore.
  * PIN is hashed using PBKDF2-SHA256 with a unique salt per device.
  * Security question answers are hashed similarly.
  * Biometric enrollment is tracked as a boolean flag + wrapped key placeholder.
  */
 class PinAuthRepositoryImpl(
-    private val appMetaStore: AppMetaLocalStore,
+    private val appMetaStore: AppMetaStore,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : PinAuthRepository {
 
     override suspend fun isPinConfigured(): Result<Boolean> = withContext(dispatcher) {
         try {
             val snapshot = appMetaStore.read()
-            Result.Success(snapshot.securityAnswerHash != null || snapshot.securityQuestionId != null)
+            Result.Success(snapshot.pinHash != null)
         } catch (e: Exception) {
             Result.Error("Failed to check PIN configuration", cause = e)
         }
@@ -35,8 +35,7 @@ class PinAuthRepositoryImpl(
             val hash = hashPin(pin, salt)
             appMetaStore.update { snapshot ->
                 snapshot.copy(
-                    securityAnswerHash = hash,
-                    securityQuestionId = null, // Clear question/answer on new PIN
+                    pinHash = hash,
                     failedAttemptCount = 0,
                     lockoutUntil = null,
                 )
@@ -50,14 +49,12 @@ class PinAuthRepositoryImpl(
     override suspend fun verifyPin(pin: String): Result<Boolean> = withContext(dispatcher) {
         try {
             val snapshot = appMetaStore.read()
-            val storedHash = snapshot.securityAnswerHash
+            val storedHash = snapshot.pinHash
             if (storedHash == null) {
                 return@withContext Result.Success(false)
             }
 
-            // Hash is stored as "salt:hash" where salt was the original used for hashing
-            // For simplicity, we store the salt in the hash. In production, derive it securely.
-            val result = hashPin(pin, extractSalt(storedHash)) == storedHash
+            val result = verifyHash(pin, storedHash)
             Result.Success(result)
         } catch (e: Exception) {
             Result.Error("Failed to verify PIN", cause = e)
@@ -68,8 +65,7 @@ class PinAuthRepositoryImpl(
         try {
             appMetaStore.update { snapshot ->
                 snapshot.copy(
-                    securityAnswerHash = null,
-                    securityQuestionId = null,
+                    pinHash = null,
                     failedAttemptCount = 0,
                     lockoutUntil = null,
                     biometricEnrolled = false,
@@ -115,7 +111,7 @@ class PinAuthRepositoryImpl(
             if (storedHash == null) {
                 return@withContext Result.Success(false)
             }
-            val result = hashPin(answer, extractSalt(storedHash)) == storedHash
+            val result = verifyHash(answer, storedHash)
             Result.Success(result)
         } catch (e: Exception) {
             Result.Error("Failed to verify security answer", cause = e)
@@ -208,16 +204,44 @@ class PinAuthRepositoryImpl(
     }
 
     private fun hashPin(pin: String, salt: ByteArray): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        digest.update(salt)
-        digest.update(pin.toByteArray(Charsets.UTF_8))
-        val hash = digest.digest().joinToString("") { "%02x".format(it) }
+        val iterations = 120_000
+        val keyLength = 256
+        val spec = PBEKeySpec(pin.toCharArray(), salt, iterations, keyLength)
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        val key = factory.generateSecret(spec)
+        val hashBytes = key.encoded
         val saltHex = salt.joinToString("") { "%02x".format(it) }
-        return "$saltHex:$hash"
+        val hashHex = hashBytes.joinToString("") { "%02x".format(it) }
+        return "v2:$iterations:$saltHex:$hashHex"
     }
 
-    private fun extractSalt(storedHash: String): ByteArray {
-        val saltHex = storedHash.substringBefore(":")
-        return saltHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+    private fun verifyHash(input: String, storedHash: String): Boolean {
+        return if (storedHash.startsWith("v2:")) {
+            verifyPbkdf2(input, storedHash)
+        } else {
+            false
+        }
+    }
+
+    private fun verifyPbkdf2(input: String, storedHash: String): Boolean {
+        val parts = storedHash.split(":")
+        if (parts.size != 4) return false
+        val iterations = parts[1].toIntOrNull() ?: return false
+        val saltHex = parts[2]
+        val expectedHashHex = parts[3]
+
+        val salt = saltHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+        val spec = PBEKeySpec(input.toCharArray(), salt, iterations, 256)
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        val key = factory.generateSecret(spec)
+        val computedHashHex = key.encoded.joinToString("") { "%02x".format(it) }
+        return computedHashHex == expectedHashHex
+    }
+
+    private fun lockoutDurationMs(failedAttemptCount: Long): Long? = when {
+        failedAttemptCount <= 4 -> null
+        failedAttemptCount == 5L -> 30 * 1000
+        failedAttemptCount == 6L -> 60 * 1000
+        else -> 5 * 60 * 1000
     }
 }

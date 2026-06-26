@@ -51,15 +51,15 @@ data class AppMetaSnapshot(
 class AppMetaLocalStore(
     private val queries: AppMetaQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) {
+) : AppMetaStore {
     private val mutex = Mutex()
 
-    suspend fun read(): AppMetaSnapshot = withContext(dispatcher) {
+    override suspend fun read(): AppMetaSnapshot = withContext(dispatcher) {
         mutex.withLock { currentSnapshot() }
     }
 
     /** Atomically read-modify-write the row; returns the persisted snapshot. */
-    suspend fun update(transform: (AppMetaSnapshot) -> AppMetaSnapshot): AppMetaSnapshot =
+    override suspend fun update(transform: (AppMetaSnapshot) -> AppMetaSnapshot): AppMetaSnapshot =
         withContext(dispatcher) {
             mutex.withLock {
                 val updated = transform(currentSnapshot())
