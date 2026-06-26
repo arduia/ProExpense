@@ -93,6 +93,7 @@ class PinScreenshotTest {
     fun edge_pin_mismatch() = capture {
         PinSetPinScreen(
             state = previewPinSetConfirmMismatch,
+            headingRes = R.string.pin_confirm_heading,
             onDigit = {},
             onBackspace = {},
             onBack = {},

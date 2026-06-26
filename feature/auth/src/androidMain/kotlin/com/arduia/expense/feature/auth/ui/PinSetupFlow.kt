@@ -8,17 +8,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.data.Result
+import com.arduia.expense.feature.auth.PinAuthRepository
+import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
+import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.PinSetupUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
-private enum class PinSetupStep { Setup, Security }
+private enum class PinSetupStep { Setup, EnterNew, EnterConfirm, Security }
 
 @Composable
 fun PinSetupFlow(
@@ -28,11 +36,21 @@ fun PinSetupFlow(
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
+    val pinAuthRepository: PinAuthRepository = koinInject()
+    val scope = rememberCoroutineScope()
 
     var step by remember { mutableStateOf(PinSetupStep.Setup) }
     var pinAuthOn by remember { mutableStateOf(true) }
+    var biometricOn by remember { mutableStateOf(false) }
+    var newPin by remember { mutableStateOf("") }
+    var confirmPin by remember { mutableStateOf("") }
+    var entryBuffer by remember { mutableStateOf("") }
+    var confirmError by remember { mutableStateOf(false) }
     var selectedQuestion by remember { mutableStateOf("pet") }
     var answer by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val canSave = pinAuthOn && newPin.length == 6 && confirmPin.length == 6 && answer.isNotBlank()
 
     Box(
         modifier = modifier
@@ -52,14 +70,94 @@ fun PinSetupFlow(
         ) { target ->
             when (target) {
                 PinSetupStep.Setup -> PinSetupScreen(
-                    state = PinSetupUiState(pinAuthOn = pinAuthOn),
+                    state = PinSetupUiState(
+                        pinAuthOn = pinAuthOn,
+                        biometricOn = biometricOn,
+                        newPinFilled = newPin.length,
+                        confirmPinFilled = confirmPin.length,
+                    ),
                     onTogglePin = { pinAuthOn = it },
-                    onToggleBiometric = {},
-                    onRevealNew = {},
-                    onRevealConfirm = {},
+                    onToggleBiometric = { biometricOn = it },
+                    onRevealNew = {
+                        entryBuffer = ""
+                        step = PinSetupStep.EnterNew
+                    },
+                    onRevealConfirm = {
+                        entryBuffer = ""
+                        confirmError = false
+                        step = PinSetupStep.EnterConfirm
+                    },
                     onRecoveryClick = { step = PinSetupStep.Security },
-                    onSave = { step = PinSetupStep.Security },
+                    onSave = {
+                        errorMessage = null
+                        scope.launch {
+                            val pinResult = pinAuthRepository.setPin(newPin)
+                            if (pinResult is Result.Error) {
+                                errorMessage = pinResult.message
+                                return@launch
+                            }
+                            val questionResult =
+                                pinAuthRepository.setSecurityQuestion(selectedQuestion, answer)
+                            if (questionResult is Result.Error) {
+                                errorMessage = questionResult.message
+                                return@launch
+                            }
+                            if (biometricOn) {
+                                pinAuthRepository.enrollBiometric()
+                            }
+                            onDismiss()
+                        }
+                    },
                     onBack = onDismiss,
+                    saveEnabled = canSave,
+                    errorMessage = errorMessage,
+                )
+                PinSetupStep.EnterNew -> PinSetPinScreen(
+                    state = PinEntryUiState(filledDots = entryBuffer.length),
+                    headingRes = R.string.pin_set_new_heading,
+                    onDigit = { digit ->
+                        if (entryBuffer.length < 6) {
+                            entryBuffer += digit
+                            if (entryBuffer.length == 6) {
+                                newPin = entryBuffer
+                                confirmPin = ""
+                                step = PinSetupStep.Setup
+                            }
+                        }
+                    },
+                    onBackspace = {
+                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
+                    },
+                    onBack = { step = PinSetupStep.Setup },
+                )
+                PinSetupStep.EnterConfirm -> PinSetPinScreen(
+                    state = PinEntryUiState(
+                        filledDots = entryBuffer.length,
+                        mode = if (confirmError) PinEntryMode.Error else PinEntryMode.Default,
+                    ),
+                    headingRes = R.string.pin_confirm_heading,
+                    onDigit = { digit ->
+                        if (confirmError) {
+                            confirmError = false
+                            entryBuffer = ""
+                        }
+                        if (entryBuffer.length < 6) {
+                            entryBuffer += digit
+                            if (entryBuffer.length == 6) {
+                                if (entryBuffer == newPin) {
+                                    confirmPin = entryBuffer
+                                    step = PinSetupStep.Setup
+                                } else {
+                                    confirmError = true
+                                    entryBuffer = ""
+                                }
+                            }
+                        }
+                    },
+                    onBackspace = {
+                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
+                    },
+                    onBack = { step = PinSetupStep.Setup },
                 )
                 PinSetupStep.Security -> PinSecurityQuestionScreen(
                     questions = pinSecurityQuestions,
@@ -67,7 +165,7 @@ fun PinSetupFlow(
                     answer = answer,
                     onSelect = { selectedQuestion = it },
                     onAnswerChange = { answer = it },
-                    onEnable = onDismiss,
+                    onEnable = { step = PinSetupStep.Setup },
                     onBack = { step = PinSetupStep.Setup },
                 )
             }

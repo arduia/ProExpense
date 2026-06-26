@@ -54,6 +54,8 @@ fun PinSetupScreen(
     onSave: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    saveEnabled: Boolean = true,
+    errorMessage: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -196,9 +198,21 @@ fun PinSetupScreen(
             }
         }
 
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                style = typography.caption,
+                color = colors.danger,
+                modifier = Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
+            )
+        }
+
         ProButton(
             text = stringResource(R.string.pin_setup_save),
             onClick = onSave,
+            enabled = saveEnabled,
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,

@@ -31,6 +31,7 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 @Composable
 fun PinSetPinScreen(
     state: PinEntryUiState,
+    headingRes: Int,
     onDigit: (Int) -> Unit,
     onBackspace: () -> Unit,
     onBack: () -> Unit,
@@ -59,7 +60,7 @@ fun PinSetPinScreen(
         }
 
         Text(
-            text = stringResource(R.string.pin_confirm_heading),
+            text = stringResource(headingRes),
             style = typography.profileScreenTitle,
             color = colors.onSurface,
             modifier = Modifier.padding(top = dimens.space24),
@@ -100,6 +101,7 @@ private fun PinSetMismatchPreview() {
     ProExpenseTheme {
         PinSetPinScreen(
             state = previewPinSetConfirmMismatch,
+            headingRes = R.string.pin_confirm_heading,
             onDigit = {},
             onBackspace = {},
             onBack = {},
