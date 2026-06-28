@@ -1,41 +1,164 @@
-# User Story Template
+# User Story
 
-> Copy a story block below when adding stories to any feature's `user-stories.md`.
-> Keep it **lightweight**: inline priority on the heading (no metadata table), the
-> "As a / I want / so that" statement, and **Given/When/Then** acceptance criteria.
+## Title
 
-**Priority tags:** 🔴 Must · 🟡 Should · 🔵 Phase 2
-**Personas:** 🎓 Maya (Student) · 🏠 Siti (Housekeeper) · ✈️ Carlos (Traveler) · 👫 Aiko (Cost Sharer) ·
-💼 Raj (Freelancer) · 🧳 Sophie (Expat) · 🎉 James (Event Organizer) · 👴 Mr. Chen (Retiree) ·
-🛒 Amara (Vendor) · "any user" when persona-agnostic.
-
-**ID scheme:** `US-<SERVICE>-<n>` (e.g. `US-LOG-2`).
+> Short, descriptive title
 
 ---
 
-## Template
+## User Story
 
-```markdown
-### US-<SERVICE>-<n> — <Short title> · <🔴 Must | 🟡 Should | 🔵 Phase 2>
-> **As a** <persona>, **I want** <goal/action>, **so that** <benefit/value>.
-
-- **AC1** — **Given** <precondition/context>, **when** <action>, **then** <observable, testable outcome>.
-- **AC2** — **Given** <…>, **when** <…>, **then** <…>.
-
-**Notes / edge cases** *(optional)*
-- <constraints, error states, dependencies, or out-of-scope items>
-```
+**As a** `<user/persona>`
+**I want to** `<goal/action>`
+**So that** `<business value / user benefit>`
 
 ---
 
-## Filled example
+## Description
 
-### US-LOG-2 — Block an empty amount · 🔴 Must
-> **As** any user, **I want** the app to stop me saving a $0 entry, **so that** I don't create meaningless records.
+### Background
 
-- **AC1** — **Given** the amount is $0 or empty, **when** I view the Amount screen, **then** `Save` and `Next` are disabled (`canProceed = value > 0`).
-- **AC2** — **Given** the amount is $0, **when** I tap a disabled `Save`/`Next`, **then** the field shakes (±4dp) and shows "Amount must be greater than $0".
-- **AC3** — **Given** I am typing an amount, **when** I enter digits, **then** the whole part is capped at 7 digits, the fraction at 2, a single decimal is allowed, leading zeros are stripped (except "0."), and commas group live.
+Describe the context and why this feature is needed.
 
-**Notes / edge cases**
-- Back from Amount with no value navigates away silently — no save, no prompt.
+### Scope
+
+**In Scope**
+
+* Item 1
+* Item 2
+
+**Out of Scope**
+
+* Item 1
+* Item 2
+
+---
+
+## Acceptance Criteria
+
+### Scenario 1
+
+**Given**
+
+* ...
+
+**When**
+
+* ...
+
+**Then**
+
+* ...
+
+### Scenario 2
+
+**Given**
+
+* ...
+
+**When**
+
+* ...
+
+**Then**
+
+* ...
+
+---
+
+## Functional Requirements
+
+* [ ] Requirement 1
+* [ ] Requirement 2
+* [ ] Requirement 3
+
+---
+
+## Non-Functional Requirements
+
+* [ ] Performance
+* [ ] Security
+* [ ] Accessibility
+* [ ] Reliability
+* [ ] Logging & Monitoring
+* [ ] Compliance (if applicable)
+
+---
+
+## Business Rules
+
+* Rule 1
+* Rule 2
+
+---
+
+## UI / UX Notes
+
+* Design / Mockup:
+* User Flow:
+* Validation Rules:
+* Error Messages:
+* Empty States:
+* Responsive Behavior:
+
+---
+
+## API / Technical Notes
+
+* Endpoints:
+* Request/Response:
+* Database Changes:
+* Feature Flags:
+* Dependencies:
+
+---
+
+## Success Metrics
+
+| Metric          | Target |
+| --------------- | ------ |
+| Adoption        |        |
+| Completion Rate |        |
+| Performance     |        |
+| Error Rate      |        |
+
+---
+
+## Assumptions
+
+* Assumption 1
+* Assumption 2
+
+---
+
+## Risks
+
+* Risk 1
+* Risk 2
+
+---
+
+## Dependencies
+
+* Story/Task:
+* External Service:
+* Team:
+
+---
+
+## Definition of Done
+
+* [ ] Acceptance criteria met
+* [ ] Code reviewed
+* [ ] Unit tests completed
+* [ ] Integration tests passed
+* [ ] Documentation updated
+* [ ] QA approved
+* [ ] Product Owner accepted
+* [ ] Deployed to target environment
+
+---
+
+## Notes
+
+Additional information, links, or references.
