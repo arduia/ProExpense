@@ -5,20 +5,23 @@
 > ([`../finance_tracker_product.md`](../finance_tracker_product.md)) and the user journey captured in
 > the screen specs ([`../../design-system-spec/screens/`](../../design-system-spec/screens/)).
 >
-> One folder per feature; each folder holds that feature's `user-stories.md`. This fulfils Stage 3 →
-> *"Write user stories for all MVP use cases"* in the PRD roadmap.
+> One folder per feature. Each story lives in its own file (`US-<SERVICE>-<n>.md`), following
+> [`TEMPLATE.md`](TEMPLATE.md); each feature folder's `user-stories.md` is an index table linking to
+> its story files. This fulfils Stage 3 → *"Write user stories for all MVP use cases"* in the PRD
+> roadmap.
 
 ---
 
 ## How to read these documents
 
-**Story format** — see [`TEMPLATE.md`](TEMPLATE.md) for the canonical block to copy.
+**Story format** — see [`TEMPLATE.md`](TEMPLATE.md) for the canonical structure every story file
+follows.
 
-> **As a** \<persona>, **I want** \<goal>, **so that** \<benefit>.
+> **As** \<persona>, **I want to** \<goal>, **so that** \<benefit>.
 
-Each story has a stable **ID** (`US-<SERVICE>-<n>`), an inline **priority** on its heading, and
-**acceptance criteria** written in **Given / When / Then** form, grounded in the screen behaviors and
-edge cases so they are testable.
+Each story file has a stable **ID** (`US-<SERVICE>-<n>`), a **priority** and **status** in its
+header, and **acceptance criteria** written as numbered Given/When/Then **Scenario** blocks,
+grounded in the screen behaviors and edge cases so they are testable.
 
 **Priority** (from PRD Feature List):
 
