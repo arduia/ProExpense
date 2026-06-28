@@ -516,7 +516,7 @@ A complete end-to-end journey from idea to shipped product.
 
 ### Stage 3 — Pre-Development 📐
 - [ ] Finalize PRD with all sections
-- [ ] Write user stories for all MVP use cases
+- [x] Write user stories for all MVP use cases — see [`user_stories.md`](user_stories.md)
 - [ ] Define data models & local DB schema
 - [ ] Define API contracts (import/export formats)
 - [ ] Set up KMP project structure
