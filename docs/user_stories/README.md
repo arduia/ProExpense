@@ -12,12 +12,13 @@
 
 ## How to read these documents
 
-**Story format**
+**Story format** — see [`TEMPLATE.md`](TEMPLATE.md) for the canonical block to copy.
 
 > **As a** \<persona>, **I want** \<goal>, **so that** \<benefit>.
 
-Each story has a stable **ID** (`US-<SERVICE>-<n>`), a **priority**, and **acceptance criteria** (AC)
-grounded in the screen behaviors and edge cases. ACs are written to be testable.
+Each story has a stable **ID** (`US-<SERVICE>-<n>`), an inline **priority** on its heading, and
+**acceptance criteria** written in **Given / When / Then** form, grounded in the screen behaviors and
+edge cases so they are testable.
 
 **Priority** (from PRD Feature List):
 
