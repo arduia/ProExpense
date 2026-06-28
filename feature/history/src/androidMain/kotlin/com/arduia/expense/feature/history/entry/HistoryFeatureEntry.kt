@@ -36,6 +36,7 @@ interface HistoryFeatureEntry {
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
         initialSelectedRowId: String?,
+        onEditRecord: (String) -> Unit,
         modifier: Modifier = Modifier,
     )
 }
@@ -47,6 +48,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
         initialSelectedRowId: String?,
+        onEditRecord: (String) -> Unit,
         modifier: Modifier,
     ) {
         val scope = rememberCoroutineScope()
@@ -85,6 +87,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                     }
                 }
             },
+            onEditRecord = onEditRecord,
             modifier = modifier,
         )
     }

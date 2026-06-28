@@ -15,6 +15,7 @@ import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetails
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLimit
+import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -145,6 +146,19 @@ class AddExpenseScreenshotTest {
                 onTagSelected = {},
                 onClearTag = {},
                 onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_date_time_sheet() {
+        capture {
+            // Fixed instant keeps the baseline deterministic across runs.
+            DateTimePickerSheet(
+                visible = true,
+                initialEpochMillis = 1_716_600_000_000L,
+                onConfirm = {},
+                onDismiss = {},
             )
         }
     }

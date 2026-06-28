@@ -74,6 +74,7 @@ fun ExpenseApp(
     var showReports by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
     var homeSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
+    var editRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var userName by rememberSaveable { mutableStateOf("") }
     var userCurrency by rememberSaveable { mutableStateOf("") }
 
@@ -229,6 +230,7 @@ fun ExpenseApp(
                             onTabSelected = onTabSelected,
                             onAddClick = { showQuickLog = true },
                             initialSelectedRowId = homeSelectedRecordId,
+                            onEditRecord = { editRecordId = it },
                         )
                         HomeNavTab.More -> MoreFlow(
                             features = features,
@@ -289,6 +291,14 @@ fun ExpenseApp(
                 features.logging.QuickLogFlow(
                     onDismiss = { showQuickLog = false },
                     onSaved = onExpenseSaved,
+                )
+            }
+
+            editRecordId?.let { recordId ->
+                features.logging.EditExpenseFlow(
+                    recordId = recordId,
+                    onDismiss = { editRecordId = null },
+                    onSaved = { editRecordId = null },
                 )
             }
 

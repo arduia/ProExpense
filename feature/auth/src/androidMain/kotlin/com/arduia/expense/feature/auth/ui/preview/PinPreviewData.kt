@@ -55,3 +55,10 @@ val previewPinSetConfirmMismatch = PinEntryUiState(
     mode = PinEntryMode.Error,
     showBiometric = false,
 )
+
+val previewPinSetRevealed = PinEntryUiState(
+    filledDots = 4,
+    mode = PinEntryMode.Default,
+    showBiometric = false,
+    digits = "1234",
+)

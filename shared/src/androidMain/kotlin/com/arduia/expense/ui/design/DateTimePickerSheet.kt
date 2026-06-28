@@ -26,7 +26,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import java.util.Calendar
 import java.util.Locale
@@ -137,5 +139,24 @@ fun DateTimePickerSheet(
 private class TimeFieldTransformation : VisualTransformation {
     override fun filter(text: androidx.compose.ui.text.AnnotatedString): TransformedText {
         return TransformedText(text, OffsetMapping.Identity)
+    }
+}
+
+@Preview(
+    name = "Date/time picker — open",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun DateTimePickerSheetPreview() {
+    ProExpenseTheme {
+        // Fixed instant so the screenshot baseline stays deterministic.
+        DateTimePickerSheet(
+            visible = true,
+            initialEpochMillis = 1_716_600_000_000L,
+            onConfirm = {},
+            onDismiss = {},
+        )
     }
 }

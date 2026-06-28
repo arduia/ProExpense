@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -90,15 +91,14 @@ fun PinDots(
         repeat(PIN_LENGTH) { index ->
             val filled = index < filledCount.coerceIn(0, PIN_LENGTH)
             if (digitsText != null && index < digitsText.length) {
+                // Revealed digit: size to the glyph (a fixed dot-sized box would clip it).
                 Box(
-                    modifier = Modifier
-                        .size(dimens.space12)
-                        .clip(CircleShape),
+                    modifier = Modifier.widthIn(min = dimens.space12),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = digitsText[index].toString(),
-                        style = typography.keypadKey,
+                        style = typography.bodySemiBold,
                         color = colors.onSurface,
                     )
                 }

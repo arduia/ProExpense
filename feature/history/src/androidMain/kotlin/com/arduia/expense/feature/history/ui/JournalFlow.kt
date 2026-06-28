@@ -39,6 +39,7 @@ fun JournalFlow(
     initialSelectedRowId: String? = null,
     onDeleteRecord: (String) -> Unit = {},
     onUpdateNote: (String, String) -> Unit = { _, _ -> },
+    onEditRecord: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -105,7 +106,7 @@ fun JournalFlow(
                     onBack = { selectedRowId = null },
                     onActions = { showActions = true },
                     onLinkedTagClick = {},
-                    onEdit = {},
+                    onEdit = { onEditRecord(rowId) },
                     onDelete = { showDeleteConfirm = true },
                 )
             }
@@ -135,7 +136,10 @@ fun JournalFlow(
             onClose = { showActions = false },
         ) {
             JournalActionsSheetContent(
-                onEdit = { showActions = false },
+                onEdit = {
+                    showActions = false
+                    selectedRowId?.let(onEditRecord)
+                },
                 onDelete = {
                     showActions = false
                     showDeleteConfirm = true
