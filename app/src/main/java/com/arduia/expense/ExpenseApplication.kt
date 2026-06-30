@@ -10,6 +10,7 @@ import com.arduia.expense.feature.eventbudget.di.eventBudgetModule
 import com.arduia.expense.feature.history.di.historyModule
 import com.arduia.expense.feature.importexport.di.importExportModule
 import com.arduia.expense.feature.logging.di.loggingModule
+import com.arduia.expense.feature.onboarding.di.onboardingModule
 import com.arduia.expense.feature.reports.di.reportsModule
 import com.arduia.expense.feature.sharedcost.di.sharedCostModule
 import com.arduia.expense.storage.ProExpenseStorage
@@ -50,6 +51,7 @@ class ExpenseApplication : Application(), KoinComponent {
                 sharedCostModule,
                 categoriesModule,
                 importExportModule,
+                onboardingModule,
                 appModule,
             )
         }

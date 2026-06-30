@@ -21,16 +21,15 @@ import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
-import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.Category
-import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
-import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
+import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
+import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.dayKey
@@ -54,10 +53,10 @@ private const val SPLASH_DURATION_MILLIS = 1800L
 fun ExpenseApp(
     features: FeatureUiRegistry = FeatureUiRegistry(),
     modifier: Modifier = Modifier,
-    profileRepository: ProfileRepository = koinInject(),
+    getOnboardingStatus: GetOnboardingStatusUseCase = koinInject(),
+    completeOnboarding: CompleteOnboardingUseCase = koinInject(),
     financeRecordRepository: FinanceRecordRepository = koinInject(),
     categoryRepository: CategoryRepository = koinInject(),
-    currencyRepository: CurrencyRepository = koinInject(),
     eventRepository: EventRepository = koinInject(),
     debtRepository: DebtRepository = koinInject(),
     sharedCostRepository: SharedCostRepository = koinInject(),
@@ -105,23 +104,9 @@ fun ExpenseApp(
     }
 
     LaunchedEffect(Unit) {
-        when (val result = profileRepository.isOnboardingComplete()) {
-            is Result.Success -> {
-                onboardingComplete = result.data
-            }
-            is Result.Error -> {
-                onboardingComplete = false
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        if (userName.isBlank()) {
-            when (val result = profileRepository.getDisplayName()) {
-                is Result.Success -> if (userName.isBlank()) userName = result.data
-                is Result.Error -> Unit
-            }
-        }
+        val status = getOnboardingStatus()
+        onboardingComplete = status.isComplete
+        if (userName.isBlank()) userName = status.displayName
     }
 
     val homeState = if (records.isEmpty()) {
@@ -271,13 +256,7 @@ fun ExpenseApp(
 
             LaunchedEffect(onboardingComplete) {
                 if (onboardingComplete == true) {
-                    if (userName.isNotBlank()) {
-                        profileRepository.setDisplayName(userName)
-                    }
-                    profileRepository.setOnboardingComplete()
-                    if (userCurrency.isNotBlank()) {
-                        currencyRepository.setHomeCurrency(CurrencyCode(userCurrency))
-                    }
+                    completeOnboarding(userName, userCurrency)
                 }
             }
 
