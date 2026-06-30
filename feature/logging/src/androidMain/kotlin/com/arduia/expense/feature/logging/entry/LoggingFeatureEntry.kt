@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.logging.entry
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
@@ -9,23 +10,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.arduia.expense.data.DebtRepository
-import com.arduia.expense.data.EventRepository
-import com.arduia.expense.data.FinanceRecordRepository
-import com.arduia.expense.data.Result
-import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.CategoryId
-import com.arduia.expense.domain.CurrencyCode
-import com.arduia.expense.domain.DebtId
-import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.domain.Money
-import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordLink
-import com.arduia.expense.domain.RecordType
-import com.arduia.expense.feature.logging.LogRecordInput
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
-import com.arduia.expense.feature.logging.LoggingRepository
+import com.arduia.expense.feature.logging.LoggingViewModel
+import com.arduia.expense.feature.logging.SaveExpenseInput
+import com.arduia.expense.feature.logging.SaveExpenseOutcome
+import com.arduia.expense.feature.logging.TagOption
+import com.arduia.expense.feature.logging.TagOptionKind
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.ui.design.AmountInput
@@ -36,8 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
-import kotlin.math.roundToLong
+import org.koin.compose.currentKoinScope
 
 interface LoggingFeatureEntry {
     @Composable
@@ -64,64 +55,20 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         modifier: Modifier,
     ) {
         val scope = rememberCoroutineScope()
-        val loggingRepository: LoggingRepository = koinInject()
-        val eventRepository: EventRepository = koinInject()
-        val debtRepository: DebtRepository = koinInject()
+        val viewModel = rememberLoggingViewModel()
+        val uiState by viewModel.uiState.collectAsState()
 
-        val events by eventRepository.observeAll().collectAsState(emptyList())
-        val debts by debtRepository.observeAll().collectAsState(emptyList())
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
 
-        val tagEvents = events.map { event ->
-            TagLinkOption(
-                id = event.id.value,
-                title = event.name,
-                subtitle = shortDateLabel(event.startEpochMillis) + " - " + shortDateLabel(event.endEpochMillis),
-                kind = TagLinkKind.Event,
-            )
-        }
-
-        val tagDebts = debts.map { debt ->
-            val direction = if (debt.direction == com.arduia.expense.domain.DebtDirection.OWED_TO_ME) "Lent" else "Owe"
-            TagLinkOption(
-                id = debt.id.value,
-                title = "$direction · ${debt.personName}",
-                subtitle = moneyLabel(debt.money.amount.valueInCents),
-                kind = TagLinkKind.Debt,
-            )
-        }
-
-        val onHandoff = onSaved
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
             onSaved = { state ->
                 scope.launch {
-                    val amount = AmountInput.numericValue(state.rawAmount) ?: 0.0
-                    val input = LogRecordInput(
-                        money = Money(
-                            Amount((amount * 100).roundToLong()),
-                            CurrencyCode(state.currencyCode),
-                        ),
-                        homeCurrencyMoney = Money(
-                            Amount((amount * 100).roundToLong()),
-                            CurrencyCode(state.currencyCode),
-                        ),
-                        categoryId = CategoryId(state.selectedCategoryId),
-                        type = RecordType.EXPENSE,
-                        note = state.note.ifBlank { null },
-                        recordedAtEpochMillis = state.recordedAtEpochMillis,
-                        link = when (state.linkedTagKind) {
-                            TagLinkKind.Event -> RecordLink.ToEvent(
-                                com.arduia.expense.domain.EventId(state.linkedTagId.orEmpty()),
-                            )
-                            TagLinkKind.Debt -> RecordLink.ToDebt(
-                                com.arduia.expense.domain.DebtId(state.linkedTagId.orEmpty()),
-                            )
-                            null -> RecordLink.None
-                        },
-                    )
-                    when (loggingRepository.createRecord(input)) {
-                        is Result.Success -> onHandoff(state.toHandoff())
-                        is Result.Error -> {} // Error silently; UI already has toast handling
+                    when (viewModel.save(state.toSaveInput())) {
+                        is SaveExpenseOutcome.Saved -> onSaved(state.toHandoff())
+                        SaveExpenseOutcome.InvalidAmount -> {} // UI already has inline validation
+                        is SaveExpenseOutcome.Failed -> {} // Error silently; UI already has toast handling
                     }
                 }
             },
@@ -139,70 +86,38 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         modifier: Modifier,
     ) {
         val scope = rememberCoroutineScope()
-        val financeRecordRepository: FinanceRecordRepository = koinInject()
-        val eventRepository: EventRepository = koinInject()
-        val debtRepository: DebtRepository = koinInject()
+        val viewModel = rememberLoggingViewModel()
+        val uiState by viewModel.uiState.collectAsState()
 
-        val events by eventRepository.observeAll().collectAsState(emptyList())
-        val debts by debtRepository.observeAll().collectAsState(emptyList())
-        val eventNames = events.associate { it.id.value to it.name }
-        val debtNames = debts.associate {
-            val direction = if (it.direction == com.arduia.expense.domain.DebtDirection.OWED_TO_ME) "Lent" else "Owe"
-            it.id.value to "$direction · ${it.personName}"
-        }
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+        val eventNames = uiState.tagOptions.filter { it.kind == TagOptionKind.EVENT }
+            .associate { it.id to it.eventName.orEmpty() }
+        val debtNames = uiState.tagOptions.filter { it.kind == TagOptionKind.DEBT }
+            .associate { it.id to debtLabel(it) }
 
-        val tagEvents = events.map { event ->
-            TagLinkOption(
-                id = event.id.value,
-                title = event.name,
-                subtitle = shortDateLabel(event.startEpochMillis) + " - " + shortDateLabel(event.endEpochMillis),
-                kind = TagLinkKind.Event,
-            )
-        }
-        val tagDebts = debts.map { debt ->
-            val direction = if (debt.direction == com.arduia.expense.domain.DebtDirection.OWED_TO_ME) "Lent" else "Owe"
-            TagLinkOption(
-                id = debt.id.value,
-                title = "$direction · ${debt.personName}",
-                subtitle = moneyLabel(debt.money.amount.valueInCents),
-                kind = TagLinkKind.Debt,
-            )
-        }
-
-        var existing by remember(recordId) { mutableStateOf<FinanceRecord?>(null) }
         var startState by remember(recordId) { mutableStateOf<ExpenseEntryState?>(null) }
 
         LaunchedEffect(recordId, eventNames, debtNames) {
-            val result = financeRecordRepository.getById(RecordId(recordId))
-            if (result is Result.Success && result.data != null) {
-                val record = result.data!!
-                existing = record
-                startState = record.toEntryState(eventNames, debtNames)
-            }
+            viewModel.loadForEdit(recordId)
+        }
+
+        val record = uiState.existingRecord
+        if (record != null && record.id.value == recordId && startState == null) {
+            startState = record.toEntryState(eventNames, debtNames)
         }
 
         val loaded = startState
-        val record = existing
         if (loaded != null && record != null) {
             com.arduia.expense.feature.logging.ui.QuickLogFlow(
                 onDismiss = onDismiss,
                 startState = loaded,
                 onSaved = { state ->
                     scope.launch {
-                        val amount = AmountInput.numericValue(state.rawAmount) ?: 0.0
-                        val cents = (amount * 100).roundToLong()
-                        val money = Money(Amount(cents), CurrencyCode(state.currencyCode))
-                        val updated = record.copy(
-                            money = money,
-                            homeCurrencyMoney = money,
-                            categoryId = CategoryId(state.selectedCategoryId),
-                            note = state.note.ifBlank { null },
-                            recordedAtEpochMillis = state.recordedAtEpochMillis,
-                            link = state.toRecordLink(record.link),
-                        )
-                        when (financeRecordRepository.upsert(updated)) {
-                            is Result.Success -> onSaved()
-                            is Result.Error -> {}
+                        when (viewModel.update(state.toSaveInput())) {
+                            is SaveExpenseOutcome.Saved -> onSaved()
+                            SaveExpenseOutcome.InvalidAmount -> {}
+                            is SaveExpenseOutcome.Failed -> {}
                         }
                     }
                 },
@@ -213,6 +128,54 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         }
     }
 }
+
+@Composable
+private fun rememberLoggingViewModel(): LoggingViewModel {
+    val scope = currentKoinScope()
+    val viewModel = remember { scope.get<LoggingViewModel>() }
+    DisposableEffect(viewModel) {
+        onDispose { viewModel.onCleared() }
+    }
+    return viewModel
+}
+
+private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind): List<TagLinkOption> =
+    filter { it.kind == kind }.map { option ->
+        when (kind) {
+            TagOptionKind.EVENT -> TagLinkOption(
+                id = option.id,
+                title = option.eventName.orEmpty(),
+                subtitle = shortDateLabel(option.eventStartEpochMillis ?: 0L) + " - " +
+                    shortDateLabel(option.eventEndEpochMillis ?: 0L),
+                kind = TagLinkKind.Event,
+            )
+            TagOptionKind.DEBT -> TagLinkOption(
+                id = option.id,
+                title = debtLabel(option),
+                subtitle = moneyLabel(option.debtAmountCents ?: 0L),
+                kind = TagLinkKind.Debt,
+            )
+        }
+    }
+
+private fun debtLabel(option: TagOption): String {
+    val direction = if (option.debtIsOwedToMe == true) "Lent" else "Owe"
+    return "$direction · ${option.debtPersonName.orEmpty()}"
+}
+
+private fun ExpenseEntryState.toSaveInput(): SaveExpenseInput = SaveExpenseInput(
+    rawAmount = rawAmount,
+    currencyCode = currencyCode,
+    categoryId = selectedCategoryId,
+    note = note,
+    recordedAtEpochMillis = recordedAtEpochMillis,
+    linkTagId = linkedTagId,
+    linkTagKind = when (linkedTagKind) {
+        TagLinkKind.Event -> TagOptionKind.EVENT
+        TagLinkKind.Debt -> TagOptionKind.DEBT
+        null -> null
+    },
+)
 
 object LoggingFeatureUi : LoggingFeatureEntry by LoggingFeatureEntryImpl()
 
@@ -246,14 +209,6 @@ private fun FinanceRecord.toEntryState(
         linkedTagLabel = tagLabel,
         currencyCode = money.currency.code,
     )
-}
-
-// Preserves a pre-existing shared-cost link when the user leaves the tag untouched, since the tag
-// picker only surfaces events and debts.
-private fun ExpenseEntryState.toRecordLink(original: RecordLink): RecordLink = when (linkedTagKind) {
-    TagLinkKind.Event -> RecordLink.ToEvent(EventId(linkedTagId.orEmpty()))
-    TagLinkKind.Debt -> RecordLink.ToDebt(DebtId(linkedTagId.orEmpty()))
-    null -> if (original is RecordLink.ToSharedCost) original else RecordLink.None
 }
 
 private fun moneyLabel(valueInCents: Long): String =

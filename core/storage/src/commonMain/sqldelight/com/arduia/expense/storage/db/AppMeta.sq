@@ -10,14 +10,15 @@ CREATE TABLE app_meta (
     biometric_wrapped_key BLOB,
     display_name TEXT NOT NULL DEFAULT '',
     onboarding_completed INTEGER NOT NULL DEFAULT 0,
-    pin_hash TEXT
+    pin_hash TEXT,
+    language_tag TEXT NOT NULL DEFAULT 'en'
 );
 
 insertMeta:
 INSERT OR REPLACE INTO app_meta(
     id, monthly_budget_cents, home_currency_code, failed_attempt_count, lockout_until,
-    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key, display_name, onboarding_completed, pin_hash
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key, display_name, onboarding_completed, pin_hash, language_tag
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectMeta:
 SELECT * FROM app_meta WHERE id = 1;

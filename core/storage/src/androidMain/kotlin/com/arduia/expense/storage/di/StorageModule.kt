@@ -19,4 +19,5 @@ val storageModule = module {
     single { get<ProExpenseStorage>().importExportRepository }
     single { get<ProExpenseStorage>().clearDataRepository }
     single { get<ProExpenseStorage>().profileRepository }
+    single { get<ProExpenseStorage>().localeRepository }
 }

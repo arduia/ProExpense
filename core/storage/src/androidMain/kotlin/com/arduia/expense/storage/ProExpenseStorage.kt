@@ -9,6 +9,7 @@ import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ImportExportRepository
+import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
@@ -20,6 +21,7 @@ import com.arduia.expense.storage.db.ProExpenseDatabase
 import com.arduia.expense.storage.repository.AppMetaBudgetRepository
 import com.arduia.expense.storage.repository.AppMetaCurrencySettingsRepository
 import com.arduia.expense.storage.repository.AppMetaLocalStore
+import com.arduia.expense.storage.repository.AppMetaLocaleRepository
 import com.arduia.expense.storage.repository.AppMetaLockoutRepository
 import com.arduia.expense.storage.repository.AppMetaProfileRepository
 import com.arduia.expense.storage.repository.AppMetaSecurityStateReader
@@ -55,6 +57,7 @@ class ProExpenseStorage internal constructor(
     val importExportRepository: ImportExportRepository,
     val clearDataRepository: ClearDataRepository,
     val profileRepository: ProfileRepository,
+    val localeRepository: LocaleRepository,
 ) {
 
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
@@ -109,6 +112,7 @@ class ProExpenseStorage internal constructor(
                 ),
                 clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
                 profileRepository = AppMetaProfileRepository(appMetaStore),
+                localeRepository = AppMetaLocaleRepository(appMetaStore),
             )
         }
     }
