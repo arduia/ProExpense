@@ -12,9 +12,10 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.tagLabel
+import com.arduia.expense.feature.history.DeleteRecordUseCase
 import com.arduia.expense.feature.history.R
+import com.arduia.expense.feature.history.UpdateRecordNoteUseCase
 import com.arduia.expense.feature.history.ui.JournalFlow
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.ui.design.AmountInput
@@ -56,6 +57,8 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val eventRepository: EventRepository = koinInject()
         val debtRepository: DebtRepository = koinInject()
         val sharedCostRepository: SharedCostRepository = koinInject()
+        val deleteRecord: DeleteRecordUseCase = koinInject()
+        val updateRecordNote: UpdateRecordNoteUseCase = koinInject()
         val noteFallback = stringResource(R.string.journal_note_fallback)
 
         val records by financeRecordRepository.observeAll().collectAsState(emptyList())
@@ -68,8 +71,6 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val days = remember(records, noteFallback, eventNames, debtNames, sharedCostNames) {
             groupByDay(records, noteFallback, eventNames, debtNames, sharedCostNames)
         }
-        val recordsById = remember(records) { records.associateBy { it.id.value } }
-
         JournalFlow(
             selectedTab = selectedTab,
             onTabSelected = onTabSelected,
@@ -77,15 +78,10 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             days = days,
             initialSelectedRowId = initialSelectedRowId,
             onDeleteRecord = { rowId ->
-                scope.launch { financeRecordRepository.delete(RecordId(rowId)) }
+                scope.launch { deleteRecord(rowId) }
             },
             onUpdateNote = { rowId, note ->
-                val record = recordsById[rowId]
-                if (record != null) {
-                    scope.launch {
-                        financeRecordRepository.upsert(record.copy(note = note.ifBlank { null }))
-                    }
-                }
+                scope.launch { updateRecordNote(rowId, note) }
             },
             onEditRecord = onEditRecord,
             modifier = modifier,

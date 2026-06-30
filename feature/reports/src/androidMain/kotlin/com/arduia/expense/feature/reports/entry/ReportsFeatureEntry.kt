@@ -9,8 +9,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.Result
-import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.domain.RecordType
+import com.arduia.expense.feature.reports.GenerateReportPeriodUseCase
+import com.arduia.expense.feature.reports.ReportPeriodResult
 import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.ui.design.AmountInput
@@ -42,6 +42,7 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
     ) {
         val financeRecordRepository: FinanceRecordRepository = koinInject()
         val categoryRepository: CategoryRepository = koinInject()
+        val generateReportPeriod: GenerateReportPeriodUseCase = koinInject()
         var periods by remember { mutableStateOf<List<ReportsUiState>>(emptyList()) }
 
         LaunchedEffect(Unit) {
@@ -52,8 +53,8 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
             val now = Calendar.getInstance()
             val previousMonth = (now.clone() as Calendar).apply { add(Calendar.MONTH, -1) }
             periods = listOf(
-                buildPeriodState(records, now, categoryNames),
-                buildPeriodState(records, previousMonth, categoryNames),
+                buildPeriodState(generateReportPeriod, records, now, categoryNames),
+                buildPeriodState(generateReportPeriod, records, previousMonth, categoryNames),
             )
         }
 
@@ -70,7 +71,8 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
 object ReportsFeatureUi : ReportsFeatureEntry by ReportsFeatureEntryImpl()
 
 private fun buildPeriodState(
-    records: List<FinanceRecord>,
+    generateReportPeriod: GenerateReportPeriodUseCase,
+    records: List<com.arduia.expense.domain.FinanceRecord>,
     month: Calendar,
     categoryNames: Map<String, String>,
 ): ReportsUiState {
@@ -83,14 +85,16 @@ private fun buildPeriodState(
     }
     val end = (start.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
     val periodLabel = SimpleDateFormat("MMMM yyyy", Locale.US).format(start.time)
+    val daysInMonth = start.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-    val inPeriod = records.filter { record ->
-        record.type == RecordType.EXPENSE &&
-            record.recordedAtEpochMillis >= start.timeInMillis &&
-            record.recordedAtEpochMillis < end.timeInMillis
-    }
+    val result: ReportPeriodResult = generateReportPeriod(
+        records = records,
+        periodStartEpochMillis = start.timeInMillis,
+        periodEndEpochMillis = end.timeInMillis,
+        daysInPeriod = daysInMonth,
+    )
 
-    if (inPeriod.isEmpty()) {
+    if (result.empty) {
         return ReportsUiState(
             periodLabel = periodLabel,
             totalLabel = "",
@@ -101,31 +105,20 @@ private fun buildPeriodState(
         )
     }
 
-    val totalCents = inPeriod.sumOf { it.homeCurrencyMoney.amount.valueInCents }
-    val daysInMonth = start.getActualMaximum(Calendar.DAY_OF_MONTH)
-    val dailyAvgCents = totalCents / daysInMonth
-
-    val categories = inPeriod
-        .groupBy { it.categoryId.value }
-        .mapValues { (_, group) -> group.sumOf { it.homeCurrencyMoney.amount.valueInCents } }
-        .entries
-        .sortedByDescending { it.value }
-        .take(5)
-        .map { (categoryId, amountCents) ->
-            val fraction = if (totalCents == 0L) 0f else amountCents.toFloat() / totalCents
-            ReportsCategoryUi(
-                categoryId = categoryId,
-                label = categoryNames[categoryId] ?: expenseCategoryLabel(categoryId),
-                percentLabel = "${(fraction * 100).roundToInt()}%",
-                amountLabel = moneyLabel(amountCents),
-                fraction = fraction,
-            )
-        }
+    val categories = result.categories.map { breakdown ->
+        ReportsCategoryUi(
+            categoryId = breakdown.categoryId,
+            label = categoryNames[breakdown.categoryId] ?: expenseCategoryLabel(breakdown.categoryId),
+            percentLabel = "${(breakdown.fraction * 100).roundToInt()}%",
+            amountLabel = moneyLabel(breakdown.amountCents),
+            fraction = breakdown.fraction,
+        )
+    }
 
     return ReportsUiState(
         periodLabel = periodLabel,
-        totalLabel = moneyLabel(totalCents),
-        dailyAvgLabel = moneyLabel(dailyAvgCents),
+        totalLabel = moneyLabel(result.totalCents),
+        dailyAvgLabel = moneyLabel(result.dailyAvgCents),
         daysLabel = "$daysInMonth days in",
         categories = categories,
     )

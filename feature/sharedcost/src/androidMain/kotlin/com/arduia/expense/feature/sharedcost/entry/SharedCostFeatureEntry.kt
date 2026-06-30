@@ -5,15 +5,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.arduia.expense.data.SharedCostInput
 import com.arduia.expense.data.SharedCostRepository
-import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.CurrencyCode
-import com.arduia.expense.domain.Money
-import com.arduia.expense.domain.Participant
-import com.arduia.expense.domain.ParticipantId
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SplitStrategy
+import com.arduia.expense.feature.sharedcost.CreateSharedCostUseCase
+import com.arduia.expense.feature.sharedcost.SaveSharedCostInput
+import com.arduia.expense.feature.sharedcost.SplitMode
+import com.arduia.expense.feature.sharedcost.UpdateSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
 import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
@@ -22,7 +20,6 @@ import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.shortDateLabel
 import java.util.Locale
-import kotlin.math.roundToLong
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -39,6 +36,8 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
     override fun SharedCostsOverlay(onDismiss: () -> Unit, modifier: Modifier) {
         val scope = rememberCoroutineScope()
         val sharedCostRepository: SharedCostRepository = koinInject()
+        val createSharedCost: CreateSharedCostUseCase = koinInject()
+        val updateSharedCost: UpdateSharedCostUseCase = koinInject()
 
         val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
 
@@ -53,38 +52,13 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             sharedCostDetails = sharedCostDetails,
             onSaveSplit = { title, rawTotal, mode, names, customShareRaws ->
                 scope.launch {
-                    val total = parseTotal(rawTotal)
-                    val participants = names.mapIndexed { index, name ->
-                        Participant(ParticipantId(newParticipantId(name, index)), name)
-                    }
-                    val splitStrategy = buildSplitStrategy(mode, customShareRaws, participants, total)
-                    sharedCostRepository.create(
-                        SharedCostInput(
-                            title = title,
-                            total = total,
-                            participants = participants,
-                            splitStrategy = splitStrategy,
-                            recordedAtEpochMillis = System.currentTimeMillis(),
-                        ),
-                    )
+                    createSharedCost(SaveSharedCostInput(title, rawTotal, mode.toSplitMode(), names, customShareRaws))
                 }
             },
-            onUpdateSplit = { id, title, rawTotal, mode, names, customShareRaws ->
+            onUpdateSplit = onUpdateSplit@{ id, title, rawTotal, mode, names, customShareRaws ->
+                val existing = sharedCosts.find { it.id.value == id } ?: return@onUpdateSplit
                 scope.launch {
-                    val existing = sharedCosts.find { it.id.value == id } ?: return@launch
-                    val total = parseTotal(rawTotal)
-                    val participants = names.mapIndexed { index, name ->
-                        Participant(ParticipantId(newParticipantId(name, index)), name)
-                    }
-                    val splitStrategy = buildSplitStrategy(mode, customShareRaws, participants, total)
-                    sharedCostRepository.update(
-                        existing.copy(
-                            title = title,
-                            total = total,
-                            participants = participants,
-                            splitStrategy = splitStrategy,
-                        ),
-                    )
+                    updateSharedCost(existing, SaveSharedCostInput(title, rawTotal, mode.toSplitMode(), names, customShareRaws))
                 }
             },
             modifier = modifier,
@@ -94,35 +68,9 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
 
 object SharedCostFeatureUi : SharedCostFeatureEntry by SharedCostFeatureEntryImpl()
 
-private fun parseTotal(rawTotal: String): Money {
-    val totalCents = ((AmountInput.numericValue(rawTotal) ?: 0.0) * 100).roundToLong()
-    return Money(Amount(totalCents), CurrencyCode("USD"))
-}
-
-private fun newParticipantId(name: String, index: Int): String =
-    name.trim().lowercase(Locale.US).replace(" ", "-") + "-" + index + "-" + System.currentTimeMillis()
-
-private fun buildSplitStrategy(
-    mode: SharedSplitMode,
-    customShareRaws: List<String>,
-    participants: List<Participant>,
-    total: Money,
-): SplitStrategy = when (mode) {
-    SharedSplitMode.Equal -> SplitStrategy.EqualSplit
-    SharedSplitMode.Custom -> {
-        val rawCents = participants.indices.map { index ->
-            val raw = customShareRaws.getOrElse(index) { "0" }
-            ((AmountInput.numericValue(raw) ?: 0.0) * 100).roundToLong()
-        }.toMutableList()
-        val diff = total.amount.valueInCents - rawCents.sum()
-        if (rawCents.isNotEmpty()) {
-            rawCents[rawCents.lastIndex] = (rawCents.last() + diff).coerceAtLeast(0)
-        }
-        val shares = participants.mapIndexed { index, participant ->
-            participant.id to Money(Amount(rawCents[index]), total.currency)
-        }.toMap()
-        SplitStrategy.CustomSplit(shares)
-    }
+private fun SharedSplitMode.toSplitMode(): SplitMode = when (this) {
+    SharedSplitMode.Equal -> SplitMode.EQUAL
+    SharedSplitMode.Custom -> SplitMode.CUSTOM
 }
 
 private fun SharedCost.toHistoryItemUi(): SharedCostHistoryItemUi {
