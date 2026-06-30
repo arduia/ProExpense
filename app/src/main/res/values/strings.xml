@@ -200,6 +200,8 @@
     <string name="quick_access_debt">Debt</string>
     <string name="quick_access_split">Split</string>
     <string name="quick_access_events">Events</string>
+    <string name="quick_access_customize_title">Customize quick access</string>
+    <string name="quick_access_customize_hint">Choose which shortcuts to show on Home</string>
     <string name="home_empty_title">No expenses yet</string>
     <string name="home_empty_subtitle">Start by logging your first one — it takes about five seconds.</string>
     <string name="home_log_first_expense">Log your first expense</string>

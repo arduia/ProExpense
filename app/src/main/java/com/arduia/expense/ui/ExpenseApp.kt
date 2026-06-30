@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
@@ -32,10 +33,14 @@ import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
 import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.dayLabel
 import com.arduia.expense.ui.design.timeLabel
 import com.arduia.expense.ui.home.HomeShell
+import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
+import com.arduia.expense.ui.home.QuickAccessPrefs
+import com.arduia.expense.ui.home.QuickAccessTileType
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
@@ -76,6 +81,9 @@ fun ExpenseApp(
     var editRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var userName by rememberSaveable { mutableStateOf("") }
     var userCurrency by rememberSaveable { mutableStateOf("") }
+    var showQuickAccessPicker by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
+    var quickAccessVisible by remember { mutableStateOf(QuickAccessPrefs.load(context)) }
 
     val records by financeRecordRepository.observeAll().collectAsState(emptyList())
     var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
@@ -237,6 +245,9 @@ fun ExpenseApp(
                             onSplitClick = { showSharedCosts = true },
                             onEventsClick = { selectedTab = HomeNavTab.Budget },
                             onLogFirstExpense = { showQuickLog = true },
+                            onSeeAll = { selectedTab = HomeNavTab.Journal },
+                            onCustomizeQuickAccess = { showQuickAccessPicker = true },
+                            visibleTiles = quickAccessVisible,
                             onRowClick = { row ->
                                 homeSelectedRecordId = row.id
                                 selectedTab = HomeNavTab.Journal
@@ -317,6 +328,25 @@ fun ExpenseApp(
                     onLogFirstExpense = {
                         showReports = false
                         showQuickLog = true
+                    },
+                )
+            }
+
+            ProBottomSheetHost(
+                visible = showQuickAccessPicker,
+                title = stringResource(R.string.quick_access_customize_title),
+                onClose = { showQuickAccessPicker = false },
+            ) {
+                QuickAccessPickerSheetContent(
+                    selected = quickAccessVisible,
+                    onToggle = { tile ->
+                        val updated = if (tile in quickAccessVisible) {
+                            if (quickAccessVisible.size > 1) quickAccessVisible - tile else quickAccessVisible
+                        } else {
+                            quickAccessVisible + tile
+                        }
+                        quickAccessVisible = updated
+                        QuickAccessPrefs.save(context, updated)
                     },
                 )
             }

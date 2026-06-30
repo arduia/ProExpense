@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
@@ -88,6 +89,7 @@ fun SearchField(
             .clip(ProExpenseTheme.shapes.searchField)
             .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
             .background(colors.surface)
+            .heightIn(max = dimens.iconInline + dimens.space24)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.searchField.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),

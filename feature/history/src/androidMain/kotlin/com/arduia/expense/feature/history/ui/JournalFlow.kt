@@ -103,7 +103,12 @@ fun JournalFlow(
             } else {
                 JournalDetailScreen(
                     state = detailStateFor(rowId, days),
-                    onBack = { selectedRowId = null },
+                    onBack = {
+                        if (initialSelectedRowId != null && rowId == initialSelectedRowId) {
+                            onTabSelected(HomeNavTab.Home)
+                        }
+                        selectedRowId = null
+                    },
                     onActions = { showActions = true },
                     onLinkedTagClick = {},
                     onEdit = { onEditRecord(rowId) },

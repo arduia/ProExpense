@@ -69,6 +69,7 @@ fun HomeScreenContent(
     onCustomizeQuickAccess: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     onRowClick: (com.arduia.expense.ui.design.ProTransactionRowModel) -> Unit = {},
+    visibleTiles: Set<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -136,6 +137,7 @@ fun HomeScreenContent(
             onDebtClick = onDebtClick,
             onSplitClick = onSplitClick,
             onEventsClick = onEventsClick,
+            visibleTiles = visibleTiles,
             modifier = Modifier.padding(top = dimens.space24),
         )
 
@@ -367,6 +369,7 @@ private fun HomeQuickAccessSection(
     onDebtClick: () -> Unit,
     onSplitClick: () -> Unit,
     onEventsClick: () -> Unit,
+    visibleTiles: Set<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -399,30 +402,38 @@ private fun HomeQuickAccessSection(
                 .padding(top = dimens.space10),
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_reports),
-                icon = ProIconGlyph.FeatReports,
-                onClick = onReportsClick,
-                modifier = Modifier.weight(1f),
-            )
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_debt),
-                icon = ProIconGlyph.FeatDebt,
-                onClick = onDebtClick,
-                modifier = Modifier.weight(1f),
-            )
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_split),
-                icon = ProIconGlyph.FeatSplit,
-                onClick = onSplitClick,
-                modifier = Modifier.weight(1f),
-            )
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_events),
-                icon = ProIconGlyph.FeatEvents,
-                onClick = onEventsClick,
-                modifier = Modifier.weight(1f),
-            )
+            if (QuickAccessTileType.Reports in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_reports),
+                    icon = ProIconGlyph.FeatReports,
+                    onClick = onReportsClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            if (QuickAccessTileType.Debt in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_debt),
+                    icon = ProIconGlyph.FeatDebt,
+                    onClick = onDebtClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            if (QuickAccessTileType.Split in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_split),
+                    icon = ProIconGlyph.FeatSplit,
+                    onClick = onSplitClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            if (QuickAccessTileType.Events in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_events),
+                    icon = ProIconGlyph.FeatEvents,
+                    onClick = onEventsClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }

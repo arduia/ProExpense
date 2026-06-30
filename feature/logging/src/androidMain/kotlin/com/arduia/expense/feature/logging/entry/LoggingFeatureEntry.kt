@@ -198,7 +198,11 @@ private fun FinanceRecord.toEntryState(
         else -> Triple(null, null, null)
     }
     return ExpenseEntryState(
-        rawAmount = String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0),
+        rawAmount = if (money.amount.valueInCents % 100 == 0L) {
+            (money.amount.valueInCents / 100).toString()
+        } else {
+            String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0)
+        },
         selectedCategoryId = categoryId.value,
         note = note.orEmpty(),
         dateLabel = SimpleDateFormat("MMMM d, yyyy", Locale.US).format(calendar.time),
