@@ -8,6 +8,7 @@ import com.arduia.expense.feature.currency.di.currencyModule
 import com.arduia.expense.feature.debt.di.debtModule
 import com.arduia.expense.feature.eventbudget.di.eventBudgetModule
 import com.arduia.expense.feature.history.di.historyModule
+import com.arduia.expense.feature.importexport.di.importExportModule
 import com.arduia.expense.feature.logging.di.loggingModule
 import com.arduia.expense.feature.reports.di.reportsModule
 import com.arduia.expense.feature.sharedcost.di.sharedCostModule
@@ -48,6 +49,7 @@ class ExpenseApplication : Application(), KoinComponent {
                 debtModule,
                 sharedCostModule,
                 categoriesModule,
+                importExportModule,
                 appModule,
             )
         }

@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import com.arduia.expense.data.ClearDataRepository
+import com.arduia.expense.feature.importexport.ClearSelectedDataUseCase
 import com.arduia.expense.feature.importexport.R
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreClearOptions
 import com.arduia.expense.ui.design.ProAlertDialog
@@ -29,7 +29,7 @@ import org.koin.compose.koinInject
 fun ClearDataFlow(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    clearDataRepository: ClearDataRepository = koinInject(),
+    clearSelectedData: ClearSelectedDataUseCase = koinInject(),
 ) {
     val colors = ProExpenseTheme.colors
     var checkedIds by remember { mutableStateOf(setOf("expenses")) }
@@ -61,14 +61,7 @@ fun ClearDataFlow(
             confirmLabel = stringResource(R.string.more_clear_confirm_action),
             onConfirm = {
                 scope.launch {
-                    if (checkedIds.contains("everything")) {
-                        clearDataRepository.clearAll()
-                    } else {
-                        if (checkedIds.contains("expenses")) clearDataRepository.clearExpenses()
-                        if (checkedIds.contains("events")) clearDataRepository.clearEvents()
-                        if (checkedIds.contains("debts")) clearDataRepository.clearDebts()
-                        if (checkedIds.contains("shared")) clearDataRepository.clearSharedCosts()
-                    }
+                    clearSelectedData(checkedIds)
                     showConfirm = false
                     checkedIds = emptySet()
                     onBack()

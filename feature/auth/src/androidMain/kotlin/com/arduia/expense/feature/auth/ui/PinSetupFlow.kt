@@ -16,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.FragmentActivity
 import com.arduia.expense.data.Result
 import com.arduia.expense.feature.auth.BiometricAuthenticator
-import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.SetupPinUseCase
 import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
 import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.PinSetupUiState
@@ -39,7 +39,7 @@ fun PinSetupFlow(
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
-    val pinAuthRepository: PinAuthRepository = koinInject()
+    val setupPin: SetupPinUseCase = koinInject()
     val scope = rememberCoroutineScope()
     val activity = LocalContext.current as? FragmentActivity
     val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
@@ -97,19 +97,15 @@ fun PinSetupFlow(
                     onSave = {
                         errorMessage = null
                         scope.launch {
-                            val pinResult = pinAuthRepository.setPin(newPin)
-                            if (pinResult is Result.Error) {
-                                errorMessage = pinResult.message
+                            val result = setupPin(
+                                pin = newPin,
+                                securityQuestionId = selectedQuestion,
+                                securityAnswer = answer,
+                                enableBiometric = biometricOn,
+                            )
+                            if (result is Result.Error) {
+                                errorMessage = result.message
                                 return@launch
-                            }
-                            val questionResult =
-                                pinAuthRepository.setSecurityQuestion(selectedQuestion, answer)
-                            if (questionResult is Result.Error) {
-                                errorMessage = questionResult.message
-                                return@launch
-                            }
-                            if (biometricOn) {
-                                pinAuthRepository.enrollBiometric()
                             }
                             onDismiss()
                         }

@@ -22,6 +22,7 @@ import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R as AuthR
 import com.arduia.expense.feature.currency.CurrencyRepository
+import com.arduia.expense.feature.currency.SaveHomeCurrencyUseCase
 import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
@@ -59,6 +60,7 @@ fun MoreFlow(
     val scope = rememberCoroutineScope()
     val profileRepository: ProfileRepository = koinInject()
     val currencyRepository: CurrencyRepository = koinInject()
+    val saveHomeCurrency: SaveHomeCurrencyUseCase = koinInject()
     val pinAuthRepository: PinAuthRepository = koinInject()
     val budgetRepository: BudgetRepository = koinInject()
 
@@ -179,7 +181,7 @@ fun MoreFlow(
                     onSelect = { newCode ->
                         selectedCurrency = newCode
                         scope.launch {
-                            currencyRepository.setHomeCurrency(CurrencyCode(newCode))
+                            saveHomeCurrency(newCode)
                             homeCurrencyCode = CurrencyCode(newCode)
                         }
                     },

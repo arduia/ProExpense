@@ -20,6 +20,12 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.feature.auth.BiometricAuthenticator
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.PIN_RECOVERY_MAX_ATTEMPTS
+import com.arduia.expense.feature.auth.RecoveryAnswerResult
+import com.arduia.expense.feature.auth.ResetPinUseCase
+import com.arduia.expense.feature.auth.VerifyPinResult
+import com.arduia.expense.feature.auth.VerifyPinUseCase
+import com.arduia.expense.feature.auth.VerifyRecoveryAnswerUseCase
 import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
 import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
@@ -30,8 +36,6 @@ import com.arduia.expense.ui.theme.stepTransition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-
-private const val RECOVERY_MAX_ATTEMPTS = 5
 
 private enum class PinLockStep { Entry, Recovery, RecoverNewPin, RecoverConfirmPin }
 
@@ -44,6 +48,9 @@ fun PinLockFlow(
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val pinAuthRepository: PinAuthRepository = koinInject()
+    val verifyPin: VerifyPinUseCase = koinInject()
+    val verifyRecoveryAnswer: VerifyRecoveryAnswerUseCase = koinInject()
+    val resetPin: ResetPinUseCase = koinInject()
     val scope = rememberCoroutineScope()
     val activity = LocalContext.current as? FragmentActivity
 
@@ -127,22 +134,14 @@ fun PinLockFlow(
             if (entryBuffer.length == 6) {
                 val pin = entryBuffer
                 scope.launch {
-                    when (val result = pinAuthRepository.verifyPin(pin)) {
-                        is Result.Success -> {
-                            if (result.data) {
-                                pinAuthRepository.resetFailedAttempts()
-                                onUnlocked()
-                            } else {
-                                pinAuthRepository.incrementFailedAttempts()
-                                entryBuffer = ""
-                                entryError = true
-                                when (val lockResult = pinAuthRepository.getLockoutUntilMs()) {
-                                    is Result.Success -> lockoutUntil = lockResult.data
-                                    is Result.Error -> Unit
-                                }
-                            }
+                    when (val result = verifyPin(pin)) {
+                        is VerifyPinResult.Unlocked -> onUnlocked()
+                        is VerifyPinResult.Incorrect -> {
+                            entryBuffer = ""
+                            entryError = true
+                            lockoutUntil = result.lockoutUntilMs
                         }
-                        is Result.Error -> {
+                        is VerifyPinResult.Error -> {
                             entryBuffer = ""
                             entryError = true
                         }
@@ -206,7 +205,7 @@ fun PinLockFlow(
                     val attemptsLabel = if (recoveryError) {
                         stringResource(R.string.pin_recover_wrong)
                     } else {
-                        stringResource(R.string.pin_recover_attempts, recoveryAttempts, RECOVERY_MAX_ATTEMPTS)
+                        stringResource(R.string.pin_recover_attempts, recoveryAttempts, PIN_RECOVERY_MAX_ATTEMPTS)
                     }
                     PinRecoveryScreen(
                         questionText = questionText,
@@ -215,23 +214,22 @@ fun PinLockFlow(
                         onAnswerChange = { recoveryAnswer = it },
                         onVerify = {
                             scope.launch {
-                                when (val result = pinAuthRepository.verifySecurityAnswer(recoveryAnswer)) {
-                                    is Result.Success -> {
-                                        if (result.data) {
-                                            recoveryError = false
-                                            newPin = ""
-                                            entryBuffer = ""
-                                            step = PinLockStep.RecoverNewPin
-                                        } else {
-                                            recoveryAttempts += 1
-                                            recoveryError = true
-                                            recoveryAnswer = ""
-                                            if (recoveryAttempts >= RECOVERY_MAX_ATTEMPTS) {
-                                                step = PinLockStep.Entry
-                                            }
+                                when (val result = verifyRecoveryAnswer(recoveryAnswer, recoveryAttempts)) {
+                                    is RecoveryAnswerResult.Correct -> {
+                                        recoveryError = false
+                                        newPin = ""
+                                        entryBuffer = ""
+                                        step = PinLockStep.RecoverNewPin
+                                    }
+                                    is RecoveryAnswerResult.Incorrect -> {
+                                        recoveryAttempts = result.attempts
+                                        recoveryError = true
+                                        recoveryAnswer = ""
+                                        if (result.attemptsExhausted) {
+                                            step = PinLockStep.Entry
                                         }
                                     }
-                                    is Result.Error -> {
+                                    is RecoveryAnswerResult.Error -> {
                                         recoveryError = true
                                         recoveryAnswer = ""
                                     }
@@ -277,8 +275,7 @@ fun PinLockFlow(
                                 if (entryBuffer == newPin) {
                                     val confirmedPin = newPin
                                     scope.launch {
-                                        pinAuthRepository.setPin(confirmedPin)
-                                        pinAuthRepository.resetFailedAttempts()
+                                        resetPin(confirmedPin)
                                         onUnlocked()
                                     }
                                 } else {
