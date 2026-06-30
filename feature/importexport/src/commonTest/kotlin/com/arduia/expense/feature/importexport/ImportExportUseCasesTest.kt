@@ -5,7 +5,13 @@ import com.arduia.expense.data.ExportFormat
 import com.arduia.expense.data.ImportExportRepository
 import com.arduia.expense.data.ImportSummary
 import com.arduia.expense.data.Result
+import com.arduia.expense.domain.Amount
+import com.arduia.expense.domain.CategoryId
+import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordType
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,6 +53,40 @@ class ExportDataUseCaseTest {
 
         assertIs<Result.Success<String>>(result)
         assertEquals(ExportFormat.JSON, repo.lastExportFormat)
+    }
+}
+
+class PreviewImportUseCaseTest {
+
+    @Test
+    fun invoke_delegatesToRepositoryWithContentAndFormat() = runTest {
+        val record = FinanceRecord(
+            id = RecordId("r1"),
+            money = Money(Amount(1000), CurrencyCode("USD")),
+            homeCurrencyMoney = Money(Amount(1000), CurrencyCode("USD")),
+            categoryId = CategoryId("food"),
+            type = RecordType.EXPENSE,
+            note = null,
+            recordedAtEpochMillis = 1_000L,
+        )
+        val repo = FakeImportExportRepository(previewResult = Result.Success(listOf(record)))
+        val useCase = PreviewImportUseCase(repo)
+
+        val result = useCase("json,content", ExportFormat.JSON)
+
+        assertIs<Result.Success<List<FinanceRecord>>>(result)
+        assertEquals(listOf(record), result.data)
+        assertEquals(ExportFormat.JSON, repo.lastPreviewFormat)
+    }
+
+    @Test
+    fun invoke_propagatesRepositoryError() = runTest {
+        val repo = FakeImportExportRepository(previewResult = Result.Error("bad format"))
+        val useCase = PreviewImportUseCase(repo)
+
+        val result = useCase("garbage", ExportFormat.CSV)
+
+        assertIs<Result.Error>(result)
     }
 }
 
