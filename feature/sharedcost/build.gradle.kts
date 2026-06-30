@@ -19,6 +19,7 @@ kotlin {
             implementation(project(":core:data"))
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -26,6 +27,8 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(project(":core:storage"))
+            implementation("io.insert-koin:koin-compose:4.1.1")
+            implementation(libs.androidx.activity.compose)
         }
     }
 }

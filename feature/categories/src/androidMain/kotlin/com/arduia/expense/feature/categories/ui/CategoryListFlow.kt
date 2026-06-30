@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +18,7 @@ import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
 import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
 import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
@@ -26,11 +28,15 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 @Composable
 fun CategoryListFlow(
     onBack: () -> Unit,
+    state: CategoryListUiState = previewCategoryList,
+    onReorderCustom: (List<String>) -> Unit = {},
+    onSaveCategory: (editingId: String?, name: String) -> Unit = { _, _ -> },
+    onDeleteCategory: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
-    val defaults = remember { previewCategoryList.defaults }
-    var custom by remember { mutableStateOf(previewCategoryList.custom) }
+    var custom by remember { mutableStateOf(state.custom) }
+    LaunchedEffect(state.custom) { custom = state.custom }
 
     var showSheet by remember { mutableStateOf(false) }
     var editingRow by remember { mutableStateOf<CategoryRowUi?>(null) }
@@ -39,7 +45,7 @@ fun CategoryListFlow(
     var form by remember { mutableStateOf(CategoryNewFormState()) }
 
     fun takenNames(excluding: CategoryRowUi?): Set<String> =
-        (defaults + custom)
+        (state.defaults + custom)
             .filter { it.label != excluding?.label }
             .map { it.label.lowercase() }
             .toSet()
@@ -50,7 +56,7 @@ fun CategoryListFlow(
             .background(colors.paper),
     ) {
         CategoryListScreen(
-            state = previewCategoryList.copy(custom = custom),
+            state = state.copy(custom = custom),
             onBack = onBack,
             onCreate = {
                 editingRow = null
@@ -60,6 +66,7 @@ fun CategoryListFlow(
             onCustomRowClick = { actionsRow = it },
             onReorder = { from, to ->
                 custom = custom.toMutableList().apply { add(to, removeAt(from)) }
+                onReorderCustom(custom.map { it.categoryId })
             },
         )
 
@@ -82,16 +89,7 @@ fun CategoryListFlow(
                 onIconSelected = { form = form.copy(selectedIconId = it) },
                 onAdd = {
                     if (form.canAdd) {
-                        val edited = editingRow
-                        val newRow = CategoryRowUi(
-                            categoryId = form.selectedIconId,
-                            label = form.name.trim(),
-                        )
-                        custom = if (edited == null) {
-                            custom + newRow
-                        } else {
-                            custom.map { if (it.label == edited.label) newRow else it }
-                        }
+                        onSaveCategory(editingRow?.categoryId, form.name.trim())
                         showSheet = false
                         editingRow = null
                     }
@@ -139,7 +137,7 @@ fun CategoryListFlow(
             body = buildAnnotatedString { append(stringResource(R.string.categories_delete_body)) },
             confirmLabel = stringResource(R.string.categories_delete_confirm),
             onConfirm = {
-                deleteRow?.let { row -> custom = custom.filter { it.label != row.label } }
+                deleteRow?.let { row -> onDeleteCategory(row.categoryId) }
                 deleteRow = null
             },
             dismissLabel = stringResource(R.string.categories_delete_cancel),

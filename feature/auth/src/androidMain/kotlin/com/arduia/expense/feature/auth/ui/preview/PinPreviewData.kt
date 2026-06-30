@@ -9,11 +9,13 @@ data class PinEntryUiState(
     val mode: PinEntryMode = PinEntryMode.Default,
     val countdownLabel: String? = null,
     val showBiometric: Boolean = true,
+    val digits: String = "",
 )
 
 data class PinSetupUiState(
     val pinAuthOn: Boolean = true,
     val biometricOn: Boolean = false,
+    val biometricCapable: Boolean = true,
     val newPinFilled: Int = 6,
     val confirmPinFilled: Int = 3,
 )
@@ -52,4 +54,11 @@ val previewPinSetConfirmMismatch = PinEntryUiState(
     filledDots = 0,
     mode = PinEntryMode.Error,
     showBiometric = false,
+)
+
+val previewPinSetRevealed = PinEntryUiState(
+    filledDots = 4,
+    mode = PinEntryMode.Default,
+    showBiometric = false,
+    digits = "1234",
 )

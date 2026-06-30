@@ -1,12 +1,12 @@
 package com.arduia.expense.feature.sharedcost.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,6 +43,7 @@ private data class SharedCostDraft(
     val names: List<String> = SharedCostSplitLogic.defaultNames(2),
     val customShareRaws: List<String> = emptyList(),
     val showZeroValidation: Boolean = false,
+    val amountConfirmed: Boolean = false,
 ) {
     fun toUiState(): SharedCostUiState {
         val participants = SharedCostSplitLogic.buildParticipants(
@@ -59,6 +60,7 @@ private data class SharedCostDraft(
             mode = mode,
             participants = participants,
             showZeroValidation = showZeroValidation,
+            amountConfirmed = amountConfirmed,
         )
     }
 }
@@ -68,9 +70,35 @@ private fun SharedCostDraft.withParticipants(): SharedCostDraft = copy(
     customShareRaws = SharedCostSplitLogic.syncCustomShares(customShareRaws, peopleCount, rawTotal),
 )
 
+private fun SharedCostUiState.toDraft(): SharedCostDraft = SharedCostDraft(
+    rawTotal = rawTotal,
+    note = note,
+    peopleCount = peopleCount,
+    mode = mode,
+    names = participants.map { it.name },
+    customShareRaws = shareRaws,
+).withParticipants()
+
 @Composable
 fun SharedCostsFlow(
     onDismiss: () -> Unit,
+    history: List<SharedCostHistoryItemUi> = previewSharedHistoryItems,
+    sharedCostDetails: Map<String, SharedCostUiState> = emptyMap(),
+    onSaveSplit: (
+        title: String,
+        rawTotal: String,
+        mode: SharedSplitMode,
+        names: List<String>,
+        customShareRaws: List<String>,
+    ) -> Unit = { _, _, _, _, _ -> },
+    onUpdateSplit: (
+        id: String,
+        title: String,
+        rawTotal: String,
+        mode: SharedSplitMode,
+        names: List<String>,
+        customShareRaws: List<String>,
+    ) -> Unit = { _, _, _, _, _, _ -> },
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
@@ -82,15 +110,37 @@ fun SharedCostsFlow(
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     var draft by remember { mutableStateOf(SharedCostDraft().withParticipants()) }
+    var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
-    val history = remember {
-        mutableStateListOf<SharedCostHistoryItemUi>().apply { addAll(previewSharedHistoryItems) }
-    }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
-    val justNowLabel = stringResource(R.string.shared_split_just_now)
 
     val currentStep = SharedCostStep.valueOf(step)
-    val uiState = draft.toUiState()
+
+    BackHandler(enabled = true) {
+        when (currentStep) {
+            SharedCostStep.Summary -> {
+                if (viewingId != null) {
+                    viewingId = null
+                    draft = SharedCostDraft().withParticipants()
+                    step = SharedCostStep.History.name
+                } else {
+                    step = SharedCostStep.Input.name
+                }
+            }
+            SharedCostStep.Input -> {
+                if (viewingId != null) {
+                    step = SharedCostStep.Summary.name
+                } else if (startStep == SharedCostStep.History) {
+                    step = SharedCostStep.History.name
+                } else {
+                    onDismiss()
+                }
+            }
+            SharedCostStep.History -> {
+                onDismiss()
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -113,24 +163,27 @@ fun SharedCostsFlow(
                     SharedCostsHistoryScreen(
                         items = history,
                         onNewSplit = {
+                            viewingId = null
                             draft = SharedCostDraft().withParticipants()
                             step = SharedCostStep.Input.name
                         },
                         onItemClick = { item ->
-                            draft = SharedCostDraft(
-                                rawTotal = item.totalLabel.removePrefix("$").replace(",", ""),
-                                note = item.title,
-                                peopleCount = item.peopleCount,
-                            ).withParticipants()
-                            step = SharedCostStep.Summary.name
+                            sharedCostDetails[item.id]?.let { detail ->
+                                viewingId = item.id
+                                draft = detail.toDraft()
+                                step = SharedCostStep.Summary.name
+                            }
                         },
+                        onBack = onDismiss,
                     )
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(
-                        state = uiState,
+                        state = draft.toUiState(),
                         onBack = {
-                            if (startStep == SharedCostStep.History) {
+                            if (viewingId != null) {
+                                step = SharedCostStep.Summary.name
+                            } else if (startStep == SharedCostStep.History) {
                                 step = SharedCostStep.History.name
                             } else {
                                 onDismiss()
@@ -168,6 +221,13 @@ fun SharedCostsFlow(
                             updated[index] = raw
                             draft = draft.copy(customShareRaws = updated, mode = SharedSplitMode.Custom)
                         },
+                        onConfirmAmount = {
+                            if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
+                                draft = draft.copy(amountConfirmed = true)
+                            } else {
+                                draft = draft.copy(showZeroValidation = true)
+                            }
+                        },
                         onContinue = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
                                 step = SharedCostStep.Summary.name
@@ -175,39 +235,41 @@ fun SharedCostsFlow(
                                 draft = draft.copy(showZeroValidation = true)
                             }
                         },
-                        showKeypad = draft.rawTotal.isEmpty() || !SharedCostSplitLogic.canSave(draft.rawTotal),
+                        showKeypad = true,
                     )
                 }
                 SharedCostStep.Summary -> {
                     SharedCostsSummaryScreen(
-                        state = uiState,
-                        onBack = { step = SharedCostStep.Input.name },
+                        state = draft.toUiState(),
+                        backLabel = if (viewingId != null) {
+                            stringResource(R.string.shared_back_history)
+                        } else {
+                            stringResource(R.string.shared_back_split)
+                        },
+                        onBack = {
+                            if (viewingId != null) {
+                                viewingId = null
+                                draft = SharedCostDraft().withParticipants()
+                                step = SharedCostStep.History.name
+                            } else {
+                                step = SharedCostStep.Input.name
+                            }
+                        },
                         onSwitchToCustom = {
                             draft = draft.copy(mode = SharedSplitMode.Custom).withParticipants()
                             step = SharedCostStep.Input.name
                         },
                         onSave = {
-                            val totalValue = AmountInput.numericValue(draft.rawTotal) ?: 0.0
-                            val perPerson = if (draft.peopleCount > 0) {
-                                totalValue / draft.peopleCount
+                            val title = draft.note.trim().ifEmpty { defaultSplitTitle }
+                            val id = viewingId
+                            if (id != null) {
+                                onUpdateSplit(id, title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
                             } else {
-                                0.0
+                                onSaveSplit(title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
                             }
-                            history.add(
-                                0,
-                                SharedCostHistoryItemUi(
-                                    id = "split-" + System.currentTimeMillis(),
-                                    title = draft.note.trim().ifEmpty { defaultSplitTitle },
-                                    peopleCount = draft.peopleCount,
-                                    perPersonLabel = "$" + AmountInput.formatDisplay(
-                                        String.format(java.util.Locale.US, "%.2f", perPerson),
-                                    ),
-                                    dateLabel = justNowLabel,
-                                    totalLabel = "$" + AmountInput.formatDisplay(draft.rawTotal),
-                                ),
-                            )
                             toastMessage = savedToastMessage
                             onSaved()
+                            viewingId = null
                             draft = SharedCostDraft().withParticipants()
                             step = SharedCostStep.History.name
                         },

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,10 +51,12 @@ fun PinDots(
     filledCount: Int,
     modifier: Modifier = Modifier,
     state: PinKeypadState = PinKeypadState.Default,
+    digitsText: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
+    val typography = ProExpenseTheme.typography
     val shakeOffset = remember { Animatable(0f) }
     val dotColor = when (state) {
         PinKeypadState.Error -> colors.danger
@@ -87,18 +90,32 @@ fun PinDots(
     ) {
         repeat(PIN_LENGTH) { index ->
             val filled = index < filledCount.coerceIn(0, PIN_LENGTH)
-            Box(
-                modifier = Modifier
-                    .size(dimens.space12)
-                    .clip(CircleShape)
-                    .then(
-                        if (filled) {
-                            Modifier.background(dotColor)
-                        } else {
-                            Modifier.border(BorderStroke(1.5.dp, emptyBorderColor), CircleShape)
-                        },
-                    ),
-            )
+            if (digitsText != null && index < digitsText.length) {
+                // Revealed digit: size to the glyph (a fixed dot-sized box would clip it).
+                Box(
+                    modifier = Modifier.widthIn(min = dimens.space12),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = digitsText[index].toString(),
+                        style = typography.bodySemiBold,
+                        color = colors.onSurface,
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(dimens.space12)
+                        .clip(CircleShape)
+                        .then(
+                            if (filled) {
+                                Modifier.background(dotColor)
+                            } else {
+                                Modifier.border(BorderStroke(1.5.dp, emptyBorderColor), CircleShape)
+                            },
+                        ),
+                )
+            }
         }
     }
 }

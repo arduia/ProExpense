@@ -47,6 +47,7 @@ fun SharedCostsInputScreen(
     onModeSelected: (SharedSplitMode) -> Unit,
     onShareChange: (Int, String) -> Unit,
     onContinue: () -> Unit,
+    onConfirmAmount: () -> Unit = {},
     modifier: Modifier = Modifier,
     showKeypad: Boolean = true,
 ) {
@@ -55,7 +56,7 @@ fun SharedCostsInputScreen(
     val displayAmount = AmountInput.formatDisplay(state.rawTotal.ifEmpty { "0" })
     val canProceed = SharedCostSplitLogic.canSave(state.rawTotal)
     val isZero = !canProceed
-    val showDetails = state.rawTotal.isNotEmpty() && canProceed
+    val showDetails = state.amountConfirmed && canProceed
     val participants = state.participants.map { it.name to it.shareLabel }
     val perPersonAmount = participants.firstOrNull()?.second ?: SharedCostSplitLogic.formatCents(0)
 
@@ -140,8 +141,8 @@ fun SharedCostsInputScreen(
                 actionsEnabled = canProceed,
                 onKey = onKey,
                 onBackspace = onBackspace,
-                onSave = onContinue,
-                onNext = onContinue,
+                onSave = onConfirmAmount,
+                onNext = onConfirmAmount,
                 saveLabel = stringResource(R.string.shared_save_split),
                 nextLabel = stringResource(R.string.shared_save_split),
                 modifier = Modifier

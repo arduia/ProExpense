@@ -6,10 +6,14 @@ enum class DebtDirection {
 }
 
 data class Debt(
-    val id: String,
+    val id: DebtId,
     val personName: String,
-    val amount: Amount,
+    val money: Money,
     val direction: DebtDirection,
     val dueEpochMillis: Long? = null,
     val isSettled: Boolean = false,
-)
+) {
+    init {
+        require(personName.isNotBlank()) { "Debt personName must not be blank" }
+    }
+}

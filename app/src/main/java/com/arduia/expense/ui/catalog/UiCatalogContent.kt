@@ -582,6 +582,7 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
                     items = previewSharedHistoryItems,
                     onNewSplit = {},
                     onItemClick = {},
+                    onBack = {},
                 )
             },
             UiCatalogEntry("shared_zero", "Input · zero validation", edge = true) {
@@ -753,6 +754,7 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
             UiCatalogEntry("pin_mismatch", "Set PIN · mismatch", edge = true) {
                 PinSetPinScreen(
                     state = previewPinSetConfirmMismatch,
+                    headingRes = AuthR.string.pin_confirm_heading,
                     onDigit = {},
                     onBackspace = {},
                     onBack = {},

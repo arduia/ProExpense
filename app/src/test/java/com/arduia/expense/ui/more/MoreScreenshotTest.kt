@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.feature.currency.ui.MoreCurrencyScreen
 import com.arduia.expense.feature.importexport.ui.MoreClearScreen
 import com.arduia.expense.feature.importexport.ui.MoreExportScreen
@@ -94,6 +95,26 @@ class MoreScreenshotTest {
             checkedIds = setOf("expenses"),
             onToggle = {},
             onClear = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_budget_empty() = capture {
+        MoreBudgetScreen(
+            currentAmount = null,
+            homeCurrency = CurrencyCode("USD"),
+            onSave = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_budget_set() = capture {
+        MoreBudgetScreen(
+            currentAmount = "$2,500.00",
+            homeCurrency = CurrencyCode("USD"),
+            onSave = {},
             onBack = {},
         )
     }

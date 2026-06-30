@@ -3,26 +3,49 @@ package com.arduia.expense.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.arduia.expense.R
+import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.EventRepository
+import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.Result
+import com.arduia.expense.data.SharedCostRepository
+import com.arduia.expense.domain.Category
+import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.tagLabel
+import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
+import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
+import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.dayKey
+import com.arduia.expense.ui.design.dayLabel
+import com.arduia.expense.ui.design.timeLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.splash.SplashScreen
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.delay
+import org.koin.compose.koinInject
 
 private const val SPLASH_DURATION_MILLIS = 1800L
 
@@ -30,55 +53,110 @@ private const val SPLASH_DURATION_MILLIS = 1800L
 fun ExpenseApp(
     features: FeatureUiRegistry = FeatureUiRegistry(),
     modifier: Modifier = Modifier,
+    getOnboardingStatus: GetOnboardingStatusUseCase = koinInject(),
+    completeOnboarding: CompleteOnboardingUseCase = koinInject(),
+    financeRecordRepository: FinanceRecordRepository = koinInject(),
+    categoryRepository: CategoryRepository = koinInject(),
+    eventRepository: EventRepository = koinInject(),
+    debtRepository: DebtRepository = koinInject(),
+    sharedCostRepository: SharedCostRepository = koinInject(),
+    pinAuthRepository: PinAuthRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
-    var onboardingComplete by rememberSaveable { mutableStateOf(false) }
+    var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var pinConfigured by remember { mutableStateOf<Boolean?>(null) }
+    var unlocked by rememberSaveable { mutableStateOf(false) }
     var showQuickLog by rememberSaveable { mutableStateOf(false) }
     var showSharedCosts by rememberSaveable { mutableStateOf(false) }
     var showDebt by rememberSaveable { mutableStateOf(false) }
     var showPinSetup by rememberSaveable { mutableStateOf(false) }
     var showReports by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
+    var homeSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
+    var editRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var userName by rememberSaveable { mutableStateOf("") }
-    var loggedItems by remember { mutableStateOf<List<HomeTransactionItem>>(emptyList()) }
-    var loggedTotal by remember { mutableStateOf(0.0) }
+    var userCurrency by rememberSaveable { mutableStateOf("") }
+
+    val records by financeRecordRepository.observeAll().collectAsState(emptyList())
+    var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
+    val events by eventRepository.observeAll().collectAsState(emptyList())
+    val debts by debtRepository.observeAll().collectAsState(emptyList())
+    val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
+    val eventNames = remember(events) { events.associate { it.id.value to it.name } }
+    val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
+    val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
 
     val noteFallback = stringResource(R.string.home_logged_note_fallback)
     val todaySection = stringResource(R.string.home_today_section)
 
-    val homeState = if (loggedItems.isEmpty()) {
+    val dateLabel = remember { buildDateLabel() }
+    val monthLabel = remember { buildMonthLabel() }
+
+    LaunchedEffect(Unit) {
+        when (val result = categoryRepository.getAll()) {
+            is Result.Success -> {
+                categoryMap = result.data.associateBy { it.id.value }
+            }
+            is Result.Error -> {
+                // Log error if needed
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val status = getOnboardingStatus()
+        onboardingComplete = status.isComplete
+        if (userName.isBlank()) userName = status.displayName
+    }
+
+    val homeState = if (records.isEmpty()) {
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
+            dateLabel = dateLabel,
+            monthLabel = monthLabel,
         )
     } else {
+        val totalCents = records.sumOf { it.money.amount.valueInCents }
         val totalLabel = "$" + AmountInput.formatDisplay(
-            String.format(Locale.US, "%.2f", loggedTotal),
+            String.format(Locale.US, "%.2f", totalCents / 100.0),
         )
+        val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
+        val dayGroups = sorted
+            .groupBy { dayKey(it.recordedAtEpochMillis) }
+            .toSortedMap(compareByDescending { it })
+            .map { (_, dayRecords) ->
+                val dayTotalCents = dayRecords.sumOf { it.money.amount.valueInCents }
+                val dayTotalLabel = "$" + AmountInput.formatDisplay(
+                    String.format(Locale.US, "%.2f", dayTotalCents / 100.0),
+                )
+                HomeDayGroup(
+                    dayTitle = dayLabel(dayRecords.first().recordedAtEpochMillis),
+                    dayTotal = dayTotalLabel,
+                    transactions = dayRecords.map { record ->
+                        HomeTransactionItem(
+                            id = record.id.value,
+                            categoryId = record.categoryId.value,
+                            note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
+                            meta = timeLabel(record.recordedAtEpochMillis),
+                            amount = "$" + AmountInput.formatDisplay(
+                                String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
+                            ),
+                            tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
+                        )
+                    },
+                )
+            }
         previewHomeEmpty.copy(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
+            dateLabel = dateLabel,
+            monthLabel = monthLabel,
             monthSpend = totalLabel,
             showEmptyHint = false,
-            dayGroups = listOf(
-                HomeDayGroup(
-                    dayTitle = todaySection,
-                    dayTotal = totalLabel,
-                    transactions = loggedItems,
-                ),
-            ),
+            dayGroups = dayGroups,
         )
     }
 
-    val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { entry ->
-        loggedTotal += AmountInput.numericValue(entry.rawAmount) ?: 0.0
-        loggedItems = listOf(
-            HomeTransactionItem(
-                categoryId = entry.categoryId,
-                note = entry.note.trim().ifEmpty { noteFallback },
-                meta = entry.timeLabel,
-                amount = "$" + AmountInput.formatDisplay(entry.rawAmount),
-                tag = entry.linkedTagLabel,
-            ),
-        ) + loggedItems
+    val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { _ ->
         showQuickLog = false
     }
 
@@ -95,55 +173,111 @@ fun ExpenseApp(
         showSplash = false
     }
 
+    LaunchedEffect(onboardingComplete) {
+        if (onboardingComplete == true) {
+            when (val result = pinAuthRepository.isPinConfigured()) {
+                is Result.Success -> pinConfigured = result.data
+                is Result.Error -> pinConfigured = false
+            }
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                unlocked = false
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     Box(modifier.fillMaxSize()) {
-        if (showSplash) {
+        if (showSplash || onboardingComplete == null) {
             SplashScreen()
         } else {
-            if (onboardingComplete) {
-                when (selectedTab) {
-                    HomeNavTab.Budget -> features.eventBudget.EventsTab(
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
+            if (onboardingComplete == true) {
+                if (pinConfigured == true && !unlocked) {
+                    features.auth.PinLockFlow(
+                        onUnlocked = { unlocked = true },
+                        modifier = Modifier,
                     )
-                    HomeNavTab.Journal -> features.history.JournalTab(
-                        selectedTab = selectedTab,
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
-                    )
-                    HomeNavTab.More -> MoreFlow(
-                        features = features,
-                        selectedTab = selectedTab,
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
-                        onDebtClick = { showDebt = true },
-                        onSharedClick = { showSharedCosts = true },
-                        onPinClick = { showPinSetup = true },
-                    )
-                    else -> HomeShell(
-                        state = homeState,
-                        selectedTab = selectedTab,
-                        onTabSelected = onTabSelected,
-                        onAddClick = { showQuickLog = true },
-                        onReportsClick = { showReports = true },
-                        onDebtClick = { showDebt = true },
-                        onSplitClick = { showSharedCosts = true },
-                        onEventsClick = { selectedTab = HomeNavTab.Budget },
-                        onLogFirstExpense = { showQuickLog = true },
-                    )
+                } else if (pinConfigured != null) {
+                    when (selectedTab) {
+                        HomeNavTab.Budget -> features.eventBudget.EventsTab(
+                            events = events,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                        )
+                        HomeNavTab.Journal -> features.history.JournalTab(
+                            selectedTab = selectedTab,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                            initialSelectedRowId = homeSelectedRecordId,
+                            onEditRecord = { editRecordId = it },
+                        )
+                        HomeNavTab.More -> MoreFlow(
+                            features = features,
+                            selectedTab = selectedTab,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                            onDebtClick = { showDebt = true },
+                            onSharedClick = { showSharedCosts = true },
+                            onPinClick = { showPinSetup = true },
+                            pinConfigured = pinConfigured,
+                        )
+                        else -> HomeShell(
+                            state = homeState,
+                            selectedTab = selectedTab,
+                            onTabSelected = onTabSelected,
+                            onAddClick = { showQuickLog = true },
+                            onReportsClick = { showReports = true },
+                            onDebtClick = { showDebt = true },
+                            onSplitClick = { showSharedCosts = true },
+                            onEventsClick = { selectedTab = HomeNavTab.Budget },
+                            onLogFirstExpense = { showQuickLog = true },
+                            onRowClick = { row ->
+                                homeSelectedRecordId = row.id
+                                selectedTab = HomeNavTab.Journal
+                            },
+                        )
+                    }
                 }
             } else {
                 features.onboarding.FirstLaunchFlow(
                     onComplete = { handoff ->
                         userName = handoff.profileName
+                        userCurrency = handoff.currencyCode
                         onboardingComplete = true
                     },
                 )
+            }
+
+            LaunchedEffect(onboardingComplete) {
+                if (onboardingComplete == true) {
+                    completeOnboarding(userName, userCurrency)
+                }
+            }
+
+            LaunchedEffect(selectedTab) {
+                if (selectedTab == HomeNavTab.Journal) {
+                    homeSelectedRecordId = null
+                }
             }
 
             if (showQuickLog) {
                 features.logging.QuickLogFlow(
                     onDismiss = { showQuickLog = false },
                     onSaved = onExpenseSaved,
+                )
+            }
+
+            editRecordId?.let { recordId ->
+                features.logging.EditExpenseFlow(
+                    recordId = recordId,
+                    onDismiss = { editRecordId = null },
+                    onSaved = { editRecordId = null },
                 )
             }
 
@@ -159,14 +293,27 @@ fun ExpenseApp(
 
             if (showPinSetup) {
                 features.auth.PinSetupFlow(
-                    onDismiss = { showPinSetup = false },
+                    onDismiss = {
+                        showPinSetup = false
+                        unlocked = true
+                    },
+                    modifier = Modifier,
                 )
+            }
+
+            LaunchedEffect(showPinSetup) {
+                if (!showPinSetup && onboardingComplete == true) {
+                    when (val result = pinAuthRepository.isPinConfigured()) {
+                        is Result.Success -> pinConfigured = result.data
+                        is Result.Error -> Unit
+                    }
+                }
             }
 
             if (showReports) {
                 features.reports.ReportsFlow(
                     onBack = { showReports = false },
-                    empty = loggedItems.isEmpty(),
+                    empty = records.isEmpty(),
                     onLogFirstExpense = {
                         showReports = false
                         showQuickLog = true
@@ -175,4 +322,14 @@ fun ExpenseApp(
             }
         }
     }
+}
+
+private fun buildDateLabel(): String {
+    val calendar = Calendar.getInstance()
+    return SimpleDateFormat("EEE · MMM d", Locale.US).format(calendar.time).uppercase()
+}
+
+private fun buildMonthLabel(): String {
+    val calendar = Calendar.getInstance()
+    return SimpleDateFormat("MMM", Locale.US).format(calendar.time).uppercase()
 }

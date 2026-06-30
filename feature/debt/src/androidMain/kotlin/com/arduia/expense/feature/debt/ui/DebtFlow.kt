@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.debt.R
-import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
@@ -28,9 +27,7 @@ import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
-import com.arduia.expense.feature.debt.ui.preview.previewDebtLentDetail
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
-import com.arduia.expense.feature.debt.ui.preview.previewDebtOweDetail
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -39,6 +36,11 @@ import com.arduia.expense.ui.theme.stepTransition
 @Composable
 fun DebtFlow(
     onDismiss: () -> Unit,
+    lentState: DebtListUiState = previewDebtLent,
+    oweState: DebtListUiState = previewDebtOwe,
+    onSaveRecord: (side: DebtSide, person: String, amountRaw: String) -> Unit = { _, _, _ -> },
+    onDeleteRecord: (String) -> Unit = {},
+    onSettleRecord: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -51,34 +53,16 @@ fun DebtFlow(
     var addForm by remember { mutableStateOf(DebtAddFormState()) }
     var conflictPerson by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<DebtRecordUi?>(null) }
-    var lentList by remember { mutableStateOf(previewDebtLent) }
-    var oweList by remember { mutableStateOf(previewDebtOwe) }
 
-    val listState = if (side == DebtSide.Lent) lentList else oweList
+    val listState = if (side == DebtSide.Lent) lentState else oweState
 
     fun otherSideName(name: String): Boolean {
-        val other = if (addForm.side == DebtSide.Lent) oweList else lentList
+        val other = if (addForm.side == DebtSide.Lent) oweState else lentState
         return name.isNotBlank() && other.active.any { it.name.equals(name.trim(), ignoreCase = true) }
     }
 
     fun commitNewRecord() {
-        val record = DebtRecordUi(
-            id = "rec-" + System.currentTimeMillis(),
-            name = addForm.person.trim(),
-            dateLabel = addForm.dateLabel,
-            amountLabel = "$" + AmountInput.formatDisplay(addForm.amountRaw),
-        )
-        if (addForm.side == DebtSide.Lent) {
-            lentList = lentList.copy(
-                active = listOf(record) + lentList.active,
-                activeCount = lentList.activeCount + 1,
-            )
-        } else {
-            oweList = oweList.copy(
-                active = listOf(record) + oweList.active,
-                activeCount = oweList.activeCount + 1,
-            )
-        }
+        onSaveRecord(addForm.side, addForm.person.trim(), addForm.amountRaw)
         side = addForm.side
         showAdd = false
     }
@@ -123,7 +107,10 @@ fun DebtFlow(
                     onBack = { selectedRecordId = null },
                     onMore = {},
                     onEdit = {},
-                    onMarkSettled = { selectedRecordId = null },
+                    onMarkSettled = {
+                        onSettleRecord(recordId)
+                        selectedRecordId = null
+                    },
                 )
             }
         }
@@ -180,7 +167,10 @@ fun DebtFlow(
                 append(stringResource(R.string.debt_delete_body, deleteTarget?.name.orEmpty()))
             },
             confirmLabel = stringResource(R.string.debt_delete),
-            onConfirm = { deleteTarget = null },
+            onConfirm = {
+                deleteTarget?.let { onDeleteRecord(it.id) }
+                deleteTarget = null
+            },
             dismissLabel = stringResource(R.string.debt_cancel),
             onDismiss = { deleteTarget = null },
             confirmVariant = ProButtonVariant.Danger,
@@ -224,23 +214,19 @@ private fun detailStateFor(
     id: String,
     side: DebtSide,
     listState: DebtListUiState,
-): DebtDetailUiState = when (id) {
-    "john" -> previewDebtLentDetail
-    "david" -> previewDebtOweDetail
-    else -> {
-        val record = listState.active.firstOrNull { it.id == id }
-        DebtDetailUiState(
-            id = id,
-            side = side,
-            name = record?.name.orEmpty(),
-            amountLabel = record?.amountLabel.orEmpty(),
-            dateRecordedLabel = record?.dateLabel.orEmpty(),
-            dueLabel = "No due date",
-            statusLabel = "Active",
-            settled = false,
-            note = record?.subtitle,
-        )
-    }
+): DebtDetailUiState {
+    val record = (listState.active + listState.settled).firstOrNull { it.id == id }
+    return DebtDetailUiState(
+        id = id,
+        side = side,
+        name = record?.name.orEmpty(),
+        amountLabel = record?.amountLabel.orEmpty(),
+        dateRecordedLabel = record?.dateLabel.orEmpty(),
+        dueLabel = record?.dateLabel ?: "No due date",
+        statusLabel = if (record?.settled == true) "Settled" else "Active",
+        settled = record?.settled ?: false,
+        note = record?.subtitle,
+    )
 }
 
 @Preview(

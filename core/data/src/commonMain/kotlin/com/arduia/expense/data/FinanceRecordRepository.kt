@@ -1,13 +1,25 @@
 package com.arduia.expense.data
 
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.RecordId
+import kotlinx.coroutines.flow.Flow
 
 interface FinanceRecordRepository {
     suspend fun getAll(): Result<List<FinanceRecord>>
 
-    suspend fun getById(id: String): Result<FinanceRecord?>
+    suspend fun getById(id: RecordId): Result<FinanceRecord?>
 
     suspend fun upsert(record: FinanceRecord): Result<Unit>
 
-    suspend fun delete(id: String): Result<Unit>
+    suspend fun delete(id: RecordId): Result<Unit>
+
+    /** Live, ordered view of every record — backs auto-updating screens (Home, Journal). */
+    fun observeAll(): Flow<List<FinanceRecord>>
+
+    /**
+     * Re-derives the stored record's checksum and compares it to the persisted one.
+     * `Success(true)` = intact; `Success(false)` = tampered/corrupt or no checksum; `Error` when the
+     * record is missing or the read fails.
+     */
+    suspend fun verifyIntegrity(id: RecordId): Result<Boolean>
 }

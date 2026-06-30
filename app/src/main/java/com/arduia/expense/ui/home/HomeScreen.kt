@@ -68,6 +68,7 @@ fun HomeScreenContent(
     onSeeAll: () -> Unit = {},
     onCustomizeQuickAccess: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
+    onRowClick: (com.arduia.expense.ui.design.ProTransactionRowModel) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -150,6 +151,7 @@ fun HomeScreenContent(
             HomeRecentSection(
                 groups = state.dayGroups,
                 onSeeAll = onSeeAll,
+                onRowClick = onRowClick,
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = dimens.space26),
@@ -445,6 +447,7 @@ private fun HomeEmptyContent(
 private fun HomeRecentSection(
     groups: List<com.arduia.expense.ui.preview.HomeDayGroup>,
     onSeeAll: () -> Unit,
+    onRowClick: (com.arduia.expense.ui.design.ProTransactionRowModel) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -483,9 +486,9 @@ private fun HomeRecentSection(
                 DayGroup(
                     title = group.dayTitle,
                     total = group.dayTotal,
-                    transactions = group.transactions.mapIndexed { index, item ->
+                    transactions = group.transactions.map { item ->
                         ProTransactionRowModel(
-                            id = "${group.dayTitle}_$index",
+                            id = item.id,
                             categoryId = item.categoryId,
                             note = item.note,
                             meta = item.meta,
@@ -494,6 +497,7 @@ private fun HomeRecentSection(
                         )
                     },
                     cardWrapped = false,
+                    onRowClick = onRowClick,
                 )
             }
         }

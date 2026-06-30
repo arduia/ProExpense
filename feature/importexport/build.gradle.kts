@@ -28,6 +28,7 @@ kotlin {
         androidMain.dependencies {
             implementation(project(":core:storage"))
             implementation(libs.zip4j)
+            implementation("io.insert-koin:koin-compose:4.1.1")
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))

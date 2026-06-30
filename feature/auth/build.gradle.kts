@@ -28,6 +28,8 @@ kotlin {
             implementation(libs.coroutines.core)
             implementation(libs.androidx.biometric)
             implementation(project(":core:storage"))
+            implementation(libs.koin.core)
+            implementation("io.insert-koin:koin-compose:4.1.1")
         }
     }
 }

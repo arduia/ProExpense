@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import com.arduia.expense.feature.auth.ui.PinEntryScreen
 import com.arduia.expense.feature.auth.ui.PinRecoveryScreen
 import com.arduia.expense.feature.auth.ui.PinSecurityQuestionScreen
@@ -19,6 +21,7 @@ import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.feature.auth.ui.preview.previewPinEntry
 import com.arduia.expense.feature.auth.ui.preview.previewPinLock
 import com.arduia.expense.feature.auth.ui.preview.previewPinSetConfirmMismatch
+import com.arduia.expense.feature.auth.ui.preview.previewPinSetRevealed
 import com.arduia.expense.feature.auth.ui.preview.previewPinSetup
 import com.arduia.expense.feature.auth.ui.preview.previewPinWrong
 import com.arduia.expense.testing.ScreenshotTests
@@ -93,10 +96,34 @@ class PinScreenshotTest {
     fun edge_pin_mismatch() = capture {
         PinSetPinScreen(
             state = previewPinSetConfirmMismatch,
+            headingRes = R.string.pin_confirm_heading,
             onDigit = {},
             onBackspace = {},
             onBack = {},
         )
+    }
+
+    @Test
+    fun pin_set_revealed() {
+        composeTestRule.setContent {
+            ProExpenseTheme {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(ProExpenseTheme.colors.paper),
+                ) {
+                    PinSetPinScreen(
+                        state = previewPinSetRevealed,
+                        headingRes = R.string.pin_set_new_heading,
+                        onDigit = {},
+                        onBackspace = {},
+                        onBack = {},
+                    )
+                }
+            }
+        }
+        composeTestRule.onNodeWithContentDescription("Toggle PIN reveal").performClick()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test

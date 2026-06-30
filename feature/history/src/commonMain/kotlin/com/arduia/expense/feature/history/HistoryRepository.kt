@@ -1,12 +1,13 @@
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.Result
-import com.arduia.expense.domain.Amount
+import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.Money
 
 data class RecordHistoryFilter(
-    val categoryId: String? = null,
+    val categoryId: CategoryId? = null,
     val currency: CurrencyCode? = null,
     val fromEpochMillis: Long? = null,
     val toEpochMillis: Long? = null,
@@ -21,7 +22,7 @@ enum class SummaryPeriod {
 
 data class RecordSummary(
     val period: SummaryPeriod,
-    val totalInHomeCurrency: Amount,
+    val totalInHomeCurrency: Money,
     val recordCount: Int,
 )
 

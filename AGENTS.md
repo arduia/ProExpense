@@ -125,6 +125,19 @@ ProExpense/
 Authoritative workflow. Each step is **gate-first**: if the gate already holds, mark ✅ and skip.
 **Never skip a gate that fails.**
 
+### Plan Mode & Model Selection Workflow
+
+When a task requires planning:
+
+1. **Agent enters plan mode** and designs an implementation approach
+2. **User reviews and approves the plan** (using ExitPlanMode)
+3. **Session pauses for model selection** — agent asks user which AI model to use for implementation
+4. **User selects model** (e.g., Haiku for straightforward impl, Opus for complex decisions)
+5. **User confirms readiness** (e.g., "let's go")
+6. **Agent proceeds with implementation** on the selected model
+
+This pattern ensures you have explicit control over which model handles each phase of work and can match model capability to task complexity.
+
 ### Step 1 — Understand Intention & Scope
 
 **Gate:** Outcome is clear, change size (small/large) is known, enough context to act, and the

@@ -27,6 +27,8 @@ kotlin {
             implementation(project(":core:data"))
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -40,10 +42,17 @@ kotlin {
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.sqlcipher.android)
             implementation(libs.androidx.security.crypto)
+            implementation(libs.koin.android)
         }
         androidUnitTest.dependencies {
             implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
+            // Pure-JVM driver: exercises real SQL + mappers without SQLCipher/Android.
+            implementation(libs.sqldelight.sqlite.driver)
         }
+        // NOTE: an `iosMain` stub (DatabaseDriverFactory.ios.kt) is checked in for iOS readiness
+        // but no iOS target is configured yet, so it is intentionally not compiled. Add the iOS
+        // targets + native SQLDelight driver here when the iosApp phase starts.
     }
 }
 

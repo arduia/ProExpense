@@ -1,6 +1,7 @@
 package com.arduia.expense.ui.preview
 
 data class HomeTransactionItem(
+    val id: String = "",
     val categoryId: String,
     val note: String,
     val meta: String,
@@ -67,11 +68,11 @@ val previewHomeCasual = HomeUiState(
             dayTitle = "Today · May 25",
             dayTotal = "$81.40",
             transactions = listOf(
-                HomeTransactionItem("food", "Lunch with M.", "Food · 12:30 PM", "$12.40"),
-                HomeTransactionItem("transport", "Transport", "Transport · 09:15 AM", "$3.50"),
-                HomeTransactionItem("coffee", "Oat latte", "Coffee · 08:40 AM", "$5.00"),
-                HomeTransactionItem("entertainment", "Movie · Dune", "Entertainment · 08:10 PM", "$18.00", "Bali Trip"),
-                HomeTransactionItem("food", "Groceries", "Food · 05:30 PM", "$42.00"),
+                HomeTransactionItem(id = "", categoryId = "food", note = "Lunch with M.", meta = "Food · 12:30 PM", amount = "$12.40"),
+                HomeTransactionItem(id = "", categoryId = "transport", note = "Transport", meta = "Transport · 09:15 AM", amount = "$3.50"),
+                HomeTransactionItem(id = "", categoryId = "coffee", note = "Oat latte", meta = "Coffee · 08:40 AM", amount = "$5.00"),
+                HomeTransactionItem(id = "", categoryId = "entertainment", note = "Movie · Dune", meta = "Entertainment · 08:10 PM", amount = "$18.00", tag = "Bali Trip"),
+                HomeTransactionItem(id = "", categoryId = "food", note = "Groceries", meta = "Food · 05:30 PM", amount = "$42.00"),
             ),
         ),
     ),

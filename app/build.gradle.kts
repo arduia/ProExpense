@@ -93,12 +93,16 @@ dependencies {
     implementation(project(":feature:categories"))
     implementation(project(":feature:onboarding"))
 
+    implementation(libs.coroutines.core)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.biometric)
     implementation(libs.material)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation("io.insert-koin:koin-compose")
 
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)

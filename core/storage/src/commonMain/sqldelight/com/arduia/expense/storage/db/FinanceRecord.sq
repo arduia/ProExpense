@@ -1,20 +1,27 @@
+-- type: RecordType code (EXPENSE=0, INCOME=1) — explicit codes, never Kotlin .ordinal
+-- home_amount_cents: nullable when currency_code == home_currency (null signals "use amount_cents")
+-- updated_at: system "last modified" timestamp, distinct from recorded_at (user-chosen, possibly-backdated)
+-- integrity_hash: hex HMAC-SHA256 over canonical fields, keyed by dedicated Android Keystore HMAC key
 CREATE TABLE finance_record (
     id TEXT NOT NULL PRIMARY KEY,
     amount_cents INTEGER NOT NULL,
     currency_code TEXT NOT NULL,
-    home_amount_cents INTEGER NOT NULL,
+    home_amount_cents INTEGER,
     category_id TEXT NOT NULL,
-    type TEXT NOT NULL,
+    type INTEGER NOT NULL,
     note TEXT,
     recorded_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
     tag_type TEXT,
-    tag_id TEXT
+    tag_id TEXT,
+    integrity_algo TEXT NOT NULL,
+    integrity_hash TEXT NOT NULL
 );
 
 insertRecord:
 INSERT OR REPLACE INTO finance_record(
-    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, tag_type, tag_id
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, updated_at, tag_type, tag_id, integrity_algo, integrity_hash
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteRecord:
 DELETE FROM finance_record WHERE id = ?;
@@ -25,5 +32,11 @@ SELECT * FROM finance_record ORDER BY recorded_at DESC;
 selectRecordById:
 SELECT * FROM finance_record WHERE id = ?;
 
+sumAmountByEventLink:
+SELECT COALESCE(SUM(amount_cents), 0) FROM finance_record WHERE tag_type = 'EVENT' AND tag_id = ?;
+
 deleteAllRecords:
 DELETE FROM finance_record;
+
+clearTagsByType:
+UPDATE finance_record SET tag_type = NULL, tag_id = NULL WHERE tag_type = ?;

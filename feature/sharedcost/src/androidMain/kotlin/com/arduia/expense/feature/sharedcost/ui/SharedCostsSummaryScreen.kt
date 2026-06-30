@@ -41,6 +41,7 @@ fun SharedCostsSummaryScreen(
     onSwitchToCustom: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
+    backLabel: String = stringResource(R.string.shared_back_split),
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -68,7 +69,7 @@ fun SharedCostsSummaryScreen(
         ProTopBar(
             title = stringResource(R.string.shared_summary_title),
             onBack = onBack,
-            backLabel = stringResource(R.string.shared_back_split),
+            backLabel = backLabel,
         )
 
         AmountDisplay(

@@ -2,6 +2,7 @@ package com.arduia.expense.feature.sharedcost.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostHistoryRow
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
@@ -33,6 +35,7 @@ fun SharedCostsHistoryScreen(
     items: List<SharedCostHistoryItemUi>,
     onNewSplit: () -> Unit,
     onItemClick: (SharedCostHistoryItemUi) -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -45,67 +48,75 @@ fun SharedCostsHistoryScreen(
             .background(colors.paper)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.screenPadding)
-            .padding(bottom = dimens.space18),
+            .verticalScroll(rememberScrollState()),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8, bottom = dimens.space16),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(dimens.space8),
-            ) {
-                Text(
-                    text = stringResource(R.string.shared_bill_splitter),
-                    style = typography.eyebrow,
-                    color = colors.muted,
-                )
-                Text(
-                    text = stringResource(R.string.shared_costs_heading),
-                    style = typography.profileScreenTitle,
-                    color = colors.onSurface,
-                )
-            }
-            ProButton(
-                text = stringResource(R.string.shared_new_split),
-                onClick = onNewSplit,
-                size = ProButtonSize.Sm,
-                leading = {
-                    ProIcon(
-                        glyph = ProIconGlyph.Plus,
-                        contentDescription = null,
-                        tint = ProExpenseTheme.colors.onPrimaryWarm,
-                        size = dimens.iconInline,
-                    )
-                },
+        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
+            ProTopBar(
+                title = stringResource(R.string.shared_costs_heading),
+                onBack = onBack,
+                backLabel = stringResource(R.string.shared_back_more),
             )
         }
 
-        Text(
-            text = stringResource(R.string.shared_recent_splits),
-            style = typography.eyebrow,
-            color = colors.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = dimens.space10),
-        )
-
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-            items.forEach { item ->
-                SharedCostHistoryRow(
-                    title = item.title,
-                    meta = stringResource(
-                        R.string.shared_history_meta,
-                        item.peopleCount,
-                        item.perPersonLabel,
-                        item.dateLabel,
-                    ),
-                    total = item.totalLabel,
-                    onClick = { onItemClick(item) },
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.screenPadding)
+                .padding(bottom = dimens.space18),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8, bottom = dimens.space16),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    Text(
+                        text = stringResource(R.string.shared_bill_splitter),
+                        style = typography.eyebrow,
+                        color = colors.muted,
+                    )
+                }
+                ProButton(
+                    text = stringResource(R.string.shared_new_split),
+                    onClick = onNewSplit,
+                    size = ProButtonSize.Sm,
+                    leading = {
+                        ProIcon(
+                            glyph = ProIconGlyph.Plus,
+                            contentDescription = null,
+                            tint = ProExpenseTheme.colors.onPrimaryWarm,
+                            size = dimens.iconInline,
+                        )
+                    },
                 )
+            }
+
+            Text(
+                text = stringResource(R.string.shared_recent_splits),
+                style = typography.eyebrow,
+                color = colors.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = dimens.space10),
+            )
+
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                items.forEach { item ->
+                    SharedCostHistoryRow(
+                        title = item.title,
+                        meta = stringResource(
+                            R.string.shared_history_meta,
+                            item.peopleCount,
+                            item.perPersonLabel,
+                            item.dateLabel,
+                        ),
+                        total = item.totalLabel,
+                        onClick = { onItemClick(item) },
+                    )
+                }
             }
         }
     }
@@ -124,6 +135,7 @@ private fun SharedCostsHistoryPreview() {
             items = previewSharedHistoryItems,
             onNewSplit = {},
             onItemClick = {},
+            onBack = {},
         )
     }
 }

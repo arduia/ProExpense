@@ -1,19 +1,21 @@
 package com.arduia.expense.feature.logging
 
 import com.arduia.expense.data.Result
-import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 
 data class LogRecordInput(
-    val amount: Amount,
-    val currency: CurrencyCode,
-    val homeCurrencyAmount: Amount,
-    val categoryId: String,
+    val money: Money,
+    val homeCurrencyMoney: Money,
+    val categoryId: CategoryId,
     val type: RecordType = RecordType.EXPENSE,
     val note: String? = null,
     val recordedAtEpochMillis: Long,
+    val link: RecordLink = RecordLink.None,
 )
 
 interface LoggingRepository {
@@ -21,5 +23,5 @@ interface LoggingRepository {
 
     suspend fun updateRecord(record: FinanceRecord): Result<Unit>
 
-    suspend fun deleteRecord(id: String): Result<Unit>
+    suspend fun deleteRecord(id: RecordId): Result<Unit>
 }

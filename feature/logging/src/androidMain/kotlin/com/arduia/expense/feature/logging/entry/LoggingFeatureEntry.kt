@@ -1,16 +1,48 @@
 package com.arduia.expense.feature.logging.entry
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
+import com.arduia.expense.feature.logging.LoggingViewModel
+import com.arduia.expense.feature.logging.SaveExpenseInput
+import com.arduia.expense.feature.logging.SaveExpenseOutcome
+import com.arduia.expense.feature.logging.TagOption
+import com.arduia.expense.feature.logging.TagOptionKind
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
+import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.TagLinkKind
+import com.arduia.expense.ui.design.TagLinkOption
+import com.arduia.expense.ui.design.shortDateLabel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import kotlinx.coroutines.launch
+import org.koin.compose.currentKoinScope
 
 interface LoggingFeatureEntry {
     @Composable
     fun QuickLogFlow(
         onDismiss: () -> Unit,
         onSaved: (LoggedExpenseHandoff) -> Unit,
+        modifier: Modifier = Modifier,
+    )
+
+    @Composable
+    fun EditExpenseFlow(
+        recordId: String,
+        onDismiss: () -> Unit,
+        onSaved: () -> Unit,
         modifier: Modifier = Modifier,
     )
 }
@@ -22,14 +54,128 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaved: (LoggedExpenseHandoff) -> Unit,
         modifier: Modifier,
     ) {
-        val onHandoff = onSaved
+        val scope = rememberCoroutineScope()
+        val viewModel = rememberLoggingViewModel()
+        val uiState by viewModel.uiState.collectAsState()
+
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
-            onSaved = { state -> onHandoff(state.toHandoff()) },
+            onSaved = { state ->
+                scope.launch {
+                    when (viewModel.save(state.toSaveInput())) {
+                        is SaveExpenseOutcome.Saved -> onSaved(state.toHandoff())
+                        SaveExpenseOutcome.InvalidAmount -> {} // UI already has inline validation
+                        is SaveExpenseOutcome.Failed -> {} // Error silently; UI already has toast handling
+                    }
+                }
+            },
+            tagEvents = tagEvents,
+            tagDebts = tagDebts,
             modifier = modifier,
         )
     }
+
+    @Composable
+    override fun EditExpenseFlow(
+        recordId: String,
+        onDismiss: () -> Unit,
+        onSaved: () -> Unit,
+        modifier: Modifier,
+    ) {
+        val scope = rememberCoroutineScope()
+        val viewModel = rememberLoggingViewModel()
+        val uiState by viewModel.uiState.collectAsState()
+
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+        val eventNames = uiState.tagOptions.filter { it.kind == TagOptionKind.EVENT }
+            .associate { it.id to it.eventName.orEmpty() }
+        val debtNames = uiState.tagOptions.filter { it.kind == TagOptionKind.DEBT }
+            .associate { it.id to debtLabel(it) }
+
+        var startState by remember(recordId) { mutableStateOf<ExpenseEntryState?>(null) }
+
+        LaunchedEffect(recordId, eventNames, debtNames) {
+            viewModel.loadForEdit(recordId)
+        }
+
+        val record = uiState.existingRecord
+        if (record != null && record.id.value == recordId && startState == null) {
+            startState = record.toEntryState(eventNames, debtNames)
+        }
+
+        val loaded = startState
+        if (loaded != null && record != null) {
+            com.arduia.expense.feature.logging.ui.QuickLogFlow(
+                onDismiss = onDismiss,
+                startState = loaded,
+                onSaved = { state ->
+                    scope.launch {
+                        when (viewModel.update(state.toSaveInput())) {
+                            is SaveExpenseOutcome.Saved -> onSaved()
+                            SaveExpenseOutcome.InvalidAmount -> {}
+                            is SaveExpenseOutcome.Failed -> {}
+                        }
+                    }
+                },
+                tagEvents = tagEvents,
+                tagDebts = tagDebts,
+                modifier = modifier,
+            )
+        }
+    }
 }
+
+@Composable
+private fun rememberLoggingViewModel(): LoggingViewModel {
+    val scope = currentKoinScope()
+    val viewModel = remember { scope.get<LoggingViewModel>() }
+    DisposableEffect(viewModel) {
+        onDispose { viewModel.onCleared() }
+    }
+    return viewModel
+}
+
+private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind): List<TagLinkOption> =
+    filter { it.kind == kind }.map { option ->
+        when (kind) {
+            TagOptionKind.EVENT -> TagLinkOption(
+                id = option.id,
+                title = option.eventName.orEmpty(),
+                subtitle = shortDateLabel(option.eventStartEpochMillis ?: 0L) + " - " +
+                    shortDateLabel(option.eventEndEpochMillis ?: 0L),
+                kind = TagLinkKind.Event,
+            )
+            TagOptionKind.DEBT -> TagLinkOption(
+                id = option.id,
+                title = debtLabel(option),
+                subtitle = moneyLabel(option.debtAmountCents ?: 0L),
+                kind = TagLinkKind.Debt,
+            )
+        }
+    }
+
+private fun debtLabel(option: TagOption): String {
+    val direction = if (option.debtIsOwedToMe == true) "Lent" else "Owe"
+    return "$direction · ${option.debtPersonName.orEmpty()}"
+}
+
+private fun ExpenseEntryState.toSaveInput(): SaveExpenseInput = SaveExpenseInput(
+    rawAmount = rawAmount,
+    currencyCode = currencyCode,
+    categoryId = selectedCategoryId,
+    note = note,
+    recordedAtEpochMillis = recordedAtEpochMillis,
+    linkTagId = linkedTagId,
+    linkTagKind = when (linkedTagKind) {
+        TagLinkKind.Event -> TagOptionKind.EVENT
+        TagLinkKind.Debt -> TagOptionKind.DEBT
+        null -> null
+    },
+)
 
 object LoggingFeatureUi : LoggingFeatureEntry by LoggingFeatureEntryImpl()
 
@@ -40,3 +186,30 @@ private fun ExpenseEntryState.toHandoff(): LoggedExpenseHandoff = LoggedExpenseH
     timeLabel = timeLabel,
     linkedTagLabel = linkedTagLabel,
 )
+
+private fun FinanceRecord.toEntryState(
+    eventNames: Map<String, String>,
+    debtNames: Map<String, String>,
+): ExpenseEntryState {
+    val calendar = Calendar.getInstance().apply { timeInMillis = recordedAtEpochMillis }
+    val (tagId, tagKind, tagLabel) = when (val current = link) {
+        is RecordLink.ToEvent -> Triple(current.eventId.value, TagLinkKind.Event, eventNames[current.eventId.value])
+        is RecordLink.ToDebt -> Triple(current.debtId.value, TagLinkKind.Debt, debtNames[current.debtId.value])
+        else -> Triple(null, null, null)
+    }
+    return ExpenseEntryState(
+        rawAmount = String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0),
+        selectedCategoryId = categoryId.value,
+        note = note.orEmpty(),
+        dateLabel = SimpleDateFormat("MMMM d, yyyy", Locale.US).format(calendar.time),
+        timeLabel = SimpleDateFormat("h:mm a", Locale.US).format(calendar.time),
+        recordedAtEpochMillis = recordedAtEpochMillis,
+        linkedTagId = tagId,
+        linkedTagKind = tagKind,
+        linkedTagLabel = tagLabel,
+        currencyCode = money.currency.code,
+    )
+}
+
+private fun moneyLabel(valueInCents: Long): String =
+    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

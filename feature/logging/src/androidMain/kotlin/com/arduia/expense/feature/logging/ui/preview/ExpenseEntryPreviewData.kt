@@ -9,6 +9,7 @@ data class ExpenseEntryState(
     val note: String = "",
     val dateLabel: String = "Today, May 25",
     val timeLabel: String = "12:30 PM",
+    val recordedAtEpochMillis: Long = System.currentTimeMillis(),
     val linkedTagId: String? = null,
     val linkedTagKind: TagLinkKind? = null,
     val linkedTagLabel: String? = null,
