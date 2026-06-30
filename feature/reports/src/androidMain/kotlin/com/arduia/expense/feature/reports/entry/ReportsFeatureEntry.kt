@@ -22,6 +22,8 @@ import kotlin.math.roundToInt
 import org.koin.compose.koinInject
 import com.arduia.expense.data.FinanceRecordRepository
 
+private const val REPORT_PERIOD_WINDOW_MONTHS = 12
+
 interface ReportsFeatureEntry {
     @Composable
     fun ReportsFlow(
@@ -51,11 +53,10 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
                 .associate { it.id.value to it.name }
 
             val now = Calendar.getInstance()
-            val previousMonth = (now.clone() as Calendar).apply { add(Calendar.MONTH, -1) }
-            periods = listOf(
-                buildPeriodState(generateReportPeriod, records, now, categoryNames),
-                buildPeriodState(generateReportPeriod, records, previousMonth, categoryNames),
-            )
+            periods = (0 until REPORT_PERIOD_WINDOW_MONTHS).map { monthsBack ->
+                val month = (now.clone() as Calendar).apply { add(Calendar.MONTH, -monthsBack) }
+                buildPeriodState(generateReportPeriod, records, month, categoryNames)
+            }
         }
 
         com.arduia.expense.feature.reports.ui.ReportsFlow(

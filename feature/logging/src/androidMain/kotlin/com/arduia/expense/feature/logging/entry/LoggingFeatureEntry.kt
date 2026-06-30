@@ -36,6 +36,7 @@ interface LoggingFeatureEntry {
         onDismiss: () -> Unit,
         onSaved: (LoggedExpenseHandoff) -> Unit,
         modifier: Modifier = Modifier,
+        currencyCode: String = "USD",
     )
 
     @Composable
@@ -53,6 +54,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onDismiss: () -> Unit,
         onSaved: (LoggedExpenseHandoff) -> Unit,
         modifier: Modifier,
+        currencyCode: String,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
@@ -63,6 +65,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
 
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
+            startState = ExpenseEntryState(currencyCode = currencyCode),
             onSaved = { state ->
                 scope.launch {
                     when (viewModel.save(state.toSaveInput())) {

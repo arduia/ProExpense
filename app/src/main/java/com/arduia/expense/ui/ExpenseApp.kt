@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
+import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
 import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
@@ -50,6 +52,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 private const val SPLASH_DURATION_MILLIS = 1800L
@@ -66,6 +69,7 @@ fun ExpenseApp(
     debtRepository: DebtRepository = koinInject(),
     sharedCostRepository: SharedCostRepository = koinInject(),
     pinAuthRepository: PinAuthRepository = koinInject(),
+    currencyRepository: CurrencyRepository = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -81,9 +85,11 @@ fun ExpenseApp(
     var editRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var userName by rememberSaveable { mutableStateOf("") }
     var userCurrency by rememberSaveable { mutableStateOf("") }
+    var homeCurrencyCode by rememberSaveable { mutableStateOf("USD") }
     var showQuickAccessPicker by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     var quickAccessVisible by remember { mutableStateOf(QuickAccessPrefs.load(context)) }
+    val coroutineScope = rememberCoroutineScope()
 
     val records by financeRecordRepository.observeAll().collectAsState(emptyList())
     var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
@@ -115,6 +121,13 @@ fun ExpenseApp(
         val status = getOnboardingStatus()
         onboardingComplete = status.isComplete
         if (userName.isBlank()) userName = status.displayName
+    }
+
+    LaunchedEffect(onboardingComplete, userCurrency) {
+        when (val result = currencyRepository.getSettings()) {
+            is Result.Success -> homeCurrencyCode = result.data.homeCurrency.code
+            is Result.Error -> Unit
+        }
     }
 
     val homeState = if (records.isEmpty()) {
@@ -161,6 +174,7 @@ fun ExpenseApp(
             monthSpend = totalLabel,
             showEmptyHint = false,
             dayGroups = dayGroups,
+            sparklinePoints = buildSparklinePoints(records),
         )
     }
 
@@ -260,15 +274,12 @@ fun ExpenseApp(
                     onComplete = { handoff ->
                         userName = handoff.profileName
                         userCurrency = handoff.currencyCode
-                        onboardingComplete = true
+                        coroutineScope.launch {
+                            completeOnboarding(handoff.profileName, handoff.currencyCode)
+                            onboardingComplete = true
+                        }
                     },
                 )
-            }
-
-            LaunchedEffect(onboardingComplete) {
-                if (onboardingComplete == true) {
-                    completeOnboarding(userName, userCurrency)
-                }
             }
 
             LaunchedEffect(selectedTab) {
@@ -281,6 +292,7 @@ fun ExpenseApp(
                 features.logging.QuickLogFlow(
                     onDismiss = { showQuickLog = false },
                     onSaved = onExpenseSaved,
+                    currencyCode = homeCurrencyCode,
                 )
             }
 
@@ -351,6 +363,20 @@ fun ExpenseApp(
                 )
             }
         }
+    }
+}
+
+private const val SPARKLINE_DAYS = 7
+
+private fun buildSparklinePoints(records: List<FinanceRecord>): List<Float> {
+    val today = Calendar.getInstance()
+    return (SPARKLINE_DAYS - 1 downTo 0).map { offset ->
+        val day = (today.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -offset) }
+        val key = dayKey(day.timeInMillis)
+        records
+            .filter { dayKey(it.recordedAtEpochMillis) == key }
+            .sumOf { it.money.amount.valueInCents }
+            .toFloat()
     }
 }
 
