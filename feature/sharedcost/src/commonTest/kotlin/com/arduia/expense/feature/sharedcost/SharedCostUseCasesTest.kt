@@ -59,7 +59,11 @@ private class FakeSharedCostRepository(
         lastUpdate = sharedCost
         return updateResult
     }
-    override suspend fun delete(id: SharedCostId): Result<Unit> = Result.Success(Unit)
+    var deletedId: SharedCostId? = null
+    override suspend fun delete(id: SharedCostId): Result<Unit> {
+        deletedId = id
+        return Result.Success(Unit)
+    }
     override suspend fun getSettlement(sharedCostId: SharedCostId): Result<SettlementSummary> =
         Result.Error("not implemented")
     override fun observeAll() = MutableStateFlow<List<SharedCost>>(emptyList()).asStateFlow()
@@ -150,5 +154,18 @@ class UpdateSharedCostUseCaseTest {
 
         assertFalse(result)
         assertEquals(null, repo.lastUpdate)
+    }
+}
+
+class DeleteSharedCostUseCaseTest {
+
+    @Test
+    fun invoke_deletesSharedCostById() = runTest {
+        val repo = FakeSharedCostRepository()
+        val useCase = DeleteSharedCostUseCase(repo)
+
+        useCase("sc1")
+
+        assertEquals(SharedCostId("sc1"), repo.deletedId)
     }
 }

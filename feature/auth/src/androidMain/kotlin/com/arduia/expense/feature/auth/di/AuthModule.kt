@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.auth.di
 
+import com.arduia.expense.feature.auth.DisablePinUseCase
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.PinAuthRepositoryImpl
 import com.arduia.expense.feature.auth.ResetPinUseCase
@@ -17,4 +18,5 @@ val authModule = module {
     factory { VerifyPinUseCase(get()) }
     factory { VerifyRecoveryAnswerUseCase(get()) }
     factory { ResetPinUseCase(get()) }
+    factory { DisablePinUseCase(get()) }
 }

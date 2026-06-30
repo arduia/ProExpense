@@ -16,6 +16,7 @@ private class FakePinAuthRepository(
     var lockoutUntilMs: Long? = null,
     var setPinError: String? = null,
     var verifyAnswerError: String? = null,
+    var clearPinError: String? = null,
 ) : PinAuthRepository {
     override suspend fun isPinConfigured(): Result<Boolean> = Result.Success(pin != null)
 
@@ -28,6 +29,7 @@ private class FakePinAuthRepository(
     override suspend fun verifyPin(pin: String): Result<Boolean> = Result.Success(pin == this.pin)
 
     override suspend fun clearPin(): Result<Unit> {
+        clearPinError?.let { return Result.Error(it) }
         pin = null
         return Result.Success(Unit)
     }
@@ -224,5 +226,31 @@ class ResetPinUseCaseTest {
 
         assertIs<Result.Error>(result)
         assertEquals(4, repo.failedAttempts)
+    }
+}
+
+class DisablePinUseCaseTest {
+
+    @Test
+    fun invoke_clearsPinAndBiometricOnSuccess() = runTest {
+        val repo = FakePinAuthRepository(pin = "1234", biometricEnrolled = true)
+        val useCase = DisablePinUseCase(repo)
+
+        val result = useCase()
+
+        assertIs<Result.Success<Unit>>(result)
+        assertEquals(null, repo.pin)
+        assertTrue(!repo.biometricEnrolled)
+    }
+
+    @Test
+    fun invoke_shortCircuitsWhenClearPinFails() = runTest {
+        val repo = FakePinAuthRepository(pin = "1234", biometricEnrolled = true, clearPinError = "storage failure")
+        val useCase = DisablePinUseCase(repo)
+
+        val result = useCase()
+
+        assertIs<Result.Error>(result)
+        assertTrue(repo.biometricEnrolled)
     }
 }

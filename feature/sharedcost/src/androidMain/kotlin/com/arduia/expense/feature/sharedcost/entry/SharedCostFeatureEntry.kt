@@ -9,6 +9,7 @@ import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SplitStrategy
 import com.arduia.expense.feature.sharedcost.CreateSharedCostUseCase
+import com.arduia.expense.feature.sharedcost.DeleteSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.SaveSharedCostInput
 import com.arduia.expense.feature.sharedcost.SplitMode
 import com.arduia.expense.feature.sharedcost.UpdateSharedCostUseCase
@@ -38,6 +39,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         val sharedCostRepository: SharedCostRepository = koinInject()
         val createSharedCost: CreateSharedCostUseCase = koinInject()
         val updateSharedCost: UpdateSharedCostUseCase = koinInject()
+        val deleteSharedCost: DeleteSharedCostUseCase = koinInject()
 
         val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
 
@@ -63,6 +65,8 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             },
             modifier = modifier,
         )
+        // deleteSharedCost is wired and ready; SharedCostsFlow has no delete affordance yet —
+        // adding one is a separate Compose UI task (new screen state + Roborazzi baselines).
     }
 }
 

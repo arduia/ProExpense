@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNull
 
 private fun sampleRecord(id: String = "r1", note: String? = "lunch") = FinanceRecord(
@@ -96,5 +97,46 @@ class UpdateRecordNoteUseCaseTest {
         useCase("missing", "note")
 
         assertEquals(null, repo.lastUpsert)
+    }
+}
+
+private class FakeHistoryRepository(
+    var recordsResult: Result<List<FinanceRecord>> = Result.Success(emptyList()),
+) : HistoryRepository {
+    var lastFilter: RecordHistoryFilter? = null
+
+    override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> {
+        lastFilter = filter
+        return recordsResult
+    }
+
+    override suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary> =
+        Result.Error("not implemented")
+}
+
+class SearchRecordsUseCaseTest {
+
+    @Test
+    fun invoke_delegatesToRepositoryWithFilter() = runTest {
+        val record = sampleRecord("r1")
+        val repo = FakeHistoryRepository(recordsResult = Result.Success(listOf(record)))
+        val useCase = SearchRecordsUseCase(repo)
+        val filter = RecordHistoryFilter(categoryId = CategoryId("food"), query = "lunch")
+
+        val result = useCase(filter)
+
+        assertIs<Result.Success<List<FinanceRecord>>>(result)
+        assertEquals(listOf(record), result.data)
+        assertEquals(filter, repo.lastFilter)
+    }
+
+    @Test
+    fun invoke_propagatesRepositoryError() = runTest {
+        val repo = FakeHistoryRepository(recordsResult = Result.Error("db error"))
+        val useCase = SearchRecordsUseCase(repo)
+
+        val result = useCase(RecordHistoryFilter())
+
+        assertIs<Result.Error>(result)
     }
 }

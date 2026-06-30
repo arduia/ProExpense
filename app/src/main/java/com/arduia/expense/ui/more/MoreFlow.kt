@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.feature.auth.DisablePinUseCase
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R as AuthR
 import com.arduia.expense.feature.currency.CurrencyRepository
@@ -62,6 +63,7 @@ fun MoreFlow(
     val currencyRepository: CurrencyRepository = koinInject()
     val saveHomeCurrency: SaveHomeCurrencyUseCase = koinInject()
     val pinAuthRepository: PinAuthRepository = koinInject()
+    val disablePin: DisablePinUseCase = koinInject()
     val budgetRepository: BudgetRepository = koinInject()
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
@@ -228,7 +230,7 @@ fun MoreFlow(
             confirmLabel = stringResource(AuthR.string.pin_disable_confirm_action),
             onConfirm = {
                 scope.launch {
-                    pinAuthRepository.clearPin()
+                    disablePin()
                     pinEnabled = false
                     showDisablePinConfirm = false
                 }

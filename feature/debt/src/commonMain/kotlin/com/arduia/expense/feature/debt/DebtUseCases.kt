@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.debt
 
 import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Debt
@@ -60,5 +61,21 @@ class AggregateDebtsUseCase {
         val settled = matching.filter { it.isSettled }
         val netCents = active.sumOf { it.money.amount.valueInCents }
         return DebtAggregate(netCents, active, settled)
+    }
+}
+
+/** Warns when a person already has an active record on the opposite side (design plan §US-DEBT-4). */
+class CheckDebtConflictUseCase(private val debtRepository: DebtRepository) {
+    suspend operator fun invoke(personName: String, direction: DebtDirection): Boolean {
+        val opposite = direction.opposite()
+        return when (val result = debtRepository.findByPersonName(personName)) {
+            is Result.Success -> result.data.any { it.direction == opposite && !it.isSettled }
+            is Result.Error -> false
+        }
+    }
+
+    private fun DebtDirection.opposite(): DebtDirection = when (this) {
+        DebtDirection.OWED_TO_ME -> DebtDirection.I_OWE
+        DebtDirection.I_OWE -> DebtDirection.OWED_TO_ME
     }
 }

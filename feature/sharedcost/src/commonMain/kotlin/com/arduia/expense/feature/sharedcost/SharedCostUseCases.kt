@@ -8,6 +8,7 @@ import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.Participant
 import com.arduia.expense.domain.ParticipantId
 import com.arduia.expense.domain.SharedCost
+import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.domain.SplitStrategy
 
 enum class SplitMode { EQUAL, CUSTOM }
@@ -91,5 +92,11 @@ class UpdateSharedCostUseCase(
             ),
         )
         return true
+    }
+}
+
+class DeleteSharedCostUseCase(private val sharedCostRepository: SharedCostRepository) {
+    suspend operator fun invoke(id: String) {
+        sharedCostRepository.delete(SharedCostId(id))
     }
 }

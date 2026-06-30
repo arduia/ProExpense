@@ -1,7 +1,17 @@
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.Result
+import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
+
+/** Filters and searches journal records (design plan §JournalViewModel). */
+class SearchRecordsUseCase(
+    private val historyRepository: HistoryRepository,
+) {
+    suspend operator fun invoke(filter: RecordHistoryFilter): Result<List<FinanceRecord>> =
+        historyRepository.getRecords(filter)
+}
 
 /** Deletes a journal record (design plan §JournalViewModel). */
 class DeleteRecordUseCase(

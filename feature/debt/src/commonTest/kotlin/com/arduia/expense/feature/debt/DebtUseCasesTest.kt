@@ -143,3 +143,40 @@ class AggregateDebtsUseCaseTest {
         assertEquals(1000L, aggregate.netCents)
     }
 }
+
+class CheckDebtConflictUseCaseTest {
+
+    @Test
+    fun invoke_returnsTrueWhenPersonHasActiveRecordOnOppositeSide() = runTest {
+        val repo = FakeDebtRepository().apply {
+            put(sampleDebt("d1", personName = "Alex", direction = DebtDirection.I_OWE, isSettled = false))
+        }
+        val useCase = CheckDebtConflictUseCase(repo)
+
+        val result = useCase("Alex", DebtDirection.OWED_TO_ME)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun invoke_returnsFalseWhenOppositeSideRecordIsSettled() = runTest {
+        val repo = FakeDebtRepository().apply {
+            put(sampleDebt("d1", personName = "Alex", direction = DebtDirection.I_OWE, isSettled = true))
+        }
+        val useCase = CheckDebtConflictUseCase(repo)
+
+        val result = useCase("Alex", DebtDirection.OWED_TO_ME)
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun invoke_returnsFalseWhenNoMatchingPerson() = runTest {
+        val repo = FakeDebtRepository()
+        val useCase = CheckDebtConflictUseCase(repo)
+
+        val result = useCase("Alex", DebtDirection.OWED_TO_ME)
+
+        assertFalse(result)
+    }
+}

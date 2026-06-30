@@ -73,3 +73,13 @@ class ResetPinUseCase(private val repository: PinAuthRepository) {
         return result
     }
 }
+
+/** Turns off PIN lock entirely, clearing both the PIN and any enrolled biometric. */
+class DisablePinUseCase(private val repository: PinAuthRepository) {
+    suspend operator fun invoke(): Result<Unit> {
+        val result = repository.clearPin()
+        if (result is Result.Error) return result
+        repository.clearBiometric()
+        return Result.Success(Unit)
+    }
+}
