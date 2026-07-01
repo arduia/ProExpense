@@ -11,13 +11,23 @@ class AppMetaProfileRepository(
 ) : ProfileRepository {
 
     override suspend fun setDisplayName(name: String): Result<Unit> = catchingResult {
+        // Write to SharedPrefs synchronously first — survives SQLCipher key-management failures,
+        // same as setOnboardingComplete() below.
+        onboardingPrefs.edit().putString(KEY_DISPLAY_NAME, name).commit()
         store.update { it.copy(displayName = name) }
         Unit
     }
 
-    override suspend fun getDisplayName(): Result<String> = catchingResult {
-        val snapshot = store.read()
-        snapshot.displayName
+    override suspend fun getDisplayName(): Result<String> {
+        onboardingPrefs.getString(KEY_DISPLAY_NAME, null)?.let { return Result.Success(it) }
+        // Fallback: check the encrypted DB (handles existing installs that wrote the name there).
+        return catchingResult {
+            val name = store.read().displayName
+            if (name.isNotBlank()) {
+                onboardingPrefs.edit().putString(KEY_DISPLAY_NAME, name).commit()
+            }
+            name
+        }
     }
 
     override suspend fun isOnboardingComplete(): Result<Boolean> {
@@ -28,7 +38,7 @@ class AppMetaProfileRepository(
             val completed = store.read().onboardingCompleted
             if (completed) {
                 // Migrate to SharedPrefs so future reads don't depend on the DB.
-                onboardingPrefs.edit().putBoolean(KEY_ONBOARDING_COMPLETE, true).apply()
+                onboardingPrefs.edit().putBoolean(KEY_ONBOARDING_COMPLETE, true).commit()
             }
             completed
         }
@@ -43,5 +53,6 @@ class AppMetaProfileRepository(
 
     companion object {
         const val KEY_ONBOARDING_COMPLETE = "onboarding_complete"
+        const val KEY_DISPLAY_NAME = "display_name"
     }
 }

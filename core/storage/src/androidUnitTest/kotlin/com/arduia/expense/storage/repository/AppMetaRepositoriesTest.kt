@@ -16,21 +16,30 @@ import kotlin.test.assertTrue
 /**
  * Backs onto a shared mutable map so two [FakeSharedPreferences] built from the same [backing]
  * simulate re-reading the same on-disk file across a fresh process — the scenario that matters
- * for the onboarding-persistence regression test below.
+ * for the onboarding/display-name persistence regression tests below.
  */
 private class FakeSharedPreferences(
-    private val backing: MutableMap<String, Boolean> = mutableMapOf(),
+    private val backing: MutableMap<String, Any?> = mutableMapOf(),
 ) : SharedPreferences by UnsupportedSharedPreferences {
-    override fun getBoolean(key: String, defValue: Boolean): Boolean = backing[key] ?: defValue
+    override fun getBoolean(key: String, defValue: Boolean): Boolean =
+        backing[key] as? Boolean ?: defValue
+
+    override fun getString(key: String?, defValue: String?): String? =
+        backing[key] as? String ?: defValue
 
     override fun edit(): SharedPreferences.Editor = FakeEditor(backing)
 
     private class FakeEditor(
-        private val backing: MutableMap<String, Boolean>,
+        private val backing: MutableMap<String, Any?>,
     ) : SharedPreferences.Editor by UnsupportedEditor {
-        private val pending = mutableMapOf<String, Boolean>()
+        private val pending = mutableMapOf<String, Any?>()
 
         override fun putBoolean(key: String, value: Boolean): SharedPreferences.Editor {
+            pending[key] = value
+            return this
+        }
+
+        override fun putString(key: String, value: String?): SharedPreferences.Editor {
             pending[key] = value
             return this
         }
@@ -85,7 +94,7 @@ class AppMetaRepositoriesTest {
     fun profile_onboardingComplete_survivesSimulatedProcessRestart() = runTest {
         // Same on-disk backing map, but a brand new AppMetaLocalStore each time — this mirrors a
         // cold app restart where Koin rebuilds the DI graph but SharedPreferences persists on disk.
-        val diskBacking = mutableMapOf<String, Boolean>()
+        val diskBacking = mutableMapOf<String, Any?>()
         val firstLaunchPrefs = FakeSharedPreferences(diskBacking)
         val firstLaunchRepo = AppMetaProfileRepository(store(), firstLaunchPrefs)
 
@@ -108,6 +117,29 @@ class AppMetaRepositoriesTest {
         val repoWithFreshPrefs = AppMetaProfileRepository(dbStore, freshPrefs)
 
         assertEquals(Result.Success(true), repoWithFreshPrefs.isOnboardingComplete())
+    }
+
+    @Test
+    fun profile_displayName_survivesSimulatedProcessRestart() = runTest {
+        val diskBacking = mutableMapOf<String, Any?>()
+        val firstLaunchRepo = AppMetaProfileRepository(store(), FakeSharedPreferences(diskBacking))
+
+        firstLaunchRepo.setDisplayName("Ada")
+
+        val secondLaunchRepo = AppMetaProfileRepository(store(), FakeSharedPreferences(diskBacking))
+
+        assertEquals(Result.Success("Ada"), secondLaunchRepo.getDisplayName())
+    }
+
+    @Test
+    fun profile_displayName_fallsBackToDbWhenPrefsMissing() = runTest {
+        // Simulates an existing install that wrote the name to the DB before this fix shipped.
+        val dbStore = store()
+        AppMetaProfileRepository(dbStore, FakeSharedPreferences()).setDisplayName("Ada")
+
+        val repoWithFreshPrefs = AppMetaProfileRepository(dbStore, FakeSharedPreferences())
+
+        assertEquals(Result.Success("Ada"), repoWithFreshPrefs.getDisplayName())
     }
 
     @Test
