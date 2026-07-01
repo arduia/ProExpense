@@ -168,6 +168,7 @@ fun QuickLogFlow(
                         },
                         tagEvents = tagEvents,
                         tagDebts = tagDebts,
+                        showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
                     )
                 }
             }

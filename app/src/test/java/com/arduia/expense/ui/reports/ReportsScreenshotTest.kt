@@ -14,6 +14,7 @@ import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.reports.ui.preview.previewReportsWithOtherRollup
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -55,6 +56,11 @@ class ReportsScreenshotTest {
     @Test
     fun reports() = capture {
         ReportsScreen(previewReports, {}, {}, {})
+    }
+
+    @Test
+    fun edge_reports_other_rollup() = capture {
+        ReportsScreen(previewReportsWithOtherRollup, {}, {}, {})
     }
 
     @Test

@@ -45,8 +45,8 @@ class ProDesignTokensTest {
     }
 
     @Test
-    fun category_lookup_returns_food_for_unknown_id() {
-        assertEquals(ProLightColors.categoryFood, ProLightColors.category("unknown"))
+    fun category_lookup_returns_neutral_other_for_unknown_id() {
+        assertEquals(ProLightColors.categoryOther, ProLightColors.category("unknown"))
     }
 
     @Test

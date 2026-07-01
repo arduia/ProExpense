@@ -47,6 +47,7 @@ import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.reports.ui.preview.previewReportsWithOtherRollup
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -416,6 +417,19 @@ private fun ReportsTipBanner() {
 private fun ReportsPreview() {
     ProExpenseTheme {
         ReportsScreen(previewReports, {}, {}, {})
+    }
+}
+
+@Preview(
+    name = "Reports — other rollup",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsOtherRollupPreview() {
+    ProExpenseTheme {
+        ReportsScreen(previewReportsWithOtherRollup, {}, {}, {})
     }
 }
 

@@ -32,6 +32,21 @@ val previewReports = ReportsUiState(
     ),
 )
 
+val previewReportsWithOtherRollup = ReportsUiState(
+    periodLabel = "May 2026",
+    totalLabel = "$1,247",
+    dailyAvgLabel = "$50",
+    daysLabel = "25 days in",
+    categories = listOf(
+        ReportsCategoryUi("food", "Food", "30%", "$374", 0.30f),
+        ReportsCategoryUi("transport", "Transport", "18%", "$224", 0.18f),
+        ReportsCategoryUi("shopping", "Shopping", "16%", "$200", 0.16f),
+        ReportsCategoryUi("bills", "Bills", "12%", "$150", 0.12f),
+        ReportsCategoryUi("entertainment", "Entertainment", "10%", "$125", 0.10f),
+        ReportsCategoryUi("other", "Other", "14%", "$174", 0.14f),
+    ),
+)
+
 val previewReportsUncategorized = ReportsUiState(
     periodLabel = "May 2026",
     totalLabel = "$1,247",

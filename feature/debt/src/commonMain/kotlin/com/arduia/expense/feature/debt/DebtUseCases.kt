@@ -19,13 +19,15 @@ class CreateDebtUseCase(
         rawAmount: String,
         direction: DebtDirection,
         currencyCode: String = "USD",
+        dueEpochMillis: Long? = null,
     ): Boolean {
-        val amount = Amount.parseOrNull(rawAmount) ?: return false
+        val amount = Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 } ?: return false
         val debt = Debt(
             id = DebtId(newDebtId(personName, nowEpochMillis())),
             personName = personName,
             money = Money(amount, CurrencyCode(currencyCode)),
             direction = direction,
+            dueEpochMillis = dueEpochMillis,
         )
         debtRepository.upsert(debt)
         return true
@@ -33,6 +35,26 @@ class CreateDebtUseCase(
 
     private fun newDebtId(person: String, now: Long): String =
         person.trim().lowercase() + "-" + now
+}
+
+/** Updates an existing debt's editable fields, preserving its id/direction/settled status. */
+class UpdateDebtUseCase(private val debtRepository: DebtRepository) {
+    suspend operator fun invoke(
+        existing: Debt,
+        personName: String,
+        rawAmount: String,
+        dueEpochMillis: Long?,
+    ): Boolean {
+        val amount = Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 } ?: return false
+        debtRepository.upsert(
+            existing.copy(
+                personName = personName,
+                money = existing.money.copy(amount = amount),
+                dueEpochMillis = dueEpochMillis,
+            ),
+        )
+        return true
+    }
 }
 
 class DeleteDebtUseCase(private val debtRepository: DebtRepository) {

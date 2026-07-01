@@ -132,6 +132,7 @@ fun AddExpenseDetailsScreen(
             ProButton(
                 text = stringResource(R.string.save_expense, formattedSaveAmount),
                 onClick = onSave,
+                enabled = state.selectedCategoryId.isNotBlank(),
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,
                 modifier = Modifier.padding(top = dimens.space8),

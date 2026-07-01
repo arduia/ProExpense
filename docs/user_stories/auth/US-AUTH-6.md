@@ -131,4 +131,9 @@ auth is layered on top of, and dependent on, a PIN already being set.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** Scenario 2 (auto-prompt) was unimplemented — `PinLockFlow` required the
+  user to tap into biometric manually even when enabled. Added a `LaunchedEffect` in
+  `PinLockFlow.kt` keyed on `(canUseBiometric, lockoutUntil, step)` that triggers `startBiometric()`
+  automatically once per lock-screen visit when biometric is available, no lockout is active, and
+  the screen is on the entry step; a `hasAutoPromptedBiometric` flag prevents re-firing on
+  recomposition. Falls back to PIN entry unchanged on cancel/failure.

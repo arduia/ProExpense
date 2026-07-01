@@ -137,4 +137,11 @@ even recovery fails — otherwise the user's data becomes permanently inaccessib
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** Scenario 2's lockout and Scenario 3's last-resort reset were both
+  unimplemented — wrong recovery answers had no attempt limit, and there was no reset-app option.
+  `PinLockFlow.kt` now shares `pinAuthRepository.incrementFailedAttempts()` /
+  `getLockoutUntilMs()` with the standard PIN lockout on each wrong recovery answer, tracks
+  `recoveryExhausted`, and shows a "Reset app" `ProTextAction` (danger styling) via
+  `PinRecoveryScreen`'s new `showResetOption`/`onResetApp` params once exhausted. Confirming reset
+  runs `DisablePinUseCase` + `ClearDataRepository.clearAll()` behind a confirmation `ProAlertDialog`
+  before unlocking into a clean app. Covered by the new `PinRecoveryExhaustedPreview`.

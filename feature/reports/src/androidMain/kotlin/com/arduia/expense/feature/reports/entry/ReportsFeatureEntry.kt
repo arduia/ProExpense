@@ -7,14 +7,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.feature.reports.GenerateReportPeriodUseCase
+import com.arduia.expense.feature.reports.REPORT_OTHER_CATEGORY_ID
 import com.arduia.expense.feature.reports.ReportPeriodResult
 import com.arduia.expense.feature.reports.daysElapsedInPeriod
 import com.arduia.expense.feature.reports.selectInitialPeriodIndex
 import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
+import com.arduia.expense.feature.reports.R
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import java.text.SimpleDateFormat
@@ -48,6 +51,7 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         val categoryRepository: CategoryRepository = koinInject()
         val generateReportPeriod: GenerateReportPeriodUseCase = koinInject()
         var periods by remember { mutableStateOf<List<ReportsUiState>>(emptyList()) }
+        val otherCategoryLabel = stringResource(R.string.reports_other_category)
 
         LaunchedEffect(Unit) {
             val records = (financeRecordRepository.getAll() as? Result.Success)?.data.orEmpty()
@@ -57,7 +61,7 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
             val now = Calendar.getInstance()
             periods = (0 until REPORT_PERIOD_WINDOW_MONTHS).map { monthsBack ->
                 val month = (now.clone() as Calendar).apply { add(Calendar.MONTH, -monthsBack) }
-                buildPeriodState(generateReportPeriod, records, month, categoryNames, now)
+                buildPeriodState(generateReportPeriod, records, month, categoryNames, now, otherCategoryLabel)
             }
         }
 
@@ -82,6 +86,7 @@ private fun buildPeriodState(
     month: Calendar,
     categoryNames: Map<String, String>,
     now: Calendar,
+    otherCategoryLabel: String,
 ): ReportsUiState {
     val start = (month.clone() as Calendar).apply {
         set(Calendar.DAY_OF_MONTH, 1)
@@ -123,7 +128,11 @@ private fun buildPeriodState(
     val categories = result.categories.map { breakdown ->
         ReportsCategoryUi(
             categoryId = breakdown.categoryId,
-            label = categoryNames[breakdown.categoryId] ?: expenseCategoryLabel(breakdown.categoryId),
+            label = if (breakdown.isOtherRollup) {
+                otherCategoryLabel
+            } else {
+                categoryNames[breakdown.categoryId] ?: expenseCategoryLabel(breakdown.categoryId)
+            },
             percentLabel = "${(breakdown.fraction * 100).roundToInt()}%",
             amountLabel = moneyLabel(breakdown.amountCents),
             fraction = breakdown.fraction,

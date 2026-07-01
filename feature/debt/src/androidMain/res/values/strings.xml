@@ -38,6 +38,7 @@
 <string name="debt_edit">Edit</string>
 <string name="debt_mark_as_settled">Mark as settled</string>
 <string name="debt_new_record">New record</string>
+<string name="debt_edit_record">Edit record</string>
 <string name="debt_person_label">PERSON</string>
 <string name="debt_amount_label">AMOUNT</string>
 <string name="debt_date_label">DATE</string>

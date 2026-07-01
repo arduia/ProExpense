@@ -10,10 +10,12 @@ import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.DebtId
 import com.arduia.expense.feature.debt.AggregateDebtsUseCase
+import com.arduia.expense.feature.debt.CheckDebtConflictUseCase
 import com.arduia.expense.feature.debt.CreateDebtUseCase
 import com.arduia.expense.feature.debt.DebtAggregate
 import com.arduia.expense.feature.debt.DeleteDebtUseCase
 import com.arduia.expense.feature.debt.SettleDebtUseCase
+import com.arduia.expense.feature.debt.UpdateDebtUseCase
 import com.arduia.expense.feature.debt.ui.DebtFlow
 import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
@@ -39,8 +41,10 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
         val debtRepository: DebtRepository = koinInject()
         val aggregateDebts: AggregateDebtsUseCase = koinInject()
         val createDebt: CreateDebtUseCase = koinInject()
+        val updateDebt: UpdateDebtUseCase = koinInject()
         val deleteDebt: DeleteDebtUseCase = koinInject()
         val settleDebt: SettleDebtUseCase = koinInject()
+        val checkDebtConflict: CheckDebtConflictUseCase = koinInject()
 
         val debts by debtRepository.observeAll().collectAsState(emptyList())
 
@@ -51,9 +55,15 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
             onDismiss = onDismiss,
             lentState = lentState,
             oweState = oweState,
-            onSaveRecord = { side, person, amountRaw ->
+            onSaveRecord = { side, person, amountRaw, dueEpochMillis ->
                 val direction = if (side == DebtSide.Lent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE
-                scope.launch { createDebt(person, amountRaw, direction) }
+                scope.launch { createDebt(person, amountRaw, direction, dueEpochMillis = dueEpochMillis) }
+            },
+            onUpdateRecord = { id, person, amountRaw, dueEpochMillis ->
+                val debt = debts.firstOrNull { it.id.value == id }
+                if (debt != null) {
+                    scope.launch { updateDebt(debt, person, amountRaw, dueEpochMillis) }
+                }
             },
             onDeleteRecord = { id ->
                 scope.launch { deleteDebt(id) }
@@ -63,6 +73,10 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
                 if (debt != null) {
                     scope.launch { settleDebt(debt) }
                 }
+            },
+            onCheckConflict = { person, side ->
+                val direction = if (side == DebtSide.Lent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE
+                checkDebtConflict(person, direction)
             },
             modifier = modifier,
         )
@@ -85,6 +99,8 @@ private fun Debt.toRecordUi(settled: Boolean): DebtRecordUi = DebtRecordUi(
     dateLabel = dueEpochMillis?.let { shortDateLabel(it) } ?: "No due date",
     amountLabel = moneyLabel(money.amount.valueInCents),
     settled = settled,
+    amountCents = money.amount.valueInCents,
+    dueEpochMillis = dueEpochMillis,
 )
 
 private fun moneyLabel(valueInCents: Long): String =

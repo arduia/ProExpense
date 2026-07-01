@@ -55,6 +55,7 @@ data class ProColors(
     val categoryEntertainment: CategoryColorPair,
     val categoryCoffee: CategoryColorPair,
     val categoryPet: CategoryColorPair,
+    val categoryOther: CategoryColorPair,
 ) {
     fun category(id: String): CategoryColorPair = when (id) {
         "food" -> categoryFood
@@ -65,7 +66,7 @@ data class ProColors(
         "entertainment" -> categoryEntertainment
         "coffee" -> categoryCoffee
         "pet" -> categoryPet
-        else -> categoryFood
+        else -> categoryOther
     }
 }
 
@@ -115,6 +116,7 @@ val ProLightColors = ProColors(
     categoryEntertainment = CategoryColorPair(Color(0xFF0277BD), Color(0xFF81D4FA)),
     categoryCoffee = CategoryColorPair(Color(0xFF9E9E9E), Color(0xFFE0E0E0)),
     categoryPet = CategoryColorPair(Color(0xFF66BB6A), Color(0xFFDCEDC8)),
+    categoryOther = CategoryColorPair(Color(0xFF9E9E9E), Color(0xFFEEEEEE)),
 )
 
 val ProDarkColors = ProColors(
@@ -161,4 +163,5 @@ val ProDarkColors = ProColors(
     categoryEntertainment = CategoryColorPair(Color(0xFF4FC3F7), Color(0xFF0D3B52)),
     categoryCoffee = CategoryColorPair(Color(0xFFBDBDBD), Color(0xFF2C2C2C)),
     categoryPet = CategoryColorPair(Color(0xFFA5D6A7), Color(0xFF1B3D1F)),
+    categoryOther = CategoryColorPair(Color(0xFFBDBDBD), Color(0xFF2C2C2C)),
 )

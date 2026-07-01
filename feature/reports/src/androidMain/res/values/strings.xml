@@ -8,6 +8,7 @@
 <string name="reports_by_category">BY CATEGORY</string>
 <string name="reports_top_categories">TOP CATEGORIES</string>
 <string name="reports_uncategorized_label">Uncategorized</string>
+<string name="reports_other_category">Other</string>
 <string name="reports_uncategorized_tip">Tip: categorize your expenses to unlock a spending breakdown by category.</string>
 <string name="reports_prev_period">Previous month</string>
 <string name="reports_next_period">Next month</string>

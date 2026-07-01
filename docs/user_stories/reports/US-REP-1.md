@@ -137,4 +137,13 @@ without requiring the user to do any manual tallying.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** the Top-categories list previously capped at 5 entries and silently
+  dropped everything beyond the 5th-ranked category, so a month's category percentages never
+  summed to 100% once the user had 6+ active categories. `GenerateReportPeriodUseCase` now sums
+  ranked categories beyond the top 5 into a single `"other"` pseudo-category
+  (`REPORT_OTHER_CATEGORY_ID`, `ReportCategoryBreakdown.isOtherRollup = true`), appended to the
+  list and rendered in the donut/rank-row using a dedicated neutral `categoryOther` color token
+  (`ProColors`) instead of silently reusing Food's blue via the unknown-id fallback. Covered by
+  `GenerateReportPeriodUseCaseTest.invoke_rollsUpCategoriesBeyondTopFiveIntoOther` and
+  `invoke_omitsOtherBucketWhenFiveOrFewerCategories`, plus a new "Reports — other rollup" preview
+  in `ReportsScreen.kt`.
