@@ -119,4 +119,17 @@ of nested settings.
 
 ## Notes
 
-None.
+Fixed: the Biometric row was always disabled (`enabled = false` hardcoded) and its toggle was a
+no-op (`onSettingToggle = { _, _ -> }`), regardless of PIN state — the Business Rule ("interactive
+only when PIN is on") was never actually true. It now reads live `pinEnabled` +
+`BiometricAuthenticator.isAvailable(...)` to enable/disable the row, and toggling calls
+`PinAuthRepository.enrollBiometric()`/`clearBiometric()`. Tapping it while blocked shows
+"Please enable PIN first to use biometric authentication." (US-AUTH-6 Scenario 3) via `ProToast`,
+since a disabled `Switch` swallows touches — the row itself is now clickable when disabled to
+catch that tap. Covered by `MoreScreenshotTest.edge_more_hub_pin_on`.
+
+Also fixed: the "Default category" row had no tap handler at all (silent no-op) and no backing
+preference. Added `DefaultCategoryRepository` (new `app_meta.default_category_id` column via
+migration `6.sqm`), a `MoreDefaultCategoryScreen` reusing the shared `CategoryPicker`, and wired
+the selection into `QuickLogFlow`'s initial category. Covered by
+`MoreScreenshotTest.more_default_category` and `AppMetaRepositoriesTest`.

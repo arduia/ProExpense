@@ -70,6 +70,36 @@ class MoreScreenshotTest {
     }
 
     @Test
+    fun edge_more_hub_pin_on() = capture {
+        MoreHubScreen(
+            state = previewMoreHub.copy(
+                settings = previewMoreHub.settings.map { setting ->
+                    when (setting.id) {
+                        "pin" -> setting.copy(value = "On")
+                        "biometric" -> setting.copy(enabled = true, toggleOn = true)
+                        else -> setting
+                    }
+                },
+            ),
+            onFeatureClick = {},
+            onSettingClick = {},
+            onSettingToggle = { _, _ -> },
+            selectedTab = HomeNavTab.More,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+
+    @Test
+    fun more_default_category() = capture {
+        MoreDefaultCategoryScreen(
+            selectedCategoryId = "food",
+            onSelect = {},
+            onBack = {},
+        )
+    }
+
+    @Test
     fun more_currency() = capture {
         MoreCurrencyScreen(
             items = previewMoreCurrencies,

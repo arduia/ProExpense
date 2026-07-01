@@ -249,4 +249,47 @@ class AppMetaRepositoriesTest {
         assertEquals(100, budget.data!!.amount.valueInCents)
         assertEquals(1, AppMetaLockoutRepository(store).getFailedAttemptCount())
     }
+
+    @Test
+    fun defaultCategory_nullByDefault_thenPersists() = runTest {
+        val store = store()
+        val repo = AppMetaDefaultCategoryRepository(store)
+
+        val initial = repo.getDefaultCategoryId()
+        assertTrue(initial is Result.Success)
+        assertNull(initial.data)
+
+        repo.setDefaultCategoryId("coffee")
+
+        val fetched = repo.getDefaultCategoryId()
+        assertTrue(fetched is Result.Success)
+        assertEquals("coffee", fetched.data)
+    }
+
+    @Test
+    fun defaultCategory_setNull_clearsIt() = runTest {
+        val store = store()
+        val repo = AppMetaDefaultCategoryRepository(store)
+        repo.setDefaultCategoryId("coffee")
+
+        repo.setDefaultCategoryId(null)
+
+        val fetched = repo.getDefaultCategoryId()
+        assertTrue(fetched is Result.Success)
+        assertNull(fetched.data)
+    }
+
+    @Test
+    fun defaultCategory_changeDoesNotResetBudgetOrCurrency() = runTest {
+        val store = store()
+        AppMetaBudgetRepository(store).setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
+        AppMetaCurrencySettingsRepository(store).setHomeCurrency(CurrencyCode("GBP"))
+
+        AppMetaDefaultCategoryRepository(store).setDefaultCategoryId("pet")
+
+        val budget = AppMetaBudgetRepository(store).getMonthlyBudget()
+        assertTrue(budget is Result.Success)
+        assertEquals(100, budget.data!!.amount.valueInCents)
+        assertEquals("GBP", AppMetaCurrencySettingsRepository(store).getHomeCurrency().let { (it as Result.Success).data!!.code })
+    }
 }

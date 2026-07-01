@@ -26,6 +26,7 @@ data class AppMetaSnapshot(
     val onboardingCompleted: Boolean,
     val pinHash: String?,
     val languageTag: String,
+    val defaultCategoryId: String?,
 ) {
     companion object {
         val DEFAULT = AppMetaSnapshot(
@@ -41,6 +42,7 @@ data class AppMetaSnapshot(
             onboardingCompleted = false,
             pinHash = null,
             languageTag = "en",
+            defaultCategoryId = null,
         )
     }
 }
@@ -85,6 +87,7 @@ class AppMetaLocalStore(
             onboardingCompleted = row.onboarding_completed != 0L,
             pinHash = row.pin_hash,
             languageTag = row.language_tag,
+            defaultCategoryId = row.default_category_id,
         )
     }
 
@@ -103,6 +106,7 @@ class AppMetaLocalStore(
             onboarding_completed = if (snapshot.onboardingCompleted) 1L else 0L,
             pin_hash = snapshot.pinHash,
             language_tag = snapshot.languageTag,
+            default_category_id = snapshot.defaultCategoryId,
         )
     }
 

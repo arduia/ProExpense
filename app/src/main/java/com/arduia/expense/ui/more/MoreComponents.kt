@@ -171,12 +171,15 @@ fun MoreSettingRow(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val isNav = setting.kind == MoreSettingKind.Nav
+    // A disabled Toggle row (e.g. Biometric while PIN is off) still needs to catch a tap so it
+    // can explain why it's blocked — Switch(enabled = false) swallows touches entirely.
+    val isRowClickable = isNav || !setting.enabled
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .then(
-                if (isNav) {
+                if (isRowClickable) {
                     Modifier.proClickable(
                         onClick = onClick,
                         shape = androidx.compose.ui.graphics.RectangleShape,
