@@ -11,6 +11,8 @@ import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.feature.reports.GenerateReportPeriodUseCase
 import com.arduia.expense.feature.reports.ReportPeriodResult
+import com.arduia.expense.feature.reports.daysElapsedInPeriod
+import com.arduia.expense.feature.reports.selectInitialPeriodIndex
 import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.ui.design.AmountInput
@@ -55,14 +57,17 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
             val now = Calendar.getInstance()
             periods = (0 until REPORT_PERIOD_WINDOW_MONTHS).map { monthsBack ->
                 val month = (now.clone() as Calendar).apply { add(Calendar.MONTH, -monthsBack) }
-                buildPeriodState(generateReportPeriod, records, month, categoryNames)
+                buildPeriodState(generateReportPeriod, records, month, categoryNames, now)
             }
         }
+
+        val initialPage = selectInitialPeriodIndex(periods.map { it.empty })
 
         com.arduia.expense.feature.reports.ui.ReportsFlow(
             onBack = onBack,
             modifier = modifier,
             periods = periods,
+            initialPage = initialPage,
             empty = empty,
             onLogFirstExpense = onLogFirstExpense,
         )
@@ -76,6 +81,7 @@ private fun buildPeriodState(
     records: List<com.arduia.expense.domain.FinanceRecord>,
     month: Calendar,
     categoryNames: Map<String, String>,
+    now: Calendar,
 ): ReportsUiState {
     val start = (month.clone() as Calendar).apply {
         set(Calendar.DAY_OF_MONTH, 1)
@@ -87,12 +93,20 @@ private fun buildPeriodState(
     val end = (start.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
     val periodLabel = SimpleDateFormat("MMMM yyyy", Locale.US).format(start.time)
     val daysInMonth = start.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val daysElapsed = daysElapsedInPeriod(
+        periodYear = start.get(Calendar.YEAR),
+        periodMonth = start.get(Calendar.MONTH),
+        nowYear = now.get(Calendar.YEAR),
+        nowMonth = now.get(Calendar.MONTH),
+        nowDayOfMonth = now.get(Calendar.DAY_OF_MONTH),
+        daysInMonth = daysInMonth,
+    )
 
     val result: ReportPeriodResult = generateReportPeriod(
         records = records,
         periodStartEpochMillis = start.timeInMillis,
         periodEndEpochMillis = end.timeInMillis,
-        daysInPeriod = daysInMonth,
+        daysInPeriod = daysElapsed,
     )
 
     if (result.empty) {
@@ -120,7 +134,7 @@ private fun buildPeriodState(
         periodLabel = periodLabel,
         totalLabel = moneyLabel(result.totalCents),
         dailyAvgLabel = moneyLabel(result.dailyAvgCents),
-        daysLabel = "$daysInMonth days in",
+        daysLabel = "$daysElapsed days in",
         categories = categories,
     )
 }

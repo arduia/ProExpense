@@ -25,11 +25,15 @@ fun ReportsFlow(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     periods: List<ReportsUiState> = listOf(previewReports, previewReportsUncategorized),
+    initialPage: Int = 0,
     empty: Boolean = false,
     onLogFirstExpense: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
-    val pagerState = rememberPagerState(pageCount = { periods.size.coerceAtLeast(1) })
+    val pagerState = rememberPagerState(
+        initialPage = initialPage.coerceIn(0, (periods.size - 1).coerceAtLeast(0)),
+        pageCount = { periods.size.coerceAtLeast(1) },
+    )
     val scope = rememberCoroutineScope()
 
     Box(
