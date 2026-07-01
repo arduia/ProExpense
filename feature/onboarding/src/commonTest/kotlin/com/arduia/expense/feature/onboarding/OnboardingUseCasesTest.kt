@@ -113,16 +113,17 @@ class CompleteOnboardingUseCaseTest {
     }
 
     @Test
-    fun invoke_shortCircuitsOnSetDisplayNameError_skippingOnboardingComplete() = runTest {
+    fun invoke_completesSuccessfullyEvenWhenSetDisplayNameFails() = runTest {
         val profileRepo = FakeProfileRepository(setDisplayNameError = "storage failure")
         val currencyRepo = FakeCurrencySettingsRepository()
         val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
 
         val result = useCase(displayName = "Ada", currencyCode = "JPY")
 
-        assertIs<Result.Error>(result)
-        assertEquals(false, profileRepo.onboardingComplete)
-        assertEquals(null, currencyRepo.current)
+        // setOnboardingComplete is called first and succeeds; displayName error is best-effort.
+        assertIs<Result.Success<Unit>>(result)
+        assertEquals(true, profileRepo.onboardingComplete)
+        assertEquals("JPY", currencyRepo.current?.code)
     }
 
     @Test

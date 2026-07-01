@@ -86,6 +86,8 @@ class ProExpenseStorage internal constructor(
             val driver = DatabaseDriverFactory(context.applicationContext).createDriver(passphrase)
             val database = ProExpenseDatabase(driver)
             val appMetaStore = AppMetaLocalStore(database.appMetaQueries, dispatcher)
+            val onboardingPrefs = context.applicationContext
+                .getSharedPreferences("onboarding_state", Context.MODE_PRIVATE)
             val integrityVerifier = RecordIntegrityVerifier()
             val financeRecordRepository = SqlDelightFinanceRecordRepository(
                 queries = database.financeRecordQueries,
@@ -111,7 +113,7 @@ class ProExpenseStorage internal constructor(
                     dispatcher = dispatcher,
                 ),
                 clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
-                profileRepository = AppMetaProfileRepository(appMetaStore),
+                profileRepository = AppMetaProfileRepository(appMetaStore, onboardingPrefs),
                 localeRepository = AppMetaLocaleRepository(appMetaStore),
             )
         }
