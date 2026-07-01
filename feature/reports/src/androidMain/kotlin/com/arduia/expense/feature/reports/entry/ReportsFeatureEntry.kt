@@ -145,6 +145,7 @@ private fun buildPeriodState(
         dailyAvgLabel = moneyLabel(result.dailyAvgCents),
         daysLabel = "$daysElapsed days in",
         categories = categories,
+        uncategorized = result.allUncategorized,
     )
 }
 

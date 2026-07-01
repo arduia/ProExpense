@@ -2,6 +2,7 @@ package com.arduia.expense.feature.reports
 
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 
 /** Portable category breakdown within a report period. */
 data class ReportCategoryBreakdown(
@@ -22,6 +23,8 @@ data class ReportPeriodResult(
     val daysInPeriod: Int,
     val categories: List<ReportCategoryBreakdown>,
     val empty: Boolean,
+    /** True only when every expense in the period is Uncategorized (US-REP-3 Scenario 3). */
+    val allUncategorized: Boolean = false,
 )
 
 /** Computes spend totals and top-5 category breakdown for a date range, given raw epoch bounds. */
@@ -84,6 +87,7 @@ class GenerateReportPeriodUseCase {
             daysInPeriod = daysInPeriod,
             categories = categories,
             empty = false,
+            allUncategorized = inPeriod.all { it.categoryId.value == UNCATEGORIZED_CATEGORY_ID },
         )
     }
 }

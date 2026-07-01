@@ -1,8 +1,11 @@
 package com.arduia.expense.feature.categories
 
 import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CategoryId
+import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 
 /** Creates a new custom category or renames an existing one (design plan §CategoriesViewModel). */
 class SaveCategoryUseCase(
@@ -26,8 +29,16 @@ class SaveCategoryUseCase(
         name.trim().lowercase() + "-" + nowEpochMillis()
 }
 
-class DeleteCategoryUseCase(private val categoryRepository: CategoryRepository) {
+/** Deleting a category reassigns its linked records to Uncategorized before removing it. */
+class DeleteCategoryUseCase(
+    private val categoryRepository: CategoryRepository,
+    private val financeRecordRepository: FinanceRecordRepository,
+) {
     suspend operator fun invoke(id: String) {
+        val records = (financeRecordRepository.getAll() as? Result.Success)?.data.orEmpty()
+        records.filter { it.categoryId.value == id }.forEach { record ->
+            financeRecordRepository.upsert(record.copy(categoryId = CategoryId(UNCATEGORIZED_CATEGORY_ID)))
+        }
         categoryRepository.delete(CategoryId(id))
     }
 }

@@ -20,6 +20,8 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.TagLinkOption
+import com.arduia.expense.ui.design.customExpenseCategories
+import com.arduia.expense.ui.design.defaultExpenseCategories
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -47,6 +49,8 @@ fun QuickLogFlow(
     onSaved: (ExpenseEntryState) -> Unit = { onDismiss() },
     tagEvents: List<TagLinkOption> = emptyList(),
     tagDebts: List<TagLinkOption> = emptyList(),
+    defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
+    customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -135,6 +139,8 @@ fun QuickLogFlow(
                                 state = state.copy(showZeroValidation = true)
                             }
                         },
+                        defaultCategories = defaultCategories,
+                        customCategories = customCategories,
                     )
                 }
                 QuickLogStep.Details -> {
@@ -169,6 +175,8 @@ fun QuickLogFlow(
                         tagEvents = tagEvents,
                         tagDebts = tagDebts,
                         showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
+                        defaultCategories = defaultCategories,
+                        customCategories = customCategories,
                     )
                 }
             }

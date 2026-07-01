@@ -103,6 +103,30 @@ class GenerateReportPeriodUseCaseTest {
     }
 
     @Test
+    fun invoke_flagsAllUncategorizedWhenEveryRecordIsUncategorized() {
+        val records = listOf(
+            record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
+            record("r2", "uncategorized", 500, recordedAtEpochMillis = 20),
+        )
+
+        val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
+
+        assertTrue(result.allUncategorized)
+    }
+
+    @Test
+    fun invoke_doesNotFlagAllUncategorizedWhenOnlySomeRecordsAreUncategorized() {
+        val records = listOf(
+            record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
+            record("r2", "food", 500, recordedAtEpochMillis = 20),
+        )
+
+        val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
+
+        assertEquals(false, result.allUncategorized)
+    }
+
+    @Test
     fun invoke_zeroDaysInPeriodAvoidsDivisionByZero() {
         val records = listOf(record("r1", "food", 1000, recordedAtEpochMillis = 10))
 

@@ -135,4 +135,18 @@ under it, and "Uncategorized" exists precisely to catch those orphaned records.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** Scenario 2 (reassignment) was entirely unimplemented — `DeleteCategoryUseCase`
+  called `categoryRepository.delete(id)` with no reassignment step, so any expense linked to a
+  deleted category was left pointing at a category id that no longer existed. It now injects
+  `FinanceRecordRepository`, reassigns every matching record's `categoryId` to the new
+  `UNCATEGORIZED_CATEGORY_ID` sentinel (`core:domain`'s `DefaultCategories.kt`) before deleting.
+  Separately, Quick Log's category picker (`AddExpenseAmountScreen`/`AddExpenseDetailsScreen`) was
+  fully hardcoded from `shared`'s static `ExpenseCategories.kt` lists rather than reading
+  `CategoryRepository`, despite `DEFAULT_CATEGORIES`'s own doc comment saying otherwise — a newly
+  created custom category never appeared in Quick Log. `LoggingFeatureEntry` now injects
+  `CategoryRepository`, splits `observeAll()` into default/custom lists sorted by `sortOrder`, and
+  threads them through `QuickLogFlow` → both step screens. Because Uncategorized is never seeded
+  as a storage `Category` row, it's excluded from this picker by construction (Scenario 3), while
+  `expenseCategoryLabel("uncategorized")` (`shared/.../ExpenseCategories.kt`) renders it as
+  "Uncategorized" wherever a real label is needed (Journal/Reports). Covered by
+  `DeleteCategoryUseCaseTest.invoke_reassignsLinkedRecordsToUncategorizedBeforeDeleting`.

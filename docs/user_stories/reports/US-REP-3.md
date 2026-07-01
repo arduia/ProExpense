@@ -136,4 +136,11 @@ instead of rendering an empty or broken-looking chart.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** Scenario 3 (all-Uncategorized rendering) was a real `ReportsUiState.uncategorized`
+  field with correct UI handling, but nothing in `ReportsFeatureEntry.kt` ever set it to `true` in
+  production — it was permanently `false` outside of hardcoded preview data. `GenerateReportPeriodUseCase`
+  now computes `ReportPeriodResult.allUncategorized` (every record in the period has categoryId ==
+  `UNCATEGORIZED_CATEGORY_ID`), which `buildPeriodState` passes straight through to
+  `ReportsUiState.uncategorized`. Covered by
+  `GenerateReportPeriodUseCaseTest.invoke_flagsAllUncategorizedWhenEveryRecordIsUncategorized` /
+  `invoke_doesNotFlagAllUncategorizedWhenOnlySomeRecordsAreUncategorized`.

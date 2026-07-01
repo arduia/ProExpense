@@ -39,6 +39,8 @@ fun AddExpenseAmountScreen(
     onSave: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
+    defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
+    customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -74,8 +76,8 @@ fun AddExpenseAmountScreen(
         )
 
         CategoryPicker(
-            defaultCategories = defaultExpenseCategories,
-            customCategories = customExpenseCategories,
+            defaultCategories = defaultCategories,
+            customCategories = customCategories,
             selectedCategoryId = state.selectedCategoryId,
             onCategorySelected = onCategorySelected,
             showCustomSection = true,

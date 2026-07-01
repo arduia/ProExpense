@@ -10,6 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.Result
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
@@ -29,6 +31,7 @@ import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.currentKoinScope
+import org.koin.compose.koinInject
 
 interface LoggingFeatureEntry {
     @Composable
@@ -61,6 +64,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
+        val (defaultCategories, customCategories) = rememberCategoryLists()
 
         val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
         val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
@@ -79,6 +83,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             },
             tagEvents = tagEvents,
             tagDebts = tagDebts,
+            defaultCategories = defaultCategories,
+            customCategories = customCategories,
             modifier = modifier,
         )
     }
@@ -93,6 +99,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
+        val (defaultCategories, customCategories) = rememberCategoryLists()
 
         val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
         val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
@@ -128,6 +135,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 },
                 tagEvents = tagEvents,
                 tagDebts = tagDebts,
+                defaultCategories = defaultCategories,
+                customCategories = customCategories,
                 modifier = modifier,
             )
         }
@@ -142,6 +151,22 @@ private fun rememberLoggingViewModel(): LoggingViewModel {
         onDispose { viewModel.onCleared() }
     }
     return viewModel
+}
+
+/** Live default/custom category chip lists sourced from [CategoryRepository], not hardcoded. */
+@Composable
+private fun rememberCategoryLists(): Pair<List<Pair<String, String>>, List<Pair<String, String>>> {
+    val categoryRepository: CategoryRepository = koinInject()
+    val categories by categoryRepository.observeAll().collectAsState(emptyList())
+    val defaultCategories = categories
+        .filter { !it.isCustom }
+        .sortedBy { it.sortOrder }
+        .map { it.id.value to it.name }
+    val customCategories = categories
+        .filter { it.isCustom }
+        .sortedBy { it.sortOrder }
+        .map { it.id.value to it.name }
+    return defaultCategories to customCategories
 }
 
 private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind): List<TagLinkOption> =

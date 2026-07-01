@@ -56,6 +56,8 @@ fun AddExpenseDetailsScreen(
     tagEvents: List<TagLinkOption> = previewTagEvents,
     tagDebts: List<TagLinkOption> = previewTagDebts,
     showTagField: Boolean = true,
+    defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
+    customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -90,8 +92,8 @@ fun AddExpenseDetailsScreen(
             )
 
             CategoryPicker(
-                defaultCategories = defaultExpenseCategories,
-                customCategories = customExpenseCategories,
+                defaultCategories = defaultCategories,
+                customCategories = customCategories,
                 selectedCategoryId = state.selectedCategoryId,
                 onCategorySelected = onCategorySelected,
                 showCustomSection = true,
