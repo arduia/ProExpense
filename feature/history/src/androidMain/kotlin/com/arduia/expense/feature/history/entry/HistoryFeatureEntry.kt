@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.DebtRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
@@ -18,6 +19,7 @@ import com.arduia.expense.feature.history.R
 import com.arduia.expense.feature.history.UpdateRecordNoteUseCase
 import com.arduia.expense.feature.history.ui.JournalFlow
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
+import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProTransactionRowModel
@@ -54,20 +56,28 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
     ) {
         val scope = rememberCoroutineScope()
         val financeRecordRepository: FinanceRecordRepository = koinInject()
+        val categoryRepository: CategoryRepository = koinInject()
         val eventRepository: EventRepository = koinInject()
         val debtRepository: DebtRepository = koinInject()
         val sharedCostRepository: SharedCostRepository = koinInject()
         val deleteRecord: DeleteRecordUseCase = koinInject()
         val updateRecordNote: UpdateRecordNoteUseCase = koinInject()
         val noteFallback = stringResource(R.string.journal_note_fallback)
+        val allFilterLabel = stringResource(R.string.journal_filter_all)
 
         val records by financeRecordRepository.observeAll().collectAsState(emptyList())
+        val categories by categoryRepository.observeAll().collectAsState(emptyList())
         val events by eventRepository.observeAll().collectAsState(emptyList())
         val debts by debtRepository.observeAll().collectAsState(emptyList())
         val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
         val eventNames = remember(events) { events.associate { it.id.value to it.name } }
         val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
         val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
+        val categoryNames = remember(categories) { categories.associate { it.id.value to it.name } }
+        val filters = remember(categories, allFilterLabel) {
+            listOf(JournalFilterUi("all", allFilterLabel)) +
+                categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
+        }
         val days = remember(records, noteFallback, eventNames, debtNames, sharedCostNames) {
             groupByDay(records, noteFallback, eventNames, debtNames, sharedCostNames)
         }
@@ -76,6 +86,8 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             onTabSelected = onTabSelected,
             onAddClick = onAddClick,
             days = days,
+            filters = filters,
+            categoryNames = categoryNames,
             initialSelectedRowId = initialSelectedRowId,
             onDeleteRecord = { rowId ->
                 scope.launch { deleteRecord(rowId) }

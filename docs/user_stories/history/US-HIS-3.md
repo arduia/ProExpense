@@ -115,4 +115,10 @@ state.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** the filter chips were a hardcoded static list (`journalFilters`:
+  All/Food/Transport/Bills/More) with zero filtering effect — tapping a chip only changed which
+  chip looked selected; `filteredDays` never read `selectedFilterId`. `HistoryFeatureEntryImpl` now
+  builds the chip list from live `CategoryRepository` data (an "All" chip plus one per real
+  category, ordered by `sortOrder`), and `filterJournalDays()` filters rows by
+  `selectedFilterId` before display. Covered by
+  `JournalFlowFilterTest.invoke_filtersByCategoryChip` / `invoke_combinesFilterAndSearch`.

@@ -22,9 +22,12 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
+import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
+import com.arduia.expense.feature.history.ui.preview.journalFilters
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
+import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -36,6 +39,8 @@ fun JournalFlow(
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
     days: List<JournalDayUi> = previewJournalList.days,
+    filters: List<JournalFilterUi> = journalFilters,
+    categoryNames: Map<String, String> = emptyMap(),
     initialSelectedRowId: String? = null,
     onDeleteRecord: (String) -> Unit = {},
     onUpdateNote: (String, String) -> Unit = { _, _ -> },
@@ -55,18 +60,17 @@ fun JournalFlow(
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
     val searchActive = query.isNotBlank()
-    val filteredDays = if (searchActive) {
-        days.mapNotNull { day ->
-            val matches = day.rows.filter { it.note.contains(query, ignoreCase = true) }
-            if (matches.isEmpty()) null else day.copy(rows = matches)
-        }
-    } else {
-        days
-    }
+    val filteredDays = filterJournalDays(
+        days = days,
+        query = query,
+        selectedFilterId = selectedFilterId,
+        categoryLabelFor = { id -> categoryNames[id] ?: expenseCategoryLabel(id) },
+    )
     val listState = JournalListUiState(
         query = query,
         selectedFilterId = selectedFilterId,
         days = filteredDays,
+        filters = filters,
         searchActive = searchActive,
     )
 
@@ -172,6 +176,27 @@ fun JournalFlow(
             onDismiss = { showDeleteConfirm = false },
             confirmVariant = ProButtonVariant.Danger,
         )
+    }
+}
+
+/** Matches search against note, category label, and amount; combined with the selected category filter. */
+fun filterJournalDays(
+    days: List<JournalDayUi>,
+    query: String,
+    selectedFilterId: String,
+    categoryLabelFor: (String) -> String,
+): List<JournalDayUi> {
+    val searchActive = query.isNotBlank()
+    return days.mapNotNull { day ->
+        val matches = day.rows.filter { row ->
+            val matchesFilter = selectedFilterId == "all" || row.categoryId == selectedFilterId
+            val matchesQuery = !searchActive ||
+                row.note.contains(query, ignoreCase = true) ||
+                categoryLabelFor(row.categoryId).contains(query, ignoreCase = true) ||
+                row.amount.contains(query, ignoreCase = true)
+            matchesFilter && matchesQuery
+        }
+        if (matches.isEmpty()) null else day.copy(rows = matches)
     }
 }
 
