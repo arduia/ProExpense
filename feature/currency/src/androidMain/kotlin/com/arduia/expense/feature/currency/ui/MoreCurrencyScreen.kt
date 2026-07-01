@@ -13,11 +13,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.currency.R
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.feature.currency.ui.preview.MoreCurrencyItemUi
 import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
 import com.arduia.expense.ui.theme.ProArtboard
@@ -34,6 +39,14 @@ fun MoreCurrencyScreen(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    var searchQuery by remember { mutableStateOf("") }
+    val filteredItems = remember(items, searchQuery) {
+        items.filter { item ->
+            searchQuery.isBlank() ||
+                item.code.contains(searchQuery, ignoreCase = true) ||
+                item.name.contains(searchQuery, ignoreCase = true)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -66,7 +79,15 @@ fun MoreCurrencyScreen(
                     .fillMaxWidth()
                     .padding(bottom = dimens.space8),
             )
-            items.forEach { item ->
+            SearchField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = stringResource(R.string.search_currency_placeholder),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimens.space4),
+            )
+            filteredItems.forEach { item ->
                 CurrencyCard(
                     item = item,
                     selected = item.code == selectedCode,
