@@ -12,11 +12,15 @@ import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.feature.currency.ui.MoreCurrencyScreen
 import com.arduia.expense.feature.importexport.ui.MoreClearScreen
 import com.arduia.expense.feature.importexport.ui.MoreExportScreen
+import com.arduia.expense.feature.importexport.ui.MoreImportScreen
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreClearOptions
 import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportEmpty
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -114,6 +118,36 @@ class MoreScreenshotTest {
         MoreExportScreen(
             files = previewMoreExportFiles,
             onExport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_import_empty() = capture {
+        MoreImportScreen(
+            state = previewMoreImportEmpty,
+            onChooseFile = {},
+            onImport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_import_picked() = capture {
+        MoreImportScreen(
+            state = previewMoreImportPicked,
+            onChooseFile = {},
+            onImport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_import_error() = capture {
+        MoreImportScreen(
+            state = previewMoreImportError,
+            onChooseFile = {},
+            onImport = {},
             onBack = {},
         )
     }

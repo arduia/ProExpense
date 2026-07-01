@@ -4,6 +4,15 @@
     <string name="more_export_heading">Export your data</string>
     <string name="more_export_subtitle">One zip with a CSV per feature. Everything stays on your device — nothing is uploaded.</string>
     <string name="more_export_action">Export as ZIP</string>
+    <string name="more_export_failed">Export failed. Please try again.</string>
+    <string name="more_import_title">Data Import</string>
+    <string name="more_import_heading">Import from a backup</string>
+    <string name="more_import_subtitle">Choose a CSV or JSON file exported from Pro Expense. Records are read from this device only — nothing is uploaded.</string>
+    <string name="more_import_choose_file">Choose file…</string>
+    <string name="more_import_preview_count">%1$d records found</string>
+    <string name="more_import_action">Import %1$d records</string>
+    <string name="more_import_read_error">Couldn\'t read this file as a CSV or JSON backup.</string>
+    <string name="more_import_result">Imported %1$d · Skipped %2$d</string>
     <string name="more_clear_title">Clear Data</string>
     <string name="more_clear_subtitle">Choose what to wipe. Each clear asks for confirmation and can\'t be undone.</string>
     <string name="more_clear_action">Clear selected…</string>

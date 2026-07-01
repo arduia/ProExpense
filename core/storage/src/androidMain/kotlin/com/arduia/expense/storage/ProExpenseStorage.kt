@@ -98,25 +98,31 @@ class ProExpenseStorage internal constructor(
                 integrityVerifier = integrityVerifier,
                 dispatcher = dispatcher,
             )
+            val eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher)
+            val debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher)
+            val sharedCostRepository = SqlDelightSharedCostRepository(
+                queries = database.sharedCostQueries,
+                financeRecordRepository = financeRecordRepository,
+                dispatcher = dispatcher,
+            )
             return ProExpenseStorage(
                 database = database,
                 appMetaStore = appMetaStore,
                 dispatcher = dispatcher,
                 financeRecordRepository = financeRecordRepository,
                 categoryRepository = SqlDelightCategoryRepository(database.categoryQueries, dispatcher),
-                eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher),
-                debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher),
+                eventRepository = eventRepository,
+                debtRepository = debtRepository,
                 budgetRepository = AppMetaBudgetRepository(appMetaStore),
                 lockoutRepository = AppMetaLockoutRepository(appMetaStore),
                 securityStateReader = AppMetaSecurityStateReader(appMetaStore),
                 currencySettingsRepository = AppMetaCurrencySettingsRepository(appMetaStore),
-                sharedCostRepository = SqlDelightSharedCostRepository(
-                    queries = database.sharedCostQueries,
-                    financeRecordRepository = financeRecordRepository,
-                    dispatcher = dispatcher,
-                ),
+                sharedCostRepository = sharedCostRepository,
                 importExportRepository = SqlDelightImportExportRepository(
                     financeRecordRepository = financeRecordRepository,
+                    eventRepository = eventRepository,
+                    debtRepository = debtRepository,
+                    sharedCostRepository = sharedCostRepository,
                     dispatcher = dispatcher,
                 ),
                 clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),

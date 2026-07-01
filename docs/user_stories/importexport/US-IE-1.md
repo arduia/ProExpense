@@ -120,3 +120,14 @@ than one mixed file) keeps the export human-readable and easy to inspect or re-i
 
 **Planned (PRD):** encrypted export for sensitive data is not yet implemented. Tracked here for
 traceability against the PRD's Secure Import & Export use case.
+
+* **Gap fix (2026-07):** despite the "✅ Implemented" status, `MoreExportScreen` was wired to a
+  hardcoded file list and `onExport` was a no-op — no CSV was ever generated, zipped, or shared.
+  `ImportExportRepository.exportGrouped()` (new) now builds one CSV per record type (expenses,
+  events, debts, shared_costs) from the real repositories; `ExportFileWriter` (androidMain) writes
+  them to `cacheDir/exports/` and zips them via the already-declared but previously unused `zip4j`
+  dependency. `ExportSettingsFlow` invokes the use case, then launches an `ACTION_SEND` share-sheet
+  intent through a new `FileProvider` (`app/src/main/res/xml/file_paths.xml`) — matching the
+  existing `more_export_subtitle` copy's promise of "one zip with a CSV per feature." Covered by
+  `ExportGroupedDataUseCaseTest.invoke_delegatesToRepository` and
+  `SqlDelightImportExportRepositoryTest.exportGrouped_returnsOneCsvPerRecordTypeWithRealData`.

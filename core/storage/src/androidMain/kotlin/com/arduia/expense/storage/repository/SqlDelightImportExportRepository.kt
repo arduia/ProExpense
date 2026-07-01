@@ -1,20 +1,26 @@
 package com.arduia.expense.storage.repository
 
+import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.ExportFormat
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ImportExportRepository
 import com.arduia.expense.data.ImportSummary
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtId
+import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.catchingResult
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,6 +29,9 @@ import kotlinx.coroutines.withContext
 
 class SqlDelightImportExportRepository(
     private val financeRecordRepository: FinanceRecordRepository,
+    private val eventRepository: EventRepository,
+    private val debtRepository: DebtRepository,
+    private val sharedCostRepository: SharedCostRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ImportExportRepository {
 
@@ -38,6 +47,88 @@ class SqlDelightImportExportRepository(
                 ExportFormat.JSON -> toJson(records)
             }
         }
+    }
+
+    override suspend fun exportGrouped(): Result<Map<String, String>> = withContext(dispatcher) {
+        catchingResult {
+            val records = financeRecordRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            val events = eventRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            val debts = debtRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            val sharedCosts = sharedCostRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            mapOf(
+                "expenses.csv" to toCsv(records),
+                "events.csv" to eventsToCsv(events),
+                "debts.csv" to debtsToCsv(debts),
+                "shared_costs.csv" to sharedCostsToCsv(sharedCosts),
+            )
+        }
+    }
+
+    private fun eventsToCsv(events: List<Event>): String {
+        val header = "id,name,start_at,end_at,budget_cents,currency_code,status"
+        val rows = events.map { event ->
+            listOf(
+                event.id.value,
+                escapeQuotes(event.name),
+                event.startEpochMillis,
+                event.endEpochMillis,
+                event.budget.amount.valueInCents,
+                event.budget.currency.code,
+                event.status.name,
+            ).joinToString(",") { "\"$it\"" }
+        }
+        return (listOf(header) + rows).joinToString("\n")
+    }
+
+    private fun debtsToCsv(debts: List<Debt>): String {
+        val header = "id,person_name,amount_cents,currency_code,direction,due_at,settled"
+        val rows = debts.map { debt ->
+            listOf(
+                debt.id.value,
+                escapeQuotes(debt.personName),
+                debt.money.amount.valueInCents,
+                debt.money.currency.code,
+                debt.direction.name,
+                debt.dueEpochMillis ?: "",
+                debt.isSettled,
+            ).joinToString(",") { "\"$it\"" }
+        }
+        return (listOf(header) + rows).joinToString("\n")
+    }
+
+    private fun sharedCostsToCsv(sharedCosts: List<SharedCost>): String {
+        val header = "id,title,total_cents,currency_code,participant_count,recorded_at"
+        val rows = sharedCosts.map { sharedCost ->
+            listOf(
+                sharedCost.id.value,
+                escapeQuotes(sharedCost.title),
+                sharedCost.total.amount.valueInCents,
+                sharedCost.total.currency.code,
+                sharedCost.participants.size,
+                sharedCost.recordedAtEpochMillis,
+            ).joinToString(",") { "\"$it\"" }
+        }
+        return (listOf(header) + rows).joinToString("\n")
     }
 
     override suspend fun importFrom(

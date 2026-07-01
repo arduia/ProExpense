@@ -115,4 +115,14 @@ system and land the records exactly where they'd appear had they been logged nat
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** despite the "✅ Implemented" status, there was no screen or flow behind
+  "Data import" at all — the More hub had no entry point and `PreviewImportUseCase`/
+  `ImportDataUseCase` (already implemented at the use-case layer) were never invoked from any UI.
+  Added `ImportDataFlow` (androidMain), which opens the system file picker via
+  `ActivityResultContracts.OpenDocument()`, reads the picked file through `ContentResolver`,
+  detects CSV vs. JSON by filename extension, previews the record count before committing, then
+  imports on confirmation and reports imported/skipped counts. Wired a new "Data import" row into
+  the More hub (`MorePreviewData.kt`, `MoreFlow.kt`) and a new `ImportFlow` entry point on
+  `ImportExportFeatureEntry`. Covered by `MoreImportScreen`'s three `@Preview`/Roborazzi states
+  (empty, file picked, error) in `MoreScreenshotTest`; the underlying preview/import use cases
+  were already covered by `ImportExportUseCasesTest`.

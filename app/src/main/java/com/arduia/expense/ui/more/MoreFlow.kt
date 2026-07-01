@@ -47,7 +47,7 @@ import org.koin.compose.koinInject
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.R
 
-private enum class MoreStep { Hub, Currency, Export, Clear, Reports, Categories, Budget, DefaultCategory }
+private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory }
 
 @Composable
 fun MoreFlow(
@@ -203,6 +203,7 @@ fun MoreFlow(
                         when (id) {
                             "currency" -> step = MoreStep.Currency
                             "export" -> step = MoreStep.Export
+                            "import" -> step = MoreStep.Import
                             "clear" -> step = MoreStep.Clear
                             "pin" -> if (pinEnabled) showDisablePinConfirm = true else onPinClick()
                             "budget" -> step = MoreStep.Budget
@@ -238,6 +239,9 @@ fun MoreFlow(
                     onBack = { step = MoreStep.Hub },
                 )
                 MoreStep.Export -> features.importExport.ExportFlow(
+                    onBack = { step = MoreStep.Hub },
+                )
+                MoreStep.Import -> features.importExport.ImportFlow(
                     onBack = { step = MoreStep.Hub },
                 )
                 MoreStep.Clear -> features.importExport.ClearDataFlow(

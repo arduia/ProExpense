@@ -28,6 +28,8 @@ kotlin {
         androidMain.dependencies {
             implementation(project(":core:storage"))
             implementation(libs.zip4j)
+            implementation(libs.androidx.core.ktx)
+            implementation(libs.androidx.activity.compose)
             implementation("io.insert-koin:koin-compose:4.1.1")
         }
         androidUnitTest.dependencies {
