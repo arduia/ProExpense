@@ -62,7 +62,6 @@ fun ReportsScreen(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
 
     Column(
         modifier = modifier
@@ -101,104 +100,131 @@ fun ReportsScreen(
             return@Column
         }
 
-        Column(
+        // The pill is a fixed header, not part of the swipeable body below — it must stay put
+        // while only the content underneath changes, so switching periods never reads like
+        // navigating to a new screen.
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
                 .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space24),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(dimens.space16),
+                .padding(top = dimens.space8),
+            contentAlignment = Alignment.Center,
         ) {
             ReportsPeriodPill(
                 label = state.periodLabel,
                 onPrev = onPrevPeriod,
                 onNext = onNextPeriod,
             )
+        }
 
-            if (state.empty) {
-                EmptyStateContent(
-                    title = stringResource(R.string.reports_period_empty_title),
-                    subtitle = stringResource(R.string.reports_period_empty_subtitle),
-                    actionLabel = stringResource(R.string.reports_period_empty_action),
-                    onActionClick = onLogFirstExpense,
-                    modifier = Modifier.padding(vertical = dimens.space24),
-                )
-                return@Column
-            }
+        ReportsPeriodContent(
+            state = state,
+            onLogFirstExpense = onLogFirstExpense,
+        )
+    }
+}
 
-            if (!state.uncategorized) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = stringResource(R.string.reports_total_spent),
-                        style = typography.eyebrow,
-                        color = colors.muted,
-                    )
-                    Text(
-                        text = state.totalLabel,
-                        style = typography.displayAmount,
-                        color = colors.onSurface,
-                        modifier = Modifier.padding(top = dimens.space8),
-                    )
-                    Text(
-                        text = buildAnnotatedString {
-                            append(stringResource(R.string.reports_daily_avg_prefix) + " ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = colors.onSurface)) {
-                                append(state.dailyAvgLabel)
-                            }
-                            append(" · ${state.daysLabel}")
-                        },
-                        style = typography.caption,
-                        color = colors.onSurfaceMuted,
-                        modifier = Modifier.padding(top = dimens.space6),
-                    )
-                }
-            } else {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = stringResource(R.string.reports_period_total, state.periodLabel),
-                        style = typography.eyebrow,
-                        color = colors.muted,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        text = state.totalLabel,
-                        style = typography.summaryAmount,
-                        color = colors.onSurface,
-                        modifier = Modifier.padding(top = dimens.space8),
-                    )
-                }
-            }
+@Composable
+internal fun ReportsPeriodContent(
+    state: ReportsUiState,
+    onLogFirstExpense: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
 
-            ReportsDonut(
-                categories = state.categories,
-                uncategorized = state.uncategorized,
-                modifier = Modifier.padding(vertical = dimens.space8),
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = dimens.screenPadding)
+            .padding(top = dimens.space16, bottom = dimens.space24),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(dimens.space16),
+    ) {
+        if (state.empty) {
+            EmptyStateContent(
+                title = stringResource(R.string.reports_period_empty_title),
+                subtitle = stringResource(R.string.reports_period_empty_subtitle),
+                actionLabel = stringResource(R.string.reports_period_empty_action),
+                onActionClick = onLogFirstExpense,
+                modifier = Modifier.padding(vertical = dimens.space24),
             )
+            return@Column
+        }
 
-            if (state.uncategorized) {
-                ReportsTipBanner()
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(dimens.space10)) {
-                    Text(
-                        text = stringResource(R.string.reports_top_categories),
-                        style = typography.eyebrow,
-                        color = colors.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(ProExpenseTheme.shapes.card)
-                            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                            .background(colors.surface),
-                    ) {
-                        state.categories.forEachIndexed { index, category ->
-                            if (index > 0) {
-                                Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
-                            }
-                            ReportsRankRow(category = category)
+        if (!state.uncategorized) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(R.string.reports_total_spent),
+                    style = typography.eyebrow,
+                    color = colors.muted,
+                )
+                Text(
+                    text = state.totalLabel,
+                    style = typography.displayAmount,
+                    color = colors.onSurface,
+                    modifier = Modifier.padding(top = dimens.space8),
+                )
+                Text(
+                    text = buildAnnotatedString {
+                        append(stringResource(R.string.reports_daily_avg_prefix) + " ")
+                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = colors.onSurface)) {
+                            append(state.dailyAvgLabel)
                         }
+                        append(" · ${state.daysLabel}")
+                    },
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                    modifier = Modifier.padding(top = dimens.space6),
+                )
+            }
+        } else {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(R.string.reports_period_total, state.periodLabel),
+                    style = typography.eyebrow,
+                    color = colors.muted,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = state.totalLabel,
+                    style = typography.summaryAmount,
+                    color = colors.onSurface,
+                    modifier = Modifier.padding(top = dimens.space8),
+                )
+            }
+        }
+
+        ReportsDonut(
+            categories = state.categories,
+            uncategorized = state.uncategorized,
+            modifier = Modifier.padding(vertical = dimens.space8),
+        )
+
+        if (state.uncategorized) {
+            ReportsTipBanner()
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space10)) {
+                Text(
+                    text = stringResource(R.string.reports_top_categories),
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(ProExpenseTheme.shapes.card)
+                        .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                        .background(colors.surface),
+                ) {
+                    state.categories.forEachIndexed { index, category ->
+                        if (index > 0) {
+                            Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
+                        }
+                        ReportsRankRow(category = category)
                     }
                 }
             }
@@ -207,7 +233,7 @@ fun ReportsScreen(
 }
 
 @Composable
-private fun ReportsPeriodPill(
+internal fun ReportsPeriodPill(
     label: String,
     onPrev: () -> Unit,
     onNext: () -> Unit,
