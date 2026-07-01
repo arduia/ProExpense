@@ -12,6 +12,7 @@ import com.arduia.expense.feature.reports.ui.ReportsScreen
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
+import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -64,5 +65,16 @@ class ReportsScreenshotTest {
     @Test
     fun edge_reports_empty() = capture {
         ReportsScreen(previewReportsEmpty, {}, {}, {})
+    }
+
+    @Test
+    fun edge_reports_period_empty() = capture {
+        ReportsScreen(
+            state = previewReportsPeriodEmpty,
+            onBack = {},
+            onPrevPeriod = {},
+            onNextPeriod = {},
+            globalEmpty = false,
+        )
     }
 }

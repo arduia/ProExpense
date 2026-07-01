@@ -45,6 +45,7 @@ import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
+import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -56,6 +57,7 @@ fun ReportsScreen(
     onPrevPeriod: () -> Unit,
     onNextPeriod: () -> Unit,
     modifier: Modifier = Modifier,
+    globalEmpty: Boolean = state.empty,
     onLogFirstExpense: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
@@ -77,7 +79,12 @@ fun ReportsScreen(
             )
         }
 
-        if (state.empty) {
+        // Global empty (never logged anything, ever) has no periods to switch between, so the
+        // month pill is meaningless here — this is the only case that hides it (US-REP-3 Scenario
+        // 1). A per-period empty month (state.empty while globalEmpty is false, e.g. after
+        // swiping to a month with no spending) must still show the pill/chevrons below, or the
+        // user gets stranded with no way back to a month that has data.
+        if (globalEmpty) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -103,12 +110,24 @@ fun ReportsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            if (!state.uncategorized) {
-                ReportsPeriodPill(
-                    label = state.periodLabel,
-                    onPrev = onPrevPeriod,
-                    onNext = onNextPeriod,
+            ReportsPeriodPill(
+                label = state.periodLabel,
+                onPrev = onPrevPeriod,
+                onNext = onNextPeriod,
+            )
+
+            if (state.empty) {
+                EmptyStateContent(
+                    title = stringResource(R.string.reports_period_empty_title),
+                    subtitle = stringResource(R.string.reports_period_empty_subtitle),
+                    actionLabel = stringResource(R.string.reports_period_empty_action),
+                    onActionClick = onLogFirstExpense,
+                    modifier = Modifier.padding(vertical = dimens.space24),
                 )
+                return@Column
+            }
+
+            if (!state.uncategorized) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = stringResource(R.string.reports_total_spent),
@@ -397,5 +416,24 @@ private fun ReportsUncategorizedPreview() {
 private fun ReportsEmptyPreview() {
     ProExpenseTheme {
         ReportsScreen(previewReportsEmpty, {}, {}, {})
+    }
+}
+
+@Preview(
+    name = "Reports — empty month (pill stays visible)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsPeriodEmptyPreview() {
+    ProExpenseTheme {
+        ReportsScreen(
+            state = previewReportsPeriodEmpty,
+            onBack = {},
+            onPrevPeriod = {},
+            onNextPeriod = {},
+            globalEmpty = false,
+        )
     }
 }

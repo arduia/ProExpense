@@ -53,12 +53,13 @@ fun ReportsFlow(
             .fillMaxSize()
             .background(colors.paper),
     ) {
+        val globalEmpty = empty || periods.isEmpty()
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
         ) { page ->
             ReportsScreen(
-                state = if (empty || periods.isEmpty()) previewReportsEmpty else periods[page % periods.size],
+                state = if (globalEmpty) previewReportsEmpty else periods[page % periods.size],
                 onBack = onBack,
                 onPrevPeriod = {
                     scope.launch {
@@ -70,6 +71,7 @@ fun ReportsFlow(
                         pagerState.animateScrollToPage((pagerState.currentPage + 1) % periods.size.coerceAtLeast(1))
                     }
                 },
+                globalEmpty = globalEmpty,
                 onLogFirstExpense = onLogFirstExpense,
             )
         }

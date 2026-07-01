@@ -49,3 +49,13 @@ val previewReportsEmpty = ReportsUiState(
     categories = emptyList(),
     empty = true,
 )
+
+/** A specific past month with no spending, distinct from [previewReportsEmpty]'s global case. */
+val previewReportsPeriodEmpty = ReportsUiState(
+    periodLabel = "March 2026",
+    totalLabel = "",
+    dailyAvgLabel = "",
+    daysLabel = "",
+    categories = emptyList(),
+    empty = true,
+)
