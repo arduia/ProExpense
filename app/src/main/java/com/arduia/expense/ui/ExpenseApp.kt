@@ -36,6 +36,8 @@ import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.eventbudget.ComputeEventProgressUseCase
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
+import com.arduia.expense.feature.logging.ui.ExpenseDraftPrefs
+import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
 import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import com.arduia.expense.ui.design.AmountInput
@@ -97,6 +99,7 @@ fun ExpenseApp(
     var homeSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var homeSelectedEventId by rememberSaveable { mutableStateOf<String?>(null) }
     var quickLogLinkedEventId by rememberSaveable { mutableStateOf<String?>(null) }
+    var pendingDraftState by remember { mutableStateOf<ExpenseEntryState?>(null) }
     var editRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var userName by rememberSaveable { mutableStateOf("") }
     var userCurrency by rememberSaveable { mutableStateOf("") }
@@ -164,6 +167,15 @@ fun ExpenseApp(
         val status = getOnboardingStatus()
         onboardingComplete = status.isComplete
         if (userName.isBlank()) userName = status.displayName
+    }
+
+    LaunchedEffect(onboardingComplete) {
+        if (onboardingComplete == true) {
+            ExpenseDraftPrefs.load(context)?.let { draft ->
+                pendingDraftState = draft
+                showQuickLog = true
+            }
+        }
     }
 
     LaunchedEffect(onboardingComplete, userCurrency) {
@@ -259,6 +271,7 @@ fun ExpenseApp(
     val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { _ ->
         showQuickLog = false
         quickLogLinkedEventId = null
+        pendingDraftState = null
     }
 
     val onTabSelected: (HomeNavTab) -> Unit = { tab ->
@@ -311,7 +324,19 @@ fun ExpenseApp(
             SplashScreen()
         } else {
             if (onboardingComplete == true) {
-                if (pinConfigured == true && !unlocked) {
+                if (pendingDraftState != null) {
+                    // A restorable draft is never gated behind PIN (US-LOG-7) — resolve it first.
+                    features.logging.QuickLogFlow(
+                        onDismiss = {
+                            showQuickLog = false
+                            pendingDraftState = null
+                        },
+                        onSaved = onExpenseSaved,
+                        currencyCode = homeCurrencyCode,
+                        defaultCategoryId = defaultCategoryId,
+                        initialDraftState = pendingDraftState,
+                    )
+                } else if (pinConfigured == true && !unlocked) {
                     features.auth.PinLockFlow(
                         onUnlocked = { unlocked = true },
                         modifier = Modifier,
@@ -387,7 +412,7 @@ fun ExpenseApp(
                 )
             }
 
-            if (showQuickLog) {
+            if (showQuickLog && pendingDraftState == null) {
                 features.logging.QuickLogFlow(
                     onDismiss = {
                         showQuickLog = false

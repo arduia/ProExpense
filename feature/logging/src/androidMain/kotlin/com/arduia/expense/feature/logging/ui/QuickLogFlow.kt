@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.R
@@ -57,6 +59,7 @@ fun QuickLogFlow(
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val savedMessage = stringResource(R.string.toast_expense_saved)
+    val context = LocalContext.current
 
     var step by rememberSaveable {
         mutableStateOf(
@@ -68,6 +71,14 @@ fun QuickLogFlow(
     var showDateTimePicker by remember { mutableStateOf(false) }
 
     val currentStep = QuickLogStep.valueOf(step)
+
+    // Persist the in-progress entry as a resumable draft so it survives process death or an
+    // accidental close — cleared only on an explicit save or discard, never on backing out.
+    LaunchedEffect(state, currentStep) {
+        if (currentStep != QuickLogStep.DraftPrompt) {
+            ExpenseDraftPrefs.save(context, state)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -101,7 +112,10 @@ fun QuickLogFlow(
                                 )
                             }",
                             onContinue = { step = QuickLogStep.Amount.name },
-                            onDiscard = onDismiss,
+                            onDiscard = {
+                                ExpenseDraftPrefs.clear(context)
+                                onDismiss()
+                            },
                         )
                     }
                 }
@@ -126,6 +140,7 @@ fun QuickLogFlow(
                         },
                         onSave = {
                             if (AmountInput.canProceed(state.rawAmount)) {
+                                ExpenseDraftPrefs.clear(context)
                                 toastMessage = savedMessage
                                 onSaved(state)
                             } else {
@@ -169,6 +184,7 @@ fun QuickLogFlow(
                             )
                         },
                         onSave = {
+                            ExpenseDraftPrefs.clear(context)
                             toastMessage = savedMessage
                             onSaved(state)
                         },
