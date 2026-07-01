@@ -1,5 +1,6 @@
 package com.arduia.expense.storage.repository
 
+import android.content.SharedPreferences
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
@@ -12,9 +13,102 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+/**
+ * Backs onto a shared mutable map so two [FakeSharedPreferences] built from the same [backing]
+ * simulate re-reading the same on-disk file across a fresh process — the scenario that matters
+ * for the onboarding-persistence regression test below.
+ */
+private class FakeSharedPreferences(
+    private val backing: MutableMap<String, Boolean> = mutableMapOf(),
+) : SharedPreferences by UnsupportedSharedPreferences {
+    override fun getBoolean(key: String, defValue: Boolean): Boolean = backing[key] ?: defValue
+
+    override fun edit(): SharedPreferences.Editor = FakeEditor(backing)
+
+    private class FakeEditor(
+        private val backing: MutableMap<String, Boolean>,
+    ) : SharedPreferences.Editor by UnsupportedEditor {
+        private val pending = mutableMapOf<String, Boolean>()
+
+        override fun putBoolean(key: String, value: Boolean): SharedPreferences.Editor {
+            pending[key] = value
+            return this
+        }
+
+        override fun commit(): Boolean {
+            backing.putAll(pending)
+            return true
+        }
+
+        override fun apply() {
+            backing.putAll(pending)
+        }
+    }
+}
+
+private object UnsupportedSharedPreferences : SharedPreferences {
+    override fun getAll(): MutableMap<String, *> = throw UnsupportedOperationException()
+    override fun getString(key: String?, defValue: String?) = throw UnsupportedOperationException()
+    override fun getStringSet(key: String?, defValues: MutableSet<String>?) = throw UnsupportedOperationException()
+    override fun getInt(key: String?, defValue: Int) = throw UnsupportedOperationException()
+    override fun getLong(key: String?, defValue: Long) = throw UnsupportedOperationException()
+    override fun getFloat(key: String?, defValue: Float) = throw UnsupportedOperationException()
+    override fun getBoolean(key: String?, defValue: Boolean) = throw UnsupportedOperationException()
+    override fun contains(key: String?) = throw UnsupportedOperationException()
+    override fun edit(): SharedPreferences.Editor = throw UnsupportedOperationException()
+    override fun registerOnSharedPreferenceChangeListener(
+        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
+    ) = throw UnsupportedOperationException()
+    override fun unregisterOnSharedPreferenceChangeListener(
+        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
+    ) = throw UnsupportedOperationException()
+}
+
+private object UnsupportedEditor : SharedPreferences.Editor {
+    override fun putString(key: String?, value: String?) = throw UnsupportedOperationException()
+    override fun putStringSet(key: String?, values: MutableSet<String>?) = throw UnsupportedOperationException()
+    override fun putInt(key: String?, value: Int) = throw UnsupportedOperationException()
+    override fun putLong(key: String?, value: Long) = throw UnsupportedOperationException()
+    override fun putFloat(key: String?, value: Float) = throw UnsupportedOperationException()
+    override fun putBoolean(key: String?, value: Boolean) = throw UnsupportedOperationException()
+    override fun remove(key: String?) = throw UnsupportedOperationException()
+    override fun clear() = throw UnsupportedOperationException()
+    override fun commit() = throw UnsupportedOperationException()
+    override fun apply() = throw UnsupportedOperationException()
+}
+
 class AppMetaRepositoriesTest {
 
     private fun store() = AppMetaLocalStore(inMemoryDatabase().appMetaQueries, Dispatchers.Unconfined)
+
+    @Test
+    fun profile_onboardingComplete_survivesSimulatedProcessRestart() = runTest {
+        // Same on-disk backing map, but a brand new AppMetaLocalStore each time — this mirrors a
+        // cold app restart where Koin rebuilds the DI graph but SharedPreferences persists on disk.
+        val diskBacking = mutableMapOf<String, Boolean>()
+        val firstLaunchPrefs = FakeSharedPreferences(diskBacking)
+        val firstLaunchRepo = AppMetaProfileRepository(store(), firstLaunchPrefs)
+
+        assertEquals(Result.Success(false), firstLaunchRepo.isOnboardingComplete())
+        firstLaunchRepo.setOnboardingComplete()
+
+        val secondLaunchPrefs = FakeSharedPreferences(diskBacking)
+        val secondLaunchRepo = AppMetaProfileRepository(store(), secondLaunchPrefs)
+
+        assertEquals(Result.Success(true), secondLaunchRepo.isOnboardingComplete())
+    }
+
+    @Test
+    fun profile_onboardingComplete_fallsBackToDbWhenPrefsMissing() = runTest {
+        // Simulates an existing install that wrote the flag to the DB before this fix shipped.
+        val dbStore = store()
+        AppMetaProfileRepository(dbStore, FakeSharedPreferences()).setOnboardingComplete()
+
+        val freshPrefs = FakeSharedPreferences()
+        val repoWithFreshPrefs = AppMetaProfileRepository(dbStore, freshPrefs)
+
+        assertEquals(Result.Success(true), repoWithFreshPrefs.isOnboardingComplete())
+    }
 
     @Test
     fun budget_setThenGet_roundTrips() = runTest {
