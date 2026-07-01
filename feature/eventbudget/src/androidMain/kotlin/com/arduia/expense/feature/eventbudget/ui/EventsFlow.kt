@@ -33,13 +33,15 @@ fun EventsFlow(
     events: List<EventBudgetCardState> = previewEventList,
     eventDetails: Map<String, EventDetailUiState> = emptyMap(),
     onCreateEvent: (name: String, budgetRaw: String) -> Unit = { _, _ -> },
+    initialSelectedEventId: String? = null,
+    onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
 
-    var selectedEventId by remember { mutableStateOf<String?>(null) }
+    var selectedEventId by remember { mutableStateOf(initialSelectedEventId) }
     var showCreate by remember { mutableStateOf(false) }
     var form by remember { mutableStateOf(EventCreateFormState()) }
 
@@ -79,7 +81,7 @@ fun EventsFlow(
                     state = detailStateFor(targetId, events, eventDetails),
                     onBack = { selectedEventId = null },
                     onMore = {},
-                    onAddTagged = onAddClick,
+                    onAddTagged = { onAddTaggedExpense(targetId) },
                     onExpenseClick = {},
                 )
             }

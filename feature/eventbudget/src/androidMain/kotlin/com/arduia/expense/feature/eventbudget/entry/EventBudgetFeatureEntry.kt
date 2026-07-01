@@ -35,6 +35,8 @@ interface EventBudgetFeatureEntry {
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
         modifier: Modifier = Modifier,
+        initialSelectedEventId: String? = null,
+        onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
     )
 }
 
@@ -45,6 +47,8 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
         modifier: Modifier,
+        initialSelectedEventId: String?,
+        onAddTaggedExpense: (eventId: String) -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val eventRepository: EventRepository = koinInject()
@@ -75,6 +79,8 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
             onCreateEvent = { name, budgetRaw ->
                 scope.launch { createEvent(name, budgetRaw) }
             },
+            initialSelectedEventId = initialSelectedEventId,
+            onAddTaggedExpense = onAddTaggedExpense,
             modifier = modifier,
         )
     }

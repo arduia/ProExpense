@@ -41,6 +41,7 @@ interface LoggingFeatureEntry {
         modifier: Modifier = Modifier,
         currencyCode: String = "USD",
         defaultCategoryId: String = "food",
+        initialLinkedEventId: String? = null,
     )
 
     @Composable
@@ -60,6 +61,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         modifier: Modifier,
         currencyCode: String,
         defaultCategoryId: String,
+        initialLinkedEventId: String?,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
@@ -68,10 +70,17 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
 
         val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
         val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+        val linkedEvent = initialLinkedEventId?.let { id -> tagEvents.firstOrNull { it.id == id } }
 
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
-            startState = ExpenseEntryState(currencyCode = currencyCode, selectedCategoryId = defaultCategoryId),
+            startState = ExpenseEntryState(
+                currencyCode = currencyCode,
+                selectedCategoryId = defaultCategoryId,
+                linkedTagId = linkedEvent?.id,
+                linkedTagKind = linkedEvent?.kind,
+                linkedTagLabel = linkedEvent?.title,
+            ),
             onSaved = { state ->
                 scope.launch {
                     when (viewModel.save(state.toSaveInput())) {

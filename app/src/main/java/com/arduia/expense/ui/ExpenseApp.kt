@@ -28,11 +28,13 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.Category
+import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.currency.CurrencyRepository
+import com.arduia.expense.feature.eventbudget.ComputeEventProgressUseCase
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
 import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
@@ -41,12 +43,14 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.dayLabel
+import com.arduia.expense.ui.design.shortDateLabel
 import com.arduia.expense.ui.design.timeLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
 import com.arduia.expense.ui.home.QuickAccessPrefs
 import com.arduia.expense.ui.home.QuickAccessTileType
 import com.arduia.expense.ui.more.MoreFlow
+import com.arduia.expense.ui.preview.HomeActiveEventState
 import com.arduia.expense.ui.preview.HomeBudgetSummaryState
 import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
@@ -78,6 +82,7 @@ fun ExpenseApp(
     currencyRepository: CurrencyRepository = koinInject(),
     budgetRepository: BudgetRepository = koinInject(),
     defaultCategoryRepository: DefaultCategoryRepository = koinInject(),
+    computeEventProgress: ComputeEventProgressUseCase = koinInject(),
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -90,6 +95,8 @@ fun ExpenseApp(
     var showReports by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
     var homeSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
+    var homeSelectedEventId by rememberSaveable { mutableStateOf<String?>(null) }
+    var quickLogLinkedEventId by rememberSaveable { mutableStateOf<String?>(null) }
     var editRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var userName by rememberSaveable { mutableStateOf("") }
     var userCurrency by rememberSaveable { mutableStateOf("") }
@@ -109,6 +116,32 @@ fun ExpenseApp(
     val eventNames = remember(events) { events.associate { it.id.value to it.name } }
     val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
     val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
+
+    val activeEvent = remember(events) {
+        events.filter { it.status == EventStatus.ACTIVE }.maxByOrNull { it.startEpochMillis }
+    }
+    var activeEventSpent by remember { mutableStateOf<Money?>(null) }
+    LaunchedEffect(activeEvent) {
+        activeEventSpent = activeEvent?.let { event ->
+            (eventRepository.getSpent(event.id) as? Result.Success)?.data
+        }
+    }
+    val activeEventState = activeEvent?.let { event ->
+        val progress = computeEventProgress(event, activeEventSpent)
+        HomeActiveEventState(
+            eventId = event.id.value,
+            title = event.name,
+            dateRange = if (event.startEpochMillis == event.endEpochMillis) {
+                shortDateLabel(event.startEpochMillis)
+            } else {
+                "${shortDateLabel(event.startEpochMillis)} — ${shortDateLabel(event.endEpochMillis)}"
+            },
+            spentLabel = moneyLabel(progress.spentCents),
+            budgetLabel = "of " + moneyLabel(progress.budgetCents),
+            progress = progress.progress,
+            isOverBudget = progress.isOverBudget,
+        )
+    }
 
     val noteFallback = stringResource(R.string.home_logged_note_fallback)
     val todaySection = stringResource(R.string.home_today_section)
@@ -156,6 +189,7 @@ fun ExpenseApp(
             greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
             dateLabel = dateLabel,
             monthLabel = monthLabel,
+            activeEvent = activeEventState,
         )
     } else {
         val totalCents = records.sumOf { it.money.amount.valueInCents }
@@ -218,11 +252,13 @@ fun ExpenseApp(
             dayGroups = dayGroups,
             sparklinePoints = buildSparklinePoints(records),
             budgetSummary = budgetSummary,
+            activeEvent = activeEventState,
         )
     }
 
     val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { _ ->
         showQuickLog = false
+        quickLogLinkedEventId = null
     }
 
     val onTabSelected: (HomeNavTab) -> Unit = { tab ->
@@ -236,6 +272,10 @@ fun ExpenseApp(
             // back-to-home navigation in JournalDetailScreen.onBack.
             if (tab == HomeNavTab.Journal && selectedTab != HomeNavTab.Journal) {
                 homeSelectedRecordId = null
+            }
+            // Same rationale as above, for the Active Event card's tap-through to Budget.
+            if (tab == HomeNavTab.Budget && selectedTab != HomeNavTab.Budget) {
+                homeSelectedEventId = null
             }
             selectedTab = tab
         }
@@ -282,6 +322,11 @@ fun ExpenseApp(
                             events = events,
                             onTabSelected = onTabSelected,
                             onAddClick = { showQuickLog = true },
+                            initialSelectedEventId = homeSelectedEventId,
+                            onAddTaggedExpense = { eventId ->
+                                quickLogLinkedEventId = eventId
+                                showQuickLog = true
+                            },
                         )
                         HomeNavTab.Journal -> features.history.JournalTab(
                             selectedTab = selectedTab,
@@ -320,6 +365,10 @@ fun ExpenseApp(
                                 homeSelectedRecordId = row.id
                                 selectedTab = HomeNavTab.Journal
                             },
+                            onActiveEventClick = { eventId ->
+                                homeSelectedEventId = eventId
+                                selectedTab = HomeNavTab.Budget
+                            },
                         )
                     }
                 }
@@ -340,10 +389,14 @@ fun ExpenseApp(
 
             if (showQuickLog) {
                 features.logging.QuickLogFlow(
-                    onDismiss = { showQuickLog = false },
+                    onDismiss = {
+                        showQuickLog = false
+                        quickLogLinkedEventId = null
+                    },
                     onSaved = onExpenseSaved,
                     currencyCode = homeCurrencyCode,
                     defaultCategoryId = defaultCategoryId,
+                    initialLinkedEventId = quickLogLinkedEventId,
                 )
             }
 
@@ -440,3 +493,6 @@ private fun buildMonthLabel(): String {
     val calendar = Calendar.getInstance()
     return SimpleDateFormat("MMM", Locale.US).format(calendar.time).uppercase()
 }
+
+private fun moneyLabel(valueInCents: Long): String =
+    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
