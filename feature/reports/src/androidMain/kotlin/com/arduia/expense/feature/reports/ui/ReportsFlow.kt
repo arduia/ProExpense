@@ -2,24 +2,37 @@ package com.arduia.expense.feature.reports.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.launch
+import com.arduia.expense.feature.reports.R
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.ui.design.EmptyStateContent
+import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 /**
- * Reports UI flow. [periods] cycles via period chevrons; [empty] shows new-user state.
+ * Reports UI flow. [periods] cycles via period chevrons or a swipe on the body below the pill.
+ * The top bar and month pill are fixed chrome, hoisted above the pager — only the content
+ * underneath (total, donut, categories) pages between periods, so switching months never reads
+ * like navigating to a new screen.
  */
 @Composable
 fun ReportsFlow(
@@ -31,6 +44,7 @@ fun ReportsFlow(
     onLogFirstExpense: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
     val pagerState = rememberPagerState(
         initialPage = initialPage.coerceIn(0, (periods.size - 1).coerceAtLeast(0)),
         pageCount = { periods.size.coerceAtLeast(1) },
@@ -48,30 +62,69 @@ fun ReportsFlow(
         }
     }
 
-    Box(
+    val globalEmpty = empty || periods.isEmpty()
+
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.paper),
+            .background(colors.paper)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
     ) {
-        val globalEmpty = empty || periods.isEmpty()
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize(),
-        ) { page ->
-            ReportsScreen(
-                state = if (globalEmpty) previewReportsEmpty else periods[page % periods.size],
+        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
+            ProTopBar(
+                title = stringResource(R.string.reports_title),
                 onBack = onBack,
-                onPrevPeriod = {
+                backLabel = stringResource(R.string.reports_back),
+            )
+        }
+
+        if (globalEmpty) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.screenPadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                EmptyStateContent(
+                    title = stringResource(R.string.reports_empty_title),
+                    subtitle = stringResource(R.string.reports_empty_subtitle),
+                    actionLabel = stringResource(R.string.reports_empty_action),
+                    onActionClick = onLogFirstExpense,
+                )
+            }
+            return@Column
+        }
+
+        val currentPeriod = periods[pagerState.currentPage % periods.size]
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.screenPadding)
+                .padding(top = dimens.space8),
+            contentAlignment = Alignment.Center,
+        ) {
+            ReportsPeriodPill(
+                label = currentPeriod.periodLabel,
+                onPrev = {
                     scope.launch {
                         pagerState.animateScrollToPage((pagerState.currentPage - 1 + periods.size) % periods.size.coerceAtLeast(1))
                     }
                 },
-                onNextPeriod = {
+                onNext = {
                     scope.launch {
                         pagerState.animateScrollToPage((pagerState.currentPage + 1) % periods.size.coerceAtLeast(1))
                     }
                 },
-                globalEmpty = globalEmpty,
+            )
+        }
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize(),
+        ) { page ->
+            ReportsPeriodContent(
+                state = periods[page % periods.size],
                 onLogFirstExpense = onLogFirstExpense,
             )
         }
