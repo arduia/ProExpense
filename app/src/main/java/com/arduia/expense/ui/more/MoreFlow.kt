@@ -71,6 +71,7 @@ fun MoreFlow(
     var displayName by remember { mutableStateOf("") }
     var pinEnabled by remember { mutableStateOf(false) }
     var showDisablePinConfirm by remember { mutableStateOf(false) }
+    var showDisablePinVerify by remember { mutableStateOf(false) }
     var monthlyBudgetLabel by remember { mutableStateOf("Off") }
     var appVersion by remember { mutableStateOf("1.0.0") }
     var homeCurrencyCode by remember { mutableStateOf(CurrencyCode("USD")) }
@@ -229,16 +230,31 @@ fun MoreFlow(
             body = buildAnnotatedString { append(stringResource(AuthR.string.pin_disable_confirm_body)) },
             confirmLabel = stringResource(AuthR.string.pin_disable_confirm_action),
             onConfirm = {
-                scope.launch {
-                    disablePin()
-                    pinEnabled = false
-                    showDisablePinConfirm = false
-                }
+                // Intent alone isn't authorization — the current PIN must be re-verified before
+                // anything is actually turned off (US-AUTH-7).
+                showDisablePinConfirm = false
+                showDisablePinVerify = true
             },
             dismissLabel = stringResource(AuthR.string.pin_disable_confirm_cancel),
             onDismiss = { showDisablePinConfirm = false },
             confirmVariant = ProButtonVariant.Danger,
         )
+
+        if (showDisablePinVerify) {
+            features.auth.PinVerifyFlow(
+                headingRes = AuthR.string.pin_disable_verify_heading,
+                helperRes = AuthR.string.pin_disable_verify_helper,
+                onVerified = {
+                    scope.launch {
+                        disablePin()
+                        pinEnabled = false
+                        showDisablePinVerify = false
+                    }
+                },
+                onCancel = { showDisablePinVerify = false },
+                modifier = Modifier,
+            )
+        }
     }
 }
 

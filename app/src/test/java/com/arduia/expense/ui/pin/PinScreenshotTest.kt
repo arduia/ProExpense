@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -17,6 +18,7 @@ import com.arduia.expense.feature.auth.ui.PinSecurityQuestionScreen
 import com.arduia.expense.feature.auth.ui.PinSetPinScreen
 import com.arduia.expense.feature.auth.ui.PinSetupScreen
 import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.feature.auth.ui.preview.previewPinEntry
 import com.arduia.expense.feature.auth.ui.preview.previewPinLock
@@ -79,6 +81,22 @@ class PinScreenshotTest {
     }
 
     @Test
+    fun edge_pin_verify_disable() = capture {
+        PinEntryScreen(
+            state = PinEntryUiState(filledDots = 4, showBiometric = false),
+            onDigit = {},
+            onBackspace = {},
+            onBiometric = {},
+            onForgot = {},
+            headingRes = R.string.pin_disable_verify_heading,
+            helperRes = R.string.pin_disable_verify_helper,
+            showForgot = false,
+            onBack = {},
+            backLabel = "Cancel",
+        )
+    }
+
+    @Test
     fun pin_setup() = capture {
         PinSetupScreen(
             state = previewPinSetup,
@@ -90,6 +108,32 @@ class PinScreenshotTest {
             onSave = {},
             onBack = {},
         )
+    }
+
+    @Test
+    fun pin_setup_revealed() {
+        composeTestRule.setContent {
+            ProExpenseTheme {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(ProExpenseTheme.colors.paper),
+                ) {
+                    PinSetupScreen(
+                        state = previewPinSetup,
+                        onTogglePin = {},
+                        onToggleBiometric = {},
+                        onRevealNew = {},
+                        onRevealConfirm = {},
+                        onRecoveryClick = {},
+                        onSave = {},
+                        onBack = {},
+                    )
+                }
+            }
+        }
+        composeTestRule.onAllNodesWithContentDescription("Show PIN")[0].performClick()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
