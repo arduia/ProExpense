@@ -4,7 +4,7 @@
 > Do not edit by hand — it is overwritten. Authoritative prose lives in `AGENTS.md` and `docs/`.
 
 - **Last updated:** 2026-07-01
-- **Branch:** `claude/v2-migration-branch-setup-pok6n5`
+- **Branch:** `claude/gradle-deps-api-access-3u5yhn`
 - **Stack:** Kotlin Multiplatform · Jetpack Compose (Android) · offline-first
 - **PR base (v2 migration):** PRs target `refactor/v2-migration` until the migration completes — not `main`.
 
