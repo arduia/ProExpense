@@ -13,7 +13,14 @@
 <string name="event_spent_of">%1$s of %2$s</string>
 <string name="event_linked_transactions">Linked transactions</string>
 <string name="event_edit">Edit</string>
+<string name="event_edit_subtitle">Change name, dates, or budget</string>
 <string name="event_close">Close event</string>
+<string name="event_close_subtitle">Stop tracking new expenses against it</string>
+<string name="event_actions_cancel">Cancel</string>
+<string name="event_close_confirm_title">Close %1$s?</string>
+<string name="event_close_confirm_body">This event becomes read-only — no more expenses can be linked to it.</string>
+<string name="event_close_confirm">Close</string>
+<string name="event_edit_title">Edit event</string>
 <string name="event_delete_warning">This event has %1$d linked expenses. Delete anyway?</string>
 <string name="events_eyebrow">BUDGET TRACKER</string>
 <string name="events_title">Budget</string>

@@ -118,6 +118,40 @@ class CreateEventUseCaseTest {
         assertFalse(result)
         assertEquals(null, repo.lastUpsert)
     }
+
+    @Test
+    fun invoke_usesProvidedStartAndEndDatesWhenGiven() = runTest {
+        val repo = FakeEventRepository()
+        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+
+        val result = useCase("Trip", "12.50", startEpochMillis = 500L, endEpochMillis = 900L)
+
+        assertTrue(result)
+        assertEquals(500L, repo.lastUpsert?.startEpochMillis)
+        assertEquals(900L, repo.lastUpsert?.endEpochMillis)
+    }
+
+    @Test
+    fun invoke_defaultsToNowForBothDatesWhenNotProvided() = runTest {
+        val repo = FakeEventRepository()
+        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+
+        useCase("Trip", "12.50")
+
+        assertEquals(1_000L, repo.lastUpsert?.startEpochMillis)
+        assertEquals(1_000L, repo.lastUpsert?.endEpochMillis)
+    }
+
+    @Test
+    fun invoke_returnsFalseWhenEndBeforeStart() = runTest {
+        val repo = FakeEventRepository()
+        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+
+        val result = useCase("Trip", "12.50", startEpochMillis = 900L, endEpochMillis = 500L)
+
+        assertFalse(result)
+        assertEquals(null, repo.lastUpsert)
+    }
 }
 
 class UpdateEventUseCaseTest {

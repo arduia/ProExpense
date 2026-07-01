@@ -37,14 +37,23 @@ class CreateEventUseCase(
     private val eventRepository: EventRepository,
     private val nowEpochMillis: () -> Long,
 ) {
-    suspend operator fun invoke(name: String, rawBudget: String, currencyCode: String = "USD"): Boolean {
+    suspend operator fun invoke(
+        name: String,
+        rawBudget: String,
+        currencyCode: String = "USD",
+        startEpochMillis: Long? = null,
+        endEpochMillis: Long? = null,
+    ): Boolean {
         val amount = Amount.parseOrNull(rawBudget) ?: return false
         val now = nowEpochMillis()
+        val start = startEpochMillis ?: now
+        val end = endEpochMillis ?: now
+        if (end < start) return false
         val event = Event(
             id = EventId(newEventId(name, now)),
             name = name,
-            startEpochMillis = now,
-            endEpochMillis = now,
+            startEpochMillis = start,
+            endEpochMillis = end,
             budget = Money(amount, CurrencyCode(currencyCode)),
             status = EventStatus.ACTIVE,
         )

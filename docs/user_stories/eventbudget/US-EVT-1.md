@@ -160,3 +160,12 @@ later expenses can be tagged against (see [US-LOG-5](../logging/US-LOG-5.md)).
 
 Phase 2 per the PRD roadmap, but the screen exists in this build, so it's documented here for
 completeness.
+
+* **Gap fix (2026-07):** the start/end date pills were wired to no-ops (`onPickStart = {}`,
+  `onPickEnd = {}`), so the create form's dates were permanently fixed to today regardless of what
+  the labels showed. `EventCreateFormState` now carries real `startEpochMillis`/`endEpochMillis`,
+  `EventsFlow` opens the shared `DateTimePickerSheet` for each pill and updates both the epoch value
+  and its display label, and `CreateEventUseCase` accepts optional `startEpochMillis`/`endEpochMillis`
+  (defaulting to now, rejecting end &lt; start) instead of always hardcoding both to "now." Covered by
+  `CreateEventUseCaseTest.invoke_usesProvidedStartAndEndDatesWhenGiven` /
+  `invoke_returnsFalseWhenEndBeforeStart`.

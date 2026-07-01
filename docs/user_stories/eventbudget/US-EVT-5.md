@@ -133,3 +133,15 @@ action, with a short grace period after closing where the event stays editable b
 
 Phase 2 per the PRD roadmap, but the screen exists in this build, so it's documented here for
 completeness.
+
+* **Gap fix (2026-07, partial):** the Event Detail "..." menu (`onMore`) was a no-op with zero UI
+  entry point for either action, despite `UpdateEventUseCase`/`CloseEventUseCase` already existing
+  and being tested. `EventsFlow` now opens a new `EventActionsSheetContent` (Edit / Close / Cancel)
+  from `onMore`; Edit reopens the create sheet prefilled from the real `Event` (via a new
+  `Event.toEditFormState()` in `EventBudgetFeatureEntry.kt`) and routes Save through
+  `UpdateEventUseCase`; Close shows a confirmation `ProAlertDialog` before calling
+  `CloseEventUseCase`. **Not yet implemented:** Scenario 3's 24h grace period — `readOnly` is still
+  the pre-existing simple `status == CLOSED` check, so a just-closed event locks immediately instead
+  of staying editable for 24h. That nuance needs a `closedAtEpochMillis` timestamp on `Event` plus a
+  grace-period calculation and is left as a follow-up; only the binary Active/Closed states are
+  covered by this fix.

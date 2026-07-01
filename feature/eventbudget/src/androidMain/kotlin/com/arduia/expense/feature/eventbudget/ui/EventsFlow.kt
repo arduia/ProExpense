@@ -11,16 +11,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.eventbudget.R
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.EventBudgetSummaryState
 import com.arduia.expense.ui.design.EventBudgetTone
+import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
+import com.arduia.expense.ui.design.shortDateLabel
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -32,7 +38,10 @@ fun EventsFlow(
     onAddClick: () -> Unit,
     events: List<EventBudgetCardState> = previewEventList,
     eventDetails: Map<String, EventDetailUiState> = emptyMap(),
-    onCreateEvent: (name: String, budgetRaw: String) -> Unit = { _, _ -> },
+    eventEditForms: Map<String, EventCreateFormState> = emptyMap(),
+    onCreateEvent: (name: String, budgetRaw: String, startEpochMillis: Long, endEpochMillis: Long) -> Unit = { _, _, _, _ -> },
+    onUpdateEvent: (id: String, name: String, budgetRaw: String, startEpochMillis: Long, endEpochMillis: Long) -> Unit = { _, _, _, _, _ -> },
+    onCloseEvent: (id: String) -> Unit = {},
     initialSelectedEventId: String? = null,
     onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
     modifier: Modifier = Modifier,
@@ -43,10 +52,16 @@ fun EventsFlow(
 
     var selectedEventId by remember { mutableStateOf(initialSelectedEventId) }
     var showCreate by remember { mutableStateOf(false) }
+    var editingEventId by remember { mutableStateOf<String?>(null) }
     var form by remember { mutableStateOf(EventCreateFormState()) }
+    var showStartPicker by remember { mutableStateOf(false) }
+    var showEndPicker by remember { mutableStateOf(false) }
+    var showActionsSheet by remember { mutableStateOf(false) }
+    var showCloseConfirm by remember { mutableStateOf(false) }
 
     fun isDuplicate(name: String): Boolean =
-        name.isNotBlank() && events.any { it.title.equals(name.trim(), ignoreCase = true) }
+        name.isNotBlank() &&
+            events.any { it.title.equals(name.trim(), ignoreCase = true) && it.id != editingEventId }
 
     Box(
         modifier = modifier
@@ -77,10 +92,11 @@ fun EventsFlow(
                     onAddClick = onAddClick,
                 )
             } else {
+                val detail = detailStateFor(targetId, events, eventDetails)
                 EventDetailScreen(
-                    state = detailStateFor(targetId, events, eventDetails),
+                    state = detail,
                     onBack = { selectedEventId = null },
-                    onMore = {},
+                    onMore = { if (!detail.readOnly) showActionsSheet = true },
                     onAddTagged = { onAddTaggedExpense(targetId) },
                     onExpenseClick = {},
                 )
@@ -88,9 +104,34 @@ fun EventsFlow(
         }
 
         ProBottomSheetHost(
+            visible = showActionsSheet,
+            title = null,
+            onClose = { showActionsSheet = false },
+        ) {
+            EventActionsSheetContent(
+                onEdit = {
+                    showActionsSheet = false
+                    selectedEventId?.let { id ->
+                        editingEventId = id
+                        form = eventEditForms[id] ?: EventCreateFormState()
+                        showCreate = true
+                    }
+                },
+                onClose = {
+                    showActionsSheet = false
+                    showCloseConfirm = true
+                },
+                onCancel = { showActionsSheet = false },
+            )
+        }
+
+        ProBottomSheetHost(
             visible = showCreate,
-            title = stringResource(R.string.event_create_title),
-            onClose = { showCreate = false },
+            title = stringResource(if (editingEventId != null) R.string.event_edit_title else R.string.event_create_title),
+            onClose = {
+                showCreate = false
+                editingEventId = null
+            },
         ) {
             EventCreateSheetContent(
                 form = form,
@@ -100,19 +141,65 @@ fun EventsFlow(
                 onBudgetChange = { raw ->
                     form = form.copy(budgetRaw = raw, showBudgetError = false)
                 },
-                onPickStart = {},
-                onPickEnd = {},
+                onPickStart = { showStartPicker = true },
+                onPickEnd = { showEndPicker = true },
                 onSave = {
                     if (!form.canSave) {
                         form = form.copy(showBudgetError = true, isDuplicateName = isDuplicate(form.name))
                     } else {
-                        onCreateEvent(form.name.trim(), form.budgetRaw)
+                        val editingId = editingEventId
+                        if (editingId != null) {
+                            onUpdateEvent(editingId, form.name.trim(), form.budgetRaw, form.startEpochMillis, form.endEpochMillis)
+                        } else {
+                            onCreateEvent(form.name.trim(), form.budgetRaw, form.startEpochMillis, form.endEpochMillis)
+                        }
                         showCreate = false
+                        editingEventId = null
                         form = EventCreateFormState()
                     }
                 },
             )
         }
+
+        selectedEventId?.let { id ->
+            val eventTitle = detailStateFor(id, events, eventDetails).title
+            ProAlertDialog(
+                visible = showCloseConfirm,
+                icon = ProIconGlyph.Close,
+                iconTint = colors.danger,
+                iconBackground = colors.dangerTint,
+                title = stringResource(R.string.event_close_confirm_title, eventTitle),
+                body = buildAnnotatedString { append(stringResource(R.string.event_close_confirm_body)) },
+                confirmLabel = stringResource(R.string.event_close_confirm),
+                onConfirm = {
+                    onCloseEvent(id)
+                    showCloseConfirm = false
+                },
+                dismissLabel = stringResource(R.string.event_actions_cancel),
+                onDismiss = { showCloseConfirm = false },
+                confirmVariant = ProButtonVariant.Danger,
+            )
+        }
+
+        DateTimePickerSheet(
+            visible = showStartPicker,
+            initialEpochMillis = form.startEpochMillis,
+            onConfirm = { millis ->
+                form = form.copy(startEpochMillis = millis, startLabel = shortDateLabel(millis))
+                showStartPicker = false
+            },
+            onDismiss = { showStartPicker = false },
+        )
+
+        DateTimePickerSheet(
+            visible = showEndPicker,
+            initialEpochMillis = form.endEpochMillis,
+            onConfirm = { millis ->
+                form = form.copy(endEpochMillis = millis, endLabel = shortDateLabel(millis))
+                showEndPicker = false
+            },
+            onDismiss = { showEndPicker = false },
+        )
     }
 }
 
