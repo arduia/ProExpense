@@ -315,7 +315,7 @@
     <string name="event_close">Close event</string>
     <string name="event_delete_warning">This event has %1$d linked expenses. Delete anyway?</string>
     <string name="events_eyebrow">BUDGET TRACKER</string>
-    <string name="events_title">Events</string>
+    <string name="events_title">Budget</string>
     <string name="event_new">New event</string>
     <string name="events_back">Events</string>
     <string name="event_empty_heading">No active events</string>

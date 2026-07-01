@@ -23,15 +23,15 @@ class CompleteOnboardingUseCase(
     private val currencySettingsRepository: CurrencySettingsRepository,
 ) {
     suspend operator fun invoke(displayName: String, currencyCode: String): Result<Unit> {
-        if (displayName.isNotBlank()) {
-            val result = profileRepository.setDisplayName(displayName)
-            if (result is Result.Error) return result
-        }
+        // Mark onboarding complete first — this is the critical flag. Name and currency are
+        // best-effort: a failure there must NOT leave onboarding_completed = 0 in the DB.
         val completeResult = profileRepository.setOnboardingComplete()
         if (completeResult is Result.Error) return completeResult
+        if (displayName.isNotBlank()) {
+            profileRepository.setDisplayName(displayName)
+        }
         if (currencyCode.isNotBlank()) {
-            val result = currencySettingsRepository.setHomeCurrency(CurrencyCode(currencyCode))
-            if (result is Result.Error) return result
+            currencySettingsRepository.setHomeCurrency(CurrencyCode(currencyCode))
         }
         return Result.Success(Unit)
     }

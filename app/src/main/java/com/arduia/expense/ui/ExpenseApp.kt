@@ -51,8 +51,10 @@ import com.arduia.expense.ui.splash.SplashScreen
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 private const val SPLASH_DURATION_MILLIS = 1800L
@@ -186,6 +188,14 @@ fun ExpenseApp(
         if (tab == HomeNavTab.Home || tab == HomeNavTab.Budget ||
             tab == HomeNavTab.Journal || tab == HomeNavTab.More
         ) {
+            // When the user manually navigates to Journal, clear the home-originated row
+            // selection so the journal doesn't pre-jump to a record from a previous session.
+            // Do NOT clear it when we programmatically switch to Journal from onRowClick — that
+            // selection is what drives initialSelectedRowId in JournalFlow and is needed for the
+            // back-to-home navigation in JournalDetailScreen.onBack.
+            if (tab == HomeNavTab.Journal && selectedTab != HomeNavTab.Journal) {
+                homeSelectedRecordId = null
+            }
             selectedTab = tab
         }
     }
@@ -275,17 +285,13 @@ fun ExpenseApp(
                         userName = handoff.profileName
                         userCurrency = handoff.currencyCode
                         coroutineScope.launch {
-                            completeOnboarding(handoff.profileName, handoff.currencyCode)
+                            withContext(NonCancellable) {
+                                completeOnboarding(handoff.profileName, handoff.currencyCode)
+                            }
                             onboardingComplete = true
                         }
                     },
                 )
-            }
-
-            LaunchedEffect(selectedTab) {
-                if (selectedTab == HomeNavTab.Journal) {
-                    homeSelectedRecordId = null
-                }
             }
 
             if (showQuickLog) {
