@@ -29,16 +29,12 @@ private fun buildSplitStrategy(
 ): SplitStrategy = when (input.mode) {
     SplitMode.EQUAL -> SplitStrategy.EqualSplit
     SplitMode.CUSTOM -> {
-        val rawCents = participants.indices.map { index ->
-            val raw = input.customShareRaws.getOrElse(index) { "0" }
-            (Amount.parseOrNull(raw) ?: Amount(0L)).valueInCents
-        }.toMutableList()
-        val diff = total.amount.valueInCents - rawCents.sum()
-        if (rawCents.isNotEmpty()) {
-            rawCents[rawCents.lastIndex] = (rawCents.last() + diff).coerceAtLeast(0)
-        }
+        // Shares are stored exactly as entered — they need not sum to the total, which remains
+        // the stored source of truth (US-SHC-2/US-SHC-4). Never rebalance a participant's share.
         val shares = participants.mapIndexed { index, participant ->
-            participant.id to Money(Amount(rawCents[index]), total.currency)
+            val raw = input.customShareRaws.getOrElse(index) { "0" }
+            val cents = (Amount.parseOrNull(raw) ?: Amount(0L)).valueInCents.coerceAtLeast(0)
+            participant.id to Money(Amount(cents), total.currency)
         }.toMap()
         SplitStrategy.CustomSplit(shares)
     }

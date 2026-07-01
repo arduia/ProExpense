@@ -63,10 +63,11 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
                     updateSharedCost(existing, SaveSharedCostInput(title, rawTotal, mode.toSplitMode(), names, customShareRaws))
                 }
             },
+            onDeleteSplit = { id ->
+                scope.launch { deleteSharedCost(id) }
+            },
             modifier = modifier,
         )
-        // deleteSharedCost is wired and ready; SharedCostsFlow has no delete affordance yet —
-        // adding one is a separate Compose UI task (new screen state + Roborazzi baselines).
     }
 }
 

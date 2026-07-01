@@ -98,7 +98,7 @@ class CreateSharedCostUseCaseTest {
     }
 
     @Test
-    fun invoke_buildsCustomSplitDistributingRemainderToLastParticipant() = runTest {
+    fun invoke_buildsCustomSplitStoringSharesExactlyAsEnteredWithoutRebalancing() = runTest {
         val repo = FakeSharedCostRepository()
         val useCase = CreateSharedCostUseCase(repo, nowEpochMillis = { 1_000L })
 
@@ -114,8 +114,10 @@ class CreateSharedCostUseCaseTest {
         val strategy = repo.lastCreateInput?.splitStrategy
         assertTrue(strategy is SplitStrategy.CustomSplit)
         val shares = (strategy as SplitStrategy.CustomSplit).shares
+        // Shares (5 + 5 = 10) don't sum to the $20 total — that's allowed; the total stays
+        // authoritative and no participant's entered share is silently rebalanced.
         assertEquals(500L, shares[ParticipantId("alex-0-1000")]?.amount?.valueInCents)
-        assertEquals(1500L, shares[ParticipantId("bo-1-1000")]?.amount?.valueInCents)
+        assertEquals(500L, shares[ParticipantId("bo-1-1000")]?.amount?.valueInCents)
     }
 
     @Test

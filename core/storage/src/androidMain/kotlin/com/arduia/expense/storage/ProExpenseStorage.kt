@@ -110,7 +110,11 @@ class ProExpenseStorage internal constructor(
                 lockoutRepository = AppMetaLockoutRepository(appMetaStore),
                 securityStateReader = AppMetaSecurityStateReader(appMetaStore),
                 currencySettingsRepository = AppMetaCurrencySettingsRepository(appMetaStore),
-                sharedCostRepository = SqlDelightSharedCostRepository(database.sharedCostQueries, dispatcher),
+                sharedCostRepository = SqlDelightSharedCostRepository(
+                    queries = database.sharedCostQueries,
+                    financeRecordRepository = financeRecordRepository,
+                    dispatcher = dispatcher,
+                ),
                 importExportRepository = SqlDelightImportExportRepository(
                     financeRecordRepository = financeRecordRepository,
                     dispatcher = dispatcher,
