@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.data.ExportFormat
 import com.arduia.expense.data.Result
 import com.arduia.expense.feature.importexport.ImportDataUseCase
+import com.arduia.expense.feature.importexport.ImportZipReader
 import com.arduia.expense.feature.importexport.PreviewImportUseCase
 import com.arduia.expense.feature.importexport.R
 import com.arduia.expense.feature.importexport.ui.preview.MoreImportUiState
@@ -38,45 +39,80 @@ fun ImportDataFlow(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var state by remember { mutableStateOf(MoreImportUiState()) }
+    var pendingUri by remember { mutableStateOf<Uri?>(null) }
     var pendingContent by remember { mutableStateOf<String?>(null) }
     var pendingFormat by remember { mutableStateOf(ExportFormat.CSV) }
     val readError = stringResource(R.string.more_import_read_error)
+    val wrongPassword = stringResource(R.string.more_import_password_wrong)
+
+    suspend fun readAndPreview(uri: Uri, fileName: String, password: String) {
+        val isZip = fileName.endsWith(".zip", ignoreCase = true)
+        val format = if (fileName.endsWith(".json", ignoreCase = true)) ExportFormat.JSON else ExportFormat.CSV
+        val content: String? = if (isZip) {
+            val zipRead = runCatching {
+                context.contentResolver.openInputStream(uri)?.use { stream ->
+                    ImportZipReader.readExpensesCsv(stream, password)
+                }
+            }.getOrNull()
+            when (zipRead) {
+                is ImportZipReader.ZipRead.Success -> zipRead.csvContent
+                is ImportZipReader.ZipRead.NeedsPassword -> {
+                    state = state.copy(
+                        needsPassword = true,
+                        previewCount = null,
+                        errorMessage = if (password.isNotBlank()) wrongPassword else null,
+                    )
+                    return
+                }
+                else -> null
+            }
+        } else {
+            runCatching {
+                context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+            }.getOrNull()
+        }
+        if (content == null) {
+            state = state.copy(errorMessage = readError, needsPassword = false)
+            return
+        }
+        when (val result = previewImport(content, format)) {
+            is Result.Success -> {
+                if (result.data.isEmpty()) {
+                    state = state.copy(errorMessage = readError, needsPassword = false)
+                } else {
+                    pendingContent = content
+                    pendingFormat = format
+                    state = state.copy(previewCount = result.data.size, needsPassword = false, errorMessage = null)
+                }
+            }
+            is Result.Error -> state = state.copy(errorMessage = readError, needsPassword = false)
+        }
+    }
 
     val pickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri: Uri? ->
         if (uri == null) return@rememberLauncherForActivityResult
         val fileName = queryDisplayName(context, uri) ?: uri.lastPathSegment.orEmpty()
-        val format = if (fileName.endsWith(".json", ignoreCase = true)) ExportFormat.JSON else ExportFormat.CSV
+        pendingUri = uri
+        pendingContent = null
         state = MoreImportUiState(fileName = fileName)
-        scope.launch {
-            val content = runCatching {
-                context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
-            }.getOrNull()
-            if (content == null) {
-                state = state.copy(errorMessage = readError)
-                return@launch
-            }
-            when (val result = previewImport(content, format)) {
-                is Result.Success -> {
-                    if (result.data.isEmpty()) {
-                        state = state.copy(errorMessage = readError)
-                    } else {
-                        pendingContent = content
-                        pendingFormat = format
-                        state = state.copy(previewCount = result.data.size)
-                    }
-                }
-                is Result.Error -> state = state.copy(errorMessage = readError)
-            }
-        }
+        scope.launch { readAndPreview(uri, fileName, password = "") }
     }
 
     Box(modifier = modifier.fillMaxSize()) {
         MoreImportScreen(
             state = state,
             onChooseFile = {
-                pickerLauncher.launch(arrayOf("text/csv", "text/comma-separated-values", "application/json", "*/*"))
+                pickerLauncher.launch(
+                    arrayOf("text/csv", "text/comma-separated-values", "application/json", "application/zip", "*/*"),
+                )
+            },
+            onPasswordChange = { state = state.copy(password = it) },
+            onUnlock = {
+                val uri = pendingUri ?: return@MoreImportScreen
+                val fileName = state.fileName ?: return@MoreImportScreen
+                scope.launch { readAndPreview(uri, fileName, password = state.password) }
             },
             onImport = {
                 val content = pendingContent ?: return@MoreImportScreen

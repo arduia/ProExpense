@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.importexport.R
 import com.arduia.expense.feature.importexport.ui.components.ExportFileRow
 import com.arduia.expense.feature.importexport.ui.components.ImportExportGroupCard
+import com.arduia.expense.ui.design.PasswordField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
@@ -31,6 +32,7 @@ import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.feature.importexport.ui.preview.MoreImportUiState
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportEmpty
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportLocked
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -42,6 +44,8 @@ fun MoreImportScreen(
     onImport: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    onPasswordChange: (String) -> Unit = {},
+    onUnlock: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -105,7 +109,29 @@ fun MoreImportScreen(
                         fileName = picked.fileName.orEmpty(),
                         subtitle = picked.errorMessage
                             ?: picked.resultMessage
-                            ?: stringResource(R.string.more_import_preview_count, picked.previewCount ?: 0),
+                            ?: if (picked.needsPassword) {
+                                stringResource(R.string.more_import_password_needed)
+                            } else {
+                                stringResource(R.string.more_import_preview_count, picked.previewCount ?: 0)
+                            },
+                    )
+                }
+            }
+
+            if (state.needsPassword) {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                    PasswordField(
+                        value = state.password,
+                        onValueChange = onPasswordChange,
+                        placeholder = stringResource(R.string.more_import_password_placeholder),
+                    )
+                    ProButton(
+                        text = stringResource(R.string.more_import_unlock),
+                        onClick = onUnlock,
+                        enabled = state.password.isNotBlank(),
+                        variant = ProButtonVariant.Primary,
+                        size = ProButtonSize.Md,
+                        fillMaxWidth = true,
                     )
                 }
             }
@@ -182,6 +208,24 @@ private fun MoreImportErrorPreview() {
     ProExpenseTheme {
         MoreImportScreen(
             state = previewMoreImportError,
+            onChooseFile = {},
+            onImport = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — data import (password-protected zip)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreImportLockedPreview() {
+    ProExpenseTheme {
+        MoreImportScreen(
+            state = previewMoreImportLocked,
             onChooseFile = {},
             onImport = {},
             onBack = {},

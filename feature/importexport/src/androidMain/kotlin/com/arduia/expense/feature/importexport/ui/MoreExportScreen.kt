@@ -23,6 +23,7 @@ import com.arduia.expense.feature.importexport.R
 import com.arduia.expense.feature.importexport.ui.components.ClearDataCard
 import com.arduia.expense.feature.importexport.ui.components.ExportFileRow
 import com.arduia.expense.feature.importexport.ui.components.ImportExportGroupCard
+import com.arduia.expense.ui.design.PasswordField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
@@ -40,6 +41,8 @@ fun MoreExportScreen(
     onExport: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    password: String = "",
+    onPasswordChange: (String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -100,6 +103,19 @@ fun MoreExportScreen(
             ImportExportGroupCard(items = files) { file ->
                 ExportFileRow(fileName = file.fileName, subtitle = file.subtitle)
             }
+
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                PasswordField(
+                    value = password,
+                    onValueChange = onPasswordChange,
+                    placeholder = stringResource(R.string.more_export_password_placeholder),
+                )
+                Text(
+                    text = stringResource(R.string.more_export_password_hint),
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                )
+            }
         }
 
         ProButton(
@@ -128,6 +144,24 @@ private fun MoreExportPreview() {
             files = previewMoreExportFiles,
             onExport = {},
             onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — data export (password set)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreExportPasswordPreview() {
+    ProExpenseTheme {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+            password = "s3cret",
         )
     }
 }

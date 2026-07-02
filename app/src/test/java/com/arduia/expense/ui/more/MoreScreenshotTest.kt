@@ -20,6 +20,7 @@ import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportEmpty
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportLocked
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
@@ -123,6 +124,16 @@ class MoreScreenshotTest {
     }
 
     @Test
+    fun more_export_password_set() = capture {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+            password = "s3cret",
+        )
+    }
+
+    @Test
     fun more_import_empty() = capture {
         MoreImportScreen(
             state = previewMoreImportEmpty,
@@ -146,6 +157,16 @@ class MoreScreenshotTest {
     fun more_import_error() = capture {
         MoreImportScreen(
             state = previewMoreImportError,
+            onChooseFile = {},
+            onImport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_import_locked() = capture {
+        MoreImportScreen(
+            state = previewMoreImportLocked,
             onChooseFile = {},
             onImport = {},
             onBack = {},

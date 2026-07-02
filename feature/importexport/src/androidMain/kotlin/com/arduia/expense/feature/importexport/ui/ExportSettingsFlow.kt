@@ -38,11 +38,14 @@ fun ExportSettingsFlow(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var password by remember { mutableStateOf("") }
     val exportFailedMessage = stringResource(R.string.more_export_failed)
 
     Box(modifier = modifier.fillMaxSize()) {
         MoreExportScreen(
             files = previewMoreExportFiles,
+            password = password,
+            onPasswordChange = { password = it },
             onExport = {
                 onExport()
                 scope.launch {
@@ -53,6 +56,7 @@ fun ExportSettingsFlow(
                                 context = context,
                                 files = result.data,
                                 zipFileName = "pro-expense-export-$timestamp.zip",
+                                password = password,
                             )
                             val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", zip)
                             val shareIntent = Intent(Intent.ACTION_SEND).apply {

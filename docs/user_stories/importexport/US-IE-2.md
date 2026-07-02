@@ -115,6 +115,15 @@ system and land the records exactly where they'd appear had they been logged nat
 
 ## Notes
 
+* **Gap fix (2026-07, zip round-trip):** import initially accepted only a bare CSV/JSON file, so
+  the zip produced by [US-IE-1](US-IE-1.md)'s export couldn't be re-imported without manual
+  extraction. `ImportZipReader` (zip4j streaming) now extracts `expenses.csv` from a picked `.zip`
+  — including AES-encrypted exports, with an in-screen password prompt (`needsPassword` state on
+  `MoreImportScreen`) and a wrong-password retry message. Only `expenses.csv` round-trips; the
+  other per-type CSVs are reference exports without an import path. Covered by
+  `ExportImportZipRoundTripTest` (plain + encrypted round-trip, missing/wrong password, zip
+  without `expenses.csv`).
+
 * **Gap fix (2026-07):** despite the "✅ Implemented" status, there was no screen or flow behind
   "Data import" at all — the More hub had no entry point and `PreviewImportUseCase`/
   `ImportDataUseCase` (already implemented at the use-case layer) were never invoked from any UI.

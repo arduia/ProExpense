@@ -18,6 +18,8 @@ data class MoreImportUiState(
     val errorMessage: String? = null,
     val isImporting: Boolean = false,
     val resultMessage: String? = null,
+    val needsPassword: Boolean = false,
+    val password: String = "",
 )
 
 val previewMoreExportFiles = listOf(
@@ -33,7 +35,12 @@ val previewMoreImportPicked = MoreImportUiState(fileName = "backup-2026-05.csv",
 
 val previewMoreImportError = MoreImportUiState(
     fileName = "notes.txt",
-    errorMessage = "Couldn't read this file as a CSV or JSON backup.",
+    errorMessage = "Couldn't read this file as a Pro Expense backup.",
+)
+
+val previewMoreImportLocked = MoreImportUiState(
+    fileName = "pro-expense-export-20260702.zip",
+    needsPassword = true,
 )
 
 val previewMoreClearOptions = listOf(

@@ -35,7 +35,6 @@ than one mixed file) keeps the export human-readable and easy to inspect or re-i
 **Out of Scope**
 
 * Importing a previously exported file — covered by [US-IE-2](US-IE-2.md).
-* Encrypted export — not yet implemented, tracked under Notes.
 
 ---
 
@@ -118,8 +117,12 @@ than one mixed file) keeps the export human-readable and easy to inspect or re-i
 
 ## Notes
 
-**Planned (PRD):** encrypted export for sensitive data is not yet implemented. Tracked here for
-traceability against the PRD's Secure Import & Export use case.
+* **Gap fix (2026-07, encrypted export):** the PRD's Secure Import & Export use case (previously
+  tracked here as "planned, not yet implemented") is now covered — the export screen gained an
+  optional password field (`PasswordField`, new shared design primitive); a non-blank password
+  makes `ExportFileWriter` produce an AES-encrypted zip via zip4j. Covered by
+  `ExportImportZipRoundTripTest.encryptedZip_roundTripsWithCorrectPassword` and
+  `encryptedZip_missingOrWrongPassword_reportsNeedsPassword`.
 
 * **Gap fix (2026-07):** despite the "✅ Implemented" status, `MoreExportScreen` was wired to a
   hardcoded file list and `onExport` was a no-op — no CSV was ever generated, zipped, or shared.
