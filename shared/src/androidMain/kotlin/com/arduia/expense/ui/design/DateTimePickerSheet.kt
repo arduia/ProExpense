@@ -85,6 +85,7 @@ fun DateTimePickerSheet(
                     state = datePickerState,
                     title = null,
                     headline = null,
+                    showModeToggle = false,
                     colors = proDatePickerColors(),
                 )
             }

@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,7 +48,6 @@ import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proCircularRippleClickable
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
@@ -107,12 +108,17 @@ fun JournalListScreen(
                             style = typography.profileScreenTitle,
                             color = colors.onSurface,
                         )
+                        // No proIconClickable here — its 48dp minimum-size box reads as
+                        // oversized/misaligned next to a 25dp icon in a tight header row (same
+                        // class of defect as the date-range chip's clear icon).
                         ProIcon(
                             glyph = ProIconGlyph.Calendar,
                             contentDescription = stringResource(R.string.journal_date_range_cd),
                             tint = colors.onSurfaceVariant,
                             size = dimens.iconNav,
-                            modifier = Modifier.proIconClickable(onClick = onDateRangeClick),
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button),
                         )
                     }
                 }
@@ -123,34 +129,44 @@ fun JournalListScreen(
                     placeholder = stringResource(R.string.journal_search_placeholder),
                     active = state.searchActive,
                 )
+            }
 
-                // The date-range chip stays visible during search — an active range still
-                // constrains results, and hiding it would make "no matches" misleading. Category
-                // chips still hide, since they'd otherwise crowd out the query results list.
-                if (dateRangeLabel != null || !state.searchActive) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.space6),
-                    ) {
-                        if (dateRangeLabel != null) {
-                            DateRangeChip(
-                                label = dateRangeLabel,
-                                onClick = onDateRangeClick,
-                                onClear = onClearDateRange,
+            // Outside the screen's padded Column so the scrollable viewport spans the full
+            // width — chips scroll flush to both screen edges instead of stopping at an
+            // invisible wall inset by screenPadding on either side. Leading/trailing spacers
+            // reproduce that same inset only for the resting (unscrolled) position.
+            // The date-range chip stays visible during search — an active range still
+            // constrains results, and hiding it would make "no matches" misleading. Category
+            // chips still hide, since they'd otherwise crowd out the query results list.
+            if (dateRangeLabel != null || !state.searchActive) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(top = dimens.space16),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space6),
+                ) {
+                    // spacedBy also gaps the leading/trailing Spacer from its neighboring chip,
+                    // so each Spacer is shortened by that gap to land the resting inset exactly
+                    // on screenPadding — matching the title/search field above.
+                    Spacer(Modifier.width(dimens.screenPadding - dimens.space6))
+                    if (dateRangeLabel != null) {
+                        DateRangeChip(
+                            label = dateRangeLabel,
+                            onClick = onDateRangeClick,
+                            onClear = onClearDateRange,
+                        )
+                    }
+                    if (!state.searchActive) {
+                        state.filters.forEach { filter ->
+                            FilterChip(
+                                label = filter.label,
+                                selected = filter.id == state.selectedFilterId,
+                                onClick = { onFilterSelected(filter.id) },
                             )
                         }
-                        if (!state.searchActive) {
-                            state.filters.forEach { filter ->
-                                FilterChip(
-                                    label = filter.label,
-                                    selected = filter.id == state.selectedFilterId,
-                                    onClick = { onFilterSelected(filter.id) },
-                                )
-                            }
-                        }
                     }
+                    Spacer(Modifier.width(dimens.screenPadding - dimens.space6))
                 }
             }
 

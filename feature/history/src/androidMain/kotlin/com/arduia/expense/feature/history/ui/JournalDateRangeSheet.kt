@@ -109,6 +109,10 @@ fun JournalDateRangeSheet(
                             .weight(1f),
                         title = null,
                         headline = null,
+                        // The text-input mode toggle reserves a header row even with title/headline
+                        // hidden, leaving a large blank gap above the calendar grid. Not needed for
+                        // a simple range filter — presets above already cover the fast path.
+                        showModeToggle = false,
                         colors = proDatePickerColors(),
                     )
                 }
