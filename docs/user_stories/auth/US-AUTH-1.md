@@ -139,4 +139,10 @@ introducing accounts or server-side auth, which the product explicitly rules out
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** the app shipped a PIN lock but no `FLAG_SECURE` — every screen (PIN entry
+  included) was screenshot-able and shown in full in the recents/app-switcher thumbnail, at odds
+  with "personal & private" and the PIN's own purpose. `MainActivity.onCreate` now sets
+  `WindowManager.LayoutParams.FLAG_SECURE` on the whole window, since nearly every screen shows a
+  financial amount, not just the PIN screens. Verified by manual inspection (Android's screenshot
+  block can't be asserted from a Robolectric unit test without bootstrapping the full app's Koin/DB
+  startup, disproportionate for a one-line window-flag call).
