@@ -165,6 +165,12 @@ fun Modifier.proClickable(
         )
 }
 
+/**
+ * `minimumInteractiveComponentSize()` here puts a 48dp floor on the icon's *layout box*, not just
+ * its touch target — nested inside a compact component (chip, pill, dense row) it inflates the
+ * parent past its siblings (see retrospective 2026-07-02). For a secondary micro-target inside an
+ * already-tappable surface, use `clip(CircleShape)` + [proCircularRippleClickable] instead.
+ */
 @Composable
 fun Modifier.proIconClickable(
     onClick: () -> Unit,

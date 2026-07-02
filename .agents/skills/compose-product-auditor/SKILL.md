@@ -89,6 +89,14 @@ Walk every dimension. For each, the question is "what happens to the user when�
   intends otherwise. A block inset further than its siblings is usually a reusable component baking its
   own outer `.padding(all)` that stacks with the screen's content padding — double-inset, misaligned.
   Don't trust a recorded screenshot baseline as proof: the baseline can bless the misalignment.
+- **Sibling-size measurement (mandatory, not by eye).** When a container repeats components — a chip
+  row, a button group, a tab bar — **measure** each sibling's rendered bounding box in the reviewed
+  screenshot (pixel-measure; a 2× height difference has hidden in plain sight before). Unequal siblings
+  are a defect. Classic cause: a `minimumInteractiveComponentSize`-applying modifier (`proIconClickable`,
+  `proSelectable`) nested inside a compact component puts a 48dp floor inside it and inflates the parent —
+  use `clip(CircleShape)` + `proCircularRippleClickable` for a secondary micro-target inside an
+  already-tappable surface. Recommend a layout-bounds Compose UI test for the invariant
+  (pattern: `JournalChipRowConsistencyTest`).
 - Affordances and transitions present per the motion/navigation rule (no hard cut-overs, adequate ripple).
 - **Mandatory interaction quality gate (two-sided):** every tappable text/icon action must expose a
   clearly perceptible ripple/press affordance whose surface **matches the visual element**. Both extremes

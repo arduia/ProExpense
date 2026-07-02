@@ -72,3 +72,32 @@ pixels by coincidence, or any string not currently exercised by a baseline.
 - A Roborazzi-clean diff is not proof a string change reached the app — accessibility-only text
   (content descriptions, TalkBack labels) needs a Compose UI test asserting on the actual node,
   not just a screenshot.
+
+## 2026-07-02 — Oversized date-range chip survived a dedicated product audit
+
+**What slipped:** The Journal date-range chip rendered at 59dp next to 28dp FilterChips in the
+same row — more than double their height — because its clear (X) icon used `proIconClickable`,
+whose `minimumInteractiveComponentSize()` puts a 48dp floor on the icon's layout box and
+inflates the whole chip. The defect shipped with the original date-range feature (`a89fff8`),
+was recorded into Roborazzi baselines as truth, and then survived a full
+`compose-product-auditor` review whose screenshots showed the mismatch plainly. It was only
+fixed when the user reported it.
+
+**Root cause:** (1) The audit's consistency dimension was applied by eye — sibling components
+in the same container were never compared by measured size, and a 2× height difference hid in
+plain sight. (2) `proIconClickable`'s layout-inflating minimum size was a known footgun
+(`ProTextAction` in `Interaction.kt` already carries a comment about the same ballooning) but
+was never promoted into a guard, so it kept being reached for as the default icon-click
+modifier in compact containers. (3) Screenshot verification structurally cannot catch this
+class of defect: a wrong baseline is self-consistent, and verify only detects change.
+
+**Guards:**
+- Never nest `minimumInteractiveComponentSize`-applying modifiers (`proIconClickable`,
+  `proSelectable`) inside compact components (chips, pills, dense list rows). For a secondary
+  micro-target inside an already-tappable surface, use `clip(CircleShape)` +
+  `proCircularRippleClickable` (non-inflating) instead.
+- Repeated/sibling components in one container (a chip row, a button group) must be asserted
+  for equal rendered size with a Compose UI test on layout bounds (see
+  `JournalChipRowConsistencyTest`) — pixels lie once a defect is recorded as the baseline.
+- Product audits must **measure** sibling sizes in reviewed screenshots (pixel-measure the
+  bounding boxes), not eyeball them — promoted into `compose-product-auditor` skill and G5.

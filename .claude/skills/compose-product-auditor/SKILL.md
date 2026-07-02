@@ -79,6 +79,14 @@ Walk every dimension. For each, the question is "what happens to the user when�
 ### 9. Consistency
 - Reuses design-system components and tokens; no one-off duplicates of existing components.
 - Matches established patterns for similar screens (spacing scale, component variants, nav patterns).
+- **Sibling-size measurement (mandatory, not by eye).** When a container repeats components — a chip
+  row, a button group, a tab bar — **measure** each sibling's rendered bounding box in the reviewed
+  screenshot (pixel-measure; a 2× height difference has hidden in plain sight before). Unequal siblings
+  are a defect. Classic cause: a `minimumInteractiveComponentSize`-applying modifier (`proIconClickable`,
+  `proSelectable`) nested inside a compact component puts a 48dp floor inside it and inflates the parent —
+  use `clip(CircleShape)` + `proCircularRippleClickable` for a secondary micro-target inside an
+  already-tappable surface. Recommend a layout-bounds Compose UI test for the invariant
+  (pattern: `JournalChipRowConsistencyTest`).
 - Affordances and transitions present per the motion/navigation rule (no hard cut-overs, adequate ripple).
 - **Mandatory interaction quality gate:** every tappable text/icon action must expose a visibly large enough
   interaction surface and a clearly perceptible ripple/press affordance. Tiny, cramped, or hard-to-trigger
