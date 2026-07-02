@@ -17,18 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.shared.CurrencyCatalog
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-fun currencySymbol(code: String): String = when (code) {
-    "USD" -> "$"
-    "EUR" -> "€"
-    "GBP" -> "£"
-    "JPY" -> "¥"
-    "INR" -> "₹"
-    "AED" -> "د.إ"
-    else -> code.take(1)
-}
+fun currencySymbol(code: String): String = CurrencyCatalog.symbolFor(code)
 
 @Composable
 fun ProfileCurrencyRow(

@@ -11,4 +11,5 @@
 | [US-IE-1](US-IE-1.md) | Export my data | 🔴 Must |
 | [US-IE-2](US-IE-2.md) | Import from a backup | 🔴 Must |
 
-**Planned (PRD):** encrypted export for sensitive data — see [US-IE-1](US-IE-1.md) Notes.
+**Encrypted export (PRD):** implemented 2026-07 — optional password produces an AES-encrypted zip;
+import prompts for the password. See [US-IE-1](US-IE-1.md) / [US-IE-2](US-IE-2.md) Notes.

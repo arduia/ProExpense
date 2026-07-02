@@ -7,8 +7,10 @@ import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.Participant
 import com.arduia.expense.domain.ParticipantId
+import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.domain.SplitStrategy
+import com.arduia.expense.storage.db.ProExpenseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -18,13 +20,22 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+private fun sharedCostRepo(database: ProExpenseDatabase): SqlDelightSharedCostRepository {
+    val financeRecordRepository = SqlDelightFinanceRecordRepository(
+        queries = database.financeRecordQueries,
+        eventQueries = database.eventQueries,
+        dispatcher = Dispatchers.Unconfined,
+    )
+    return SqlDelightSharedCostRepository(database.sharedCostQueries, financeRecordRepository, Dispatchers.Unconfined)
+}
+
 class SqlDelightSharedCostRepositoryTest {
 
     private val home = CurrencyCode("USD")
 
     @Test
     fun create_then_getById_returnsSame() = runTest {
-        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val repo = sharedCostRepo(inMemoryDatabase())
         val input = SharedCostInput(
             title = "Dinner",
             total = Money(Amount(100_00), home),
@@ -50,7 +61,7 @@ class SqlDelightSharedCostRepositoryTest {
 
     @Test
     fun update_replacesFields() = runTest {
-        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val repo = sharedCostRepo(inMemoryDatabase())
         val input = SharedCostInput(
             title = "Original",
             total = Money(Amount(100_00), home),
@@ -76,7 +87,7 @@ class SqlDelightSharedCostRepositoryTest {
 
     @Test
     fun delete_removesRow() = runTest {
-        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val repo = sharedCostRepo(inMemoryDatabase())
         val input = SharedCostInput(
             title = "Dinner",
             total = Money(Amount(100_00), home),
@@ -101,7 +112,7 @@ class SqlDelightSharedCostRepositoryTest {
 
     @Test
     fun observeAll_emitsCreated() = runTest {
-        val repo = SqlDelightSharedCostRepository(inMemoryDatabase().sharedCostQueries, Dispatchers.Unconfined)
+        val repo = sharedCostRepo(inMemoryDatabase())
         val input = SharedCostInput(
             title = "Dinner",
             total = Money(Amount(100_00), home),
@@ -121,7 +132,7 @@ class SqlDelightSharedCostRepositoryTest {
     @Test
     fun observeAll_skipsRowWithUnmappableParticipants_insteadOfThrowing() = runTest {
         val database = inMemoryDatabase()
-        val repo = SqlDelightSharedCostRepository(database.sharedCostQueries, Dispatchers.Unconfined)
+        val repo = sharedCostRepo(database)
         val input = SharedCostInput(
             title = "Dinner",
             total = Money(Amount(100_00), home),
@@ -144,5 +155,67 @@ class SqlDelightSharedCostRepositoryTest {
 
         val all = repo.observeAll().first()
         assertEquals(listOf("Dinner"), all.map { it.title })
+    }
+
+    @Test
+    fun create_writesLinkedFinanceRecordForTheTotal() = runTest {
+        val database = inMemoryDatabase()
+        val repo = sharedCostRepo(database)
+        val input = SharedCostInput(
+            title = "Dinner",
+            total = Money(Amount(100_00), home),
+            participants = listOf(
+                Participant(ParticipantId("p1"), "Alice"),
+                Participant(ParticipantId("p2"), "Bob"),
+            ),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+
+        val created = repo.create(input)
+        val id = (created as Result.Success<com.arduia.expense.domain.SharedCost>).data.id
+
+        val record = database.financeRecordQueries.selectRecordById(id.value).executeAsOneOrNull()
+        assertNotNull(record)
+        assertEquals(100_00L, record.amount_cents)
+        assertEquals(RecordLink.ToSharedCost(id), com.arduia.expense.storage.mapping.toRecordLink(record.tag_type, record.tag_id))
+    }
+
+    @Test
+    fun update_updatesTheSameLinkedRecordRatherThanCreatingASecondOne() = runTest {
+        val database = inMemoryDatabase()
+        val repo = sharedCostRepo(database)
+        val input = SharedCostInput(
+            title = "Dinner",
+            total = Money(Amount(100_00), home),
+            participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+        val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
+
+        repo.update(created.copy(total = Money(Amount(200_00), home)))
+
+        assertEquals(1, database.financeRecordQueries.selectAllRecords().executeAsList().size)
+        val record = database.financeRecordQueries.selectRecordById(created.id.value).executeAsOneOrNull()
+        assertEquals(200_00L, record?.amount_cents)
+    }
+
+    @Test
+    fun delete_alsoDeletesTheLinkedFinanceRecord() = runTest {
+        val database = inMemoryDatabase()
+        val repo = sharedCostRepo(database)
+        val input = SharedCostInput(
+            title = "Dinner",
+            total = Money(Amount(100_00), home),
+            participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+            splitStrategy = SplitStrategy.EqualSplit,
+            recordedAtEpochMillis = 1000,
+        )
+        val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
+
+        repo.delete(created.id)
+
+        assertNull(database.financeRecordQueries.selectRecordById(created.id.value).executeAsOneOrNull())
     }
 }

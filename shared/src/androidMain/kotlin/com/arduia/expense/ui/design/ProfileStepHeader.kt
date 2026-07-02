@@ -50,7 +50,7 @@ fun ProfileStepHeader(
                     text = skipLabel,
                     onClick = onSkip,
                     style = typography.navAction,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
             }
         }

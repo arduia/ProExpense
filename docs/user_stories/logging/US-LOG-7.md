@@ -119,3 +119,15 @@ PIN gate) protects that effort without requiring the user to do anything extra.
 
 Back from Amount with no value navigates away silently — no save, no prompt — since an empty
 Amount screen never produces a meaningful draft to protect.
+
+* **Gap fix (2026-07):** this story was entirely unimplemented — `QuickLogFlow`'s in-progress
+  `state` lived in a plain `remember` (lost on process death), and `showDraftPrompt`/
+  `draftAmountLabel` were preview-only params with no real caller. Added `ExpenseDraftPrefs`
+  (SharedPreferences-backed save/load/clear of amount, category, note, currency, and
+  recorded-at) written continuously while Amount/Details are open and cleared on save or
+  explicit discard. `ExpenseApp.kt` checks for a saved draft once onboarding is confirmed and, if
+  found, renders `QuickLogFlow` with the `Continue/Discard` prompt in a branch that runs *before*
+  the PIN-lock check (Scenario 2's "never gated behind PIN" requirement) instead of inside the
+  post-unlock tab content. Covered by `ExpenseDraftPrefsTest`'s save/load/clear round-trip.
+  Tag linking (event/debt) is intentionally not part of the persisted draft — a resumed draft
+  always lands untagged, which needs one extra tap to re-link if desired.

@@ -86,7 +86,7 @@ fun CategoryNewSheetContent(
                             CATEGORY_NAME_MAX,
                         ),
                         style = typography.caption,
-                        color = if (form.duplicate) colors.danger else colors.muted,
+                        color = if (form.duplicate) colors.danger else colors.onSurfaceMuted,
                         modifier = Modifier.padding(start = dimens.space8),
                     )
                 }

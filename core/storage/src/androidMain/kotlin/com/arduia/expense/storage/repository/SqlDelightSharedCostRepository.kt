@@ -2,12 +2,18 @@ package com.arduia.expense.storage.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SettlementLine
 import com.arduia.expense.data.SettlementSummary
 import com.arduia.expense.data.SharedCostInput
 import com.arduia.expense.data.SharedCostRepository
+import com.arduia.expense.domain.CategoryId
+import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.ParticipantId
+import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordLink
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.catchingResult
@@ -22,8 +28,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
+private const val SHARED_COST_DEFAULT_CATEGORY_ID = "shopping"
+
 class SqlDelightSharedCostRepository(
     private val queries: SharedCostQueries,
+    private val financeRecordRepository: FinanceRecordRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : SharedCostRepository {
 
@@ -40,6 +49,7 @@ class SqlDelightSharedCostRepository(
             )
 
             persist(sharedCost)
+            financeRecordRepository.upsert(sharedCost.toFinanceRecord())
             sharedCost
         }
     }
@@ -59,6 +69,9 @@ class SqlDelightSharedCostRepository(
     override suspend fun update(sharedCost: SharedCost): Result<Unit> = withContext(dispatcher) {
         catchingResult {
             persist(sharedCost)
+            // Same RecordId as create() — this updates the existing linked record in place
+            // rather than creating a second one.
+            financeRecordRepository.upsert(sharedCost.toFinanceRecord())
             Unit
         }
     }
@@ -66,6 +79,8 @@ class SqlDelightSharedCostRepository(
     override suspend fun delete(id: SharedCostId): Result<Unit> = withContext(dispatcher) {
         catchingResult {
             queries.deleteSharedCost(id.value)
+            // Deletion is atomic across both the split and its linked FinanceRecord (US-SHC-5).
+            financeRecordRepository.delete(RecordId(id.value))
             Unit
         }
     }
@@ -109,6 +124,22 @@ class SqlDelightSharedCostRepository(
             custom_shares_json = sharedCost.splitStrategy.toStrategyJson(),
         )
     }
+
+    /**
+     * The shared cost's total is the single [FinanceRecord] the user's own spending history sees
+     * (US-SHC-4) — reuses the [SharedCostId] string as the [RecordId] so create/update always
+     * target the same record instead of accumulating duplicates.
+     */
+    private fun SharedCost.toFinanceRecord(): FinanceRecord = FinanceRecord(
+        id = RecordId(id.value),
+        money = total,
+        homeCurrencyMoney = total,
+        categoryId = CategoryId(SHARED_COST_DEFAULT_CATEGORY_ID),
+        type = RecordType.EXPENSE,
+        note = title,
+        recordedAtEpochMillis = recordedAtEpochMillis,
+        link = RecordLink.ToSharedCost(id),
+    )
 
     private fun generateSharedCostId(): SharedCostId {
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"

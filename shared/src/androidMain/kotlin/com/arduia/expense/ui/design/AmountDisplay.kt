@@ -73,7 +73,7 @@ fun AmountDisplay(
         Text(
             text = eyebrowText ?: "AMOUNT · $currencyCode",
             style = typography.eyebrow,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
         )
         BasicText(
             text = buildAmountLine(

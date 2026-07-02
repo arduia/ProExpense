@@ -16,8 +16,8 @@ data class PinSetupUiState(
     val pinAuthOn: Boolean = true,
     val biometricOn: Boolean = false,
     val biometricCapable: Boolean = true,
-    val newPinFilled: Int = 6,
-    val confirmPinFilled: Int = 3,
+    val newPin: String = "483920",
+    val confirmPin: String = "483",
 )
 
 data class PinSecurityQuestionUi(

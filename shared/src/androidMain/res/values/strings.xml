@@ -9,6 +9,9 @@
     <string name="close">Close</string>
     <string name="more">More</string>
     <string name="backspace">Backspace</string>
+    <string name="add_person">Add person</string>
+    <string name="remove_person">Remove person</string>
+    <string name="people_count_state">%1$d people</string>
     <string name="category_section_default">DEFAULT</string>
     <string name="category_section_custom">CUSTOM</string>
     <string name="category_picker_more">+ More</string>

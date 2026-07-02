@@ -120,4 +120,15 @@ appear as separate Journal rows, or the journal would massively over-count actua
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** Scenario 1 was unimplemented — `SqlDelightSharedCostRepository.persist()`
+  only wrote the `shared_cost` table row; nothing ever created the promised `FinanceRecord` for the
+  total, so shared costs never counted toward Journal/Reports spend at all. It now injects
+  `FinanceRecordRepository` and upserts one `FinanceRecord` (category defaults to "shopping" — not
+  yet user-selectable) with `link = RecordLink.ToSharedCost(id)`, reusing the `SharedCostId` string
+  as the `RecordId` so create/update always target the same record instead of accumulating
+  duplicates, and `delete()` removes both rows atomically (satisfying
+  [US-SHC-5](US-SHC-5.md)'s atomicity requirement). The read side (mapping, tag columns, import/export,
+  `tagLabel()`) already existed and needed no changes. Covered by
+  `SqlDelightSharedCostRepositoryTest.create_writesLinkedFinanceRecordForTheTotal` /
+  `update_updatesTheSameLinkedRecordRatherThanCreatingASecondOne` /
+  `delete_alsoDeletesTheLinkedFinanceRecord`.

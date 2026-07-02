@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,17 +14,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.CurrencyPickerContent
 import com.arduia.expense.ui.design.DateTimePickerSheet
+import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.TagLinkOption
+import com.arduia.expense.ui.design.customExpenseCategories
+import com.arduia.expense.ui.design.defaultExpenseCategories
+import com.arduia.expense.shared.CurrencyCatalog
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
+import com.arduia.expense.feature.logging.ui.preview.hasValidExchangeRate
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDraft
 import com.arduia.expense.ui.theme.ProArtboard
@@ -37,6 +45,10 @@ private enum class QuickLogStep {
     Details,
 }
 
+private val currencyOptions = CurrencyCatalog.ALL.map {
+    com.arduia.expense.ui.design.CurrencyOption(it.code, it.name)
+}
+
 @Composable
 fun QuickLogFlow(
     onDismiss: () -> Unit,
@@ -47,12 +59,15 @@ fun QuickLogFlow(
     onSaved: (ExpenseEntryState) -> Unit = { onDismiss() },
     tagEvents: List<TagLinkOption> = emptyList(),
     tagDebts: List<TagLinkOption> = emptyList(),
+    defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
+    customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val savedMessage = stringResource(R.string.toast_expense_saved)
+    val context = LocalContext.current
 
     var step by rememberSaveable {
         mutableStateOf(
@@ -62,8 +77,17 @@ fun QuickLogFlow(
     var state by remember { mutableStateOf(startState) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var showDateTimePicker by remember { mutableStateOf(false) }
+    var showCurrencySheet by remember { mutableStateOf(false) }
 
     val currentStep = QuickLogStep.valueOf(step)
+
+    // Persist the in-progress entry as a resumable draft so it survives process death or an
+    // accidental close — cleared only on an explicit save or discard, never on backing out.
+    LaunchedEffect(state, currentStep) {
+        if (currentStep != QuickLogStep.DraftPrompt) {
+            ExpenseDraftPrefs.save(context, state)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -97,7 +121,10 @@ fun QuickLogFlow(
                                 )
                             }",
                             onContinue = { step = QuickLogStep.Amount.name },
-                            onDiscard = onDismiss,
+                            onDiscard = {
+                                ExpenseDraftPrefs.clear(context)
+                                onDismiss()
+                            },
                         )
                     }
                 }
@@ -121,11 +148,15 @@ fun QuickLogFlow(
                             state = state.copy(selectedCategoryId = categoryId)
                         },
                         onSave = {
-                            if (AmountInput.canProceed(state.rawAmount)) {
+                            if (!AmountInput.canProceed(state.rawAmount)) {
+                                state = state.copy(showZeroValidation = true)
+                            } else if (!state.hasValidExchangeRate()) {
+                                // Quick-commit needs a rate first; the field only lives on Details.
+                                step = QuickLogStep.Details.name
+                            } else {
+                                ExpenseDraftPrefs.clear(context)
                                 toastMessage = savedMessage
                                 onSaved(state)
-                            } else {
-                                state = state.copy(showZeroValidation = true)
                             }
                         },
                         onNext = {
@@ -135,6 +166,9 @@ fun QuickLogFlow(
                                 state = state.copy(showZeroValidation = true)
                             }
                         },
+                        onOpenCurrencySheet = { showCurrencySheet = true },
+                        defaultCategories = defaultCategories,
+                        customCategories = customCategories,
                     )
                 }
                 QuickLogStep.Details -> {
@@ -146,6 +180,7 @@ fun QuickLogFlow(
                         },
                         onNoteChange = { note -> state = state.copy(note = note) },
                         onDateClick = { showDateTimePicker = true },
+                        onExchangeRateChange = { rate -> state = state.copy(exchangeRateRaw = rate) },
                         onOpenTagSheet = { state = state.copy(showTagSheet = true) },
                         onCloseTagSheet = { state = state.copy(showTagSheet = false) },
                         onTagSelected = { option ->
@@ -163,11 +198,15 @@ fun QuickLogFlow(
                             )
                         },
                         onSave = {
+                            ExpenseDraftPrefs.clear(context)
                             toastMessage = savedMessage
                             onSaved(state)
                         },
                         tagEvents = tagEvents,
                         tagDebts = tagDebts,
+                        showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
+                        defaultCategories = defaultCategories,
+                        customCategories = customCategories,
                     )
                 }
             }
@@ -193,6 +232,25 @@ fun QuickLogFlow(
                 showDateTimePicker = false
             },
             onDismiss = { showDateTimePicker = false },
+        )
+
+        ProBottomSheetHost(
+            visible = showCurrencySheet,
+            title = stringResource(R.string.currency_sheet_title),
+            onClose = { showCurrencySheet = false },
+            sheetContent = {
+                CurrencyPickerContent(
+                    options = currencyOptions,
+                    selectedCode = state.currencyCode,
+                    onSelected = { code ->
+                        state = state.copy(
+                            currencyCode = code,
+                            exchangeRateRaw = if (code == state.homeCurrencyCode) "1" else "",
+                        )
+                        showCurrencySheet = false
+                    },
+                )
+            },
         )
     }
 }
@@ -227,6 +285,22 @@ private fun QuickLogFlowDraftPreview() {
             startState = previewExpenseDraft,
             showDraftPrompt = true,
             draftAmountLabel = "$12.50",
+        )
+    }
+}
+
+@Preview(
+    name = "Quick log — foreign currency selected",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun QuickLogFlowForeignCurrencyPreview() {
+    ProExpenseTheme {
+        QuickLogFlow(
+            onDismiss = {},
+            startState = com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency,
         )
     }
 }

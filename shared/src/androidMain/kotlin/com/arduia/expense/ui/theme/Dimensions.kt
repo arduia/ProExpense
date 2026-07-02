@@ -150,7 +150,10 @@ val ProDefaultDimens = ProDimens(
     sheetRadiusTop = 22.dp,
     sheetMaxHeightFraction = 0.78f,
     fabSize = 64.dp,
-    touchTargetMin = 44.dp,
+    // Android's Material minimum interactive size is 48dp — several call sites use this as a
+    // fixed .size() (not just a floor other modifiers can grow past), so the token itself must
+    // already be 48dp rather than relying on a later minimumInteractiveComponentSize() to fix it.
+    touchTargetMin = 48.dp,
     artboardWidth = ProArtboard.PIXEL_9_PRO_WIDTH_DP.dp,
     artboardHeight = ProArtboard.PIXEL_9_PRO_HEIGHT_DP.dp,
     buttonBorderWidth = 1.4.dp,

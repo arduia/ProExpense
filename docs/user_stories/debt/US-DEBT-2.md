@@ -121,3 +121,10 @@ MVP has no reminder system.
 
 Phase 2 per the PRD roadmap, but the screen exists in this build, so it's documented here for
 completeness.
+
+* **Gap fix (2026-07):** `CreateDebtUseCase` accepted a zero amount (silently created a $0 record);
+  it now rejects via `Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 }`, returning
+  `false` without persisting. The optional due date is now actually settable — `DebtFlow`'s
+  `onPickDue` opens the shared `DateTimePickerSheet` (previously a no-op), and `DebtAddFormState`
+  carries `dueEpochMillis` through to `CreateDebtUseCase`/`UpdateDebtUseCase`. Covered by
+  `DebtUseCasesTest.invoke_returnsFalseForZeroAmount`.

@@ -16,7 +16,17 @@ data class ExpenseEntryState(
     val showZeroValidation: Boolean = false,
     val showTagSheet: Boolean = false,
     val currencyCode: String = "USD",
+    val homeCurrencyCode: String = "USD",
+    val exchangeRateRaw: String = "1",
+    val showCurrencySheet: Boolean = false,
 )
+
+/** True when the entry's currency differs from the account's home currency (US-LOG multi-currency). */
+fun ExpenseEntryState.isForeignCurrency(): Boolean = currencyCode != homeCurrencyCode
+
+/** Same-currency entries never need a rate; foreign-currency entries need a positive manual rate. */
+fun ExpenseEntryState.hasValidExchangeRate(): Boolean =
+    !isForeignCurrency() || (exchangeRateRaw.trim().toDoubleOrNull()?.let { it > 0.0 } == true)
 
 val previewExpenseAmountTyped = ExpenseEntryState(rawAmount = "12.50")
 
@@ -41,6 +51,27 @@ val previewExpenseDetailsNoteLimit = ExpenseEntryState(
 )
 
 val previewExpenseDraft = ExpenseEntryState(rawAmount = "12.50")
+
+val previewExpenseAmountForeignCurrency = ExpenseEntryState(
+    rawAmount = "45.00",
+    currencyCode = "EUR",
+    homeCurrencyCode = "USD",
+)
+
+val previewExpenseDetailsForeignCurrency = ExpenseEntryState(
+    rawAmount = "45.00",
+    currencyCode = "EUR",
+    homeCurrencyCode = "USD",
+    exchangeRateRaw = "1.08",
+    note = "Dinner in Lisbon",
+)
+
+val previewExpenseDetailsForeignCurrencyNoRate = ExpenseEntryState(
+    rawAmount = "45.00",
+    currencyCode = "EUR",
+    homeCurrencyCode = "USD",
+    exchangeRateRaw = "",
+)
 
 val previewTagEvents = listOf(
     TagLinkOption("bali", "Bali Trip", "May 12 — May 26", TagLinkKind.Event),

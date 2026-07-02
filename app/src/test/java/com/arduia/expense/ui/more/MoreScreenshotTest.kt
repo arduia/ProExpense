@@ -12,11 +12,16 @@ import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.feature.currency.ui.MoreCurrencyScreen
 import com.arduia.expense.feature.importexport.ui.MoreClearScreen
 import com.arduia.expense.feature.importexport.ui.MoreExportScreen
+import com.arduia.expense.feature.importexport.ui.MoreImportScreen
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreClearOptions
 import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportEmpty
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportLocked
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -70,6 +75,36 @@ class MoreScreenshotTest {
     }
 
     @Test
+    fun edge_more_hub_pin_on() = capture {
+        MoreHubScreen(
+            state = previewMoreHub.copy(
+                settings = previewMoreHub.settings.map { setting ->
+                    when (setting.id) {
+                        "pin" -> setting.copy(value = "On")
+                        "biometric" -> setting.copy(enabled = true, toggleOn = true)
+                        else -> setting
+                    }
+                },
+            ),
+            onFeatureClick = {},
+            onSettingClick = {},
+            onSettingToggle = { _, _ -> },
+            selectedTab = HomeNavTab.More,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+
+    @Test
+    fun more_default_category() = capture {
+        MoreDefaultCategoryScreen(
+            selectedCategoryId = "food",
+            onSelect = {},
+            onBack = {},
+        )
+    }
+
+    @Test
     fun more_currency() = capture {
         MoreCurrencyScreen(
             items = previewMoreCurrencies,
@@ -84,6 +119,66 @@ class MoreScreenshotTest {
         MoreExportScreen(
             files = previewMoreExportFiles,
             onExport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_export_password_set() = capture {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+            password = "s3cret",
+        )
+    }
+
+    @Test
+    fun more_export_json_format() = capture {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+            formatIndex = 1,
+        )
+    }
+
+    @Test
+    fun more_import_empty() = capture {
+        MoreImportScreen(
+            state = previewMoreImportEmpty,
+            onChooseFile = {},
+            onImport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_import_picked() = capture {
+        MoreImportScreen(
+            state = previewMoreImportPicked,
+            onChooseFile = {},
+            onImport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_import_error() = capture {
+        MoreImportScreen(
+            state = previewMoreImportError,
+            onChooseFile = {},
+            onImport = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_import_locked() = capture {
+        MoreImportScreen(
+            state = previewMoreImportLocked,
+            onChooseFile = {},
+            onImport = {},
             onBack = {},
         )
     }

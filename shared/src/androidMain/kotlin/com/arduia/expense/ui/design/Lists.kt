@@ -116,7 +116,7 @@ fun TransactionRow(
                 Text(
                     text = meta,
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -180,7 +180,7 @@ fun DayHeader(
         Text(
             text = total,
             style = typography.monoFigure,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
         )
     }
 }

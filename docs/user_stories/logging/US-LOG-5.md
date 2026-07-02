@@ -136,3 +136,9 @@ exclusive to avoid ambiguous accounting.
 
 This is a Phase 2 story per the PRD roadmap, but the underlying linking screen already exists in
 this build, so it's documented here for completeness.
+
+* **Gap fix (2026-07):** Scenario 1 (hide the `@` tag field when there are no active events/debts)
+  was unimplemented — `AddExpenseDetailsScreen`'s `DetailTagField` always rendered, even with empty
+  `tagEvents`/`tagDebts`. `QuickLogFlow` now passes
+  `showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty()` through to the screen, which only
+  renders the field when `true`.

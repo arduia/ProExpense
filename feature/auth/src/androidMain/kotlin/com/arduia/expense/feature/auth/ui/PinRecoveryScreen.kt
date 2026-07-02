@@ -26,6 +26,7 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -39,6 +40,9 @@ fun PinRecoveryScreen(
     onVerify: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    verifyEnabled: Boolean = true,
+    showResetOption: Boolean = false,
+    onResetApp: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -104,11 +108,21 @@ fun PinRecoveryScreen(
                 style = typography.caption,
                 color = colors.onSurfaceMuted,
             )
+
+            if (showResetOption) {
+                ProTextAction(
+                    text = stringResource(R.string.pin_recover_reset_action),
+                    onClick = onResetApp,
+                    style = typography.bodyMedium,
+                    color = colors.danger,
+                )
+            }
         }
 
         ProButton(
             text = stringResource(R.string.pin_recover_action),
             onClick = onVerify,
+            enabled = verifyEnabled,
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
@@ -135,6 +149,29 @@ private fun PinRecoveryPreview() {
             onAnswerChange = {},
             onVerify = {},
             onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "PIN — recovery exhausted (last resort)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun PinRecoveryExhaustedPreview() {
+    ProExpenseTheme {
+        PinRecoveryScreen(
+            questionText = stringResource(R.string.security_question_pet),
+            answer = "",
+            attemptsLabel = stringResource(R.string.pin_recover_attempts, 5, 5),
+            onAnswerChange = {},
+            onVerify = {},
+            onBack = {},
+            verifyEnabled = false,
+            showResetOption = true,
+            onResetApp = {},
         )
     }
 }

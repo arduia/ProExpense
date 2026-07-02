@@ -15,6 +15,8 @@ data class DebtRecordUi(
     val amountLabel: String,
     val subtitle: String? = null,
     val settled: Boolean = false,
+    val amountCents: Long = 0,
+    val dueEpochMillis: Long? = null,
 ) {
     val initial: String = name.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "?"
 }
@@ -55,6 +57,8 @@ data class DebtAddFormState(
     val amountRaw: String = "",
     val dateLabel: String = "May 12",
     val dueLabel: String? = null,
+    val editingId: String? = null,
+    val dueEpochMillis: Long? = null,
 ) {
     val canSave: Boolean
         get() = person.isNotBlank() && (amountRaw.toDoubleOrNull() ?: 0.0) > 0.0

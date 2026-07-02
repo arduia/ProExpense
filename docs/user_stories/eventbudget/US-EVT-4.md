@@ -134,3 +134,11 @@ automatically pre-tagged to this event.
 
 Phase 2 per the PRD roadmap, but the screen exists in this build, so it's documented here for
 completeness.
+
+* **Gap fix (2026-07):** Scenario 2's linked-expenses list was always empty in production —
+  `EventDetailUiState.linkedExpenses`/`linkedCount` defaulted to `emptyList()`/`0` and nothing
+  populated them from real data. `EventBudgetFeatureEntryImpl` now groups the live `FinanceRecord`
+  list by `RecordLink.ToEvent(eventId)` and maps each linked record into an `EventLinkedExpenseUi`
+  (category, note/label, amount), sorted newest-first. The Add-expense shortcut's pre-tagging
+  (`onAddTagged` → `onAddTaggedExpense(eventId)` → `QuickLogFlow`'s `initialLinkedEventId`) was
+  fixed alongside the Home Active Event card work (see [US-HOME-1](../app-shell/US-HOME-1.md)).

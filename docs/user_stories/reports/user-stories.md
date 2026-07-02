@@ -11,3 +11,4 @@
 | [US-REP-1](US-REP-1.md) | See where my money went this month | 🟡 Should |
 | [US-REP-2](US-REP-2.md) | Move between months | 🟡 Should |
 | [US-REP-3](US-REP-3.md) | Get useful empty/edge behavior | 🟡 Should |
+| [US-REP-4](US-REP-4.md) | See a weekly breakdown of my spending | 🟡 Should |

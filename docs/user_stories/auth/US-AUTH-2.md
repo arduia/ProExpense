@@ -31,6 +31,8 @@ without weakening the unlock screen's security posture.
 **In Scope**
 
 * Eye-icon reveal/hide toggle on the PIN creation (set + confirm) screens.
+* Eye-icon reveal/hide toggle on the New PIN / Confirm PIN summary rows of the PIN Setup hub
+  screen (14 PIN Setup), independent per row.
 * Default hidden state on first render.
 
 **Out of Scope**
@@ -83,6 +85,22 @@ without weakening the unlock screen's security posture.
 
 * No reveal toggle exists — this affordance is scoped to PIN creation only.
 
+### Scenario 4 — Toggling reveal on the setup hub
+
+**Given**
+
+* I'm on the PIN Setup hub screen with a New PIN and/or Confirm PIN already entered.
+
+**When**
+
+* I tap the eye icon on the New PIN row or the Confirm PIN row.
+
+**Then**
+
+* That row's icon switches between the open and crossed-out eye glyph and its dots reveal or
+  hide the actual entered digits, independently of the other row. Tapping elsewhere on the row
+  still opens the full-screen entry/edit keypad, unaffected by the reveal state.
+
 ---
 
 ## Functional Requirements
@@ -91,6 +109,9 @@ without weakening the unlock screen's security posture.
 * [ ] Default state on render is hidden (dots), regardless of how many digits are already entered.
 * [ ] Toggling reveals the actual entered digits in place of dots, and toggling again re-hides them.
 * [ ] The lock/unlock screen has no reveal toggle.
+* [ ] The PIN Setup hub's New PIN and Confirm PIN rows each have an independent reveal toggle that
+  changes the eye glyph (open/crossed-out) and swaps dots for actual digits, without triggering
+  navigation to the entry screen.
 
 ---
 
@@ -135,3 +156,12 @@ without weakening the unlock screen's security posture.
 This story tracks a fix shipped after the toggle was found missing during PIN creation entry —
 dots were always shown with no way to reveal the typed digits. Out of scope per the original
 report: the lock-screen (`PinLockFlow`/`PinEntryScreen`) reveal toggle is intentionally not built.
+
+Follow-up fix: the PIN Setup hub's New/Confirm PIN rows (`PinFieldSection` in
+`PinSetupScreen.kt`) always rendered a static open-eye glyph that did nothing but navigate to the
+full entry screen — it never toggled or reflected a reveal state, unlike the entry screen's own
+working toggle. Fixed by giving each row independent `revealed` state: the eye glyph now switches
+between `Eye`/`EyeOff` and toggling shows the actual digits (plumbed down via new
+`PinSetupUiState.newPin`/`confirmPin` fields, replacing the old `newPinFilled`/`confirmPinFilled`
+counts) instead of dots; tapping the row itself (not the eye) still opens the entry screen.
+Covered by `PinScreenshotTest.pin_setup_revealed`.

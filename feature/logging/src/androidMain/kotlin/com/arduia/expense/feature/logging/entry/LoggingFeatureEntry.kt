@@ -10,6 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.Result
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
@@ -29,6 +31,7 @@ import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.currentKoinScope
+import org.koin.compose.koinInject
 
 interface LoggingFeatureEntry {
     @Composable
@@ -37,6 +40,11 @@ interface LoggingFeatureEntry {
         onSaved: (LoggedExpenseHandoff) -> Unit,
         modifier: Modifier = Modifier,
         currencyCode: String = "USD",
+        defaultCategoryId: String = "food",
+        initialLinkedEventId: String? = null,
+        initialDraftState: ExpenseEntryState? = null,
+        homeCurrencySymbol: String = "$",
+        homeCurrencyCode: String = currencyCode,
     )
 
     @Composable
@@ -45,6 +53,7 @@ interface LoggingFeatureEntry {
         onDismiss: () -> Unit,
         onSaved: () -> Unit,
         modifier: Modifier = Modifier,
+        homeCurrencySymbol: String = "$",
     )
 }
 
@@ -55,28 +64,47 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaved: (LoggedExpenseHandoff) -> Unit,
         modifier: Modifier,
         currencyCode: String,
+        defaultCategoryId: String,
+        initialLinkedEventId: String?,
+        initialDraftState: ExpenseEntryState?,
+        homeCurrencySymbol: String,
+        homeCurrencyCode: String,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
+        val (defaultCategories, customCategories) = rememberCategoryLists()
 
-        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
-        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
+        val linkedEvent = initialLinkedEventId?.let { id -> tagEvents.firstOrNull { it.id == id } }
 
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
-            startState = ExpenseEntryState(currencyCode = currencyCode),
+            startState = initialDraftState ?: ExpenseEntryState(
+                currencyCode = currencyCode,
+                homeCurrencyCode = homeCurrencyCode,
+                selectedCategoryId = defaultCategoryId,
+                linkedTagId = linkedEvent?.id,
+                linkedTagKind = linkedEvent?.kind,
+                linkedTagLabel = linkedEvent?.title,
+            ),
+            showDraftPrompt = initialDraftState != null,
+            draftAmountLabel = initialDraftState?.let { homeCurrencySymbol + AmountInput.formatDisplay(it.rawAmount) },
             onSaved = { state ->
                 scope.launch {
                     when (viewModel.save(state.toSaveInput())) {
                         is SaveExpenseOutcome.Saved -> onSaved(state.toHandoff())
                         SaveExpenseOutcome.InvalidAmount -> {} // UI already has inline validation
+                        SaveExpenseOutcome.InvalidExchangeRate -> {} // UI blocks Save until the rate is valid
                         is SaveExpenseOutcome.Failed -> {} // Error silently; UI already has toast handling
                     }
                 }
             },
             tagEvents = tagEvents,
             tagDebts = tagDebts,
+            defaultCategories = defaultCategories,
+            customCategories = customCategories,
             modifier = modifier,
         )
     }
@@ -87,13 +115,15 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onDismiss: () -> Unit,
         onSaved: () -> Unit,
         modifier: Modifier,
+        homeCurrencySymbol: String,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
+        val (defaultCategories, customCategories) = rememberCategoryLists()
 
-        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
-        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
         val eventNames = uiState.tagOptions.filter { it.kind == TagOptionKind.EVENT }
             .associate { it.id to it.eventName.orEmpty() }
         val debtNames = uiState.tagOptions.filter { it.kind == TagOptionKind.DEBT }
@@ -120,12 +150,15 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                         when (viewModel.update(state.toSaveInput())) {
                             is SaveExpenseOutcome.Saved -> onSaved()
                             SaveExpenseOutcome.InvalidAmount -> {}
+                            SaveExpenseOutcome.InvalidExchangeRate -> {}
                             is SaveExpenseOutcome.Failed -> {}
                         }
                     }
                 },
                 tagEvents = tagEvents,
                 tagDebts = tagDebts,
+                defaultCategories = defaultCategories,
+                customCategories = customCategories,
                 modifier = modifier,
             )
         }
@@ -142,7 +175,23 @@ private fun rememberLoggingViewModel(): LoggingViewModel {
     return viewModel
 }
 
-private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind): List<TagLinkOption> =
+/** Live default/custom category chip lists sourced from [CategoryRepository], not hardcoded. */
+@Composable
+private fun rememberCategoryLists(): Pair<List<Pair<String, String>>, List<Pair<String, String>>> {
+    val categoryRepository: CategoryRepository = koinInject()
+    val categories by categoryRepository.observeAll().collectAsState(emptyList())
+    val defaultCategories = categories
+        .filter { !it.isCustom }
+        .sortedBy { it.sortOrder }
+        .map { it.id.value to it.name }
+    val customCategories = categories
+        .filter { it.isCustom }
+        .sortedBy { it.sortOrder }
+        .map { it.id.value to it.name }
+    return defaultCategories to customCategories
+}
+
+private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind, currencySymbol: String): List<TagLinkOption> =
     filter { it.kind == kind }.map { option ->
         when (kind) {
             TagOptionKind.EVENT -> TagLinkOption(
@@ -155,7 +204,7 @@ private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind): List<TagLinkO
             TagOptionKind.DEBT -> TagLinkOption(
                 id = option.id,
                 title = debtLabel(option),
-                subtitle = moneyLabel(option.debtAmountCents ?: 0L),
+                subtitle = moneyLabel(option.debtAmountCents ?: 0L, currencySymbol),
                 kind = TagLinkKind.Debt,
             )
         }
@@ -178,6 +227,8 @@ private fun ExpenseEntryState.toSaveInput(): SaveExpenseInput = SaveExpenseInput
         TagLinkKind.Debt -> TagOptionKind.DEBT
         null -> null
     },
+    homeCurrencyCode = homeCurrencyCode,
+    exchangeRateRaw = exchangeRateRaw,
 )
 
 object LoggingFeatureUi : LoggingFeatureEntry by LoggingFeatureEntryImpl()
@@ -200,6 +251,15 @@ private fun FinanceRecord.toEntryState(
         is RecordLink.ToDebt -> Triple(current.debtId.value, TagLinkKind.Debt, debtNames[current.debtId.value])
         else -> Triple(null, null, null)
     }
+    val exchangeRateRaw = if (money.currency == homeCurrencyMoney.currency || money.amount.valueInCents == 0L) {
+        "1"
+    } else {
+        String.format(
+            Locale.US,
+            "%.4f",
+            homeCurrencyMoney.amount.valueInCents.toDouble() / money.amount.valueInCents.toDouble(),
+        )
+    }
     return ExpenseEntryState(
         rawAmount = if (money.amount.valueInCents % 100 == 0L) {
             (money.amount.valueInCents / 100).toString()
@@ -215,8 +275,10 @@ private fun FinanceRecord.toEntryState(
         linkedTagKind = tagKind,
         linkedTagLabel = tagLabel,
         currencyCode = money.currency.code,
+        homeCurrencyCode = homeCurrencyMoney.currency.code,
+        exchangeRateRaw = exchangeRateRaw,
     )
 }
 
-private fun moneyLabel(valueInCents: Long): String =
-    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
+    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

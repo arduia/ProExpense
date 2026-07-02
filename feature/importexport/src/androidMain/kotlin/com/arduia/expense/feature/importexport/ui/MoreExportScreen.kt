@@ -23,12 +23,14 @@ import com.arduia.expense.feature.importexport.R
 import com.arduia.expense.feature.importexport.ui.components.ClearDataCard
 import com.arduia.expense.feature.importexport.ui.components.ExportFileRow
 import com.arduia.expense.feature.importexport.ui.components.ImportExportGroupCard
+import com.arduia.expense.ui.design.PasswordField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.feature.importexport.ui.preview.MoreExportFileUi
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
 import com.arduia.expense.ui.theme.ProArtboard
@@ -40,6 +42,10 @@ fun MoreExportScreen(
     onExport: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    password: String = "",
+    onPasswordChange: (String) -> Unit = {},
+    formatIndex: Int = 0,
+    onFormatChange: (Int) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -91,19 +97,58 @@ fun MoreExportScreen(
                     color = colors.onSurface,
                 )
                 Text(
-                    text = stringResource(R.string.more_export_subtitle),
+                    text = if (formatIndex == 0) {
+                        stringResource(R.string.more_export_subtitle)
+                    } else {
+                        stringResource(R.string.more_export_subtitle_json)
+                    },
                     style = typography.body,
                     color = colors.onSurfaceMuted,
                 )
             }
 
-            ImportExportGroupCard(items = files) { file ->
-                ExportFileRow(fileName = file.fileName, subtitle = file.subtitle)
+            SegmentedToggle(
+                options = listOf(
+                    stringResource(R.string.more_export_format_csv),
+                    stringResource(R.string.more_export_format_json),
+                ),
+                selectedIndex = formatIndex,
+                onSelected = onFormatChange,
+            )
+
+            if (formatIndex == 0) {
+                ImportExportGroupCard(items = files) { file ->
+                    ExportFileRow(fileName = file.fileName, subtitle = file.subtitle)
+                }
+            } else {
+                ImportExportGroupCard(items = listOf(Unit)) {
+                    ExportFileRow(
+                        fileName = stringResource(R.string.more_export_json_filename),
+                        subtitle = stringResource(R.string.more_export_json_subtitle),
+                    )
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                PasswordField(
+                    value = password,
+                    onValueChange = onPasswordChange,
+                    placeholder = stringResource(R.string.more_export_password_placeholder),
+                )
+                Text(
+                    text = stringResource(R.string.more_export_password_hint),
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                )
             }
         }
 
         ProButton(
-            text = stringResource(R.string.more_export_action),
+            text = if (formatIndex == 0) {
+                stringResource(R.string.more_export_action)
+            } else {
+                stringResource(R.string.more_export_action_json)
+            },
             onClick = onExport,
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
@@ -128,6 +173,42 @@ private fun MoreExportPreview() {
             files = previewMoreExportFiles,
             onExport = {},
             onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — data export (password set)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreExportPasswordPreview() {
+    ProExpenseTheme {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+            password = "s3cret",
+        )
+    }
+}
+
+@Preview(
+    name = "More — data export (JSON format)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreExportJsonPreview() {
+    ProExpenseTheme {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+            formatIndex = 1,
         )
     }
 }

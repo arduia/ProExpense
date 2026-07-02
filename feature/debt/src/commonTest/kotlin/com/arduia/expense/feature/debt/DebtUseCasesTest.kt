@@ -82,6 +82,49 @@ class CreateDebtUseCaseTest {
         assertFalse(result)
         assertEquals(null, repo.lastUpsert)
     }
+
+    @Test
+    fun invoke_returnsFalseForZeroAmount() = runTest {
+        val repo = FakeDebtRepository()
+        val useCase = CreateDebtUseCase(repo, nowEpochMillis = { 1_000L })
+
+        val result = useCase("Alex", "0", DebtDirection.OWED_TO_ME)
+
+        assertFalse(result)
+        assertEquals(null, repo.lastUpsert)
+    }
+}
+
+class UpdateDebtUseCaseTest {
+
+    @Test
+    fun invoke_updatesPersonAmountAndDuePreservingIdAndDirection() = runTest {
+        val repo = FakeDebtRepository()
+        val useCase = UpdateDebtUseCase(repo)
+        val existing = sampleDebt("d1", personName = "Alex", amountCents = 20_00, direction = DebtDirection.I_OWE)
+
+        val result = useCase(existing, "Alexandra", "35.00", 5_000L)
+
+        assertTrue(result)
+        val updated = repo.lastUpsert
+        assertEquals(DebtId("d1"), updated?.id)
+        assertEquals("Alexandra", updated?.personName)
+        assertEquals(3500L, updated?.money?.amount?.valueInCents)
+        assertEquals(DebtDirection.I_OWE, updated?.direction)
+        assertEquals(5_000L, updated?.dueEpochMillis)
+    }
+
+    @Test
+    fun invoke_returnsFalseForZeroAmount() = runTest {
+        val repo = FakeDebtRepository()
+        val useCase = UpdateDebtUseCase(repo)
+        val existing = sampleDebt("d1")
+
+        val result = useCase(existing, "Alex", "0", null)
+
+        assertFalse(result)
+        assertEquals(null, repo.lastUpsert)
+    }
 }
 
 class DeleteDebtUseCaseTest {

@@ -35,6 +35,7 @@ import com.arduia.expense.ui.design.PinKeypadState
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
+import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
 import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
@@ -52,6 +53,11 @@ fun PinEntryScreen(
     onBiometric: () -> Unit,
     onForgot: () -> Unit,
     modifier: Modifier = Modifier,
+    headingRes: Int = R.string.pin_entry_heading,
+    helperRes: Int = R.string.pin_entry_helper,
+    showForgot: Boolean = true,
+    onBack: (() -> Unit)? = null,
+    backLabel: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -71,12 +77,12 @@ fun PinEntryScreen(
     val title = if (locked) {
         stringResource(R.string.pin_entry_locked_title)
     } else {
-        stringResource(R.string.pin_entry_heading)
+        stringResource(headingRes)
     }
     val helper = when (state.mode) {
         PinEntryMode.Error -> stringResource(R.string.pin_entry_wrong)
         PinEntryMode.Locked -> stringResource(R.string.pin_entry_lock_helper)
-        PinEntryMode.Default -> stringResource(R.string.pin_entry_helper)
+        PinEntryMode.Default -> stringResource(helperRes)
     }
 
     Column(
@@ -88,6 +94,11 @@ fun PinEntryScreen(
             .padding(horizontal = dimens.screenPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        if (onBack != null) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                ProTopBar(title = "", onBack = onBack, backLabel = backLabel)
+            }
+        }
         Spacer(Modifier.height(dimens.space44 + dimens.space44))
         PinBrandTile()
         Text(
@@ -151,13 +162,15 @@ fun PinEntryScreen(
                 if (locked) ProExpenseTheme.motion.keypadDisabledOpacity else 1f,
             ),
         )
-        ProTextAction(
-            text = stringResource(R.string.pin_forgot),
-            onClick = onForgot,
-            style = typography.bodyMedium,
-            color = colors.primary,
-            modifier = Modifier.padding(top = dimens.space12, bottom = dimens.space12),
-        )
+        if (showForgot) {
+            ProTextAction(
+                text = stringResource(R.string.pin_forgot),
+                onClick = onForgot,
+                style = typography.bodyMedium,
+                color = colors.primary,
+                modifier = Modifier.padding(top = dimens.space12, bottom = dimens.space12),
+            )
+        }
     }
 }
 
@@ -217,5 +230,29 @@ private fun PinWrongPreview() {
 private fun PinLockPreview() {
     ProExpenseTheme {
         PinEntryScreen(previewPinLock, {}, {}, {}, {})
+    }
+}
+
+@Preview(
+    name = "PIN entry — verify to disable",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun PinVerifyDisablePreview() {
+    ProExpenseTheme {
+        PinEntryScreen(
+            state = PinEntryUiState(filledDots = 4, showBiometric = false),
+            onDigit = {},
+            onBackspace = {},
+            onBiometric = {},
+            onForgot = {},
+            headingRes = R.string.pin_disable_verify_heading,
+            helperRes = R.string.pin_disable_verify_helper,
+            showForgot = false,
+            onBack = {},
+            backLabel = "Cancel",
+        )
     }
 }

@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -77,7 +79,7 @@ fun ProTopBar(
             } else {
                 ProIcon(
                     glyph = ProIconGlyph.Back,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = colors.onSurface,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
@@ -98,7 +100,7 @@ fun ProTopBar(
         when (action) {
             ProTopBarAction.More -> ProIcon(
                 glyph = ProIconGlyph.More,
-                contentDescription = "More",
+                contentDescription = stringResource(R.string.more),
                 tint = colors.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
@@ -106,7 +108,7 @@ fun ProTopBar(
             )
             ProTopBarAction.Close -> ProIcon(
                 glyph = ProIconGlyph.Close,
-                contentDescription = "Close",
+                contentDescription = stringResource(R.string.close),
                 tint = colors.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
@@ -123,7 +125,7 @@ fun ProTopBar(
             ) {
                 ProIcon(
                     glyph = ProIconGlyph.Plus,
-                    contentDescription = "Add",
+                    contentDescription = stringResource(R.string.nav_add),
                     tint = colors.onPrimaryWarm,
                     size = dimens.iconNav,
                 )

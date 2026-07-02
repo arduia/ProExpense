@@ -26,16 +26,14 @@ sealed interface SplitStrategy {
             }
 
             is CustomSplit -> {
+                // Custom shares need not sum to the total — the total remains the stored source
+                // of truth (US-SHC-2/US-SHC-4); editing one share never rebalances the others.
                 val participantIds = participants.map { it.id }.toSet()
                 require(strategy.shares.keys == participantIds) {
                     "CustomSplit participant keys must exactly match SharedCost participants"
                 }
                 require(strategy.shares.values.all { it.currency == total.currency }) {
                     "All shares must be in the SharedCost currency: ${total.currency}"
-                }
-                val sum = strategy.shares.values.fold(Amount.ZERO) { acc, money -> acc + money.amount }
-                require(sum == total.amount) {
-                    "CustomSplit shares (${sum.valueInCents}) must sum to total (${total.amount.valueInCents})"
                 }
                 strategy.shares
             }

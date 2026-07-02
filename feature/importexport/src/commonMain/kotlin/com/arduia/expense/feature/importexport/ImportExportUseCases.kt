@@ -12,6 +12,11 @@ class ExportDataUseCase(private val repository: ImportExportRepository) {
         repository.exportAll(format)
 }
 
+/** Per-record-type CSVs (expenses/events/debts/shared costs), packaged into one zip by the caller. */
+class ExportGroupedDataUseCase(private val repository: ImportExportRepository) {
+    suspend operator fun invoke(): Result<Map<String, String>> = repository.exportGrouped()
+}
+
 class PreviewImportUseCase(private val repository: ImportExportRepository) {
     suspend operator fun invoke(content: String, format: ExportFormat): Result<List<FinanceRecord>> =
         repository.previewImport(content, format)

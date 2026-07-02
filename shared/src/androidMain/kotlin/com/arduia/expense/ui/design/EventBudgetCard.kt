@@ -133,7 +133,7 @@ fun EventBudgetCard(
                     Text(
                         text = state.dailyAverageLabel,
                         style = typography.caption,
-                        color = colors.muted,
+                        color = colors.onSurfaceMuted,
                     )
                 }
             }

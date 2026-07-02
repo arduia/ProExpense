@@ -12,7 +12,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -65,7 +67,28 @@ fun DateTimePickerSheet(
                 .padding(bottom = dimens.space24),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            DatePicker(state = datePickerState)
+            val typography = ProExpenseTheme.typography
+            val timeFieldColors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = colors.primary,
+                unfocusedBorderColor = colors.line,
+                focusedLabelColor = colors.primary,
+                unfocusedLabelColor = colors.muted,
+                focusedTextColor = colors.onSurface,
+                unfocusedTextColor = colors.onSurface,
+                cursorColor = colors.primary,
+                focusedContainerColor = colors.surface,
+                unfocusedContainerColor = colors.surface,
+            )
+
+            MaterialTheme(typography = proDatePickerTypography()) {
+                DatePicker(
+                    state = datePickerState,
+                    title = null,
+                    headline = null,
+                    showModeToggle = false,
+                    colors = proDatePickerColors(),
+                )
+            }
 
             Row(
                 modifier = Modifier
@@ -79,23 +102,29 @@ fun DateTimePickerSheet(
                     onValueChange = { value ->
                         selectedHour = value.toIntOrNull()?.coerceIn(0, 23) ?: selectedHour
                     },
-                    label = { Text("Hour") },
+                    label = { Text("Hour", style = typography.caption) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.weight(1f),
                     visualTransformation = TimeFieldTransformation(),
+                    textStyle = typography.body,
+                    shape = ProExpenseTheme.shapes.searchField,
+                    colors = timeFieldColors,
                 )
 
-                Text(":", modifier = Modifier.padding(vertical = 8.dp))
+                Text(":", style = typography.body, color = colors.onSurface, modifier = Modifier.padding(vertical = 8.dp))
 
                 OutlinedTextField(
                     value = selectedMinute.toString().padStart(2, '0'),
                     onValueChange = { value ->
                         selectedMinute = value.toIntOrNull()?.coerceIn(0, 59) ?: selectedMinute
                     },
-                    label = { Text("Min") },
+                    label = { Text("Min", style = typography.caption) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.weight(1f),
                     visualTransformation = TimeFieldTransformation(),
+                    textStyle = typography.body,
+                    shape = ProExpenseTheme.shapes.searchField,
+                    colors = timeFieldColors,
                 )
             }
 

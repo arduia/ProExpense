@@ -132,4 +132,10 @@ query is active so results aren't broken across day headers.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** search matched note text only, despite the search field's own placeholder
+  ("Search notes, amount, category…") promising otherwise. Extracted the filtering into a testable
+  `filterJournalDays()` in `JournalFlow.kt` that also matches the row's resolved category label
+  (real name for custom categories via `CategoryRepository`, falling back to
+  `expenseCategoryLabel`) and its formatted amount string. Covered by
+  `JournalFlowFilterTest.invoke_matchesSearchAgainstCategoryLabel` /
+  `invoke_matchesSearchAgainstAmount` (`app/src/test/.../JournalFlowFilterTest.kt`).

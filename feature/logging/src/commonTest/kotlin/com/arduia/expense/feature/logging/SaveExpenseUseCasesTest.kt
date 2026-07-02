@@ -115,6 +115,47 @@ class LogExpenseUseCaseTest {
 
         assertEquals(RecordLink.ToEvent(EventId("ev1")), repo.lastInput?.link)
     }
+
+    @Test
+    fun invoke_sameCurrencyLeavesHomeCurrencyMoneyUnconverted() = runTest {
+        val repo = FakeLoggingRepository()
+        val useCase = LogExpenseUseCase(repo)
+
+        useCase(sampleInput(rawAmount = "10.00"))
+
+        assertEquals(1000L, repo.lastInput?.homeCurrencyMoney?.amount?.valueInCents)
+        assertEquals(CurrencyCode("USD"), repo.lastInput?.homeCurrencyMoney?.currency)
+    }
+
+    @Test
+    fun invoke_foreignCurrencyConvertsHomeCurrencyMoneyUsingManualRate() = runTest {
+        val repo = FakeLoggingRepository()
+        val useCase = LogExpenseUseCase(repo)
+        val input = sampleInput(rawAmount = "10.00").copy(
+            currencyCode = "EUR",
+            homeCurrencyCode = "USD",
+            exchangeRateRaw = "1.08",
+        )
+
+        val outcome = useCase(input)
+
+        assertIs<SaveExpenseOutcome.Saved>(outcome)
+        assertEquals(1000L, repo.lastInput?.money?.amount?.valueInCents)
+        assertEquals(CurrencyCode("EUR"), repo.lastInput?.money?.currency)
+        assertEquals(1080L, repo.lastInput?.homeCurrencyMoney?.amount?.valueInCents)
+        assertEquals(CurrencyCode("USD"), repo.lastInput?.homeCurrencyMoney?.currency)
+    }
+
+    @Test
+    fun invoke_foreignCurrencyWithBlankOrZeroRateReturnsInvalidExchangeRate() = runTest {
+        val repo = FakeLoggingRepository()
+        val useCase = LogExpenseUseCase(repo)
+        val blankRate = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "")
+        val zeroRate = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "0")
+
+        assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(blankRate))
+        assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(zeroRate))
+    }
 }
 
 class UpdateExpenseUseCaseTest {
@@ -187,6 +228,33 @@ class UpdateExpenseUseCaseTest {
         val outcome = useCase(sampleRecord(), sampleInput())
 
         assertEquals(SaveExpenseOutcome.Failed("disk full"), outcome)
+    }
+
+    @Test
+    fun invoke_foreignCurrencyConvertsHomeCurrencyMoneyUsingManualRate() = runTest {
+        val repo = FakeFinanceRecordRepository()
+        val useCase = UpdateExpenseUseCase(repo)
+        val input = sampleInput(rawAmount = "10.00").copy(
+            currencyCode = "EUR",
+            homeCurrencyCode = "USD",
+            exchangeRateRaw = "1.08",
+        )
+
+        useCase(sampleRecord(), input)
+
+        assertEquals(1080L, repo.lastUpsert?.homeCurrencyMoney?.amount?.valueInCents)
+        assertEquals(CurrencyCode("USD"), repo.lastUpsert?.homeCurrencyMoney?.currency)
+    }
+
+    @Test
+    fun invoke_foreignCurrencyWithInvalidRateReturnsInvalidExchangeRate() = runTest {
+        val repo = FakeFinanceRecordRepository()
+        val useCase = UpdateExpenseUseCase(repo)
+        val input = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "not-a-number")
+
+        val outcome = useCase(sampleRecord(), input)
+
+        assertEquals(SaveExpenseOutcome.InvalidExchangeRate, outcome)
     }
 }
 

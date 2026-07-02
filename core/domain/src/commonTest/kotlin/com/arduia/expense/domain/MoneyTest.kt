@@ -29,4 +29,26 @@ class MoneyTest {
             Money(Amount(100), usd) - Money(Amount(100), eur)
         }
     }
+
+    @Test
+    fun `convertedTo applies the manual rate and swaps currency`() {
+        val converted = Money(Amount(10_00), eur).convertedTo(usd, 1.08)
+        assertEquals(Money(Amount(10_80), usd), converted)
+    }
+
+    @Test
+    fun `convertedTo rounds to the nearest cent`() {
+        val converted = Money(Amount(10_00), eur).convertedTo(usd, 1.085)
+        assertEquals(Money(Amount(10_85), usd), converted)
+    }
+
+    @Test
+    fun `convertedTo rejects a non-positive rate`() {
+        assertFailsWith<IllegalArgumentException> {
+            Money(Amount(10_00), eur).convertedTo(usd, 0.0)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Money(Amount(10_00), eur).convertedTo(usd, -1.0)
+        }
+    }
 }

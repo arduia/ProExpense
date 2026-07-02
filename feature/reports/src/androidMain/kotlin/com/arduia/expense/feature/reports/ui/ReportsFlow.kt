@@ -22,9 +22,12 @@ import com.arduia.expense.feature.reports.R
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
+import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.reports.ui.preview.previewReportsWeekly
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -41,7 +44,10 @@ fun ReportsFlow(
     periods: List<ReportsUiState> = listOf(previewReports, previewReportsUncategorized),
     initialPage: Int = 0,
     empty: Boolean = false,
+    isLoading: Boolean = false,
     onLogFirstExpense: () -> Unit = {},
+    granularityIndex: Int = 0,
+    onGranularityChange: (index: Int, anchor: Pair<Long, Long>?) -> Unit = { _, _ -> },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -62,7 +68,13 @@ fun ReportsFlow(
         }
     }
 
-    val globalEmpty = empty || periods.isEmpty()
+    // `periods` starts empty before the first load completes — without `isLoading`, a user
+    // with data would flash the "No data yet" empty state on every visit to Reports.
+    val globalEmpty = !isLoading && (empty || periods.isEmpty())
+    // Weekly windows cover far less history than monthly ones (~12 weeks vs 12 months); when
+    // every period in the current granularity is empty, "swipe to view another period" is
+    // useless advice — steer toward the granularity toggle instead.
+    val allPeriodsEmpty = periods.isNotEmpty() && periods.all { it.empty }
 
     Column(
         modifier = modifier
@@ -77,6 +89,10 @@ fun ReportsFlow(
                 onBack = onBack,
                 backLabel = stringResource(R.string.reports_back),
             )
+        }
+
+        if (isLoading) {
+            return@Column
         }
 
         if (globalEmpty) {
@@ -96,6 +112,25 @@ fun ReportsFlow(
             return@Column
         }
 
+        SegmentedToggle(
+            options = listOf(
+                stringResource(R.string.reports_granularity_month),
+                stringResource(R.string.reports_granularity_week),
+            ),
+            selectedIndex = granularityIndex,
+            onSelected = { newIndex ->
+                // Anchor the switch to whatever period is currently on screen, so the caller can
+                // land the new granularity on the period that overlaps it.
+                val current = periods.getOrNull(pagerState.currentPage % periods.size.coerceAtLeast(1))
+                val anchor = current?.let { it.periodStartEpochMillis to it.periodEndEpochMillis }
+                onGranularityChange(newIndex, anchor)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.screenPadding)
+                .padding(top = dimens.space8),
+        )
+
         val currentPeriod = periods[pagerState.currentPage % periods.size]
         Box(
             modifier = Modifier
@@ -104,18 +139,24 @@ fun ReportsFlow(
                 .padding(top = dimens.space8),
             contentAlignment = Alignment.Center,
         ) {
+            // periods[0] is the current/most recent period and index grows into the past, so
+            // "Previous" (earlier) moves the page index up and "Next" (later, toward the
+            // present) moves it down — the reverse of a naive index +1/-1 mapping. Clamped, not
+            // wrapped, to match HorizontalPager's own swipe behavior at the list's ends.
             ReportsPeriodPill(
                 label = currentPeriod.periodLabel,
                 onPrev = {
-                    scope.launch {
-                        pagerState.animateScrollToPage((pagerState.currentPage - 1 + periods.size) % periods.size.coerceAtLeast(1))
+                    if (pagerState.currentPage < periods.size - 1) {
+                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                     }
                 },
                 onNext = {
-                    scope.launch {
-                        pagerState.animateScrollToPage((pagerState.currentPage + 1) % periods.size.coerceAtLeast(1))
+                    if (pagerState.currentPage > 0) {
+                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
                     }
                 },
+                prevEnabled = pagerState.currentPage < periods.size - 1,
+                nextEnabled = pagerState.currentPage > 0,
             )
         }
 
@@ -126,6 +167,7 @@ fun ReportsFlow(
             ReportsPeriodContent(
                 state = periods[page % periods.size],
                 onLogFirstExpense = onLogFirstExpense,
+                allPeriodsEmpty = allPeriodsEmpty,
             )
         }
     }
@@ -154,5 +196,52 @@ private fun ReportsFlowPreview() {
 private fun ReportsFlowEmptyPreview() {
     ProExpenseTheme {
         ReportsFlow(onBack = {}, empty = true)
+    }
+}
+
+@Preview(
+    name = "Reports flow — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsFlowLoadingPreview() {
+    ProExpenseTheme {
+        ReportsFlow(onBack = {}, periods = emptyList(), isLoading = true)
+    }
+}
+
+@Preview(
+    name = "Reports flow — all periods empty",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsFlowAllPeriodsEmptyPreview() {
+    ProExpenseTheme {
+        ReportsFlow(
+            onBack = {},
+            periods = List(3) { previewReportsPeriodEmpty },
+            granularityIndex = 1,
+        )
+    }
+}
+
+@Preview(
+    name = "Reports flow — weekly",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsFlowWeeklyPreview() {
+    ProExpenseTheme {
+        ReportsFlow(
+            onBack = {},
+            periods = listOf(previewReportsWeekly),
+            granularityIndex = 1,
+        )
     }
 }

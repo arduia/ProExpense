@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +22,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -145,18 +150,18 @@ fun PinSetupScreen(
 
             PinFieldSection(
                 label = stringResource(R.string.pin_setup_new_label),
-                filled = state.newPinFilled,
+                digits = state.newPin,
                 dotColor = colors.primary,
                 active = true,
-                onReveal = onRevealNew,
+                onFieldClick = onRevealNew,
             )
 
             PinFieldSection(
                 label = stringResource(R.string.pin_setup_confirm_label),
-                filled = state.confirmPinFilled,
+                digits = state.confirmPin,
                 dotColor = colors.onSurface,
                 active = false,
-                onReveal = onRevealConfirm,
+                onFieldClick = onRevealConfirm,
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
@@ -278,15 +283,16 @@ private fun PinSwitchRow(
 @Composable
 private fun PinFieldSection(
     label: String,
-    filled: Int,
+    digits: String,
     dotColor: Color,
     active: Boolean,
-    onReveal: () -> Unit,
+    onFieldClick: () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val borderColor = if (active) colors.primary else colors.line
+    var revealed by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
         Text(text = label, style = typography.eyebrow, color = colors.onSurfaceVariant)
@@ -296,6 +302,7 @@ private fun PinFieldSection(
                 .clip(ProExpenseTheme.shapes.searchField)
                 .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
                 .background(colors.surface)
+                .proClickable(onClick = onFieldClick, shape = ProExpenseTheme.shapes.searchField)
                 .padding(horizontal = dimens.space16, vertical = dimens.space14),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -304,27 +311,40 @@ private fun PinFieldSection(
                 horizontalArrangement = Arrangement.spacedBy(dimens.space12),
             ) {
                 repeat(6) { index ->
-                    val isFilled = index < filled
-                    Box(
-                        modifier = Modifier
-                            .size(dimens.space10)
-                            .clip(CircleShape)
-                            .then(
-                                if (isFilled) {
-                                    Modifier.background(dotColor)
-                                } else {
-                                    Modifier.border(BorderStroke(1.5.dp, colors.lineStrong), CircleShape)
-                                },
-                            ),
-                    )
+                    if (revealed && index < digits.length) {
+                        Box(
+                            modifier = Modifier.widthIn(min = dimens.space10),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = digits[index].toString(),
+                                style = typography.bodySemiBold,
+                                color = colors.onSurface,
+                            )
+                        }
+                    } else {
+                        val isFilled = index < digits.length
+                        Box(
+                            modifier = Modifier
+                                .size(dimens.space10)
+                                .clip(CircleShape)
+                                .then(
+                                    if (isFilled) {
+                                        Modifier.background(dotColor)
+                                    } else {
+                                        Modifier.border(BorderStroke(1.5.dp, colors.lineStrong), CircleShape)
+                                    },
+                                ),
+                        )
+                    }
                 }
             }
             ProIcon(
-                glyph = ProIconGlyph.Eye,
+                glyph = if (revealed) ProIconGlyph.EyeOff else ProIconGlyph.Eye,
                 contentDescription = stringResource(R.string.pin_setup_reveal_cd),
                 tint = colors.muted,
                 size = dimens.iconNav,
-                modifier = Modifier.proIconClickable(onClick = onReveal),
+                modifier = Modifier.proIconClickable(onClick = { revealed = !revealed }),
             )
         }
     }

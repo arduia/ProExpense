@@ -15,3 +15,4 @@
 | [US-HIS-5](US-HIS-5.md) | Open an entry's full detail | 🔴 Must |
 | [US-HIS-6](US-HIS-6.md) | Edit a past entry | 🔴 Must |
 | [US-HIS-7](US-HIS-7.md) | Delete a past entry safely | 🔴 Must |
+| [US-HIS-8](US-HIS-8.md) | Filter by date range | 🔴 Must |

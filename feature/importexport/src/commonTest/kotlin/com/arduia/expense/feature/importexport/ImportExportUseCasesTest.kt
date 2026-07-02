@@ -19,6 +19,7 @@ import kotlin.test.assertIs
 
 private class FakeImportExportRepository(
     var exportResult: Result<String> = Result.Success("exported"),
+    var exportGroupedResult: Result<Map<String, String>> = Result.Success(mapOf("expenses.csv" to "exported")),
     var importResult: Result<ImportSummary> = Result.Success(ImportSummary(0, 0)),
     var previewResult: Result<List<FinanceRecord>> = Result.Success(emptyList()),
 ) : ImportExportRepository {
@@ -30,6 +31,8 @@ private class FakeImportExportRepository(
         lastExportFormat = format
         return exportResult
     }
+
+    override suspend fun exportGrouped(): Result<Map<String, String>> = exportGroupedResult
 
     override suspend fun importFrom(content: String, format: ExportFormat): Result<ImportSummary> {
         lastImportFormat = format
@@ -53,6 +56,22 @@ class ExportDataUseCaseTest {
 
         assertIs<Result.Success<String>>(result)
         assertEquals(ExportFormat.JSON, repo.lastExportFormat)
+    }
+}
+
+class ExportGroupedDataUseCaseTest {
+
+    @Test
+    fun invoke_delegatesToRepository() = runTest {
+        val repo = FakeImportExportRepository(
+            exportGroupedResult = Result.Success(mapOf("expenses.csv" to "a", "events.csv" to "b")),
+        )
+        val useCase = ExportGroupedDataUseCase(repo)
+
+        val result = useCase()
+
+        assertIs<Result.Success<Map<String, String>>>(result)
+        assertEquals(mapOf("expenses.csv" to "a", "events.csv" to "b"), result.data)
     }
 }
 

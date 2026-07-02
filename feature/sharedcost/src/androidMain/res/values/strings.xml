@@ -28,4 +28,12 @@
     <string name="shared_split_default_title">Shared split</string>
     <string name="shared_split_just_now">Just now</string>
     <string name="shared_people_word">PEOPLE</string>
+    <string name="shared_add_person_cd">Add person</string>
+    <string name="shared_remove_person_cd">Remove person</string>
+    <string name="shared_people_count_state">%1$d people</string>
+    <string name="shared_delete_action">Delete</string>
+    <string name="shared_delete_title">Delete this split?</string>
+    <string name="shared_delete_body">"%1$s" and its saved expense will be removed. This can\'t be undone.</string>
+    <string name="shared_delete_confirm">Delete</string>
+    <string name="shared_delete_cancel">Cancel</string>
 </resources>

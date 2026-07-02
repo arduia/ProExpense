@@ -1,9 +1,17 @@
 package com.arduia.expense.feature.categories
 
 import com.arduia.expense.data.CategoryRepository
+import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
+import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CategoryId
+import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
@@ -71,16 +79,63 @@ class SaveCategoryUseCaseTest {
     }
 }
 
+private fun sampleRecord(id: String, categoryId: String) = FinanceRecord(
+    id = RecordId(id),
+    money = Money(Amount(1000), CurrencyCode("USD")),
+    homeCurrencyMoney = Money(Amount(1000), CurrencyCode("USD")),
+    categoryId = CategoryId(categoryId),
+    type = RecordType.EXPENSE,
+    note = null,
+    recordedAtEpochMillis = 0L,
+)
+
+private class FakeFinanceRecordRepository(
+    private val records: MutableMap<String, FinanceRecord> = mutableMapOf(),
+) : FinanceRecordRepository {
+    override suspend fun getAll(): Result<List<FinanceRecord>> = Result.Success(records.values.toList())
+    override suspend fun getById(id: RecordId): Result<FinanceRecord?> = Result.Success(records[id.value])
+    override suspend fun upsert(record: FinanceRecord): Result<Unit> {
+        records[record.id.value] = record
+        return Result.Success(Unit)
+    }
+    override suspend fun delete(id: RecordId): Result<Unit> {
+        records.remove(id.value)
+        return Result.Success(Unit)
+    }
+    override fun observeAll() = MutableStateFlow(records.values.toList()).asStateFlow()
+    override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
+}
+
 class DeleteCategoryUseCaseTest {
 
     @Test
     fun invoke_deletesCategoryById() = runTest {
         val repo = FakeCategoryRepository()
-        val useCase = DeleteCategoryUseCase(repo)
+        val useCase = DeleteCategoryUseCase(repo, FakeFinanceRecordRepository())
 
         useCase("food")
 
         assertEquals(CategoryId("food"), repo.deletedId)
+    }
+
+    @Test
+    fun invoke_reassignsLinkedRecordsToUncategorizedBeforeDeleting() = runTest {
+        val repo = FakeCategoryRepository()
+        val financeRecordRepo = FakeFinanceRecordRepository(
+            mutableMapOf(
+                "r1" to sampleRecord("r1", "coffee"),
+                "r2" to sampleRecord("r2", "coffee"),
+                "r3" to sampleRecord("r3", "food"),
+            ),
+        )
+        val useCase = DeleteCategoryUseCase(repo, financeRecordRepo)
+
+        useCase("coffee")
+
+        val reassigned = (financeRecordRepo.getAll() as Result.Success).data.associateBy { it.id.value }
+        assertEquals(CategoryId(UNCATEGORIZED_CATEGORY_ID), reassigned.getValue("r1").categoryId)
+        assertEquals(CategoryId(UNCATEGORIZED_CATEGORY_ID), reassigned.getValue("r2").categoryId)
+        assertEquals(CategoryId("food"), reassigned.getValue("r3").categoryId)
     }
 }
 

@@ -31,6 +31,8 @@ data class EventCreateFormState(
     val budgetRaw: String = "",
     val startLabel: String = "May 12",
     val endLabel: String = "May 26",
+    val startEpochMillis: Long = System.currentTimeMillis(),
+    val endEpochMillis: Long = System.currentTimeMillis(),
     val isDuplicateName: Boolean = false,
     val showBudgetError: Boolean = false,
 ) {

@@ -159,3 +159,7 @@ entry, and leave a note — without ever blocking the faster quick-commit path o
 
 Tapping the read-only amount to return to Amount must never clear the typed value — this is a
 common regression point when wiring two-way navigation between Amount and Details.
+
+* **Gap fix (2026-07):** Scenario 2/4's "category required" rule was documented but not enforced —
+  `Save` on `AddExpenseDetailsScreen` had no `enabled` gate, so a user could save with no category
+  selected. Added `enabled = state.selectedCategoryId.isNotBlank()` to the `ProButton`.

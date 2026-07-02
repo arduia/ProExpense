@@ -115,4 +115,35 @@ system and land the records exactly where they'd appear had they been logged nat
 
 ## Notes
 
-None.
+* **Gap fix (2026-07, JSON/CSV parser correctness):** JSON import silently imported **zero
+  records** — `parseJsonRecord`'s nested-field regex (`"money.*cents"` etc.) could never match a
+  real `"money":{"cents":…}` object, since `[^:]*` can't cross the colon that follows the outer
+  key, so every required field read `null` and the record was dropped. Separately, the CSV
+  parser's quote-escape check couldn't distinguish an *empty* quoted field (`""`) from an escaped
+  literal quote inside content, corrupting every row with a blank note or no tag — the common
+  case — and desyncing every column after it. Both silently passed before because no test ever
+  exercised a full `exportAll` → `previewImport` round trip. Rewrote the JSON extractor to isolate
+  each nested object before searching it, and the CSV state machine to only treat a doubled quote
+  as an escape while already inside a field. Covered by
+  `SqlDelightImportExportRepositoryTest`'s CSV/JSON round-trip and no-note/no-tag regression tests.
+
+* **Gap fix (2026-07, zip round-trip):** import initially accepted only a bare CSV/JSON file, so
+  the zip produced by [US-IE-1](US-IE-1.md)'s export couldn't be re-imported without manual
+  extraction. `ImportZipReader` (zip4j streaming) now extracts `expenses.csv` from a picked `.zip`
+  — including AES-encrypted exports, with an in-screen password prompt (`needsPassword` state on
+  `MoreImportScreen`) and a wrong-password retry message. Only `expenses.csv` round-trips; the
+  other per-type CSVs are reference exports without an import path. Covered by
+  `ExportImportZipRoundTripTest` (plain + encrypted round-trip, missing/wrong password, zip
+  without `expenses.csv`).
+
+* **Gap fix (2026-07):** despite the "✅ Implemented" status, there was no screen or flow behind
+  "Data import" at all — the More hub had no entry point and `PreviewImportUseCase`/
+  `ImportDataUseCase` (already implemented at the use-case layer) were never invoked from any UI.
+  Added `ImportDataFlow` (androidMain), which opens the system file picker via
+  `ActivityResultContracts.OpenDocument()`, reads the picked file through `ContentResolver`,
+  detects CSV vs. JSON by filename extension, previews the record count before committing, then
+  imports on confirmation and reports imported/skipped counts. Wired a new "Data import" row into
+  the More hub (`MorePreviewData.kt`, `MoreFlow.kt`) and a new `ImportFlow` entry point on
+  `ImportExportFeatureEntry`. Covered by `MoreImportScreen`'s three `@Preview`/Roborazzi states
+  (empty, file picked, error) in `MoreScreenshotTest`; the underlying preview/import use cases
+  were already covered by `ImportExportUseCasesTest`.

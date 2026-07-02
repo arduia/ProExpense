@@ -6,32 +6,47 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CategoryPicker
 import com.arduia.expense.ui.design.DetailAmountSummaryCard
 import com.arduia.expense.ui.design.DetailDateTimeField
+import com.arduia.expense.ui.design.DetailFieldCard
 import com.arduia.expense.ui.design.DetailNoteField
 import com.arduia.expense.ui.design.DetailTagField
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.ui.design.TagPickerContent
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
+import com.arduia.expense.feature.logging.ui.preview.hasValidExchangeRate
+import com.arduia.expense.feature.logging.ui.preview.isForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetails
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrency
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrencyNoRate
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLimit
 import com.arduia.expense.feature.logging.ui.preview.previewTagDebts
 import com.arduia.expense.feature.logging.ui.preview.previewTagEvents
@@ -53,15 +68,27 @@ fun AddExpenseDetailsScreen(
     onClearTag: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
+    onExchangeRateChange: (String) -> Unit = {},
     tagEvents: List<TagLinkOption> = previewTagEvents,
     tagDebts: List<TagLinkOption> = previewTagDebts,
     showTagField: Boolean = true,
+    defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
+    customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val displayAmount = AmountInput.formatDisplay(state.rawAmount)
-    val formattedSaveAmount = "$${displayAmount}"
+    val formattedSaveAmount = currencySymbol(state.currencyCode) + displayAmount
     val atNoteLimit = state.note.length >= NOTE_MAX_LENGTH
+    val rate = state.exchangeRateRaw.trim().toDoubleOrNull()
+    val convertedLabel = if (state.isForeignCurrency() && rate != null && rate > 0.0) {
+        val rawCents = state.rawAmount.toDoubleOrNull() ?: 0.0
+        currencySymbol(state.homeCurrencyCode) + AmountInput.formatDisplay(
+            String.format(java.util.Locale.US, "%.2f", rawCents * rate),
+        )
+    } else {
+        null
+    }
 
     Box(
         modifier = modifier
@@ -89,9 +116,19 @@ fun AddExpenseDetailsScreen(
                 onEdit = onBackToAmount,
             )
 
+            if (state.isForeignCurrency()) {
+                ExchangeRateField(
+                    fromCode = state.currencyCode,
+                    toCode = state.homeCurrencyCode,
+                    rateRaw = state.exchangeRateRaw,
+                    onRateChange = onExchangeRateChange,
+                    convertedLabel = convertedLabel,
+                )
+            }
+
             CategoryPicker(
-                defaultCategories = defaultExpenseCategories,
-                customCategories = customExpenseCategories,
+                defaultCategories = defaultCategories,
+                customCategories = customCategories,
                 selectedCategoryId = state.selectedCategoryId,
                 onCategorySelected = onCategorySelected,
                 showCustomSection = true,
@@ -132,6 +169,7 @@ fun AddExpenseDetailsScreen(
             ProButton(
                 text = stringResource(R.string.save_expense, formattedSaveAmount),
                 onClick = onSave,
+                enabled = state.selectedCategoryId.isNotBlank() && state.hasValidExchangeRate(),
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,
                 modifier = Modifier.padding(top = dimens.space8),
@@ -156,6 +194,67 @@ fun AddExpenseDetailsScreen(
                 )
             },
         )
+    }
+}
+
+@Composable
+private fun ExchangeRateField(
+    fromCode: String,
+    toCode: String,
+    rateRaw: String,
+    onRateChange: (String) -> Unit,
+    convertedLabel: String?,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        DetailFieldCard(
+            leading = {
+                ProIcon(
+                    glyph = ProIconGlyph.Budget,
+                    contentDescription = null,
+                    tint = colors.muted,
+                    size = dimens.iconNav,
+                )
+            },
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.exchange_rate_label, fromCode, toCode),
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                )
+                BasicTextField(
+                    value = rateRaw,
+                    onValueChange = onRateChange,
+                    textStyle = typography.body.copy(color = colors.onSurface),
+                    cursorBrush = SolidColor(colors.primary),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 28.dp),
+                    decorationBox = { inner ->
+                        if (rateRaw.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.exchange_rate_placeholder),
+                                style = typography.body,
+                                color = colors.muted,
+                            )
+                        }
+                        inner()
+                    },
+                )
+            }
+        }
+        if (convertedLabel != null) {
+            Text(
+                text = stringResource(R.string.exchange_rate_converted, convertedLabel),
+                style = typography.caption,
+                color = colors.onSurfaceMuted,
+                modifier = Modifier.padding(top = dimens.space6),
+            )
+        }
     }
 }
 
@@ -218,6 +317,54 @@ private fun AddExpenseTagSheetPreview() {
     ProExpenseTheme {
         AddExpenseDetailsScreen(
             state = previewExpenseDetails.copy(showTagSheet = true),
+            onBackToAmount = {},
+            onCategorySelected = {},
+            onNoteChange = {},
+            onDateClick = {},
+            onOpenTagSheet = {},
+            onCloseTagSheet = {},
+            onTagSelected = {},
+            onClearTag = {},
+            onSave = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add expense — foreign currency with rate",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddExpenseDetailsForeignCurrencyPreview() {
+    ProExpenseTheme {
+        AddExpenseDetailsScreen(
+            state = previewExpenseDetailsForeignCurrency,
+            onBackToAmount = {},
+            onCategorySelected = {},
+            onNoteChange = {},
+            onDateClick = {},
+            onOpenTagSheet = {},
+            onCloseTagSheet = {},
+            onTagSelected = {},
+            onClearTag = {},
+            onSave = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add expense — foreign currency, no rate yet",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddExpenseDetailsForeignCurrencyNoRatePreview() {
+    ProExpenseTheme {
+        AddExpenseDetailsScreen(
+            state = previewExpenseDetailsForeignCurrencyNoRate,
             onBackToAmount = {},
             onCategorySelected = {},
             onNoteChange = {},
