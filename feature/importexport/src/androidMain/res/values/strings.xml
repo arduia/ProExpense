@@ -3,7 +3,13 @@
     <string name="more_export_title">Data Export</string>
     <string name="more_export_heading">Export your data</string>
     <string name="more_export_subtitle">One zip with a CSV per feature. Everything stays on your device — nothing is uploaded.</string>
+    <string name="more_export_subtitle_json">A single JSON file with all your expenses. Everything stays on your device — nothing is uploaded.</string>
+    <string name="more_export_format_csv">ZIP (CSV)</string>
+    <string name="more_export_format_json">JSON</string>
+    <string name="more_export_json_filename">expenses.json</string>
+    <string name="more_export_json_subtitle">All logged expenses + @ tags</string>
     <string name="more_export_action">Export as ZIP</string>
+    <string name="more_export_action_json">Export as JSON</string>
     <string name="more_export_failed">Export failed. Please try again.</string>
     <string name="more_export_password_placeholder">Password (optional)</string>
     <string name="more_export_password_hint">Add a password to encrypt the zip. You\'ll need it to import this backup later.</string>

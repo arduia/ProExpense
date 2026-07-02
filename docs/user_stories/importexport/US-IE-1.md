@@ -30,6 +30,7 @@ than one mixed file) keeps the export human-readable and easy to inspect or re-i
 **In Scope**
 
 * Building a zip of per-type CSVs (expenses / events / debts / shared_costs).
+* A JSON format option — a single `expenses.json` file, per PRD's "export as CSV, JSON, or PDF."
 * Sharing the resulting file via the OS share sheet.
 
 **Out of Scope**
@@ -116,6 +117,13 @@ than one mixed file) keeps the export human-readable and easy to inspect or re-i
 ---
 
 ## Notes
+
+* **Gap fix (2026-07, JSON format option):** export only ever produced the grouped-CSV zip —
+  `ExportDataUseCase(ExportFormat.JSON)` existed and was unit-tested but had no UI caller, so JSON
+  export (PRD Feature #15, "CSV or JSON") was unreachable. `MoreExportScreen` gained a
+  ZIP(CSV)/JSON `SegmentedToggle`; picking JSON exports a single `expenses.json` (still
+  optionally password-encrypted via the same `ExportFileWriter` zip path). Fixing this also
+  surfaced that JSON *import* silently parsed zero records — see [US-IE-2](US-IE-2.md) Notes.
 
 * **Gap fix (2026-07, encrypted export):** the PRD's Secure Import & Export use case (previously
   tracked here as "planned, not yet implemented") is now covered — the export screen gained an

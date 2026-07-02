@@ -134,6 +134,16 @@ class MoreScreenshotTest {
     }
 
     @Test
+    fun more_export_json_format() = capture {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+            formatIndex = 1,
+        )
+    }
+
+    @Test
     fun more_import_empty() = capture {
         MoreImportScreen(
             state = previewMoreImportEmpty,

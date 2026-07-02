@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -14,7 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.FileProvider
+import com.arduia.expense.data.ExportFormat
 import com.arduia.expense.data.Result
+import com.arduia.expense.feature.importexport.ExportDataUseCase
 import com.arduia.expense.feature.importexport.ExportFileWriter
 import com.arduia.expense.feature.importexport.ExportGroupedDataUseCase
 import com.arduia.expense.feature.importexport.R
@@ -34,11 +37,13 @@ fun ExportSettingsFlow(
     onExport: () -> Unit = {},
     modifier: Modifier = Modifier,
     exportGroupedData: ExportGroupedDataUseCase = koinInject(),
+    exportData: ExportDataUseCase = koinInject(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var password by remember { mutableStateOf("") }
+    var formatIndex by remember { mutableIntStateOf(0) }
     val exportFailedMessage = stringResource(R.string.more_export_failed)
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -46,15 +51,25 @@ fun ExportSettingsFlow(
             files = previewMoreExportFiles,
             password = password,
             onPasswordChange = { password = it },
+            formatIndex = formatIndex,
+            onFormatChange = { formatIndex = it },
             onExport = {
                 onExport()
                 scope.launch {
-                    when (val result = exportGroupedData()) {
+                    val timestamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+                    val filesResult: Result<Map<String, String>> = if (formatIndex == 0) {
+                        exportGroupedData()
+                    } else {
+                        when (val result = exportData(ExportFormat.JSON)) {
+                            is Result.Success -> Result.Success(mapOf("expenses.json" to result.data))
+                            is Result.Error -> result
+                        }
+                    }
+                    when (filesResult) {
                         is Result.Success -> {
-                            val timestamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
                             val zip = ExportFileWriter.writeZip(
                                 context = context,
-                                files = result.data,
+                                files = filesResult.data,
                                 zipFileName = "pro-expense-export-$timestamp.zip",
                                 password = password,
                             )

@@ -115,6 +115,18 @@ system and land the records exactly where they'd appear had they been logged nat
 
 ## Notes
 
+* **Gap fix (2026-07, JSON/CSV parser correctness):** JSON import silently imported **zero
+  records** — `parseJsonRecord`'s nested-field regex (`"money.*cents"` etc.) could never match a
+  real `"money":{"cents":…}` object, since `[^:]*` can't cross the colon that follows the outer
+  key, so every required field read `null` and the record was dropped. Separately, the CSV
+  parser's quote-escape check couldn't distinguish an *empty* quoted field (`""`) from an escaped
+  literal quote inside content, corrupting every row with a blank note or no tag — the common
+  case — and desyncing every column after it. Both silently passed before because no test ever
+  exercised a full `exportAll` → `previewImport` round trip. Rewrote the JSON extractor to isolate
+  each nested object before searching it, and the CSV state machine to only treat a doubled quote
+  as an escape while already inside a field. Covered by
+  `SqlDelightImportExportRepositoryTest`'s CSV/JSON round-trip and no-note/no-tag regression tests.
+
 * **Gap fix (2026-07, zip round-trip):** import initially accepted only a bare CSV/JSON file, so
   the zip produced by [US-IE-1](US-IE-1.md)'s export couldn't be re-imported without manual
   extraction. `ImportZipReader` (zip4j streaming) now extracts `expenses.csv` from a picked `.zip`
