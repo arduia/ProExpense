@@ -115,4 +115,12 @@ keeping the original total as the source of truth.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** despite this documented business rule, `buildSplitStrategy` silently
+  rebalanced the *last* participant's share to force the sum to match the total whenever it didn't
+  — directly contradicting "editing one share does not auto-adjust the others." The deeper cause
+  was `SplitStrategy.resolve()`'s `CustomSplit` branch (`core:domain`) hard-`require`-ing
+  `sum == total.amount`, which is what the rebalancing was silently working around. Removed that
+  requirement (now only validates matching participant keys and currency) and stopped the
+  use-case-level rebalancing — shares are now stored exactly as entered. Covered by
+  `CreateSharedCostUseCaseTest.invoke_buildsCustomSplitStoringSharesExactlyAsEnteredWithoutRebalancing`
+  and `SplitStrategyTest`'s `custom split allows shares that do not sum to total`.

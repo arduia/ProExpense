@@ -18,6 +18,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.delay
@@ -35,7 +38,10 @@ fun ProToast(
         modifier = modifier
             .proToastShadow()
             .background(colors.onSurface, ProExpenseTheme.shapes.toast)
-            .padding(horizontal = dimens.space16, vertical = dimens.space10),
+            .padding(horizontal = dimens.space16, vertical = dimens.space10)
+            // The toast auto-dismisses on a timer with no user interaction — without a live
+            // region, screen readers never learn it appeared at all.
+            .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {

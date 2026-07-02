@@ -115,4 +115,9 @@ More → Currency.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** the More → Currency settings screen (`MoreCurrencyScreen`) had no search
+  field at all — only the Profile Setup entry point (`ProfileSetupScreen`'s sheet, backed by
+  `CurrencyPickerContent`) had search wired. Added a hoisted `searchQuery` + `SearchField` directly
+  in `MoreCurrencyScreen`, filtering by code/name case-insensitively, matching the search behavior
+  (not the exact shared composable) of the Profile Setup entry point. Re-recorded the
+  `MoreScreenshotTest.more_currency` baseline for the new search field.

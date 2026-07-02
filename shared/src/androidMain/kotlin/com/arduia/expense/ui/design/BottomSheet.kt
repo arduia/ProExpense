@@ -26,7 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.sheetEnter
@@ -97,7 +99,7 @@ fun ProBottomSheet(
                     )
                     ProIcon(
                         glyph = ProIconGlyph.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.close),
                         tint = colors.onSurface,
                         modifier = Modifier.proIconClickable(onClick = onClose),
                     )

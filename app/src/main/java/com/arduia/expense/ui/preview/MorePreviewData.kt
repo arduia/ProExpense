@@ -53,6 +53,7 @@ val previewMoreHub = MoreHubUiState(
         MoreSettingRowUi("language", ProIconGlyph.Note, "Language", value = "English", kind = MoreSettingKind.Nav),
         MoreSettingRowUi("theme", ProIconGlyph.Sparkle, "Theme", value = "System", kind = MoreSettingKind.Nav),
         MoreSettingRowUi("export", ProIconGlyph.Note, "Data export", kind = MoreSettingKind.Nav),
+        MoreSettingRowUi("import", ProIconGlyph.Note, "Data import", kind = MoreSettingKind.Nav),
         MoreSettingRowUi("clear", ProIconGlyph.Close, "Clear data", kind = MoreSettingKind.Nav),
         MoreSettingRowUi("version", ProIconGlyph.Bell, "App version", value = "2.0.0", kind = MoreSettingKind.Value),
     ),

@@ -654,6 +654,15 @@ declare verification impossible. Treat all code as **unverified**. Compensate pe
 - `./gradlew :app:verifyRoborazziDevDebug` green; run `recordRoborazziDevDebug` and commit
   baselines when visuals change intentionally
 - Device/emulator check only when Roborazzi cannot cover the change; flag if verify impossible (G1)
+- **Sibling-size check on new/changed baselines:** when a container repeats components (chip
+  row, button group, tab bar), **measure** their rendered heights in the recorded screenshot
+  (pixel-measure bounding boxes — do not eyeball); unequal siblings are a defect. A wrong
+  baseline is self-consistent, so `verifyRoborazzi` will never flag it — guard size invariants
+  with a Compose UI test on layout bounds (pattern: `JournalChipRowConsistencyTest`).
+- **Never nest `minimumInteractiveComponentSize`-based modifiers (`proIconClickable`,
+  `proSelectable`) inside compact components** (chips, pills, dense rows) — the 48dp floor
+  inflates the parent's layout. For a secondary micro-target inside an already-tappable
+  surface use `clip(CircleShape)` + `proCircularRippleClickable` instead.
 
 ### Recording
 

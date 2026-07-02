@@ -29,12 +29,13 @@ interface SharedCostFeatureEntry {
     fun SharedCostsOverlay(
         onDismiss: () -> Unit,
         modifier: Modifier = Modifier,
+        homeCurrencySymbol: String = "$",
     )
 }
 
 internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
     @Composable
-    override fun SharedCostsOverlay(onDismiss: () -> Unit, modifier: Modifier) {
+    override fun SharedCostsOverlay(onDismiss: () -> Unit, modifier: Modifier, homeCurrencySymbol: String) {
         val scope = rememberCoroutineScope()
         val sharedCostRepository: SharedCostRepository = koinInject()
         val createSharedCost: CreateSharedCostUseCase = koinInject()
@@ -45,8 +46,8 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
 
         val history = sharedCosts
             .sortedByDescending { it.recordedAtEpochMillis }
-            .map { it.toHistoryItemUi() }
-        val sharedCostDetails = sharedCosts.associate { it.id.value to it.toUiState() }
+            .map { it.toHistoryItemUi(homeCurrencySymbol) }
+        val sharedCostDetails = sharedCosts.associate { it.id.value to it.toUiState(homeCurrencySymbol) }
 
         SharedCostsFlow(
             onDismiss = onDismiss,
@@ -63,10 +64,11 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
                     updateSharedCost(existing, SaveSharedCostInput(title, rawTotal, mode.toSplitMode(), names, customShareRaws))
                 }
             },
+            onDeleteSplit = { id ->
+                scope.launch { deleteSharedCost(id) }
+            },
             modifier = modifier,
         )
-        // deleteSharedCost is wired and ready; SharedCostsFlow has no delete affordance yet —
-        // adding one is a separate Compose UI task (new screen state + Roborazzi baselines).
     }
 }
 
@@ -77,10 +79,10 @@ private fun SharedSplitMode.toSplitMode(): SplitMode = when (this) {
     SharedSplitMode.Custom -> SplitMode.CUSTOM
 }
 
-private fun SharedCost.toHistoryItemUi(): SharedCostHistoryItemUi {
+private fun SharedCost.toHistoryItemUi(currencySymbol: String): SharedCostHistoryItemUi {
     val shares = shares()
     val perPersonLabel = when (splitStrategy) {
-        is SplitStrategy.EqualSplit -> moneyLabel(shares.values.first().amount.valueInCents)
+        is SplitStrategy.EqualSplit -> moneyLabel(shares.values.first().amount.valueInCents, currencySymbol)
         is SplitStrategy.CustomSplit -> "Varies"
     }
     return SharedCostHistoryItemUi(
@@ -89,11 +91,11 @@ private fun SharedCost.toHistoryItemUi(): SharedCostHistoryItemUi {
         peopleCount = participants.size,
         perPersonLabel = perPersonLabel,
         dateLabel = shortDateLabel(recordedAtEpochMillis),
-        totalLabel = moneyLabel(total.amount.valueInCents),
+        totalLabel = moneyLabel(total.amount.valueInCents, currencySymbol),
     )
 }
 
-private fun SharedCost.toUiState(): SharedCostUiState {
+private fun SharedCost.toUiState(currencySymbol: String): SharedCostUiState {
     val shares = shares()
     return SharedCostUiState(
         rawTotal = String.format(Locale.US, "%.2f", total.amount.valueInCents / 100.0),
@@ -103,7 +105,7 @@ private fun SharedCost.toUiState(): SharedCostUiState {
         participants = participants.map { participant ->
             SharedCostParticipantUi(
                 name = participant.name,
-                shareLabel = moneyLabel(shares[participant.id]?.amount?.valueInCents ?: 0L),
+                shareLabel = moneyLabel(shares[participant.id]?.amount?.valueInCents ?: 0L, currencySymbol),
             )
         },
         shareRaws = participants.map { participant ->
@@ -112,5 +114,5 @@ private fun SharedCost.toUiState(): SharedCostUiState {
     )
 }
 
-private fun moneyLabel(valueInCents: Long): String =
-    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
+    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

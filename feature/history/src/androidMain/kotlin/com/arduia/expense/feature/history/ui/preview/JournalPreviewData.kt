@@ -93,6 +93,10 @@ val previewJournalSearchEmpty = JournalListUiState(
     searchActive = true,
 )
 
+val previewJournalEmpty = JournalListUiState(
+    days = emptyList(),
+)
+
 val previewJournalDetail = JournalDetailUiState(
     id = "t1",
     categoryId = "food",

@@ -1,20 +1,26 @@
 package com.arduia.expense.storage.repository
 
+import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.ExportFormat
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ImportExportRepository
 import com.arduia.expense.data.ImportSummary
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtId
+import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.catchingResult
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,6 +29,9 @@ import kotlinx.coroutines.withContext
 
 class SqlDelightImportExportRepository(
     private val financeRecordRepository: FinanceRecordRepository,
+    private val eventRepository: EventRepository,
+    private val debtRepository: DebtRepository,
+    private val sharedCostRepository: SharedCostRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ImportExportRepository {
 
@@ -38,6 +47,88 @@ class SqlDelightImportExportRepository(
                 ExportFormat.JSON -> toJson(records)
             }
         }
+    }
+
+    override suspend fun exportGrouped(): Result<Map<String, String>> = withContext(dispatcher) {
+        catchingResult {
+            val records = financeRecordRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            val events = eventRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            val debts = debtRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            val sharedCosts = sharedCostRepository.getAll().let {
+                when (it) {
+                    is Result.Success -> it.data
+                    is Result.Error -> throw Exception(it.message, it.cause)
+                }
+            }
+            mapOf(
+                "expenses.csv" to toCsv(records),
+                "events.csv" to eventsToCsv(events),
+                "debts.csv" to debtsToCsv(debts),
+                "shared_costs.csv" to sharedCostsToCsv(sharedCosts),
+            )
+        }
+    }
+
+    private fun eventsToCsv(events: List<Event>): String {
+        val header = "id,name,start_at,end_at,budget_cents,currency_code,status"
+        val rows = events.map { event ->
+            listOf(
+                event.id.value,
+                escapeQuotes(event.name),
+                event.startEpochMillis,
+                event.endEpochMillis,
+                event.budget.amount.valueInCents,
+                event.budget.currency.code,
+                event.status.name,
+            ).joinToString(",") { "\"$it\"" }
+        }
+        return (listOf(header) + rows).joinToString("\n")
+    }
+
+    private fun debtsToCsv(debts: List<Debt>): String {
+        val header = "id,person_name,amount_cents,currency_code,direction,due_at,settled"
+        val rows = debts.map { debt ->
+            listOf(
+                debt.id.value,
+                escapeQuotes(debt.personName),
+                debt.money.amount.valueInCents,
+                debt.money.currency.code,
+                debt.direction.name,
+                debt.dueEpochMillis ?: "",
+                debt.isSettled,
+            ).joinToString(",") { "\"$it\"" }
+        }
+        return (listOf(header) + rows).joinToString("\n")
+    }
+
+    private fun sharedCostsToCsv(sharedCosts: List<SharedCost>): String {
+        val header = "id,title,total_cents,currency_code,participant_count,recorded_at"
+        val rows = sharedCosts.map { sharedCost ->
+            listOf(
+                sharedCost.id.value,
+                escapeQuotes(sharedCost.title),
+                sharedCost.total.amount.valueInCents,
+                sharedCost.total.currency.code,
+                sharedCost.participants.size,
+                sharedCost.recordedAtEpochMillis,
+            ).joinToString(",") { "\"$it\"" }
+        }
+        return (listOf(header) + rows).joinToString("\n")
     }
 
     override suspend fun importFrom(
@@ -79,7 +170,7 @@ class SqlDelightImportExportRepository(
     }
 
     private fun toCsv(records: List<FinanceRecord>): String {
-        val header = "id,money_cents,money_code,category_id,type,note,recorded_at,link_type,link_id"
+        val header = "id,money_cents,money_code,category_id,type,note,recorded_at,link_type,link_id,home_money_cents,home_money_code"
         val rows = records.map { record ->
             val (linkType, linkId) = extractLinkParts(record.link)
 
@@ -93,6 +184,8 @@ class SqlDelightImportExportRepository(
                 record.recordedAtEpochMillis,
                 linkType,
                 linkId,
+                record.homeCurrencyMoney.amount.valueInCents,
+                record.homeCurrencyMoney.currency.code,
             ).joinToString(",") { "\"$it\"" }
         }
         return (listOf(header) + rows).joinToString("\n")
@@ -103,7 +196,7 @@ class SqlDelightImportExportRepository(
             val linkJson = buildLinkJson(record.link)
             val note = record.note?.let { escapeJsonString(it) } ?: ""
 
-            """{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""
+            """{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"homeMoney":{"cents":${record.homeCurrencyMoney.amount.valueInCents},"code":"${record.homeCurrencyMoney.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""
         }
         return "[" + jsonRecords.joinToString(",") + "]"
     }
@@ -141,11 +234,18 @@ class SqlDelightImportExportRepository(
 
             try {
                 val link = parseLink(fields[7], fields[8])
+                val money = Money(Amount(fields[1].toLong()), CurrencyCode(fields[2]))
+                // Older exports (9 columns) predate multi-currency — home money always equals money.
+                val homeCurrencyMoney = if (fields.size >= 11 && fields[9].isNotEmpty() && fields[10].isNotEmpty()) {
+                    Money(Amount(fields[9].toLong()), CurrencyCode(fields[10]))
+                } else {
+                    money
+                }
                 records.add(
                     FinanceRecord(
                         id = RecordId(fields[0]),
-                        money = Money(Amount(fields[1].toLong()), CurrencyCode(fields[2])),
-                        homeCurrencyMoney = Money(Amount(fields[1].toLong()), CurrencyCode(fields[2])),
+                        money = money,
+                        homeCurrencyMoney = homeCurrencyMoney,
                         categoryId = CategoryId(fields[3]),
                         type = RecordType.valueOf(fields[4]),
                         note = if (fields[5].isEmpty()) null else fields[5],
@@ -205,15 +305,20 @@ class SqlDelightImportExportRepository(
     private fun parseJsonRecord(json: String): FinanceRecord? {
         return try {
             val id = extractJsonString(json, "id") ?: return null
-            val moneyCents = extractJsonNumber(json, "money.*cents") ?: return null
-            val moneyCode = extractJsonString(json, "money.*code") ?: return null
+            val moneyCents = extractNestedNumber(json, "money", "cents") ?: return null
+            val moneyCode = extractNestedString(json, "money", "code") ?: return null
             val categoryId = extractJsonString(json, "categoryId") ?: return null
             val type = extractJsonString(json, "type") ?: return null
             val note = extractJsonString(json, "note")
             val recordedAt = extractJsonNumber(json, "recordedAtEpochMillis") ?: return null
 
-            val linkType = extractJsonString(json, "link.*type") ?: "NONE"
-            val linkId = extractJsonString(json, "link.*id")
+            // Older exports predate multi-currency and never wrote a homeMoney object — home money
+            // then equals money, matching the CSV importer's same fallback.
+            val homeMoneyCents = extractNestedNumber(json, "homeMoney", "cents") ?: moneyCents
+            val homeMoneyCode = extractNestedString(json, "homeMoney", "code") ?: moneyCode
+
+            val linkType = extractNestedString(json, "link", "type") ?: "NONE"
+            val linkId = extractNestedString(json, "link", "id")
             val link = when (linkType) {
                 "EVENT" -> RecordLink.ToEvent(EventId(linkId ?: ""))
                 "DEBT" -> RecordLink.ToDebt(DebtId(linkId ?: ""))
@@ -224,7 +329,7 @@ class SqlDelightImportExportRepository(
             FinanceRecord(
                 id = RecordId(id),
                 money = Money(Amount(moneyCents), CurrencyCode(moneyCode)),
-                homeCurrencyMoney = Money(Amount(moneyCents), CurrencyCode(moneyCode)),
+                homeCurrencyMoney = Money(Amount(homeMoneyCents), CurrencyCode(homeMoneyCode)),
                 categoryId = CategoryId(categoryId),
                 type = RecordType.valueOf(type),
                 note = if (note.isNullOrEmpty()) null else note,
@@ -253,46 +358,59 @@ class SqlDelightImportExportRepository(
         while (i < line.length) {
             val c = line[i]
             when {
-                c == '"' -> {
-                    inQuotes = !inQuotes
+                // A quote's meaning depends on whether we're already inside a quoted field: two
+                // adjacent quotes right after an opening quote is an *empty* field (close
+                // immediately), not an escaped literal quote — that only applies once we're
+                // already inside content. Conflating the two used to corrupt every row containing
+                // an empty field (e.g. no note, no tag — the common case), desyncing every column
+                // after it.
+                inQuotes && c == '"' -> {
                     if (i + 1 < line.length && line[i + 1] == '"') {
                         current.append('"')
                         i++
+                    } else {
+                        inQuotes = false
                     }
                 }
-                c == ',' && !inQuotes -> {
-                    fields.add(current.toString().trim().trim('"'))
+                !inQuotes && c == '"' -> inQuotes = true
+                !inQuotes && c == ',' -> {
+                    fields.add(current.toString().trim())
                     current = StringBuilder()
                 }
                 else -> current.append(c)
             }
             i++
         }
-        if (current.isNotEmpty()) {
-            fields.add(current.toString().trim().trim('"'))
-        }
+        // Always emit the trailing field, even when empty — dropping it silently shifted every
+        // subsequent row's column count whenever the last field (e.g. home_money_code) was blank.
+        fields.add(current.toString().trim())
         return fields
     }
 
     private fun extractJsonString(json: String, key: String): String? {
-        val pattern = if (key.contains(".*")) {
-            key.replace(".*", "[^:]*")
-        } else {
-            "\"$key\""
-        }
-        val regex = Regex("$pattern\\s*:\\s*\"([^\"]*)\"")
+        val regex = Regex("\"$key\"\\s*:\\s*\"([^\"]*)\"")
         return regex.find(json)?.groupValues?.get(1)
     }
 
     private fun extractJsonNumber(json: String, key: String): Long? {
-        val pattern = if (key.contains(".*")) {
-            key.replace(".*", "[^:]*")
-        } else {
-            "\"$key\""
-        }
-        val regex = Regex("$pattern\\s*:\\s*(-?\\d+)")
+        val regex = Regex("\"$key\"\\s*:\\s*(-?\\d+)")
         return regex.find(json)?.groupValues?.get(1)?.toLongOrNull()
     }
+
+    /**
+     * Reads a field from inside a nested `"objectKey":{...}` object rather than the top level —
+     * e.g. `money.cents` in `"money":{"cents":123,"code":"USD"}`. A plain wildcard between the
+     * outer and inner key can't work here since `[^:]*` can never cross the colon that follows
+     * the outer key, so the object's contents are isolated first and searched independently.
+     */
+    private fun extractNestedObject(json: String, objectKey: String): String? =
+        Regex("\"$objectKey\"\\s*:\\s*\\{([^}]*)\\}").find(json)?.groupValues?.get(1)
+
+    private fun extractNestedString(json: String, objectKey: String, fieldKey: String): String? =
+        extractNestedObject(json, objectKey)?.let { extractJsonString(it, fieldKey) }
+
+    private fun extractNestedNumber(json: String, objectKey: String, fieldKey: String): Long? =
+        extractNestedObject(json, objectKey)?.let { extractJsonNumber(it, fieldKey) }
 
     private fun escapeQuotes(str: String): String {
         return str.replace("\"", "\"\"")

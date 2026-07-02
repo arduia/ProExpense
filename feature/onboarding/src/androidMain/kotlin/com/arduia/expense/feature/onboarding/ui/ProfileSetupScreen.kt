@@ -188,7 +188,7 @@ fun ProfileSetupScreenContent(
                         Text(
                             text = stringResource(R.string.profile_currency_hint),
                             style = typography.caption,
-                            color = colors.muted,
+                            color = colors.onSurfaceMuted,
                         )
                     }
                     CurrencyQuickGrid(

@@ -118,4 +118,23 @@ else holding the unlocked phone.
 
 ## Notes
 
-None.
+Disable-PIN previously showed only a Yes/No confirmation dialog (`pin_disable_confirm_*`) with no
+PIN re-entry — anyone with the unlocked phone could turn off PIN protection without proving they
+knew it. Fixed: confirming "Turn off" now opens a dedicated PIN re-entry step (`PinVerifyFlow`,
+reusing `PinEntryScreen` + `VerifyPinUseCase`, so lockout/attempt-tracking is shared with the main
+unlock screen) before `DisablePinUseCase` actually runs. Scenario 2 is implemented and covered by
+`PinScreenshotTest.edge_pin_verify_disable`.
+
+Scenario 1 (Change PIN) still has no reachable entry point in the Settings UI — tapping
+"PIN authentication" while on only ever offers disable, never a way to rotate the PIN while
+keeping it active. That gap is unchanged by this fix and would need its own follow-up (likely
+reusing `PinSetupScreen`'s New/Confirm PIN fields behind the same `PinVerifyFlow` gate).
+
+Separately, the "Turn off PIN?" confirmation dialog had square bottom corners instead of matching
+the rounded top — traced to the shared `ProAlertDialog` component (`shared/.../ui/design/
+AlertDialog.kt`) using the `sheet` shape token (`RoundedCornerShape(topStart=22dp, topEnd=22dp)`,
+meant for bottom sheets docked to the screen edge) instead of `card` (`RoundedCornerShape(16dp)`,
+all four corners) for its centered, floating card. Fixed at the component level, so every confirm
+dialog in the app (Debt, Journal, Categories, Clear Data, PIN) gets correctly rounded corners, not
+just this one. Covered by the existing `DebtScreenshotTest.edge_debt_conflict` /
+`edge_debt_settled` baselines (re-recorded).

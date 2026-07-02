@@ -16,8 +16,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.FragmentActivity
+import com.arduia.expense.data.ClearDataRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.feature.auth.BiometricAuthenticator
+import com.arduia.expense.feature.auth.DisablePinUseCase
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R
 import com.arduia.expense.feature.auth.PIN_RECOVERY_MAX_ATTEMPTS
@@ -29,10 +31,14 @@ import com.arduia.expense.feature.auth.VerifyRecoveryAnswerUseCase
 import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
 import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
+import androidx.compose.ui.text.AnnotatedString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -51,6 +57,8 @@ fun PinLockFlow(
     val verifyPin: VerifyPinUseCase = koinInject()
     val verifyRecoveryAnswer: VerifyRecoveryAnswerUseCase = koinInject()
     val resetPin: ResetPinUseCase = koinInject()
+    val disablePin: DisablePinUseCase = koinInject()
+    val clearDataRepository: ClearDataRepository = koinInject()
     val scope = rememberCoroutineScope()
     val activity = LocalContext.current as? FragmentActivity
 
@@ -65,6 +73,8 @@ fun PinLockFlow(
     var recoveryAnswer by remember { mutableStateOf("") }
     var recoveryAttempts by remember { mutableStateOf(0) }
     var recoveryError by remember { mutableStateOf(false) }
+    var recoveryExhausted by remember { mutableStateOf(false) }
+    var showResetConfirm by remember { mutableStateOf(false) }
     var newPin by remember { mutableStateOf("") }
     var confirmError by remember { mutableStateOf(false) }
 
@@ -95,6 +105,8 @@ fun PinLockFlow(
                 lockoutUntil = null
                 countdownLabel = null
                 entryError = false
+                recoveryAttempts = 0
+                recoveryError = false
                 break
             }
             val totalSeconds = (remaining / 1000).toInt()
@@ -121,6 +133,16 @@ fun PinLockFlow(
             },
             onError = {},
         )
+    }
+
+    // Auto-prompt once per lock-screen appearance (US-AUTH-6 Scenario 2) — a cancelled/failed
+    // prompt just leaves the already-visible PIN entry as the fallback, no extra state needed.
+    var hasAutoPromptedBiometric by remember { mutableStateOf(false) }
+    LaunchedEffect(canUseBiometric, lockoutUntil, step) {
+        if (!hasAutoPromptedBiometric && canUseBiometric && lockoutUntil == null && step == PinLockStep.Entry) {
+            hasAutoPromptedBiometric = true
+            startBiometric()
+        }
     }
 
     fun handleDigit(digit: Int) {
@@ -188,6 +210,7 @@ fun PinLockFlow(
                         recoveryAnswer = ""
                         recoveryAttempts = 0
                         recoveryError = false
+                        recoveryExhausted = false
                         scope.launch {
                             when (val result = pinAuthRepository.getSecurityQuestionId()) {
                                 is Result.Success -> recoveryQuestionId = result.data
@@ -212,10 +235,14 @@ fun PinLockFlow(
                         answer = recoveryAnswer,
                         attemptsLabel = attemptsLabel,
                         onAnswerChange = { recoveryAnswer = it },
+                        verifyEnabled = !recoveryExhausted && lockoutUntil == null,
+                        showResetOption = recoveryExhausted,
+                        onResetApp = { showResetConfirm = true },
                         onVerify = {
                             scope.launch {
                                 when (val result = verifyRecoveryAnswer(recoveryAnswer, recoveryAttempts)) {
                                     is RecoveryAnswerResult.Correct -> {
+                                        pinAuthRepository.resetFailedAttempts()
                                         recoveryError = false
                                         newPin = ""
                                         entryBuffer = ""
@@ -225,8 +252,16 @@ fun PinLockFlow(
                                         recoveryAttempts = result.attempts
                                         recoveryError = true
                                         recoveryAnswer = ""
+                                        // Shares the PIN-entry lockout counter (US-AUTH-8: "same
+                                        // pattern as PIN lockout") so it's persisted and survives
+                                        // a restart mid-lockout, unlike a purely local counter.
+                                        pinAuthRepository.incrementFailedAttempts()
+                                        when (val lockoutResult = pinAuthRepository.getLockoutUntilMs()) {
+                                            is Result.Success -> lockoutUntil = lockoutResult.data
+                                            is Result.Error -> Unit
+                                        }
                                         if (result.attemptsExhausted) {
-                                            step = PinLockStep.Entry
+                                            recoveryExhausted = true
                                         }
                                     }
                                     is RecoveryAnswerResult.Error -> {
@@ -292,6 +327,27 @@ fun PinLockFlow(
                 )
             }
         }
+
+        ProAlertDialog(
+            visible = showResetConfirm,
+            icon = ProIconGlyph.Close,
+            iconTint = colors.danger,
+            iconBackground = colors.dangerTint,
+            title = stringResource(R.string.pin_recover_reset_title),
+            body = AnnotatedString(stringResource(R.string.pin_recover_reset_body)),
+            confirmLabel = stringResource(R.string.pin_recover_reset_confirm),
+            onConfirm = {
+                showResetConfirm = false
+                scope.launch {
+                    disablePin()
+                    clearDataRepository.clearAll()
+                    onUnlocked()
+                }
+            },
+            dismissLabel = stringResource(R.string.pin_recover_reset_cancel),
+            onDismiss = { showResetConfirm = false },
+            confirmVariant = ProButtonVariant.Danger,
+        )
     }
 }
 

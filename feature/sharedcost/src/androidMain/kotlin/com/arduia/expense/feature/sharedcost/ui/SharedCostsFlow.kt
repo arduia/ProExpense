@@ -13,9 +13,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
@@ -99,6 +103,7 @@ fun SharedCostsFlow(
         names: List<String>,
         customShareRaws: List<String>,
     ) -> Unit = { _, _, _, _, _, _ -> },
+    onDeleteSplit: (id: String) -> Unit = {},
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
@@ -112,6 +117,7 @@ fun SharedCostsFlow(
     var draft by remember { mutableStateOf(SharedCostDraft().withParticipants()) }
     var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
+    var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
     val currentStep = SharedCostStep.valueOf(step)
@@ -175,6 +181,7 @@ fun SharedCostsFlow(
                             }
                         },
                         onBack = onDismiss,
+                        onDeleteRequested = { deleteTarget = it },
                     )
                 }
                 SharedCostStep.Input -> {
@@ -281,6 +288,25 @@ fun SharedCostsFlow(
         ProToastHost(
             message = toastMessage,
             onDismiss = { toastMessage = null },
+        )
+
+        ProAlertDialog(
+            visible = deleteTarget != null,
+            icon = ProIconGlyph.Close,
+            iconTint = colors.danger,
+            iconBackground = colors.dangerTint,
+            title = stringResource(R.string.shared_delete_title),
+            body = buildAnnotatedString {
+                append(stringResource(R.string.shared_delete_body, deleteTarget?.title.orEmpty()))
+            },
+            confirmLabel = stringResource(R.string.shared_delete_confirm),
+            onConfirm = {
+                deleteTarget?.let { onDeleteSplit(it.id) }
+                deleteTarget = null
+            },
+            dismissLabel = stringResource(R.string.shared_delete_cancel),
+            onDismiss = { deleteTarget = null },
+            confirmVariant = ProButtonVariant.Danger,
         )
     }
 }

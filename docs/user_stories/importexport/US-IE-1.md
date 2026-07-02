@@ -30,12 +30,12 @@ than one mixed file) keeps the export human-readable and easy to inspect or re-i
 **In Scope**
 
 * Building a zip of per-type CSVs (expenses / events / debts / shared_costs).
+* A JSON format option — a single `expenses.json` file, per PRD's "export as CSV, JSON, or PDF."
 * Sharing the resulting file via the OS share sheet.
 
 **Out of Scope**
 
 * Importing a previously exported file — covered by [US-IE-2](US-IE-2.md).
-* Encrypted export — not yet implemented, tracked under Notes.
 
 ---
 
@@ -118,5 +118,27 @@ than one mixed file) keeps the export human-readable and easy to inspect or re-i
 
 ## Notes
 
-**Planned (PRD):** encrypted export for sensitive data is not yet implemented. Tracked here for
-traceability against the PRD's Secure Import & Export use case.
+* **Gap fix (2026-07, JSON format option):** export only ever produced the grouped-CSV zip —
+  `ExportDataUseCase(ExportFormat.JSON)` existed and was unit-tested but had no UI caller, so JSON
+  export (PRD Feature #15, "CSV or JSON") was unreachable. `MoreExportScreen` gained a
+  ZIP(CSV)/JSON `SegmentedToggle`; picking JSON exports a single `expenses.json` (still
+  optionally password-encrypted via the same `ExportFileWriter` zip path). Fixing this also
+  surfaced that JSON *import* silently parsed zero records — see [US-IE-2](US-IE-2.md) Notes.
+
+* **Gap fix (2026-07, encrypted export):** the PRD's Secure Import & Export use case (previously
+  tracked here as "planned, not yet implemented") is now covered — the export screen gained an
+  optional password field (`PasswordField`, new shared design primitive); a non-blank password
+  makes `ExportFileWriter` produce an AES-encrypted zip via zip4j. Covered by
+  `ExportImportZipRoundTripTest.encryptedZip_roundTripsWithCorrectPassword` and
+  `encryptedZip_missingOrWrongPassword_reportsNeedsPassword`.
+
+* **Gap fix (2026-07):** despite the "✅ Implemented" status, `MoreExportScreen` was wired to a
+  hardcoded file list and `onExport` was a no-op — no CSV was ever generated, zipped, or shared.
+  `ImportExportRepository.exportGrouped()` (new) now builds one CSV per record type (expenses,
+  events, debts, shared_costs) from the real repositories; `ExportFileWriter` (androidMain) writes
+  them to `cacheDir/exports/` and zips them via the already-declared but previously unused `zip4j`
+  dependency. `ExportSettingsFlow` invokes the use case, then launches an `ACTION_SEND` share-sheet
+  intent through a new `FileProvider` (`app/src/main/res/xml/file_paths.xml`) — matching the
+  existing `more_export_subtitle` copy's promise of "one zip with a CSV per feature." Covered by
+  `ExportGroupedDataUseCaseTest.invoke_delegatesToRepository` and
+  `SqlDelightImportExportRepositoryTest.exportGrouped_returnsOneCsvPerRecordTypeWithRealData`.

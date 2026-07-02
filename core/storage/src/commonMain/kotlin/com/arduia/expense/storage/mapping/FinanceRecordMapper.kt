@@ -29,7 +29,10 @@ internal fun FinanceRecordRow.toDomain(): FinanceRecord =
     FinanceRecord(
         id = RecordId(id),
         money = Money(Amount(amount_cents), CurrencyCode(currency_code)),
-        homeCurrencyMoney = Money(Amount(home_amount_cents ?: amount_cents), CurrencyCode(currency_code)),
+        homeCurrencyMoney = Money(
+            Amount(home_amount_cents ?: amount_cents),
+            CurrencyCode(home_currency_code ?: currency_code),
+        ),
         categoryId = CategoryId(category_id),
         type = type.toRecordTypeFromCode(),
         note = note,

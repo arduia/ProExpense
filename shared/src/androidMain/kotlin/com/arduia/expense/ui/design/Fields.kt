@@ -8,18 +8,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -42,7 +49,7 @@ fun ProfileNameField(
             .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
             .background(colors.surface)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        textStyle = typography.body.copy(color = colors.onSurface),
+        textStyle = typography.bodyMedium.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
         decorationBox = { inner ->
@@ -62,6 +69,56 @@ fun ProfileNameField(
                     }
                     inner()
                 }
+            }
+        },
+    )
+}
+
+@Composable
+fun PasswordField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    var visible by remember { mutableStateOf(false) }
+
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(ProExpenseTheme.shapes.searchField)
+            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.searchField)
+            .background(colors.surface)
+            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        textStyle = typography.bodyMedium.copy(color = colors.onSurface),
+        cursorBrush = SolidColor(colors.primary),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+        decorationBox = { inner ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimens.space10),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    if (value.isEmpty()) {
+                        Text(text = placeholder, style = typography.body, color = colors.muted)
+                    }
+                    inner()
+                }
+                ProIcon(
+                    glyph = if (visible) ProIconGlyph.EyeOff else ProIconGlyph.Eye,
+                    contentDescription = if (visible) "Hide password" else "Show password",
+                    tint = colors.muted,
+                    size = dimens.iconInline,
+                    modifier = Modifier.proIconClickable(onClick = { visible = !visible }),
+                )
             }
         },
     )
@@ -88,6 +145,7 @@ fun SearchField(
             .clip(ProExpenseTheme.shapes.searchField)
             .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
             .background(colors.surface)
+            .heightIn(max = dimens.iconInline + dimens.space24)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.searchField.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
@@ -192,7 +250,7 @@ fun FilterChip(
     val background = if (selected) colors.onSurface else Color.Transparent
     val contentColor = if (selected) colors.paper else colors.onSurfaceVariant
     val borderColor = if (selected) colors.onSurface else colors.lineStrong
-    val textStyle = if (selected) typography.bodySemiBold.copy(fontSize = 12.sp) else typography.bodyMedium.copy(fontSize = 12.sp)
+    val textStyle = if (selected) typography.chipLabelSelected else typography.chipLabel
 
     Text(
         text = label,
@@ -203,7 +261,7 @@ fun FilterChip(
             .clip(chipShape)
             .background(background)
             .border(BorderStroke(1.dp, borderColor), chipShape)
-            .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
+            .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
             .padding(horizontal = dimens.space12, vertical = dimens.space6),
     )
 }

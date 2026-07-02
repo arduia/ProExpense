@@ -104,4 +104,11 @@ month rather than accumulating across months.
 
 ## Notes
 
-None.
+Fixed: setting a budget in More persisted correctly, but `ExpenseApp.kt` never read it back —
+`HomeScreen.budgetSummary` stayed `null` in the real app (only ever populated in a hardcoded
+Compose preview), so the Budget-Planner header never actually appeared regardless of what budget
+was set. `ExpenseApp` now injects `BudgetRepository`, loads it alongside onboarding status, updates
+immediately via a new `MoreFlow.onBudgetChanged` callback (no stale wait for app restart), and
+computes `HomeBudgetSummaryState` by filtering `records` to the current calendar month — which is
+what gives the "resets on the 1st" behavior for free, since a new month naturally has zero matching
+records; the budget figure itself is untouched by this and persists as before.

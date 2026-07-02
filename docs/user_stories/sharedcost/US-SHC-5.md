@@ -116,4 +116,11 @@ outright (with confirmation, consistent with delete behavior elsewhere in the ap
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** swipe-to-delete had no implementation at all — `DeleteSharedCostUseCase`
+  existed, was DI-registered, and injected in `SharedCostFeatureEntry.kt`, but nothing called it and
+  `SharedCostsHistoryScreen` had no delete affordance. Added a `SwipeToDismissBox`-based
+  `SwipeToDeleteRow` (Material3, first use of this primitive in the codebase) per the design spec
+  (`10-shared-costs.md`: "swipe-left to delete (confirm)"); swiping never auto-dismisses the row —
+  it only opens a `ProAlertDialog` confirmation (mirroring the Debt/Category/Journal delete-confirm
+  pattern), and only on confirm does `onDeleteSplit` fire. Deletion is atomic with its linked
+  `FinanceRecord` — see [US-SHC-4](US-SHC-4.md)'s note for the storage-layer half of that.

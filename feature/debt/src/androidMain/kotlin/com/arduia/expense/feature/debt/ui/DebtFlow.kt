@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,41 +29,48 @@ import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
+import com.arduia.expense.ui.design.DateTimePickerSheet
+import com.arduia.expense.ui.design.shortDateLabel
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
+import kotlinx.coroutines.launch
 
 @Composable
 fun DebtFlow(
     onDismiss: () -> Unit,
     lentState: DebtListUiState = previewDebtLent,
     oweState: DebtListUiState = previewDebtOwe,
-    onSaveRecord: (side: DebtSide, person: String, amountRaw: String) -> Unit = { _, _, _ -> },
+    onSaveRecord: (side: DebtSide, person: String, amountRaw: String, dueEpochMillis: Long?) -> Unit = { _, _, _, _ -> },
+    onUpdateRecord: (id: String, person: String, amountRaw: String, dueEpochMillis: Long?) -> Unit = { _, _, _, _ -> },
     onDeleteRecord: (String) -> Unit = {},
     onSettleRecord: (String) -> Unit = {},
+    onCheckConflict: suspend (person: String, side: DebtSide) -> Boolean = { _, _ -> false },
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
+    val scope = rememberCoroutineScope()
 
     var side by remember { mutableStateOf(DebtSide.Lent) }
     var selectedRecordId by remember { mutableStateOf<String?>(null) }
     var showAdd by remember { mutableStateOf(false) }
     var addForm by remember { mutableStateOf(DebtAddFormState()) }
+    var showDuePicker by remember { mutableStateOf(false) }
     var conflictPerson by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<DebtRecordUi?>(null) }
 
     val listState = if (side == DebtSide.Lent) lentState else oweState
 
-    fun otherSideName(name: String): Boolean {
-        val other = if (addForm.side == DebtSide.Lent) oweState else lentState
-        return name.isNotBlank() && other.active.any { it.name.equals(name.trim(), ignoreCase = true) }
-    }
-
-    fun commitNewRecord() {
-        onSaveRecord(addForm.side, addForm.person.trim(), addForm.amountRaw)
+    fun commitRecord() {
+        val editingId = addForm.editingId
+        if (editingId != null) {
+            onUpdateRecord(editingId, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis)
+        } else {
+            onSaveRecord(addForm.side, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis)
+        }
         side = addForm.side
         showAdd = false
     }
@@ -106,7 +114,22 @@ fun DebtFlow(
                     state = detailStateFor(recordId, side, listState),
                     onBack = { selectedRecordId = null },
                     onMore = {},
-                    onEdit = {},
+                    onEdit = {
+                        val record = (listState.active + listState.settled).firstOrNull { it.id == recordId }
+                        if (record != null) {
+                            addForm = DebtAddFormState(
+                                side = side,
+                                person = record.name,
+                                // The amount field takes whole-dollar digits (no decimal input),
+                                // matching how CreateDebtUseCase/Amount.parseOrNull interpret it.
+                                amountRaw = (record.amountCents / 100).toString(),
+                                dueLabel = record.dueEpochMillis?.let { shortDateLabel(it) },
+                                editingId = record.id,
+                                dueEpochMillis = record.dueEpochMillis,
+                            )
+                            showAdd = true
+                        }
+                    },
                     onMarkSettled = {
                         onSettleRecord(recordId)
                         selectedRecordId = null
@@ -117,7 +140,9 @@ fun DebtFlow(
 
         ProBottomSheetHost(
             visible = showAdd,
-            title = stringResource(R.string.debt_new_record),
+            title = stringResource(
+                if (addForm.editingId != null) R.string.debt_edit_record else R.string.debt_new_record,
+            ),
             onClose = { showAdd = false },
         ) {
             DebtAddSheetContent(
@@ -126,16 +151,34 @@ fun DebtFlow(
                 onPersonChange = { addForm = addForm.copy(person = it) },
                 onAmountChange = { addForm = addForm.copy(amountRaw = it) },
                 onPickDate = {},
-                onPickDue = {},
+                onPickDue = { showDuePicker = true },
                 onSave = {
-                    if (otherSideName(addForm.person)) {
-                        conflictPerson = addForm.person.trim()
+                    val person = addForm.person.trim()
+                    if (addForm.editingId != null) {
+                        // Editing an already-committed record isn't a new conflict to warn about.
+                        commitRecord()
                     } else {
-                        commitNewRecord()
+                        scope.launch {
+                            if (person.isNotBlank() && onCheckConflict(person, addForm.side)) {
+                                conflictPerson = person
+                            } else {
+                                commitRecord()
+                            }
+                        }
                     }
                 },
             )
         }
+
+        DateTimePickerSheet(
+            visible = showDuePicker,
+            initialEpochMillis = addForm.dueEpochMillis ?: System.currentTimeMillis(),
+            onConfirm = { millis ->
+                addForm = addForm.copy(dueEpochMillis = millis, dueLabel = shortDateLabel(millis))
+                showDuePicker = false
+            },
+            onDismiss = { showDuePicker = false },
+        )
 
         ProAlertDialog(
             visible = conflictPerson != null,
@@ -150,7 +193,7 @@ fun DebtFlow(
             confirmLabel = stringResource(R.string.debt_continue),
             onConfirm = {
                 conflictPerson = null
-                commitNewRecord()
+                commitRecord()
             },
             dismissLabel = stringResource(R.string.debt_cancel),
             onDismiss = { conflictPerson = null },

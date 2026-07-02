@@ -167,7 +167,7 @@ fun DetailDateTimeField(
             Text(
                 text = timeLabel,
                 style = typography.caption,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
                 modifier = Modifier.padding(top = ProExpenseTheme.dimensions.space2),
             )
         }
@@ -203,7 +203,7 @@ fun DetailTagField(
                 Text(
                     text = "Clear",
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                     modifier = Modifier
                         .clip(ProExpenseTheme.shapes.chip)
                         .proClickable(onClick = onClear, shape = ProExpenseTheme.shapes.chip)
@@ -246,7 +246,7 @@ fun DetailAmountSummaryCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "AMOUNT", style = typography.eyebrow, color = colors.muted)
+            Text(text = "AMOUNT", style = typography.eyebrow, color = colors.onSurfaceMuted)
             Row(
                 modifier = Modifier
                     .proClickable(onClick = onEdit, shape = ProExpenseTheme.shapes.chip)

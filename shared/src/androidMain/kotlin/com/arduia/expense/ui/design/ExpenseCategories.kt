@@ -14,5 +14,9 @@ val customExpenseCategories = listOf(
     "pet" to "Pet care",
 )
 
-fun expenseCategoryLabel(id: String): String =
-    (defaultExpenseCategories + customExpenseCategories).firstOrNull { it.first == id }?.second ?: id
+private const val UNCATEGORIZED_ID = "uncategorized"
+
+fun expenseCategoryLabel(id: String): String = when {
+    id == UNCATEGORIZED_ID -> "Uncategorized"
+    else -> (defaultExpenseCategories + customExpenseCategories).firstOrNull { it.first == id }?.second ?: id
+}

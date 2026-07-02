@@ -136,7 +136,7 @@ fun CategoryListScreen(
             Text(
                 text = stringResource(R.string.categories_footer),
                 style = typography.caption,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -155,7 +155,7 @@ private fun CategorySectionHeader(label: String, trailing: String) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = label, style = typography.eyebrow, color = colors.onSurfaceVariant)
-        Text(text = trailing, style = typography.caption, color = colors.muted)
+        Text(text = trailing, style = typography.caption, color = colors.onSurfaceMuted)
     }
 }
 
@@ -206,7 +206,7 @@ private fun CategoryRow(row: CategoryRowUi, locked: Boolean) {
             Text(
                 text = stringResource(R.string.categories_locked_pill),
                 style = typography.eyebrow,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
                 modifier = Modifier
                     .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
                     .padding(horizontal = dimens.space10, vertical = dimens.space4),

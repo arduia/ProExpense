@@ -128,3 +128,10 @@ USD).
 
 Scenario 2 is a regression guard — currency selection previously reset to USD on relaunch in some
 flows; both `US-CUR-2` and [US-ONB-4](../onboarding/US-ONB-4.md) carry this guard.
+
+Fixed a second regression against Scenario 1's "immediately" wording: `ExpenseApp.kt` kept its own
+`homeCurrencyCode` copy, refreshed only via `LaunchedEffect(onboardingComplete, userCurrency)` —
+neither key changes when Settings saves a new currency, so Quick Log kept using the previous
+currency until the app relaunched. `MoreFlow` now takes an `onCurrencyChanged` callback invoked
+right after `saveHomeCurrency` succeeds, so `ExpenseApp` updates its copy (and therefore Quick Log)
+in the same session, not just after restart.

@@ -73,7 +73,7 @@ fun EventBudgetListScreen(
                     Text(
                         text = stringResource(R.string.events_eyebrow),
                         style = typography.eyebrow,
-                        color = colors.muted,
+                        color = colors.onSurfaceMuted,
                     )
                     Text(
                         text = stringResource(R.string.events_title),

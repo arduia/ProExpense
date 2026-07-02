@@ -59,7 +59,7 @@ fun MoreHubScreen(
                 Text(
                     text = stringResource(R.string.more_eyebrow),
                     style = typography.eyebrow,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
                 Text(
                     text = stringResource(R.string.more_title),

@@ -24,6 +24,7 @@ class SqlDelightClearDataRepositoryTest {
             tag_id = tagId,
             integrity_algo = "SHA-256",
             integrity_hash = "dummy",
+            home_currency_code = null,
         )
     }
 

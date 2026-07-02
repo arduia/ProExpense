@@ -35,7 +35,7 @@ read by every screen that displays or stores an amount.
 **Out of Scope**
 
 * Changing it later in detail — covered by [US-CUR-2](US-CUR-2.md).
-* Per-record currency / manual exchange rates — explicitly out of MVP scope.
+* Per-record currency / manual exchange rates — covered by [US-CUR-4](US-CUR-4.md).
 
 ---
 
@@ -122,5 +122,7 @@ read by every screen that displays or stores an amount.
 
 ## Notes
 
-**Planned (post-MVP, per PRD Multi-Currency section):** per-record currency, manual exchange rate
-per entry, and "original + converted" display. Tracked here for traceability; **not** in MVP scope.
+* **Gap fix (2026-07):** per-record currency, manual exchange rate per entry, and "original +
+  converted" display are now implemented — see [US-CUR-4](US-CUR-4.md). This story's "single
+  home currency" concept is unchanged; a different per-record currency now converts into it
+  instead of the app assuming every record already matches it.

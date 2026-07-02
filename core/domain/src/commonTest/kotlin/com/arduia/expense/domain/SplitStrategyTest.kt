@@ -47,15 +47,15 @@ class SplitStrategyTest {
     }
 
     @Test
-    fun `custom split rejects shares that do not sum to total`() {
+    fun `custom split allows shares that do not sum to total`() {
         val total = Money(Amount(100), usd)
         val strategy = SplitStrategy.CustomSplit(
             mapOf(p1.id to Money(Amount(60), usd), p2.id to Money(Amount(30), usd)),
         )
 
-        assertFailsWith<IllegalArgumentException> {
-            SplitStrategy.resolve(strategy, listOf(p1, p2), total)
-        }
+        val shares = SplitStrategy.resolve(strategy, listOf(p1, p2), total)
+
+        assertEquals(strategy.shares, shares)
     }
 
     @Test

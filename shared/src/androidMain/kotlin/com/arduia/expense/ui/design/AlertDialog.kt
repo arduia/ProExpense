@@ -93,7 +93,7 @@ fun ProAlertDialog(
                             if (dialogElevation != null) {
                                 Modifier.shadow(
                                     elevation = dialogElevation.blur,
-                                    shape = ProExpenseTheme.shapes.sheet,
+                                    shape = ProExpenseTheme.shapes.card,
                                     spotColor = dialogElevation.color,
                                     ambientColor = dialogElevation.color,
                                 )
@@ -107,7 +107,7 @@ fun ProAlertDialog(
                             indication = null,
                             onClick = {},
                         ),
-                    shape = ProExpenseTheme.shapes.sheet,
+                    shape = ProExpenseTheme.shapes.card,
                     color = colors.surface,
                 ) {
                     Column(

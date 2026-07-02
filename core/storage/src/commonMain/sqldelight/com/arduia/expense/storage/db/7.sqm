@@ -1,0 +1,1 @@
+ALTER TABLE finance_record ADD COLUMN home_currency_code TEXT;

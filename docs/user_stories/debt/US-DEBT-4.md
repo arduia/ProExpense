@@ -118,3 +118,9 @@ valid second record (people can owe each other different things at once).
 
 Phase 2 per the PRD roadmap, but the screen exists in this build, so it's documented here for
 completeness.
+
+* **Gap fix (2026-07):** `DebtFlow`'s conflict check was a hardcoded `false` (`onCheckConflict`
+  default), so the warning never appeared despite `CheckDebtConflictUseCase` already existing and
+  being tested. `DebtFeatureEntryImpl` now injects `CheckDebtConflictUseCase` and wires it through
+  `onCheckConflict`, invoked only for new records (editing an already-committed record skips the
+  conflict check since it isn't a new cross-side entry).

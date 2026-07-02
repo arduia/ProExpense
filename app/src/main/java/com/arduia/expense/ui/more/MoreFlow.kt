@@ -16,9 +16,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.fragment.app.FragmentActivity
+import com.arduia.expense.data.DefaultCategoryRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.Money
+import com.arduia.expense.feature.auth.BiometricAuthenticator
 import com.arduia.expense.feature.auth.DisablePinUseCase
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R as AuthR
@@ -30,6 +34,9 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProToastHost
+import com.arduia.expense.ui.design.currencySymbol
+import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -39,8 +46,9 @@ import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import com.arduia.expense.data.BudgetRepository
+import com.arduia.expense.R
 
-private enum class MoreStep { Hub, Currency, Export, Clear, Reports, Categories, Budget }
+private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory }
 
 @Composable
 fun MoreFlow(
@@ -53,11 +61,15 @@ fun MoreFlow(
     modifier: Modifier = Modifier,
     onPinClick: () -> Unit = {},
     pinConfigured: Boolean? = null,
+    onCurrencyChanged: (CurrencyCode) -> Unit = {},
+    onBudgetChanged: (Money?) -> Unit = {},
+    onDefaultCategoryChanged: (String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val context = LocalContext.current
+    val activity = context as? FragmentActivity
     val scope = rememberCoroutineScope()
     val profileRepository: ProfileRepository = koinInject()
     val currencyRepository: CurrencyRepository = koinInject()
@@ -65,15 +77,21 @@ fun MoreFlow(
     val pinAuthRepository: PinAuthRepository = koinInject()
     val disablePin: DisablePinUseCase = koinInject()
     val budgetRepository: BudgetRepository = koinInject()
+    val defaultCategoryRepository: DefaultCategoryRepository = koinInject()
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
     var displayName by remember { mutableStateOf("") }
     var pinEnabled by remember { mutableStateOf(false) }
     var showDisablePinConfirm by remember { mutableStateOf(false) }
+    var showDisablePinVerify by remember { mutableStateOf(false) }
     var monthlyBudgetLabel by remember { mutableStateOf("Off") }
     var appVersion by remember { mutableStateOf("1.0.0") }
     var homeCurrencyCode by remember { mutableStateOf(CurrencyCode("USD")) }
+    var biometricEnrolled by remember { mutableStateOf(false) }
+    val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
+    var defaultCategoryId by remember { mutableStateOf("food") }
+    var toastMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pinConfigured) {
         if (pinConfigured != null) pinEnabled = pinConfigured
@@ -98,16 +116,27 @@ fun MoreFlow(
             is Result.Success -> pinEnabled = result.data
             is Result.Error -> Unit
         }
+        // Load biometric enrollment
+        when (val result = pinAuthRepository.isBiometricEnrolled()) {
+            is Result.Success -> biometricEnrolled = result.data
+            is Result.Error -> Unit
+        }
         // Load monthly budget
         when (val result = budgetRepository.getMonthlyBudget()) {
             is Result.Success -> {
                 result.data?.let { budget ->
-                    monthlyBudgetLabel = "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budget.amount.valueInCents / 100.0))
+                    monthlyBudgetLabel = currencySymbol(homeCurrencyCode.code) +
+                        AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budget.amount.valueInCents / 100.0))
                 } ?: run {
                     monthlyBudgetLabel = "Off"
                 }
             }
             is Result.Error -> monthlyBudgetLabel = "Off"
+        }
+        // Load default category
+        when (val result = defaultCategoryRepository.getDefaultCategoryId()) {
+            is Result.Success -> result.data?.let { defaultCategoryId = it }
+            is Result.Error -> Unit
         }
         // Load app version
         try {
@@ -118,7 +147,10 @@ fun MoreFlow(
         }
     }
 
-    val hubState = remember(selectedCurrency, displayName, pinEnabled, monthlyBudgetLabel, appVersion) {
+    val hubState = remember(
+        selectedCurrency, displayName, pinEnabled, monthlyBudgetLabel, appVersion,
+        biometricEnrolled, biometricCapable, defaultCategoryId,
+    ) {
         val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "M"
         previewMoreHub.copy(
             profile = previewMoreHub.profile.copy(
@@ -129,7 +161,12 @@ fun MoreFlow(
                 when (setting.id) {
                     "currency" -> setting.copy(value = selectedCurrency)
                     "pin" -> setting.copy(value = if (pinEnabled) "On" else "Off")
+                    "biometric" -> setting.copy(
+                        toggleOn = biometricEnrolled,
+                        enabled = pinEnabled && biometricCapable,
+                    )
                     "budget" -> setting.copy(value = monthlyBudgetLabel)
+                    "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
                     "version" -> setting.copy(value = appVersion)
                     else -> setting
                 }
@@ -168,12 +205,24 @@ fun MoreFlow(
                         when (id) {
                             "currency" -> step = MoreStep.Currency
                             "export" -> step = MoreStep.Export
+                            "import" -> step = MoreStep.Import
                             "clear" -> step = MoreStep.Clear
                             "pin" -> if (pinEnabled) showDisablePinConfirm = true else onPinClick()
                             "budget" -> step = MoreStep.Budget
+                            "category" -> step = MoreStep.DefaultCategory
+                            "biometric" -> if (!pinEnabled) {
+                                toastMessage = context.getString(R.string.more_biometric_requires_pin)
+                            }
                         }
                     },
-                    onSettingToggle = { _, _ -> },
+                    onSettingToggle = { id, on ->
+                        if (id == "biometric" && pinEnabled && biometricCapable) {
+                            scope.launch {
+                                if (on) pinAuthRepository.enrollBiometric() else pinAuthRepository.clearBiometric()
+                                biometricEnrolled = on
+                            }
+                        }
+                    },
                     selectedTab = selectedTab,
                     onTabSelected = onTabSelected,
                     onAddClick = onAddClick,
@@ -184,7 +233,9 @@ fun MoreFlow(
                         selectedCurrency = newCode
                         scope.launch {
                             saveHomeCurrency(newCode)
-                            homeCurrencyCode = CurrencyCode(newCode)
+                            val newCurrency = CurrencyCode(newCode)
+                            homeCurrencyCode = newCurrency
+                            onCurrencyChanged(newCurrency)
                         }
                     },
                     onBack = { step = MoreStep.Hub },
@@ -192,13 +243,31 @@ fun MoreFlow(
                 MoreStep.Export -> features.importExport.ExportFlow(
                     onBack = { step = MoreStep.Hub },
                 )
+                MoreStep.Import -> features.importExport.ImportFlow(
+                    onBack = { step = MoreStep.Hub },
+                )
                 MoreStep.Clear -> features.importExport.ClearDataFlow(
                     onBack = { step = MoreStep.Hub },
                 )
                 MoreStep.Reports -> features.reports.ReportsFlow(
                     onBack = { step = MoreStep.Hub },
+                    onLogFirstExpense = {
+                        step = MoreStep.Hub
+                        onAddClick()
+                    },
                 )
                 MoreStep.Categories -> features.categories.CategoryListFlow(
+                    onBack = { step = MoreStep.Hub },
+                )
+                MoreStep.DefaultCategory -> MoreDefaultCategoryScreen(
+                    selectedCategoryId = defaultCategoryId,
+                    onSelect = { categoryId ->
+                        defaultCategoryId = categoryId
+                        onDefaultCategoryChanged(categoryId)
+                        scope.launch {
+                            defaultCategoryRepository.setDefaultCategoryId(categoryId)
+                        }
+                    },
                     onBack = { step = MoreStep.Hub },
                 )
                 MoreStep.Budget -> MoreBudgetScreen(
@@ -208,10 +277,12 @@ fun MoreFlow(
                         scope.launch {
                             budgetRepository.setMonthlyBudget(money)
                             monthlyBudgetLabel = if (money != null) {
-                                "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0))
+                                currencySymbol(homeCurrencyCode.code) +
+                                    AmountInput.formatDisplay(String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0))
                             } else {
                                 "Off"
                             }
+                            onBudgetChanged(money)
                             step = MoreStep.Hub
                         }
                     },
@@ -229,15 +300,35 @@ fun MoreFlow(
             body = buildAnnotatedString { append(stringResource(AuthR.string.pin_disable_confirm_body)) },
             confirmLabel = stringResource(AuthR.string.pin_disable_confirm_action),
             onConfirm = {
-                scope.launch {
-                    disablePin()
-                    pinEnabled = false
-                    showDisablePinConfirm = false
-                }
+                // Intent alone isn't authorization — the current PIN must be re-verified before
+                // anything is actually turned off (US-AUTH-7).
+                showDisablePinConfirm = false
+                showDisablePinVerify = true
             },
             dismissLabel = stringResource(AuthR.string.pin_disable_confirm_cancel),
             onDismiss = { showDisablePinConfirm = false },
             confirmVariant = ProButtonVariant.Danger,
+        )
+
+        if (showDisablePinVerify) {
+            features.auth.PinVerifyFlow(
+                headingRes = AuthR.string.pin_disable_verify_heading,
+                helperRes = AuthR.string.pin_disable_verify_helper,
+                onVerified = {
+                    scope.launch {
+                        disablePin()
+                        pinEnabled = false
+                        showDisablePinVerify = false
+                    }
+                },
+                onCancel = { showDisablePinVerify = false },
+                modifier = Modifier,
+            )
+        }
+
+        ProToastHost(
+            message = toastMessage,
+            onDismiss = { toastMessage = null },
         )
     }
 }

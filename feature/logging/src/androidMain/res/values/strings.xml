@@ -16,4 +16,8 @@
     <string name="draft_discard">Discard</string>
     <string name="note_max_length_error">Note can\'t exceed 200 characters</string>
     <string name="link_to_title">Link to…</string>
+    <string name="exchange_rate_label">1 %1$s in %2$s</string>
+    <string name="exchange_rate_placeholder">Enter rate</string>
+    <string name="exchange_rate_converted">≈ %1$s</string>
+    <string name="currency_sheet_title">Choose currency</string>
 </resources>

@@ -3,6 +3,7 @@ package com.arduia.expense.feature.logging.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -19,12 +20,17 @@ import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CategoryPicker
 import com.arduia.expense.ui.design.NumericKeypad
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -39,6 +45,9 @@ fun AddExpenseAmountScreen(
     onSave: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenCurrencySheet: () -> Unit = {},
+    defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
+    customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -62,8 +71,25 @@ fun AddExpenseAmountScreen(
             onAction = onClose,
         )
 
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            ProTextAction(
+                text = state.currencyCode,
+                onClick = onOpenCurrencySheet,
+                color = colors.primary,
+                trailing = {
+                    ProIcon(
+                        glyph = ProIconGlyph.ChevronDown,
+                        contentDescription = null,
+                        tint = colors.primary,
+                        size = dimens.iconInline,
+                    )
+                },
+            )
+        }
+
         AmountDisplay(
             amountText = displayAmount,
+            currencySymbol = currencySymbol(state.currencyCode),
             currencyCode = state.currencyCode,
             isZero = isZero,
             showZeroValidation = state.showZeroValidation,
@@ -74,8 +100,8 @@ fun AddExpenseAmountScreen(
         )
 
         CategoryPicker(
-            defaultCategories = defaultExpenseCategories,
-            customCategories = customExpenseCategories,
+            defaultCategories = defaultCategories,
+            customCategories = customCategories,
             selectedCategoryId = state.selectedCategoryId,
             onCategorySelected = onCategorySelected,
             showCustomSection = true,
@@ -129,6 +155,27 @@ private fun AddExpenseAmountZeroValidationPreview() {
     ProExpenseTheme {
         AddExpenseAmountScreen(
             state = previewExpenseAmountZeroValidation,
+            onClose = {},
+            onKey = {},
+            onBackspace = {},
+            onCategorySelected = {},
+            onSave = {},
+            onNext = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add expense — foreign currency",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddExpenseAmountForeignCurrencyPreview() {
+    ProExpenseTheme {
+        AddExpenseAmountScreen(
+            state = previewExpenseAmountForeignCurrency,
             onClose = {},
             onKey = {},
             onBackspace = {},

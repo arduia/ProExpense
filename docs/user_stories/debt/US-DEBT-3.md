@@ -117,3 +117,11 @@ the debt link, never the underlying linked expense.
 
 Phase 2 per the PRD roadmap, but the screen exists in this build, so it's documented here for
 completeness.
+
+* **Gap fix (2026-07):** Scenario 1's "Edit" action was wired to a no-op (`onEdit = {}`). Added
+  `UpdateDebtUseCase` (same `amount > 0` guard as create) and wired `DebtDetailScreen`'s Edit tap to
+  prefill the Add-Record sheet from the tapped record — including converting the persisted
+  `amountCents` back to the whole-dollar string the amount field expects
+  (`(record.amountCents / 100).toString()`, matching `Amount.parseOrNull`'s cents conversion) — and
+  route Save through `UpdateDebtUseCase` instead of creating a duplicate record. Covered by
+  `UpdateDebtUseCaseTest`.

@@ -119,4 +119,13 @@ going." A one-size header would bury the number that matters most to each of the
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** Scenario 2's Active Event card had a real `HomeUiState.activeEvent` field
+  and rendering, but `ExpenseApp.kt` never populated it from real `EventRepository` data — it was
+  always `null` outside of preview fixtures, so the card never appeared in production regardless of
+  active events. `ExpenseApp` now picks the most-recently-started `EventStatus.ACTIVE` event, fetches
+  its spend via `EventRepository.getSpent`, and reuses `ComputeEventProgressUseCase` (already used by
+  `feature:eventbudget`) to build the card. Tapping the card now also navigates to Budget and opens
+  that event's detail (`EventsFlow`/`EventBudgetFeatureEntry.EventsTab` gained
+  `initialSelectedEventId`), and Event Detail's "Add expense" action now pre-tags the newly logged
+  expense to that event instead of opening a blank Quick Log (`onAddTaggedExpense` threaded through
+  to `QuickLogFlow`'s new `initialLinkedEventId` param).

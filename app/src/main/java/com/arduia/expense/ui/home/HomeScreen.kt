@@ -69,6 +69,7 @@ fun HomeScreenContent(
     onCustomizeQuickAccess: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     onRowClick: (com.arduia.expense.ui.design.ProTransactionRowModel) -> Unit = {},
+    visibleTiles: Set<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -106,7 +107,8 @@ fun HomeScreenContent(
                 budgetSummary = state.budgetSummary,
                 monthDelta = state.monthDelta,
                 showEmptyHint = state.showEmptyHint,
-                showSparkline = !state.isEmpty,
+                showSparkline = !state.isEmpty && state.sparklinePoints.size >= 2,
+                sparklinePoints = state.sparklinePoints,
             )
 
             state.activeEvent?.let { event ->
@@ -136,6 +138,7 @@ fun HomeScreenContent(
             onDebtClick = onDebtClick,
             onSplitClick = onSplitClick,
             onEventsClick = onEventsClick,
+            visibleTiles = visibleTiles,
             modifier = Modifier.padding(top = dimens.space24),
         )
 
@@ -224,6 +227,7 @@ private fun MonthSpendCard(
     monthDelta: String?,
     showEmptyHint: Boolean,
     showSparkline: Boolean,
+    sparklinePoints: List<Float> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -276,6 +280,7 @@ private fun MonthSpendCard(
                 )
             if (showSparkline) {
                 SpendSparkline(
+                    points = sparklinePoints,
                     modifier = Modifier
                         .width(86.dp)
                         .height(40.dp),
@@ -324,37 +329,35 @@ private fun MonthSpendCard(
 }
 
 @Composable
-private fun SpendSparkline(modifier: Modifier = Modifier) {
+private fun SpendSparkline(points: List<Float>, modifier: Modifier = Modifier) {
     val lineColor = ProExpenseTheme.colors.primary
     androidx.compose.foundation.Canvas(modifier = modifier) {
+        if (points.size < 2) return@Canvas
+        val maxValue = points.max()
+        val minValue = points.min()
+        val range = (maxValue - minValue).coerceAtLeast(1f)
+        val stepX = size.width / (points.size - 1)
+
+        fun pointAt(index: Int): androidx.compose.ui.geometry.Offset {
+            val normalized = (points[index] - minValue) / range
+            return androidx.compose.ui.geometry.Offset(stepX * index, size.height - normalized * size.height)
+        }
+
         val path = Path().apply {
-            moveTo(2f, size.height * 0.72f)
-            cubicTo(
-                size.width * 0.2f,
-                size.height * 0.55f,
-                size.width * 0.35f,
-                size.height * 0.8f,
-                size.width * 0.5f,
-                size.height * 0.45f,
-            )
-            cubicTo(
-                size.width * 0.65f,
-                size.height * 0.2f,
-                size.width * 0.8f,
-                size.height * 0.5f,
-                size.width,
-                size.height * 0.28f,
-            )
+            moveTo(pointAt(0).x, pointAt(0).y)
+            for (index in 1 until points.size) {
+                lineTo(pointAt(index).x, pointAt(index).y)
+            }
         }
         drawPath(
             path = path,
             color = lineColor,
-            style = Stroke(width = 2.5f, cap = StrokeCap.Round),
+            style = Stroke(width = 2.5f, cap = StrokeCap.Round, join = androidx.compose.ui.graphics.StrokeJoin.Round),
         )
         drawCircle(
             color = lineColor,
             radius = 4f,
-            center = androidx.compose.ui.geometry.Offset(size.width, size.height * 0.28f),
+            center = pointAt(points.size - 1),
         )
     }
 }
@@ -367,6 +370,7 @@ private fun HomeQuickAccessSection(
     onDebtClick: () -> Unit,
     onSplitClick: () -> Unit,
     onEventsClick: () -> Unit,
+    visibleTiles: Set<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -399,30 +403,38 @@ private fun HomeQuickAccessSection(
                 .padding(top = dimens.space10),
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_reports),
-                icon = ProIconGlyph.FeatReports,
-                onClick = onReportsClick,
-                modifier = Modifier.weight(1f),
-            )
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_debt),
-                icon = ProIconGlyph.FeatDebt,
-                onClick = onDebtClick,
-                modifier = Modifier.weight(1f),
-            )
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_split),
-                icon = ProIconGlyph.FeatSplit,
-                onClick = onSplitClick,
-                modifier = Modifier.weight(1f),
-            )
-            QuickAccessTile(
-                label = stringResource(R.string.quick_access_events),
-                icon = ProIconGlyph.FeatEvents,
-                onClick = onEventsClick,
-                modifier = Modifier.weight(1f),
-            )
+            if (QuickAccessTileType.Reports in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_reports),
+                    icon = ProIconGlyph.FeatReports,
+                    onClick = onReportsClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            if (QuickAccessTileType.Debt in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_debt),
+                    icon = ProIconGlyph.FeatDebt,
+                    onClick = onDebtClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            if (QuickAccessTileType.Split in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_split),
+                    icon = ProIconGlyph.FeatSplit,
+                    onClick = onSplitClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            if (QuickAccessTileType.Events in visibleTiles) {
+                QuickAccessTile(
+                    label = stringResource(R.string.quick_access_events),
+                    icon = ProIconGlyph.FeatEvents,
+                    onClick = onEventsClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }

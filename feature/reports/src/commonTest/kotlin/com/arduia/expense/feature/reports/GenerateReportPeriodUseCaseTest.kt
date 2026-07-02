@@ -59,17 +59,71 @@ class GenerateReportPeriodUseCaseTest {
 
     @Test
     fun invoke_returnsTopFiveCategoriesSortedDescendingWithFraction() {
-        val records = (1..6).map { i ->
+        val records = (1..5).map { i ->
             record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
         }
 
         val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
 
         assertEquals(5, result.categories.size)
-        assertEquals("cat6", result.categories.first().categoryId)
-        assertEquals("cat2", result.categories.last().categoryId)
+        assertEquals("cat5", result.categories.first().categoryId)
+        assertEquals("cat1", result.categories.last().categoryId)
         val totalCents = result.totalCents
-        assertEquals(600f / totalCents, result.categories.first().fraction)
+        assertEquals(500f / totalCents, result.categories.first().fraction)
+    }
+
+    @Test
+    fun invoke_rollsUpCategoriesBeyondTopFiveIntoOther() {
+        val records = (1..7).map { i ->
+            record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
+        }
+
+        val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
+
+        assertEquals(6, result.categories.size)
+        assertEquals("cat7", result.categories.first().categoryId)
+        val other = result.categories.last()
+        assertEquals(REPORT_OTHER_CATEGORY_ID, other.categoryId)
+        assertTrue(other.isOtherRollup)
+        // cat1 (100) + cat2 (200) roll up into Other.
+        assertEquals(300L, other.amountCents)
+        val totalCents = result.totalCents
+        assertEquals(300f / totalCents, other.fraction)
+    }
+
+    @Test
+    fun invoke_omitsOtherBucketWhenFiveOrFewerCategories() {
+        val records = (1..5).map { i ->
+            record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
+        }
+
+        val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
+
+        assertTrue(result.categories.none { it.isOtherRollup })
+    }
+
+    @Test
+    fun invoke_flagsAllUncategorizedWhenEveryRecordIsUncategorized() {
+        val records = listOf(
+            record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
+            record("r2", "uncategorized", 500, recordedAtEpochMillis = 20),
+        )
+
+        val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
+
+        assertTrue(result.allUncategorized)
+    }
+
+    @Test
+    fun invoke_doesNotFlagAllUncategorizedWhenOnlySomeRecordsAreUncategorized() {
+        val records = listOf(
+            record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
+            record("r2", "food", 500, recordedAtEpochMillis = 20),
+        )
+
+        val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
+
+        assertEquals(false, result.allUncategorized)
     }
 
     @Test

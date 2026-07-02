@@ -12,10 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
@@ -37,6 +42,7 @@ fun SharedCostsHistoryScreen(
     onItemClick: (SharedCostHistoryItemUi) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    onDeleteRequested: (SharedCostHistoryItemUi) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -78,7 +84,7 @@ fun SharedCostsHistoryScreen(
                     Text(
                         text = stringResource(R.string.shared_bill_splitter),
                         style = typography.eyebrow,
-                        color = colors.muted,
+                        color = colors.onSurfaceMuted,
                     )
                 }
                 ProButton(
@@ -105,20 +111,70 @@ fun SharedCostsHistoryScreen(
 
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
                 items.forEach { item ->
-                    SharedCostHistoryRow(
-                        title = item.title,
-                        meta = stringResource(
-                            R.string.shared_history_meta,
-                            item.peopleCount,
-                            item.perPersonLabel,
-                            item.dateLabel,
-                        ),
-                        total = item.totalLabel,
-                        onClick = { onItemClick(item) },
-                    )
+                    SwipeToDeleteRow(onDelete = { onDeleteRequested(item) }) {
+                        SharedCostHistoryRow(
+                            title = item.title,
+                            meta = stringResource(
+                                R.string.shared_history_meta,
+                                item.peopleCount,
+                                item.perPersonLabel,
+                                item.dateLabel,
+                            ),
+                            total = item.totalLabel,
+                            onClick = { onItemClick(item) },
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+/** Swipe-left reveals a delete affordance; releasing past the threshold requests confirmation
+ *  (never dismisses the row outright — [SharedCostsFlow] gates the actual delete behind a dialog). */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SwipeToDeleteRow(
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                onDelete()
+            }
+            false
+        },
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        modifier = modifier,
+        enableDismissFromStartToEnd = false,
+        enableDismissFromEndToStart = true,
+        backgroundContent = {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(ProExpenseTheme.shapes.card)
+                    .background(colors.danger)
+                    .padding(horizontal = dimens.space20),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End,
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.Close,
+                    contentDescription = stringResource(R.string.shared_delete_action),
+                    tint = colors.onPrimaryWarm,
+                    size = dimens.iconInline,
+                )
+            }
+        },
+    ) {
+        content()
     }
 }
 

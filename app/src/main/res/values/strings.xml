@@ -2,9 +2,7 @@
     <string name="app_name">Pro Expense</string>
     <string name="settings">Settings</string>
     <string name="expense_logs">Expense Logs</string>
-    <string name="next">Next</string>
     <string name="start_now">Start Now</string>
-    <string name="skip">Skip</string>
     <string name="record">Record</string>
     <string name="record_description">Easily Manage you Finances by recording incomes and expenses</string>
     <string name="statistics">Statistics</string>
@@ -17,8 +15,6 @@
     <string name="spend">Spend</string>
     <string name="name">Name</string>
     <string name="amount">Amount</string>
-    <string name="save">Save</string>
-    <string name="note">Note</string>
     <string name="update">Update</string>
     <string name="update_data">Update Data</string>
     <string name="expense_entry">Expense Entry</string>
@@ -136,46 +132,12 @@
 
     <!-- First launch / onboarding -->
     <string name="splash_tagline">Your finance notebook</string>
-    <string name="get_started">Get started</string>
-    <string name="back">Back</string>
-    <string name="onboarding_welcome_title">Welcome</string>
-    <string name="onboarding_welcome_subtitle">Your personal finance notebook.</string>
-    <string name="onboarding_quick_log_title">Quick Log</string>
-    <string name="onboarding_quick_log_subtitle">Log expenses in seconds — amount, category, done.</string>
-    <string name="onboarding_shared_costs_title">Shared Costs</string>
-    <string name="onboarding_shared_costs_subtitle">Split bills instantly — total, people, done.</string>
-    <string name="onboarding_event_budget_title">Event Budget</string>
-    <string name="onboarding_event_budget_subtitle">Plan and track any event budget — trips, weddings, parties.</string>
-    <string name="onboarding_journal_title">Journal</string>
-    <string name="onboarding_journal_subtitle">Review your spending like a diary, day by day.</string>
-    <string name="onboarding_get_started_title">You are all set</string>
-    <string name="onboarding_get_started_subtitle">Start logging in seconds. Your notebook stays on your device.</string>
     <string name="journal_empty">No records yet — tap + to log your first expense</string>
     <string name="pin_change_title">Change your PIN</string>
     <string name="shared_history">History</string>
-    <string name="profile_setup_step">PROFILE · %1$d OF %2$d</string>
-    <string name="profile_setup_eyebrow">PROFILE · ALL SET IN ONE STEP</string>
-    <string name="profile_setup_title">Make it yours</string>
-    <string name="profile_setup_description">Your name and home currency together make up your profile — no account, all on your device.</string>
-    <string name="profile_identity_eyebrow">YOUR PROFILE</string>
-    <string name="profile_identity_greeting">Hi, %1$s</string>
-    <string name="profile_identity_greeting_empty">Hi there</string>
-    <string name="profile_identity_tracking">Tracking in %1$s · %2$s</string>
-    <string name="profile_name_label">PROFILE NAME</string>
-    <string name="profile_name_hint">Your name</string>
-    <string name="profile_name_helper">Used on your home screen and CSV exports.</string>
-    <string name="profile_currency_label">HOME CURRENCY</string>
-    <string name="profile_currency_hint">Default for every entry</string>
-    <string name="profile_more_currencies">More currencies</string>
 
     <!-- Quick log / expense entry -->
-    <string name="new_expense">New expense</string>
-    <string name="details">Details</string>
-    <string name="amount_step">Amount</string>
-    <string name="save_expense">Save expense · %1$s</string>
-    <string name="next_with_chevron">Next ></string>
     <string name="clear">Clear</string>
-    <string name="amount_must_be_greater_than_zero">Amount must be greater than $0</string>
 
     <!-- Budget / events -->
     <string name="budget_tracker">BUDGET TRACKER</string>
@@ -200,6 +162,8 @@
     <string name="quick_access_debt">Debt</string>
     <string name="quick_access_split">Split</string>
     <string name="quick_access_events">Events</string>
+    <string name="quick_access_customize_title">Customize quick access</string>
+    <string name="quick_access_customize_hint">Choose which shortcuts to show on Home</string>
     <string name="home_empty_title">No expenses yet</string>
     <string name="home_empty_subtitle">Start by logging your first one — it takes about five seconds.</string>
     <string name="home_log_first_expense">Log your first expense</string>
@@ -243,20 +207,8 @@
     <string name="more_security_sub">PIN, biometrics, and recovery</string>
     <string name="more_import_sub">Restore records from CSV</string>
 
-    <!-- Reports -->
-    <string name="reports_title">Reports</string>
-
-    <!-- Categories -->
-    <string name="categories_title">Categories</string>
-
     <!-- Currency -->
-    <string name="profile_currency_title">Pick your home currency</string>
-    <string name="profile_currency_description">All entries default to this. You can still log in any currency per-expense.</string>
     <string name="currency_setting_title">Home currency</string>
-    <string name="currency_picker_title">All currencies</string>
-    <string name="search_currency_placeholder">Search currency...</string>
-    <string name="start_tracking">Start tracking</string>
-    <string name="continue_label">Continue</string>
 
     <!-- Data -->
     <string name="export_title">Export data</string>
@@ -273,7 +225,6 @@
     <string name="clear_data_confirm_prompt">This cannot be undone. Clear everything?</string>
     <string name="toast_export_success">Export ready — share when you connect storage</string>
     <string name="toast_data_cleared">All records cleared on this device</string>
-    <string name="toast_expense_saved">Expense saved</string>
     <string name="delete_confirm">Delete permanently</string>
 
     <!-- PIN -->
@@ -283,136 +234,28 @@
     <string name="pin_security_title">Security question</string>
     <string name="pin_security_subtitle">Required for PIN recovery if you forget it</string>
     <string name="pin_security_hint">Your answer</string>
-    <string name="security_question_pet">What was your first pet\'s name?</string>
-    <string name="security_question_city">What city were you born in?</string>
-    <string name="security_question_school">What was the name of your first school?</string>
-    <string name="security_question_maiden">What is your mother\'s maiden name?</string>
-    <string name="security_question_nickname">What was your childhood nickname?</string>
     <string name="pin_mismatch">PINs do not match — try again</string>
     <string name="pin_entry_title">Enter PIN</string>
     <string name="pin_entry_subtitle">Unlock Pro Expense</string>
     <string name="pin_wrong">Incorrect PIN</string>
     <string name="pin_lockout">Try again in %1$ds</string>
-    <string name="pin_forgot">Forgot PIN?</string>
     <string name="pin_recovery_title">Answer your security question</string>
 
-    <!-- Events -->
-    <string name="event_create_title">New event</string>
-    <string name="event_name_hint">Event name</string>
-    <string name="event_date_range">Date range</string>
-    <string name="event_budget_amount">Budget amount</string>
-    <string name="event_save">Save event</string>
-    <string name="event_name_required">Event name is required</string>
-    <string name="event_detail_title">Event</string>
-    <string name="event_empty_title">No events yet</string>
-    <string name="event_empty_subtitle">Create a budget for trips, parties, or any occasion.</string>
-    <string name="event_closed_label">Closed</string>
-    <string name="event_spent_of">%1$s of %2$s</string>
-    <string name="event_linked_transactions">Linked transactions</string>
-    <string name="event_edit">Edit</string>
-    <string name="event_close">Close event</string>
-    <string name="event_delete_warning">This event has %1$d linked expenses. Delete anyway?</string>
-    <string name="events_eyebrow">BUDGET TRACKER</string>
-    <string name="events_title">Events</string>
-    <string name="event_new">New event</string>
-    <string name="events_back">Events</string>
-    <string name="event_empty_heading">No active events</string>
-    <string name="event_empty_body">Set a budget for a trip, wedding or party — then tag expenses to track it in real time.</string>
-    <string name="event_create_cta">Create event</string>
-    <string name="event_name_label">EVENT NAME</string>
-    <string name="event_name_placeholder">e.g. Bali Trip</string>
-    <string name="event_dates_label">DATES</string>
-    <string name="event_total_budget_label">TOTAL BUDGET</string>
-    <string name="event_name_counter">%1$d/%2$d</string>
-    <string name="event_name_duplicate">An event with this name already exists</string>
-    <string name="event_budget_positive_error">Budget must be greater than $0</string>
-    <string name="event_currency_usd">USD</string>
-    <string name="event_status_active">ACTIVE</string>
-    <string name="event_status_closed">CLOSED</string>
-    <string name="event_remaining">REMAINING</string>
-    <string name="event_final_remaining">FINAL · REMAINING</string>
-    <string name="event_over_budget_eyebrow">OVER BUDGET</string>
-    <string name="event_spent_label">Spent</string>
-    <string name="event_budget_label">Budget</string>
-    <string name="event_over_budget_by">Over budget by %1$s (%2$d%%)</string>
-    <string name="event_percent_spent">%1$d%% spent</string>
-    <string name="event_daily_pace">%1$s/day pace</string>
-    <string name="event_days_left">%1$d days left</string>
-    <string name="event_linked_expenses_count">LINKED EXPENSES · %1$d</string>
-    <string name="event_add_tagged">Add tagged</string>
-    <string name="event_add_expense">Add expense</string>
-    <string name="event_readonly_notice">Read-only — the 24-hour edit window has passed. No new expenses can be linked.</string>
-    <string name="event_meta_active">%1$s · active</string>
-    <string name="event_meta_archived">%1$s · archived</string>
-    <string name="event_more">More options</string>
-
-    <!-- Debt -->
-    <string name="debt_tracker_title">Debt tracker</string>
-    <string name="debt_lent">Lent</string>
-    <string name="debt_owe">Owe</string>
-    <string name="debt_add">Add record</string>
-    <string name="debt_add_title">New debt record</string>
-    <string name="debt_person_hint">Person name</string>
-    <string name="debt_due_hint">Due date</string>
-    <string name="debt_detail_lent">Lent to %1$s</string>
-    <string name="debt_detail_owe">Owe %1$s</string>
-    <string name="debt_mark_settled">Mark settled</string>
-    <string name="debt_delete_settled">Delete record</string>
-    <string name="debt_settled_label">Settled</string>
-    <string name="debt_empty_title">No debt records yet</string>
-    <string name="debt_empty_subtitle">Track money you lent or owe with a quick record.</string>
-    <string name="debt_due_preview">Due in 30 days</string>
-    <string name="debt_save_anyway">Save anyway</string>
-
     <!-- Shared costs -->
-    <string name="shared_costs_title">Split a bill</string>
     <string name="shared_total_label">Total amount</string>
     <string name="shared_people_label">People</string>
     <string name="shared_calculate">Calculate split</string>
-    <string name="shared_summary_title">Split summary</string>
-    <string name="shared_per_person">Per person</string>
-    <string name="shared_save_split">Save split</string>
     <string name="shared_history_title">Split history</string>
     <string name="shared_history_empty">No saved splits yet</string>
     <string name="shared_people_count">%1$d people</string>
-    <string name="shared_split_even">Even split</string>
-    <string name="shared_split_custom">Custom split</string>
     <string name="shared_person_amount">Person %1$d amount</string>
-    <string name="shared_bill_splitter">BILL SPLITTER</string>
-    <string name="shared_costs_heading">Shared Costs</string>
-    <string name="shared_new_split">+ New split</string>
-    <string name="shared_recent_splits">RECENT SPLITS</string>
-    <string name="shared_total_bill">TOTAL BILL</string>
-    <string name="shared_each_person_pays">EACH PERSON PAYS</string>
-    <string name="shared_summary_meta">%1$s total · split %2$d ways · %3$s</string>
-    <string name="shared_split_mode_equal">equal</string>
-    <string name="shared_switch_to_custom">Switch to custom</string>
-    <string name="shared_switch_to_equal">Switch to equal</string>
-    <string name="shared_custom_split">CUSTOM SPLIT</string>
-    <string name="shared_max_people">Maximum of 20 people reached</string>
-    <string name="shared_total_zero_error">Total amount must be greater than $0</string>
-    <string name="shared_save_split_amount">Save split · %1$s</string>
-    <string name="shared_history_meta">%1$d people · %2$s each · %3$s</string>
-    <string name="shared_uneven_split_prompt">Need an uneven split?</string>
-    <string name="shared_back_more">More</string>
-    <string name="shared_back_split">Split</string>
-    <string name="shared_note_placeholder">Dinner at Nobu</string>
     <string name="date_time_picker_title">Date and time</string>
-    <string name="add_event_tag">Link event or debt</string>
-    <string name="event_tag_format">@%1$s</string>
-    <string name="draft_restore_title">Unfinished expense</string>
-    <string name="draft_restore_body">You had %1$s in progress when the app closed. Continue where you left off, or discard it?</string>
-    <string name="draft_continue">Continue</string>
-    <string name="draft_discard">Discard</string>
-    <string name="note_max_length_error">Note can\'t exceed 200 characters</string>
-    <string name="link_to_title">Link to…</string>
     <string name="link_to_subtitle">Pick one event or one debt — not both. Choosing one greys out the other.</string>
     <string name="link_events_section">EVENTS</string>
     <string name="link_debts_section">DEBTS</string>
     <string name="link_debts_unavailable">· unavailable while an event is selected</string>
     <string name="today_date_sample">Today, May 25</string>
     <string name="time_sample">12:30 PM</string>
-    <string name="pin_biometric_cd">Unlock with biometrics</string>
     <string name="pin_biometric_offer_title">Enable biometrics?</string>
     <string name="pin_biometric_offer_subtitle">Unlock faster with fingerprint or face on this device.</string>
     <string name="pin_biometric_enable">Enable biometrics</string>
@@ -422,173 +265,15 @@
     <string name="security_biometric_enable">Enable biometrics</string>
     <string name="security_biometric_disable">Disable biometrics</string>
 
-    <!-- Debt &amp; Lending -->
-    <string name="debt_title">Debt</string>
-    <string name="debt_back_more">More</string>
-    <string name="debt_detail_back">Debt</string>
-    <string name="debt_tab_lent">I Lent</string>
-    <string name="debt_tab_owe">I Owe</string>
-    <string name="debt_youre_owed">YOU\'RE OWED</string>
-    <string name="debt_you_owe">YOU OWE</string>
-    <string name="debt_section_active">ACTIVE</string>
-    <string name="debt_section_settled">SETTLED</string>
-    <string name="debt_settled_chip">SETTLED</string>
-    <string name="debt_settled_meta">Settled · %1$s</string>
-    <string name="debt_you_lent">YOU LENT</string>
-    <string name="debt_you_owe_caps">YOU OWE</string>
-    <string name="debt_date_recorded">Date recorded</string>
-    <string name="debt_due_date">Due date</string>
-    <string name="debt_status">Status</string>
-    <string name="debt_no_due">No due date</string>
-    <string name="debt_linked_expense">LINKED EXPENSE</string>
-    <string name="debt_reference_only">Reference only</string>
-    <string name="debt_edit">Edit</string>
-    <string name="debt_mark_as_settled">Mark as settled</string>
-    <string name="debt_new_record">New record</string>
-    <string name="debt_person_label">PERSON</string>
-    <string name="debt_amount_label">AMOUNT</string>
-    <string name="debt_date_label">DATE</string>
-    <string name="debt_due_optional">DUE · OPTIONAL</string>
-    <string name="debt_due_none">None</string>
-    <string name="debt_person_placeholder">Name</string>
-    <string name="debt_person_counter">%1$d/%2$d</string>
-    <string name="debt_currency_usd">USD</string>
-    <string name="debt_save_record">Save record</string>
-    <string name="debt_conflict_title">%1$s already has a record</string>
-    <string name="debt_conflict_body">%1$s is on your %2$s list. Do you want to add this %3$s record too?</string>
-    <string name="debt_continue">Continue</string>
-    <string name="debt_cancel">Cancel</string>
-    <string name="debt_delete">Delete</string>
-    <string name="debt_delete_title">Delete this record?</string>
-    <!-- Journal -->
-    <string name="journal_eyebrow">DIARY VIEW</string>    <string name="journal_title">Journal</string>
-    <string name="journal_search_placeholder">Search notes, amount, category…</string>
-    <string name="journal_no_matches_title">No matches</string>
-    <string name="journal_no_matches_body">Nothing found for \"%1$s.\" Try a different keyword, amount, or note.</string>
-    <string name="journal_detail_back">Journal</string>
-    <string name="journal_note_label">NOTE</string>
-    <string name="journal_linked_to_label">LINKED TO</string>
-    <string name="journal_edit_action">Edit</string>
-    <string name="journal_delete_action">Delete</string>
-    <string name="journal_quick_note_title">Quick note</string>
-    <string name="journal_quick_note_placeholder">Add a quick note…</string>
-    <string name="journal_save_note">Save note</string>
-    <string name="journal_action_edit_title">Edit expense</string>
-    <string name="journal_action_edit_subtitle">Opens Add Expense, pre-filled</string>
-    <string name="journal_action_delete_title">Delete expense</string>
-    <string name="journal_action_delete_subtitle">Asks to confirm first</string>
-    <string name="journal_action_cancel">Cancel</string>
-    <string name="journal_delete_title">Delete this expense?</string>
-    <string name="journal_delete_body">This removes the record and updates any linked event or debt.</string>
-
     <!-- More / Settings -->
     <string name="more_eyebrow">SETTINGS &amp; EXTRAS</string>
     <string name="more_title">More</string>
     <string name="more_features">FEATURES</string>
     <string name="more_settings">SETTINGS</string>
-    <string name="more_back">More</string>
-    <string name="more_currency_title">Currency</string>
-    <string name="more_currency_subtitle">Your home currency. Applied to all entries — multi-currency per entry comes later.</string>
-    <string name="more_export_title">Data Export</string>
-    <string name="more_export_heading">Export your data</string>
-    <string name="more_export_subtitle">One zip with a CSV per feature. Everything stays on your device — nothing is uploaded.</string>
-    <string name="more_export_action">Export as ZIP</string>
-    <string name="more_clear_title">Clear Data</string>
-    <string name="more_clear_subtitle">Choose what to wipe. Each clear asks for confirmation and can\'t be undone.</string>
-    <string name="more_clear_action">Clear selected…</string>
-    <string name="more_clear_confirm_title">Clear selected data?</string>
-    <string name="more_clear_confirm_body">This permanently removes the selected records from this device. It can\'t be undone.</string>
-    <string name="more_clear_confirm_action">Clear</string>
-    <string name="more_clear_confirm_cancel">Cancel</string>
-
-    <!-- PIN auth -->
-    <string name="pin_entry_heading">Enter your PIN</string>
-    <string name="pin_entry_helper">6 digits to unlock</string>
-    <string name="pin_entry_wrong">Incorrect PIN, try again</string>
-    <string name="pin_entry_locked_title">App locked</string>
-    <string name="pin_entry_lock_helper">Too many attempts · try again shortly</string>
-    <string name="pin_entry_lock_countdown_helper">Keypad disabled until countdown ends</string>
-    <string name="pin_setup_appbar">PIN authentication</string>
-    <string name="pin_setup_back">Settings</string>
-    <string name="pin_setup_heading">Set up your PIN</string>
-    <string name="pin_setup_subheading">Optional 6-digit lock · fully on-device</string>
-    <string name="pin_setup_toggle_pin">PIN authentication</string>
-    <string name="pin_setup_toggle_biometric">Use Touch ID</string>
-    <string name="pin_setup_requires_pin">Requires PIN</string>
-    <string name="pin_setup_new_label">NEW PIN · 6 DIGITS</string>
-    <string name="pin_setup_confirm_label">CONFIRM PIN</string>
-    <string name="pin_setup_recovery_label">RECOVERY · REQUIRED</string>
-    <string name="pin_setup_recovery_title">Security question</string>
-    <string name="pin_setup_recovery_subtitle">Pick from a list</string>
-    <string name="pin_setup_reveal_cd">Show PIN</string>
-    <string name="pin_setup_save">Save PIN</string>
-    <string name="pin_set_appbar">Set PIN</string>
-    <string name="pin_confirm_heading">Confirm your PIN</string>
-    <string name="pin_mismatch_helper">PINs do not match. Try again.</string>
-    <string name="pin_recovery_appbar">Recovery</string>
-    <string name="pin_security_heading">Set a security question</string>
-    <string name="pin_security_subheading">Required — this is the only way to recover access if you forget your PIN.</string>
-    <string name="pin_security_question_label">QUESTION</string>
-    <string name="pin_security_answer_label">YOUR ANSWER</string>
-    <string name="pin_security_enable">Enable PIN</string>
-    <string name="pin_recover_appbar">Recover PIN</string>
-    <string name="pin_recover_heading">Answer your security question</string>
-    <string name="pin_recover_attempts">%1$d of %2$d attempts used</string>
-    <string name="pin_recover_action">Verify &amp; reset PIN</string>
-
-    <!-- Reports -->
-    <string name="reports_back">More</string>
-    <string name="reports_total_spent">TOTAL SPENT</string>
-    <string name="reports_period_total">%1$s · TOTAL SPENT</string>
-    <string name="reports_daily_avg_prefix">Daily avg</string>
-    <string name="reports_by_category">BY CATEGORY</string>
-    <string name="reports_top_categories">TOP CATEGORIES</string>
-    <string name="reports_uncategorized_label">Uncategorized</string>
-    <string name="reports_uncategorized_tip">Tip: categorize your expenses to unlock a spending breakdown by category.</string>
-    <string name="reports_prev_period">Previous month</string>
-    <string name="reports_next_period">Next month</string>
-    <string name="reports_empty_title">No data yet</string>
-    <string name="reports_empty_subtitle">Log a few expenses and your monthly spending breakdown will appear here.</string>
-    <string name="reports_empty_action">Log your first expense</string>
+    <string name="more_biometric_requires_pin">Please enable PIN first to use biometric authentication.</string>
 
     <!-- Category list -->
-    <string name="categories_back">More</string>
-    <string name="categories_default_label">DEFAULT · ALWAYS FIRST</string>
-    <string name="categories_custom_label">CUSTOM · DRAG TO REORDER</string>
-    <string name="categories_locked_word">locked</string>
-    <string name="categories_locked_pill">LOCKED</string>
-    <plurals name="categories_count">
-        <item quantity="one">%1$d category</item>
-        <item quantity="other">%1$d categories</item>
-    </plurals>
-    <string name="categories_create">Create new category</string>
-    <string name="categories_footer">Order here mirrors chip order in Add Expense</string>
-    <string name="categories_new_title">New category</string>
-    <string name="categories_name_placeholder">Category name</string>
-    <string name="categories_name_counter">%1$d/%2$d</string>
-    <string name="categories_duplicate_error">A category with this name already exists</string>
-    <string name="categories_icon_label">Icon</string>
-    <string name="categories_add">Add category</string>
-    <string name="categories_edit_title">Edit category</string>
-    <string name="categories_save">Save changes</string>
-    <string name="categories_action_edit_title">Edit category</string>
-    <string name="categories_action_edit_subtitle">Rename or change the icon</string>
-    <string name="categories_action_delete_title">Delete category</string>
-    <string name="categories_action_delete_subtitle">Expenses move to Uncategorized</string>
-    <string name="categories_action_cancel">Cancel</string>
-    <string name="categories_delete_title">Delete category?</string>
-    <string name="categories_delete_body">Its expenses will move to Uncategorized. This can\'t be undone.</string>
-    <string name="categories_delete_confirm">Delete</string>
-    <string name="categories_delete_cancel">Cancel</string>
-
-    <string name="debt_delete_body">Removing %1$s\'s settled record can\'t be undone.</string>
     <string name="home_logged_note_fallback">New expense</string>
     <string name="home_today_section">Today</string>
-    <string name="shared_split_default_title">Shared split</string>
-    <string name="shared_split_just_now">Just now</string>
-    <plurals name="debt_active_count">
-        <item quantity="one">%1$d active</item>
-        <item quantity="other">%1$d active</item>
-    </plurals>
 </resources>
 

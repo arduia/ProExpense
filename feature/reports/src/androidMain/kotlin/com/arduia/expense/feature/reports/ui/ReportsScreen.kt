@@ -45,7 +45,9 @@ import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
+import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.reports.ui.preview.previewReportsWithOtherRollup
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -56,11 +58,11 @@ fun ReportsScreen(
     onPrevPeriod: () -> Unit,
     onNextPeriod: () -> Unit,
     modifier: Modifier = Modifier,
+    globalEmpty: Boolean = state.empty,
     onLogFirstExpense: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
 
     Column(
         modifier = modifier
@@ -77,7 +79,12 @@ fun ReportsScreen(
             )
         }
 
-        if (state.empty) {
+        // Global empty (never logged anything, ever) has no periods to switch between, so the
+        // month pill is meaningless here — this is the only case that hides it (US-REP-3 Scenario
+        // 1). A per-period empty month (state.empty while globalEmpty is false, e.g. after
+        // swiping to a month with no spending) must still show the pill/chevrons below, or the
+        // user gets stranded with no way back to a month that has data.
+        if (globalEmpty) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -94,92 +101,139 @@ fun ReportsScreen(
             return@Column
         }
 
-        Column(
+        // The pill is a fixed header, not part of the swipeable body below — it must stay put
+        // while only the content underneath changes, so switching periods never reads like
+        // navigating to a new screen.
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
                 .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space24),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(dimens.space16),
+                .padding(top = dimens.space8),
+            contentAlignment = Alignment.Center,
         ) {
-            if (!state.uncategorized) {
-                ReportsPeriodPill(
-                    label = state.periodLabel,
-                    onPrev = onPrevPeriod,
-                    onNext = onNextPeriod,
-                )
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = stringResource(R.string.reports_total_spent),
-                        style = typography.eyebrow,
-                        color = colors.muted,
-                    )
-                    Text(
-                        text = state.totalLabel,
-                        style = typography.displayAmount,
-                        color = colors.onSurface,
-                        modifier = Modifier.padding(top = dimens.space8),
-                    )
-                    Text(
-                        text = buildAnnotatedString {
-                            append(stringResource(R.string.reports_daily_avg_prefix) + " ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = colors.onSurface)) {
-                                append(state.dailyAvgLabel)
-                            }
-                            append(" · ${state.daysLabel}")
-                        },
-                        style = typography.caption,
-                        color = colors.onSurfaceMuted,
-                        modifier = Modifier.padding(top = dimens.space6),
-                    )
-                }
-            } else {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = stringResource(R.string.reports_period_total, state.periodLabel),
-                        style = typography.eyebrow,
-                        color = colors.muted,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        text = state.totalLabel,
-                        style = typography.summaryAmount,
-                        color = colors.onSurface,
-                        modifier = Modifier.padding(top = dimens.space8),
-                    )
-                }
-            }
-
-            ReportsDonut(
-                categories = state.categories,
-                uncategorized = state.uncategorized,
-                modifier = Modifier.padding(vertical = dimens.space8),
+            ReportsPeriodPill(
+                label = state.periodLabel,
+                onPrev = onPrevPeriod,
+                onNext = onNextPeriod,
             )
+        }
 
-            if (state.uncategorized) {
-                ReportsTipBanner()
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(dimens.space10)) {
-                    Text(
-                        text = stringResource(R.string.reports_top_categories),
-                        style = typography.eyebrow,
-                        color = colors.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(ProExpenseTheme.shapes.card)
-                            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                            .background(colors.surface),
-                    ) {
-                        state.categories.forEachIndexed { index, category ->
-                            if (index > 0) {
-                                Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
-                            }
-                            ReportsRankRow(category = category)
+        ReportsPeriodContent(
+            state = state,
+            onLogFirstExpense = onLogFirstExpense,
+        )
+    }
+}
+
+@Composable
+internal fun ReportsPeriodContent(
+    state: ReportsUiState,
+    onLogFirstExpense: () -> Unit,
+    modifier: Modifier = Modifier,
+    allPeriodsEmpty: Boolean = false,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = dimens.screenPadding)
+            .padding(top = dimens.space16, bottom = dimens.space24),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(dimens.space16),
+    ) {
+        if (state.empty) {
+            // "Swipe/use the arrows" is useless advice when every period in this granularity's
+            // window is empty — nudge toward the granularity toggle instead, since that's the
+            // only control that can actually surface data at that point.
+            EmptyStateContent(
+                title = stringResource(
+                    if (allPeriodsEmpty) R.string.reports_window_empty_title else R.string.reports_period_empty_title,
+                ),
+                subtitle = stringResource(
+                    if (allPeriodsEmpty) R.string.reports_window_empty_subtitle else R.string.reports_period_empty_subtitle,
+                ),
+                actionLabel = stringResource(R.string.reports_period_empty_action),
+                onActionClick = onLogFirstExpense,
+                modifier = Modifier.padding(vertical = dimens.space24),
+            )
+            return@Column
+        }
+
+        if (!state.uncategorized) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(R.string.reports_total_spent),
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceMuted,
+                )
+                Text(
+                    text = state.totalLabel,
+                    style = typography.displayAmount,
+                    color = colors.onSurface,
+                    modifier = Modifier.padding(top = dimens.space8),
+                )
+                Text(
+                    text = buildAnnotatedString {
+                        append(stringResource(R.string.reports_daily_avg_prefix) + " ")
+                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = colors.onSurface)) {
+                            append(state.dailyAvgLabel)
                         }
+                        append(" · ${state.daysLabel}")
+                    },
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                    modifier = Modifier.padding(top = dimens.space6),
+                )
+            }
+        } else {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(R.string.reports_period_total, state.periodLabel),
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceMuted,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = state.totalLabel,
+                    style = typography.summaryAmount,
+                    color = colors.onSurface,
+                    modifier = Modifier.padding(top = dimens.space8),
+                )
+            }
+        }
+
+        ReportsDonut(
+            categories = state.categories,
+            uncategorized = state.uncategorized,
+            modifier = Modifier.padding(vertical = dimens.space8),
+        )
+
+        if (state.uncategorized) {
+            ReportsTipBanner()
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space10)) {
+                Text(
+                    text = stringResource(R.string.reports_top_categories),
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(ProExpenseTheme.shapes.card)
+                        .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                        .background(colors.surface),
+                ) {
+                    state.categories.forEachIndexed { index, category ->
+                        if (index > 0) {
+                            Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
+                        }
+                        ReportsRankRow(category = category)
                     }
                 }
             }
@@ -187,11 +241,18 @@ fun ReportsScreen(
     }
 }
 
+/**
+ * [label]'s period moves further into the past on [onPrev] (earlier) and back toward the
+ * present on [onNext] (later) — standard calendar-navigator direction, independent of how the
+ * underlying period list happens to be ordered.
+ */
 @Composable
-private fun ReportsPeriodPill(
+internal fun ReportsPeriodPill(
     label: String,
     onPrev: () -> Unit,
     onNext: () -> Unit,
+    prevEnabled: Boolean = true,
+    nextEnabled: Boolean = true,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -209,9 +270,9 @@ private fun ReportsPeriodPill(
         ProIcon(
             glyph = ProIconGlyph.Back,
             contentDescription = stringResource(R.string.reports_prev_period),
-            tint = colors.onSurfaceMuted,
+            tint = if (prevEnabled) colors.onSurfaceMuted else colors.muted2,
             size = dimens.iconInline,
-            modifier = Modifier.proIconClickable(onClick = onPrev),
+            modifier = Modifier.proIconClickable(onClick = onPrev, enabled = prevEnabled),
         )
         Text(
             text = label,
@@ -222,9 +283,9 @@ private fun ReportsPeriodPill(
         ProIcon(
             glyph = ProIconGlyph.ChevronRight,
             contentDescription = stringResource(R.string.reports_next_period),
-            tint = colors.onSurfaceMuted,
+            tint = if (nextEnabled) colors.onSurfaceMuted else colors.muted2,
             size = dimens.iconInline,
-            modifier = Modifier.proIconClickable(onClick = onNext),
+            modifier = Modifier.proIconClickable(onClick = onNext, enabled = nextEnabled),
         )
     }
 }
@@ -274,13 +335,13 @@ private fun ReportsDonut(
                 Text(
                     text = stringResource(R.string.reports_uncategorized_label),
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
             } else {
                 Text(
                     text = stringResource(R.string.reports_by_category),
                     style = typography.eyebrow,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
                 Text(
                     text = categories.size.toString(),
@@ -321,7 +382,7 @@ private fun ReportsRankRow(category: ReportsCategoryUi) {
         Text(
             text = category.percentLabel,
             style = typography.monoFigure,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
             modifier = Modifier.padding(end = dimens.space8),
         )
         Text(
@@ -375,6 +436,19 @@ private fun ReportsPreview() {
 }
 
 @Preview(
+    name = "Reports — other rollup",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsOtherRollupPreview() {
+    ProExpenseTheme {
+        ReportsScreen(previewReportsWithOtherRollup, {}, {}, {})
+    }
+}
+
+@Preview(
     name = "Reports — all uncategorized",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
@@ -397,5 +471,24 @@ private fun ReportsUncategorizedPreview() {
 private fun ReportsEmptyPreview() {
     ProExpenseTheme {
         ReportsScreen(previewReportsEmpty, {}, {}, {})
+    }
+}
+
+@Preview(
+    name = "Reports — empty month (pill stays visible)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsPeriodEmptyPreview() {
+    ProExpenseTheme {
+        ReportsScreen(
+            state = previewReportsPeriodEmpty,
+            onBack = {},
+            onPrevPeriod = {},
+            onNextPeriod = {},
+            globalEmpty = false,
+        )
     }
 }

@@ -43,12 +43,13 @@ class SqlDelightFinanceRecordRepository(
             val checksum = integrityVerifier.checksumFor(record)
             val previousLink = queries.selectRecordById(record.id.value).executeAsOneOrNull()
                 ?.let { toRecordLink(it.tag_type, it.tag_id) }
+            val sameCurrency = record.money.currency == record.homeCurrencyMoney.currency
             queries.transaction {
                 queries.insertRecord(
                     id = record.id.value,
                     amount_cents = record.money.amount.valueInCents,
                     currency_code = record.money.currency.code,
-                    home_amount_cents = if (record.homeCurrencyMoney.amount.valueInCents == record.money.amount.valueInCents) null else record.homeCurrencyMoney.amount.valueInCents,
+                    home_amount_cents = if (sameCurrency) null else record.homeCurrencyMoney.amount.valueInCents,
                     category_id = record.categoryId.value,
                     type = record.type.toCode(),
                     note = record.note,
@@ -58,6 +59,7 @@ class SqlDelightFinanceRecordRepository(
                     tag_id = record.link.tagId(),
                     integrity_algo = checksum.algorithm,
                     integrity_hash = checksum.value,
+                    home_currency_code = if (sameCurrency) null else record.homeCurrencyMoney.currency.code,
                 )
                 // The link may have moved from one event to another — recompute both caches from
                 // the source of truth rather than incrementing/decrementing, so a partial failure

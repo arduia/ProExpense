@@ -25,6 +25,7 @@ data class HomeUiState(
     val showEmptyHint: Boolean = true,
     val budgetSummary: HomeBudgetSummaryState? = null,
     val activeEvent: HomeActiveEventState? = null,
+    val sparklinePoints: List<Float> = emptyList(),
 ) {
     val isEmpty: Boolean get() = dayGroups.isEmpty() && showEmptyHint
     val greetingPrefixRes: String get() = if (isEmpty) "welcome" else "hi"
@@ -63,6 +64,7 @@ val previewHomeCasual = HomeUiState(
     monthSpend = "$80.90",
     monthDelta = "-12% from last month",
     showEmptyHint = false,
+    sparklinePoints = listOf(1200f, 800f, 1600f, 900f, 2200f, 1400f, 8090f),
     dayGroups = listOf(
         HomeDayGroup(
             dayTitle = "Today · May 25",
@@ -85,6 +87,7 @@ val previewHomeBudget = HomeUiState(
     monthSpend = "$420.00",
     monthDelta = "-8% from last month",
     showEmptyHint = false,
+    sparklinePoints = previewHomeCasual.sparklinePoints,
     budgetSummary = HomeBudgetSummaryState(
         spentLabel = "$420.00",
         budgetLabel = "of $500.00",
@@ -102,6 +105,7 @@ val previewHomeEvent = HomeUiState(
     monthSpend = "$1,240.00",
     monthDelta = "+5% from last month",
     showEmptyHint = false,
+    sparklinePoints = previewHomeCasual.sparklinePoints,
     activeEvent = HomeActiveEventState(
         eventId = "event_bali",
         title = "Bali Trip",

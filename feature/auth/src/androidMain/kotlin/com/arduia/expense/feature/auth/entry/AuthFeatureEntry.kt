@@ -16,6 +16,15 @@ interface AuthFeatureEntry {
         onUnlocked: () -> Unit,
         modifier: Modifier,
     )
+
+    @Composable
+    fun PinVerifyFlow(
+        headingRes: Int,
+        helperRes: Int,
+        onVerified: () -> Unit,
+        onCancel: () -> Unit,
+        modifier: Modifier,
+    )
 }
 
 internal class AuthFeatureEntryImpl : AuthFeatureEntry {
@@ -27,6 +36,23 @@ internal class AuthFeatureEntryImpl : AuthFeatureEntry {
     @Composable
     override fun PinLockFlow(onUnlocked: () -> Unit, modifier: Modifier) {
         com.arduia.expense.feature.auth.ui.PinLockFlow(onUnlocked = onUnlocked, modifier = modifier)
+    }
+
+    @Composable
+    override fun PinVerifyFlow(
+        headingRes: Int,
+        helperRes: Int,
+        onVerified: () -> Unit,
+        onCancel: () -> Unit,
+        modifier: Modifier,
+    ) {
+        com.arduia.expense.feature.auth.ui.PinVerifyFlow(
+            headingRes = headingRes,
+            helperRes = helperRes,
+            onVerified = onVerified,
+            onCancel = onCancel,
+            modifier = modifier,
+        )
     }
 }
 
