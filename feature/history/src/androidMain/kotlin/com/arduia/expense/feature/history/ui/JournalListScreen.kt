@@ -124,7 +124,7 @@ fun JournalListScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.space6),
                     ) {
                         if (dateRangeLabel != null) {
                             DateRangeChip(

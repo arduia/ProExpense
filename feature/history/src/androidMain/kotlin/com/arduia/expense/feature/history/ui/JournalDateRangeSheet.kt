@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +21,8 @@ import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.proDatePickerColors
+import com.arduia.expense.ui.design.proDatePickerTypography
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -55,14 +58,17 @@ fun JournalDateRangeSheet(
                     .fillMaxWidth()
                     .fillMaxHeight(),
             ) {
-                DateRangePicker(
-                    state = rangeState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    title = null,
-                    headline = null,
-                )
+                MaterialTheme(typography = proDatePickerTypography()) {
+                    DateRangePicker(
+                        state = rangeState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        title = null,
+                        headline = null,
+                        colors = proDatePickerColors(),
+                    )
+                }
 
                 Row(
                     modifier = Modifier
