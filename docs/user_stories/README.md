@@ -44,7 +44,7 @@ grounded in the screen behaviors and edge cases so they are testable.
 | [onboarding](onboarding/user-stories.md) | ONB-1…5 | 01 Splash · 02 Onboarding · 02P Profile Setup | First-launch / setup |
 | [logging](logging/user-stories.md) | LOG-1…7 | 04 Add Expense | Quick Manual Logging |
 | [history](history/user-stories.md) | HIS-1…7 | 05 Journal · 06 Journal Detail | Record History / Financial Journal |
-| [currency](currency/user-stories.md) | CUR-1…3 | 02P Currency picker · 13 More → Currency | Multi-Currency |
+| [currency](currency/user-stories.md) | CUR-1…4 | 02P Currency picker · 13 More → Currency · 04 Add Expense | Multi-Currency |
 | [eventbudget](eventbudget/user-stories.md) | EVT-1…5 | 07 Event Budget · 08 Event Detail | Event Budget |
 | [debt](debt/user-stories.md) | DEBT-1…4 | 09 Debt Tracker | Debt & Lending Tracker |
 | [sharedcost](sharedcost/user-stories.md) | SHC-1…5 | 10 Shared Costs | Shared Costs |

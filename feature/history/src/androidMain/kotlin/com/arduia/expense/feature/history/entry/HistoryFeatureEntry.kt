@@ -23,6 +23,7 @@ import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProTransactionRowModel
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.dayLabel
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.expenseCategoryLabel
@@ -111,20 +112,20 @@ private fun groupByDay(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
-    currencySymbol: String,
+    homeCurrencySymbol: String,
 ): List<JournalDayUi> {
     val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
     return sorted
         .groupBy { dayKey(it.recordedAtEpochMillis) }
         .toSortedMap(compareByDescending { it })
         .map { (key, dayRecords) ->
-            val totalCents = dayRecords.sumOf { it.money.amount.valueInCents }
+            val totalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
             JournalDayUi(
                 id = key,
                 title = dayLabel(dayRecords.first().recordedAtEpochMillis),
-                total = moneyLabel(totalCents, currencySymbol),
+                total = moneyLabel(totalCents, homeCurrencySymbol),
                 rows = dayRecords.map { record ->
-                    record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames, currencySymbol)
+                    record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames)
                 },
             )
         }
@@ -135,13 +136,12 @@ private fun FinanceRecord.toRowModel(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
-    currencySymbol: String,
 ): ProTransactionRowModel = ProTransactionRowModel(
     id = id.value,
     categoryId = categoryId.value,
     note = note?.trim().orEmpty().ifEmpty { noteFallback },
     meta = "${expenseCategoryLabel(categoryId.value)} · ${timeLabel(recordedAtEpochMillis)}",
-    amount = moneyLabel(money.amount.valueInCents, currencySymbol),
+    amount = moneyLabel(money.amount.valueInCents, currencySymbol(money.currency.code)),
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
 )
 

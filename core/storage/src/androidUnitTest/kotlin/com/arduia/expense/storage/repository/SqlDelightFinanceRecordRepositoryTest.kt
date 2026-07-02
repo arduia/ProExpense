@@ -102,6 +102,7 @@ class SqlDelightFinanceRecordRepositoryTest {
             tag_id = stored.tag_id,
             integrity_algo = stored.integrity_algo,
             integrity_hash = stored.integrity_hash,
+            home_currency_code = stored.home_currency_code,
         )
 
         val verified = repo.verifyIntegrity(RecordId("rec-1"))
@@ -170,6 +171,7 @@ class SqlDelightFinanceRecordRepositoryTest {
             tag_id = "x",
             integrity_algo = "SHA-256",
             integrity_hash = "dummy",
+            home_currency_code = null,
         )
 
         val observed = repo.observeAll().first()
@@ -187,6 +189,58 @@ class SqlDelightFinanceRecordRepositoryTest {
 
         val event = database.eventQueries.selectEventById("evt-1").executeAsOne()
         assertEquals(3_000, event.cached_spent_cents)
+    }
+
+    @Test
+    fun upsert_foreignCurrencyRecord_roundTripsHomeCurrencyAndAmount() = runTest {
+        val database = inMemoryDatabase()
+        val repo = repository(database)
+        val foreign = FinanceRecord(
+            id = RecordId("rec-eur"),
+            money = Money(Amount(4_500), CurrencyCode("EUR")),
+            homeCurrencyMoney = Money(Amount(4_860), CurrencyCode("USD")),
+            categoryId = CategoryId("food"),
+            type = RecordType.EXPENSE,
+            note = null,
+            recordedAtEpochMillis = 1_000,
+        )
+
+        repo.upsert(foreign)
+
+        val row = database.financeRecordQueries.selectRecordById("rec-eur").executeAsOne()
+        assertEquals("EUR", row.currency_code)
+        assertEquals(4_500, row.amount_cents)
+        assertEquals("USD", row.home_currency_code)
+        assertEquals(4_860, row.home_amount_cents)
+
+        val reloaded = (repo.getById(RecordId("rec-eur")) as Result.Success).data!!
+        assertEquals(CurrencyCode("EUR"), reloaded.money.currency)
+        assertEquals(CurrencyCode("USD"), reloaded.homeCurrencyMoney.currency)
+        assertEquals(4_860, reloaded.homeCurrencyMoney.amount.valueInCents)
+    }
+
+    @Test
+    fun upsert_linkedToEvent_withForeignCurrency_cachesHomeCurrencyAmount() = runTest {
+        val database = inMemoryDatabase()
+        seedEvent(database, "evt-1")
+        val repo = repository(database)
+        val foreign = FinanceRecord(
+            id = RecordId("rec-eur"),
+            money = Money(Amount(1_000), CurrencyCode("EUR")),
+            homeCurrencyMoney = Money(Amount(1_080), CurrencyCode("USD")),
+            categoryId = CategoryId("food"),
+            type = RecordType.EXPENSE,
+            note = null,
+            recordedAtEpochMillis = 1_000,
+            link = RecordLink.ToEvent(EventId("evt-1")),
+        )
+
+        repo.upsert(foreign)
+
+        // Event's cached spend is in the event's own (home) currency — must sum the converted
+        // amount, not the foreign record's raw cents, or a mixed-currency event misreports spend.
+        val event = database.eventQueries.selectEventById("evt-1").executeAsOne()
+        assertEquals(1_080, event.cached_spent_cents)
     }
 
     @Test

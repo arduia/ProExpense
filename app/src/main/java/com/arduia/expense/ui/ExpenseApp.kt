@@ -207,7 +207,7 @@ fun ExpenseApp(
             activeEvent = activeEventState,
         )
     } else {
-        val totalCents = records.sumOf { it.money.amount.valueInCents }
+        val totalCents = records.sumOf { it.homeCurrencyMoney.amount.valueInCents }
         val totalLabel = homeSymbol + AmountInput.formatDisplay(
             String.format(Locale.US, "%.2f", totalCents / 100.0),
         )
@@ -222,7 +222,7 @@ fun ExpenseApp(
             val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
             val spentThisMonthCents = records
                 .filter { it.recordedAtEpochMillis >= monthStart.timeInMillis && it.recordedAtEpochMillis < monthEnd.timeInMillis }
-                .sumOf { it.money.amount.valueInCents }
+                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
             val budgetCents = budget.amount.valueInCents
             HomeBudgetSummaryState(
                 spentLabel = homeSymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", spentThisMonthCents / 100.0)),
@@ -237,7 +237,7 @@ fun ExpenseApp(
             .groupBy { dayKey(it.recordedAtEpochMillis) }
             .toSortedMap(compareByDescending { it })
             .map { (_, dayRecords) ->
-                val dayTotalCents = dayRecords.sumOf { it.money.amount.valueInCents }
+                val dayTotalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
                 val dayTotalLabel = homeSymbol + AmountInput.formatDisplay(
                     String.format(Locale.US, "%.2f", dayTotalCents / 100.0),
                 )
@@ -250,7 +250,7 @@ fun ExpenseApp(
                             categoryId = record.categoryId.value,
                             note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
                             meta = timeLabel(record.recordedAtEpochMillis),
-                            amount = homeSymbol + AmountInput.formatDisplay(
+                            amount = currencySymbol(record.money.currency.code) + AmountInput.formatDisplay(
                                 String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
                             ),
                             tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),

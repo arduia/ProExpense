@@ -170,7 +170,7 @@ class SqlDelightImportExportRepository(
     }
 
     private fun toCsv(records: List<FinanceRecord>): String {
-        val header = "id,money_cents,money_code,category_id,type,note,recorded_at,link_type,link_id"
+        val header = "id,money_cents,money_code,category_id,type,note,recorded_at,link_type,link_id,home_money_cents,home_money_code"
         val rows = records.map { record ->
             val (linkType, linkId) = extractLinkParts(record.link)
 
@@ -184,6 +184,8 @@ class SqlDelightImportExportRepository(
                 record.recordedAtEpochMillis,
                 linkType,
                 linkId,
+                record.homeCurrencyMoney.amount.valueInCents,
+                record.homeCurrencyMoney.currency.code,
             ).joinToString(",") { "\"$it\"" }
         }
         return (listOf(header) + rows).joinToString("\n")
@@ -194,7 +196,7 @@ class SqlDelightImportExportRepository(
             val linkJson = buildLinkJson(record.link)
             val note = record.note?.let { escapeJsonString(it) } ?: ""
 
-            """{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""
+            """{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"homeMoney":{"cents":${record.homeCurrencyMoney.amount.valueInCents},"code":"${record.homeCurrencyMoney.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""
         }
         return "[" + jsonRecords.joinToString(",") + "]"
     }
@@ -232,11 +234,18 @@ class SqlDelightImportExportRepository(
 
             try {
                 val link = parseLink(fields[7], fields[8])
+                val money = Money(Amount(fields[1].toLong()), CurrencyCode(fields[2]))
+                // Older exports (9 columns) predate multi-currency — home money always equals money.
+                val homeCurrencyMoney = if (fields.size >= 11 && fields[9].isNotEmpty() && fields[10].isNotEmpty()) {
+                    Money(Amount(fields[9].toLong()), CurrencyCode(fields[10]))
+                } else {
+                    money
+                }
                 records.add(
                     FinanceRecord(
                         id = RecordId(fields[0]),
-                        money = Money(Amount(fields[1].toLong()), CurrencyCode(fields[2])),
-                        homeCurrencyMoney = Money(Amount(fields[1].toLong()), CurrencyCode(fields[2])),
+                        money = money,
+                        homeCurrencyMoney = homeCurrencyMoney,
                         categoryId = CategoryId(fields[3]),
                         type = RecordType.valueOf(fields[4]),
                         note = if (fields[5].isEmpty()) null else fields[5],
@@ -296,15 +305,20 @@ class SqlDelightImportExportRepository(
     private fun parseJsonRecord(json: String): FinanceRecord? {
         return try {
             val id = extractJsonString(json, "id") ?: return null
-            val moneyCents = extractJsonNumber(json, "money.*cents") ?: return null
-            val moneyCode = extractJsonString(json, "money.*code") ?: return null
+            val moneyCents = extractNestedNumber(json, "money", "cents") ?: return null
+            val moneyCode = extractNestedString(json, "money", "code") ?: return null
             val categoryId = extractJsonString(json, "categoryId") ?: return null
             val type = extractJsonString(json, "type") ?: return null
             val note = extractJsonString(json, "note")
             val recordedAt = extractJsonNumber(json, "recordedAtEpochMillis") ?: return null
 
-            val linkType = extractJsonString(json, "link.*type") ?: "NONE"
-            val linkId = extractJsonString(json, "link.*id")
+            // Older exports predate multi-currency and never wrote a homeMoney object — home money
+            // then equals money, matching the CSV importer's same fallback.
+            val homeMoneyCents = extractNestedNumber(json, "homeMoney", "cents") ?: moneyCents
+            val homeMoneyCode = extractNestedString(json, "homeMoney", "code") ?: moneyCode
+
+            val linkType = extractNestedString(json, "link", "type") ?: "NONE"
+            val linkId = extractNestedString(json, "link", "id")
             val link = when (linkType) {
                 "EVENT" -> RecordLink.ToEvent(EventId(linkId ?: ""))
                 "DEBT" -> RecordLink.ToDebt(DebtId(linkId ?: ""))
@@ -315,7 +329,7 @@ class SqlDelightImportExportRepository(
             FinanceRecord(
                 id = RecordId(id),
                 money = Money(Amount(moneyCents), CurrencyCode(moneyCode)),
-                homeCurrencyMoney = Money(Amount(moneyCents), CurrencyCode(moneyCode)),
+                homeCurrencyMoney = Money(Amount(homeMoneyCents), CurrencyCode(homeMoneyCode)),
                 categoryId = CategoryId(categoryId),
                 type = RecordType.valueOf(type),
                 note = if (note.isNullOrEmpty()) null else note,
@@ -344,46 +358,59 @@ class SqlDelightImportExportRepository(
         while (i < line.length) {
             val c = line[i]
             when {
-                c == '"' -> {
-                    inQuotes = !inQuotes
+                // A quote's meaning depends on whether we're already inside a quoted field: two
+                // adjacent quotes right after an opening quote is an *empty* field (close
+                // immediately), not an escaped literal quote — that only applies once we're
+                // already inside content. Conflating the two used to corrupt every row containing
+                // an empty field (e.g. no note, no tag — the common case), desyncing every column
+                // after it.
+                inQuotes && c == '"' -> {
                     if (i + 1 < line.length && line[i + 1] == '"') {
                         current.append('"')
                         i++
+                    } else {
+                        inQuotes = false
                     }
                 }
-                c == ',' && !inQuotes -> {
-                    fields.add(current.toString().trim().trim('"'))
+                !inQuotes && c == '"' -> inQuotes = true
+                !inQuotes && c == ',' -> {
+                    fields.add(current.toString().trim())
                     current = StringBuilder()
                 }
                 else -> current.append(c)
             }
             i++
         }
-        if (current.isNotEmpty()) {
-            fields.add(current.toString().trim().trim('"'))
-        }
+        // Always emit the trailing field, even when empty — dropping it silently shifted every
+        // subsequent row's column count whenever the last field (e.g. home_money_code) was blank.
+        fields.add(current.toString().trim())
         return fields
     }
 
     private fun extractJsonString(json: String, key: String): String? {
-        val pattern = if (key.contains(".*")) {
-            key.replace(".*", "[^:]*")
-        } else {
-            "\"$key\""
-        }
-        val regex = Regex("$pattern\\s*:\\s*\"([^\"]*)\"")
+        val regex = Regex("\"$key\"\\s*:\\s*\"([^\"]*)\"")
         return regex.find(json)?.groupValues?.get(1)
     }
 
     private fun extractJsonNumber(json: String, key: String): Long? {
-        val pattern = if (key.contains(".*")) {
-            key.replace(".*", "[^:]*")
-        } else {
-            "\"$key\""
-        }
-        val regex = Regex("$pattern\\s*:\\s*(-?\\d+)")
+        val regex = Regex("\"$key\"\\s*:\\s*(-?\\d+)")
         return regex.find(json)?.groupValues?.get(1)?.toLongOrNull()
     }
+
+    /**
+     * Reads a field from inside a nested `"objectKey":{...}` object rather than the top level —
+     * e.g. `money.cents` in `"money":{"cents":123,"code":"USD"}`. A plain wildcard between the
+     * outer and inner key can't work here since `[^:]*` can never cross the colon that follows
+     * the outer key, so the object's contents are isolated first and searched independently.
+     */
+    private fun extractNestedObject(json: String, objectKey: String): String? =
+        Regex("\"$objectKey\"\\s*:\\s*\\{([^}]*)\\}").find(json)?.groupValues?.get(1)
+
+    private fun extractNestedString(json: String, objectKey: String, fieldKey: String): String? =
+        extractNestedObject(json, objectKey)?.let { extractJsonString(it, fieldKey) }
+
+    private fun extractNestedNumber(json: String, objectKey: String, fieldKey: String): Long? =
+        extractNestedObject(json, objectKey)?.let { extractJsonNumber(it, fieldKey) }
 
     private fun escapeQuotes(str: String): String {
         return str.replace("\"", "\"\"")

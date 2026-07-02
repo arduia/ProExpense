@@ -11,9 +11,12 @@ import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.AddExpenseAmountScreen
 import com.arduia.expense.feature.logging.ui.AddExpenseDetailsScreen
 import com.arduia.expense.feature.logging.ui.ExpenseDraftDialog
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetails
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrency
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrencyNoRate
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLimit
 import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.testing.ScreenshotTests
@@ -86,10 +89,61 @@ class AddExpenseScreenshotTest {
     }
 
     @Test
+    fun add_amount_foreign_currency() {
+        capture {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountForeignCurrency,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
     fun add_details() {
         capture {
             AddExpenseDetailsScreen(
                 state = previewExpenseDetails,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_details_foreign_currency() {
+        capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetailsForeignCurrency,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_details_foreign_currency_no_rate() {
+        capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetailsForeignCurrencyNoRate,
                 onBackToAmount = {},
                 onCategorySelected = {},
                 onNoteChange = {},

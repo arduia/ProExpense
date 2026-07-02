@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 class FinanceRecordMapperTest {
 
     @Test
-    fun toDomain_mapsAllColumns_andUsesRowCurrencyForBothMoneys() {
+    fun toDomain_foreignCurrencyRecord_usesHomeCurrencyColumnForHomeMoney() {
         val row = Finance_record(
             id = "rec-1",
             amount_cents = 12_345,
@@ -30,6 +30,7 @@ class FinanceRecordMapperTest {
             tag_id = null,
             integrity_algo = "SHA-256",
             integrity_hash = "abc123",
+            home_currency_code = "USD",
         )
 
         val record = row.toDomain()
@@ -37,9 +38,8 @@ class FinanceRecordMapperTest {
         assertEquals("rec-1", record.id.value)
         assertEquals(12_345, record.money.amount.valueInCents)
         assertEquals("EUR", record.money.currency.code)
-        // Schema stores a single currency column, so home money reuses it (design §4.3 limitation).
         assertEquals(11_000, record.homeCurrencyMoney.amount.valueInCents)
-        assertEquals("EUR", record.homeCurrencyMoney.currency.code)
+        assertEquals("USD", record.homeCurrencyMoney.currency.code)
         assertEquals("food", record.categoryId.value)
         assertEquals(RecordType.EXPENSE, record.type)
         assertEquals("lunch", record.note)
@@ -47,6 +47,31 @@ class FinanceRecordMapperTest {
         assertEquals(RecordLink.None, record.link)
         assertEquals("SHA-256", record.integrity!!.algorithm)
         assertEquals("abc123", record.integrity!!.value)
+    }
+
+    @Test
+    fun toDomain_sameCurrencyRecord_nullHomeColumnsFallBackToRowCurrency() {
+        val row = Finance_record(
+            id = "rec-2",
+            amount_cents = 5_000,
+            currency_code = "USD",
+            home_amount_cents = null,
+            category_id = "food",
+            type = 0L,
+            note = null,
+            recorded_at = 1_700_000_000_000,
+            updated_at = 1_700_000_000_001,
+            tag_type = null,
+            tag_id = null,
+            integrity_algo = "SHA-256",
+            integrity_hash = "abc123",
+            home_currency_code = null,
+        )
+
+        val record = row.toDomain()
+
+        assertEquals(5_000, record.homeCurrencyMoney.amount.valueInCents)
+        assertEquals("USD", record.homeCurrencyMoney.currency.code)
     }
 
     @Test

@@ -13,6 +13,7 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.data.ExportFormat
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
@@ -95,5 +96,99 @@ class SqlDelightImportExportRepositoryTest {
         assertTrue(files.getValue("events.csv").contains("\"e1\""))
         assertTrue(files.getValue("debts.csv").contains("\"d1\""))
         assertEquals("shared_costs.csv" to "id,title,total_cents,currency_code,participant_count,recorded_at", "shared_costs.csv" to files.getValue("shared_costs.csv").lines().first())
+    }
+
+    private suspend fun seedForeignCurrencyRecord(repo: SqlDelightImportExportRepository, financeRecordRepository: SqlDelightFinanceRecordRepository) {
+        financeRecordRepository.upsert(
+            FinanceRecord(
+                id = RecordId("r-eur"),
+                money = Money(Amount(45_00), CurrencyCode("EUR")),
+                homeCurrencyMoney = Money(Amount(48_60), home),
+                categoryId = CategoryId("food"),
+                type = RecordType.EXPENSE,
+                note = "Dinner in Lisbon",
+                recordedAtEpochMillis = 1_000,
+            ),
+        )
+    }
+
+    @Test
+    fun csvRoundTrip_recordWithNoNoteAndNoTag_parsesWithoutColumnDesync() = runTest {
+        val database = inMemoryDatabase()
+        val financeRecordRepository = SqlDelightFinanceRecordRepository(
+            queries = database.financeRecordQueries,
+            eventQueries = database.eventQueries,
+            dispatcher = Dispatchers.Unconfined,
+        )
+        val repo = importExportRepo(database)
+        // The common case — no note, no @ tag — used to corrupt every column after the first
+        // empty field because the CSV parser couldn't tell an empty quoted field ("") apart from
+        // an escaped literal quote inside content.
+        financeRecordRepository.upsert(
+            FinanceRecord(
+                id = RecordId("r-plain"),
+                money = Money(Amount(12_34), home),
+                homeCurrencyMoney = Money(Amount(12_34), home),
+                categoryId = CategoryId("food"),
+                type = RecordType.EXPENSE,
+                note = null,
+                recordedAtEpochMillis = 1_000,
+            ),
+        )
+
+        val csv = (repo.exportAll(ExportFormat.CSV) as Result.Success).data
+        val previewed = (repo.previewImport(csv, ExportFormat.CSV) as Result.Success).data
+
+        assertEquals(1, previewed.size)
+        val record = previewed.single()
+        assertEquals(1_234, record.money.amount.valueInCents)
+        assertEquals(home, record.money.currency)
+        assertEquals("food", record.categoryId.value)
+        assertEquals(null, record.note)
+    }
+
+    @Test
+    fun csvRoundTrip_foreignCurrencyRecord_preservesHomeCurrencyAmount() = runTest {
+        val database = inMemoryDatabase()
+        val financeRecordRepository = SqlDelightFinanceRecordRepository(
+            queries = database.financeRecordQueries,
+            eventQueries = database.eventQueries,
+            dispatcher = Dispatchers.Unconfined,
+        )
+        val repo = importExportRepo(database)
+        seedForeignCurrencyRecord(repo, financeRecordRepository)
+
+        val csv = (repo.exportAll(ExportFormat.CSV) as Result.Success).data
+        val previewed = (repo.previewImport(csv, ExportFormat.CSV) as Result.Success).data
+
+        assertEquals(1, previewed.size)
+        val record = previewed.single()
+        assertEquals(CurrencyCode("EUR"), record.money.currency)
+        assertEquals(4_500, record.money.amount.valueInCents)
+        assertEquals(home, record.homeCurrencyMoney.currency)
+        assertEquals(4_860, record.homeCurrencyMoney.amount.valueInCents)
+    }
+
+    @Test
+    fun jsonRoundTrip_foreignCurrencyRecord_preservesHomeCurrencyAmount() = runTest {
+        val database = inMemoryDatabase()
+        val financeRecordRepository = SqlDelightFinanceRecordRepository(
+            queries = database.financeRecordQueries,
+            eventQueries = database.eventQueries,
+            dispatcher = Dispatchers.Unconfined,
+        )
+        val repo = importExportRepo(database)
+        seedForeignCurrencyRecord(repo, financeRecordRepository)
+
+        val json = (repo.exportAll(ExportFormat.JSON) as Result.Success).data
+        val previewed = (repo.previewImport(json, ExportFormat.JSON) as Result.Success).data
+
+        assertEquals(1, previewed.size)
+        val record = previewed.single()
+        assertEquals(CurrencyCode("EUR"), record.money.currency)
+        assertEquals(4_500, record.money.amount.valueInCents)
+        assertEquals(home, record.homeCurrencyMoney.currency)
+        assertEquals(4_860, record.homeCurrencyMoney.amount.valueInCents)
+        assertEquals("Dinner in Lisbon", record.note)
     }
 }

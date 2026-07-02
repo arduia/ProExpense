@@ -44,6 +44,7 @@ interface LoggingFeatureEntry {
         initialLinkedEventId: String? = null,
         initialDraftState: ExpenseEntryState? = null,
         homeCurrencySymbol: String = "$",
+        homeCurrencyCode: String = currencyCode,
     )
 
     @Composable
@@ -67,6 +68,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         initialLinkedEventId: String?,
         initialDraftState: ExpenseEntryState?,
         homeCurrencySymbol: String,
+        homeCurrencyCode: String,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
@@ -81,6 +83,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             onDismiss = onDismiss,
             startState = initialDraftState ?: ExpenseEntryState(
                 currencyCode = currencyCode,
+                homeCurrencyCode = homeCurrencyCode,
                 selectedCategoryId = defaultCategoryId,
                 linkedTagId = linkedEvent?.id,
                 linkedTagKind = linkedEvent?.kind,
@@ -93,6 +96,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                     when (viewModel.save(state.toSaveInput())) {
                         is SaveExpenseOutcome.Saved -> onSaved(state.toHandoff())
                         SaveExpenseOutcome.InvalidAmount -> {} // UI already has inline validation
+                        SaveExpenseOutcome.InvalidExchangeRate -> {} // UI blocks Save until the rate is valid
                         is SaveExpenseOutcome.Failed -> {} // Error silently; UI already has toast handling
                     }
                 }
@@ -146,6 +150,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                         when (viewModel.update(state.toSaveInput())) {
                             is SaveExpenseOutcome.Saved -> onSaved()
                             SaveExpenseOutcome.InvalidAmount -> {}
+                            SaveExpenseOutcome.InvalidExchangeRate -> {}
                             is SaveExpenseOutcome.Failed -> {}
                         }
                     }
@@ -222,6 +227,8 @@ private fun ExpenseEntryState.toSaveInput(): SaveExpenseInput = SaveExpenseInput
         TagLinkKind.Debt -> TagOptionKind.DEBT
         null -> null
     },
+    homeCurrencyCode = homeCurrencyCode,
+    exchangeRateRaw = exchangeRateRaw,
 )
 
 object LoggingFeatureUi : LoggingFeatureEntry by LoggingFeatureEntryImpl()
@@ -244,6 +251,15 @@ private fun FinanceRecord.toEntryState(
         is RecordLink.ToDebt -> Triple(current.debtId.value, TagLinkKind.Debt, debtNames[current.debtId.value])
         else -> Triple(null, null, null)
     }
+    val exchangeRateRaw = if (money.currency == homeCurrencyMoney.currency || money.amount.valueInCents == 0L) {
+        "1"
+    } else {
+        String.format(
+            Locale.US,
+            "%.4f",
+            homeCurrencyMoney.amount.valueInCents.toDouble() / money.amount.valueInCents.toDouble(),
+        )
+    }
     return ExpenseEntryState(
         rawAmount = if (money.amount.valueInCents % 100 == 0L) {
             (money.amount.valueInCents / 100).toString()
@@ -259,6 +275,8 @@ private fun FinanceRecord.toEntryState(
         linkedTagKind = tagKind,
         linkedTagLabel = tagLabel,
         currencyCode = money.currency.code,
+        homeCurrencyCode = homeCurrencyMoney.currency.code,
+        exchangeRateRaw = exchangeRateRaw,
     )
 }
 
