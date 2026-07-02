@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.history.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -93,6 +94,13 @@ fun JournalFlow(
         filters = filters,
         searchActive = searchActive,
     )
+
+    BackHandler(enabled = selectedRowId != null) {
+        if (initialSelectedRowId != null && selectedRowId == initialSelectedRowId) {
+            onTabSelected(HomeNavTab.Home)
+        }
+        selectedRowId = null
+    }
 
     Box(
         modifier = modifier

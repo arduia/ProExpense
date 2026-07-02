@@ -251,6 +251,10 @@ fun MoreFlow(
                 )
                 MoreStep.Reports -> features.reports.ReportsFlow(
                     onBack = { step = MoreStep.Hub },
+                    onLogFirstExpense = {
+                        step = MoreStep.Hub
+                        onAddClick()
+                    },
                 )
                 MoreStep.Categories -> features.categories.CategoryListFlow(
                     onBack = { step = MoreStep.Hub },

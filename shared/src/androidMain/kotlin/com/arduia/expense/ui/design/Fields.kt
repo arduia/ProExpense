@@ -49,7 +49,7 @@ fun ProfileNameField(
             .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
             .background(colors.surface)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        textStyle = typography.body.copy(color = colors.onSurface),
+        textStyle = typography.bodyMedium.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
         decorationBox = { inner ->
@@ -95,7 +95,7 @@ fun PasswordField(
             .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.searchField)
             .background(colors.surface)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        textStyle = typography.body.copy(color = colors.onSurface),
+        textStyle = typography.bodyMedium.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

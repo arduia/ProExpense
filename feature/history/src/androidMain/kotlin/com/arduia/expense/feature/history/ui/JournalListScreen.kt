@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material3.Text
@@ -28,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import com.arduia.expense.feature.history.R
 import com.arduia.expense.ui.design.DayHeader
@@ -91,11 +89,24 @@ fun JournalListScreen(
                             color = colors.muted,
                         )
                     }
-                    Text(
-                        text = stringResource(R.string.journal_title),
-                        style = typography.profileScreenTitle,
-                        color = colors.onSurface,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.journal_title),
+                            style = typography.profileScreenTitle,
+                            color = colors.onSurface,
+                        )
+                        ProIcon(
+                            glyph = ProIconGlyph.Calendar,
+                            contentDescription = stringResource(R.string.journal_date_range_cd),
+                            tint = colors.onSurfaceVariant,
+                            size = dimens.iconNav,
+                            modifier = Modifier.proIconClickable(onClick = onDateRangeClick),
+                        )
+                    }
                 }
 
                 SearchField(
@@ -108,24 +119,28 @@ fun JournalListScreen(
                 // The date-range chip stays visible during search — an active range still
                 // constrains results, and hiding it would make "no matches" misleading. Category
                 // chips still hide, since they'd otherwise crowd out the query results list.
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-                ) {
-                    DateRangeChip(
-                        label = dateRangeLabel,
-                        onClick = onDateRangeClick,
-                        onClear = onClearDateRange,
-                    )
-                    if (!state.searchActive) {
-                        state.filters.forEach { filter ->
-                            FilterChip(
-                                label = filter.label,
-                                selected = filter.id == state.selectedFilterId,
-                                onClick = { onFilterSelected(filter.id) },
+                if (dateRangeLabel != null || !state.searchActive) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                    ) {
+                        if (dateRangeLabel != null) {
+                            DateRangeChip(
+                                label = dateRangeLabel,
+                                onClick = onDateRangeClick,
+                                onClear = onClearDateRange,
                             )
+                        }
+                        if (!state.searchActive) {
+                            state.filters.forEach { filter ->
+                                FilterChip(
+                                    label = filter.label,
+                                    selected = filter.id == state.selectedFilterId,
+                                    onClick = { onFilterSelected(filter.id) },
+                                )
+                            }
                         }
                     }
                 }
@@ -191,7 +206,7 @@ fun JournalListScreen(
 
 @Composable
 private fun DateRangeChip(
-    label: String?,
+    label: String,
     onClick: () -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier,
@@ -200,48 +215,29 @@ private fun DateRangeChip(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.chip
-    val contentDescription = stringResource(R.string.journal_date_range_cd)
 
-    if (label == null) {
-        Box(
-            modifier = modifier
-                .size(dimens.space44)
-                .clip(CircleShape)
-                .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
-                .proIconClickable(onClick = onClick),
-            contentAlignment = Alignment.Center,
-        ) {
-            ProIcon(
-                glyph = ProIconGlyph.Calendar,
-                contentDescription = contentDescription,
-                tint = colors.onSurfaceVariant,
-                size = dimens.iconInline,
-            )
-        }
-    } else {
-        Row(
-            modifier = modifier
-                .clip(shape)
-                .background(colors.onSurface)
-                .border(BorderStroke(1.dp, colors.onSurface), shape)
-                .proClickable(onClick = onClick, shape = shape)
-                .padding(start = dimens.space12, end = dimens.space8, top = dimens.space6, bottom = dimens.space6),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimens.space4),
-        ) {
-            Text(
-                text = label,
-                style = typography.chipLabelSelected,
-                color = colors.paper,
-            )
-            ProIcon(
-                glyph = ProIconGlyph.Close,
-                contentDescription = stringResource(R.string.journal_date_range_clear),
-                tint = colors.paper,
-                size = dimens.iconClear,
-                modifier = Modifier.proIconClickable(onClick = onClear),
-            )
-        }
+    Row(
+        modifier = modifier
+            .clip(shape)
+            .background(colors.onSurface)
+            .border(BorderStroke(1.dp, colors.onSurface), shape)
+            .proClickable(onClick = onClick, shape = shape)
+            .padding(start = dimens.space12, end = dimens.space8, top = dimens.space6, bottom = dimens.space6),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space4),
+    ) {
+        Text(
+            text = label,
+            style = typography.chipLabelSelected,
+            color = colors.paper,
+        )
+        ProIcon(
+            glyph = ProIconGlyph.Close,
+            contentDescription = stringResource(R.string.journal_date_range_clear),
+            tint = colors.paper,
+            size = dimens.iconClear,
+            modifier = Modifier.proIconClickable(onClick = onClear),
+        )
     }
 }
 
