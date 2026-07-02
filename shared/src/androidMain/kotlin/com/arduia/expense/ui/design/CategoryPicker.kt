@@ -114,7 +114,7 @@ private fun CategoryPickerSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = title, style = typography.eyebrow, color = colors.muted)
+            Text(text = title, style = typography.eyebrow, color = colors.onSurfaceMuted)
             trailing?.invoke()
         }
         content()

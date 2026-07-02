@@ -233,7 +233,7 @@ fun MoreSettingRow(
                     Text(
                         text = setting.value,
                         style = typography.monoFigure,
-                        color = colors.muted,
+                        color = colors.onSurfaceMuted,
                     )
                 }
                 if (isNav) {

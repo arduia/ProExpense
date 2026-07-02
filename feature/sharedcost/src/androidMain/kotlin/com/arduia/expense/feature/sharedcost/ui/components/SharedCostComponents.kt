@@ -22,7 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +59,7 @@ fun SharedCostPeopleCard(
     val shape = ProExpenseTheme.shapes.card
     val canDecrement = count > min
     val canIncrement = count < max
+    val countDescription = stringResource(R.string.shared_people_count_state, count)
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -76,8 +81,17 @@ fun SharedCostPeopleCard(
                 enabled = canDecrement,
                 onClick = onDecrement,
                 filled = false,
+                contentDescription = stringResource(R.string.shared_remove_person_cd),
             )
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                // Merged so TalkBack reads "N people" as one node, and liveRegion announces the
+                // new count automatically on +/- without the user needing to move focus back here.
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    stateDescription = countDescription
+                    liveRegion = LiveRegionMode.Polite
+                },
+            ) {
                 Text(
                     text = count.toString(),
                     style = typography.displayAmount,
@@ -87,7 +101,7 @@ fun SharedCostPeopleCard(
                 Text(
                     text = stringResource(R.string.shared_people_word),
                     style = typography.eyebrow,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
             }
             SharedCostStepperButton(
@@ -95,13 +109,14 @@ fun SharedCostPeopleCard(
                 enabled = canIncrement,
                 onClick = onIncrement,
                 filled = true,
+                contentDescription = stringResource(R.string.shared_add_person_cd),
             )
         }
         if (maxReachedHint != null && !canIncrement) {
             Text(
                 text = maxReachedHint,
                 style = typography.caption,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
                 textAlign = TextAlign.Center,
             )
         }
@@ -114,6 +129,7 @@ private fun SharedCostStepperButton(
     enabled: Boolean,
     onClick: () -> Unit,
     filled: Boolean,
+    contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -168,7 +184,7 @@ private fun SharedCostStepperButton(
     ) {
         ProIcon(
             glyph = glyph,
-            contentDescription = null,
+            contentDescription = contentDescription,
             tint = tint,
             size = dimens.iconInline,
         )
@@ -304,7 +320,7 @@ fun SharedCostHistoryRow(
             Text(
                 text = meta,
                 style = typography.caption,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = dimens.space2),
@@ -387,7 +403,7 @@ fun SharedCostPerPersonCard(
             Text(
                 text = perPersonEyebrow,
                 style = typography.eyebrow,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
             )
             Text(
                 text = perPersonAmount,

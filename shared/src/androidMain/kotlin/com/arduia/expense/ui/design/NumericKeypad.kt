@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 private val keypadKeys = listOf(
@@ -126,7 +128,7 @@ private fun KeypadKey(
         if (isBackspace) {
             ProIcon(
                 glyph = ProIconGlyph.Backspace,
-                contentDescription = "Backspace",
+                contentDescription = stringResource(R.string.backspace),
                 tint = colors.onSurfaceVariant,
                 size = 18.dp,
             )

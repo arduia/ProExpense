@@ -245,7 +245,7 @@ private fun DebtPersonField(
                 Text(
                     text = counter,
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                     modifier = Modifier.padding(start = dimens.space8),
                 )
             }
@@ -288,7 +288,7 @@ private fun DebtAmountField(
                 Text(
                     text = stringResource(R.string.debt_currency_usd),
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
             }
         },

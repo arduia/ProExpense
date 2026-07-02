@@ -146,7 +146,7 @@ private fun DebtSummaryCard(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
-            Text(text = eyebrow, style = typography.eyebrow, color = colors.muted)
+            Text(text = eyebrow, style = typography.eyebrow, color = colors.onSurfaceMuted)
             Text(
                 text = state.netLabel,
                 style = typography.summaryAmount,
@@ -160,7 +160,7 @@ private fun DebtSummaryCard(
                 state.activeCount,
             ),
             style = typography.caption,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
         )
     }
 }
@@ -247,7 +247,7 @@ private fun DebtRecordRow(
     ) {
         DebtAvatar(
             initial = record.initial,
-            tint = if (record.settled) colors.muted else accent,
+            tint = if (record.settled) colors.onSurfaceMuted else accent,
             background = when {
                 record.settled -> colors.paperAlt
                 side == DebtSide.Lent -> colors.successTint
@@ -269,7 +269,7 @@ private fun DebtRecordRow(
                     meta
                 },
                 style = typography.caption,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = dimens.space2),
@@ -279,7 +279,7 @@ private fun DebtRecordRow(
             Text(
                 text = stringResource(R.string.debt_settled_chip),
                 style = typography.eyebrow,
-                color = colors.muted,
+                color = colors.onSurfaceMuted,
                 modifier = Modifier
                     .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
                     .padding(horizontal = dimens.space10, vertical = dimens.space4),

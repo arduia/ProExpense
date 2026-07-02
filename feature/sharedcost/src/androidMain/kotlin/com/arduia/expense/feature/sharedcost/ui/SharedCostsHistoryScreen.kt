@@ -84,7 +84,7 @@ fun SharedCostsHistoryScreen(
                     Text(
                         text = stringResource(R.string.shared_bill_splitter),
                         style = typography.eyebrow,
-                        color = colors.muted,
+                        color = colors.onSurfaceMuted,
                     )
                 }
                 ProButton(

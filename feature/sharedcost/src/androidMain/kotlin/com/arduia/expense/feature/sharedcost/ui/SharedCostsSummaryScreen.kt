@@ -90,7 +90,7 @@ fun SharedCostsSummaryScreen(
                 modeLabel,
             ),
             style = typography.caption,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
             modifier = Modifier.padding(bottom = dimens.space16),
         )
 
@@ -121,7 +121,7 @@ fun SharedCostsSummaryScreen(
                 Text(
                     text = stringResource(R.string.shared_uneven_split_prompt),
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
                 ProTextAction(
                     text = stringResource(R.string.shared_switch_to_custom),

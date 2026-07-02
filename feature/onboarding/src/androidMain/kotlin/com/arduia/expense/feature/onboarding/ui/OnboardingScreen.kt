@@ -79,7 +79,7 @@ fun OnboardingScreenContent(
                     onClick = onSkip,
                     modifier = Modifier.align(Alignment.CenterEnd),
                     style = typography.navAction,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
             }
         }
@@ -133,12 +133,12 @@ fun OnboardingScreenContent(
                             scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
                         },
                         style = typography.navAction,
-                        color = colors.muted,
+                        color = colors.onSurfaceMuted,
                         leading = {
                             ProIcon(
                                 glyph = ProIconGlyph.Back,
                                 contentDescription = null,
-                                tint = colors.muted,
+                                tint = colors.onSurfaceMuted,
                                 size = dimens.iconInline,
                             )
                         },

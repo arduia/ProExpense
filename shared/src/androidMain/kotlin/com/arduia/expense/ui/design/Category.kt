@@ -72,7 +72,7 @@ fun CategoryChip(
             .clip(chipShape)
             .background(background)
             .border(BorderStroke(dimens.chipBorderWidth, borderColor), chipShape)
-            .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
+            .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
             .padding(start = dimens.space8, top = 7.dp, end = dimens.space12, bottom = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space6),

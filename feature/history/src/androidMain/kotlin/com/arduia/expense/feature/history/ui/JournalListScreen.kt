@@ -95,7 +95,7 @@ fun JournalListScreen(
                         Text(
                             text = stringResource(R.string.journal_eyebrow),
                             style = typography.eyebrow,
-                            color = colors.muted,
+                            color = colors.onSurfaceMuted,
                         )
                     }
                     Row(

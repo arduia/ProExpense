@@ -60,7 +60,7 @@ fun TagPickerContent(
         Text(
             text = stringResource(R.string.link_to_subtitle),
             style = typography.caption,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
         )
         TagPickerSection(
             title = stringResource(R.string.link_events_section),
@@ -103,7 +103,9 @@ private fun TagPickerSection(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val labelColor = if (disabled) colors.onSurfaceMuted else colors.muted
+    // Enabled sections are the ones users read/act on and need full contrast; disabled sections
+    // are already de-emphasized by intent, so the dimmer token is appropriate only there.
+    val labelColor = if (disabled) colors.muted else colors.onSurfaceMuted
 
     Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
         Row(

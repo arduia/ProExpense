@@ -128,6 +128,55 @@ fun Modifier.proRippleClickable(
     onClick = onClick,
 )
 
+/**
+ * [proRippleClickable]'s selected-state counterpart — exposes `selected` to TalkBack via
+ * `Modifier.selectable` instead of a plain click, for single-select groups like filter/category
+ * chips. Deliberately has no size floor: [proSelectable] below adds
+ * `minimumInteractiveComponentSize()`, which inflates compact chips past their siblings (see
+ * retrospective 2026-07-02) — use this bare version for anything already sized by its content.
+ */
+@Composable
+fun Modifier.proSelectableClickable(
+    selected: Boolean,
+    onClick: () -> Unit,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true,
+    role: Role = Role.Tab,
+): Modifier = selectable(
+    selected = selected,
+    onClick = onClick,
+    enabled = enabled,
+    role = role,
+    interactionSource = interactionSource,
+    indication = proBoundedRipple(),
+)
+
+/** [proClickable]'s selected-state counterpart — same press-scale + clip bundle, but selectable. */
+@Composable
+fun Modifier.proSelectableClip(
+    selected: Boolean,
+    onClick: () -> Unit,
+    shape: Shape,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true,
+    role: Role = Role.Tab,
+    scaleOnPress: Boolean = true,
+): Modifier {
+    val motion = ProExpenseTheme.motion
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale = if (scaleOnPress && pressed && enabled) motion.pressedScale else 1f
+    return this
+        .scale(scale)
+        .clip(shape)
+        .proSelectableClickable(
+            selected = selected,
+            onClick = onClick,
+            interactionSource = interactionSource,
+            enabled = enabled,
+            role = role,
+        )
+}
+
 @Composable
 fun Modifier.proCircularRippleClickable(
     onClick: () -> Unit,

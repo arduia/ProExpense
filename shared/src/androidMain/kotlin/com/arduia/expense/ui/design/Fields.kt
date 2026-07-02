@@ -261,7 +261,7 @@ fun FilterChip(
             .clip(chipShape)
             .background(background)
             .border(BorderStroke(1.dp, borderColor), chipShape)
-            .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
+            .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
             .padding(horizontal = dimens.space12, vertical = dimens.space6),
     )
 }

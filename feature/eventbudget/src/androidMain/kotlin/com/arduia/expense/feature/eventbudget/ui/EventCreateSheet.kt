@@ -186,7 +186,7 @@ private fun EventNameField(
                 Text(
                     text = counter,
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                     modifier = Modifier.padding(start = dimens.space8),
                 )
             }
@@ -265,7 +265,7 @@ private fun EventBudgetField(
                 Text(
                     text = stringResource(R.string.event_currency_usd),
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
             }
         },

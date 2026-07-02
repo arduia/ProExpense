@@ -168,7 +168,7 @@ internal fun ReportsPeriodContent(
                 Text(
                     text = stringResource(R.string.reports_total_spent),
                     style = typography.eyebrow,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
                 Text(
                     text = state.totalLabel,
@@ -194,7 +194,7 @@ internal fun ReportsPeriodContent(
                 Text(
                     text = stringResource(R.string.reports_period_total, state.periodLabel),
                     style = typography.eyebrow,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                     textAlign = TextAlign.Center,
                 )
                 Text(
@@ -335,13 +335,13 @@ private fun ReportsDonut(
                 Text(
                     text = stringResource(R.string.reports_uncategorized_label),
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
             } else {
                 Text(
                     text = stringResource(R.string.reports_by_category),
                     style = typography.eyebrow,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                 )
                 Text(
                     text = categories.size.toString(),
@@ -382,7 +382,7 @@ private fun ReportsRankRow(category: ReportsCategoryUi) {
         Text(
             text = category.percentLabel,
             style = typography.monoFigure,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
             modifier = Modifier.padding(end = dimens.space8),
         )
         Text(

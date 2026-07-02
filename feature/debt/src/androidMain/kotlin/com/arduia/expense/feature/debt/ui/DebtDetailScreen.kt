@@ -220,7 +220,7 @@ private fun DebtFieldRow(label: String, value: String) {
         Text(
             text = label,
             style = typography.body,
-            color = colors.muted,
+            color = colors.onSurfaceMuted,
         )
         Text(
             text = value,
@@ -307,7 +307,7 @@ private fun DebtLinkedExpenseSection(state: DebtDetailUiState) {
                 Text(
                     text = stringResource(R.string.debt_reference_only),
                     style = typography.caption,
-                    color = colors.muted,
+                    color = colors.onSurfaceMuted,
                     modifier = Modifier.padding(top = dimens.space2),
                 )
             }
