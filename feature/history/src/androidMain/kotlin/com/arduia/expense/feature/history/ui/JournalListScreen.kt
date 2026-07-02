@@ -109,13 +109,15 @@ fun JournalListScreen(
                             color = colors.onSurface,
                         )
                         // No proIconClickable here — its 48dp minimum-size box reads as
-                        // oversized/misaligned next to a 25dp icon in a tight header row (same
-                        // class of defect as the date-range chip's clear icon).
+                        // oversized/misaligned next to a compact icon in a tight header row (same
+                        // class of defect as the date-range chip's clear icon). iconInline (not
+                        // iconNav) matches the icons.md spec's "list 16-18dp" category — this is
+                        // an inline header affordance, not a full-size bottom-nav icon.
                         ProIcon(
                             glyph = ProIconGlyph.Calendar,
                             contentDescription = stringResource(R.string.journal_date_range_cd),
                             tint = colors.onSurfaceVariant,
-                            size = dimens.iconNav,
+                            size = dimens.iconInline,
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button),

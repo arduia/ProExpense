@@ -1,22 +1,31 @@
 package com.arduia.expense.feature.history.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.history.R
@@ -101,21 +110,44 @@ fun JournalDateRangeSheet(
                     )
                 }
 
-                MaterialTheme(typography = proDatePickerTypography()) {
-                    DateRangePicker(
-                        state = rangeState,
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    MaterialTheme(typography = proDatePickerTypography()) {
+                        DateRangePicker(
+                            state = rangeState,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clipToBounds(),
+                            title = null,
+                            headline = null,
+                            // The text-input mode toggle reserves a header row even with title/headline
+                            // hidden, leaving a large blank gap above the calendar grid. Not needed for
+                            // a simple range filter — presets above already cover the fast path.
+                            showModeToggle = false,
+                            colors = proDatePickerColors(),
+                        )
+                    }
+                    // The month list's next-month preview (e.g. June's "1" badge) scrolls right up
+                    // to the bottom of this tightly-constrained box with near-zero natural gap —
+                    // clipToBounds alone slices straight through that row instead of hiding it, which
+                    // reads as broken. Fade it out instead of cutting it off.
+                    Box(
                         modifier = Modifier
+                            .align(Alignment.BottomCenter)
                             .fillMaxWidth()
-                            .weight(1f),
-                        title = null,
-                        headline = null,
-                        // The text-input mode toggle reserves a header row even with title/headline
-                        // hidden, leaving a large blank gap above the calendar grid. Not needed for
-                        // a simple range filter — presets above already cover the fast path.
-                        showModeToggle = false,
-                        colors = proDatePickerColors(),
+                            .height(dimens.space32)
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color.Transparent, ProExpenseTheme.colors.surface),
+                                ),
+                            ),
                     )
                 }
+
+                HorizontalDivider(color = ProExpenseTheme.colors.lineSoft)
 
                 Text(
                     text = stringResource(R.string.journal_date_range_hint),
@@ -124,7 +156,7 @@ fun JournalDateRangeSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = dimens.screenPadding)
-                        .padding(bottom = dimens.space8),
+                        .padding(top = dimens.space12, bottom = dimens.space8),
                 )
 
                 Row(
