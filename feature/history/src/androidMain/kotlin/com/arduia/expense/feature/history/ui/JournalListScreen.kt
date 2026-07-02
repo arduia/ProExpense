@@ -113,15 +113,26 @@ fun JournalListScreen(
                         // class of defect as the date-range chip's clear icon). iconInline (not
                         // iconNav) matches the icons.md spec's "list 16-18dp" category — this is
                         // an inline header affordance, not a full-size bottom-nav icon.
-                        ProIcon(
-                            glyph = ProIconGlyph.Calendar,
-                            contentDescription = stringResource(R.string.journal_date_range_cd),
-                            tint = colors.onSurfaceVariant,
-                            size = dimens.iconInline,
+                        Box(
+                            // Clip + ripple sit on this outer box, not on the icon itself — the
+                            // calendar glyph's frame corners sit almost exactly at its own bounding
+                            // box edge (bottom corners measure ~12.04 units from center in a 24-unit
+                            // viewBox whose inscribed-circle radius is 12), so clipping the icon
+                            // directly to a same-size CircleShape shaves the corners off. Padding
+                            // before the clip gives the icon room inside the circle instead.
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button),
-                        )
+                                .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button)
+                                .padding(dimens.space4),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            ProIcon(
+                                glyph = ProIconGlyph.Calendar,
+                                contentDescription = stringResource(R.string.journal_date_range_cd),
+                                tint = colors.onSurfaceVariant,
+                                size = dimens.iconInline,
+                            )
+                        }
                     }
                 }
 
