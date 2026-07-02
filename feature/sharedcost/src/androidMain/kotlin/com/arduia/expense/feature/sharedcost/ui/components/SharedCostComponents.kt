@@ -233,7 +233,7 @@ fun SharedCostParticipantRow(
         }
         if (editableAmount) {
             BasicTextField(
-                value = amount.removePrefix("$"),
+                value = amount.dropWhile { !it.isDigit() },
                 onValueChange = onAmountChange,
                 textStyle = typography.listAmount.copy(
                     color = colors.onSurface,
@@ -428,7 +428,7 @@ fun SharedCostCustomSplitCard(
             SharedCostParticipantRow(
                 index = index + 1,
                 name = name,
-                amount = amount.removePrefix("$"),
+                amount = amount.dropWhile { !it.isDigit() },
                 editableAmount = true,
                 onAmountChange = { onShareChange(index, it) },
             )

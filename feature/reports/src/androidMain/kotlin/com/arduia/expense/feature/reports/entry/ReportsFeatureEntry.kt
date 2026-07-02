@@ -36,6 +36,7 @@ interface ReportsFeatureEntry {
         modifier: Modifier = Modifier,
         empty: Boolean = false,
         onLogFirstExpense: () -> Unit = {},
+        homeCurrencySymbol: String = "$",
     )
 }
 
@@ -46,6 +47,7 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         modifier: Modifier,
         empty: Boolean,
         onLogFirstExpense: () -> Unit,
+        homeCurrencySymbol: String,
     ) {
         val financeRecordRepository: FinanceRecordRepository = koinInject()
         val categoryRepository: CategoryRepository = koinInject()
@@ -61,7 +63,7 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
             val now = Calendar.getInstance()
             periods = (0 until REPORT_PERIOD_WINDOW_MONTHS).map { monthsBack ->
                 val month = (now.clone() as Calendar).apply { add(Calendar.MONTH, -monthsBack) }
-                buildPeriodState(generateReportPeriod, records, month, categoryNames, now, otherCategoryLabel)
+                buildPeriodState(generateReportPeriod, records, month, categoryNames, now, otherCategoryLabel, homeCurrencySymbol)
             }
         }
 
@@ -87,6 +89,7 @@ private fun buildPeriodState(
     categoryNames: Map<String, String>,
     now: Calendar,
     otherCategoryLabel: String,
+    currencySymbol: String,
 ): ReportsUiState {
     val start = (month.clone() as Calendar).apply {
         set(Calendar.DAY_OF_MONTH, 1)
@@ -134,20 +137,20 @@ private fun buildPeriodState(
                 categoryNames[breakdown.categoryId] ?: expenseCategoryLabel(breakdown.categoryId)
             },
             percentLabel = "${(breakdown.fraction * 100).roundToInt()}%",
-            amountLabel = moneyLabel(breakdown.amountCents),
+            amountLabel = moneyLabel(breakdown.amountCents, currencySymbol),
             fraction = breakdown.fraction,
         )
     }
 
     return ReportsUiState(
         periodLabel = periodLabel,
-        totalLabel = moneyLabel(result.totalCents),
-        dailyAvgLabel = moneyLabel(result.dailyAvgCents),
+        totalLabel = moneyLabel(result.totalCents, currencySymbol),
+        dailyAvgLabel = moneyLabel(result.dailyAvgCents, currencySymbol),
         daysLabel = "$daysElapsed days in",
         categories = categories,
         uncategorized = result.allUncategorized,
     )
 }
 
-private fun moneyLabel(valueInCents: Long): String =
-    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
+    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

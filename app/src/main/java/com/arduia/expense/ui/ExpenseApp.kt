@@ -43,6 +43,7 @@ import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.dayLabel
 import com.arduia.expense.ui.design.shortDateLabel
@@ -120,6 +121,8 @@ fun ExpenseApp(
     val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
     val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
 
+    val homeSymbol = currencySymbol(homeCurrencyCode)
+
     val activeEvent = remember(events) {
         events.filter { it.status == EventStatus.ACTIVE }.maxByOrNull { it.startEpochMillis }
     }
@@ -139,8 +142,8 @@ fun ExpenseApp(
             } else {
                 "${shortDateLabel(event.startEpochMillis)} — ${shortDateLabel(event.endEpochMillis)}"
             },
-            spentLabel = moneyLabel(progress.spentCents),
-            budgetLabel = "of " + moneyLabel(progress.budgetCents),
+            spentLabel = moneyLabel(progress.spentCents, homeSymbol),
+            budgetLabel = "of " + moneyLabel(progress.budgetCents, homeSymbol),
             progress = progress.progress,
             isOverBudget = progress.isOverBudget,
         )
@@ -205,7 +208,7 @@ fun ExpenseApp(
         )
     } else {
         val totalCents = records.sumOf { it.money.amount.valueInCents }
-        val totalLabel = "$" + AmountInput.formatDisplay(
+        val totalLabel = homeSymbol + AmountInput.formatDisplay(
             String.format(Locale.US, "%.2f", totalCents / 100.0),
         )
         val budgetSummary = monthlyBudget?.let { budget ->
@@ -222,8 +225,8 @@ fun ExpenseApp(
                 .sumOf { it.money.amount.valueInCents }
             val budgetCents = budget.amount.valueInCents
             HomeBudgetSummaryState(
-                spentLabel = "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", spentThisMonthCents / 100.0)),
-                budgetLabel = "of $" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budgetCents / 100.0)),
+                spentLabel = homeSymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", spentThisMonthCents / 100.0)),
+                budgetLabel = "of " + homeSymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budgetCents / 100.0)),
                 progress = if (budgetCents > 0) spentThisMonthCents.toFloat() / budgetCents else 0f,
                 statusLabel = if (spentThisMonthCents > budgetCents) "Over budget" else "On track",
                 isOverBudget = spentThisMonthCents > budgetCents,
@@ -235,7 +238,7 @@ fun ExpenseApp(
             .toSortedMap(compareByDescending { it })
             .map { (_, dayRecords) ->
                 val dayTotalCents = dayRecords.sumOf { it.money.amount.valueInCents }
-                val dayTotalLabel = "$" + AmountInput.formatDisplay(
+                val dayTotalLabel = homeSymbol + AmountInput.formatDisplay(
                     String.format(Locale.US, "%.2f", dayTotalCents / 100.0),
                 )
                 HomeDayGroup(
@@ -247,7 +250,7 @@ fun ExpenseApp(
                             categoryId = record.categoryId.value,
                             note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
                             meta = timeLabel(record.recordedAtEpochMillis),
-                            amount = "$" + AmountInput.formatDisplay(
+                            amount = homeSymbol + AmountInput.formatDisplay(
                                 String.format(Locale.US, "%.2f", record.money.amount.valueInCents / 100.0),
                             ),
                             tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
@@ -335,6 +338,7 @@ fun ExpenseApp(
                         currencyCode = homeCurrencyCode,
                         defaultCategoryId = defaultCategoryId,
                         initialDraftState = pendingDraftState,
+                        homeCurrencySymbol = homeSymbol,
                     )
                 } else if (pinConfigured == true && !unlocked) {
                     features.auth.PinLockFlow(
@@ -352,6 +356,7 @@ fun ExpenseApp(
                                 quickLogLinkedEventId = eventId
                                 showQuickLog = true
                             },
+                            homeCurrencySymbol = homeSymbol,
                         )
                         HomeNavTab.Journal -> features.history.JournalTab(
                             selectedTab = selectedTab,
@@ -359,6 +364,7 @@ fun ExpenseApp(
                             onAddClick = { showQuickLog = true },
                             initialSelectedRowId = homeSelectedRecordId,
                             onEditRecord = { editRecordId = it },
+                            homeCurrencySymbol = homeSymbol,
                         )
                         HomeNavTab.More -> MoreFlow(
                             features = features,
@@ -422,6 +428,7 @@ fun ExpenseApp(
                     currencyCode = homeCurrencyCode,
                     defaultCategoryId = defaultCategoryId,
                     initialLinkedEventId = quickLogLinkedEventId,
+                    homeCurrencySymbol = homeSymbol,
                 )
             }
 
@@ -430,17 +437,19 @@ fun ExpenseApp(
                     recordId = recordId,
                     onDismiss = { editRecordId = null },
                     onSaved = { editRecordId = null },
+                    homeCurrencySymbol = homeSymbol,
                 )
             }
 
             if (showSharedCosts) {
                 features.sharedCost.SharedCostsOverlay(
                     onDismiss = { showSharedCosts = false },
+                    homeCurrencySymbol = homeSymbol,
                 )
             }
 
             if (showDebt) {
-                features.debt.DebtOverlay(onDismiss = { showDebt = false })
+                features.debt.DebtOverlay(onDismiss = { showDebt = false }, homeCurrencySymbol = homeSymbol)
             }
 
             if (showPinSetup) {
@@ -470,6 +479,7 @@ fun ExpenseApp(
                         showReports = false
                         showQuickLog = true
                     },
+                    homeCurrencySymbol = homeSymbol,
                 )
             }
 
@@ -519,5 +529,5 @@ private fun buildMonthLabel(): String {
     return SimpleDateFormat("MMM", Locale.US).format(calendar.time).uppercase()
 }
 
-private fun moneyLabel(valueInCents: Long): String =
-    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
+    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

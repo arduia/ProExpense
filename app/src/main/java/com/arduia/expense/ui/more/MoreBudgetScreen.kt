@@ -23,6 +23,7 @@ import com.arduia.expense.domain.Money
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
@@ -41,7 +42,9 @@ fun MoreBudgetScreen(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    var rawAmount by remember { mutableStateOf(currentAmount?.replace("$", "")?.replace(",", "") ?: "") }
+    var rawAmount by remember {
+        mutableStateOf(currentAmount?.filter { it.isDigit() || it == '.' } ?: "")
+    }
     val displayAmount = AmountInput.formatDisplay(rawAmount.ifEmpty { "0" })
     val canProceed = AmountInput.canProceed(rawAmount)
 
@@ -61,6 +64,7 @@ fun MoreBudgetScreen(
 
         AmountDisplay(
             amountText = displayAmount,
+            currencySymbol = currencySymbol(homeCurrency.code),
             currencyCode = homeCurrency.code,
             isZero = !canProceed,
             showZeroValidation = false,

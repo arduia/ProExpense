@@ -43,6 +43,7 @@ interface LoggingFeatureEntry {
         defaultCategoryId: String = "food",
         initialLinkedEventId: String? = null,
         initialDraftState: ExpenseEntryState? = null,
+        homeCurrencySymbol: String = "$",
     )
 
     @Composable
@@ -51,6 +52,7 @@ interface LoggingFeatureEntry {
         onDismiss: () -> Unit,
         onSaved: () -> Unit,
         modifier: Modifier = Modifier,
+        homeCurrencySymbol: String = "$",
     )
 }
 
@@ -64,14 +66,15 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         defaultCategoryId: String,
         initialLinkedEventId: String?,
         initialDraftState: ExpenseEntryState?,
+        homeCurrencySymbol: String,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val (defaultCategories, customCategories) = rememberCategoryLists()
 
-        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
-        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
         val linkedEvent = initialLinkedEventId?.let { id -> tagEvents.firstOrNull { it.id == id } }
 
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
@@ -84,7 +87,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 linkedTagLabel = linkedEvent?.title,
             ),
             showDraftPrompt = initialDraftState != null,
-            draftAmountLabel = initialDraftState?.let { "$" + AmountInput.formatDisplay(it.rawAmount) },
+            draftAmountLabel = initialDraftState?.let { homeCurrencySymbol + AmountInput.formatDisplay(it.rawAmount) },
             onSaved = { state ->
                 scope.launch {
                     when (viewModel.save(state.toSaveInput())) {
@@ -108,14 +111,15 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onDismiss: () -> Unit,
         onSaved: () -> Unit,
         modifier: Modifier,
+        homeCurrencySymbol: String,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val (defaultCategories, customCategories) = rememberCategoryLists()
 
-        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT)
-        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT)
+        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
+        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
         val eventNames = uiState.tagOptions.filter { it.kind == TagOptionKind.EVENT }
             .associate { it.id to it.eventName.orEmpty() }
         val debtNames = uiState.tagOptions.filter { it.kind == TagOptionKind.DEBT }
@@ -182,7 +186,7 @@ private fun rememberCategoryLists(): Pair<List<Pair<String, String>>, List<Pair<
     return defaultCategories to customCategories
 }
 
-private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind): List<TagLinkOption> =
+private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind, currencySymbol: String): List<TagLinkOption> =
     filter { it.kind == kind }.map { option ->
         when (kind) {
             TagOptionKind.EVENT -> TagLinkOption(
@@ -195,7 +199,7 @@ private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind): List<TagLinkO
             TagOptionKind.DEBT -> TagLinkOption(
                 id = option.id,
                 title = debtLabel(option),
-                subtitle = moneyLabel(option.debtAmountCents ?: 0L),
+                subtitle = moneyLabel(option.debtAmountCents ?: 0L, currencySymbol),
                 kind = TagLinkKind.Debt,
             )
         }
@@ -258,5 +262,5 @@ private fun FinanceRecord.toEntryState(
     )
 }
 
-private fun moneyLabel(valueInCents: Long): String =
-    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
+    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

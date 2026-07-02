@@ -48,7 +48,7 @@ fun SharedCostsSummaryScreen(
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.card
     val perPersonDisplay = state.participants.firstOrNull()?.shareLabel
-        ?.removePrefix("$")
+        ?.dropWhile { !it.isDigit() }
         ?: "0"
     val totalDisplay = AmountInput.formatDisplay(state.rawTotal)
     val modeLabel = when (state.mode) {

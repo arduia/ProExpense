@@ -41,6 +41,7 @@ interface HistoryFeatureEntry {
         initialSelectedRowId: String?,
         onEditRecord: (String) -> Unit,
         modifier: Modifier = Modifier,
+        homeCurrencySymbol: String = "$",
     )
 }
 
@@ -53,6 +54,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         initialSelectedRowId: String?,
         onEditRecord: (String) -> Unit,
         modifier: Modifier,
+        homeCurrencySymbol: String,
     ) {
         val scope = rememberCoroutineScope()
         val financeRecordRepository: FinanceRecordRepository = koinInject()
@@ -78,8 +80,8 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             listOf(JournalFilterUi("all", allFilterLabel)) +
                 categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
         }
-        val days = remember(records, noteFallback, eventNames, debtNames, sharedCostNames) {
-            groupByDay(records, noteFallback, eventNames, debtNames, sharedCostNames)
+        val days = remember(records, noteFallback, eventNames, debtNames, sharedCostNames, homeCurrencySymbol) {
+            groupByDay(records, noteFallback, eventNames, debtNames, sharedCostNames, homeCurrencySymbol)
         }
         JournalFlow(
             selectedTab = selectedTab,
@@ -109,6 +111,7 @@ private fun groupByDay(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
+    currencySymbol: String,
 ): List<JournalDayUi> {
     val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
     return sorted
@@ -119,9 +122,9 @@ private fun groupByDay(
             JournalDayUi(
                 id = key,
                 title = dayLabel(dayRecords.first().recordedAtEpochMillis),
-                total = moneyLabel(totalCents),
+                total = moneyLabel(totalCents, currencySymbol),
                 rows = dayRecords.map { record ->
-                    record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames)
+                    record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames, currencySymbol)
                 },
             )
         }
@@ -132,14 +135,15 @@ private fun FinanceRecord.toRowModel(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
+    currencySymbol: String,
 ): ProTransactionRowModel = ProTransactionRowModel(
     id = id.value,
     categoryId = categoryId.value,
     note = note?.trim().orEmpty().ifEmpty { noteFallback },
     meta = "${expenseCategoryLabel(categoryId.value)} · ${timeLabel(recordedAtEpochMillis)}",
-    amount = moneyLabel(money.amount.valueInCents),
+    amount = moneyLabel(money.amount.valueInCents, currencySymbol),
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
 )
 
-private fun moneyLabel(valueInCents: Long): String =
-    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
+    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

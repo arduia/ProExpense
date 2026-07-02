@@ -31,12 +31,13 @@ interface DebtFeatureEntry {
     fun DebtOverlay(
         onDismiss: () -> Unit,
         modifier: Modifier = Modifier,
+        homeCurrencySymbol: String = "$",
     )
 }
 
 internal class DebtFeatureEntryImpl : DebtFeatureEntry {
     @Composable
-    override fun DebtOverlay(onDismiss: () -> Unit, modifier: Modifier) {
+    override fun DebtOverlay(onDismiss: () -> Unit, modifier: Modifier, homeCurrencySymbol: String) {
         val scope = rememberCoroutineScope()
         val debtRepository: DebtRepository = koinInject()
         val aggregateDebts: AggregateDebtsUseCase = koinInject()
@@ -48,8 +49,8 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
 
         val debts by debtRepository.observeAll().collectAsState(emptyList())
 
-        val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent)
-        val oweState = aggregateDebts(debts, DebtDirection.I_OWE).toUiState(DebtSide.Owe)
+        val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent, homeCurrencySymbol)
+        val oweState = aggregateDebts(debts, DebtDirection.I_OWE).toUiState(DebtSide.Owe, homeCurrencySymbol)
 
         DebtFlow(
             onDismiss = onDismiss,
@@ -85,23 +86,23 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
 
 object DebtFeatureUi : DebtFeatureEntry by DebtFeatureEntryImpl()
 
-private fun DebtAggregate.toUiState(side: DebtSide): DebtListUiState = DebtListUiState(
+private fun DebtAggregate.toUiState(side: DebtSide, currencySymbol: String): DebtListUiState = DebtListUiState(
     side = side,
-    netLabel = moneyLabel(netCents),
+    netLabel = moneyLabel(netCents, currencySymbol),
     activeCount = active.size,
-    active = active.map { it.toRecordUi(settled = false) },
-    settled = settled.map { it.toRecordUi(settled = true) },
+    active = active.map { it.toRecordUi(settled = false, currencySymbol = currencySymbol) },
+    settled = settled.map { it.toRecordUi(settled = true, currencySymbol = currencySymbol) },
 )
 
-private fun Debt.toRecordUi(settled: Boolean): DebtRecordUi = DebtRecordUi(
+private fun Debt.toRecordUi(settled: Boolean, currencySymbol: String): DebtRecordUi = DebtRecordUi(
     id = id.value,
     name = personName,
     dateLabel = dueEpochMillis?.let { shortDateLabel(it) } ?: "No due date",
-    amountLabel = moneyLabel(money.amount.valueInCents),
+    amountLabel = moneyLabel(money.amount.valueInCents, currencySymbol),
     settled = settled,
     amountCents = money.amount.valueInCents,
     dueEpochMillis = dueEpochMillis,
 )
 
-private fun moneyLabel(valueInCents: Long): String =
-    "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
+    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

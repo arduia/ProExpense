@@ -47,6 +47,7 @@ interface EventBudgetFeatureEntry {
         modifier: Modifier = Modifier,
         initialSelectedEventId: String? = null,
         onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
+        homeCurrencySymbol: String = "$",
     )
 }
 
@@ -59,6 +60,7 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         modifier: Modifier,
         initialSelectedEventId: String?,
         onAddTaggedExpense: (eventId: String) -> Unit,
+        homeCurrencySymbol: String,
     ) {
         val scope = rememberCoroutineScope()
         val eventRepository: EventRepository = koinInject()
@@ -97,12 +99,13 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
                 .groupBy { (it.link as RecordLink.ToEvent).eventId.value }
         }
 
-        val cards = events.map { it.toCardState(computeProgress(it, spentByEvent[it.id.value])) }
+        val cards = events.map { it.toCardState(computeProgress(it, spentByEvent[it.id.value]), homeCurrencySymbol) }
         val details = events.associate { event ->
             event.id.value to event.toDetailState(
                 progress = computeProgress(event, spentByEvent[event.id.value]),
                 linkedRecords = linkedByEvent[event.id.value].orEmpty(),
                 categoryNames = categoryNames,
+                currencySymbol = homeCurrencySymbol,
             )
         }
 
@@ -155,13 +158,16 @@ private fun Event.toEditFormState(): EventCreateFormState =
         endEpochMillis = endEpochMillis,
     )
 
-private fun Event.toCardState(progress: com.arduia.expense.feature.eventbudget.EventProgress): EventBudgetCardState =
+private fun Event.toCardState(
+    progress: com.arduia.expense.feature.eventbudget.EventProgress,
+    currencySymbol: String,
+): EventBudgetCardState =
     EventBudgetCardState(
         id = id.value,
         title = name,
         dateRange = dateRangeLabel(),
-        spentLabel = moneyLabel(progress.spentCents),
-        budgetLabel = "of " + moneyLabel(progress.budgetCents),
+        spentLabel = moneyLabel(progress.spentCents, currencySymbol),
+        budgetLabel = "of " + moneyLabel(progress.budgetCents, currencySymbol),
         progress = progress.progress,
         isOverBudget = progress.isOverBudget,
     )
@@ -170,6 +176,7 @@ private fun Event.toDetailState(
     progress: com.arduia.expense.feature.eventbudget.EventProgress,
     linkedRecords: List<FinanceRecord>,
     categoryNames: Map<String, String>,
+    currencySymbol: String,
 ): EventDetailUiState {
     val linkedExpenses = linkedRecords
         .sortedByDescending { it.recordedAtEpochMillis }
@@ -181,7 +188,7 @@ private fun Event.toDetailState(
                 },
                 categoryId = record.categoryId.value,
                 categoryLabel = categoryNames[record.categoryId.value] ?: expenseCategoryLabel(record.categoryId.value),
-                amountLabel = moneyLabel(record.money.amount.valueInCents),
+                amountLabel = moneyLabel(record.money.amount.valueInCents, currencySymbol),
             )
         }
     return EventDetailUiState(
@@ -191,9 +198,9 @@ private fun Event.toDetailState(
         statusEyebrow = status.name,
         summary = EventBudgetSummaryState(
             eyebrow = if (progress.remainingCents < 0) "OVER BUDGET" else "REMAINING",
-            remainingLabel = moneyLabel(progress.remainingCents),
-            spentLabel = moneyLabel(progress.spentCents),
-            budgetLabel = moneyLabel(progress.budgetCents),
+            remainingLabel = moneyLabel(progress.remainingCents, currencySymbol),
+            spentLabel = moneyLabel(progress.spentCents, currencySymbol),
+            budgetLabel = moneyLabel(progress.budgetCents, currencySymbol),
             spentCaption = "Spent",
             budgetCaption = "Budget",
             progress = progress.progress,
@@ -206,9 +213,9 @@ private fun Event.toDetailState(
     )
 }
 
-private fun moneyLabel(valueInCents: Long): String {
+private fun moneyLabel(valueInCents: Long, currencySymbol: String): String {
     val sign = if (valueInCents < 0) "-" else ""
-    return sign + "$" + AmountInput.formatDisplay(
+    return sign + currencySymbol + AmountInput.formatDisplay(
         String.format(Locale.US, "%.2f", abs(valueInCents) / 100.0),
     )
 }

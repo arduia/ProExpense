@@ -35,6 +35,7 @@ import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProToastHost
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
@@ -124,7 +125,8 @@ fun MoreFlow(
         when (val result = budgetRepository.getMonthlyBudget()) {
             is Result.Success -> {
                 result.data?.let { budget ->
-                    monthlyBudgetLabel = "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budget.amount.valueInCents / 100.0))
+                    monthlyBudgetLabel = currencySymbol(homeCurrencyCode.code) +
+                        AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budget.amount.valueInCents / 100.0))
                 } ?: run {
                     monthlyBudgetLabel = "Off"
                 }
@@ -271,7 +273,8 @@ fun MoreFlow(
                         scope.launch {
                             budgetRepository.setMonthlyBudget(money)
                             monthlyBudgetLabel = if (money != null) {
-                                "$" + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0))
+                                currencySymbol(homeCurrencyCode.code) +
+                                    AmountInput.formatDisplay(String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0))
                             } else {
                                 "Off"
                             }

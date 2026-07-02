@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.arduia.expense.shared.CurrencyCatalog
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 data class CurrencyOption(
@@ -20,15 +21,7 @@ data class CurrencyOption(
     val label: String,
 )
 
-val defaultCurrencyOptions = listOf(
-    CurrencyOption("USD", "US Dollar"),
-    CurrencyOption("EUR", "Euro"),
-    CurrencyOption("GBP", "British Pound"),
-    CurrencyOption("JPY", "Japanese Yen"),
-    CurrencyOption("INR", "Indian Rupee"),
-    CurrencyOption("AED", "UAE Dirham"),
-    CurrencyOption("MMK", "Myanmar Kyat"),
-)
+val defaultCurrencyOptions = CurrencyCatalog.ALL.map { CurrencyOption(it.code, it.name) }
 
 @Composable
 fun CurrencyPickerContent(
