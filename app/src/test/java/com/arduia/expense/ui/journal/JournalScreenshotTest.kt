@@ -16,6 +16,7 @@ import com.arduia.expense.feature.history.ui.JournalListScreen
 import com.arduia.expense.feature.history.ui.JournalQuickNoteSheetContent
 import com.arduia.expense.feature.history.R
 import com.arduia.expense.feature.history.ui.preview.previewJournalDetail
+import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
 import com.arduia.expense.feature.history.ui.preview.previewJournalQuickNote
 import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
@@ -78,6 +79,37 @@ class JournalScreenshotTest {
     fun journal_list_date_range_active() = capture {
         JournalListScreen(
             state = previewJournalList,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+            dateRangeLabel = "May 1 – May 15",
+        )
+    }
+
+    @Test
+    fun journal_empty() = capture {
+        JournalListScreen(
+            state = previewJournalEmpty,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+
+    @Test
+    fun edge_filtered_empty() = capture {
+        // Zero results from an active date-range filter must not read as "no records ever" —
+        // it needs its own copy and a way to clear the filter, not the first-run empty state.
+        JournalListScreen(
+            state = previewJournalEmpty,
             onQueryChange = {},
             onFilterSelected = {},
             onRowClick = {},

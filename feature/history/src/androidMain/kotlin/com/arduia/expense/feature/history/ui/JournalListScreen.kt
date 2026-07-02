@@ -30,9 +30,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.draw.clip
 import com.arduia.expense.feature.history.R
 import com.arduia.expense.ui.design.DayHeader
+import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.FilterChip
 import com.arduia.expense.ui.design.HomeBottomNav
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTransactionRowModel
@@ -41,6 +45,7 @@ import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
+import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
 import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
 import com.arduia.expense.ui.theme.ProArtboard
@@ -146,9 +151,30 @@ fun JournalListScreen(
                 }
             }
 
+            val hasActiveFilter = dateRangeLabel != null || state.selectedFilterId != "all"
             if (state.searchActive && state.days.isEmpty()) {
                 JournalNoResults(
                     query = state.query,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                )
+            } else if (!state.searchActive && state.days.isEmpty() && hasActiveFilter) {
+                JournalFilteredEmpty(
+                    onClearFilter = {
+                        onClearDateRange()
+                        onFilterSelected("all")
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                )
+            } else if (!state.searchActive && state.days.isEmpty()) {
+                EmptyStateContent(
+                    title = stringResource(R.string.journal_empty_title),
+                    subtitle = stringResource(R.string.journal_empty_body),
+                    actionLabel = stringResource(R.string.journal_empty_action),
+                    onActionClick = onAddClick,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth(),
@@ -237,6 +263,53 @@ private fun DateRangeChip(
             tint = colors.paper,
             size = dimens.iconClear,
             modifier = Modifier.proIconClickable(onClick = onClear),
+        )
+    }
+}
+
+@Composable
+private fun JournalFilteredEmpty(
+    onClearFilter: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val titleStyle = typography.bodySemiBold.copy(
+        fontSize = typography.sectionHead.fontSize,
+        lineHeight = typography.sectionHead.lineHeight,
+    )
+
+    Column(
+        modifier = modifier.padding(horizontal = dimens.space32),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        ProIcon(
+            glyph = ProIconGlyph.Calendar,
+            contentDescription = null,
+            tint = colors.muted2,
+            size = dimens.space32,
+        )
+        Text(
+            text = stringResource(R.string.journal_filtered_empty_title),
+            style = titleStyle,
+            color = colors.onSurface,
+            modifier = Modifier.padding(top = dimens.space18),
+        )
+        Text(
+            text = stringResource(R.string.journal_filtered_empty_body),
+            style = typography.body,
+            color = colors.onSurfaceMuted,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = dimens.space8),
+        )
+        ProButton(
+            text = stringResource(R.string.journal_filtered_empty_action),
+            onClick = onClearFilter,
+            variant = ProButtonVariant.Secondary,
+            size = ProButtonSize.Md,
+            modifier = Modifier.padding(top = dimens.space20),
         )
     }
 }
@@ -336,6 +409,51 @@ private fun JournalListDateRangeActivePreview() {
     ProExpenseTheme {
         JournalListScreen(
             state = previewJournalList,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+            dateRangeLabel = "May 1 – May 15",
+        )
+    }
+}
+
+@Preview(
+    name = "Journal — empty",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalListEmptyPreview() {
+    ProExpenseTheme {
+        JournalListScreen(
+            state = previewJournalEmpty,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Journal — filtered empty",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalListFilteredEmptyPreview() {
+    ProExpenseTheme {
+        JournalListScreen(
+            state = previewJournalEmpty,
             onQueryChange = {},
             onFilterSelected = {},
             onRowClick = {},

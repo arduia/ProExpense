@@ -33,6 +33,7 @@ import com.arduia.expense.ui.design.UtcTimeZone
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.design.shortDateLabel
+import com.arduia.expense.ui.design.yearOf
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -73,7 +74,14 @@ fun JournalFlow(
     // DateRangePickerState reports UTC-midnight millis, not device-local instants — must be
     // read back with the same UTC calendar or the label/filter drift by a day off UTC.
     val dateRangeLabel = if (dateRangeStart != null && dateRangeEnd != null) {
-        "${shortDateLabel(dateRangeStart!!, UtcTimeZone)} – ${shortDateLabel(dateRangeEnd!!, UtcTimeZone)}"
+        // Omitting the year is ambiguous once the range isn't entirely within the current
+        // year (a past year, or one that crosses a year boundary) — show it on both ends
+        // whenever that's the case so "Dec 20 – Jan 5" can't be misread as backwards.
+        val currentYear = yearOf(System.currentTimeMillis(), UtcTimeZone)
+        val startYear = yearOf(dateRangeStart!!, UtcTimeZone)
+        val endYear = yearOf(dateRangeEnd!!, UtcTimeZone)
+        val withYear = startYear != currentYear || endYear != currentYear
+        "${shortDateLabel(dateRangeStart!!, UtcTimeZone, withYear)} – ${shortDateLabel(dateRangeEnd!!, UtcTimeZone, withYear)}"
     } else {
         null
     }

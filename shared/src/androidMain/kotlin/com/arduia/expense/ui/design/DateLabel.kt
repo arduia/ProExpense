@@ -25,9 +25,14 @@ fun dayLabel(epochMillis: Long, now: Long = System.currentTimeMillis()): String 
     return SimpleDateFormat("EEE · MMM d", Locale.US).format(target.time)
 }
 
-fun shortDateLabel(epochMillis: Long, timeZone: TimeZone = TimeZone.getDefault()): String =
-    SimpleDateFormat("MMM d", Locale.US).apply { this.timeZone = timeZone }
+fun shortDateLabel(epochMillis: Long, timeZone: TimeZone = TimeZone.getDefault(), withYear: Boolean = false): String {
+    val pattern = if (withYear) "MMM d, yyyy" else "MMM d"
+    return SimpleDateFormat(pattern, Locale.US).apply { this.timeZone = timeZone }
         .format(Calendar.getInstance(timeZone).apply { timeInMillis = epochMillis }.time)
+}
+
+fun yearOf(epochMillis: Long, timeZone: TimeZone = TimeZone.getDefault()): Int =
+    Calendar.getInstance(timeZone).apply { timeInMillis = epochMillis }.get(Calendar.YEAR)
 
 fun timeLabel(epochMillis: Long): String =
     SimpleDateFormat("h:mm a", Locale.US).format(Calendar.getInstance().apply { timeInMillis = epochMillis }.time)

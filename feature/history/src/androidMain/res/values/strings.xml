@@ -26,4 +26,14 @@
     <string name="journal_date_range_clear">Clear</string>
     <string name="journal_date_range_apply">Apply</string>
     <string name="journal_date_range_cd">Filter by date range</string>
+    <string name="journal_date_range_preset_today">Today</string>
+    <string name="journal_date_range_preset_week">This week</string>
+    <string name="journal_date_range_preset_month">This month</string>
+    <string name="journal_date_range_hint">Tip: tap a date twice to filter a single day</string>
+    <string name="journal_empty_title">No expenses yet</string>
+    <string name="journal_empty_body">Log a few expenses and they\'ll show up here.</string>
+    <string name="journal_empty_action">Log an expense</string>
+    <string name="journal_filtered_empty_title">No expenses match this filter</string>
+    <string name="journal_filtered_empty_body">Try a different date range or category, or clear the filter.</string>
+    <string name="journal_filtered_empty_action">Clear filter</string>
 </resources>
