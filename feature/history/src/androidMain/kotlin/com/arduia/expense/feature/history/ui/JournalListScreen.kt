@@ -27,7 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import com.arduia.expense.feature.history.R
 import com.arduia.expense.ui.design.DayHeader
 import com.arduia.expense.ui.design.EmptyStateContent
@@ -42,6 +44,7 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.design.TransactionRow
+import com.arduia.expense.ui.design.proCircularRippleClickable
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
@@ -257,12 +260,17 @@ private fun DateRangeChip(
             style = typography.chipLabelSelected,
             color = colors.paper,
         )
+        // No proIconClickable here — its 48dp minimum-size box would double the chip's height
+        // relative to the FilterChips beside it. The X is a secondary micro-target inside an
+        // already-tappable chip, so an unbounded ripple without size inflation is enough.
         ProIcon(
             glyph = ProIconGlyph.Close,
             contentDescription = stringResource(R.string.journal_date_range_clear),
             tint = colors.paper,
             size = dimens.iconClear,
-            modifier = Modifier.proIconClickable(onClick = onClear),
+            modifier = Modifier
+                .clip(CircleShape)
+                .proCircularRippleClickable(onClick = onClear, role = Role.Button),
         )
     }
 }
