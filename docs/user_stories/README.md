@@ -49,7 +49,7 @@ grounded in the screen behaviors and edge cases so they are testable.
 | [debt](debt/user-stories.md) | DEBT-1…4 | 09 Debt Tracker | Debt & Lending Tracker |
 | [sharedcost](sharedcost/user-stories.md) | SHC-1…5 | 10 Shared Costs | Shared Costs |
 | [categories](categories/user-stories.md) | CAT-1…3 | 11 Category List | Category Management |
-| [reports](reports/user-stories.md) | REP-1…3 | 12 Reports | Record History → Summary |
+| [reports](reports/user-stories.md) | REP-1…4 | 12 Reports | Record History → Summary |
 | [auth](auth/user-stories.md) | AUTH-1…8 | 14 PIN Setup · 15 PIN Entry | Auth Setup (PIN) |
 | [importexport](importexport/user-stories.md) | IE-1…2 | 13 More → Data export | Secure Import & Export |
 | [app-shell](app-shell/user-stories.md) | HOME-1…4 · MORE-1…4 | 03 Home · 13 More | Central hub / Foundation |
@@ -68,7 +68,7 @@ grounded in the screen behaviors and edge cases so they are testable.
 | debt | DEBT-1…4 | — | 4 |
 | sharedcost | SHC-1…5 | 5 | — |
 | categories | CAT-1…3 | 3 | — |
-| reports | REP-1…3 | 3 | — |
+| reports | REP-1…4 | 4 | — |
 | auth | AUTH-1…8 | 7 | 1 |
 | importexport | IE-1…2 | 2 | (encryption planned) |
 | app-shell / settings | HOME-1…4, MORE-1…4 | 7 | 1 |

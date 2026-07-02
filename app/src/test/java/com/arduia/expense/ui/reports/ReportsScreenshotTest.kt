@@ -8,12 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.reports.ui.ReportsFlow
 import com.arduia.expense.feature.reports.ui.ReportsScreen
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.reports.ui.preview.previewReportsWeekly
 import com.arduia.expense.feature.reports.ui.preview.previewReportsWithOtherRollup
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -81,6 +83,20 @@ class ReportsScreenshotTest {
             onPrevPeriod = {},
             onNextPeriod = {},
             globalEmpty = false,
+        )
+    }
+
+    @Test
+    fun reports_flow_monthly() = capture {
+        ReportsFlow(onBack = {})
+    }
+
+    @Test
+    fun reports_flow_weekly() = capture {
+        ReportsFlow(
+            onBack = {},
+            periods = listOf(previewReportsWeekly),
+            granularityIndex = 1,
         )
     }
 }

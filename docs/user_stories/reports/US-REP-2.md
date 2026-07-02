@@ -29,12 +29,12 @@ interaction feels as fast as the rest of the app.
 
 **In Scope**
 
-* Monthly period selector (monthly granularity only in MVP).
-* Swipe left/right to move between months.
+* Monthly period selector.
+* Swipe left/right to move between periods.
 
 **Out of Scope**
 
-* Weekly/yearly granularity — not in MVP scope.
+* Weekly granularity — covered by [US-REP-4](US-REP-4.md). Yearly granularity is still out of scope.
 
 ---
 
@@ -116,4 +116,8 @@ interaction feels as fast as the rest of the app.
 
 ## Notes
 
-None.
+* **Gap fix (2026-07):** "Out of Scope" previously said weekly/yearly granularity was not in MVP
+  scope at all; weekly granularity is now implemented (see [US-REP-4](US-REP-4.md)) so the language
+  here was updated to reflect that the period selector is no longer month-only — swipe/chevron
+  navigation works identically regardless of which granularity is active. Yearly granularity
+  remains out of scope.

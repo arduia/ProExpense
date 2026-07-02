@@ -23,8 +23,10 @@ import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.reports.ui.preview.previewReportsWeekly
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -42,6 +44,8 @@ fun ReportsFlow(
     initialPage: Int = 0,
     empty: Boolean = false,
     onLogFirstExpense: () -> Unit = {},
+    granularityIndex: Int = 0,
+    onGranularityChange: (Int) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -95,6 +99,19 @@ fun ReportsFlow(
             }
             return@Column
         }
+
+        SegmentedToggle(
+            options = listOf(
+                stringResource(R.string.reports_granularity_month),
+                stringResource(R.string.reports_granularity_week),
+            ),
+            selectedIndex = granularityIndex,
+            onSelected = onGranularityChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.screenPadding)
+                .padding(top = dimens.space8),
+        )
 
         val currentPeriod = periods[pagerState.currentPage % periods.size]
         Box(
@@ -154,5 +171,22 @@ private fun ReportsFlowPreview() {
 private fun ReportsFlowEmptyPreview() {
     ProExpenseTheme {
         ReportsFlow(onBack = {}, empty = true)
+    }
+}
+
+@Preview(
+    name = "Reports flow — weekly",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsFlowWeeklyPreview() {
+    ProExpenseTheme {
+        ReportsFlow(
+            onBack = {},
+            periods = listOf(previewReportsWeekly),
+            granularityIndex = 1,
+        )
     }
 }
