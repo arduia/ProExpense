@@ -18,8 +18,14 @@
 <string name="reports_period_empty_title">No expenses this period</string>
 <string name="reports_period_empty_subtitle">Swipe or use the arrows above to view another period.</string>
 <string name="reports_period_empty_action">Log an expense</string>
+<string name="reports_window_empty_title">No expenses in this view</string>
+<string name="reports_window_empty_subtitle">Try switching between Month and Week above, or log a new expense.</string>
 <string name="reports_granularity_month">Month</string>
 <string name="reports_granularity_week">Week</string>
+<plurals name="reports_days_in">
+    <item quantity="one">%1$d day in</item>
+    <item quantity="other">%1$d days in</item>
+</plurals>
 <string name="next">Next</string>
 <string name="skip">Skip</string>
 <string name="get_started">Get started</string>

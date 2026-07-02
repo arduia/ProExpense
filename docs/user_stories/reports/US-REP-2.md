@@ -121,3 +121,11 @@ interaction feels as fast as the rest of the app.
   here was updated to reflect that the period selector is no longer month-only — swipe/chevron
   navigation works identically regardless of which granularity is active. Yearly granularity
   remains out of scope.
+* **Gap fix (2026-07, follow-up audit):** the period pill's chevrons were reversed —
+  "Previous period" (left, pointing left) moved to a *newer* period and "Next period" (right)
+  moved to an *older* one, since the underlying period list is newest-first while the chevron
+  labels assumed calendar-forward semantics. TalkBack announced the opposite of what the tap did.
+  Swapped the chevron actions so "Previous" always moves further into the past and "Next" always
+  moves back toward the present, and replaced the chevrons' modulo wrap-around with clamping
+  (disabling + dimming at the oldest/newest period) to match `HorizontalPager`'s own swipe
+  behavior, which never wrapped. Covered by `ReportsPeriodNavigationTest`.

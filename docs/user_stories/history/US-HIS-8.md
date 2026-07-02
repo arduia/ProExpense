@@ -156,3 +156,13 @@ chips keeps the affordance consistent with how filtering already works on this s
   Covered by `JournalFlowFilterTest.invoke_dateRangeKeepsDaysWithinRangeInclusive` /
   `invoke_dateRangeExcludesDaysOutsideRange` / `invoke_dateRangeCombinesWithCategoryFilterAndSearch`
   / `invoke_noDateRangeSetReturnsAllDays`.
+* **Gap fix (2026-07, follow-up audit):** `DateRangePickerState` reports UTC-midnight epoch
+  millis, but `dayKey`/`shortDateLabel` were read back with the device's local `Calendar`, so the
+  filter and chip label silently drifted a day off UTC-negative timezones (most of the Americas).
+  `DateLabel.kt` gained UTC-aware overloads (`UtcTimeZone` + a `timeZone` param, default unchanged
+  for existing local-instant callers); `JournalFlow` now reads picker-derived values through them.
+  Also fixed: the active-range chip stayed hidden during search, making "No matches" misleading
+  when an unseen range was still constraining results — it now stays visible (category chips still
+  hide); filter state (`query`, `selectedFilterId`, date range) now survives rotation via
+  `rememberSaveable`; the date-range sheet's exit now animates instead of hard-cutting. Covered by
+  `DateLabelTest`, new `edge_search_with_date_range_active` screenshot baseline.

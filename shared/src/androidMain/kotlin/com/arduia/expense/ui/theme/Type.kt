@@ -114,6 +114,8 @@ data class ProTypography(
     val bodySemiBold: TextStyle,
     val caption: TextStyle,
     val captionMedium: TextStyle,
+    val chipLabel: TextStyle,
+    val chipLabelSelected: TextStyle,
     val eyebrow: TextStyle,
     val button: TextStyle,
     val tabTimestamp: TextStyle,
@@ -242,6 +244,18 @@ val ProDefaultTypography = ProTypography(
         fontSize = 11.5.sp,
         lineHeight = proLineHeight(11.5f, 1.4f),
         fontWeight = FontWeight.Medium,
+    ),
+    chipLabel = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 12.sp,
+        lineHeight = proLineHeight(12f, 1.4f),
+        fontWeight = FontWeight.Medium,
+    ),
+    chipLabelSelected = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 12.sp,
+        lineHeight = proLineHeight(12f, 1.4f),
+        fontWeight = FontWeight.SemiBold,
     ),
     eyebrow = TextStyle(
         fontFamily = GeistMonoFamily,

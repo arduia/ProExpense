@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,6 +28,7 @@ import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
 import com.arduia.expense.feature.history.ui.preview.journalFilters
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
+import com.arduia.expense.ui.design.UtcTimeZone
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.design.shortDateLabel
@@ -53,31 +55,37 @@ fun JournalFlow(
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
 
-    var query by remember { mutableStateOf("") }
-    var selectedFilterId by remember { mutableStateOf("all") }
-    var selectedRowId by remember { mutableStateOf(initialSelectedRowId) }
+    // Filter/search state survives config change (rotation, theme switch); transient sheet/dialog
+    // visibility does not need to.
+    var query by rememberSaveable { mutableStateOf("") }
+    var selectedFilterId by rememberSaveable { mutableStateOf("all") }
+    var selectedRowId by rememberSaveable { mutableStateOf(initialSelectedRowId) }
     var quickNoteRow by remember { mutableStateOf<ProTransactionRowModel?>(null) }
     var quickNoteText by remember { mutableStateOf("") }
     var showActions by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showDateRangeSheet by remember { mutableStateOf(false) }
-    var dateRangeStart by remember { mutableStateOf<Long?>(null) }
-    var dateRangeEnd by remember { mutableStateOf<Long?>(null) }
+    var dateRangeStart by rememberSaveable { mutableStateOf<Long?>(null) }
+    var dateRangeEnd by rememberSaveable { mutableStateOf<Long?>(null) }
 
     val searchActive = query.isNotBlank()
+    // DateRangePickerState reports UTC-midnight millis, not device-local instants — must be
+    // read back with the same UTC calendar or the label/filter drift by a day off UTC.
     val dateRangeLabel = if (dateRangeStart != null && dateRangeEnd != null) {
-        "${shortDateLabel(dateRangeStart!!)} – ${shortDateLabel(dateRangeEnd!!)}"
+        "${shortDateLabel(dateRangeStart!!, UtcTimeZone)} – ${shortDateLabel(dateRangeEnd!!, UtcTimeZone)}"
     } else {
         null
     }
-    val filteredDays = filterJournalDays(
-        days = days,
-        query = query,
-        selectedFilterId = selectedFilterId,
-        categoryLabelFor = { id -> categoryNames[id] ?: expenseCategoryLabel(id) },
-        startDayKey = dateRangeStart?.let { dayKey(it) },
-        endDayKey = dateRangeEnd?.let { dayKey(it) },
-    )
+    val filteredDays = remember(days, query, selectedFilterId, categoryNames, dateRangeStart, dateRangeEnd) {
+        filterJournalDays(
+            days = days,
+            query = query,
+            selectedFilterId = selectedFilterId,
+            categoryLabelFor = { id -> categoryNames[id] ?: expenseCategoryLabel(id) },
+            startDayKey = dateRangeStart?.let { dayKey(it, UtcTimeZone) },
+            endDayKey = dateRangeEnd?.let { dayKey(it, UtcTimeZone) },
+        )
+    }
     val listState = JournalListUiState(
         query = query,
         selectedFilterId = selectedFilterId,

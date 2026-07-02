@@ -99,4 +99,20 @@ class ReportsScreenshotTest {
             granularityIndex = 1,
         )
     }
+
+    @Test
+    fun edge_reports_flow_loading() = capture {
+        ReportsFlow(onBack = {}, periods = emptyList(), isLoading = true)
+    }
+
+    @Test
+    fun edge_reports_flow_all_periods_empty() = capture {
+        // e.g. the weekly window's ~12-week history has no expenses at all — "swipe or use the
+        // arrows to view another period" would be a dead end, so this gets a distinct message.
+        ReportsFlow(
+            onBack = {},
+            periods = List(3) { previewReportsPeriodEmpty },
+            granularityIndex = 1,
+        )
+    }
 }

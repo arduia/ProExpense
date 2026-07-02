@@ -167,3 +167,18 @@ the gap was purely in the orchestration/UI layer, which only ever built monthly 
   `ReportsScreenshotTest.reports_flow_monthly` / `reports_flow_weekly` tests (the latter also
   closed a pre-existing gap where `ReportsScreenshotTest` only ever exercised `ReportsScreen`
   content, never the `ReportsFlow` orchestration composable itself).
+* **Gap fix (2026-07, follow-up audit):** a follow-up product audit found four more defects
+  introduced or exposed by adding weekly granularity, all now fixed: (1) `ReportsFeatureEntry`'s
+  period lists started empty before the first DB read completed, so every visit briefly flashed
+  the "No data yet" empty state even for users with data — added an explicit `isLoading` flag;
+  (2) the weekly window covers ~12 weeks vs. monthly's 12 months, so a user whose last expense
+  predates that gets a dead-end "swipe to view another period" message on every page — added a
+  distinct "No expenses in this view" message pointing at the granularity toggle when every period
+  in the window is empty; (3) `daysLabel` was a hardcoded, unpluralized "X days in" string, wrong
+  as "1 days in" on the first day of any period — moved to a `reports_days_in` plurals resource;
+  (4) discovered along the way: `app/src/main/res/values/strings.xml` carried a stale, legacy
+  duplicate of the Reports strings block (leftover from before the `feature:reports` module
+  existed) that silently shadowed this file's updated copy via Android's library-vs-app resource
+  merge order — the chevron labels and empty-state copy above were never actually reaching the
+  built app until that duplicate was deleted. Covered by `edge_reports_flow_loading`,
+  `edge_reports_flow_all_periods_empty`, `ReportsDaysInPluralsTest`.

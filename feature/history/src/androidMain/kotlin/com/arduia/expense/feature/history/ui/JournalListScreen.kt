@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.CircleShape
@@ -106,18 +105,21 @@ fun JournalListScreen(
                     active = state.searchActive,
                 )
 
-                if (!state.searchActive) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-                    ) {
-                        DateRangeChip(
-                            label = dateRangeLabel,
-                            onClick = onDateRangeClick,
-                            onClear = onClearDateRange,
-                        )
+                // The date-range chip stays visible during search — an active range still
+                // constrains results, and hiding it would make "no matches" misleading. Category
+                // chips still hide, since they'd otherwise crowd out the query results list.
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    DateRangeChip(
+                        label = dateRangeLabel,
+                        onClick = onDateRangeClick,
+                        onClear = onClearDateRange,
+                    )
+                    if (!state.searchActive) {
                         state.filters.forEach { filter ->
                             FilterChip(
                                 label = filter.label,
@@ -229,7 +231,7 @@ private fun DateRangeChip(
         ) {
             Text(
                 text = label,
-                style = typography.bodySemiBold.copy(fontSize = 12.sp),
+                style = typography.chipLabelSelected,
                 color = colors.paper,
             )
             ProIcon(

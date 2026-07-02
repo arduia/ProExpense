@@ -104,6 +104,23 @@ class JournalScreenshotTest {
     }
 
     @Test
+    fun edge_search_with_date_range_active() = capture {
+        // The date-range chip must stay visible during search — a "no matches" result while an
+        // unseen date filter is still narrowing results would otherwise be misleading.
+        JournalListScreen(
+            state = previewJournalSearchEmpty,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+            dateRangeLabel = "May 1 – May 15",
+        )
+    }
+
+    @Test
     fun journal_detail() = capture {
         JournalDetailScreen(
             state = previewJournalDetail,

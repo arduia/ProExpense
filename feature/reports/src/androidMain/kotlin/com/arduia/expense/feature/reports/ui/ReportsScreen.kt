@@ -130,6 +130,7 @@ internal fun ReportsPeriodContent(
     state: ReportsUiState,
     onLogFirstExpense: () -> Unit,
     modifier: Modifier = Modifier,
+    allPeriodsEmpty: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -145,9 +146,16 @@ internal fun ReportsPeriodContent(
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         if (state.empty) {
+            // "Swipe/use the arrows" is useless advice when every period in this granularity's
+            // window is empty — nudge toward the granularity toggle instead, since that's the
+            // only control that can actually surface data at that point.
             EmptyStateContent(
-                title = stringResource(R.string.reports_period_empty_title),
-                subtitle = stringResource(R.string.reports_period_empty_subtitle),
+                title = stringResource(
+                    if (allPeriodsEmpty) R.string.reports_window_empty_title else R.string.reports_period_empty_title,
+                ),
+                subtitle = stringResource(
+                    if (allPeriodsEmpty) R.string.reports_window_empty_subtitle else R.string.reports_period_empty_subtitle,
+                ),
                 actionLabel = stringResource(R.string.reports_period_empty_action),
                 onActionClick = onLogFirstExpense,
                 modifier = Modifier.padding(vertical = dimens.space24),
@@ -233,11 +241,18 @@ internal fun ReportsPeriodContent(
     }
 }
 
+/**
+ * [label]'s period moves further into the past on [onPrev] (earlier) and back toward the
+ * present on [onNext] (later) — standard calendar-navigator direction, independent of how the
+ * underlying period list happens to be ordered.
+ */
 @Composable
 internal fun ReportsPeriodPill(
     label: String,
     onPrev: () -> Unit,
     onNext: () -> Unit,
+    prevEnabled: Boolean = true,
+    nextEnabled: Boolean = true,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -255,9 +270,9 @@ internal fun ReportsPeriodPill(
         ProIcon(
             glyph = ProIconGlyph.Back,
             contentDescription = stringResource(R.string.reports_prev_period),
-            tint = colors.onSurfaceMuted,
+            tint = if (prevEnabled) colors.onSurfaceMuted else colors.muted2,
             size = dimens.iconInline,
-            modifier = Modifier.proIconClickable(onClick = onPrev),
+            modifier = Modifier.proIconClickable(onClick = onPrev, enabled = prevEnabled),
         )
         Text(
             text = label,
@@ -268,9 +283,9 @@ internal fun ReportsPeriodPill(
         ProIcon(
             glyph = ProIconGlyph.ChevronRight,
             contentDescription = stringResource(R.string.reports_next_period),
-            tint = colors.onSurfaceMuted,
+            tint = if (nextEnabled) colors.onSurfaceMuted else colors.muted2,
             size = dimens.iconInline,
-            modifier = Modifier.proIconClickable(onClick = onNext),
+            modifier = Modifier.proIconClickable(onClick = onNext, enabled = nextEnabled),
         )
     }
 }

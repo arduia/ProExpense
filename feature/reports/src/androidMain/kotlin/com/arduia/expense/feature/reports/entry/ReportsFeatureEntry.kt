@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.Result
@@ -57,7 +58,14 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         var monthlyPeriods by remember { mutableStateOf<List<ReportsUiState>>(emptyList()) }
         var weeklyPeriods by remember { mutableStateOf<List<ReportsUiState>>(emptyList()) }
         var granularityIndex by remember { mutableStateOf(0) }
+        var isLoading by remember { mutableStateOf(true) }
         val otherCategoryLabel = stringResource(R.string.reports_other_category)
+        // getQuantityString, not pluralStringResource — this is resolved inside the LaunchedEffect
+        // (a suspend, non-@Composable context) once per period, each with its own day count.
+        val resources = LocalContext.current.resources
+        val daysInLabel: (Int) -> String = { count ->
+            resources.getQuantityString(R.plurals.reports_days_in, count, count)
+        }
 
         LaunchedEffect(Unit) {
             val records = (financeRecordRepository.getAll() as? Result.Success)?.data.orEmpty()
@@ -66,11 +74,12 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
 
             val now = Calendar.getInstance()
             monthlyPeriods = (0 until REPORT_PERIOD_WINDOW_MONTHS).map { monthsBack ->
-                buildPeriodState(generateReportPeriod, records, monthWindow(monthsBack, now), categoryNames, otherCategoryLabel, homeCurrencySymbol)
+                buildPeriodState(generateReportPeriod, records, monthWindow(monthsBack, now), categoryNames, otherCategoryLabel, homeCurrencySymbol, daysInLabel)
             }
             weeklyPeriods = (0 until REPORT_PERIOD_WINDOW_WEEKS).map { weeksBack ->
-                buildPeriodState(generateReportPeriod, records, weekWindow(weeksBack, now), categoryNames, otherCategoryLabel, homeCurrencySymbol)
+                buildPeriodState(generateReportPeriod, records, weekWindow(weeksBack, now), categoryNames, otherCategoryLabel, homeCurrencySymbol, daysInLabel)
             }
+            isLoading = false
         }
 
         val periods = if (granularityIndex == 0) monthlyPeriods else weeklyPeriods
@@ -82,6 +91,7 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
             periods = periods,
             initialPage = initialPage,
             empty = empty,
+            isLoading = isLoading,
             onLogFirstExpense = onLogFirstExpense,
             granularityIndex = granularityIndex,
             onGranularityChange = { granularityIndex = it },
@@ -125,9 +135,9 @@ private fun monthWindow(monthsBack: Int, now: Calendar): PeriodWindow {
 private fun weekWindow(weeksBack: Int, now: Calendar): PeriodWindow {
     val target = (now.clone() as Calendar).apply { add(Calendar.WEEK_OF_YEAR, -weeksBack) }
     val firstDayOfWeek = target.firstDayOfWeek
-    val daysSinceWeekStart = (target.get(Calendar.DAY_OF_WEEK) - firstDayOfWeek + 7) % 7
+    val offsetFromWeekStart = (target.get(Calendar.DAY_OF_WEEK) - firstDayOfWeek + 7) % 7
     val start = (target.clone() as Calendar).apply {
-        add(Calendar.DAY_OF_YEAR, -daysSinceWeekStart)
+        add(Calendar.DAY_OF_YEAR, -offsetFromWeekStart)
         set(Calendar.HOUR_OF_DAY, 0)
         set(Calendar.MINUTE, 0)
         set(Calendar.SECOND, 0)
@@ -137,8 +147,29 @@ private fun weekWindow(weeksBack: Int, now: Calendar): PeriodWindow {
     val lastDay = (end.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -1) }
     val label = "${SimpleDateFormat("MMM d", Locale.US).format(start.time)} – " +
         SimpleDateFormat("MMM d", Locale.US).format(lastDay.time)
-    val daysElapsed = daysElapsedInWeek(start.timeInMillis, end.timeInMillis, now.timeInMillis)
+
+    val today = (now.clone() as Calendar).apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+    val isCurrentWeek = !today.before(start) && today.before(end)
+    // Calendar-day count, not a fixed-24h-millis division — the latter is wrong by one on a
+    // DST transition day.
+    val daysSinceWeekStart = if (isCurrentWeek) calendarDayDiff(start, today) else 0
+    val daysElapsed = daysElapsedInWeek(isCurrentWeek, daysSinceWeekStart)
     return PeriodWindow(label, start.timeInMillis, end.timeInMillis, daysElapsed)
+}
+
+private fun calendarDayDiff(from: Calendar, to: Calendar): Int {
+    val fromYear = from.get(Calendar.YEAR)
+    val fromDayOfYear = from.get(Calendar.DAY_OF_YEAR)
+    val toYear = to.get(Calendar.YEAR)
+    val toDayOfYear = to.get(Calendar.DAY_OF_YEAR)
+    if (fromYear == toYear) return toDayOfYear - fromDayOfYear
+    val daysInFromYear = (from.clone() as Calendar).getActualMaximum(Calendar.DAY_OF_YEAR)
+    return (daysInFromYear - fromDayOfYear) + toDayOfYear
 }
 
 private fun buildPeriodState(
@@ -148,6 +179,7 @@ private fun buildPeriodState(
     categoryNames: Map<String, String>,
     otherCategoryLabel: String,
     currencySymbol: String,
+    daysInLabel: (Int) -> String,
 ): ReportsUiState {
     val result: ReportPeriodResult = generateReportPeriod(
         records = records,
@@ -185,7 +217,7 @@ private fun buildPeriodState(
         periodLabel = window.label,
         totalLabel = moneyLabel(result.totalCents, currencySymbol),
         dailyAvgLabel = moneyLabel(result.dailyAvgCents, currencySymbol),
-        daysLabel = "${window.daysInPeriod} days in",
+        daysLabel = daysInLabel(window.daysInPeriod),
         categories = categories,
         uncategorized = result.allUncategorized,
     )

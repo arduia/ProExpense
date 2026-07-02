@@ -27,7 +27,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -251,7 +250,7 @@ fun FilterChip(
     val background = if (selected) colors.onSurface else Color.Transparent
     val contentColor = if (selected) colors.paper else colors.onSurfaceVariant
     val borderColor = if (selected) colors.onSurface else colors.lineStrong
-    val textStyle = if (selected) typography.bodySemiBold.copy(fontSize = 12.sp) else typography.bodyMedium.copy(fontSize = 12.sp)
+    val textStyle = if (selected) typography.chipLabelSelected else typography.chipLabel
 
     Text(
         text = label,

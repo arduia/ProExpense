@@ -245,9 +245,6 @@
     <string name="more_security_sub">PIN, biometrics, and recovery</string>
     <string name="more_import_sub">Restore records from CSV</string>
 
-    <!-- Reports -->
-    <string name="reports_title">Reports</string>
-
     <!-- Categories -->
     <string name="categories_title">Categories</string>
 
@@ -538,21 +535,6 @@
     <string name="pin_recover_heading">Answer your security question</string>
     <string name="pin_recover_attempts">%1$d of %2$d attempts used</string>
     <string name="pin_recover_action">Verify &amp; reset PIN</string>
-
-    <!-- Reports -->
-    <string name="reports_back">More</string>
-    <string name="reports_total_spent">TOTAL SPENT</string>
-    <string name="reports_period_total">%1$s · TOTAL SPENT</string>
-    <string name="reports_daily_avg_prefix">Daily avg</string>
-    <string name="reports_by_category">BY CATEGORY</string>
-    <string name="reports_top_categories">TOP CATEGORIES</string>
-    <string name="reports_uncategorized_label">Uncategorized</string>
-    <string name="reports_uncategorized_tip">Tip: categorize your expenses to unlock a spending breakdown by category.</string>
-    <string name="reports_prev_period">Previous month</string>
-    <string name="reports_next_period">Next month</string>
-    <string name="reports_empty_title">No data yet</string>
-    <string name="reports_empty_subtitle">Log a few expenses and your monthly spending breakdown will appear here.</string>
-    <string name="reports_empty_action">Log your first expense</string>
 
     <!-- Category list -->
     <string name="categories_back">More</string>

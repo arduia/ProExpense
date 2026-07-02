@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,66 +33,71 @@ fun JournalDateRangeSheet(
     onClear: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    if (!visible) return
-
     val dimens = ProExpenseTheme.dimensions
-    val rangeState = rememberDateRangePickerState(
-        initialSelectedStartDateMillis = initialStartEpochMillis,
-        initialSelectedEndDateMillis = initialEndEpochMillis,
-    )
 
+    // ProBottomSheetHost must stay composed while `visible` flips to false so its own
+    // AnimatedVisibility can play the sheet's exit animation — an early `if (!visible) return`
+    // here would remove it immediately instead, producing a hard cut. `key(visible)` re-seeds
+    // the picker's selection from the current initial values each time the sheet opens.
     ProBottomSheetHost(
         visible = visible,
         title = stringResource(R.string.journal_date_range_title),
         onClose = onDismiss,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-        ) {
-            DateRangePicker(
-                state = rangeState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                title = null,
-                headline = null,
+        key(visible) {
+            val rangeState = rememberDateRangePickerState(
+                initialSelectedStartDateMillis = initialStartEpochMillis,
+                initialSelectedEndDateMillis = initialEndEpochMillis,
             )
 
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimens.screenPadding)
-                    .padding(bottom = dimens.space24),
-                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                    .fillMaxHeight(),
             ) {
-                ProButton(
-                    text = stringResource(R.string.journal_date_range_clear),
-                    onClick = {
-                        onClear()
-                        onDismiss()
-                    },
-                    variant = ProButtonVariant.Secondary,
-                    size = ProButtonSize.Md,
-                    fillMaxWidth = true,
-                    modifier = Modifier.weight(1f),
+                DateRangePicker(
+                    state = rangeState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    title = null,
+                    headline = null,
                 )
-                ProButton(
-                    text = stringResource(R.string.journal_date_range_apply),
-                    onClick = {
-                        val start = rangeState.selectedStartDateMillis
-                        val end = rangeState.selectedEndDateMillis
-                        if (start != null && end != null) {
-                            onConfirm(start, end)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimens.screenPadding)
+                        .padding(bottom = dimens.space24),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    ProButton(
+                        text = stringResource(R.string.journal_date_range_clear),
+                        onClick = {
+                            onClear()
                             onDismiss()
-                        }
-                    },
-                    enabled = rangeState.selectedStartDateMillis != null && rangeState.selectedEndDateMillis != null,
-                    size = ProButtonSize.Md,
-                    fillMaxWidth = true,
-                    modifier = Modifier.weight(1f),
-                )
+                        },
+                        variant = ProButtonVariant.Secondary,
+                        size = ProButtonSize.Md,
+                        fillMaxWidth = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    ProButton(
+                        text = stringResource(R.string.journal_date_range_apply),
+                        onClick = {
+                            val start = rangeState.selectedStartDateMillis
+                            val end = rangeState.selectedEndDateMillis
+                            if (start != null && end != null) {
+                                onConfirm(start, end)
+                                onDismiss()
+                            }
+                        },
+                        enabled = rangeState.selectedStartDateMillis != null && rangeState.selectedEndDateMillis != null,
+                        size = ProButtonSize.Md,
+                        fillMaxWidth = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
         }
     }
