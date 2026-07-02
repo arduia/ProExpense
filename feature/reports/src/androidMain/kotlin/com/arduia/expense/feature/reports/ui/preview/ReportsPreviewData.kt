@@ -16,6 +16,8 @@ data class ReportsUiState(
     val categories: List<ReportsCategoryUi>,
     val uncategorized: Boolean = false,
     val empty: Boolean = false,
+    val periodStartEpochMillis: Long = 0L,
+    val periodEndEpochMillis: Long = 0L,
 )
 
 val previewReports = ReportsUiState(

@@ -166,3 +166,9 @@ chips keeps the affordance consistent with how filtering already works on this s
   hide); filter state (`query`, `selectedFilterId`, date range) now survives rotation via
   `rememberSaveable`; the date-range sheet's exit now animates instead of hard-cutting. Covered by
   `DateLabelTest`, new `edge_search_with_date_range_active` screenshot baseline.
+* **Verified (2026-07):** whether M3's `DateRangePicker` supports a single-day range (same day as
+  both start and end) was an open question from the audit — no emulator/device was available to
+  check by hand. Confirmed via `JournalDateRangeSameDayTest`, which drives the real
+  `JournalDateRangeSheet` through Robolectric: tapping the same day twice sets
+  `selectedStartDateMillis == selectedEndDateMillis`, enables Apply, and `onConfirm` fires with a
+  single-day range. No code change was needed — this is now a permanent regression test.

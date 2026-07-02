@@ -180,5 +180,16 @@ the gap was purely in the orchestration/UI layer, which only ever built monthly 
   duplicate of the Reports strings block (leftover from before the `feature:reports` module
   existed) that silently shadowed this file's updated copy via Android's library-vs-app resource
   merge order — the chevron labels and empty-state copy above were never actually reaching the
-  built app until that duplicate was deleted. Covered by `edge_reports_flow_loading`,
+  built app until that duplicate was deleted (the duplication turned out to span nearly every
+  `feature:*` module, ~280 resource names in total; all were removed from
+  `app/src/main/res/values/strings.xml` in the same pass — see
+  `.cursor/context/retrospectives.md`). Covered by `edge_reports_flow_loading`,
   `edge_reports_flow_all_periods_empty`, `ReportsDaysInPluralsTest`.
+* **Gap fix (2026-07, second follow-up):** switching Month↔Week always jumped to the latest
+  period with data in the new granularity, discarding whatever period the user was actually
+  looking at — e.g. viewing March 2026 and tapping Week could land on the current week in July.
+  `findGranularitySwitchTargetIndex` now picks the period in the new granularity that overlaps the
+  one just being viewed (preferring the most recent overlapping period with data, falling back to
+  the most recent overlap if all are empty); the toggle passes the current period's window bounds
+  as an anchor via `onGranularityChange`. Covered by `FindGranularitySwitchTargetIndexTest` and
+  `ReportsGranularitySwitchTest`.

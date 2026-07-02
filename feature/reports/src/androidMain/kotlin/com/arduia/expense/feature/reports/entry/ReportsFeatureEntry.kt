@@ -14,8 +14,10 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.feature.reports.GenerateReportPeriodUseCase
 import com.arduia.expense.feature.reports.REPORT_OTHER_CATEGORY_ID
 import com.arduia.expense.feature.reports.ReportPeriodResult
+import com.arduia.expense.feature.reports.ReportsPeriodBounds
 import com.arduia.expense.feature.reports.daysElapsedInPeriod
 import com.arduia.expense.feature.reports.daysElapsedInWeek
+import com.arduia.expense.feature.reports.findGranularitySwitchTargetIndex
 import com.arduia.expense.feature.reports.selectInitialPeriodIndex
 import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
@@ -59,6 +61,10 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         var weeklyPeriods by remember { mutableStateOf<List<ReportsUiState>>(emptyList()) }
         var granularityIndex by remember { mutableStateOf(0) }
         var isLoading by remember { mutableStateOf(true) }
+        // Set on each granularity switch to the period the user was just viewing, so the new
+        // granularity lands on the period that overlaps it instead of always jumping to the
+        // latest period with data.
+        var switchAnchor by remember { mutableStateOf<Pair<Long, Long>?>(null) }
         val otherCategoryLabel = stringResource(R.string.reports_other_category)
         // getQuantityString, not pluralStringResource — this is resolved inside the LaunchedEffect
         // (a suspend, non-@Composable context) once per period, each with its own day count.
@@ -83,7 +89,14 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
         }
 
         val periods = if (granularityIndex == 0) monthlyPeriods else weeklyPeriods
-        val initialPage = selectInitialPeriodIndex(periods.map { it.empty })
+        val anchoredPage = switchAnchor?.let { (start, end) ->
+            findGranularitySwitchTargetIndex(
+                oldPeriodStartEpochMillis = start,
+                oldPeriodEndEpochMillis = end,
+                newPeriods = periods.map { ReportsPeriodBounds(it.periodStartEpochMillis, it.periodEndEpochMillis, it.empty) },
+            ).takeIf { it >= 0 }
+        }
+        val initialPage = anchoredPage ?: selectInitialPeriodIndex(periods.map { it.empty })
 
         com.arduia.expense.feature.reports.ui.ReportsFlow(
             onBack = onBack,
@@ -94,7 +107,10 @@ internal class ReportsFeatureEntryImpl : ReportsFeatureEntry {
             isLoading = isLoading,
             onLogFirstExpense = onLogFirstExpense,
             granularityIndex = granularityIndex,
-            onGranularityChange = { granularityIndex = it },
+            onGranularityChange = { index, anchor ->
+                granularityIndex = index
+                switchAnchor = anchor
+            },
         )
     }
 }
@@ -196,6 +212,8 @@ private fun buildPeriodState(
             daysLabel = "",
             categories = emptyList(),
             empty = true,
+            periodStartEpochMillis = window.startEpochMillis,
+            periodEndEpochMillis = window.endEpochMillis,
         )
     }
 
@@ -220,6 +238,8 @@ private fun buildPeriodState(
         daysLabel = daysInLabel(window.daysInPeriod),
         categories = categories,
         uncategorized = result.allUncategorized,
+        periodStartEpochMillis = window.startEpochMillis,
+        periodEndEpochMillis = window.endEpochMillis,
     )
 }
 

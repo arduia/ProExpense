@@ -47,7 +47,7 @@ fun ReportsFlow(
     isLoading: Boolean = false,
     onLogFirstExpense: () -> Unit = {},
     granularityIndex: Int = 0,
-    onGranularityChange: (Int) -> Unit = {},
+    onGranularityChange: (index: Int, anchor: Pair<Long, Long>?) -> Unit = { _, _ -> },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -118,7 +118,13 @@ fun ReportsFlow(
                 stringResource(R.string.reports_granularity_week),
             ),
             selectedIndex = granularityIndex,
-            onSelected = onGranularityChange,
+            onSelected = { newIndex ->
+                // Anchor the switch to whatever period is currently on screen, so the caller can
+                // land the new granularity on the period that overlaps it.
+                val current = periods.getOrNull(pagerState.currentPage % periods.size.coerceAtLeast(1))
+                val anchor = current?.let { it.periodStartEpochMillis to it.periodEndEpochMillis }
+                onGranularityChange(newIndex, anchor)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = dimens.screenPadding)

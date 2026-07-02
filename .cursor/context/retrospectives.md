@@ -41,3 +41,34 @@ contradicted the 2-decimal rule; `./gradlew test` reported success anyway becaus
 - For lockout/ticker assertions use `runCurrent()`, not `advanceUntilIdle()`.
 - Robolectric Compose UI tests are debug-only; tag them `@Category(ComposeUiTests/ScreenshotTests)`
   and exclude those categories from the release unit-test variant.
+
+## 2026-07 — App-module string duplicates silently shadowed feature-module string updates
+
+**What slipped:** `app/src/main/res/values/strings.xml` still carried a near-complete legacy copy
+of almost every `feature:*` module's `strings.xml` (leftover from before the KMP module split —
+~280 duplicate `<string>`/`<plurals>` names across Reports, Journal, Debt, Events, PIN, Categories,
+Shared Costs, and more). Android's library-vs-app resource merge order makes the *app* module's
+copy win for any resource name defined in both places. A Reports string update earlier in this
+session (generalizing "this month" → "this period" copy for the new weekly-granularity feature,
+plus fixing the chevron labels) passed `verifyAll` and Roborazzi screenshot verification cleanly —
+but never actually reached the built app, because the stale app-module duplicate silently won the
+merge. The defect was only caught by accident: a new Compose UI test asserted on the chevron's
+*content description* (an accessibility label, invisible in a screenshot pixel diff), which is
+exactly the kind of change Roborazzi cannot catch.
+
+**Root cause:** No automated check flags a resource name defined in both an app module and a
+library module it depends on — AGP allows the override intentionally, so it fails silently rather
+than erroring. Screenshot tests only catch *visible* text changes, not content descriptions,
+`stringResource` calls that resolve to unreachable app-module copies with identical rendered
+pixels by coincidence, or any string not currently exercised by a baseline.
+
+**Guards:**
+- When adding or changing a string in a `feature:*` module's `strings.xml`, grep
+  `app/src/main/res/values/strings.xml` for the same resource name first — if present, the feature
+  module's copy may be silently shadowed. Removed all ~280 stale app-module duplicates in this pass
+  (`comm -12` diff between `app` and all `feature/*/src/androidMain/res/values/strings.xml` names);
+  only one (`shared_new_split`) had a different value ("+ New split" → "New split") and needed a
+  screenshot re-record.
+- A Roborazzi-clean diff is not proof a string change reached the app — accessibility-only text
+  (content descriptions, TalkBack labels) needs a Compose UI test asserting on the actual node,
+  not just a screenshot.
