@@ -21,4 +21,9 @@
     <string name="journal_delete_title">Delete this expense?</string>
     <string name="journal_delete_body">This removes the record and updates any linked event or debt.</string>
     <string name="journal_note_fallback">New expense</string>
+    <string name="journal_date_range_title">Filter by date</string>
+    <string name="journal_date_range_chip">Date range</string>
+    <string name="journal_date_range_clear">Clear</string>
+    <string name="journal_date_range_apply">Apply</string>
+    <string name="journal_date_range_cd">Filter by date range</string>
 </resources>

@@ -14,8 +14,8 @@ private fun row(id: String, categoryId: String, note: String, amount: String) = 
     amount = amount,
 )
 
-private fun day(vararg rows: ProTransactionRowModel) = JournalDayUi(
-    id = "day",
+private fun day(vararg rows: ProTransactionRowModel, id: String = "day") = JournalDayUi(
+    id = id,
     title = "Today",
     total = "$0",
     rows = rows.toList(),
@@ -90,6 +90,68 @@ class JournalFlowFilterTest {
         val days = listOf(day(row("r1", "food", "Lunch", "$12"), row("r2", "coffee", "Latte", "$5")))
 
         val result = filterJournalDays(days, query = "", selectedFilterId = "all", categoryLabelFor = categoryLabel)
+
+        assertEquals(days, result)
+    }
+
+    @Test
+    fun invoke_dateRangeKeepsDaysWithinRangeInclusive() {
+        val days = listOf(
+            day(row("r1", "food", "Lunch", "$12"), id = "2026-120"),
+            day(row("r2", "food", "Dinner", "$8"), id = "2026-125"),
+            day(row("r3", "food", "Brunch", "$9"), id = "2026-130"),
+        )
+
+        val result = filterJournalDays(
+            days, query = "", selectedFilterId = "all", categoryLabelFor = categoryLabel,
+            startDayKey = "2026-120", endDayKey = "2026-125",
+        )
+
+        assertEquals(listOf("2026-120", "2026-125"), result.map { it.id })
+    }
+
+    @Test
+    fun invoke_dateRangeExcludesDaysOutsideRange() {
+        val days = listOf(
+            day(row("r1", "food", "Lunch", "$12"), id = "2026-100"),
+            day(row("r2", "food", "Dinner", "$8"), id = "2026-200"),
+        )
+
+        val result = filterJournalDays(
+            days, query = "", selectedFilterId = "all", categoryLabelFor = categoryLabel,
+            startDayKey = "2026-150", endDayKey = "2026-160",
+        )
+
+        assertEquals(emptyList<JournalDayUi>(), result)
+    }
+
+    @Test
+    fun invoke_dateRangeCombinesWithCategoryFilterAndSearch() {
+        val days = listOf(
+            day(
+                row("r1", "coffee", "Latte", "$5"),
+                row("r2", "food", "Lunch", "$12"),
+                id = "2026-120",
+            ),
+            day(row("r3", "coffee", "Espresso", "$3"), id = "2026-200"),
+        )
+
+        val result = filterJournalDays(
+            days, query = "", selectedFilterId = "coffee", categoryLabelFor = categoryLabel,
+            startDayKey = "2026-110", endDayKey = "2026-130",
+        )
+
+        assertEquals(listOf("r1"), result.single().rows.map { it.id })
+    }
+
+    @Test
+    fun invoke_noDateRangeSetReturnsAllDays() {
+        val days = listOf(day(row("r1", "food", "Lunch", "$12"), id = "2026-100"))
+
+        val result = filterJournalDays(
+            days, query = "", selectedFilterId = "all", categoryLabelFor = categoryLabel,
+            startDayKey = null, endDayKey = null,
+        )
 
         assertEquals(days, result)
     }

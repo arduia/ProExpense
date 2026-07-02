@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material3.Text
@@ -24,6 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import com.arduia.expense.feature.history.R
 import com.arduia.expense.ui.design.DayHeader
 import com.arduia.expense.ui.design.FilterChip
@@ -34,6 +41,8 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.design.TransactionRow
+import com.arduia.expense.ui.design.proClickable
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
 import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
@@ -52,6 +61,9 @@ fun JournalListScreen(
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
+    dateRangeLabel: String? = null,
+    onDateRangeClick: () -> Unit = {},
+    onClearDateRange: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -101,6 +113,11 @@ fun JournalListScreen(
                             .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
                     ) {
+                        DateRangeChip(
+                            label = dateRangeLabel,
+                            onClick = onDateRangeClick,
+                            onClear = onClearDateRange,
+                        )
                         state.filters.forEach { filter ->
                             FilterChip(
                                 label = filter.label,
@@ -165,6 +182,62 @@ fun JournalListScreen(
                 onTabSelected = onTabSelected,
                 onAddClick = onAddClick,
                 modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
+    }
+}
+
+@Composable
+private fun DateRangeChip(
+    label: String?,
+    onClick: () -> Unit,
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val shape = ProExpenseTheme.shapes.chip
+    val contentDescription = stringResource(R.string.journal_date_range_cd)
+
+    if (label == null) {
+        Box(
+            modifier = modifier
+                .size(dimens.space44)
+                .clip(CircleShape)
+                .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
+                .proIconClickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            ProIcon(
+                glyph = ProIconGlyph.Calendar,
+                contentDescription = contentDescription,
+                tint = colors.onSurfaceVariant,
+                size = dimens.iconInline,
+            )
+        }
+    } else {
+        Row(
+            modifier = modifier
+                .clip(shape)
+                .background(colors.onSurface)
+                .border(BorderStroke(1.dp, colors.onSurface), shape)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(start = dimens.space12, end = dimens.space8, top = dimens.space6, bottom = dimens.space6),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimens.space4),
+        ) {
+            Text(
+                text = label,
+                style = typography.bodySemiBold.copy(fontSize = 12.sp),
+                color = colors.paper,
+            )
+            ProIcon(
+                glyph = ProIconGlyph.Close,
+                contentDescription = stringResource(R.string.journal_date_range_clear),
+                tint = colors.paper,
+                size = dimens.iconClear,
+                modifier = Modifier.proIconClickable(onClick = onClear),
             )
         }
     }
@@ -250,6 +323,29 @@ private fun JournalSearchEmptyPreview() {
             selectedTab = HomeNavTab.Journal,
             onTabSelected = {},
             onAddClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Journal — date range active",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalListDateRangeActivePreview() {
+    ProExpenseTheme {
+        JournalListScreen(
+            state = previewJournalList,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+            dateRangeLabel = "May 1 – May 15",
         )
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.feature.history.ui.JournalActionsSheetContent
+import com.arduia.expense.feature.history.ui.JournalDateRangeSheet
 import com.arduia.expense.feature.history.ui.JournalDetailScreen
 import com.arduia.expense.feature.history.ui.JournalListScreen
 import com.arduia.expense.feature.history.ui.JournalQuickNoteSheetContent
@@ -74,6 +75,21 @@ class JournalScreenshotTest {
     }
 
     @Test
+    fun journal_list_date_range_active() = capture {
+        JournalListScreen(
+            state = previewJournalList,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+            dateRangeLabel = "May 1 – May 15",
+        )
+    }
+
+    @Test
     fun edge_search() = capture {
         JournalListScreen(
             state = previewJournalSearchEmpty,
@@ -123,6 +139,30 @@ class JournalScreenshotTest {
                     onSave = {},
                 )
             }
+        }
+    }
+
+    @Test
+    fun edge_date_range_sheet() = capture {
+        Box(Modifier.fillMaxSize()) {
+            JournalListScreen(
+                state = previewJournalList,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+            JournalDateRangeSheet(
+                visible = true,
+                initialStartEpochMillis = 1_716_600_000_000L,
+                initialEndEpochMillis = 1_717_200_000_000L,
+                onConfirm = { _, _ -> },
+                onClear = {},
+                onDismiss = {},
+            )
         }
     }
 

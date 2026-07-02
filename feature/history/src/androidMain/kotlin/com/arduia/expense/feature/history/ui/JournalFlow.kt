@@ -27,7 +27,9 @@ import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
 import com.arduia.expense.feature.history.ui.preview.journalFilters
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
+import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.expenseCategoryLabel
+import com.arduia.expense.ui.design.shortDateLabel
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -58,13 +60,23 @@ fun JournalFlow(
     var quickNoteText by remember { mutableStateOf("") }
     var showActions by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showDateRangeSheet by remember { mutableStateOf(false) }
+    var dateRangeStart by remember { mutableStateOf<Long?>(null) }
+    var dateRangeEnd by remember { mutableStateOf<Long?>(null) }
 
     val searchActive = query.isNotBlank()
+    val dateRangeLabel = if (dateRangeStart != null && dateRangeEnd != null) {
+        "${shortDateLabel(dateRangeStart!!)} – ${shortDateLabel(dateRangeEnd!!)}"
+    } else {
+        null
+    }
     val filteredDays = filterJournalDays(
         days = days,
         query = query,
         selectedFilterId = selectedFilterId,
         categoryLabelFor = { id -> categoryNames[id] ?: expenseCategoryLabel(id) },
+        startDayKey = dateRangeStart?.let { dayKey(it) },
+        endDayKey = dateRangeEnd?.let { dayKey(it) },
     )
     val listState = JournalListUiState(
         query = query,
@@ -103,6 +115,12 @@ fun JournalFlow(
                     selectedTab = selectedTab,
                     onTabSelected = onTabSelected,
                     onAddClick = onAddClick,
+                    dateRangeLabel = dateRangeLabel,
+                    onDateRangeClick = { showDateRangeSheet = true },
+                    onClearDateRange = {
+                        dateRangeStart = null
+                        dateRangeEnd = null
+                    },
                 )
             } else {
                 JournalDetailScreen(
@@ -176,18 +194,41 @@ fun JournalFlow(
             onDismiss = { showDeleteConfirm = false },
             confirmVariant = ProButtonVariant.Danger,
         )
+
+        JournalDateRangeSheet(
+            visible = showDateRangeSheet,
+            initialStartEpochMillis = dateRangeStart,
+            initialEndEpochMillis = dateRangeEnd,
+            onConfirm = { start, end ->
+                dateRangeStart = start
+                dateRangeEnd = end
+            },
+            onClear = {
+                dateRangeStart = null
+                dateRangeEnd = null
+            },
+            onDismiss = { showDateRangeSheet = false },
+        )
     }
 }
 
-/** Matches search against note, category label, and amount; combined with the selected category filter. */
+/**
+ * Matches search against note, category label, and amount; combined with the selected category
+ * filter and an optional inclusive date range (compared via [JournalDayUi.id], the same
+ * year/day-of-year `dayKey` string the day was grouped by — lexicographic comparison sorts
+ * correctly since the key is fixed-width zero-padded).
+ */
 fun filterJournalDays(
     days: List<JournalDayUi>,
     query: String,
     selectedFilterId: String,
     categoryLabelFor: (String) -> String,
+    startDayKey: String? = null,
+    endDayKey: String? = null,
 ): List<JournalDayUi> {
     val searchActive = query.isNotBlank()
     return days.mapNotNull { day ->
+        if (startDayKey != null && endDayKey != null && day.id !in startDayKey..endDayKey) return@mapNotNull null
         val matches = day.rows.filter { row ->
             val matchesFilter = selectedFilterId == "all" || row.categoryId == selectedFilterId
             val matchesQuery = !searchActive ||
