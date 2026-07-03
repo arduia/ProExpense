@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.debt
 
 import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
@@ -8,6 +9,7 @@ import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordLink
 
 /** Validates and creates a new debt record (design plan §DebtViewModel). */
 class CreateDebtUseCase(
@@ -61,8 +63,16 @@ class UpdateDebtUseCase(private val debtRepository: DebtRepository) {
     }
 }
 
-class DeleteDebtUseCase(private val debtRepository: DebtRepository) {
+/** Deleting a debt clears its dangling link on any expense still tagged to it (US-DEBT-3). */
+class DeleteDebtUseCase(
+    private val debtRepository: DebtRepository,
+    private val financeRecordRepository: FinanceRecordRepository,
+) {
     suspend operator fun invoke(id: String) {
+        val records = (financeRecordRepository.getAll() as? Result.Success)?.data.orEmpty()
+        records
+            .filter { (it.link as? RecordLink.ToDebt)?.debtId?.value == id }
+            .forEach { record -> financeRecordRepository.upsert(record.copy(link = RecordLink.None)) }
         debtRepository.delete(DebtId(id))
     }
 }

@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.debt.di
 
 import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.feature.debt.AggregateDebtsUseCase
 import com.arduia.expense.feature.debt.CheckDebtConflictUseCase
 import com.arduia.expense.feature.debt.CreateDebtUseCase
@@ -14,7 +15,7 @@ val debtModule = module {
     factory { AggregateDebtsUseCase() }
     factory { CreateDebtUseCase(get<DebtRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
     factory { UpdateDebtUseCase(get<DebtRepository>()) }
-    factory { DeleteDebtUseCase(get<DebtRepository>()) }
+    factory { DeleteDebtUseCase(get<DebtRepository>(), get<FinanceRecordRepository>()) }
     factory { SettleDebtUseCase(get<DebtRepository>()) }
     factory { CheckDebtConflictUseCase(get<DebtRepository>()) }
 }
