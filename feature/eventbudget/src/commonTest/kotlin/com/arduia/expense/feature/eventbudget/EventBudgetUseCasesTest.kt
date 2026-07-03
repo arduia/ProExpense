@@ -76,6 +76,32 @@ class ComputeEventProgressUseCaseTest {
         assertEquals(0f, progress.progress)
         assertTrue(progress.isOverBudget)
     }
+
+    @Test
+    fun invoke_atOrUnderBudgetHasZeroOverBudgetPercent() {
+        val event = sampleEvent(budgetCents = 10_00)
+
+        assertEquals(0, useCase(event, Money(Amount(10_00), CurrencyCode("USD"))).overBudgetPercent)
+        assertEquals(0, useCase(event, Money(Amount(4_00), CurrencyCode("USD"))).overBudgetPercent)
+    }
+
+    @Test
+    fun invoke_warningTierComputesPercentOverBudgetBetween1And10() {
+        val event = sampleEvent(budgetCents = 10_00)
+
+        val progress = useCase(event, Money(Amount(10_50), CurrencyCode("USD")))
+
+        assertEquals(5, progress.overBudgetPercent)
+    }
+
+    @Test
+    fun invoke_dangerTierComputesPercentOverBudgetAbove10() {
+        val event = sampleEvent(budgetCents = 10_00)
+
+        val progress = useCase(event, Money(Amount(13_00), CurrencyCode("USD")))
+
+        assertEquals(30, progress.overBudgetPercent)
+    }
 }
 
 private class FakeEventRepository : EventRepository {

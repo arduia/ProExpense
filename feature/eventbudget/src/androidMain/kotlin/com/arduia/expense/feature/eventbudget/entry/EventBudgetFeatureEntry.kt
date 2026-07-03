@@ -170,6 +170,12 @@ private fun Event.toCardState(
         budgetLabel = "of " + moneyLabel(progress.budgetCents, currencySymbol),
         progress = progress.progress,
         isOverBudget = progress.isOverBudget,
+        overAmountLabel = if (progress.isOverBudget) {
+            moneyLabel(-progress.remainingCents, currencySymbol)
+        } else {
+            null
+        },
+        overBudgetPercent = progress.overBudgetPercent,
     )
 
 private fun Event.toDetailState(
