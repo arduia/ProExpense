@@ -107,6 +107,9 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 linkedTagId = linkedEvent?.id,
                 linkedTagKind = linkedEvent?.kind,
                 linkedTagLabel = linkedEvent?.title,
+                // recordedAtEpochMillis default is a fixed preview/screenshot fixture (US-LOG
+                // baselines need a deterministic date) — a brand-new entry must start at "now".
+                recordedAtEpochMillis = System.currentTimeMillis(),
             ),
             showDraftPrompt = initialDraftState != null,
             draftAmountLabel = initialDraftState?.let { homeCurrencySymbol + AmountInput.formatDisplay(it.rawAmount) },
