@@ -75,6 +75,7 @@ class ProExpenseStorage internal constructor(
                     name = category.name,
                     is_custom = if (category.isCustom) 1L else 0L,
                     sort_order = index.toLong(),
+                    icon_id = "",
                 )
             }
         }

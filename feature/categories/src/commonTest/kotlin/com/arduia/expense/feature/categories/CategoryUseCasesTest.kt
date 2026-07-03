@@ -77,6 +77,16 @@ class SaveCategoryUseCaseTest {
         assertEquals("Groceries", repo.lastUpsert?.name)
         assertEquals(3, repo.lastUpsert?.sortOrder)
     }
+
+    @Test
+    fun invoke_persistsTheSelectedIconIdInsteadOfDiscardingIt() = runTest {
+        val repo = FakeCategoryRepository()
+        val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+
+        useCase(emptyList(), editingId = null, name = "Coffee Fund", iconId = "coffee")
+
+        assertEquals("coffee", repo.lastUpsert?.iconId)
+    }
 }
 
 private fun sampleRecord(id: String, categoryId: String) = FinanceRecord(

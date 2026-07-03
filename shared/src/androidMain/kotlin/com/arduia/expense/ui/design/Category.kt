@@ -27,8 +27,13 @@ fun LogCategoryBadge(
     categoryId: String,
     modifier: Modifier = Modifier,
     size: Dp = ProExpenseTheme.dimensions.iconBadge,
+    // A custom category's own id is a generated slug, not a catalogue key — its chosen iconId
+    // (US-CAT-2) is the real lookup key. Blank/null falls back to categoryId (default categories,
+    // whose id already is the catalogue key).
+    iconId: String? = null,
 ) {
-    val colors = ProExpenseTheme.colors.category(categoryId)
+    val catalogueKey = iconId?.takeIf { it.isNotBlank() } ?: categoryId
+    val colors = ProExpenseTheme.colors.category(catalogueKey)
     val iconSize = size * 0.52f
     Box(
         modifier = modifier
@@ -38,7 +43,7 @@ fun LogCategoryBadge(
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(
-            glyph = categoryIcon(categoryId),
+            glyph = categoryIcon(catalogueKey),
             contentDescription = null,
             tint = colors.accent,
             size = iconSize,
