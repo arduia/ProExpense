@@ -126,6 +126,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             customCategories = customCategories,
             modifier = modifier,
             saveErrorMessage = saveErrorMessage,
+            initialLinkedTag = linkedEvent,
         )
     }
 

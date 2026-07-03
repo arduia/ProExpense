@@ -25,6 +25,7 @@ import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
 import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
+import com.arduia.expense.feature.history.ui.preview.JournalLinkedTagUi
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
 import com.arduia.expense.feature.history.ui.preview.journalFilters
@@ -148,7 +149,7 @@ fun JournalFlow(
                 )
             } else {
                 JournalDetailScreen(
-                    state = detailStateFor(rowId, days),
+                    state = detailStateFor(rowId, days, categoryNames),
                     onBack = {
                         if (initialSelectedRowId != null && rowId == initialSelectedRowId) {
                             onTabSelected(HomeNavTab.Home)
@@ -265,16 +266,25 @@ fun filterJournalDays(
     }
 }
 
-private fun detailStateFor(rowId: String, days: List<JournalDayUi>): JournalDetailUiState {
+private fun detailStateFor(
+    rowId: String,
+    days: List<JournalDayUi>,
+    categoryNames: Map<String, String>,
+): JournalDetailUiState {
     val row = days.flatMap { it.rows }.firstOrNull { it.id == rowId }
+    val categoryId = row?.categoryId ?: "food"
     return JournalDetailUiState(
         id = rowId,
-        categoryId = row?.categoryId ?: "food",
-        categoryLabel = (row?.categoryId ?: "food").uppercase(),
+        categoryId = categoryId,
+        // Real category name for custom categories (US-HIS-5) — the raw id (e.g. a generated
+        // "coffee-<timestamp>" slug) is not a label.
+        categoryLabel = (categoryNames[categoryId] ?: expenseCategoryLabel(categoryId)).uppercase(),
         amountLabel = row?.amount.orEmpty(),
         dateTimeLabel = row?.meta.orEmpty(),
         note = row?.note.orEmpty(),
-        linkedTag = null,
+        linkedTag = row?.tag?.let { title ->
+            JournalLinkedTagUi(title = title, meta = row.tagSubtitle.orEmpty())
+        },
     )
 }
 

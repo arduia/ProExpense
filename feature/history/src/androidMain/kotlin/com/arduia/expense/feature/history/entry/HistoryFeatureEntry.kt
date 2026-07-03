@@ -27,6 +27,7 @@ import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.dayLabel
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.expenseCategoryLabel
+import com.arduia.expense.ui.design.shortDateLabel
 import com.arduia.expense.ui.design.timeLabel
 import java.util.Calendar
 import java.util.Locale
@@ -77,12 +78,20 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
         val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
         val categoryNames = remember(categories) { categories.associate { it.id.value to it.name } }
+        // Secondary line for Journal Detail's linked-tag card (US-HIS-5) — an event's date range
+        // or a debt's amount, mirroring what feature:logging shows in its own tag picker.
+        val eventSubtitles = remember(events) {
+            events.associate { it.id.value to "${shortDateLabel(it.startEpochMillis)} - ${shortDateLabel(it.endEpochMillis)}" }
+        }
+        val debtSubtitles = remember(debts, homeCurrencySymbol) {
+            debts.associate { it.id.value to moneyLabel(it.money.amount.valueInCents, currencySymbol(it.money.currency.code)) }
+        }
         val filters = remember(categories, allFilterLabel) {
             listOf(JournalFilterUi("all", allFilterLabel)) +
                 categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
         }
-        val days = remember(records, noteFallback, eventNames, debtNames, sharedCostNames, homeCurrencySymbol) {
-            groupByDay(records, noteFallback, eventNames, debtNames, sharedCostNames, homeCurrencySymbol)
+        val days = remember(records, noteFallback, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol) {
+            groupByDay(records, noteFallback, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol)
         }
         JournalFlow(
             selectedTab = selectedTab,
@@ -112,6 +121,8 @@ private fun groupByDay(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
+    eventSubtitles: Map<String, String>,
+    debtSubtitles: Map<String, String>,
     homeCurrencySymbol: String,
 ): List<JournalDayUi> {
     val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
@@ -125,7 +136,7 @@ private fun groupByDay(
                 title = dayLabel(dayRecords.first().recordedAtEpochMillis),
                 total = moneyLabel(totalCents, homeCurrencySymbol),
                 rows = dayRecords.map { record ->
-                    record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames)
+                    record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles)
                 },
             )
         }
@@ -136,6 +147,8 @@ private fun FinanceRecord.toRowModel(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
+    eventSubtitles: Map<String, String>,
+    debtSubtitles: Map<String, String>,
 ): ProTransactionRowModel = ProTransactionRowModel(
     id = id.value,
     categoryId = categoryId.value,
@@ -143,6 +156,7 @@ private fun FinanceRecord.toRowModel(
     meta = "${expenseCategoryLabel(categoryId.value)} · ${timeLabel(recordedAtEpochMillis)}",
     amount = moneyLabel(money.amount.valueInCents, currencySymbol(money.currency.code)),
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
+    tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
 )
 
 private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =

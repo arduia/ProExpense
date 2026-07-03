@@ -69,6 +69,12 @@ fun QuickLogFlow(
     // success, which dismisses immediately), so this is the one outcome this composable can
     // reliably surface itself.
     saveErrorMessage: String? = null,
+    // A pre-selected event/debt link (e.g. "Add expense" from an Event card) resolved from a
+    // live, asynchronously-loaded tag catalog. It is often still null on first composition —
+    // baking it only into `startState` would silently drop it, since `state` below is captured
+    // once via `remember` and never re-reads `startState` after that. Re-applied via effect
+    // below whenever it transitions from unresolved to resolved.
+    initialLinkedTag: TagLinkOption? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -91,6 +97,16 @@ fun QuickLogFlow(
     // render. A failed save keeps the flow open, so the error toast is shown here instead.
     LaunchedEffect(saveErrorMessage) {
         if (saveErrorMessage != null) toastMessage = saveErrorMessage
+    }
+
+    // Re-applies a pre-selected event/debt link once its async lookup resolves, since it is
+    // frequently still null when `state` above captures its initial snapshot (US-EVT-4 "Add
+    // expense" pre-tagging). Only applies while the user hasn't already picked a different tag.
+    LaunchedEffect(initialLinkedTag) {
+        val tag = initialLinkedTag
+        if (tag != null && state.linkedTagId == null) {
+            state = state.copy(linkedTagId = tag.id, linkedTagKind = tag.kind, linkedTagLabel = tag.title)
+        }
     }
 
     val currentStep = QuickLogStep.valueOf(step)

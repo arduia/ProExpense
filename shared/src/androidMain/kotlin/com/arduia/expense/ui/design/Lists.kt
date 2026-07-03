@@ -32,6 +32,8 @@ data class ProTransactionRowModel(
     val meta: String,
     val amount: String,
     val tag: String? = null,
+    /** Secondary line for the linked tag (e.g. its date range) shown on Journal Detail. */
+    val tagSubtitle: String? = null,
 )
 
 @Composable
