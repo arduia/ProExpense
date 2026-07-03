@@ -444,8 +444,6 @@ fun ExpenseApp(
                             onboardingComplete = true
                         }
                     },
-                    onThemeModeChanged = onThemeModeChanged,
-                    onLanguageChanged = onLanguageChanged,
                 )
             }
 

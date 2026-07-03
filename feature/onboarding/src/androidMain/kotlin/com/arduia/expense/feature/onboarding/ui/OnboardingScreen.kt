@@ -20,9 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.feature.onboarding.R
-import com.arduia.expense.ui.design.AppLanguage
 import com.arduia.expense.ui.design.OnboardingIllustration
 import com.arduia.expense.ui.design.OnboardingPageIndicator
 import com.arduia.expense.ui.design.ProButton
@@ -30,7 +28,6 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
-import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.launch
@@ -55,10 +52,6 @@ fun OnboardingScreenContent(
     onSkip: () -> Unit,
     modifier: Modifier = Modifier,
     initialPage: Int = 0,
-    languageTag: String = AppLanguage.DEFAULT.tag,
-    themeMode: ThemeMode = ThemeMode.DARK,
-    onLanguageSelected: (String) -> Unit = {},
-    onThemeSelected: (ThemeMode) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -118,19 +111,6 @@ fun OnboardingScreenContent(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = dimens.space10, start = dimens.space8, end = dimens.space8),
                 )
-                // Set on the very first screen a new user sees — applies immediately, no restart,
-                // and both remain changeable later in Settings (US-MORE-3).
-                if (page == 0) {
-                    OnboardingPreferencesPicker(
-                        languageTag = languageTag,
-                        themeMode = themeMode,
-                        onLanguageSelected = onLanguageSelected,
-                        onThemeSelected = onThemeSelected,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = dimens.screenPadding, vertical = dimens.space20),
-                    )
-                }
             }
         }
 
@@ -215,59 +195,6 @@ fun OnboardingScreenContent(
     }
 }
 
-@Composable
-private fun OnboardingPreferencesPicker(
-    languageTag: String,
-    themeMode: ThemeMode,
-    onLanguageSelected: (String) -> Unit,
-    onThemeSelected: (ThemeMode) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-
-    val languages = AppLanguage.entries
-    val selectedLanguageIndex = languages.indexOf(AppLanguage.fromTag(languageTag)).coerceAtLeast(0)
-
-    val themeOptions = listOf(
-        ThemeMode.LIGHT to stringResource(R.string.preferences_theme_light),
-        ThemeMode.DARK to stringResource(R.string.preferences_theme_dark),
-        ThemeMode.SYSTEM to stringResource(R.string.preferences_theme_system),
-    )
-    val selectedThemeIndex = themeOptions.indexOfFirst { it.first == themeMode }.coerceAtLeast(0)
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimens.space16),
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-            Text(
-                text = stringResource(R.string.preferences_language_label),
-                style = typography.eyebrow,
-                color = colors.primary,
-            )
-            SegmentedToggle(
-                options = languages.map { it.displayName },
-                selectedIndex = selectedLanguageIndex,
-                onSelected = { index -> onLanguageSelected(languages[index].tag) },
-            )
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-            Text(
-                text = stringResource(R.string.preferences_theme_label),
-                style = typography.eyebrow,
-                color = colors.primary,
-            )
-            SegmentedToggle(
-                options = themeOptions.map { it.second },
-                selectedIndex = selectedThemeIndex,
-                onSelected = { index -> onThemeSelected(themeOptions[index].first) },
-            )
-        }
-    }
-}
-
 @Preview(
     name = "Onboarding — welcome",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
@@ -278,24 +205,6 @@ private fun OnboardingPreferencesPicker(
 private fun OnboardingWelcomePreview() {
     ProExpenseTheme {
         OnboardingScreenContent(onGetStarted = {}, onSkip = {})
-    }
-}
-
-@Preview(
-    name = "Onboarding — welcome, Myanmar + Light",
-    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
-    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
-    showBackground = true,
-)
-@Composable
-private fun OnboardingWelcomeMyanmarPreview() {
-    ProExpenseTheme {
-        OnboardingScreenContent(
-            onGetStarted = {},
-            onSkip = {},
-            languageTag = AppLanguage.MYANMAR.tag,
-            themeMode = ThemeMode.LIGHT,
-        )
     }
 }
 

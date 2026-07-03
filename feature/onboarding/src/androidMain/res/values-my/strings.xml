@@ -12,11 +12,6 @@
 <string name="onboarding_journal_subtitle">သင့်အသုံးစရိတ်ကို နေ့စဉ်မှတ်စုကဲ့သို့ ပြန်လည်ကြည့်ရှုပါ။</string>
 <string name="profile_setup_eyebrow">ပရိုဖိုင် · တစ်ဆင့်တည်းဖြင့် ပြီးပါပြီ</string>
 <string name="profile_setup_title">သင့်ပိုင်ဆိုင်မှု ဖြစ်စေပါ</string>
-<string name="preferences_language_label">ဘာသာစကား</string>
-<string name="preferences_theme_label">အသွင်အပြင်</string>
-<string name="preferences_theme_light">အလင်း</string>
-<string name="preferences_theme_dark">အမှောင်</string>
-<string name="preferences_theme_system">စနစ်အလိုက်</string>
 <string name="profile_setup_description">သင့်အမည်နှင့် အခြေခံငွေကြေးတို့ပေါင်းစပ်၍ သင့်ပရိုဖိုင်ဖြစ်သည် — အကောင့်မလို၊ ဖုန်းပေါ်တွင်သာ။</string>
 <string name="profile_identity_eyebrow">သင့်ပရိုဖိုင်</string>
 <string name="profile_identity_greeting">မင်္ဂလာပါ၊ %1$s</string>
