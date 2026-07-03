@@ -1,0 +1,24 @@
+<resources>
+<string name="reports_title">รายงาน</string>
+<string name="reports_back">เพิ่มเติม</string>
+<string name="reports_total_spent">ใช้จ่ายทั้งหมด</string>
+<string name="reports_period_total">%1$s · ใช้จ่ายทั้งหมด</string>
+<string name="reports_daily_avg_prefix">เฉลี่ยต่อวัน</string>
+<string name="reports_by_category">ตามหมวดหมู่</string>
+<string name="reports_top_categories">หมวดหมู่ยอดนิยม</string>
+<string name="reports_uncategorized_label">ไม่มีหมวดหมู่</string>
+<string name="reports_other_category">อื่นๆ</string>
+<string name="reports_uncategorized_tip">เคล็ดลับ: จัดหมวดหมู่รายจ่ายของคุณเพื่อดูรายละเอียดการใช้จ่ายตามหมวดหมู่</string>
+<string name="reports_prev_period">ช่วงก่อนหน้า</string>
+<string name="reports_next_period">ช่วงถัดไป</string>
+<string name="reports_empty_title">ยังไม่มีข้อมูล</string>
+<string name="reports_empty_subtitle">บันทึกรายจ่ายสักสองสามรายการแล้วรายละเอียดการใช้จ่ายของคุณจะปรากฏที่นี่</string>
+<string name="reports_empty_action">บันทึกรายจ่ายแรกของคุณ</string>
+<string name="reports_period_empty_title">ไม่มีรายจ่ายในช่วงนี้</string>
+<string name="reports_period_empty_subtitle">ปัดหรือใช้ลูกศรด้านบนเพื่อดูช่วงอื่น</string>
+<string name="reports_period_empty_action">บันทึกรายจ่าย</string>
+<string name="reports_window_empty_title">ไม่มีรายจ่ายในมุมมองนี้</string>
+<string name="reports_window_empty_subtitle">ลองสลับระหว่างเดือนและสัปดาห์ด้านบน หรือบันทึกรายจ่ายใหม่</string>
+<string name="reports_granularity_month">เดือน</string>
+<string name="reports_granularity_week">สัปดาห์</string>
+</resources>

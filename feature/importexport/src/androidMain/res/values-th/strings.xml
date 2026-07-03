@@ -1,0 +1,35 @@
+<resources>
+    <string name="more_back">เพิ่มเติม</string>
+    <string name="more_export_title">ส่งออกข้อมูล</string>
+    <string name="more_export_heading">ส่งออกข้อมูลของคุณ</string>
+    <string name="more_export_subtitle">ไฟล์ zip เดียวที่มี CSV สำหรับแต่ละฟีเจอร์ ทุกอย่างอยู่ในอุปกรณ์ของคุณ — ไม่มีการอัปโหลด</string>
+    <string name="more_export_subtitle_json">ไฟล์ JSON เดียวที่มีรายจ่ายทั้งหมดของคุณ ทุกอย่างอยู่ในอุปกรณ์ของคุณ — ไม่มีการอัปโหลด</string>
+    <string name="more_export_format_csv">ZIP (CSV)</string>
+    <string name="more_export_format_json">JSON</string>
+    <string name="more_export_json_filename">expenses.json</string>
+    <string name="more_export_json_subtitle">รายจ่ายที่บันทึกทั้งหมด + แท็ก @</string>
+    <string name="more_export_action">ส่งออกเป็น ZIP</string>
+    <string name="more_export_action_json">ส่งออกเป็น JSON</string>
+    <string name="more_export_failed">การส่งออกล้มเหลว กรุณาลองอีกครั้ง</string>
+    <string name="more_export_password_placeholder">รหัสผ่าน (ไม่บังคับ)</string>
+    <string name="more_export_password_hint">เพิ่มรหัสผ่านเพื่อเข้ารหัส zip คุณจะต้องใช้รหัสนี้เพื่อนำเข้าข้อมูลสำรองนี้ในภายหลัง</string>
+    <string name="more_import_title">นำเข้าข้อมูล</string>
+    <string name="more_import_heading">นำเข้าจากข้อมูลสำรอง</string>
+    <string name="more_import_subtitle">เลือกไฟล์ CSV, JSON หรือ ZIP ที่ส่งออกจาก Pro Expense ระบบจะอ่านข้อมูลจากอุปกรณ์นี้เท่านั้น — ไม่มีการอัปโหลด</string>
+    <string name="more_import_choose_file">เลือกไฟล์…</string>
+    <string name="more_import_preview_count">พบ %1$d รายการ</string>
+    <string name="more_import_action">นำเข้า %1$d รายการ</string>
+    <string name="more_import_read_error">ไม่สามารถอ่านไฟล์นี้เป็นข้อมูลสำรองของ Pro Expense ได้</string>
+    <string name="more_import_result">นำเข้าแล้ว %1$d · ข้าม %2$d</string>
+    <string name="more_import_password_placeholder">รหัสผ่าน</string>
+    <string name="more_import_password_needed">ข้อมูลสำรองนี้มีรหัสผ่านป้องกันไว้ ป้อนรหัสผ่านเพื่อปลดล็อก</string>
+    <string name="more_import_password_wrong">รหัสผ่านไม่ถูกต้อง ลองอีกครั้ง</string>
+    <string name="more_import_unlock">ปลดล็อก</string>
+    <string name="more_clear_title">ล้างข้อมูล</string>
+    <string name="more_clear_subtitle">เลือกสิ่งที่จะล้าง การล้างแต่ละครั้งจะขอการยืนยันและไม่สามารถย้อนกลับได้</string>
+    <string name="more_clear_action">ล้างที่เลือก…</string>
+    <string name="more_clear_confirm_title">ล้างข้อมูลที่เลือกหรือไม่?</string>
+    <string name="more_clear_confirm_body">การดำเนินการนี้จะลบรายการที่เลือกออกจากอุปกรณ์นี้อย่างถาวร ไม่สามารถย้อนกลับได้</string>
+    <string name="more_clear_confirm_action">ล้าง</string>
+    <string name="more_clear_confirm_cancel">ยกเลิก</string>
+</resources>

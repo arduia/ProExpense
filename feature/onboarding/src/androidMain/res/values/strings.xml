@@ -13,8 +13,15 @@
 <string name="onboarding_get_started_title">You are all set</string>
 <string name="onboarding_get_started_subtitle">Start logging in seconds. Your notebook stays on your device.</string>
 <string name="profile_setup_step">PROFILE · %1$d OF %2$d</string>
-<string name="profile_setup_eyebrow">PROFILE · ALL SET IN ONE STEP</string>
 <string name="profile_setup_title">Make it yours</string>
+<string name="preferences_setup_step">PREFERENCES · %1$d OF %2$d</string>
+<string name="preferences_title">Set your preferences</string>
+<string name="preferences_subtitle">Choose your language and how Pro Expense looks. You can change these anytime in Settings.</string>
+<string name="preferences_language_label">LANGUAGE</string>
+<string name="preferences_theme_label">THEME</string>
+<string name="preferences_theme_light">Light</string>
+<string name="preferences_theme_dark">Dark</string>
+<string name="preferences_theme_system">System</string>
 <string name="profile_setup_description">Your name and home currency together make up your profile — no account, all on your device.</string>
 <string name="profile_identity_eyebrow">YOUR PROFILE</string>
 <string name="profile_identity_greeting">Hi, %1$s</string>

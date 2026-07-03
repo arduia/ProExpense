@@ -309,4 +309,20 @@ class AppMetaRepositoriesTest {
         assertTrue(fetched is Result.Success)
         assertEquals(ThemeMode.SYSTEM, fetched.data)
     }
+
+    @Test
+    fun locale_defaultsToEnglish_thenPersists() = runTest {
+        val store = store()
+        val repo = AppMetaLocaleRepository(store)
+
+        val initial = repo.getLanguageTag()
+        assertTrue(initial is Result.Success)
+        assertEquals("en", initial.data)
+
+        repo.setLanguageTag("my")
+
+        val fetched = repo.getLanguageTag()
+        assertTrue(fetched is Result.Success)
+        assertEquals("my", fetched.data)
+    }
 }

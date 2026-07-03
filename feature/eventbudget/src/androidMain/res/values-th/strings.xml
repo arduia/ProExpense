@@ -1,0 +1,31 @@
+<resources>
+<string name="event_create_title">กิจกรรมใหม่</string>
+<string name="event_edit">แก้ไข</string>
+<string name="event_edit_subtitle">เปลี่ยนชื่อ วันที่ หรืองบประมาณ</string>
+<string name="event_close">ปิดกิจกรรม</string>
+<string name="event_close_subtitle">หยุดติดตามรายจ่ายใหม่สำหรับกิจกรรมนี้</string>
+<string name="event_actions_cancel">ยกเลิก</string>
+<string name="event_close_confirm_title">ปิด %1$s หรือไม่?</string>
+<string name="event_close_confirm_body">กิจกรรมนี้จะกลายเป็นแบบอ่านอย่างเดียว — ไม่สามารถเชื่อมโยงรายจ่ายใหม่ได้อีก</string>
+<string name="event_close_confirm">ปิด</string>
+<string name="event_edit_title">แก้ไขกิจกรรม</string>
+<string name="events_eyebrow">ติดตามงบประมาณ</string>
+<string name="events_title">งบประมาณ</string>
+<string name="event_new">กิจกรรมใหม่</string>
+<string name="events_back">กิจกรรม</string>
+<string name="event_empty_heading">ไม่มีกิจกรรมที่ใช้งานอยู่</string>
+<string name="event_empty_body">ตั้งงบประมาณสำหรับทริป งานแต่งงาน หรืองานปาร์ตี้ — แล้วแท็กรายจ่ายเพื่อติดตามแบบเรียลไทม์</string>
+<string name="event_create_cta">สร้างกิจกรรม</string>
+<string name="event_name_label">ชื่อกิจกรรม</string>
+<string name="event_name_placeholder">เช่น ทริปบาหลี</string>
+<string name="event_dates_label">วันที่</string>
+<string name="event_total_budget_label">งบประมาณทั้งหมด</string>
+<string name="event_name_counter">%1$d/%2$d</string>
+<string name="event_name_duplicate">มีกิจกรรมชื่อนี้อยู่แล้ว</string>
+<string name="event_budget_positive_error">งบประมาณต้องมากกว่า $0</string>
+<string name="event_currency_usd">USD</string>
+<string name="event_linked_expenses_count">รายจ่ายที่เชื่อมโยง · %1$d</string>
+<string name="event_add_tagged">เพิ่มที่แท็กไว้</string>
+<string name="event_add_expense">เพิ่มรายจ่าย</string>
+<string name="event_readonly_notice">อ่านอย่างเดียว — ระยะเวลาแก้ไข 24 ชั่วโมงผ่านไปแล้ว ไม่สามารถเชื่อมโยงรายจ่ายใหม่ได้</string>
+</resources>

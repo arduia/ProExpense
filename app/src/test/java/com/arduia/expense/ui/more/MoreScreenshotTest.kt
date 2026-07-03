@@ -115,6 +115,15 @@ class MoreScreenshotTest {
     }
 
     @Test
+    fun more_language() = capture {
+        MoreLanguageScreen(
+            selectedLanguage = com.arduia.expense.ui.design.AppLanguage.ENGLISH,
+            onSelect = {},
+            onBack = {},
+        )
+    }
+
+    @Test
     fun more_export() = capture {
         MoreExportScreen(
             files = previewMoreExportFiles,

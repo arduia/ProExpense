@@ -20,8 +20,10 @@ import androidx.fragment.app.FragmentActivity
 import com.arduia.expense.data.DefaultCategoryRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.data.ThemeRepository
+import com.arduia.expense.ui.design.AppLanguage
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Money
 import com.arduia.expense.feature.auth.BiometricAuthenticator
@@ -52,7 +54,7 @@ import org.koin.compose.koinInject
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.R
 
-private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory, Theme }
+private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory, Theme, Language }
 
 @Composable
 fun MoreFlow(
@@ -69,6 +71,7 @@ fun MoreFlow(
     onBudgetChanged: (Money?) -> Unit = {},
     onDefaultCategoryChanged: (String) -> Unit = {},
     onThemeModeChanged: (ThemeMode) -> Unit = {},
+    onLanguageTagChanged: (String) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -80,11 +83,15 @@ fun MoreFlow(
     val currencyRepository: CurrencyRepository = koinInject()
     val saveHomeCurrency: SaveHomeCurrencyUseCase = koinInject()
     val themeRepository: ThemeRepository = koinInject()
+    val localeRepository: LocaleRepository = koinInject()
     val pinAuthRepository: PinAuthRepository = koinInject()
     val disablePin: DisablePinUseCase = koinInject()
     val budgetRepository: BudgetRepository = koinInject()
     val defaultCategoryRepository: DefaultCategoryRepository = koinInject()
     val profileNameFallback = stringResource(R.string.more_profile_name_fallback)
+    val themeLightLabel = stringResource(R.string.theme_light)
+    val themeDarkLabel = stringResource(R.string.theme_dark)
+    val themeSystemLabel = stringResource(R.string.theme_system)
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
@@ -101,6 +108,7 @@ fun MoreFlow(
     val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
     var defaultCategoryId by remember { mutableStateOf("food") }
     var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
+    var languageTag by remember { mutableStateOf(AppLanguage.DEFAULT.tag) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pinConfigured) {
@@ -152,6 +160,11 @@ fun MoreFlow(
             is Result.Success -> themeMode = result.data
             is Result.Error -> Unit
         }
+        // Load language
+        when (val result = localeRepository.getLanguageTag()) {
+            is Result.Success -> if (result.data.isNotBlank()) languageTag = result.data
+            is Result.Error -> Unit
+        }
         // Load app version
         try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -163,7 +176,8 @@ fun MoreFlow(
 
     val hubState = remember(
         selectedCurrency, displayName, pinEnabled, monthlyBudgetLabel, appVersion,
-        biometricEnrolled, biometricCapable, defaultCategoryId, themeMode, profileNameFallback,
+        biometricEnrolled, biometricCapable, defaultCategoryId, themeMode, languageTag, profileNameFallback,
+        themeLightLabel, themeDarkLabel, themeSystemLabel,
     ) {
         // No fictional-persona fallback (US-ONB-3: no name set -> generic, not "Maya").
         val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
@@ -182,7 +196,10 @@ fun MoreFlow(
                     )
                     "budget" -> setting.copy(value = monthlyBudgetLabel)
                     "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
-                    "theme" -> setting.copy(value = themeModeLabel(themeMode))
+                    "theme" -> setting.copy(
+                        value = themeModeLabel(themeMode, themeLightLabel, themeDarkLabel, themeSystemLabel),
+                    )
+                    "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
                     "version" -> setting.copy(value = appVersion)
                     else -> setting
                 }
@@ -227,6 +244,7 @@ fun MoreFlow(
                             "budget" -> step = MoreStep.Budget
                             "category" -> step = MoreStep.DefaultCategory
                             "theme" -> step = MoreStep.Theme
+                            "language" -> step = MoreStep.Language
                             "biometric" -> if (!pinEnabled) {
                                 toastMessage = context.getString(R.string.more_biometric_requires_pin)
                             }
@@ -293,6 +311,15 @@ fun MoreFlow(
                         themeMode = mode
                         onThemeModeChanged(mode)
                         scope.launch { themeRepository.setThemeMode(mode) }
+                    },
+                    onBack = { step = MoreStep.Hub },
+                )
+                MoreStep.Language -> MoreLanguageScreen(
+                    selectedLanguage = AppLanguage.fromTag(languageTag),
+                    onSelect = { language ->
+                        languageTag = language.tag
+                        onLanguageTagChanged(language.tag)
+                        scope.launch { localeRepository.setLanguageTag(language.tag) }
                     },
                     onBack = { step = MoreStep.Hub },
                 )
@@ -424,11 +451,12 @@ private fun PinManageSheetContent(
     }
 }
 
-private fun themeModeLabel(mode: ThemeMode): String = when (mode) {
-    ThemeMode.LIGHT -> "Light"
-    ThemeMode.DARK -> "Dark"
-    ThemeMode.SYSTEM -> "System"
-}
+private fun themeModeLabel(mode: ThemeMode, lightLabel: String, darkLabel: String, systemLabel: String): String =
+    when (mode) {
+        ThemeMode.LIGHT -> lightLabel
+        ThemeMode.DARK -> darkLabel
+        ThemeMode.SYSTEM -> systemLabel
+    }
 
 @Preview(
     name = "More flow — hub",

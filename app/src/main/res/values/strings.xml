@@ -195,6 +195,10 @@
     <string name="more_shared_costs">Shared Costs</string>
     <string name="more_monthly_budget">Monthly budget</string>
     <string name="more_language">Language</string>
+    <string name="more_theme_title">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
     <string name="more_currency">Currency</string>
     <string name="more_currency_sub">Change your default currency</string>
     <string name="more_reports_sub">Monthly category breakdown</string>

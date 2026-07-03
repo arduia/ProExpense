@@ -21,6 +21,7 @@ kotlin {
             implementation(libs.coroutines.core)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
+            implementation("io.insert-koin:koin-compose:4.1.1")
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

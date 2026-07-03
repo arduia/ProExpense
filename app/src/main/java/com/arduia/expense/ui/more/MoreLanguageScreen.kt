@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
-import com.arduia.expense.data.ThemeMode
+import com.arduia.expense.ui.design.AppLanguage
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
@@ -26,23 +26,16 @@ import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-private data class ThemeOptionUi(val mode: ThemeMode, val label: String)
-
 @Composable
-fun MoreThemeScreen(
-    selectedMode: ThemeMode,
-    onSelect: (ThemeMode) -> Unit,
+fun MoreLanguageScreen(
+    selectedLanguage: AppLanguage,
+    onSelect: (AppLanguage) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val options = listOf(
-        ThemeOptionUi(ThemeMode.LIGHT, stringResource(R.string.theme_light)),
-        ThemeOptionUi(ThemeMode.DARK, stringResource(R.string.theme_dark)),
-        ThemeOptionUi(ThemeMode.SYSTEM, stringResource(R.string.theme_system)),
-    )
 
     Box(
         modifier = modifier
@@ -57,7 +50,7 @@ fun MoreThemeScreen(
                 .padding(horizontal = dimens.screenPadding)
                 .padding(bottom = dimens.space24),
         ) {
-            ProTopBar(title = stringResource(R.string.more_theme_title), onBack = onBack)
+            ProTopBar(title = stringResource(R.string.more_language), onBack = onBack)
 
             Column(
                 modifier = Modifier
@@ -65,22 +58,22 @@ fun MoreThemeScreen(
                     .padding(top = dimens.space8),
                 verticalArrangement = Arrangement.spacedBy(dimens.space8),
             ) {
-                options.forEach { option ->
-                    val selected = option.mode == selectedMode
+                AppLanguage.entries.forEach { language ->
+                    val selected = language == selectedLanguage
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(ProExpenseTheme.shapes.searchField)
                             .background(if (selected) colors.primarySoft else colors.surface)
                             .proClickable(
-                                onClick = { onSelect(option.mode) },
+                                onClick = { onSelect(language) },
                                 shape = ProExpenseTheme.shapes.searchField,
                             )
                             .padding(horizontal = dimens.space14, vertical = dimens.space14),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        Text(text = option.label, style = typography.bodySemiBold, color = colors.onSurface)
+                        Text(text = language.displayName, style = typography.bodySemiBold, color = colors.onSurface)
                         if (selected) {
                             ProIcon(
                                 glyph = ProIconGlyph.Check,
@@ -96,16 +89,16 @@ fun MoreThemeScreen(
 }
 
 @Preview(
-    name = "More — theme",
+    name = "More — language",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
     showBackground = true,
 )
 @Composable
-private fun MoreThemeScreenPreview() {
+private fun MoreLanguageScreenPreview() {
     ProExpenseTheme {
-        MoreThemeScreen(
-            selectedMode = ThemeMode.SYSTEM,
+        MoreLanguageScreen(
+            selectedLanguage = AppLanguage.ENGLISH,
             onSelect = {},
             onBack = {},
         )

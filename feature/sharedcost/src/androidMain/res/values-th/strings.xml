@@ -1,0 +1,37 @@
+<resources>
+    <string name="shared_costs_title">หารบิล</string>
+    <string name="shared_summary_title">สรุปการหาร</string>
+    <string name="shared_per_person">ต่อคน</string>
+    <string name="shared_save_split">บันทึกการหาร</string>
+    <string name="shared_split_saved_toast">บันทึกการหารแล้ว</string>
+    <string name="shared_split_even">หารเท่ากัน</string>
+    <string name="shared_split_custom">หารแบบกำหนดเอง</string>
+    <string name="shared_bill_splitter">เครื่องมือหารบิล</string>
+    <string name="shared_costs_heading">หารค่าใช้จ่าย</string>
+    <string name="shared_new_split">การหารใหม่</string>
+    <string name="shared_recent_splits">การหารล่าสุด</string>
+    <string name="shared_total_bill">ยอดบิลรวม</string>
+    <string name="shared_each_person_pays">แต่ละคนจ่าย</string>
+    <string name="shared_summary_meta">รวม %1$s · หาร %2$d คน · %3$s</string>
+    <string name="shared_split_mode_equal">เท่ากัน</string>
+    <string name="shared_switch_to_custom">เปลี่ยนเป็นกำหนดเอง</string>
+    <string name="shared_max_people">ถึงจำนวนสูงสุด 20 คนแล้ว</string>
+    <string name="shared_total_zero_error">ยอดรวมต้องมากกว่า $0</string>
+    <string name="shared_save_split_amount">บันทึกการหาร · %1$s</string>
+    <string name="shared_history_meta">%1$d คน · คนละ %2$s · %3$s</string>
+    <string name="shared_uneven_split_prompt">ต้องการหารแบบไม่เท่ากันหรือไม่?</string>
+    <string name="shared_back_more">เพิ่มเติม</string>
+    <string name="shared_back_split">หาร</string>
+    <string name="shared_back_history">ประวัติ</string>
+    <string name="shared_note_placeholder">มื้อเย็นที่ Nobu</string>
+    <string name="shared_split_default_title">การหารค่าใช้จ่าย</string>
+    <string name="shared_people_word">คน</string>
+    <string name="shared_add_person_cd">เพิ่มคน</string>
+    <string name="shared_remove_person_cd">ลบคน</string>
+    <string name="shared_people_count_state">%1$d คน</string>
+    <string name="shared_delete_action">ลบ</string>
+    <string name="shared_delete_title">ลบการหารนี้หรือไม่?</string>
+    <string name="shared_delete_body">"%1$s" และรายจ่ายที่บันทึกไว้จะถูกลบ ไม่สามารถย้อนกลับได้</string>
+    <string name="shared_delete_confirm">ลบ</string>
+    <string name="shared_delete_cancel">ยกเลิก</string>
+</resources>

@@ -140,9 +140,9 @@ fun ProfileSetupScreenContent(
                 verticalArrangement = Arrangement.spacedBy(dimens.space20),
             ) {
                 ProfileStepHeader(
-                    step = 1,
-                    totalSteps = 1,
-                    eyebrow = stringResource(R.string.profile_setup_eyebrow),
+                    step = 2,
+                    totalSteps = 2,
+                    eyebrow = stringResource(R.string.profile_setup_step, 2, 2),
                     title = stringResource(R.string.profile_setup_title),
                     subtitle = stringResource(R.string.profile_setup_description),
                     onSkip = onSkip,

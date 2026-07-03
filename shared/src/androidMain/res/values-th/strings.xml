@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_home">หน้าหลัก</string>
+    <string name="nav_budget">งบประมาณ</string>
+    <string name="nav_journal">บันทึก</string>
+    <string name="nav_more">เพิ่มเติม</string>
+    <string name="nav_add">เพิ่ม</string>
+    <string name="back">ย้อนกลับ</string>
+    <string name="close">ปิด</string>
+    <string name="more">เพิ่มเติม</string>
+    <string name="backspace">ลบ</string>
+    <string name="add_person">เพิ่มคน</string>
+    <string name="remove_person">ลบคน</string>
+    <string name="people_count_state">%1$d คน</string>
+    <string name="category_section_default">ค่าเริ่มต้น</string>
+    <string name="category_section_custom">กำหนดเอง</string>
+    <string name="category_picker_more">+ เพิ่มเติม</string>
+    <string name="category_picker_add">+ เพิ่ม</string>
+    <string name="event_over_budget">เกินงบประมาณ</string>
+    <string name="event_over_budget_by">เกินงบประมาณ %1$s (%2$d%%)</string>
+    <string name="toast_check_icon">สำเร็จ</string>
+    <string name="link_to_subtitle">เลือกกิจกรรมหนึ่งรายการหรือหนี้หนึ่งรายการ ไม่ใช่ทั้งสองอย่าง การเลือกอย่างหนึ่งจะทำให้อีกอย่างหนึ่งเป็นสีจาง</string>
+    <string name="link_events_section">กิจกรรม</string>
+    <string name="link_debts_section">หนี้สิน</string>
+    <string name="link_debts_unavailable">· ไม่พร้อมใช้งานขณะเลือกกิจกรรม</string>
+</resources>
