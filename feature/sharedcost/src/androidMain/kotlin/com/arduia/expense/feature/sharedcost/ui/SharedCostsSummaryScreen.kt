@@ -42,6 +42,10 @@ fun SharedCostsSummaryScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
     backLabel: String = stringResource(R.string.shared_back_split),
+    // A previously saved split is immutable except for deletion (US-SHC-5 Scenario 2) — viewing
+    // it from history must not offer Save or the switch-to-custom edit path, only the new-split
+    // flow does.
+    readOnly: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -111,7 +115,7 @@ fun SharedCostsSummaryScreen(
             }
         }
 
-        if (state.mode == SharedSplitMode.Equal) {
+        if (!readOnly && state.mode == SharedSplitMode.Equal) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,13 +136,15 @@ fun SharedCostsSummaryScreen(
             }
         }
 
-        ProButton(
-            text = stringResource(R.string.shared_save_split_amount, "$$totalDisplay"),
-            onClick = onSave,
-            size = ProButtonSize.Lg,
-            fillMaxWidth = true,
-            modifier = Modifier.padding(top = dimens.space24),
-        )
+        if (!readOnly) {
+            ProButton(
+                text = stringResource(R.string.shared_save_split_amount, "$$totalDisplay"),
+                onClick = onSave,
+                size = ProButtonSize.Lg,
+                fillMaxWidth = true,
+                modifier = Modifier.padding(top = dimens.space24),
+            )
+        }
     }
 }
 

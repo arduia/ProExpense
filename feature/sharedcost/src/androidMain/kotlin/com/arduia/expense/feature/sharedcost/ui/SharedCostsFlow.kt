@@ -248,6 +248,7 @@ fun SharedCostsFlow(
                 SharedCostStep.Summary -> {
                     SharedCostsSummaryScreen(
                         state = draft.toUiState(),
+                        readOnly = viewingId != null,
                         backLabel = if (viewingId != null) {
                             stringResource(R.string.shared_back_history)
                         } else {
