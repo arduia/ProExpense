@@ -52,6 +52,7 @@ class SqlDelightFinanceRecordRepositoryTest {
             created_at = 0,
             cached_spent_cents = 0,
             cache_updated_at = 0,
+            closed_at_epoch_millis = null,
         )
     }
 
