@@ -102,6 +102,11 @@ fun PinLockFlow(
         while (true) {
             val remaining = until - System.currentTimeMillis()
             if (remaining <= 0) {
+                // The countdown completing must reset the *persisted* attempt count (US-AUTH-5:
+                // "attempt counter resets once the countdown completes") — clearing only local UI
+                // state left the next wrong digit escalate straight to the next lockout tier
+                // (30s -> 60s -> 5min) instead of a fresh 5-attempt budget.
+                pinAuthRepository.resetFailedAttempts()
                 lockoutUntil = null
                 countdownLabel = null
                 entryError = false
@@ -207,10 +212,13 @@ fun PinLockFlow(
                     },
                     onBiometric = { startBiometric() },
                     onForgot = {
+                        // Only the input field and its inline error clear on re-entry — the
+                        // attempt count and exhausted flag must survive a Back/Forgot round trip
+                        // within this session, or a user could reset their 5-attempt recovery
+                        // budget indefinitely just by backing out and tapping Forgot again
+                        // (US-AUTH-8: same lockout pattern as PIN entry).
                         recoveryAnswer = ""
-                        recoveryAttempts = 0
                         recoveryError = false
-                        recoveryExhausted = false
                         scope.launch {
                             when (val result = pinAuthRepository.getSecurityQuestionId()) {
                                 is Result.Success -> recoveryQuestionId = result.data

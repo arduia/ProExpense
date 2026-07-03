@@ -25,6 +25,13 @@ interface AuthFeatureEntry {
         onCancel: () -> Unit,
         modifier: Modifier,
     )
+
+    @Composable
+    fun PinChangeFlow(
+        onDone: () -> Unit,
+        onCancel: () -> Unit,
+        modifier: Modifier,
+    )
 }
 
 internal class AuthFeatureEntryImpl : AuthFeatureEntry {
@@ -53,6 +60,11 @@ internal class AuthFeatureEntryImpl : AuthFeatureEntry {
             onCancel = onCancel,
             modifier = modifier,
         )
+    }
+
+    @Composable
+    override fun PinChangeFlow(onDone: () -> Unit, onCancel: () -> Unit, modifier: Modifier) {
+        com.arduia.expense.feature.auth.ui.PinChangeFlow(onDone = onDone, onCancel = onCancel, modifier = modifier)
     }
 }
 

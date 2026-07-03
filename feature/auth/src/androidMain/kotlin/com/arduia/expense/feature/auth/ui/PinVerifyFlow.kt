@@ -61,6 +61,9 @@ fun PinVerifyFlow(
         while (true) {
             val remaining = until - System.currentTimeMillis()
             if (remaining <= 0) {
+                // See PinLockFlow's matching fix — the persisted attempt count must reset when
+                // the countdown itself completes, not just local UI state.
+                pinAuthRepository.resetFailedAttempts()
                 lockoutUntil = null
                 countdownLabel = null
                 entryError = false

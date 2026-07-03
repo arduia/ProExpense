@@ -56,4 +56,11 @@
     <string name="pin_disable_verify_heading">Confirm your PIN</string>
     <string name="pin_disable_verify_helper">Enter your current PIN to turn off protection</string>
     <string name="pin_disable_verify_cancel">Cancel</string>
+    <string name="pin_manage_sheet_change">Change PIN</string>
+    <string name="pin_manage_sheet_disable">Turn off PIN protection</string>
+    <string name="pin_manage_sheet_cancel">Cancel</string>
+    <string name="pin_change_verify_heading">Confirm your current PIN</string>
+    <string name="pin_change_verify_helper">Enter your current PIN to change it</string>
+    <string name="pin_change_new_heading">Choose a new 6-digit PIN</string>
+    <string name="pin_change_success">PIN changed</string>
 </resources>

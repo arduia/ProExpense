@@ -32,6 +32,9 @@ import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProToastHost
@@ -83,8 +86,10 @@ fun MoreFlow(
     var selectedCurrency by remember { mutableStateOf("USD") }
     var displayName by remember { mutableStateOf("") }
     var pinEnabled by remember { mutableStateOf(false) }
+    var showPinManageSheet by remember { mutableStateOf(false) }
     var showDisablePinConfirm by remember { mutableStateOf(false) }
     var showDisablePinVerify by remember { mutableStateOf(false) }
+    var showPinChangeFlow by remember { mutableStateOf(false) }
     var monthlyBudgetLabel by remember { mutableStateOf("Off") }
     var appVersion by remember { mutableStateOf("1.0.0") }
     var homeCurrencyCode by remember { mutableStateOf(CurrencyCode("USD")) }
@@ -207,7 +212,7 @@ fun MoreFlow(
                             "export" -> step = MoreStep.Export
                             "import" -> step = MoreStep.Import
                             "clear" -> step = MoreStep.Clear
-                            "pin" -> if (pinEnabled) showDisablePinConfirm = true else onPinClick()
+                            "pin" -> if (pinEnabled) showPinManageSheet = true else onPinClick()
                             "budget" -> step = MoreStep.Budget
                             "category" -> step = MoreStep.DefaultCategory
                             "biometric" -> if (!pinEnabled) {
@@ -291,6 +296,24 @@ fun MoreFlow(
             }
         }
 
+        ProBottomSheetHost(
+            visible = showPinManageSheet,
+            title = null,
+            onClose = { showPinManageSheet = false },
+        ) {
+            PinManageSheetContent(
+                onChange = {
+                    showPinManageSheet = false
+                    showPinChangeFlow = true
+                },
+                onDisable = {
+                    showPinManageSheet = false
+                    showDisablePinConfirm = true
+                },
+                onCancel = { showPinManageSheet = false },
+            )
+        }
+
         ProAlertDialog(
             visible = showDisablePinConfirm,
             icon = ProIconGlyph.Close,
@@ -326,9 +349,57 @@ fun MoreFlow(
             )
         }
 
+        if (showPinChangeFlow) {
+            features.auth.PinChangeFlow(
+                onDone = {
+                    showPinChangeFlow = false
+                    toastMessage = context.getString(AuthR.string.pin_change_success)
+                },
+                onCancel = { showPinChangeFlow = false },
+                modifier = Modifier,
+            )
+        }
+
         ProToastHost(
             message = toastMessage,
             onDismiss = { toastMessage = null },
+        )
+    }
+}
+
+/** Change vs. disable choice for an already-enabled PIN (US-AUTH-7). */
+@Composable
+private fun PinManageSheetContent(
+    onChange: () -> Unit,
+    onDisable: () -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val dimens = ProExpenseTheme.dimensions
+    androidx.compose.foundation.layout.Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(dimens.space12),
+    ) {
+        ProButton(
+            text = stringResource(AuthR.string.pin_manage_sheet_change),
+            onClick = onChange,
+            variant = ProButtonVariant.Primary,
+            size = ProButtonSize.Lg,
+            fillMaxWidth = true,
+        )
+        ProButton(
+            text = stringResource(AuthR.string.pin_manage_sheet_disable),
+            onClick = onDisable,
+            variant = ProButtonVariant.Danger,
+            size = ProButtonSize.Lg,
+            fillMaxWidth = true,
+        )
+        ProButton(
+            text = stringResource(AuthR.string.pin_manage_sheet_cancel),
+            onClick = onCancel,
+            variant = ProButtonVariant.Secondary,
+            size = ProButtonSize.Lg,
+            fillMaxWidth = true,
         )
     }
 }
