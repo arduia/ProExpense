@@ -71,7 +71,7 @@ fun MoreFlow(
     onBudgetChanged: (Money?) -> Unit = {},
     onDefaultCategoryChanged: (String) -> Unit = {},
     onThemeModeChanged: (ThemeMode) -> Unit = {},
-    onLanguageTagChanged: (String) -> Unit = {},
+    onLanguageChanged: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -318,8 +318,12 @@ fun MoreFlow(
                     selectedLanguage = AppLanguage.fromTag(languageTag),
                     onSelect = { language ->
                         languageTag = language.tag
-                        onLanguageTagChanged(language.tag)
-                        scope.launch { localeRepository.setLanguageTag(language.tag) }
+                        // Persist first (synchronous SharedPrefs write inside), then recreate —
+                        // attachBaseContext() re-reads the fresh value on the new Activity instance.
+                        scope.launch {
+                            localeRepository.setLanguageTag(language.tag)
+                            onLanguageChanged()
+                        }
                     },
                     onBack = { step = MoreStep.Hub },
                 )

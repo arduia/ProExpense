@@ -10,11 +10,8 @@
 <string name="onboarding_event_budget_subtitle">วางแผนและติดตามงบประมาณกิจกรรมใดก็ได้ — ทริป งานแต่งงาน งานปาร์ตี้</string>
 <string name="onboarding_journal_title">บันทึก</string>
 <string name="onboarding_journal_subtitle">ทบทวนการใช้จ่ายของคุณเหมือนไดอารี่ วันต่อวัน</string>
-<string name="profile_setup_step">โปรไฟล์ · %1$d/%2$d</string>
+<string name="profile_setup_eyebrow">โปรไฟล์ · เสร็จในขั้นตอนเดียว</string>
 <string name="profile_setup_title">ทำให้เป็นของคุณ</string>
-<string name="preferences_setup_step">การตั้งค่า · %1$d/%2$d</string>
-<string name="preferences_title">ตั้งค่าที่คุณต้องการ</string>
-<string name="preferences_subtitle">เลือกภาษาและรูปลักษณ์ของ Pro Expense คุณสามารถเปลี่ยนได้ทุกเมื่อในการตั้งค่า</string>
 <string name="preferences_language_label">ภาษา</string>
 <string name="preferences_theme_label">ธีม</string>
 <string name="preferences_theme_light">สว่าง</string>

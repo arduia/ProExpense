@@ -1,5 +1,6 @@
 package com.arduia.expense.ui
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.WindowManager
@@ -8,26 +9,33 @@ import com.arduia.expense.BuildConfig
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
 import com.arduia.expense.ExpenseApplication
-import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.data.ThemeRepository
+import com.arduia.expense.storage.repository.AppMetaLocaleRepository
 import com.arduia.expense.ui.design.AppLanguage
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.koin.compose.koinInject
 import java.util.Locale
 
 class MainActivity : FragmentActivity() {
+
+    // MainActivity is a plain FragmentActivity, not AppCompatActivity, so AppCompatDelegate's
+    // per-app-language API won't auto-recreate it with the stored locale — wrapping the base
+    // Context here (the same technique the OS itself uses) is the reliable, API-24+-safe fix.
+    // Reads SharedPreferences directly (not through Koin/the suspend repository) since this runs
+    // before ExpenseApplication.ensureStarted() / DI is available.
+    override fun attachBaseContext(newBase: Context) {
+        val languageTag = AppMetaLocaleRepository.peekLanguageTag(newBase) ?: AppLanguage.DEFAULT.tag
+        super.attachBaseContext(newBase.withLocale(languageTag))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +48,17 @@ class MainActivity : FragmentActivity() {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
         setContent {
-            ThemedExpenseApp()
+            ThemedExpenseApp(onLanguageChanged = { recreate() })
         }
     }
+}
+
+private fun Context.withLocale(languageTag: String): Context {
+    val locale = Locale.forLanguageTag(languageTag)
+    Locale.setDefault(locale)
+    val config = Configuration(resources.configuration)
+    config.setLocale(locale)
+    return createConfigurationContext(config)
 }
 
 /**
@@ -51,21 +67,15 @@ class MainActivity : FragmentActivity() {
  * the whole tree (US-MORE-3: applies immediately, no restart).
  */
 @Composable
-private fun ThemedExpenseApp() {
+private fun ThemedExpenseApp(onLanguageChanged: () -> Unit) {
     val themeRepository: ThemeRepository = koinInject()
-    val localeRepository: LocaleRepository = koinInject()
     // Dark is the product default (US-MORE-3) — seed the pre-load placeholder with it too, so a
     // fresh install's first frame doesn't flash light before the persisted value resolves below.
     var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
-    var languageTag by remember { mutableStateOf(AppLanguage.DEFAULT.tag) }
 
     LaunchedEffect(Unit) {
         when (val result = themeRepository.getThemeMode()) {
             is Result.Success -> themeMode = result.data
-            is Result.Error -> Unit
-        }
-        when (val result = localeRepository.getLanguageTag()) {
-            is Result.Success -> if (result.data.isNotBlank()) languageTag = result.data
             is Result.Error -> Unit
         }
     }
@@ -77,36 +87,11 @@ private fun ThemedExpenseApp() {
     }
 
     ProExpenseTheme(darkTheme = darkTheme) {
-        LocalizedContent(languageTag = languageTag) {
-            ExpenseApp(
-                onThemeModeChanged = { themeMode = it },
-                onLanguageTagChanged = { languageTag = it },
-            )
-        }
-    }
-}
-
-/**
- * Overrides string-resource resolution to [languageTag] for the whole composition — mirrors
- * ThemedExpenseApp's no-restart pattern for Theme (US-MORE-3 analog for language). MainActivity
- * is a plain FragmentActivity, not AppCompatActivity, so AppCompatDelegate's per-app-language API
- * won't auto-recreate it; overriding the Configuration Compose reads from is the same fix without
- * that dependency.
- */
-@Composable
-private fun LocalizedContent(languageTag: String, content: @Composable () -> Unit) {
-    val baseContext = LocalContext.current
-    val localizedContext = remember(languageTag, baseContext) {
-        val locale = Locale.forLanguageTag(languageTag)
-        Locale.setDefault(locale)
-        val config = Configuration(baseContext.resources.configuration)
-        config.setLocale(locale)
-        baseContext.createConfigurationContext(config)
-    }
-    CompositionLocalProvider(
-        LocalContext provides localizedContext,
-        LocalConfiguration provides localizedContext.resources.configuration,
-    ) {
-        content()
+        ExpenseApp(
+            onThemeModeChanged = { themeMode = it },
+            // The language is already persisted by the caller before this fires (see MoreFlow /
+            // FirstLaunchFlow) — attachBaseContext() re-reads it fresh on recreate().
+            onLanguageChanged = onLanguageChanged,
+        )
     }
 }

@@ -21,7 +21,6 @@ import org.koin.compose.koinInject
 
 enum class FirstLaunchStep {
     Onboarding,
-    Preferences,
     ProfileSetup,
 }
 
@@ -30,7 +29,7 @@ fun FirstLaunchFlow(
     onComplete: (name: String, currencyCode: String) -> Unit,
     modifier: Modifier = Modifier,
     onThemeModeChanged: (ThemeMode) -> Unit = {},
-    onLanguageTagChanged: (String) -> Unit = {},
+    onLanguageChanged: () -> Unit = {},
 ) {
     val themeRepository: ThemeRepository = koinInject()
     val localeRepository: LocaleRepository = koinInject()
@@ -42,7 +41,7 @@ fun FirstLaunchFlow(
     var showCurrencySheet by rememberSaveable { mutableStateOf(false) }
     var currencySearchQuery by rememberSaveable { mutableStateOf("") }
     // Dark/English match AppMetaSnapshot.DEFAULT and ThemedExpenseApp's preload placeholder, so
-    // the step opens with the option already in effect pre-selected, not a mismatched default.
+    // the picker opens with the option already in effect pre-selected, not a mismatched default.
     var languageTag by rememberSaveable { mutableStateOf(AppLanguage.DEFAULT.tag) }
     var themeMode by rememberSaveable { mutableStateOf(ThemeMode.DARK) }
 
@@ -65,35 +64,31 @@ fun FirstLaunchFlow(
         showCurrencySheet = showCurrencySheet,
         currencySearchQuery = currencySearchQuery,
     )
-    val preferencesState = PreferencesSetupState(
-        languageTag = languageTag,
-        themeMode = themeMode,
-    )
 
     when (step) {
         FirstLaunchStep.Onboarding -> {
             OnboardingScreenContent(
                 modifier = modifier,
-                onGetStarted = { stepName = FirstLaunchStep.Preferences.name },
-                onSkip = { stepName = FirstLaunchStep.Preferences.name },
-            )
-        }
-        FirstLaunchStep.Preferences -> {
-            PreferencesSetupScreenContent(
-                modifier = modifier,
-                state = preferencesState,
+                onGetStarted = { stepName = FirstLaunchStep.ProfileSetup.name },
+                onSkip = { stepName = FirstLaunchStep.ProfileSetup.name },
+                languageTag = languageTag,
+                themeMode = themeMode,
                 onLanguageSelected = { tag ->
                     languageTag = tag
-                    onLanguageTagChanged(tag)
-                    scope.launch { localeRepository.setLanguageTag(tag) }
+                    // Persist first (synchronous SharedPrefs write inside), then recreate the
+                    // Activity — attachBaseContext() re-reads the fresh value on the new instance.
+                    // stepName/name/etc. are all rememberSaveable, so onboarding resumes where it
+                    // left off, just re-rendered in the new language.
+                    scope.launch {
+                        localeRepository.setLanguageTag(tag)
+                        onLanguageChanged()
+                    }
                 },
                 onThemeSelected = { mode ->
                     themeMode = mode
                     onThemeModeChanged(mode)
                     scope.launch { themeRepository.setThemeMode(mode) }
                 },
-                onContinue = { stepName = FirstLaunchStep.ProfileSetup.name },
-                onSkip = { stepName = FirstLaunchStep.ProfileSetup.name },
             )
         }
         FirstLaunchStep.ProfileSetup -> {
@@ -125,25 +120,6 @@ fun FirstLaunchFlow(
 private fun FirstLaunchOnboardingPreview() {
     ProExpenseTheme {
         FirstLaunchFlow(onComplete = { _, _ -> })
-    }
-}
-
-@Preview(
-    name = "First launch — preferences",
-    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
-    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
-    showBackground = true,
-)
-@Composable
-private fun FirstLaunchPreferencesPreview() {
-    ProExpenseTheme {
-        PreferencesSetupScreenContent(
-            state = PreferencesSetupState(),
-            onLanguageSelected = {},
-            onThemeSelected = {},
-            onContinue = {},
-            onSkip = {},
-        )
     }
 }
 

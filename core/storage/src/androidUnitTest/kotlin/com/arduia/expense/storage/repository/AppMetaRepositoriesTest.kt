@@ -312,8 +312,7 @@ class AppMetaRepositoriesTest {
 
     @Test
     fun locale_defaultsToEnglish_thenPersists() = runTest {
-        val store = store()
-        val repo = AppMetaLocaleRepository(store)
+        val repo = AppMetaLocaleRepository(store(), FakeSharedPreferences())
 
         val initial = repo.getLanguageTag()
         assertTrue(initial is Result.Success)
@@ -324,5 +323,17 @@ class AppMetaRepositoriesTest {
         val fetched = repo.getLanguageTag()
         assertTrue(fetched is Result.Success)
         assertEquals("my", fetched.data)
+    }
+
+    @Test
+    fun locale_setLanguageTag_writesSharedPrefsSynchronously() = runTest {
+        // MainActivity.attachBaseContext() reads this on the next Activity recreation, before
+        // Koin/the suspend repository stack are available — the write must not depend on the DB.
+        val diskBacking = mutableMapOf<String, Any?>()
+        val repo = AppMetaLocaleRepository(store(), FakeSharedPreferences(diskBacking))
+
+        repo.setLanguageTag("th")
+
+        assertEquals("th", diskBacking[AppMetaLocaleRepository.KEY_LANGUAGE_TAG])
     }
 }

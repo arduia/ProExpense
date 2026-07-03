@@ -52,9 +52,9 @@
 | Gradle modules | 16 |
 | Feature modules | 11 |
 | Screen specs (`design-system-spec/screens/`) | 16 |
-| Roborazzi baselines (`app/src/test/screenshots/`) | 93 |
-| App test sources (`app/src/test/`) | 26 |
-| Files with `@Composable` | 128 |
+| Roborazzi baselines (`app/src/test/screenshots/`) | 96 |
+| App test sources (`app/src/test/`) | 27 |
+| Files with `@Composable` | 130 |
 
 ## Screen specs
 

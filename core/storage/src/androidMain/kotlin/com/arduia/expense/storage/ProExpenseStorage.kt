@@ -131,7 +131,7 @@ class ProExpenseStorage internal constructor(
                 ),
                 clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
                 profileRepository = AppMetaProfileRepository(appMetaStore, onboardingPrefs),
-                localeRepository = AppMetaLocaleRepository(appMetaStore),
+                localeRepository = AppMetaLocaleRepository(appMetaStore, onboardingPrefs),
                 defaultCategoryRepository = AppMetaDefaultCategoryRepository(appMetaStore),
                 themeRepository = AppMetaThemeRepository(appMetaStore),
             )

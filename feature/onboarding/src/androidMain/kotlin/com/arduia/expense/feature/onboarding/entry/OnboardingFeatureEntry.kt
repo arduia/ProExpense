@@ -12,7 +12,7 @@ interface OnboardingFeatureEntry {
         onComplete: (OnboardingCompleteHandoff) -> Unit,
         modifier: Modifier = Modifier,
         onThemeModeChanged: (ThemeMode) -> Unit = {},
-        onLanguageTagChanged: (String) -> Unit = {},
+        onLanguageChanged: () -> Unit = {},
     )
 }
 
@@ -22,7 +22,7 @@ internal class OnboardingFeatureEntryImpl : OnboardingFeatureEntry {
         onComplete: (OnboardingCompleteHandoff) -> Unit,
         modifier: Modifier,
         onThemeModeChanged: (ThemeMode) -> Unit,
-        onLanguageTagChanged: (String) -> Unit,
+        onLanguageChanged: () -> Unit,
     ) {
         com.arduia.expense.feature.onboarding.ui.FirstLaunchFlow(
             onComplete = { name, currencyCode ->
@@ -30,7 +30,7 @@ internal class OnboardingFeatureEntryImpl : OnboardingFeatureEntry {
             },
             modifier = modifier,
             onThemeModeChanged = onThemeModeChanged,
-            onLanguageTagChanged = onLanguageTagChanged,
+            onLanguageChanged = onLanguageChanged,
         )
     }
 }
