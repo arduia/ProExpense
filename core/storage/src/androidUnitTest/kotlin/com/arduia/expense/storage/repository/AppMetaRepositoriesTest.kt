@@ -2,6 +2,7 @@ package com.arduia.expense.storage.repository
 
 import android.content.SharedPreferences
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Money
@@ -291,5 +292,21 @@ class AppMetaRepositoriesTest {
         assertTrue(budget is Result.Success)
         assertEquals(100, budget.data!!.amount.valueInCents)
         assertEquals("GBP", AppMetaCurrencySettingsRepository(store).getHomeCurrency().let { (it as Result.Success).data!!.code })
+    }
+
+    @Test
+    fun theme_defaultsToSystem_thenPersists() = runTest {
+        val store = store()
+        val repo = AppMetaThemeRepository(store)
+
+        val initial = repo.getThemeMode()
+        assertTrue(initial is Result.Success)
+        assertEquals(ThemeMode.SYSTEM, initial.data)
+
+        repo.setThemeMode(ThemeMode.DARK)
+
+        val fetched = repo.getThemeMode()
+        assertTrue(fetched is Result.Success)
+        assertEquals(ThemeMode.DARK, fetched.data)
     }
 }

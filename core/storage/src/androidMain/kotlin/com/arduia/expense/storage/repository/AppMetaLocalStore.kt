@@ -27,6 +27,7 @@ data class AppMetaSnapshot(
     val pinHash: String?,
     val languageTag: String,
     val defaultCategoryId: String?,
+    val themeMode: String,
 ) {
     companion object {
         val DEFAULT = AppMetaSnapshot(
@@ -43,6 +44,7 @@ data class AppMetaSnapshot(
             pinHash = null,
             languageTag = "en",
             defaultCategoryId = null,
+            themeMode = "system",
         )
     }
 }
@@ -88,6 +90,7 @@ class AppMetaLocalStore(
             pinHash = row.pin_hash,
             languageTag = row.language_tag,
             defaultCategoryId = row.default_category_id,
+            themeMode = row.theme_mode,
         )
     }
 
@@ -107,6 +110,7 @@ class AppMetaLocalStore(
             pin_hash = snapshot.pinHash,
             language_tag = snapshot.languageTag,
             default_category_id = snapshot.defaultCategoryId,
+            theme_mode = snapshot.themeMode,
         )
     }
 

@@ -88,6 +88,7 @@ fun ExpenseApp(
     budgetRepository: BudgetRepository = koinInject(),
     defaultCategoryRepository: DefaultCategoryRepository = koinInject(),
     computeEventProgress: ComputeEventProgressUseCase = koinInject(),
+    onThemeModeChanged: (com.arduia.expense.data.ThemeMode) -> Unit = {},
 ) {
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -389,6 +390,7 @@ fun ExpenseApp(
                             onCurrencyChanged = { homeCurrencyCode = it.code },
                             onBudgetChanged = { monthlyBudget = it },
                             onDefaultCategoryChanged = { defaultCategoryId = it },
+                            onThemeModeChanged = onThemeModeChanged,
                         )
                         else -> HomeShell(
                             state = homeState,

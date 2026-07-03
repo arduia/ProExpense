@@ -20,6 +20,8 @@ import androidx.fragment.app.FragmentActivity
 import com.arduia.expense.data.DefaultCategoryRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.ThemeMode
+import com.arduia.expense.data.ThemeRepository
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Money
 import com.arduia.expense.feature.auth.BiometricAuthenticator
@@ -51,7 +53,7 @@ import org.koin.compose.koinInject
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.R
 
-private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory }
+private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory, Theme }
 
 @Composable
 fun MoreFlow(
@@ -67,6 +69,7 @@ fun MoreFlow(
     onCurrencyChanged: (CurrencyCode) -> Unit = {},
     onBudgetChanged: (Money?) -> Unit = {},
     onDefaultCategoryChanged: (String) -> Unit = {},
+    onThemeModeChanged: (ThemeMode) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -77,6 +80,7 @@ fun MoreFlow(
     val profileRepository: ProfileRepository = koinInject()
     val currencyRepository: CurrencyRepository = koinInject()
     val saveHomeCurrency: SaveHomeCurrencyUseCase = koinInject()
+    val themeRepository: ThemeRepository = koinInject()
     val pinAuthRepository: PinAuthRepository = koinInject()
     val disablePin: DisablePinUseCase = koinInject()
     val budgetRepository: BudgetRepository = koinInject()
@@ -96,6 +100,7 @@ fun MoreFlow(
     var biometricEnrolled by remember { mutableStateOf(false) }
     val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
     var defaultCategoryId by remember { mutableStateOf("food") }
+    var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pinConfigured) {
@@ -143,6 +148,11 @@ fun MoreFlow(
             is Result.Success -> result.data?.let { defaultCategoryId = it }
             is Result.Error -> Unit
         }
+        // Load theme
+        when (val result = themeRepository.getThemeMode()) {
+            is Result.Success -> themeMode = result.data
+            is Result.Error -> Unit
+        }
         // Load app version
         try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -154,7 +164,7 @@ fun MoreFlow(
 
     val hubState = remember(
         selectedCurrency, displayName, pinEnabled, monthlyBudgetLabel, appVersion,
-        biometricEnrolled, biometricCapable, defaultCategoryId,
+        biometricEnrolled, biometricCapable, defaultCategoryId, themeMode,
     ) {
         val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "M"
         previewMoreHub.copy(
@@ -172,6 +182,7 @@ fun MoreFlow(
                     )
                     "budget" -> setting.copy(value = monthlyBudgetLabel)
                     "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
+                    "theme" -> setting.copy(value = themeModeLabel(themeMode))
                     "version" -> setting.copy(value = appVersion)
                     else -> setting
                 }
@@ -215,6 +226,7 @@ fun MoreFlow(
                             "pin" -> if (pinEnabled) showPinManageSheet = true else onPinClick()
                             "budget" -> step = MoreStep.Budget
                             "category" -> step = MoreStep.DefaultCategory
+                            "theme" -> step = MoreStep.Theme
                             "biometric" -> if (!pinEnabled) {
                                 toastMessage = context.getString(R.string.more_biometric_requires_pin)
                             }
@@ -272,6 +284,15 @@ fun MoreFlow(
                         scope.launch {
                             defaultCategoryRepository.setDefaultCategoryId(categoryId)
                         }
+                    },
+                    onBack = { step = MoreStep.Hub },
+                )
+                MoreStep.Theme -> MoreThemeScreen(
+                    selectedMode = themeMode,
+                    onSelect = { mode ->
+                        themeMode = mode
+                        onThemeModeChanged(mode)
+                        scope.launch { themeRepository.setThemeMode(mode) }
                     },
                     onBack = { step = MoreStep.Hub },
                 )
@@ -402,6 +423,12 @@ private fun PinManageSheetContent(
             fillMaxWidth = true,
         )
     }
+}
+
+private fun themeModeLabel(mode: ThemeMode): String = when (mode) {
+    ThemeMode.LIGHT -> "Light"
+    ThemeMode.DARK -> "Dark"
+    ThemeMode.SYSTEM -> "System"
 }
 
 @Preview(
