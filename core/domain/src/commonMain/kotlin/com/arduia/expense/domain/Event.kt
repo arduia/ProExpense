@@ -12,6 +12,8 @@ data class Event(
     val endEpochMillis: Long,
     val budget: Money,
     val status: EventStatus = EventStatus.ACTIVE,
+    /** When this event transitioned to CLOSED; set by the storage layer, not by callers. */
+    val closedAtEpochMillis: Long? = null,
 ) {
     init {
         require(name.isNotBlank()) { "Event name must not be blank" }

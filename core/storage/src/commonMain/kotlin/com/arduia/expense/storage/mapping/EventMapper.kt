@@ -16,6 +16,7 @@ internal fun EventRow.toDomain(): Event =
         endEpochMillis = end_epoch_millis,
         budget = Money(Amount(budget_cents), CurrencyCode(currency_code)),
         status = status.toEventStatusFromCode(),
+        closedAtEpochMillis = closed_at_epoch_millis,
     )
 
 /**

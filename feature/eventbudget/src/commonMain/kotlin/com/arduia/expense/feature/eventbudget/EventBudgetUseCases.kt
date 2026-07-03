@@ -104,3 +104,16 @@ class CloseEventUseCase(private val eventRepository: EventRepository) {
         return true
     }
 }
+
+private const val CLOSED_EVENT_GRACE_PERIOD_MILLIS = 24L * 60 * 60 * 1000
+
+/**
+ * US-EVT-5 lifecycle: Active is always editable; Closed < 24h is a grace period (still editable,
+ * no new links); Closed > 24h locks permanently. An event with no recorded closedAtEpochMillis
+ * (e.g. closed before this field existed) is treated as past the grace period.
+ */
+fun isEventReadOnly(status: EventStatus, closedAtEpochMillis: Long?, nowEpochMillis: Long): Boolean {
+    if (status != EventStatus.CLOSED) return false
+    val closedAt = closedAtEpochMillis ?: return true
+    return nowEpochMillis - closedAt > CLOSED_EVENT_GRACE_PERIOD_MILLIS
+}

@@ -197,6 +197,11 @@ private fun Event.toDetailState(
                 amountLabel = moneyLabel(record.money.amount.valueInCents, currencySymbol),
             )
         }
+    val isReadOnly = com.arduia.expense.feature.eventbudget.isEventReadOnly(
+        status = status,
+        closedAtEpochMillis = closedAtEpochMillis,
+        nowEpochMillis = System.currentTimeMillis(),
+    )
     return EventDetailUiState(
         id = id.value,
         title = name,
@@ -214,8 +219,10 @@ private fun Event.toDetailState(
         ),
         linkedCount = linkedExpenses.size,
         linkedExpenses = linkedExpenses,
-        showAddTagged = status == EventStatus.ACTIVE,
-        readOnly = status == EventStatus.CLOSED,
+        // Active and the 24h grace-period window both still allow new links (US-EVT-5); only
+        // past the grace period is a closed event truly locked.
+        showAddTagged = !isReadOnly,
+        readOnly = isReadOnly,
     )
 }
 

@@ -260,3 +260,32 @@ class CloseEventUseCaseTest {
         assertEquals(null, repo.lastUpsert)
     }
 }
+
+class IsEventReadOnlyTest {
+
+    private val hour = 60 * 60 * 1000L
+
+    @Test
+    fun activeEventIsNeverReadOnly() {
+        assertFalse(isEventReadOnly(EventStatus.ACTIVE, closedAtEpochMillis = null, nowEpochMillis = 0L))
+    }
+
+    @Test
+    fun closedWithinGracePeriodIsEditable() {
+        val closedAt = 1_000L
+        val now = closedAt + 23 * hour
+        assertFalse(isEventReadOnly(EventStatus.CLOSED, closedAt, now))
+    }
+
+    @Test
+    fun closedPastGracePeriodIsReadOnly() {
+        val closedAt = 1_000L
+        val now = closedAt + 25 * hour
+        assertTrue(isEventReadOnly(EventStatus.CLOSED, closedAt, now))
+    }
+
+    @Test
+    fun closedWithNoRecordedTimestampIsReadOnly() {
+        assertTrue(isEventReadOnly(EventStatus.CLOSED, closedAtEpochMillis = null, nowEpochMillis = 0L))
+    }
+}
