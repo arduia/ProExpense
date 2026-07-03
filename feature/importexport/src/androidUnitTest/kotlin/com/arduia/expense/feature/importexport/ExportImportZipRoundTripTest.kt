@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.importexport
 
+import com.arduia.expense.data.ExportFormat
 import com.arduia.expense.feature.importexport.ImportZipReader.ZipRead
 import java.io.File
 import kotlin.test.AfterTest
@@ -27,7 +28,17 @@ class ExportImportZipRoundTripTest {
 
         val read = zip.inputStream().use { ImportZipReader.readExpensesCsv(it) }
 
-        assertEquals(ZipRead.Success(files.getValue("expenses.csv")), read)
+        assertEquals(ZipRead.Success(files.getValue("expenses.csv"), ExportFormat.CSV), read)
+    }
+
+    @Test
+    fun plainZip_roundTripsExpensesJson() {
+        val jsonFiles = mapOf("expenses.json" to """[{"id":"r1"}]""")
+        val zip = ExportFileWriter.writeZipTo(tempDir, jsonFiles, "export.zip")
+
+        val read = zip.inputStream().use { ImportZipReader.readExpensesCsv(it) }
+
+        assertEquals(ZipRead.Success(jsonFiles.getValue("expenses.json"), ExportFormat.JSON), read)
     }
 
     @Test
@@ -36,7 +47,7 @@ class ExportImportZipRoundTripTest {
 
         val read = zip.inputStream().use { ImportZipReader.readExpensesCsv(it, password = "s3cret") }
 
-        assertEquals(ZipRead.Success(files.getValue("expenses.csv")), read)
+        assertEquals(ZipRead.Success(files.getValue("expenses.csv"), ExportFormat.CSV), read)
     }
 
     @Test

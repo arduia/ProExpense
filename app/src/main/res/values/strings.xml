@@ -225,6 +225,7 @@
     <string name="clear_data_confirm_prompt">This cannot be undone. Clear everything?</string>
     <string name="toast_export_success">Export ready — share when you connect storage</string>
     <string name="toast_data_cleared">All records cleared on this device</string>
+    <string name="toast_expense_saved_home">Expense saved</string>
     <string name="delete_confirm">Delete permanently</string>
 
     <!-- PIN -->

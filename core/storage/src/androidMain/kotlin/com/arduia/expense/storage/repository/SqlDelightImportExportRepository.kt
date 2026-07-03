@@ -221,13 +221,17 @@ class SqlDelightImportExportRepository(
     }
 
     private fun parseCsv(content: String): List<FinanceRecord> {
-        val lines = content.split("\n")
+        // Every field is written quoted (see toCsv), so a note containing a literal newline is
+        // valid CSV — but naively splitting the whole file on "\n" breaks that one quoted record
+        // into multiple fragments. splitCsvRecords tracks quote state so only an *unquoted*
+        // newline ends a record.
+        val lines = splitCsvRecords(content)
         if (lines.size < 2) return emptyList()
 
         val records = mutableListOf<FinanceRecord>()
         for (i in 1 until lines.size) {
-            val line = lines[i].trim()
-            if (line.isEmpty()) continue
+            val line = lines[i]
+            if (line.isBlank()) continue
 
             val fields = parseCsvLine(line)
             if (fields.size < 9) continue
@@ -350,6 +354,45 @@ class SqlDelightImportExportRepository(
         }
     }
 
+    /**
+     * Splits raw CSV content into per-record strings, treating a newline inside a quoted field
+     * (e.g. a multi-line note) as literal content rather than a record boundary. Mirrors
+     * [parseCsvLine]'s own quote-toggle logic so the two stay consistent.
+     */
+    private fun splitCsvRecords(content: String): List<String> {
+        val records = mutableListOf<String>()
+        var current = StringBuilder()
+        var inQuotes = false
+        var i = 0
+        while (i < content.length) {
+            val c = content[i]
+            when {
+                inQuotes && c == '"' -> {
+                    if (i + 1 < content.length && content[i + 1] == '"') {
+                        current.append('"').append('"')
+                        i++
+                    } else {
+                        inQuotes = false
+                        current.append(c)
+                    }
+                }
+                !inQuotes && c == '"' -> {
+                    inQuotes = true
+                    current.append(c)
+                }
+                !inQuotes && (c == '\n' || c == '\r') -> {
+                    if (c == '\r' && i + 1 < content.length && content[i + 1] == '\n') i++
+                    records.add(current.toString())
+                    current = StringBuilder()
+                }
+                else -> current.append(c)
+            }
+            i++
+        }
+        if (current.isNotEmpty()) records.add(current.toString())
+        return records
+    }
+
     private fun parseCsvLine(line: String): List<String> {
         val fields = mutableListOf<String>()
         var current = StringBuilder()
@@ -387,9 +430,38 @@ class SqlDelightImportExportRepository(
         return fields
     }
 
+    /**
+     * Matches up to the first *unescaped* closing quote — `[^"]*` alone stops early at any
+     * escaped quote (`\"`) inside the value, truncating notes that contain one. The matched raw
+     * (still-escaped) text is then unescaped so `\n`/`\r`/`\"`/`\\` come back as real characters
+     * instead of literal two-char sequences.
+     */
     private fun extractJsonString(json: String, key: String): String? {
-        val regex = Regex("\"$key\"\\s*:\\s*\"([^\"]*)\"")
-        return regex.find(json)?.groupValues?.get(1)
+        val regex = Regex("\"$key\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"")
+        return regex.find(json)?.groupValues?.get(1)?.let(::unescapeJsonString)
+    }
+
+    private fun unescapeJsonString(str: String): String {
+        val sb = StringBuilder(str.length)
+        var i = 0
+        while (i < str.length) {
+            val c = str[i]
+            if (c == '\\' && i + 1 < str.length) {
+                when (str[i + 1]) {
+                    '"' -> sb.append('"')
+                    '\\' -> sb.append('\\')
+                    'n' -> sb.append('\n')
+                    'r' -> sb.append('\r')
+                    't' -> sb.append('\t')
+                    else -> sb.append(str[i + 1])
+                }
+                i += 2
+            } else {
+                sb.append(c)
+                i++
+            }
+        }
+        return sb.toString()
     }
 
     private fun extractJsonNumber(json: String, key: String): Long? {

@@ -43,6 +43,7 @@ import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.dayLabel
@@ -69,6 +70,7 @@ import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 private const val SPLASH_DURATION_MILLIS = 1800L
+private const val RECENT_HOME_LIMIT = 8
 
 @Composable
 fun ExpenseApp(
@@ -207,33 +209,36 @@ fun ExpenseApp(
             activeEvent = activeEventState,
         )
     } else {
-        val totalCents = records.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+        val monthStart = (Calendar.getInstance() as Calendar).apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
+        val recordsThisMonth = records.filter {
+            it.recordedAtEpochMillis >= monthStart.timeInMillis && it.recordedAtEpochMillis < monthEnd.timeInMillis
+        }
+        // "Spend this month" (US-HOME-1), not all-time — the header label promises a monthly figure.
+        val totalCents = recordsThisMonth.sumOf { it.homeCurrencyMoney.amount.valueInCents }
         val totalLabel = homeSymbol + AmountInput.formatDisplay(
             String.format(Locale.US, "%.2f", totalCents / 100.0),
         )
         val budgetSummary = monthlyBudget?.let { budget ->
-            val monthStart = (Calendar.getInstance() as Calendar).apply {
-                set(Calendar.DAY_OF_MONTH, 1)
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
-            val spentThisMonthCents = records
-                .filter { it.recordedAtEpochMillis >= monthStart.timeInMillis && it.recordedAtEpochMillis < monthEnd.timeInMillis }
-                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
             val budgetCents = budget.amount.valueInCents
             HomeBudgetSummaryState(
-                spentLabel = homeSymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", spentThisMonthCents / 100.0)),
+                spentLabel = homeSymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", totalCents / 100.0)),
                 budgetLabel = "of " + homeSymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budgetCents / 100.0)),
-                progress = if (budgetCents > 0) spentThisMonthCents.toFloat() / budgetCents else 0f,
-                statusLabel = if (spentThisMonthCents > budgetCents) "Over budget" else "On track",
-                isOverBudget = spentThisMonthCents > budgetCents,
+                progress = if (budgetCents > 0) totalCents.toFloat() / budgetCents else 0f,
+                statusLabel = if (totalCents > budgetCents) "Over budget" else "On track",
+                isOverBudget = totalCents > budgetCents,
             )
         }
         val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
+        // Recent shows the last 5-10 entries (US-HOME-2), not the entire history.
         val dayGroups = sorted
+            .take(RECENT_HOME_LIMIT)
             .groupBy { dayKey(it.recordedAtEpochMillis) }
             .toSortedMap(compareByDescending { it })
             .map { (_, dayRecords) ->
@@ -271,10 +276,16 @@ fun ExpenseApp(
         )
     }
 
+    val expenseSavedMessage = stringResource(R.string.toast_expense_saved_home)
+    var actionToastMessage by remember { mutableStateOf<String?>(null) }
+
     val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { _ ->
         showQuickLog = false
         quickLogLinkedEventId = null
         pendingDraftState = null
+        // Shown here (post-dismiss) rather than inside QuickLogFlow itself — that composable
+        // unmounts as soon as the save completes, before its own toast could ever render.
+        actionToastMessage = expenseSavedMessage
     }
 
     val onTabSelected: (HomeNavTab) -> Unit = { tab ->
@@ -501,6 +512,11 @@ fun ExpenseApp(
                     },
                 )
             }
+
+            ProToastHost(
+                message = actionToastMessage,
+                onDismiss = { actionToastMessage = null },
+            )
         }
     }
 }
@@ -514,7 +530,9 @@ private fun buildSparklinePoints(records: List<FinanceRecord>): List<Float> {
         val key = dayKey(day.timeInMillis)
         records
             .filter { dayKey(it.recordedAtEpochMillis) == key }
-            .sumOf { it.money.amount.valueInCents }
+            // homeCurrencyMoney, not the record's own currency (US-CUR-4) — otherwise a foreign
+            // currency amount is added into the sparkline as if it were home-currency cents.
+            .sumOf { it.homeCurrencyMoney.amount.valueInCents }
             .toFloat()
     }
 }

@@ -2,14 +2,23 @@ package com.arduia.expense.feature.logging.ui.preview
 
 import com.arduia.expense.ui.design.TagLinkKind
 import com.arduia.expense.ui.design.TagLinkOption
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+
+private fun defaultDateLabel(epochMillis: Long): String =
+    SimpleDateFormat("MMMM d, yyyy", Locale.US).format(Calendar.getInstance().apply { timeInMillis = epochMillis }.time)
+
+private fun defaultTimeLabel(epochMillis: Long): String =
+    SimpleDateFormat("h:mm a", Locale.US).format(Calendar.getInstance().apply { timeInMillis = epochMillis }.time)
 
 data class ExpenseEntryState(
     val rawAmount: String = "",
     val selectedCategoryId: String = "food",
     val note: String = "",
-    val dateLabel: String = "Today, May 25",
-    val timeLabel: String = "12:30 PM",
     val recordedAtEpochMillis: Long = System.currentTimeMillis(),
+    val dateLabel: String = defaultDateLabel(recordedAtEpochMillis),
+    val timeLabel: String = defaultTimeLabel(recordedAtEpochMillis),
     val linkedTagId: String? = null,
     val linkedTagKind: TagLinkKind? = null,
     val linkedTagLabel: String? = null,

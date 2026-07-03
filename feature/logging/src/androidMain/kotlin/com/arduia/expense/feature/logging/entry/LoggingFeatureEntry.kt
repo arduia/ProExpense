@@ -45,6 +45,7 @@ interface LoggingFeatureEntry {
         initialDraftState: ExpenseEntryState? = null,
         homeCurrencySymbol: String = "$",
         homeCurrencyCode: String = currencyCode,
+        onSaveFailed: (String) -> Unit = {},
     )
 
     @Composable
@@ -54,6 +55,7 @@ interface LoggingFeatureEntry {
         onSaved: () -> Unit,
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
+        onSaveFailed: (String) -> Unit = {},
     )
 }
 
@@ -69,15 +71,29 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         initialDraftState: ExpenseEntryState?,
         homeCurrencySymbol: String,
         homeCurrencyCode: String,
+        onSaveFailed: (String) -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val (defaultCategories, customCategories) = rememberCategoryLists()
 
-        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
-        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
+        // A resumed draft is unauthenticated (US-LOG-7: shown before any PIN check), so it must
+        // never expose live event/debt names or amounts via the `@` tag sheet — restrict to
+        // exactly what the user already typed until the app is unlocked.
+        val restrictSensitiveData = initialDraftState != null
+        val tagEvents = if (restrictSensitiveData) {
+            emptyList()
+        } else {
+            uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
+        }
+        val tagDebts = if (restrictSensitiveData) {
+            emptyList()
+        } else {
+            uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
+        }
         val linkedEvent = initialLinkedEventId?.let { id -> tagEvents.firstOrNull { it.id == id } }
+        var saveErrorMessage by remember { mutableStateOf<String?>(null) }
 
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
@@ -93,11 +109,14 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             draftAmountLabel = initialDraftState?.let { homeCurrencySymbol + AmountInput.formatDisplay(it.rawAmount) },
             onSaved = { state ->
                 scope.launch {
-                    when (viewModel.save(state.toSaveInput())) {
+                    when (val outcome = viewModel.save(state.toSaveInput())) {
                         is SaveExpenseOutcome.Saved -> onSaved(state.toHandoff())
                         SaveExpenseOutcome.InvalidAmount -> {} // UI already has inline validation
                         SaveExpenseOutcome.InvalidExchangeRate -> {} // UI blocks Save until the rate is valid
-                        is SaveExpenseOutcome.Failed -> {} // Error silently; UI already has toast handling
+                        is SaveExpenseOutcome.Failed -> {
+                            saveErrorMessage = outcome.message
+                            onSaveFailed(outcome.message)
+                        }
                     }
                 }
             },
@@ -106,6 +125,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             defaultCategories = defaultCategories,
             customCategories = customCategories,
             modifier = modifier,
+            saveErrorMessage = saveErrorMessage,
         )
     }
 
@@ -116,6 +136,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaved: () -> Unit,
         modifier: Modifier,
         homeCurrencySymbol: String,
+        onSaveFailed: (String) -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
@@ -140,6 +161,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             startState = record.toEntryState(eventNames, debtNames)
         }
 
+        var saveErrorMessage by remember(recordId) { mutableStateOf<String?>(null) }
+
         val loaded = startState
         if (loaded != null && record != null) {
             com.arduia.expense.feature.logging.ui.QuickLogFlow(
@@ -147,11 +170,14 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 startState = loaded,
                 onSaved = { state ->
                     scope.launch {
-                        when (viewModel.update(state.toSaveInput())) {
+                        when (val outcome = viewModel.update(state.toSaveInput())) {
                             is SaveExpenseOutcome.Saved -> onSaved()
                             SaveExpenseOutcome.InvalidAmount -> {}
                             SaveExpenseOutcome.InvalidExchangeRate -> {}
-                            is SaveExpenseOutcome.Failed -> {}
+                            is SaveExpenseOutcome.Failed -> {
+                                saveErrorMessage = outcome.message
+                                onSaveFailed(outcome.message)
+                            }
                         }
                     }
                 },
@@ -160,6 +186,11 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 defaultCategories = defaultCategories,
                 customCategories = customCategories,
                 modifier = modifier,
+                // Editing writes into the existing record via update(), never via the create-path
+                // draft slot — persisting it there would surface as a duplicate-creating "Continue"
+                // prompt after simply backing out of an edit.
+                persistDraft = false,
+                saveErrorMessage = saveErrorMessage,
             )
         }
     }

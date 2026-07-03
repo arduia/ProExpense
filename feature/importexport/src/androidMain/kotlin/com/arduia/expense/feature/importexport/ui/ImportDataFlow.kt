@@ -47,7 +47,11 @@ fun ImportDataFlow(
 
     suspend fun readAndPreview(uri: Uri, fileName: String, password: String) {
         val isZip = fileName.endsWith(".zip", ignoreCase = true)
-        val format = if (fileName.endsWith(".json", ignoreCase = true)) ExportFormat.JSON else ExportFormat.CSV
+        // Only a fallback for non-zip files — a zip's actual expenses.csv/expenses.json entry
+        // determines the real format (US-IE-1/2: JSON exports are always zipped, so a filename
+        // check alone previously made JSON-export zips unreadable).
+        val fallbackFormat = if (fileName.endsWith(".json", ignoreCase = true)) ExportFormat.JSON else ExportFormat.CSV
+        var format = fallbackFormat
         val content: String? = if (isZip) {
             val zipRead = runCatching {
                 context.contentResolver.openInputStream(uri)?.use { stream ->
@@ -55,7 +59,10 @@ fun ImportDataFlow(
                 }
             }.getOrNull()
             when (zipRead) {
-                is ImportZipReader.ZipRead.Success -> zipRead.csvContent
+                is ImportZipReader.ZipRead.Success -> {
+                    format = zipRead.format
+                    zipRead.content
+                }
                 is ImportZipReader.ZipRead.NeedsPassword -> {
                     state = state.copy(
                         needsPassword = true,

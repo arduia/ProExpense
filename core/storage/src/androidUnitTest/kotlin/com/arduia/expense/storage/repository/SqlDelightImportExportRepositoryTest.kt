@@ -191,4 +191,74 @@ class SqlDelightImportExportRepositoryTest {
         assertEquals(4_860, record.homeCurrencyMoney.amount.valueInCents)
         assertEquals("Dinner in Lisbon", record.note)
     }
+
+    @Test
+    fun csvRoundTrip_multiLineNote_survivesWithoutDroppingSubsequentRecords() = runTest {
+        val database = inMemoryDatabase()
+        val financeRecordRepository = SqlDelightFinanceRecordRepository(
+            queries = database.financeRecordQueries,
+            eventQueries = database.eventQueries,
+            dispatcher = Dispatchers.Unconfined,
+        )
+        val repo = importExportRepo(database)
+        val multiLineNote = "Team dinner\nsplit the bill\nreimburse Alex"
+        financeRecordRepository.upsert(
+            FinanceRecord(
+                id = RecordId("r-multiline"),
+                money = Money(Amount(86_00), home),
+                homeCurrencyMoney = Money(Amount(86_00), home),
+                categoryId = CategoryId("food"),
+                type = RecordType.EXPENSE,
+                note = multiLineNote,
+                recordedAtEpochMillis = 1_000,
+            ),
+        )
+        financeRecordRepository.upsert(
+            FinanceRecord(
+                id = RecordId("r-after"),
+                money = Money(Amount(5_00), home),
+                homeCurrencyMoney = Money(Amount(5_00), home),
+                categoryId = CategoryId("transport"),
+                type = RecordType.EXPENSE,
+                note = "Bus",
+                recordedAtEpochMillis = 2_000,
+            ),
+        )
+
+        val csv = (repo.exportAll(ExportFormat.CSV) as Result.Success).data
+        val previewed = (repo.previewImport(csv, ExportFormat.CSV) as Result.Success).data
+
+        assertEquals(2, previewed.size)
+        assertEquals(multiLineNote, previewed.first { it.id.value == "r-multiline" }.note)
+        assertEquals("Bus", previewed.first { it.id.value == "r-after" }.note)
+    }
+
+    @Test
+    fun jsonRoundTrip_noteWithQuotesAndNewlines_survivesUnescaped() = runTest {
+        val database = inMemoryDatabase()
+        val financeRecordRepository = SqlDelightFinanceRecordRepository(
+            queries = database.financeRecordQueries,
+            eventQueries = database.eventQueries,
+            dispatcher = Dispatchers.Unconfined,
+        )
+        val repo = importExportRepo(database)
+        val noteWithQuotesAndNewlines = "He said \"hi\"\nthen left"
+        financeRecordRepository.upsert(
+            FinanceRecord(
+                id = RecordId("r-quoted"),
+                money = Money(Amount(12_00), home),
+                homeCurrencyMoney = Money(Amount(12_00), home),
+                categoryId = CategoryId("food"),
+                type = RecordType.EXPENSE,
+                note = noteWithQuotesAndNewlines,
+                recordedAtEpochMillis = 1_000,
+            ),
+        )
+
+        val json = (repo.exportAll(ExportFormat.JSON) as Result.Success).data
+        val previewed = (repo.previewImport(json, ExportFormat.JSON) as Result.Success).data
+
+        assertEquals(1, previewed.size)
+        assertEquals(noteWithQuotesAndNewlines, previewed.single().note)
+    }
 }

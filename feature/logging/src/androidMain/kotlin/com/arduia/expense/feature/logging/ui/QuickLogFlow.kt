@@ -61,12 +61,19 @@ fun QuickLogFlow(
     tagDebts: List<TagLinkOption> = emptyList(),
     defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
     customCategories: List<Pair<String, String>> = customExpenseCategories,
+    // Editing an existing record must never write it into the resumable-draft slot — otherwise
+    // backing out of an edit leaves the record's values behind as a "draft" that a later
+    // Continue re-creates as a duplicate (US-HIS-6 "no duplicate rows").
+    persistDraft: Boolean = true,
+    // Set by the caller when an async save fails. The flow stays mounted on failure (unlike
+    // success, which dismisses immediately), so this is the one outcome this composable can
+    // reliably surface itself.
+    saveErrorMessage: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
-    val savedMessage = stringResource(R.string.toast_expense_saved)
     val context = LocalContext.current
 
     var step by rememberSaveable {
@@ -79,12 +86,19 @@ fun QuickLogFlow(
     var showDateTimePicker by remember { mutableStateOf(false) }
     var showCurrencySheet by remember { mutableStateOf(false) }
 
+    // The success toast is shown by the destination screen after this flow dismisses (see
+    // ExpenseApp) — this composable unmounts too quickly on save for its own toast to ever
+    // render. A failed save keeps the flow open, so the error toast is shown here instead.
+    LaunchedEffect(saveErrorMessage) {
+        if (saveErrorMessage != null) toastMessage = saveErrorMessage
+    }
+
     val currentStep = QuickLogStep.valueOf(step)
 
     // Persist the in-progress entry as a resumable draft so it survives process death or an
     // accidental close — cleared only on an explicit save or discard, never on backing out.
     LaunchedEffect(state, currentStep) {
-        if (currentStep != QuickLogStep.DraftPrompt) {
+        if (persistDraft && currentStep != QuickLogStep.DraftPrompt) {
             ExpenseDraftPrefs.save(context, state)
         }
     }
@@ -155,7 +169,6 @@ fun QuickLogFlow(
                                 step = QuickLogStep.Details.name
                             } else {
                                 ExpenseDraftPrefs.clear(context)
-                                toastMessage = savedMessage
                                 onSaved(state)
                             }
                         },
@@ -199,7 +212,6 @@ fun QuickLogFlow(
                         },
                         onSave = {
                             ExpenseDraftPrefs.clear(context)
-                            toastMessage = savedMessage
                             onSaved(state)
                         },
                         tagEvents = tagEvents,
