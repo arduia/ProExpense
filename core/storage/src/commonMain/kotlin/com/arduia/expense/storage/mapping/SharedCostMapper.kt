@@ -35,14 +35,14 @@ internal fun parseParticipantsJson(json: String): List<Participant> {
         val objectEnd = json.indexOf('}', objectStart) + 1
         val objectStr = json.substring(objectStart, objectEnd)
 
-        val idMatch = Regex("\"id\":\"([^\"]+)\"").find(objectStr)
-        val nameMatch = Regex("\"name\":\"([^\"]+)\"").find(objectStr)
+        val id = extractJsonString(objectStr, "id")
+        val name = extractJsonString(objectStr, "name")
 
-        if (idMatch != null && nameMatch != null) {
+        if (id != null && name != null) {
             items.add(
                 Participant(
-                    id = ParticipantId(idMatch.groupValues[1]),
-                    name = nameMatch.groupValues[1],
+                    id = ParticipantId(id),
+                    name = name,
                 )
             )
         }
@@ -84,7 +84,7 @@ internal fun parseStrategyJson(json: String?): SplitStrategy {
 internal fun List<Participant>.toParticipantsJson(): String {
     if (isEmpty()) return "[]"
     return "[" + joinToString(",") { participant ->
-        """{"id":"${participant.id.value}","name":"${escapeJson(participant.name)}"}"""
+        """{"id":"${participant.id.value}","name":"${escapeJsonString(participant.name)}"}"""
     } + "]"
 }
 
@@ -96,11 +96,4 @@ internal fun SplitStrategy.toStrategyJson(): String? = when (this) {
         }
         """{"type":"custom","shares":{$sharesJson}}"""
     }
-}
-
-private fun escapeJson(str: String): String {
-    return str.replace("\\", "\\\\")
-        .replace("\"", "\\\"")
-        .replace("\n", "\\n")
-        .replace("\r", "\\r")
 }

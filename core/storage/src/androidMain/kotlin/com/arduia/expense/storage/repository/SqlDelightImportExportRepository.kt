@@ -23,6 +23,11 @@ import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.catchingResult
+import com.arduia.expense.storage.mapping.extractJsonNumber
+import com.arduia.expense.storage.mapping.extractJsonString
+import com.arduia.expense.storage.mapping.extractNestedNumber
+import com.arduia.expense.storage.mapping.extractNestedString
+import com.arduia.expense.storage.mapping.escapeJsonString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -430,68 +435,7 @@ class SqlDelightImportExportRepository(
         return fields
     }
 
-    /**
-     * Matches up to the first *unescaped* closing quote — `[^"]*` alone stops early at any
-     * escaped quote (`\"`) inside the value, truncating notes that contain one. The matched raw
-     * (still-escaped) text is then unescaped so `\n`/`\r`/`\"`/`\\` come back as real characters
-     * instead of literal two-char sequences.
-     */
-    private fun extractJsonString(json: String, key: String): String? {
-        val regex = Regex("\"$key\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"")
-        return regex.find(json)?.groupValues?.get(1)?.let(::unescapeJsonString)
-    }
-
-    private fun unescapeJsonString(str: String): String {
-        val sb = StringBuilder(str.length)
-        var i = 0
-        while (i < str.length) {
-            val c = str[i]
-            if (c == '\\' && i + 1 < str.length) {
-                when (str[i + 1]) {
-                    '"' -> sb.append('"')
-                    '\\' -> sb.append('\\')
-                    'n' -> sb.append('\n')
-                    'r' -> sb.append('\r')
-                    't' -> sb.append('\t')
-                    else -> sb.append(str[i + 1])
-                }
-                i += 2
-            } else {
-                sb.append(c)
-                i++
-            }
-        }
-        return sb.toString()
-    }
-
-    private fun extractJsonNumber(json: String, key: String): Long? {
-        val regex = Regex("\"$key\"\\s*:\\s*(-?\\d+)")
-        return regex.find(json)?.groupValues?.get(1)?.toLongOrNull()
-    }
-
-    /**
-     * Reads a field from inside a nested `"objectKey":{...}` object rather than the top level —
-     * e.g. `money.cents` in `"money":{"cents":123,"code":"USD"}`. A plain wildcard between the
-     * outer and inner key can't work here since `[^:]*` can never cross the colon that follows
-     * the outer key, so the object's contents are isolated first and searched independently.
-     */
-    private fun extractNestedObject(json: String, objectKey: String): String? =
-        Regex("\"$objectKey\"\\s*:\\s*\\{([^}]*)\\}").find(json)?.groupValues?.get(1)
-
-    private fun extractNestedString(json: String, objectKey: String, fieldKey: String): String? =
-        extractNestedObject(json, objectKey)?.let { extractJsonString(it, fieldKey) }
-
-    private fun extractNestedNumber(json: String, objectKey: String, fieldKey: String): Long? =
-        extractNestedObject(json, objectKey)?.let { extractJsonNumber(it, fieldKey) }
-
     private fun escapeQuotes(str: String): String {
         return str.replace("\"", "\"\"")
-    }
-
-    private fun escapeJsonString(str: String): String {
-        return str.replace("\\", "\\\\")
-            .replace("\"", "\\\"")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
     }
 }
