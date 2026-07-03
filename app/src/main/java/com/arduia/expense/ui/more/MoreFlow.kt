@@ -47,7 +47,6 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
-import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import com.arduia.expense.data.BudgetRepository
@@ -137,7 +136,7 @@ fun MoreFlow(
             is Result.Success -> {
                 result.data?.let { budget ->
                     monthlyBudgetLabel = currencySymbol(homeCurrencyCode.code) +
-                        AmountInput.formatDisplay(String.format(Locale.US, "%.2f", budget.amount.valueInCents / 100.0))
+                        AmountInput.formatMoney(budget.amount.valueInCents)
                 } ?: run {
                     monthlyBudgetLabel = "Off"
                 }
@@ -306,7 +305,7 @@ fun MoreFlow(
                             budgetRepository.setMonthlyBudget(money)
                             monthlyBudgetLabel = if (money != null) {
                                 currencySymbol(homeCurrencyCode.code) +
-                                    AmountInput.formatDisplay(String.format(Locale.US, "%.2f", money.amount.valueInCents / 100.0))
+                                    AmountInput.formatMoney(money.amount.valueInCents)
                             } else {
                                 "Off"
                             }

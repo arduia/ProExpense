@@ -30,4 +30,22 @@ class AmountInputTest {
     fun formatDisplay_groupsThousands() {
         assertEquals("1,234.50", AmountInput.formatDisplay("1234.50"))
     }
+
+    @Test
+    fun formatMoney_dropsFractionWhenWhole() {
+        assertEquals("22", AmountInput.formatMoney(2200))
+        assertEquals("0", AmountInput.formatMoney(0))
+    }
+
+    @Test
+    fun formatMoney_keepsTwoDigitFractionWhenNonZero() {
+        assertEquals("22.50", AmountInput.formatMoney(2250))
+        assertEquals("22.05", AmountInput.formatMoney(2205))
+    }
+
+    @Test
+    fun formatMoney_groupsThousandsOnWholeAndFractional() {
+        assertEquals("1,234", AmountInput.formatMoney(123_400))
+        assertEquals("1,234.56", AmountInput.formatMoney(123_456))
+    }
 }

@@ -118,4 +118,4 @@ private fun SharedCost.toUiState(currencySymbol: String): SharedCostUiState {
 }
 
 private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+    currencySymbol + AmountInput.formatMoney(valueInCents)

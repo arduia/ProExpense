@@ -33,7 +33,6 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.design.eventBudgetTone
 import com.arduia.expense.ui.design.shortDateLabel
-import java.util.Locale
 import kotlin.math.abs
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -228,7 +227,5 @@ private fun Event.toDetailState(
 
 private fun moneyLabel(valueInCents: Long, currencySymbol: String): String {
     val sign = if (valueInCents < 0) "-" else ""
-    return sign + currencySymbol + AmountInput.formatDisplay(
-        String.format(Locale.US, "%.2f", abs(valueInCents) / 100.0),
-    )
+    return sign + currencySymbol + AmountInput.formatMoney(abs(valueInCents))
 }

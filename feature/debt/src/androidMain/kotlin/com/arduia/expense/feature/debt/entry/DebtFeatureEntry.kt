@@ -22,7 +22,6 @@ import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.shortDateLabel
-import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -106,4 +105,4 @@ private fun Debt.toRecordUi(settled: Boolean, currencySymbol: String): DebtRecor
 )
 
 private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))
+    currencySymbol + AmountInput.formatMoney(valueInCents)

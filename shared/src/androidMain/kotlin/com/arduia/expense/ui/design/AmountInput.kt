@@ -27,6 +27,22 @@ object AmountInput {
         }
     }
 
+    /**
+     * Formats non-negative cents for read-only display (transaction totals, budget labels) —
+     * drops the fraction when it's exactly zero ("22" not "22.00") instead of always padding to
+     * 2 decimals. Callers with a possibly-negative value should format `abs(valueInCents)` and
+     * prepend the sign themselves, matching the raw-input convention elsewhere in this object.
+     */
+    fun formatMoney(valueInCents: Long): String {
+        val whole = valueInCents / 100
+        val fractionCents = valueInCents % 100
+        return if (fractionCents == 0L) {
+            formatDisplay(whole.toString())
+        } else {
+            formatDisplay("$whole.${fractionCents.toString().padStart(2, '0')}")
+        }
+    }
+
     fun numericValue(rawValue: String): Double? {
         if (rawValue.isEmpty()) return 0.0
         return rawValue.toDoubleOrNull()

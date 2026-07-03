@@ -82,10 +82,9 @@ fun AddExpenseDetailsScreen(
     val atNoteLimit = state.note.length >= NOTE_MAX_LENGTH
     val rate = state.exchangeRateRaw.trim().toDoubleOrNull()
     val convertedLabel = if (state.isForeignCurrency() && rate != null && rate > 0.0) {
-        val rawCents = state.rawAmount.toDoubleOrNull() ?: 0.0
-        currencySymbol(state.homeCurrencyCode) + AmountInput.formatDisplay(
-            String.format(java.util.Locale.US, "%.2f", rawCents * rate),
-        )
+        val rawAmount = state.rawAmount.toDoubleOrNull() ?: 0.0
+        val convertedCents = Math.round(rawAmount * rate * 100)
+        currencySymbol(state.homeCurrencyCode) + AmountInput.formatMoney(convertedCents)
     } else {
         null
     }
