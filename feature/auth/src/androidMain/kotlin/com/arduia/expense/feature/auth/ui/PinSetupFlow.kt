@@ -35,6 +35,10 @@ private enum class PinSetupStep { Setup, EnterNew, EnterConfirm, Security }
 fun PinSetupFlow(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    // Fired only on a successful save, distinct from onDismiss (also called on cancel/back) —
+    // lets the caller show the "PIN is now active" confirmation (US-AUTH-1 Scenario 3) only when
+    // setup actually completed.
+    onSaved: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -107,6 +111,7 @@ fun PinSetupFlow(
                                 errorMessage = result.message
                                 return@launch
                             }
+                            onSaved()
                             onDismiss()
                         }
                     },

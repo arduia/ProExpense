@@ -278,6 +278,7 @@ fun ExpenseApp(
     }
 
     val expenseSavedMessage = stringResource(R.string.toast_expense_saved_home)
+    val pinSetupSuccessMessage = stringResource(com.arduia.expense.feature.auth.R.string.pin_setup_success)
     var actionToastMessage by remember { mutableStateOf<String?>(null) }
 
     val onExpenseSaved: (LoggedExpenseHandoff) -> Unit = { _ ->
@@ -471,6 +472,7 @@ fun ExpenseApp(
                         showPinSetup = false
                         unlocked = true
                     },
+                    onSaved = { actionToastMessage = pinSetupSuccessMessage },
                     modifier = Modifier,
                 )
             }

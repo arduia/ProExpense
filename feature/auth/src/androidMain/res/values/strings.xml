@@ -26,6 +26,7 @@
     <string name="pin_setup_recovery_subtitle">Pick from a list</string>
     <string name="pin_setup_reveal_cd">Show PIN</string>
     <string name="pin_setup_save">Save PIN</string>
+    <string name="pin_setup_success">PIN is now active. You\'ll be asked to enter it on your next launch.</string>
     <string name="pin_set_appbar">Set PIN</string>
     <string name="pin_set_new_heading">Choose a 6-digit PIN</string>
     <string name="pin_confirm_heading">Confirm your PIN</string>

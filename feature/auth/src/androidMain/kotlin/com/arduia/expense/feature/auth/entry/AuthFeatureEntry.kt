@@ -9,6 +9,7 @@ interface AuthFeatureEntry {
     fun PinSetupFlow(
         onDismiss: () -> Unit,
         modifier: Modifier,
+        onSaved: () -> Unit = {},
     )
 
     @Composable
@@ -36,8 +37,8 @@ interface AuthFeatureEntry {
 
 internal class AuthFeatureEntryImpl : AuthFeatureEntry {
     @Composable
-    override fun PinSetupFlow(onDismiss: () -> Unit, modifier: Modifier) {
-        com.arduia.expense.feature.auth.ui.PinSetupFlow(onDismiss = onDismiss, modifier = modifier)
+    override fun PinSetupFlow(onDismiss: () -> Unit, modifier: Modifier, onSaved: () -> Unit) {
+        com.arduia.expense.feature.auth.ui.PinSetupFlow(onDismiss = onDismiss, modifier = modifier, onSaved = onSaved)
     }
 
     @Composable

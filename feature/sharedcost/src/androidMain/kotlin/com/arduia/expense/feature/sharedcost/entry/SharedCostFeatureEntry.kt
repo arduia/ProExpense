@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SplitStrategy
@@ -20,6 +21,7 @@ import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.shortDateLabel
+import com.arduia.expense.feature.sharedcost.R
 import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -67,6 +69,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             onDeleteSplit = { id ->
                 scope.launch { deleteSharedCost(id) }
             },
+            savedToastMessage = stringResource(R.string.shared_split_saved_toast),
             modifier = modifier,
         )
     }

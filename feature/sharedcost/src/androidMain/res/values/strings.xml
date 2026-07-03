@@ -3,6 +3,7 @@
     <string name="shared_summary_title">Split summary</string>
     <string name="shared_per_person">Per person</string>
     <string name="shared_save_split">Save split</string>
+    <string name="shared_split_saved_toast">Split saved</string>
     <string name="shared_split_even">Even split</string>
     <string name="shared_split_custom">Custom split</string>
     <string name="shared_bill_splitter">BILL SPLITTER</string>
