@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,7 +61,11 @@ fun ProBottomSheet(
                 } else {
                     Modifier
                 },
-            ),
+            )
+            // Sheet is bottom-aligned with no IME handling by default — without this, the
+            // keyboard simply overlaps whatever input sits near the bottom of the sheet (e.g.
+            // New Event's amount field) instead of the sheet shifting up above it.
+            .imePadding(),
         shape = ProExpenseTheme.shapes.sheet,
         color = colors.surface,
     ) {

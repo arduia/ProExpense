@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordLink
@@ -31,7 +30,6 @@ import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.currentKoinScope
-import org.koin.compose.koinInject
 
 interface LoggingFeatureEntry {
     @Composable
@@ -46,6 +44,8 @@ interface LoggingFeatureEntry {
         homeCurrencySymbol: String = "$",
         homeCurrencyCode: String = currencyCode,
         onSaveFailed: (String) -> Unit = {},
+        defaultCategories: List<Pair<String, String>> = emptyList(),
+        customCategories: List<Pair<String, String>> = emptyList(),
     )
 
     @Composable
@@ -56,6 +56,8 @@ interface LoggingFeatureEntry {
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
         onSaveFailed: (String) -> Unit = {},
+        defaultCategories: List<Pair<String, String>> = emptyList(),
+        customCategories: List<Pair<String, String>> = emptyList(),
     )
 }
 
@@ -72,11 +74,12 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         homeCurrencySymbol: String,
         homeCurrencyCode: String,
         onSaveFailed: (String) -> Unit,
+        defaultCategories: List<Pair<String, String>>,
+        customCategories: List<Pair<String, String>>,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        val (defaultCategories, customCategories) = rememberCategoryLists()
 
         // A resumed draft is unauthenticated (US-LOG-7: shown before any PIN check), so it must
         // never expose live event/debt names or amounts via the `@` tag sheet — restrict to
@@ -138,11 +141,12 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         modifier: Modifier,
         homeCurrencySymbol: String,
         onSaveFailed: (String) -> Unit,
+        defaultCategories: List<Pair<String, String>>,
+        customCategories: List<Pair<String, String>>,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        val (defaultCategories, customCategories) = rememberCategoryLists()
 
         val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
         val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
@@ -205,22 +209,6 @@ private fun rememberLoggingViewModel(): LoggingViewModel {
         onDispose { viewModel.onCleared() }
     }
     return viewModel
-}
-
-/** Live default/custom category chip lists sourced from [CategoryRepository], not hardcoded. */
-@Composable
-private fun rememberCategoryLists(): Pair<List<Pair<String, String>>, List<Pair<String, String>>> {
-    val categoryRepository: CategoryRepository = koinInject()
-    val categories by categoryRepository.observeAll().collectAsState(emptyList())
-    val defaultCategories = categories
-        .filter { !it.isCustom }
-        .sortedBy { it.sortOrder }
-        .map { it.id.value to it.name }
-    val customCategories = categories
-        .filter { it.isCustom }
-        .sortedBy { it.sortOrder }
-        .map { it.id.value to it.name }
-    return defaultCategories to customCategories
 }
 
 private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind, currencySymbol: String): List<TagLinkOption> =

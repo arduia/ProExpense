@@ -27,7 +27,6 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SharedCostRepository
-import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
@@ -121,7 +120,17 @@ fun ExpenseApp(
     val recordsOrNull by financeRecordRepository.observeAll().collectAsState(initial = null)
     val recordsLoading = recordsOrNull == null
     val records = recordsOrNull.orEmpty()
-    var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
+    // Collected once here (not re-subscribed every time Add Expense opens) so the category
+    // chips are already resolved by the time the user taps Add — collectAsState(emptyList())
+    // in the logging flow itself re-queried on every visit and flashed empty chips each time.
+    val categoriesOrNull by categoryRepository.observeAll().collectAsState(initial = null)
+    val categories = categoriesOrNull.orEmpty()
+    val defaultCategoryChips = remember(categories) {
+        categories.filter { !it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
+    }
+    val customCategoryChips = remember(categories) {
+        categories.filter { it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
+    }
     val eventsOrNull by eventRepository.observeAll().collectAsState(initial = null)
     val eventsLoading = eventsOrNull == null
     val events = eventsOrNull.orEmpty()
@@ -165,17 +174,6 @@ fun ExpenseApp(
 
     val dateLabel = remember { buildDateLabel() }
     val monthLabel = remember { buildMonthLabel() }
-
-    LaunchedEffect(Unit) {
-        when (val result = categoryRepository.getAll()) {
-            is Result.Success -> {
-                categoryMap = result.data.associateBy { it.id.value }
-            }
-            is Result.Error -> {
-                // Log error if needed
-            }
-        }
-    }
 
     LaunchedEffect(Unit) {
         val status = getOnboardingStatus()
@@ -358,6 +356,8 @@ fun ExpenseApp(
                         defaultCategoryId = defaultCategoryId,
                         initialDraftState = pendingDraftState,
                         homeCurrencySymbol = homeSymbol,
+                        defaultCategories = defaultCategoryChips,
+                        customCategories = customCategoryChips,
                     )
                 } else if (pinConfigured == true && !unlocked) {
                     features.auth.PinLockFlow(
@@ -450,6 +450,8 @@ fun ExpenseApp(
                     defaultCategoryId = defaultCategoryId,
                     initialLinkedEventId = quickLogLinkedEventId,
                     homeCurrencySymbol = homeSymbol,
+                    defaultCategories = defaultCategoryChips,
+                    customCategories = customCategoryChips,
                 )
             }
 
@@ -459,6 +461,8 @@ fun ExpenseApp(
                     onDismiss = { editRecordId = null },
                     onSaved = { editRecordId = null },
                     homeCurrencySymbol = homeSymbol,
+                    defaultCategories = defaultCategoryChips,
+                    customCategories = customCategoryChips,
                 )
             }
 
