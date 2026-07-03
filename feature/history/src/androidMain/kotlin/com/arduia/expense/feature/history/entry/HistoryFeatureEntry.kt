@@ -13,6 +13,7 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.history.DeleteRecordUseCase
 import com.arduia.expense.feature.history.R
@@ -86,9 +87,17 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val debtSubtitles = remember(debts, homeCurrencySymbol) {
             debts.associate { it.id.value to moneyLabel(it.money.amount.valueInCents, currencySymbol(it.money.currency.code)) }
         }
-        val filters = remember(categories, allFilterLabel) {
-            listOf(JournalFilterUi("all", allFilterLabel)) +
-                categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
+        val filters = remember(categories, allFilterLabel, records) {
+            val categoryChips = categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
+            // Uncategorized is never seeded as a real Category row (US-CAT-3), so it needs its
+            // own chip here whenever a reassigned record actually exists under it — otherwise
+            // those records are visible in the list but unreachable by filter.
+            val uncategorizedChip = if (records.any { it.categoryId.value == UNCATEGORIZED_CATEGORY_ID }) {
+                listOf(JournalFilterUi(UNCATEGORIZED_CATEGORY_ID, expenseCategoryLabel(UNCATEGORIZED_CATEGORY_ID)))
+            } else {
+                emptyList()
+            }
+            listOf(JournalFilterUi("all", allFilterLabel)) + categoryChips + uncategorizedChip
         }
         val days = remember(records, noteFallback, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol) {
             groupByDay(records, noteFallback, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol)
