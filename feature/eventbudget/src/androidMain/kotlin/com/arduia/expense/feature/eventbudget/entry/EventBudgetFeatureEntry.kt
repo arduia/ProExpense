@@ -46,6 +46,7 @@ interface EventBudgetFeatureEntry {
         initialSelectedEventId: String? = null,
         onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
         homeCurrencySymbol: String = "$",
+        isLoading: Boolean = false,
     )
 }
 
@@ -59,6 +60,7 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         initialSelectedEventId: String?,
         onAddTaggedExpense: (eventId: String) -> Unit,
         homeCurrencySymbol: String,
+        isLoading: Boolean,
     ) {
         val scope = rememberCoroutineScope()
         val eventRepository: EventRepository = koinInject()
@@ -132,6 +134,7 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
             },
             initialSelectedEventId = initialSelectedEventId,
             onAddTaggedExpense = onAddTaggedExpense,
+            isLoading = isLoading,
             modifier = modifier,
         )
     }

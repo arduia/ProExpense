@@ -13,6 +13,7 @@ import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.preview.previewHomeEvent
+import com.arduia.expense.ui.preview.previewHomeLoading
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -92,6 +93,18 @@ class HomeScreenScreenshotTest {
         captureHome {
             HomeShell(
                 state = previewHomeEmpty,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    fun home_loading() {
+        captureHome {
+            HomeShell(
+                state = previewHomeLoading,
                 selectedTab = HomeNavTab.Home,
                 onTabSelected = {},
                 onAddClick = {},

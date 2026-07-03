@@ -27,6 +27,7 @@ data class DebtListUiState(
     val activeCount: Int,
     val active: List<DebtRecordUi>,
     val settled: List<DebtRecordUi>,
+    val isLoading: Boolean = false,
 )
 
 data class DebtLinkedExpenseUi(
@@ -77,6 +78,15 @@ val previewDebtLent = DebtListUiState(
     settled = listOf(
         DebtRecordUi("aiko", "Aiko", "Apr 14", "$20", settled = true),
     ),
+)
+
+val previewDebtLoading = DebtListUiState(
+    side = DebtSide.Lent,
+    netLabel = "$0",
+    activeCount = 0,
+    active = emptyList(),
+    settled = emptyList(),
+    isLoading = true,
 )
 
 val previewDebtOwe = DebtListUiState(

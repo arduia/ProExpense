@@ -47,6 +47,7 @@ fun JournalFlow(
     filters: List<JournalFilterUi> = journalFilters,
     categoryNames: Map<String, String> = emptyMap(),
     initialSelectedRowId: String? = null,
+    isLoading: Boolean = false,
     onDeleteRecord: (String) -> Unit = {},
     onUpdateNote: (String, String) -> Unit = { _, _ -> },
     onEditRecord: (String) -> Unit = {},
@@ -101,6 +102,7 @@ fun JournalFlow(
         days = filteredDays,
         filters = filters,
         searchActive = searchActive,
+        isLoading = isLoading,
     )
 
     BackHandler(enabled = selectedRowId != null) {

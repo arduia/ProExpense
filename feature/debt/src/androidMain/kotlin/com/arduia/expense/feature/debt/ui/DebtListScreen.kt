@@ -38,6 +38,7 @@ import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
+import com.arduia.expense.feature.debt.ui.preview.previewDebtLoading
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
 import com.arduia.expense.ui.theme.ProArtboard
@@ -93,25 +94,29 @@ fun DebtListScreen(
                 usePrimarySelection = true,
             )
 
-            DebtSummaryCard(state = state)
+            // Debts load asynchronously after first composition — without this check, the summary
+            // card would briefly show "$0 · 0 active" before real data has had a chance to load.
+            if (!state.isLoading) {
+                DebtSummaryCard(state = state)
 
-            if (state.active.isNotEmpty()) {
-                DebtSection(label = stringResource(R.string.debt_section_active)) {
-                    DebtRecordGroup(
-                        records = state.active,
-                        side = state.side,
-                        onRecordClick = onRecordClick,
-                    )
+                if (state.active.isNotEmpty()) {
+                    DebtSection(label = stringResource(R.string.debt_section_active)) {
+                        DebtRecordGroup(
+                            records = state.active,
+                            side = state.side,
+                            onRecordClick = onRecordClick,
+                        )
+                    }
                 }
-            }
 
-            if (state.settled.isNotEmpty()) {
-                DebtSection(label = stringResource(R.string.debt_section_settled)) {
-                    DebtRecordGroup(
-                        records = state.settled,
-                        side = state.side,
-                        onRecordClick = onRecordClick,
-                    )
+                if (state.settled.isNotEmpty()) {
+                    DebtSection(label = stringResource(R.string.debt_section_settled)) {
+                        DebtRecordGroup(
+                            records = state.settled,
+                            side = state.side,
+                            onRecordClick = onRecordClick,
+                        )
+                    }
                 }
             }
         }
@@ -330,6 +335,25 @@ private fun DebtListLentPreview() {
     ProExpenseTheme {
         DebtListScreen(
             state = previewDebtLent,
+            onSideSelected = {},
+            onAddRecord = {},
+            onRecordClick = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Debt — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun DebtListLoadingPreview() {
+    ProExpenseTheme {
+        DebtListScreen(
+            state = previewDebtLoading,
             onSideSelected = {},
             onAddRecord = {},
             onRecordClick = {},

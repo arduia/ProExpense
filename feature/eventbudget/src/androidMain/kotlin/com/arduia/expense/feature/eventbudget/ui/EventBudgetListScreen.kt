@@ -45,6 +45,7 @@ fun EventBudgetListScreen(
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -98,7 +99,12 @@ fun EventBudgetListScreen(
                 }
             }
 
-            if (events.isEmpty()) {
+            if (isLoading) {
+                // Events load asynchronously after first composition — without this, "no data
+                // yet" and "genuinely no events" render identically and the empty-state
+                // illustration flashes on every visit for a user who actually has events.
+                Box(modifier = Modifier.weight(1f).fillMaxWidth())
+            } else if (events.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -218,6 +224,27 @@ private fun EventBudgetListEmptyPreview() {
             selectedTab = HomeNavTab.Budget,
             onTabSelected = {},
             onAddClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Event budget — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun EventBudgetListLoadingPreview() {
+    ProExpenseTheme {
+        EventBudgetListScreen(
+            events = emptyList(),
+            onCreateEvent = {},
+            onEventClick = {},
+            selectedTab = HomeNavTab.Budget,
+            onTabSelected = {},
+            onAddClick = {},
+            isLoading = true,
         )
     }
 }

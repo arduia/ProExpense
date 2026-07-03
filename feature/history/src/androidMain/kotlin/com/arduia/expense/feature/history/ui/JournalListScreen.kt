@@ -51,6 +51,7 @@ import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
+import com.arduia.expense.feature.history.ui.preview.previewJournalLoading
 import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -184,7 +185,12 @@ fun JournalListScreen(
             }
 
             val hasActiveFilter = dateRangeLabel != null || state.selectedFilterId != "all"
-            if (state.searchActive && state.days.isEmpty()) {
+            if (state.isLoading) {
+                // Records load asynchronously after first composition — without this, "no data
+                // yet" and "genuinely no records" render identically and the empty-state
+                // illustration flashes on every visit for a user who actually has records.
+                Box(modifier = Modifier.weight(1f).fillMaxWidth())
+            } else if (state.searchActive && state.days.isEmpty()) {
                 JournalNoResults(
                     query = state.query,
                     modifier = Modifier
@@ -469,6 +475,28 @@ private fun JournalListEmptyPreview() {
     ProExpenseTheme {
         JournalListScreen(
             state = previewJournalEmpty,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Journal — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalListLoadingPreview() {
+    ProExpenseTheme {
+        JournalListScreen(
+            state = previewJournalLoading,
             onQueryChange = {},
             onFilterSelected = {},
             onRowClick = {},

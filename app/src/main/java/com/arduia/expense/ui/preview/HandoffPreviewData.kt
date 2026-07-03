@@ -26,8 +26,9 @@ data class HomeUiState(
     val budgetSummary: HomeBudgetSummaryState? = null,
     val activeEvent: HomeActiveEventState? = null,
     val sparklinePoints: List<Float> = emptyList(),
+    val isLoading: Boolean = false,
 ) {
-    val isEmpty: Boolean get() = dayGroups.isEmpty() && showEmptyHint
+    val isEmpty: Boolean get() = dayGroups.isEmpty() && showEmptyHint && !isLoading
     val greetingPrefixRes: String get() = if (isEmpty) "welcome" else "hi"
 }
 
@@ -55,6 +56,15 @@ val previewHomeEmpty = HomeUiState(
     monthLabel = "MAY",
     monthSpend = "$0",
     showEmptyHint = true,
+)
+
+val previewHomeLoading = HomeUiState(
+    greetingName = "Maya",
+    dateLabel = "WED · MAY 25",
+    monthLabel = "MAY",
+    monthSpend = "$0",
+    showEmptyHint = true,
+    isLoading = true,
 )
 
 val previewHomeCasual = HomeUiState(

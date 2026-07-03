@@ -44,6 +44,7 @@ fun EventsFlow(
     onCloseEvent: (id: String) -> Unit = {},
     initialSelectedEventId: String? = null,
     onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
+    isLoading: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -90,6 +91,7 @@ fun EventsFlow(
                     selectedTab = HomeNavTab.Budget,
                     onTabSelected = onTabSelected,
                     onAddClick = onAddClick,
+                    isLoading = isLoading,
                 )
             } else {
                 val detail = detailStateFor(targetId, events, eventDetails)

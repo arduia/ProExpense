@@ -22,6 +22,7 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.feature.debt.ui.preview.previewDebtAddLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLentDetail
+import com.arduia.expense.feature.debt.ui.preview.previewDebtLoading
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOweDetail
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
@@ -67,6 +68,17 @@ class DebtScreenshotTest {
     fun debt_lent() = capture {
         DebtListScreen(
             state = previewDebtLent,
+            onSideSelected = {},
+            onAddRecord = {},
+            onRecordClick = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun debt_loading() = capture {
+        DebtListScreen(
+            state = previewDebtLoading,
             onSideSelected = {},
             onAddRecord = {},
             onRecordClick = {},

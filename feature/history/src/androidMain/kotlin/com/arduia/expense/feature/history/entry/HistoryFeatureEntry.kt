@@ -66,7 +66,11 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val noteFallback = stringResource(R.string.journal_note_fallback)
         val allFilterLabel = stringResource(R.string.journal_filter_all)
 
-        val records by financeRecordRepository.observeAll().collectAsState(emptyList())
+        // null (not emptyList()) until the first Flow emission arrives, so the empty-state
+        // illustration doesn't flash before real data has had a chance to load (US-HIS-1).
+        val recordsOrNull by financeRecordRepository.observeAll().collectAsState(initial = null)
+        val isLoading = recordsOrNull == null
+        val records = recordsOrNull.orEmpty()
         val categories by categoryRepository.observeAll().collectAsState(emptyList())
         val events by eventRepository.observeAll().collectAsState(emptyList())
         val debts by debtRepository.observeAll().collectAsState(emptyList())
@@ -109,6 +113,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             filters = filters,
             categoryNames = categoryNames,
             initialSelectedRowId = initialSelectedRowId,
+            isLoading = isLoading,
             onDeleteRecord = { rowId ->
                 scope.launch { deleteRecord(rowId) }
             },

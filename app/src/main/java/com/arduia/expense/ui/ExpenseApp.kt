@@ -116,9 +116,15 @@ fun ExpenseApp(
     var quickAccessVisible by remember { mutableStateOf(QuickAccessPrefs.load(context)) }
     val coroutineScope = rememberCoroutineScope()
 
-    val records by financeRecordRepository.observeAll().collectAsState(emptyList())
+    // null (not emptyList()) until the first Flow emission arrives, so the empty-state
+    // illustration doesn't flash on cold start before real data has had a chance to load.
+    val recordsOrNull by financeRecordRepository.observeAll().collectAsState(initial = null)
+    val recordsLoading = recordsOrNull == null
+    val records = recordsOrNull.orEmpty()
     var categoryMap by remember { mutableStateOf<Map<String, Category>>(emptyMap()) }
-    val events by eventRepository.observeAll().collectAsState(emptyList())
+    val eventsOrNull by eventRepository.observeAll().collectAsState(initial = null)
+    val eventsLoading = eventsOrNull == null
+    val events = eventsOrNull.orEmpty()
     val debts by debtRepository.observeAll().collectAsState(emptyList())
     val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
     val eventNames = remember(events) { events.associate { it.id.value to it.name } }
@@ -210,6 +216,7 @@ fun ExpenseApp(
             dateLabel = dateLabel,
             monthLabel = monthLabel,
             activeEvent = activeEventState,
+            isLoading = recordsLoading,
         )
     } else {
         val monthStart = (Calendar.getInstance() as Calendar).apply {
@@ -369,6 +376,7 @@ fun ExpenseApp(
                                 showQuickLog = true
                             },
                             homeCurrencySymbol = homeSymbol,
+                            isLoading = eventsLoading,
                         )
                         HomeNavTab.Journal -> features.history.JournalTab(
                             selectedTab = selectedTab,

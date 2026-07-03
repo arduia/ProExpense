@@ -46,10 +46,14 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
         val settleDebt: SettleDebtUseCase = koinInject()
         val checkDebtConflict: CheckDebtConflictUseCase = koinInject()
 
-        val debts by debtRepository.observeAll().collectAsState(emptyList())
+        // null (not emptyList()) until the first Flow emission arrives, so the summary card
+        // doesn't flash "$0 · 0 active" before real data has had a chance to load.
+        val debtsOrNull by debtRepository.observeAll().collectAsState(initial = null)
+        val isLoading = debtsOrNull == null
+        val debts = debtsOrNull.orEmpty()
 
-        val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent, homeCurrencySymbol)
-        val oweState = aggregateDebts(debts, DebtDirection.I_OWE).toUiState(DebtSide.Owe, homeCurrencySymbol)
+        val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent, homeCurrencySymbol, isLoading)
+        val oweState = aggregateDebts(debts, DebtDirection.I_OWE).toUiState(DebtSide.Owe, homeCurrencySymbol, isLoading)
 
         DebtFlow(
             onDismiss = onDismiss,
@@ -85,12 +89,13 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
 
 object DebtFeatureUi : DebtFeatureEntry by DebtFeatureEntryImpl()
 
-private fun DebtAggregate.toUiState(side: DebtSide, currencySymbol: String): DebtListUiState = DebtListUiState(
+private fun DebtAggregate.toUiState(side: DebtSide, currencySymbol: String, isLoading: Boolean): DebtListUiState = DebtListUiState(
     side = side,
     netLabel = AmountInput.formatMoney(netCents, currencySymbol),
     activeCount = active.size,
     active = active.map { it.toRecordUi(settled = false, currencySymbol = currencySymbol) },
     settled = settled.map { it.toRecordUi(settled = true, currencySymbol = currencySymbol) },
+    isLoading = isLoading,
 )
 
 private fun Debt.toRecordUi(settled: Boolean, currencySymbol: String): DebtRecordUi = DebtRecordUi(

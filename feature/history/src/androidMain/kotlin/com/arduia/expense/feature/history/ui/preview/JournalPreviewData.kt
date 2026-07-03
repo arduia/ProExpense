@@ -20,6 +20,7 @@ data class JournalListUiState(
     val days: List<JournalDayUi> = emptyList(),
     val filters: List<JournalFilterUi> = journalFilters,
     val searchActive: Boolean = false,
+    val isLoading: Boolean = false,
 )
 
 data class JournalLinkedTagUi(
@@ -95,6 +96,11 @@ val previewJournalSearchEmpty = JournalListUiState(
 
 val previewJournalEmpty = JournalListUiState(
     days = emptyList(),
+)
+
+val previewJournalLoading = JournalListUiState(
+    days = emptyList(),
+    isLoading = true,
 )
 
 val previewJournalDetail = JournalDetailUiState(

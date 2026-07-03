@@ -73,6 +73,19 @@ class EventBudgetScreenshotTest {
     }
 
     @Test
+    fun event_loading() = capture {
+        EventBudgetListScreen(
+            events = emptyList(),
+            onCreateEvent = {},
+            onEventClick = {},
+            selectedTab = HomeNavTab.Budget,
+            onTabSelected = {},
+            onAddClick = {},
+            isLoading = true,
+        )
+    }
+
+    @Test
     fun event_list() = capture {
         EventBudgetListScreen(
             events = previewEventList,

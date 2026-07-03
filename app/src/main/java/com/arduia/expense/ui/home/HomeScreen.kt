@@ -49,6 +49,7 @@ import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.preview.previewHomeEvent
+import com.arduia.expense.ui.preview.previewHomeLoading
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -106,7 +107,7 @@ fun HomeScreenContent(
                 monthSpend = state.monthSpend,
                 budgetSummary = state.budgetSummary,
                 monthDelta = state.monthDelta,
-                showEmptyHint = state.showEmptyHint,
+                showEmptyHint = state.showEmptyHint && !state.isLoading,
                 showSparkline = !state.isEmpty && state.sparklinePoints.size >= 2,
                 sparklinePoints = state.sparklinePoints,
             )
@@ -142,7 +143,12 @@ fun HomeScreenContent(
             modifier = Modifier.padding(top = dimens.space24),
         )
 
-        if (state.isEmpty) {
+        if (state.isLoading) {
+            // Records load asynchronously after first composition — without this, "no data yet"
+            // and "genuinely no records" render identically and the empty-state illustration
+            // flashes on every cold start for a user who actually has records.
+            Box(modifier = Modifier.weight(1f).fillMaxWidth())
+        } else if (state.isEmpty) {
             HomeEmptyContent(
                 onLogFirstExpense = onLogFirstExpense,
                 modifier = Modifier
@@ -584,6 +590,25 @@ private fun HomeEmptyPreview() {
     ProExpenseTheme {
         HomeScreenContent(
             state = previewHomeEmpty,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeLoadingPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeLoading,
             onReportsClick = {},
             onDebtClick = {},
             onSplitClick = {},
