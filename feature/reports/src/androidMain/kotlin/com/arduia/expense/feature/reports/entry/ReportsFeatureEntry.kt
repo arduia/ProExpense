@@ -226,15 +226,15 @@ private fun buildPeriodState(
                 categoryNames[breakdown.categoryId] ?: expenseCategoryLabel(breakdown.categoryId)
             },
             percentLabel = "${(breakdown.fraction * 100).roundToInt()}%",
-            amountLabel = moneyLabel(breakdown.amountCents, currencySymbol),
+            amountLabel = AmountInput.formatMoney(breakdown.amountCents, currencySymbol),
             fraction = breakdown.fraction,
         )
     }
 
     return ReportsUiState(
         periodLabel = window.label,
-        totalLabel = moneyLabel(result.totalCents, currencySymbol),
-        dailyAvgLabel = moneyLabel(result.dailyAvgCents, currencySymbol),
+        totalLabel = AmountInput.formatMoney(result.totalCents, currencySymbol),
+        dailyAvgLabel = AmountInput.formatMoney(result.dailyAvgCents, currencySymbol),
         daysLabel = daysInLabel(window.daysInPeriod),
         categories = categories,
         uncategorized = result.allUncategorized,
@@ -242,6 +242,3 @@ private fun buildPeriodState(
         periodEndEpochMillis = window.endEpochMillis,
     )
 }
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatMoney(valueInCents)

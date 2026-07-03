@@ -84,7 +84,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             events.associate { it.id.value to "${shortDateLabel(it.startEpochMillis)} - ${shortDateLabel(it.endEpochMillis)}" }
         }
         val debtSubtitles = remember(debts, homeCurrencySymbol) {
-            debts.associate { it.id.value to moneyLabel(it.money.amount.valueInCents, currencySymbol(it.money.currency.code)) }
+            debts.associate { it.id.value to AmountInput.formatMoney(it.money.amount.valueInCents, currencySymbol(it.money.currency.code)) }
         }
         val filters = remember(categories, allFilterLabel, records) {
             val categoryChips = categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
@@ -142,7 +142,7 @@ private fun groupByDay(
             JournalDayUi(
                 id = key,
                 title = dayLabel(dayRecords.first().recordedAtEpochMillis),
-                total = moneyLabel(totalCents, homeCurrencySymbol),
+                total = AmountInput.formatMoney(totalCents, homeCurrencySymbol),
                 rows = dayRecords.map { record ->
                     record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles)
                 },
@@ -162,11 +162,8 @@ private fun FinanceRecord.toRowModel(
     categoryId = categoryId.value,
     note = note?.trim().orEmpty().ifEmpty { noteFallback },
     meta = "${expenseCategoryLabel(categoryId.value)} · ${timeLabel(recordedAtEpochMillis)}",
-    amount = moneyLabel(money.amount.valueInCents, currencySymbol(money.currency.code)),
+    amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
     tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
     rawNote = note?.trim(),
 )
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatMoney(valueInCents)

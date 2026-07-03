@@ -135,8 +135,7 @@ fun MoreFlow(
         when (val result = budgetRepository.getMonthlyBudget()) {
             is Result.Success -> {
                 result.data?.let { budget ->
-                    monthlyBudgetLabel = currencySymbol(homeCurrencyCode.code) +
-                        AmountInput.formatMoney(budget.amount.valueInCents)
+                    monthlyBudgetLabel = AmountInput.formatMoney(budget.amount.valueInCents, currencySymbol(homeCurrencyCode.code))
                 } ?: run {
                     monthlyBudgetLabel = "Off"
                 }
@@ -304,8 +303,7 @@ fun MoreFlow(
                         scope.launch {
                             budgetRepository.setMonthlyBudget(money)
                             monthlyBudgetLabel = if (money != null) {
-                                currencySymbol(homeCurrencyCode.code) +
-                                    AmountInput.formatMoney(money.amount.valueInCents)
+                                AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(homeCurrencyCode.code))
                             } else {
                                 "Off"
                             }

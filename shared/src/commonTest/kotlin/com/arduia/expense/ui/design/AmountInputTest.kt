@@ -48,4 +48,17 @@ class AmountInputTest {
         assertEquals("1,234", AmountInput.formatMoney(123_400))
         assertEquals("1,234.56", AmountInput.formatMoney(123_456))
     }
+
+    @Test
+    fun formatMoney_withSymbol_prefixesSymbol() {
+        assertEquals("$22", AmountInput.formatMoney(2200, "$"))
+        assertEquals("$22.50", AmountInput.formatMoney(2250, "$"))
+    }
+
+    @Test
+    fun formatMoneySigned_prependsMinusBeforeSymbol() {
+        assertEquals("-$22.50", AmountInput.formatMoneySigned(-2250, "$"))
+        assertEquals("$22.50", AmountInput.formatMoneySigned(2250, "$"))
+        assertEquals("$0", AmountInput.formatMoneySigned(0, "$"))
+    }
 }

@@ -1,5 +1,10 @@
 package com.arduia.expense.ui.design
 
+/**
+ * Single source of truth for amount keypad entry and money display formatting — pure Kotlin, no
+ * Android/Compose dependency, so it's shared by every feature module today and by iOS for free
+ * once an iOS target is added to this module (see shared/src/iosMain's readiness stubs).
+ */
 object AmountInput {
     private const val MAX_WHOLE_DIGITS = 7
     private const val MAX_FRACTION_DIGITS = 2
@@ -41,6 +46,20 @@ object AmountInput {
         } else {
             formatDisplay("$whole.${fractionCents.toString().padStart(2, '0')}")
         }
+    }
+
+    /** Convenience for the common case: [formatMoney] with the currency symbol prefixed. */
+    fun formatMoney(valueInCents: Long, currencySymbol: String): String =
+        currencySymbol + formatMoney(valueInCents)
+
+    /**
+     * Like [formatMoney] but tolerates a negative [valueInCents] — the minus sign is placed
+     * before the currency symbol ("-$50") instead of requiring the caller to abs() and prepend
+     * it manually.
+     */
+    fun formatMoneySigned(valueInCents: Long, currencySymbol: String): String {
+        val sign = if (valueInCents < 0) "-" else ""
+        return sign + formatMoney(if (valueInCents < 0) -valueInCents else valueInCents, currencySymbol)
     }
 
     fun numericValue(rawValue: String): Double? {

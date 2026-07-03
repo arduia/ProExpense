@@ -87,7 +87,7 @@ object DebtFeatureUi : DebtFeatureEntry by DebtFeatureEntryImpl()
 
 private fun DebtAggregate.toUiState(side: DebtSide, currencySymbol: String): DebtListUiState = DebtListUiState(
     side = side,
-    netLabel = moneyLabel(netCents, currencySymbol),
+    netLabel = AmountInput.formatMoney(netCents, currencySymbol),
     activeCount = active.size,
     active = active.map { it.toRecordUi(settled = false, currencySymbol = currencySymbol) },
     settled = settled.map { it.toRecordUi(settled = true, currencySymbol = currencySymbol) },
@@ -97,12 +97,9 @@ private fun Debt.toRecordUi(settled: Boolean, currencySymbol: String): DebtRecor
     id = id.value,
     name = personName,
     dateLabel = dueEpochMillis?.let { shortDateLabel(it) } ?: "No due date",
-    amountLabel = moneyLabel(money.amount.valueInCents, currencySymbol),
+    amountLabel = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol),
     subtitle = note,
     settled = settled,
     amountCents = money.amount.valueInCents,
     dueEpochMillis = dueEpochMillis,
 )
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatMoney(valueInCents)

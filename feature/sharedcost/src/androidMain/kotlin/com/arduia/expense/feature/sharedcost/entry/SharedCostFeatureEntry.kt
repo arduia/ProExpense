@@ -85,7 +85,7 @@ private fun SharedSplitMode.toSplitMode(): SplitMode = when (this) {
 private fun SharedCost.toHistoryItemUi(currencySymbol: String): SharedCostHistoryItemUi {
     val shares = shares()
     val perPersonLabel = when (splitStrategy) {
-        is SplitStrategy.EqualSplit -> moneyLabel(shares.values.first().amount.valueInCents, currencySymbol)
+        is SplitStrategy.EqualSplit -> AmountInput.formatMoney(shares.values.first().amount.valueInCents, currencySymbol)
         is SplitStrategy.CustomSplit -> "Varies"
     }
     return SharedCostHistoryItemUi(
@@ -94,7 +94,7 @@ private fun SharedCost.toHistoryItemUi(currencySymbol: String): SharedCostHistor
         peopleCount = participants.size,
         perPersonLabel = perPersonLabel,
         dateLabel = shortDateLabel(recordedAtEpochMillis),
-        totalLabel = moneyLabel(total.amount.valueInCents, currencySymbol),
+        totalLabel = AmountInput.formatMoney(total.amount.valueInCents, currencySymbol),
     )
 }
 
@@ -108,7 +108,7 @@ private fun SharedCost.toUiState(currencySymbol: String): SharedCostUiState {
         participants = participants.map { participant ->
             SharedCostParticipantUi(
                 name = participant.name,
-                shareLabel = moneyLabel(shares[participant.id]?.amount?.valueInCents ?: 0L, currencySymbol),
+                shareLabel = AmountInput.formatMoney(shares[participant.id]?.amount?.valueInCents ?: 0L, currencySymbol),
             )
         },
         shareRaws = participants.map { participant ->
@@ -116,6 +116,3 @@ private fun SharedCost.toUiState(currencySymbol: String): SharedCostUiState {
         },
     )
 }
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatMoney(valueInCents)

@@ -33,7 +33,6 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.design.eventBudgetTone
 import com.arduia.expense.ui.design.shortDateLabel
-import kotlin.math.abs
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -165,12 +164,12 @@ private fun Event.toCardState(
         id = id.value,
         title = name,
         dateRange = dateRangeLabel(),
-        spentLabel = moneyLabel(progress.spentCents, currencySymbol),
-        budgetLabel = "of " + moneyLabel(progress.budgetCents, currencySymbol),
+        spentLabel = AmountInput.formatMoney(progress.spentCents, currencySymbol),
+        budgetLabel = "of " + AmountInput.formatMoney(progress.budgetCents, currencySymbol),
         progress = progress.progress,
         isOverBudget = progress.isOverBudget,
         overAmountLabel = if (progress.isOverBudget) {
-            moneyLabel(-progress.remainingCents, currencySymbol)
+            AmountInput.formatMoney(-progress.remainingCents, currencySymbol)
         } else {
             null
         },
@@ -193,7 +192,7 @@ private fun Event.toDetailState(
                 },
                 categoryId = record.categoryId.value,
                 categoryLabel = categoryNames[record.categoryId.value] ?: expenseCategoryLabel(record.categoryId.value),
-                amountLabel = moneyLabel(record.money.amount.valueInCents, currencySymbol),
+                amountLabel = AmountInput.formatMoney(record.money.amount.valueInCents, currencySymbol),
             )
         }
     val isReadOnly = com.arduia.expense.feature.eventbudget.isEventReadOnly(
@@ -208,9 +207,9 @@ private fun Event.toDetailState(
         statusEyebrow = status.name,
         summary = EventBudgetSummaryState(
             eyebrow = if (progress.remainingCents < 0) "OVER BUDGET" else "REMAINING",
-            remainingLabel = moneyLabel(progress.remainingCents, currencySymbol),
-            spentLabel = moneyLabel(progress.spentCents, currencySymbol),
-            budgetLabel = moneyLabel(progress.budgetCents, currencySymbol),
+            remainingLabel = AmountInput.formatMoneySigned(progress.remainingCents, currencySymbol),
+            spentLabel = AmountInput.formatMoney(progress.spentCents, currencySymbol),
+            budgetLabel = AmountInput.formatMoney(progress.budgetCents, currencySymbol),
             spentCaption = "Spent",
             budgetCaption = "Budget",
             progress = progress.progress,
@@ -223,9 +222,4 @@ private fun Event.toDetailState(
         showAddTagged = !isReadOnly,
         readOnly = isReadOnly,
     )
-}
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String {
-    val sign = if (valueInCents < 0) "-" else ""
-    return sign + currencySymbol + AmountInput.formatMoney(abs(valueInCents))
 }

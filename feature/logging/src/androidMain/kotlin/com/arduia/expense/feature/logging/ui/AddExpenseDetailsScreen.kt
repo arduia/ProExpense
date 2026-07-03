@@ -84,7 +84,7 @@ fun AddExpenseDetailsScreen(
     val convertedLabel = if (state.isForeignCurrency() && rate != null && rate > 0.0) {
         val rawAmount = state.rawAmount.toDoubleOrNull() ?: 0.0
         val convertedCents = Math.round(rawAmount * rate * 100)
-        currencySymbol(state.homeCurrencyCode) + AmountInput.formatMoney(convertedCents)
+        AmountInput.formatMoney(convertedCents, currencySymbol(state.homeCurrencyCode))
     } else {
         null
     }

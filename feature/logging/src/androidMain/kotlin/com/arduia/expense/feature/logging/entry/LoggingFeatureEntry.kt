@@ -236,7 +236,7 @@ private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind, currencySymbol
             TagOptionKind.DEBT -> TagLinkOption(
                 id = option.id,
                 title = debtLabel(option),
-                subtitle = moneyLabel(option.debtAmountCents ?: 0L, currencySymbol),
+                subtitle = AmountInput.formatMoney(option.debtAmountCents ?: 0L, currencySymbol),
                 kind = TagLinkKind.Debt,
             )
         }
@@ -311,6 +311,3 @@ private fun FinanceRecord.toEntryState(
         exchangeRateRaw = exchangeRateRaw,
     )
 }
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatMoney(valueInCents)

@@ -149,8 +149,8 @@ fun ExpenseApp(
             } else {
                 "${shortDateLabel(event.startEpochMillis)} — ${shortDateLabel(event.endEpochMillis)}"
             },
-            spentLabel = moneyLabel(progress.spentCents, homeSymbol),
-            budgetLabel = "of " + moneyLabel(progress.budgetCents, homeSymbol),
+            spentLabel = AmountInput.formatMoney(progress.spentCents, homeSymbol),
+            budgetLabel = "of " + AmountInput.formatMoney(progress.budgetCents, homeSymbol),
             progress = progress.progress,
             isOverBudget = progress.isOverBudget,
         )
@@ -227,12 +227,12 @@ fun ExpenseApp(
         }
         // "Spend this month" (US-HOME-1), not all-time — the header label promises a monthly figure.
         val totalCents = recordsThisMonth.sumOf { it.homeCurrencyMoney.amount.valueInCents }
-        val totalLabel = homeSymbol + AmountInput.formatMoney(totalCents)
+        val totalLabel = AmountInput.formatMoney(totalCents, homeSymbol)
         val budgetSummary = monthlyBudget?.let { budget ->
             val budgetCents = budget.amount.valueInCents
             HomeBudgetSummaryState(
-                spentLabel = homeSymbol + AmountInput.formatMoney(totalCents),
-                budgetLabel = "of " + homeSymbol + AmountInput.formatMoney(budgetCents),
+                spentLabel = AmountInput.formatMoney(totalCents, homeSymbol),
+                budgetLabel = "of " + AmountInput.formatMoney(budgetCents, homeSymbol),
                 progress = if (budgetCents > 0) totalCents.toFloat() / budgetCents else 0f,
                 statusLabel = if (totalCents > budgetCents) "Over budget" else "On track",
                 isOverBudget = totalCents > budgetCents,
@@ -246,7 +246,7 @@ fun ExpenseApp(
             .toSortedMap(compareByDescending { it })
             .map { (_, dayRecords) ->
                 val dayTotalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
-                val dayTotalLabel = homeSymbol + AmountInput.formatMoney(dayTotalCents)
+                val dayTotalLabel = AmountInput.formatMoney(dayTotalCents, homeSymbol)
                 HomeDayGroup(
                     dayTitle = dayLabel(dayRecords.first().recordedAtEpochMillis),
                     dayTotal = dayTotalLabel,
@@ -256,8 +256,10 @@ fun ExpenseApp(
                             categoryId = record.categoryId.value,
                             note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
                             meta = timeLabel(record.recordedAtEpochMillis),
-                            amount = currencySymbol(record.money.currency.code) +
-                                AmountInput.formatMoney(record.money.amount.valueInCents),
+                            amount = AmountInput.formatMoney(
+                                record.money.amount.valueInCents,
+                                currencySymbol(record.money.currency.code),
+                            ),
                             tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
                         )
                     },
@@ -549,6 +551,3 @@ private fun buildMonthLabel(): String {
     val calendar = Calendar.getInstance()
     return SimpleDateFormat("MMM", Locale.US).format(calendar.time).uppercase()
 }
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatMoney(valueInCents)
