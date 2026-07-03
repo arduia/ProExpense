@@ -36,7 +36,7 @@ fun HomeShell(
     onRowClick: (ProTransactionRowModel) -> Unit = {},
     onSeeAll: () -> Unit = {},
     onCustomizeQuickAccess: () -> Unit = {},
-    visibleTiles: Set<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
+    visibleTiles: List<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
 ) {
     val colors = ProExpenseTheme.colors
 

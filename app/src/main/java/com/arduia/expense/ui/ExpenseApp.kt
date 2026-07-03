@@ -56,6 +56,7 @@ import com.arduia.expense.ui.preview.HomeDayGroup
 import com.arduia.expense.ui.preview.HomeTransactionItem
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.splash.SplashScreen
+import com.arduia.expense.ui.theme.ProExpenseTheme
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -520,7 +521,7 @@ fun ExpenseApp(
                 onClose = { showQuickAccessPicker = false },
             ) {
                 QuickAccessPickerSheetContent(
-                    selected = quickAccessVisible,
+                    order = quickAccessVisible,
                     onToggle = { tile ->
                         val updated = if (tile in quickAccessVisible) {
                             if (quickAccessVisible.size > 1) quickAccessVisible - tile else quickAccessVisible
@@ -530,12 +531,33 @@ fun ExpenseApp(
                         quickAccessVisible = updated
                         QuickAccessPrefs.save(context, updated)
                     },
+                    onMoveUp = { tile ->
+                        val index = quickAccessVisible.indexOf(tile)
+                        if (index > 0) {
+                            val updated = quickAccessVisible.toMutableList().apply {
+                                this[index] = this[index - 1].also { this[index - 1] = this[index] }
+                            }
+                            quickAccessVisible = updated
+                            QuickAccessPrefs.save(context, updated)
+                        }
+                    },
+                    onMoveDown = { tile ->
+                        val index = quickAccessVisible.indexOf(tile)
+                        if (index in 0 until quickAccessVisible.lastIndex) {
+                            val updated = quickAccessVisible.toMutableList().apply {
+                                this[index] = this[index + 1].also { this[index + 1] = this[index] }
+                            }
+                            quickAccessVisible = updated
+                            QuickAccessPrefs.save(context, updated)
+                        }
+                    },
                 )
             }
 
             ProToastHost(
                 message = actionToastMessage,
                 onDismiss = { actionToastMessage = null },
+                bottomBarInset = ProExpenseTheme.dimensions.navBarHeight,
             )
         }
     }
