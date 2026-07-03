@@ -187,6 +187,7 @@
     <string name="more_features_section">FEATURES</string>
     <string name="more_settings_section">SETTINGS</string>
     <string name="more_profile_subtitle">All data local · no account</string>
+    <string name="more_profile_name_fallback">Your profile</string>
     <string name="more_reports">Reports</string>
     <string name="more_debt">Debt Tracker</string>
     <string name="more_shared_costs">Shared Costs</string>

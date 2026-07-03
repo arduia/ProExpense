@@ -157,6 +157,7 @@ private fun FinanceRecord.toRowModel(
     amount = moneyLabel(money.amount.valueInCents, currencySymbol(money.currency.code)),
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
     tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
+    rawNote = note?.trim(),
 )
 
 private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =

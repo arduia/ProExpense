@@ -135,7 +135,9 @@ fun JournalFlow(
                     onRowClick = { selectedRowId = it.id },
                     onRowLongPress = { row ->
                         quickNoteRow = row
-                        quickNoteText = ""
+                        // Pre-fill with the existing note (US-HIS-4) — an empty text field would
+                        // silently overwrite any note already on the record when saved.
+                        quickNoteText = row.rawNote.orEmpty()
                     },
                     selectedTab = selectedTab,
                     onTabSelected = onTabSelected,

@@ -34,6 +34,8 @@ data class ProTransactionRowModel(
     val tag: String? = null,
     /** Secondary line for the linked tag (e.g. its date range) shown on Journal Detail. */
     val tagSubtitle: String? = null,
+    /** The record's actual note, pre-fallback — [note] substitutes a placeholder when blank. */
+    val rawNote: String? = null,
 )
 
 @Composable

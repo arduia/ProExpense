@@ -204,7 +204,7 @@ fun ExpenseApp(
 
     val homeState = if (records.isEmpty()) {
         previewHomeEmpty.copy(
-            greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
+            greetingName = userName,
             dateLabel = dateLabel,
             monthLabel = monthLabel,
             activeEvent = activeEventState,
@@ -265,7 +265,7 @@ fun ExpenseApp(
                 )
             }
         previewHomeEmpty.copy(
-            greetingName = userName.ifBlank { previewHomeEmpty.greetingName },
+            greetingName = userName,
             dateLabel = dateLabel,
             monthLabel = monthLabel,
             monthSpend = totalLabel,

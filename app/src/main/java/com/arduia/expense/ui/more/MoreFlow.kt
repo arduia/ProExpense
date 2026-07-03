@@ -85,6 +85,7 @@ fun MoreFlow(
     val disablePin: DisablePinUseCase = koinInject()
     val budgetRepository: BudgetRepository = koinInject()
     val defaultCategoryRepository: DefaultCategoryRepository = koinInject()
+    val profileNameFallback = stringResource(R.string.more_profile_name_fallback)
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
@@ -164,13 +165,14 @@ fun MoreFlow(
 
     val hubState = remember(
         selectedCurrency, displayName, pinEnabled, monthlyBudgetLabel, appVersion,
-        biometricEnrolled, biometricCapable, defaultCategoryId, themeMode,
+        biometricEnrolled, biometricCapable, defaultCategoryId, themeMode, profileNameFallback,
     ) {
-        val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "M"
+        // No fictional-persona fallback (US-ONB-3: no name set -> generic, not "Maya").
+        val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
         previewMoreHub.copy(
             profile = previewMoreHub.profile.copy(
                 initial = profileInitial,
-                name = displayName.ifBlank { previewMoreHub.profile.name },
+                name = displayName.ifBlank { profileNameFallback },
             ),
             settings = previewMoreHub.settings.map { setting ->
                 when (setting.id) {
