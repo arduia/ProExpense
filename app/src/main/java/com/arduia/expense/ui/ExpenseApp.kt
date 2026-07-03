@@ -93,7 +93,11 @@ fun ExpenseApp(
     var showSplash by rememberSaveable { mutableStateOf(true) }
     var onboardingComplete by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var pinConfigured by remember { mutableStateOf<Boolean?>(null) }
-    var unlocked by rememberSaveable { mutableStateOf(false) }
+    // Deliberately `remember`, not `rememberSaveable` — on API < 29, onSaveInstanceState can run
+    // before the ON_STOP observer below resets this to false, so a saved-instance-state bundle
+    // could restore `unlocked = true` after process death and skip the PIN gate entirely. Losing
+    // this across process death is the correct behavior anyway (US-AUTH-4: always re-prompt).
+    var unlocked by remember { mutableStateOf(false) }
     var showQuickLog by rememberSaveable { mutableStateOf(false) }
     var showSharedCosts by rememberSaveable { mutableStateOf(false) }
     var showDebt by rememberSaveable { mutableStateOf(false) }
