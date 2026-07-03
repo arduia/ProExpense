@@ -60,6 +60,7 @@ fun PinSetupScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     saveEnabled: Boolean = true,
+    saving: Boolean = false,
     errorMessage: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
@@ -218,6 +219,7 @@ fun PinSetupScreen(
             text = stringResource(R.string.pin_setup_save),
             onClick = onSave,
             enabled = saveEnabled,
+            loading = saving,
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,

@@ -77,15 +77,17 @@ fun MoreBudgetScreen(
             actionsEnabled = true,
             onKey = { key -> rawAmount = AmountInput.applyKey(rawAmount, key) },
             onBackspace = { rawAmount = AmountInput.applyBackspace(rawAmount) },
-            onSave = {
+            // showSaveAction = false renders only the "Next"-slot button, so the real save
+            // logic goes there — leaving it on onSave left a second, dead "Next" button visible.
+            onSave = {},
+            onNext = {
                 if (canProceed) {
                     val cents = (AmountInput.numericValue(rawAmount) ?: 0.0) * 100
                     onSave(Money(Amount(cents.toLong()), homeCurrency))
                 }
             },
-            onNext = {},
-            saveLabel = "Save",
-            nextLabel = "Next",
+            nextLabel = "Save",
+            showSaveAction = false,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = dimens.space16),

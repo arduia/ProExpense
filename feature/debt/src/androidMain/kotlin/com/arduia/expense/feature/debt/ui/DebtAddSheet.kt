@@ -181,11 +181,10 @@ private fun DebtToggleSegment(
     val typography = ProExpenseTheme.typography
     val containerShape = ProExpenseTheme.shapes.chip
 
-    Text(
-        text = label,
-        style = if (selected) typography.bodySemiBold else typography.bodyMedium,
-        color = if (selected) accent else colors.onSurfaceMuted,
-        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+    // Text has no built-in vertical centering, so a bare Text with a minHeight taller than its
+    // own line height (from the touch-target padding below) renders top-anchored — wrap in a
+    // Box so the label centers within the enlarged touch target instead of sitting "up" a bit.
+    Box(
         modifier = modifier
             .defaultMinSize(minHeight = dimens.touchTargetMin)
             .minimumInteractiveComponentSize()
@@ -200,7 +199,15 @@ private fun DebtToggleSegment(
             )
             .proClickable(onClick = onClick, shape = containerShape)
             .padding(vertical = dimens.space8),
-    )
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = label,
+            style = if (selected) typography.bodySemiBold else typography.bodyMedium,
+            color = if (selected) accent else colors.onSurfaceMuted,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+    }
 }
 
 @Composable

@@ -58,6 +58,7 @@ fun PinSetupFlow(
     var selectedQuestion by remember { mutableStateOf("pet") }
     var answer by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isSaving by remember { mutableStateOf(false) }
 
     val canSave = pinAuthOn && newPin.length == 6 && confirmPin.length == 6 && answer.isNotBlank()
 
@@ -100,6 +101,7 @@ fun PinSetupFlow(
                     onRecoveryClick = { step = PinSetupStep.Security },
                     onSave = {
                         errorMessage = null
+                        isSaving = true
                         scope.launch {
                             val result = setupPin(
                                 pin = newPin,
@@ -108,6 +110,7 @@ fun PinSetupFlow(
                                 enableBiometric = biometricOn,
                             )
                             if (result is Result.Error) {
+                                isSaving = false
                                 errorMessage = result.message
                                 return@launch
                             }
@@ -117,6 +120,7 @@ fun PinSetupFlow(
                     },
                     onBack = onDismiss,
                     saveEnabled = canSave,
+                    saving = isSaving,
                     errorMessage = errorMessage,
                 )
                 PinSetupStep.EnterNew -> PinSetPinScreen(

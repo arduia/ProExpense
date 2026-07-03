@@ -62,6 +62,7 @@ fun ProDesignSystemButtonsContent() {
             ProButton(text = "Small", onClick = {}, size = ProButtonSize.Sm)
             ProButton(text = "Large", onClick = {}, size = ProButtonSize.Lg)
             ProButton(text = "Disabled", onClick = {}, enabled = false)
+            ProButton(text = "Loading", onClick = {}, loading = true)
         }
     }
 }

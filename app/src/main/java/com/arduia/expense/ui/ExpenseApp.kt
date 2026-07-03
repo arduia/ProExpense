@@ -423,6 +423,11 @@ fun ExpenseApp(
                             },
                         )
                     }
+                } else {
+                    // pinConfigured loads asynchronously right after onboardingComplete flips
+                    // true (LaunchedEffect below) — without this branch the Box above renders
+                    // nothing for that gap frame, exposing the raw blue windowBackground.
+                    SplashScreen()
                 }
             } else {
                 features.onboarding.FirstLaunchFlow(

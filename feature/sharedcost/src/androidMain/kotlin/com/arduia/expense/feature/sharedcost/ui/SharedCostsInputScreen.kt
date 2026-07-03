@@ -143,8 +143,8 @@ fun SharedCostsInputScreen(
                 onBackspace = onBackspace,
                 onSave = onConfirmAmount,
                 onNext = onConfirmAmount,
-                saveLabel = stringResource(R.string.shared_save_split),
                 nextLabel = stringResource(R.string.shared_save_split),
+                showSaveAction = false,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = dimens.space16),
