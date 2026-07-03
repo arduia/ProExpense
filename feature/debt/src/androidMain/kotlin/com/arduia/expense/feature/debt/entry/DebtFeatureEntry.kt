@@ -56,14 +56,14 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
             onDismiss = onDismiss,
             lentState = lentState,
             oweState = oweState,
-            onSaveRecord = { side, person, amountRaw, dueEpochMillis ->
+            onSaveRecord = { side, person, amountRaw, dueEpochMillis, note ->
                 val direction = if (side == DebtSide.Lent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE
-                scope.launch { createDebt(person, amountRaw, direction, dueEpochMillis = dueEpochMillis) }
+                scope.launch { createDebt(person, amountRaw, direction, dueEpochMillis = dueEpochMillis, note = note) }
             },
-            onUpdateRecord = { id, person, amountRaw, dueEpochMillis ->
+            onUpdateRecord = { id, person, amountRaw, dueEpochMillis, note ->
                 val debt = debts.firstOrNull { it.id.value == id }
                 if (debt != null) {
-                    scope.launch { updateDebt(debt, person, amountRaw, dueEpochMillis) }
+                    scope.launch { updateDebt(debt, person, amountRaw, dueEpochMillis, note) }
                 }
             },
             onDeleteRecord = { id ->
@@ -99,6 +99,7 @@ private fun Debt.toRecordUi(settled: Boolean, currencySymbol: String): DebtRecor
     name = personName,
     dateLabel = dueEpochMillis?.let { shortDateLabel(it) } ?: "No due date",
     amountLabel = moneyLabel(money.amount.valueInCents, currencySymbol),
+    subtitle = note,
     settled = settled,
     amountCents = money.amount.valueInCents,
     dueEpochMillis = dueEpochMillis,

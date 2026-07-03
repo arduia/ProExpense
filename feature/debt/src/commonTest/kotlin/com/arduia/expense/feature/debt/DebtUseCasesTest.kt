@@ -93,6 +93,18 @@ class CreateDebtUseCaseTest {
         assertFalse(result)
         assertEquals(null, repo.lastUpsert)
     }
+
+    @Test
+    fun invoke_persistsTheOptionalNoteAndBlanksToNull() = runTest {
+        val repo = FakeDebtRepository()
+        val useCase = CreateDebtUseCase(repo, nowEpochMillis = { 1_000L })
+
+        useCase("Alex", "12.50", DebtDirection.OWED_TO_ME, note = "Dinner split")
+        assertEquals("Dinner split", repo.lastUpsert?.note)
+
+        useCase("Alex", "12.50", DebtDirection.OWED_TO_ME, note = "   ")
+        assertEquals(null, repo.lastUpsert?.note)
+    }
 }
 
 class UpdateDebtUseCaseTest {

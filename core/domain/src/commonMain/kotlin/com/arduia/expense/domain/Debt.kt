@@ -12,6 +12,7 @@ data class Debt(
     val direction: DebtDirection,
     val dueEpochMillis: Long? = null,
     val isSettled: Boolean = false,
+    val note: String? = null,
 ) {
     init {
         require(personName.isNotBlank()) { "Debt personName must not be blank" }

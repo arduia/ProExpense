@@ -22,6 +22,7 @@ import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.feature.debt.ui.preview.DEBT_NOTE_MAX
 import com.arduia.expense.feature.debt.ui.preview.DebtAddFormState
 import com.arduia.expense.feature.debt.ui.preview.DebtDetailUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
@@ -42,8 +43,8 @@ fun DebtFlow(
     onDismiss: () -> Unit,
     lentState: DebtListUiState = previewDebtLent,
     oweState: DebtListUiState = previewDebtOwe,
-    onSaveRecord: (side: DebtSide, person: String, amountRaw: String, dueEpochMillis: Long?) -> Unit = { _, _, _, _ -> },
-    onUpdateRecord: (id: String, person: String, amountRaw: String, dueEpochMillis: Long?) -> Unit = { _, _, _, _ -> },
+    onSaveRecord: (side: DebtSide, person: String, amountRaw: String, dueEpochMillis: Long?, note: String) -> Unit = { _, _, _, _, _ -> },
+    onUpdateRecord: (id: String, person: String, amountRaw: String, dueEpochMillis: Long?, note: String) -> Unit = { _, _, _, _, _ -> },
     onDeleteRecord: (String) -> Unit = {},
     onSettleRecord: (String) -> Unit = {},
     onCheckConflict: suspend (person: String, side: DebtSide) -> Boolean = { _, _ -> false },
@@ -66,10 +67,11 @@ fun DebtFlow(
 
     fun commitRecord() {
         val editingId = addForm.editingId
+        val note = addForm.note.trim()
         if (editingId != null) {
-            onUpdateRecord(editingId, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis)
+            onUpdateRecord(editingId, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis, note)
         } else {
-            onSaveRecord(addForm.side, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis)
+            onSaveRecord(addForm.side, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis, note)
         }
         side = addForm.side
         showAdd = false
@@ -120,12 +122,18 @@ fun DebtFlow(
                             addForm = DebtAddFormState(
                                 side = side,
                                 person = record.name,
-                                // The amount field takes whole-dollar digits (no decimal input),
-                                // matching how CreateDebtUseCase/Amount.parseOrNull interpret it.
-                                amountRaw = (record.amountCents / 100).toString(),
+                                // Whole dollars when the cents are exactly zero, otherwise a
+                                // 2-decimal string — plain integer division here used to silently
+                                // truncate any cents on every edit-reload.
+                                amountRaw = if (record.amountCents % 100 == 0L) {
+                                    (record.amountCents / 100).toString()
+                                } else {
+                                    String.format(java.util.Locale.US, "%.2f", record.amountCents / 100.0)
+                                },
                                 dueLabel = record.dueEpochMillis?.let { shortDateLabel(it) },
                                 editingId = record.id,
                                 dueEpochMillis = record.dueEpochMillis,
+                                note = record.subtitle.orEmpty(),
                             )
                             showAdd = true
                         }
@@ -152,6 +160,7 @@ fun DebtFlow(
                 onAmountChange = { addForm = addForm.copy(amountRaw = it) },
                 onPickDate = {},
                 onPickDue = { showDuePicker = true },
+                onNoteChange = { addForm = addForm.copy(note = it.take(DEBT_NOTE_MAX)) },
                 onSave = {
                     val person = addForm.person.trim()
                     if (addForm.editingId != null) {

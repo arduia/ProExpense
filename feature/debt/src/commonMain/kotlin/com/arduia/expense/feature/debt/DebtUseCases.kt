@@ -20,6 +20,7 @@ class CreateDebtUseCase(
         direction: DebtDirection,
         currencyCode: String = "USD",
         dueEpochMillis: Long? = null,
+        note: String? = null,
     ): Boolean {
         val amount = Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 } ?: return false
         val debt = Debt(
@@ -28,6 +29,7 @@ class CreateDebtUseCase(
             money = Money(amount, CurrencyCode(currencyCode)),
             direction = direction,
             dueEpochMillis = dueEpochMillis,
+            note = note?.ifBlank { null },
         )
         debtRepository.upsert(debt)
         return true
@@ -44,6 +46,7 @@ class UpdateDebtUseCase(private val debtRepository: DebtRepository) {
         personName: String,
         rawAmount: String,
         dueEpochMillis: Long?,
+        note: String? = null,
     ): Boolean {
         val amount = Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 } ?: return false
         debtRepository.upsert(
@@ -51,6 +54,7 @@ class UpdateDebtUseCase(private val debtRepository: DebtRepository) {
                 personName = personName,
                 money = existing.money.copy(amount = amount),
                 dueEpochMillis = dueEpochMillis,
+                note = note?.ifBlank { null },
             ),
         )
         return true

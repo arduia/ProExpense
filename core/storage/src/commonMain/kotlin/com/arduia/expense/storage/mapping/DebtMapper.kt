@@ -16,6 +16,7 @@ internal fun DebtRow.toDomain(): Debt =
         direction = direction.toDebtDirectionFromCode(),
         dueEpochMillis = due_epoch_millis,
         isSettled = is_settled != 0L,
+        note = note,
     )
 
 /**

@@ -59,6 +59,7 @@ data class DebtAddFormState(
     val dueLabel: String? = null,
     val editingId: String? = null,
     val dueEpochMillis: Long? = null,
+    val note: String = "",
 ) {
     val canSave: Boolean
         get() = person.isNotBlank() && (amountRaw.toDoubleOrNull() ?: 0.0) > 0.0

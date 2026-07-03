@@ -7,12 +7,13 @@ CREATE TABLE debt_record (
     currency_code TEXT NOT NULL,
     direction INTEGER NOT NULL,
     due_epoch_millis INTEGER,
-    is_settled INTEGER NOT NULL
+    is_settled INTEGER NOT NULL,
+    note TEXT
 );
 
 insertDebt:
-INSERT OR REPLACE INTO debt_record(id, person_name, amount_cents, currency_code, direction, due_epoch_millis, is_settled)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO debt_record(id, person_name, amount_cents, currency_code, direction, due_epoch_millis, is_settled, note)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteDebt:
 DELETE FROM debt_record WHERE id = ?;

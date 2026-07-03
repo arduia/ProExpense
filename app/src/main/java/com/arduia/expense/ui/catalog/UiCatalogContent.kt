@@ -493,6 +493,7 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
                             onAmountChange = {},
                             onPickDate = {},
                             onPickDue = {},
+                            onNoteChange = {},
                             onSave = {},
                         )
                     }
