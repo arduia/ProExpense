@@ -30,11 +30,9 @@ import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
 import com.arduia.expense.feature.history.ui.preview.journalFilters
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
-import com.arduia.expense.ui.design.UtcTimeZone
-import com.arduia.expense.ui.design.dayKey
+import com.arduia.expense.ui.design.DateZone
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.expenseCategoryLabel
-import com.arduia.expense.ui.design.shortDateLabel
-import com.arduia.expense.ui.design.yearOf
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -78,11 +76,12 @@ fun JournalFlow(
         // Omitting the year is ambiguous once the range isn't entirely within the current
         // year (a past year, or one that crosses a year boundary) — show it on both ends
         // whenever that's the case so "Dec 20 – Jan 5" can't be misread as backwards.
-        val currentYear = yearOf(System.currentTimeMillis(), UtcTimeZone)
-        val startYear = yearOf(dateRangeStart!!, UtcTimeZone)
-        val endYear = yearOf(dateRangeEnd!!, UtcTimeZone)
+        val currentYear = PlatformDateFormatter.yearOf(System.currentTimeMillis(), DateZone.Utc)
+        val startYear = PlatformDateFormatter.yearOf(dateRangeStart!!, DateZone.Utc)
+        val endYear = PlatformDateFormatter.yearOf(dateRangeEnd!!, DateZone.Utc)
         val withYear = startYear != currentYear || endYear != currentYear
-        "${shortDateLabel(dateRangeStart!!, UtcTimeZone, withYear)} – ${shortDateLabel(dateRangeEnd!!, UtcTimeZone, withYear)}"
+        "${PlatformDateFormatter.shortDateLabel(dateRangeStart!!, DateZone.Utc, withYear)} – " +
+            PlatformDateFormatter.shortDateLabel(dateRangeEnd!!, DateZone.Utc, withYear)
     } else {
         null
     }
@@ -92,8 +91,8 @@ fun JournalFlow(
             query = query,
             selectedFilterId = selectedFilterId,
             categoryLabelFor = { id -> categoryNames[id] ?: expenseCategoryLabel(id) },
-            startDayKey = dateRangeStart?.let { dayKey(it, UtcTimeZone) },
-            endDayKey = dateRangeEnd?.let { dayKey(it, UtcTimeZone) },
+            startDayKey = dateRangeStart?.let { PlatformDateFormatter.dayKey(it, DateZone.Utc) },
+            endDayKey = dateRangeEnd?.let { PlatformDateFormatter.dayKey(it, DateZone.Utc) },
         )
     }
     val listState = JournalListUiState(

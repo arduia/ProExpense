@@ -23,13 +23,10 @@ import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.currencySymbol
-import com.arduia.expense.ui.design.dayLabel
-import com.arduia.expense.ui.design.dayKey
 import com.arduia.expense.ui.design.expenseCategoryLabel
-import com.arduia.expense.ui.design.shortDateLabel
-import com.arduia.expense.ui.design.timeLabel
 import java.util.Calendar
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -81,7 +78,10 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         // Secondary line for Journal Detail's linked-tag card (US-HIS-5) — an event's date range
         // or a debt's amount, mirroring what feature:logging shows in its own tag picker.
         val eventSubtitles = remember(events) {
-            events.associate { it.id.value to "${shortDateLabel(it.startEpochMillis)} - ${shortDateLabel(it.endEpochMillis)}" }
+            events.associate {
+                it.id.value to "${PlatformDateFormatter.shortDateLabel(it.startEpochMillis)} - " +
+                    PlatformDateFormatter.shortDateLabel(it.endEpochMillis)
+            }
         }
         val debtSubtitles = remember(debts, homeCurrencySymbol) {
             debts.associate { it.id.value to AmountInput.formatMoney(it.money.amount.valueInCents, currencySymbol(it.money.currency.code)) }
@@ -135,13 +135,13 @@ private fun groupByDay(
 ): List<JournalDayUi> {
     val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
     return sorted
-        .groupBy { dayKey(it.recordedAtEpochMillis) }
+        .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
         .toSortedMap(compareByDescending { it })
         .map { (key, dayRecords) ->
             val totalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
             JournalDayUi(
                 id = key,
-                title = dayLabel(dayRecords.first().recordedAtEpochMillis),
+                title = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
                 total = AmountInput.formatMoney(totalCents, homeCurrencySymbol),
                 rows = dayRecords.map { record ->
                     record.toRowModel(noteFallback, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles)
@@ -161,7 +161,7 @@ private fun FinanceRecord.toRowModel(
     id = id.value,
     categoryId = categoryId.value,
     note = note?.trim().orEmpty().ifEmpty { noteFallback },
-    meta = "${expenseCategoryLabel(categoryId.value)} · ${timeLabel(recordedAtEpochMillis)}",
+    meta = "${expenseCategoryLabel(categoryId.value)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
     amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
     tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),

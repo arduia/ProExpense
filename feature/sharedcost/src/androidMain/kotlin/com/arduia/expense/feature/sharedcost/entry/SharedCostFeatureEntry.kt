@@ -20,7 +20,7 @@ import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.design.AmountInput
-import com.arduia.expense.ui.design.shortDateLabel
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.feature.sharedcost.R
 import java.util.Locale
 import kotlinx.coroutines.launch
@@ -93,7 +93,7 @@ private fun SharedCost.toHistoryItemUi(currencySymbol: String): SharedCostHistor
         title = title,
         peopleCount = participants.size,
         perPersonLabel = perPersonLabel,
-        dateLabel = shortDateLabel(recordedAtEpochMillis),
+        dateLabel = PlatformDateFormatter.shortDateLabel(recordedAtEpochMillis),
         totalLabel = AmountInput.formatMoney(total.amount.valueInCents, currencySymbol),
     )
 }

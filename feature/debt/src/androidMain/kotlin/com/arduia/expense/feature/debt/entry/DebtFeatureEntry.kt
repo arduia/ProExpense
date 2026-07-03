@@ -21,7 +21,7 @@ import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.ui.design.AmountInput
-import com.arduia.expense.ui.design.shortDateLabel
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -96,7 +96,7 @@ private fun DebtAggregate.toUiState(side: DebtSide, currencySymbol: String): Deb
 private fun Debt.toRecordUi(settled: Boolean, currencySymbol: String): DebtRecordUi = DebtRecordUi(
     id = id.value,
     name = personName,
-    dateLabel = dueEpochMillis?.let { shortDateLabel(it) } ?: "No due date",
+    dateLabel = dueEpochMillis?.let { PlatformDateFormatter.shortDateLabel(it) } ?: "No due date",
     amountLabel = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol),
     subtitle = note,
     settled = settled,

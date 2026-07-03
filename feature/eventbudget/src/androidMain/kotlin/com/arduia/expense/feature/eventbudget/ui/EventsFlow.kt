@@ -26,7 +26,7 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
-import com.arduia.expense.ui.design.shortDateLabel
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -185,7 +185,7 @@ fun EventsFlow(
             visible = showStartPicker,
             initialEpochMillis = form.startEpochMillis,
             onConfirm = { millis ->
-                form = form.copy(startEpochMillis = millis, startLabel = shortDateLabel(millis))
+                form = form.copy(startEpochMillis = millis, startLabel = PlatformDateFormatter.shortDateLabel(millis))
                 showStartPicker = false
             },
             onDismiss = { showStartPicker = false },
@@ -195,7 +195,7 @@ fun EventsFlow(
             visible = showEndPicker,
             initialEpochMillis = form.endEpochMillis,
             onConfirm = { millis ->
-                form = form.copy(endEpochMillis = millis, endLabel = shortDateLabel(millis))
+                form = form.copy(endEpochMillis = millis, endLabel = PlatformDateFormatter.shortDateLabel(millis))
                 showEndPicker = false
             },
             onDismiss = { showEndPicker = false },

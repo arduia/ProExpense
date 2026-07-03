@@ -23,9 +23,9 @@ import com.arduia.expense.feature.logging.TagOptionKind
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.TagLinkKind
 import com.arduia.expense.ui.design.TagLinkOption
-import com.arduia.expense.ui.design.shortDateLabel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -229,8 +229,8 @@ private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind, currencySymbol
             TagOptionKind.EVENT -> TagLinkOption(
                 id = option.id,
                 title = option.eventName.orEmpty(),
-                subtitle = shortDateLabel(option.eventStartEpochMillis ?: 0L) + " - " +
-                    shortDateLabel(option.eventEndEpochMillis ?: 0L),
+                subtitle = PlatformDateFormatter.shortDateLabel(option.eventStartEpochMillis ?: 0L) + " - " +
+                    PlatformDateFormatter.shortDateLabel(option.eventEndEpochMillis ?: 0L),
                 kind = TagLinkKind.Event,
             )
             TagOptionKind.DEBT -> TagLinkOption(

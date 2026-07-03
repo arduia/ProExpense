@@ -36,6 +36,7 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
 import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.ui.design.TagPickerContent
 import com.arduia.expense.ui.design.currencySymbol
@@ -52,8 +53,6 @@ import com.arduia.expense.feature.logging.ui.preview.previewTagDebts
 import com.arduia.expense.feature.logging.ui.preview.previewTagEvents
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-
-private const val NOTE_MAX_LENGTH = 200
 
 @Composable
 fun AddExpenseDetailsScreen(
@@ -79,7 +78,7 @@ fun AddExpenseDetailsScreen(
     val dimens = ProExpenseTheme.dimensions
     val displayAmount = AmountInput.formatDisplay(state.rawAmount)
     val formattedSaveAmount = currencySymbol(state.currencyCode) + displayAmount
-    val atNoteLimit = state.note.length >= NOTE_MAX_LENGTH
+    val atNoteLimit = state.note.length >= NOTE_INPUT_MAX_LENGTH
     val rate = state.exchangeRateRaw.trim().toDoubleOrNull()
     val convertedLabel = if (state.isForeignCurrency() && rate != null && rate > 0.0) {
         val rawAmount = state.rawAmount.toDoubleOrNull() ?: 0.0
@@ -144,7 +143,7 @@ fun AddExpenseDetailsScreen(
             DetailNoteField(
                 value = state.note,
                 onValueChange = onNoteChange,
-                maxLength = NOTE_MAX_LENGTH,
+                maxLength = NOTE_INPUT_MAX_LENGTH,
                 placeholder = stringResource(R.string.note),
                 atLimit = atNoteLimit,
                 errorMessage = if (atNoteLimit) {

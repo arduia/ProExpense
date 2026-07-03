@@ -31,6 +31,7 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proClickable
@@ -38,8 +39,6 @@ import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
 import com.arduia.expense.feature.history.ui.preview.previewJournalQuickNote
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-
-private const val QUICK_NOTE_MAX_LENGTH = 200
 
 @Composable
 fun JournalQuickNoteSheetContent(
@@ -51,7 +50,7 @@ fun JournalQuickNoteSheetContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val atLimit = state.note.length >= QUICK_NOTE_MAX_LENGTH
+    val atLimit = state.note.length >= NOTE_INPUT_MAX_LENGTH
     val borderColor = if (atLimit) colors.danger else colors.primary
 
     Column(
@@ -68,8 +67,7 @@ fun JournalQuickNoteSheetContent(
 
         BasicTextField(
             value = state.note,
-            // Same 200-char cap as Details (US-LOG-6: "everywhere a note is entered").
-            onValueChange = { if (it.length <= QUICK_NOTE_MAX_LENGTH) onNoteChange(it) },
+            onValueChange = { if (it.length <= NOTE_INPUT_MAX_LENGTH) onNoteChange(it) },
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(ProExpenseTheme.shapes.searchField)
@@ -92,7 +90,7 @@ fun JournalQuickNoteSheetContent(
         )
 
         Text(
-            text = "${state.note.length}/$QUICK_NOTE_MAX_LENGTH",
+            text = "${state.note.length}/$NOTE_INPUT_MAX_LENGTH",
             style = typography.caption,
             color = if (atLimit) colors.danger else colors.muted,
             textAlign = TextAlign.End,

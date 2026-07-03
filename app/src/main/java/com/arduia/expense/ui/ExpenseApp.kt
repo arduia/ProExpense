@@ -44,11 +44,8 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProToastHost
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.currencySymbol
-import com.arduia.expense.ui.design.dayKey
-import com.arduia.expense.ui.design.dayLabel
-import com.arduia.expense.ui.design.shortDateLabel
-import com.arduia.expense.ui.design.timeLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
 import com.arduia.expense.ui.home.QuickAccessPrefs
@@ -145,9 +142,10 @@ fun ExpenseApp(
             eventId = event.id.value,
             title = event.name,
             dateRange = if (event.startEpochMillis == event.endEpochMillis) {
-                shortDateLabel(event.startEpochMillis)
+                PlatformDateFormatter.shortDateLabel(event.startEpochMillis)
             } else {
-                "${shortDateLabel(event.startEpochMillis)} — ${shortDateLabel(event.endEpochMillis)}"
+                "${PlatformDateFormatter.shortDateLabel(event.startEpochMillis)} — " +
+                    PlatformDateFormatter.shortDateLabel(event.endEpochMillis)
             },
             spentLabel = AmountInput.formatMoney(progress.spentCents, homeSymbol),
             budgetLabel = "of " + AmountInput.formatMoney(progress.budgetCents, homeSymbol),
@@ -242,20 +240,20 @@ fun ExpenseApp(
         // Recent shows the last 5-10 entries (US-HOME-2), not the entire history.
         val dayGroups = sorted
             .take(RECENT_HOME_LIMIT)
-            .groupBy { dayKey(it.recordedAtEpochMillis) }
+            .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
             .toSortedMap(compareByDescending { it })
             .map { (_, dayRecords) ->
                 val dayTotalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
                 val dayTotalLabel = AmountInput.formatMoney(dayTotalCents, homeSymbol)
                 HomeDayGroup(
-                    dayTitle = dayLabel(dayRecords.first().recordedAtEpochMillis),
+                    dayTitle = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
                     dayTotal = dayTotalLabel,
                     transactions = dayRecords.map { record ->
                         HomeTransactionItem(
                             id = record.id.value,
                             categoryId = record.categoryId.value,
                             note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
-                            meta = timeLabel(record.recordedAtEpochMillis),
+                            meta = PlatformDateFormatter.timeLabel(record.recordedAtEpochMillis),
                             amount = AmountInput.formatMoney(
                                 record.money.amount.valueInCents,
                                 currencySymbol(record.money.currency.code),
@@ -532,9 +530,9 @@ private fun buildSparklinePoints(records: List<FinanceRecord>): List<Float> {
     val today = Calendar.getInstance()
     return (SPARKLINE_DAYS - 1 downTo 0).map { offset ->
         val day = (today.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -offset) }
-        val key = dayKey(day.timeInMillis)
+        val key = PlatformDateFormatter.dayKey(day.timeInMillis)
         records
-            .filter { dayKey(it.recordedAtEpochMillis) == key }
+            .filter { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) == key }
             // homeCurrencyMoney, not the record's own currency (US-CUR-4) — otherwise a foreign
             // currency amount is added into the sparkline as if it were home-currency cents.
             .sumOf { it.homeCurrencyMoney.amount.valueInCents }

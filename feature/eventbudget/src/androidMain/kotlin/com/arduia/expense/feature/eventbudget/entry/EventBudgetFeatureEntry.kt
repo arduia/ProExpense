@@ -30,9 +30,9 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.EventBudgetSummaryState
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.design.eventBudgetTone
-import com.arduia.expense.ui.design.shortDateLabel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -141,17 +141,18 @@ object EventBudgetFeatureUi : EventBudgetFeatureEntry by EventBudgetFeatureEntry
 
 private fun Event.dateRangeLabel(): String =
     if (startEpochMillis == endEpochMillis) {
-        shortDateLabel(startEpochMillis)
+        PlatformDateFormatter.shortDateLabel(startEpochMillis)
     } else {
-        "${shortDateLabel(startEpochMillis)} — ${shortDateLabel(endEpochMillis)}"
+        "${PlatformDateFormatter.shortDateLabel(startEpochMillis)} — " +
+            PlatformDateFormatter.shortDateLabel(endEpochMillis)
     }
 
 private fun Event.toEditFormState(): EventCreateFormState =
     EventCreateFormState(
         name = name,
         budgetRaw = (budget.amount.valueInCents / 100).toString(),
-        startLabel = shortDateLabel(startEpochMillis),
-        endLabel = shortDateLabel(endEpochMillis),
+        startLabel = PlatformDateFormatter.shortDateLabel(startEpochMillis),
+        endLabel = PlatformDateFormatter.shortDateLabel(endEpochMillis),
         startEpochMillis = startEpochMillis,
         endEpochMillis = endEpochMillis,
     )

@@ -34,12 +34,12 @@ import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.UtcTimeZone
 import com.arduia.expense.ui.design.proDatePickerColors
 import com.arduia.expense.ui.design.proDatePickerTypography
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import java.util.Calendar
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -199,7 +199,7 @@ fun JournalDateRangeSheet(
 }
 
 private fun utcMidnight(year: Int, month: Int, dayOfMonth: Int): Long {
-    val utc = Calendar.getInstance(UtcTimeZone)
+    val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
     utc.clear()
     utc.set(year, month, dayOfMonth, 0, 0, 0)
     return utc.timeInMillis

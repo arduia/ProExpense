@@ -31,7 +31,7 @@ import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.ui.design.DateTimePickerSheet
-import com.arduia.expense.ui.design.shortDateLabel
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -130,7 +130,7 @@ fun DebtFlow(
                                 } else {
                                     String.format(java.util.Locale.US, "%.2f", record.amountCents / 100.0)
                                 },
-                                dueLabel = record.dueEpochMillis?.let { shortDateLabel(it) },
+                                dueLabel = record.dueEpochMillis?.let { PlatformDateFormatter.shortDateLabel(it) },
                                 editingId = record.id,
                                 dueEpochMillis = record.dueEpochMillis,
                                 note = record.subtitle.orEmpty(),
@@ -183,7 +183,7 @@ fun DebtFlow(
             visible = showDuePicker,
             initialEpochMillis = addForm.dueEpochMillis ?: System.currentTimeMillis(),
             onConfirm = { millis ->
-                addForm = addForm.copy(dueEpochMillis = millis, dueLabel = shortDateLabel(millis))
+                addForm = addForm.copy(dueEpochMillis = millis, dueLabel = PlatformDateFormatter.shortDateLabel(millis))
                 showDuePicker = false
             },
             onDismiss = { showDuePicker = false },
