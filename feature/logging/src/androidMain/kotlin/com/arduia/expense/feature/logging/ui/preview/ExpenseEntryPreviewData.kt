@@ -12,11 +12,15 @@ private fun defaultDateLabel(epochMillis: Long): String =
 private fun defaultTimeLabel(epochMillis: Long): String =
     SimpleDateFormat("h:mm a", Locale.US).format(Calendar.getInstance().apply { timeInMillis = epochMillis }.time)
 
+// Fixed rather than System.currentTimeMillis() — previews render at build time and back
+// Roborazzi screenshot baselines, so a live clock would make every capture non-deterministic.
+private const val PREVIEW_RECORDED_AT_EPOCH_MILLIS = 1_748_176_200_000L // 2025-05-25 12:30 UTC
+
 data class ExpenseEntryState(
     val rawAmount: String = "",
     val selectedCategoryId: String = "food",
     val note: String = "",
-    val recordedAtEpochMillis: Long = System.currentTimeMillis(),
+    val recordedAtEpochMillis: Long = PREVIEW_RECORDED_AT_EPOCH_MILLIS,
     val dateLabel: String = defaultDateLabel(recordedAtEpochMillis),
     val timeLabel: String = defaultTimeLabel(recordedAtEpochMillis),
     val linkedTagId: String? = null,
