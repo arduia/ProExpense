@@ -101,7 +101,7 @@ fun MoreFlow(
     var biometricEnrolled by remember { mutableStateOf(false) }
     val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
     var defaultCategoryId by remember { mutableStateOf("food") }
-    var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
+    var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pinConfigured) {

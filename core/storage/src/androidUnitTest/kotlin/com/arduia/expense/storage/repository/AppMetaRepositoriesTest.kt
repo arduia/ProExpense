@@ -295,18 +295,18 @@ class AppMetaRepositoriesTest {
     }
 
     @Test
-    fun theme_defaultsToSystem_thenPersists() = runTest {
+    fun theme_defaultsToDark_thenPersists() = runTest {
         val store = store()
         val repo = AppMetaThemeRepository(store)
 
         val initial = repo.getThemeMode()
         assertTrue(initial is Result.Success)
-        assertEquals(ThemeMode.SYSTEM, initial.data)
+        assertEquals(ThemeMode.DARK, initial.data)
 
-        repo.setThemeMode(ThemeMode.DARK)
+        repo.setThemeMode(ThemeMode.SYSTEM)
 
         val fetched = repo.getThemeMode()
         assertTrue(fetched is Result.Success)
-        assertEquals(ThemeMode.DARK, fetched.data)
+        assertEquals(ThemeMode.SYSTEM, fetched.data)
     }
 }

@@ -42,7 +42,9 @@ class MainActivity : FragmentActivity() {
 @Composable
 private fun ThemedExpenseApp() {
     val themeRepository: ThemeRepository = koinInject()
-    var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
+    // Dark is the product default (US-MORE-3) — seed the pre-load placeholder with it too, so a
+    // fresh install's first frame doesn't flash light before the persisted value resolves below.
+    var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
 
     LaunchedEffect(Unit) {
         when (val result = themeRepository.getThemeMode()) {

@@ -19,5 +19,5 @@ class AppMetaThemeRepository(
     }
 
     private fun String.toThemeModeOrDefault(): ThemeMode =
-        ThemeMode.entries.firstOrNull { it.name.equals(this, ignoreCase = true) } ?: ThemeMode.SYSTEM
+        ThemeMode.entries.firstOrNull { it.name.equals(this, ignoreCase = true) } ?: ThemeMode.DARK
 }
