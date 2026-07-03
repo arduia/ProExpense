@@ -107,6 +107,7 @@ class DebtScreenshotTest {
                     onAmountChange = {},
                     onPickDate = {},
                     onPickDue = {},
+                    onNoteChange = {},
                     onSave = {},
                 )
             }
