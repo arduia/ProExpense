@@ -39,6 +39,5 @@
     <string name="more_features">ฟีเจอร์</string>
     <string name="more_settings">การตั้งค่า</string>
     <string name="more_biometric_requires_pin">กรุณาเปิดใช้งาน PIN ก่อนเพื่อใช้การยืนยันตัวตนด้วยไบโอเมตริก</string>
-    <string name="home_logged_note_fallback">รายจ่ายใหม่</string>
     <string name="home_today_section">วันนี้</string>
 </resources>

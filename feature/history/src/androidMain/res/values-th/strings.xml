@@ -20,7 +20,6 @@
     <string name="journal_action_cancel">ยกเลิก</string>
     <string name="journal_delete_title">ลบรายจ่ายนี้หรือไม่?</string>
     <string name="journal_delete_body">การลบนี้จะลบรายการและอัปเดตกิจกรรมหรือหนี้สินที่เชื่อมโยงไว้</string>
-    <string name="journal_note_fallback">รายจ่ายใหม่</string>
     <string name="journal_date_range_title">กรองตามวันที่</string>
     <string name="journal_date_range_clear">ล้าง</string>
     <string name="journal_date_range_apply">นำไปใช้</string>

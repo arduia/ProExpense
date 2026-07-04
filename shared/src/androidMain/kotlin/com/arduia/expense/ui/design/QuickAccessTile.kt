@@ -37,7 +37,7 @@ fun QuickAccessTile(
     val typography = ProExpenseTheme.typography
     val interactionSource = remember { MutableInteractionSource() }
     val tileShape = ProExpenseTheme.shapes.tile
-    val resolvedIconTint = iconTint ?: colors.primaryDeep
+    val resolvedIconTint = iconTint ?: colors.onSurfaceVariant
     val resolvedIconBackground = iconBackground ?: colors.primaryTint
 
     Column(

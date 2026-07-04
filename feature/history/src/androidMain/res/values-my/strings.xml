@@ -20,7 +20,6 @@
     <string name="journal_action_cancel">မလုပ်တော့ပါ</string>
     <string name="journal_delete_title">ဒီအသုံးစရိတ်ကို ဖျက်မလား?</string>
     <string name="journal_delete_body">ဒါသည် မှတ်တမ်းကို ဖယ်ရှားပြီး ချိတ်ဆက်ထားသော ပွဲ (သို့) အကြွေးကို အပ်ဒိတ်လုပ်ပါမည်။</string>
-    <string name="journal_note_fallback">အသုံးစရိတ်အသစ်</string>
     <string name="journal_date_range_title">ရက်စွဲအလိုက် စစ်ထုတ်ရန်</string>
     <string name="journal_date_range_clear">ရှင်းလင်းရန်</string>
     <string name="journal_date_range_apply">သက်ရောက်စေရန်</string>

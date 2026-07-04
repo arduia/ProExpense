@@ -27,9 +27,11 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SharedCostRepository
+import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.currency.CurrencyRepository
@@ -45,6 +47,7 @@ import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.currencySymbol
+import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
 import com.arduia.expense.ui.home.QuickAccessPrefs
@@ -147,10 +150,15 @@ fun ExpenseApp(
     val activeEvent = remember(events) {
         events.filter { it.status == EventStatus.ACTIVE }.maxByOrNull { it.startEpochMillis }
     }
-    var activeEventSpent by remember { mutableStateOf<Money?>(null) }
-    LaunchedEffect(activeEvent) {
-        activeEventSpent = activeEvent?.let { event ->
-            (eventRepository.getSpent(event.id) as? Result.Success)?.data
+    // Summed from the already-observed records Flow (not a one-shot EventRepository.getSpent
+    // call) so the progress bar reacts immediately to any add/edit/delete of a linked expense,
+    // not just to the active event itself changing.
+    val activeEventSpent = remember(activeEvent, records) {
+        activeEvent?.let { event ->
+            val spentCents = records
+                .filter { (it.link as? RecordLink.ToEvent)?.eventId == event.id }
+                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
+            Money(Amount(spentCents), event.budget.currency)
         }
     }
     val activeEventState = activeEvent?.let { event ->
@@ -171,7 +179,6 @@ fun ExpenseApp(
         )
     }
 
-    val noteFallback = stringResource(R.string.home_logged_note_fallback)
     val todaySection = stringResource(R.string.home_today_section)
 
     val dateLabel = remember { buildDateLabel() }
@@ -259,7 +266,8 @@ fun ExpenseApp(
                         HomeTransactionItem(
                             id = record.id.value,
                             categoryId = record.categoryId.value,
-                            note = record.note?.trim().orEmpty().ifEmpty { noteFallback },
+                            note = record.note?.trim().orEmpty()
+                                .ifEmpty { expenseCategoryLabel(record.categoryId.value) },
                             meta = PlatformDateFormatter.timeLabel(record.recordedAtEpochMillis),
                             amount = AmountInput.formatMoney(
                                 record.money.amount.valueInCents,

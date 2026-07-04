@@ -281,7 +281,6 @@
     <string name="more_biometric_requires_pin">Please enable PIN first to use biometric authentication.</string>
 
     <!-- Category list -->
-    <string name="home_logged_note_fallback">New expense</string>
     <string name="home_today_section">Today</string>
 </resources>
 
