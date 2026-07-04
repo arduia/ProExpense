@@ -68,7 +68,7 @@ fun QuickAccessTile(
         }
         Text(
             text = label,
-            style = typography.caption.copy(fontSize = 11.sp),
+            style = typography.captionMedium.copy(fontSize = 11.sp),
             color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )

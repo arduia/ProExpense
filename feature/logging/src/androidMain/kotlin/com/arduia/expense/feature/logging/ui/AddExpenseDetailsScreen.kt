@@ -68,6 +68,7 @@ fun AddExpenseDetailsScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
     onExchangeRateChange: (String) -> Unit = {},
+    onAddCategory: () -> Unit = {},
     tagEvents: List<TagLinkOption> = previewTagEvents,
     tagDebts: List<TagLinkOption> = previewTagDebts,
     showTagField: Boolean = true,
@@ -131,7 +132,7 @@ fun AddExpenseDetailsScreen(
                 onCategorySelected = onCategorySelected,
                 showCustomSection = true,
                 showAddChip = true,
-                onAddClick = {},
+                onAddClick = onAddCategory,
             )
 
             DetailDateTimeField(

@@ -45,6 +45,7 @@ interface EventBudgetFeatureEntry {
         modifier: Modifier = Modifier,
         initialSelectedEventId: String? = null,
         onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
+        onExpenseClick: (recordId: String) -> Unit = {},
         homeCurrencySymbol: String = "$",
         isLoading: Boolean = false,
     )
@@ -59,6 +60,7 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         modifier: Modifier,
         initialSelectedEventId: String?,
         onAddTaggedExpense: (eventId: String) -> Unit,
+        onExpenseClick: (recordId: String) -> Unit,
         homeCurrencySymbol: String,
         isLoading: Boolean,
     ) {
@@ -134,6 +136,7 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
             },
             initialSelectedEventId = initialSelectedEventId,
             onAddTaggedExpense = onAddTaggedExpense,
+            onExpenseClick = onExpenseClick,
             isLoading = isLoading,
             modifier = modifier,
         )

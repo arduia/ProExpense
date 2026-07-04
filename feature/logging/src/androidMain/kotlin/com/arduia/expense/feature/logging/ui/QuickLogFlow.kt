@@ -75,6 +75,7 @@ fun QuickLogFlow(
     // once via `remember` and never re-reads `startState` after that. Re-applied via effect
     // below whenever it transitions from unresolved to resolved.
     initialLinkedTag: TagLinkOption? = null,
+    onAddCategory: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -235,6 +236,7 @@ fun QuickLogFlow(
                         showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
                         defaultCategories = defaultCategories,
                         customCategories = customCategories,
+                        onAddCategory = onAddCategory,
                     )
                 }
             }

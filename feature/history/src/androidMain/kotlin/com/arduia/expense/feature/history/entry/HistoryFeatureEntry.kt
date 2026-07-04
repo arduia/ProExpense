@@ -168,4 +168,6 @@ private fun FinanceRecord.toRowModel(
     tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
     tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
     rawNote = note?.trim(),
+    detailDateTimeLabel = "${PlatformDateFormatter.dayLabel(recordedAtEpochMillis)} · " +
+        PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
 )

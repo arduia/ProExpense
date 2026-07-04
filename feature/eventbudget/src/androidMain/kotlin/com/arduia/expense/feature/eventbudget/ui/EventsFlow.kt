@@ -44,6 +44,7 @@ fun EventsFlow(
     onCloseEvent: (id: String) -> Unit = {},
     initialSelectedEventId: String? = null,
     onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
+    onExpenseClick: (recordId: String) -> Unit = {},
     isLoading: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
@@ -100,7 +101,7 @@ fun EventsFlow(
                     onBack = { selectedEventId = null },
                     onMore = { if (!detail.readOnly) showActionsSheet = true },
                     onAddTagged = { onAddTaggedExpense(targetId) },
-                    onExpenseClick = {},
+                    onExpenseClick = onExpenseClick,
                 )
             }
         }

@@ -56,9 +56,9 @@ private val journalToday = JournalDayUi(
     title = "Today · May 25",
     total = "$42",
     rows = listOf(
-        ProTransactionRowModel("t1", "food", "Lunch with M.", "Food · 12:30 PM", "$12.40"),
-        ProTransactionRowModel("t2", "transport", "Transport", "Transport · 09:15 AM", "$3.50"),
-        ProTransactionRowModel("t3", "coffee", "Oat latte", "Coffee runs · 08:40 AM", "$5"),
+        ProTransactionRowModel("t1", "food", "Lunch with M.", "Food · 12:30 PM", "$12.40", detailDateTimeLabel = "Today · 12:30 PM"),
+        ProTransactionRowModel("t2", "transport", "Transport", "Transport · 09:15 AM", "$3.50", detailDateTimeLabel = "Today · 09:15 AM"),
+        ProTransactionRowModel("t3", "coffee", "Oat latte", "Coffee runs · 08:40 AM", "$5", detailDateTimeLabel = "Today · 08:40 AM"),
     ),
 )
 
@@ -70,8 +70,9 @@ private val journalYesterday = JournalDayUi(
         ProTransactionRowModel(
             "y1", "entertainment", "Movie · Dune", "Entertainment · 08:10 PM", "$18",
             tag = "Bali Trip",
+            detailDateTimeLabel = "Yesterday · 08:10 PM",
         ),
-        ProTransactionRowModel("y2", "food", "Groceries", "Food · 05:30 PM", "$42"),
+        ProTransactionRowModel("y2", "food", "Groceries", "Food · 05:30 PM", "$42", detailDateTimeLabel = "Yesterday · 05:30 PM"),
     ),
 )
 
@@ -80,7 +81,7 @@ private val journalMonday = JournalDayUi(
     title = "Mon · May 23",
     total = "$8",
     rows = listOf(
-        ProTransactionRowModel("m1", "transport", "Bus card", "Transport · 07:45 AM", "$8"),
+        ProTransactionRowModel("m1", "transport", "Bus card", "Transport · 07:45 AM", "$8", detailDateTimeLabel = "Mon · May 23 · 07:45 AM"),
     ),
 )
 

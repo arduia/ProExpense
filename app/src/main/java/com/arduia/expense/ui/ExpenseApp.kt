@@ -104,6 +104,7 @@ fun ExpenseApp(
     var showDebt by rememberSaveable { mutableStateOf(false) }
     var showPinSetup by rememberSaveable { mutableStateOf(false) }
     var showReports by rememberSaveable { mutableStateOf(false) }
+    var showCategoryManager by rememberSaveable { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(HomeNavTab.Home) }
     var homeSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var homeSelectedEventId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -368,6 +369,7 @@ fun ExpenseApp(
                         homeCurrencySymbol = homeSymbol,
                         defaultCategories = defaultCategoryChips,
                         customCategories = customCategoryChips,
+                        onAddCategory = { showCategoryManager = true },
                     )
                 } else if (pinConfigured == true && !unlocked) {
                     features.auth.PinLockFlow(
@@ -384,6 +386,10 @@ fun ExpenseApp(
                             onAddTaggedExpense = { eventId ->
                                 quickLogLinkedEventId = eventId
                                 showQuickLog = true
+                            },
+                            onExpenseClick = { recordId ->
+                                homeSelectedRecordId = recordId
+                                selectedTab = HomeNavTab.Journal
                             },
                             homeCurrencySymbol = homeSymbol,
                             isLoading = eventsLoading,
@@ -468,6 +474,7 @@ fun ExpenseApp(
                     homeCurrencySymbol = homeSymbol,
                     defaultCategories = defaultCategoryChips,
                     customCategories = customCategoryChips,
+                    onAddCategory = { showCategoryManager = true },
                 )
             }
 
@@ -479,7 +486,12 @@ fun ExpenseApp(
                     homeCurrencySymbol = homeSymbol,
                     defaultCategories = defaultCategoryChips,
                     customCategories = customCategoryChips,
+                    onAddCategory = { showCategoryManager = true },
                 )
+            }
+
+            if (showCategoryManager) {
+                features.categories.CategoryListFlow(onBack = { showCategoryManager = false })
             }
 
             if (showSharedCosts) {

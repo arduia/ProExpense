@@ -136,6 +136,28 @@ val previewEventDetailWarn = EventDetailUiState(
     ),
 )
 
+val previewEventDetailNoLinked = EventDetailUiState(
+    id = "birthday",
+    title = "Birthday party",
+    subtitle = "Apr 28 · active",
+    statusEyebrow = "ACTIVE",
+    summary = EventBudgetSummaryState(
+        eyebrow = "REMAINING",
+        remainingLabel = "$400",
+        spentLabel = "$0",
+        budgetLabel = "$400",
+        spentCaption = "Spent",
+        budgetCaption = "Budget",
+        progress = 0f,
+        tone = EventBudgetTone.OnTrack,
+        footerStartLabel = "0% spent",
+        footerEndLabel = "$0/day pace",
+    ),
+    linkedCount = 0,
+    linkedExpenses = emptyList(),
+    showAddTagged = true,
+)
+
 val previewEventDetailClosed = EventDetailUiState(
     id = "wedding",
     title = "John's Wedding",

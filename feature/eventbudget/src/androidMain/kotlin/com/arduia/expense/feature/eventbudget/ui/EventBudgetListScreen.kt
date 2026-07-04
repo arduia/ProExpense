@@ -63,7 +63,7 @@ fun EventBudgetListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = dimens.screenPadding)
-                    .padding(top = dimens.space8, bottom = dimens.space16),
+                    .padding(top = dimens.space14, bottom = dimens.space16),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top,
             ) {

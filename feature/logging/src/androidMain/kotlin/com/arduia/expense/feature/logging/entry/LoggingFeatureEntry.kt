@@ -46,6 +46,7 @@ interface LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit = {},
         defaultCategories: List<Pair<String, String>> = emptyList(),
         customCategories: List<Pair<String, String>> = emptyList(),
+        onAddCategory: () -> Unit = {},
     )
 
     @Composable
@@ -58,6 +59,7 @@ interface LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit = {},
         defaultCategories: List<Pair<String, String>> = emptyList(),
         customCategories: List<Pair<String, String>> = emptyList(),
+        onAddCategory: () -> Unit = {},
     )
 }
 
@@ -76,6 +78,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit,
         defaultCategories: List<Pair<String, String>>,
         customCategories: List<Pair<String, String>>,
+        onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
@@ -133,6 +136,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             modifier = modifier,
             saveErrorMessage = saveErrorMessage,
             initialLinkedTag = linkedEvent,
+            onAddCategory = onAddCategory,
         )
     }
 
@@ -146,6 +150,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit,
         defaultCategories: List<Pair<String, String>>,
         customCategories: List<Pair<String, String>>,
+        onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
@@ -199,6 +204,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 // prompt after simply backing out of an edit.
                 persistDraft = false,
                 saveErrorMessage = saveErrorMessage,
+                onAddCategory = onAddCategory,
             )
         }
     }
@@ -215,7 +221,10 @@ private fun rememberLoggingViewModel(): LoggingViewModel {
 }
 
 private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind, currencySymbol: String): List<TagLinkOption> =
-    filter { it.kind == kind }.map { option ->
+    // Closed events can't take new links (US-EVT-5) — exclude them from what's selectable here.
+    // Debt/event *names* for an already-linked record are still resolved from the full,
+    // unfiltered tagOptions list elsewhere, so this never breaks an existing closed-event link.
+    filter { it.kind == kind && (kind != TagOptionKind.EVENT || !it.eventIsClosed) }.map { option ->
         when (kind) {
             TagOptionKind.EVENT -> TagLinkOption(
                 id = option.id,

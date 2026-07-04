@@ -43,5 +43,8 @@ class JournalDetailNavigationTest {
 
         // Detail screen shows the NOTE section header + Edit/Delete actions.
         rule.onNodeWithText("NOTE").assertIsDisplayed()
+        // Regression guard: the line under the amount is a date+time label, not category+time
+        // (previously reused the list row's "Food · 12:30 PM" meta string verbatim).
+        rule.onNodeWithText("Today · 12:30 PM").assertIsDisplayed()
     }
 }

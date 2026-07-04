@@ -5,6 +5,7 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.Event
+import com.arduia.expense.domain.EventStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
@@ -24,6 +25,7 @@ class ObserveTagOptionsUseCase(
         eventName = name,
         eventStartEpochMillis = startEpochMillis,
         eventEndEpochMillis = endEpochMillis,
+        eventIsClosed = status == EventStatus.CLOSED,
     )
 
     private fun Debt.toTagOption() = TagOption(

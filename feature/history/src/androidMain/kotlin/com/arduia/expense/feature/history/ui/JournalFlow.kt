@@ -150,6 +150,11 @@ fun JournalFlow(
                         dateRangeEnd = null
                     },
                 )
+            } else if (days.flatMap { it.rows }.none { it.id == rowId }) {
+                // Records load asynchronously — a deep link straight into detail (e.g. from
+                // Home) can compose before the Flow emits, and detailStateFor's "food"/blank
+                // defaults would otherwise flash before the real row arrives one frame later.
+                Box(modifier = Modifier.fillMaxSize().background(colors.paper))
             } else {
                 JournalDetailScreen(
                     state = detailStateFor(rowId, days, categoryNames),
@@ -283,7 +288,7 @@ private fun detailStateFor(
         // "coffee-<timestamp>" slug) is not a label.
         categoryLabel = (categoryNames[categoryId] ?: expenseCategoryLabel(categoryId)).uppercase(),
         amountLabel = row?.amount.orEmpty(),
-        dateTimeLabel = row?.meta.orEmpty(),
+        dateTimeLabel = row?.detailDateTimeLabel.orEmpty(),
         note = row?.note.orEmpty(),
         linkedTag = row?.tag?.let { title ->
             JournalLinkedTagUi(title = title, meta = row.tagSubtitle.orEmpty())
