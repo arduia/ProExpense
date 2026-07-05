@@ -1,19 +1,16 @@
 package com.arduia.expense.feature.history.entry
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.arduia.expense.data.CategoryRepository
-import com.arduia.expense.data.DebtRepository
-import com.arduia.expense.data.EventRepository
-import com.arduia.expense.data.FinanceRecordRepository
-import com.arduia.expense.data.SharedCostRepository
+import com.arduia.expense.domain.Category
+import com.arduia.expense.domain.Debt
+import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordLink
+import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.history.DeleteRecordUseCase
@@ -40,6 +37,12 @@ interface HistoryFeatureEntry {
         onAddClick: () -> Unit,
         initialSelectedRowId: String?,
         onEditRecord: (String) -> Unit,
+        records: List<FinanceRecord>,
+        isLoading: Boolean,
+        categories: List<Category>,
+        events: List<Event>,
+        debts: List<Debt>,
+        sharedCosts: List<SharedCost>,
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
         onOpenLinkedEvent: (String) -> Unit = {},
@@ -54,29 +57,21 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         onAddClick: () -> Unit,
         initialSelectedRowId: String?,
         onEditRecord: (String) -> Unit,
+        records: List<FinanceRecord>,
+        isLoading: Boolean,
+        categories: List<Category>,
+        events: List<Event>,
+        debts: List<Debt>,
+        sharedCosts: List<SharedCost>,
         modifier: Modifier,
         homeCurrencySymbol: String,
         onOpenLinkedEvent: (String) -> Unit,
     ) {
         val scope = rememberCoroutineScope()
-        val financeRecordRepository: FinanceRecordRepository = koinInject()
-        val categoryRepository: CategoryRepository = koinInject()
-        val eventRepository: EventRepository = koinInject()
-        val debtRepository: DebtRepository = koinInject()
-        val sharedCostRepository: SharedCostRepository = koinInject()
         val deleteRecord: DeleteRecordUseCase = koinInject()
         val updateRecordNote: UpdateRecordNoteUseCase = koinInject()
         val allFilterLabel = stringResource(R.string.journal_filter_all)
 
-        // null (not emptyList()) until the first Flow emission arrives, so the empty-state
-        // illustration doesn't flash before real data has had a chance to load (US-HIS-1).
-        val recordsOrNull by financeRecordRepository.observeAll().collectAsState(initial = null)
-        val isLoading = recordsOrNull == null
-        val records = recordsOrNull.orEmpty()
-        val categories by categoryRepository.observeAll().collectAsState(emptyList())
-        val events by eventRepository.observeAll().collectAsState(emptyList())
-        val debts by debtRepository.observeAll().collectAsState(emptyList())
-        val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
         val eventNames = remember(events) { events.associate { it.id.value to it.name } }
         val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
         val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }

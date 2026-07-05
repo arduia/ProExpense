@@ -25,6 +25,7 @@ data class EventDetailUiState(
     val linkedExpenses: List<EventLinkedExpenseUi> = emptyList(),
     val showAddTagged: Boolean = false,
     val readOnly: Boolean = false,
+    val isClosed: Boolean = false,
 )
 
 data class EventCreateFormState(
@@ -173,4 +174,5 @@ val previewEventDetailClosed = EventDetailUiState(
         isFinal = true,
     ),
     readOnly = true,
+    isClosed = true,
 )

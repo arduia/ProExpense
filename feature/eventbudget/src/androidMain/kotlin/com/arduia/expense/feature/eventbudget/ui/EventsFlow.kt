@@ -125,6 +125,7 @@ fun EventsFlow(
                     showCloseConfirm = true
                 },
                 onCancel = { showActionsSheet = false },
+                showClose = selectedEventId?.let { !detailStateFor(it, events, eventDetails).isClosed } ?: true,
             )
         }
 

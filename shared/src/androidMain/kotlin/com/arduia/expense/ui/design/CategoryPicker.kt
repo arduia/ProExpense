@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -131,16 +133,24 @@ private fun AddCategoryChip(
     val typography = ProExpenseTheme.typography
     val chipShape = ProExpenseTheme.shapes.chip
     val interactionSource = remember { MutableInteractionSource() }
+    val textStyle = typography.bodyMedium.copy(fontSize = 12.5.sp)
 
-    Text(
-        text = stringResource(R.string.category_picker_add),
-        style = typography.bodyMedium,
-        color = colors.onSurfaceVariant,
+    Row(
         modifier = modifier
             .proPressScale(interactionSource)
             .clip(chipShape)
             .border(BorderStroke(dimens.chipBorderWidth, colors.lineStrong), chipShape)
             .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
-            .padding(horizontal = dimens.space14, vertical = dimens.space8),
-    )
+            .padding(start = dimens.space8, top = 7.dp, end = dimens.space12, bottom = 7.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space6),
+    ) {
+        ProIcon(
+            glyph = ProIconGlyph.Plus,
+            contentDescription = null,
+            tint = colors.onSurfaceVariant,
+            size = dimens.iconChipLeading,
+        )
+        Text(text = stringResource(R.string.category_picker_add), style = textStyle, color = colors.onSurfaceVariant)
+    }
 }

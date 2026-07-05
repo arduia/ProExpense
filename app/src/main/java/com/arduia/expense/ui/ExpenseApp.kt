@@ -145,6 +145,21 @@ fun ExpenseApp(
     val eventNames = remember(events) { events.associate { it.id.value to it.name } }
     val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
     val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
+    val categoryNames = remember(categories) { categories.associate { it.id.value to it.name } }
+    // Hoisted here (not inside EventsTab) so it survives Budget <-> other tab switches — it
+    // previously lived in a remember/LaunchedEffect scoped to EventsTab itself, which was torn
+    // down and recreated (resetting to an empty map) every time the user navigated away and back.
+    var spentByEvent by remember { mutableStateOf<Map<String, Money>>(emptyMap()) }
+    LaunchedEffect(events) {
+        val spent = mutableMapOf<String, Money>()
+        events.forEach { event ->
+            when (val result = eventRepository.getSpent(event.id)) {
+                is Result.Success -> spent[event.id.value] = result.data
+                is Result.Error -> Unit
+            }
+        }
+        spentByEvent = spent
+    }
 
     val homeSymbol = currencySymbol(homeCurrencyCode)
 
@@ -382,6 +397,9 @@ fun ExpenseApp(
                             events = events,
                             onTabSelected = onTabSelected,
                             onAddClick = { showQuickLog = true },
+                            records = records,
+                            spentByEvent = spentByEvent,
+                            categoryNames = categoryNames,
                             initialSelectedEventId = homeSelectedEventId,
                             onAddTaggedExpense = { eventId ->
                                 quickLogLinkedEventId = eventId
@@ -400,6 +418,12 @@ fun ExpenseApp(
                             onAddClick = { showQuickLog = true },
                             initialSelectedRowId = homeSelectedRecordId,
                             onEditRecord = { editRecordId = it },
+                            records = records,
+                            isLoading = recordsLoading,
+                            categories = categories,
+                            events = events,
+                            debts = debts,
+                            sharedCosts = sharedCosts,
                             homeCurrencySymbol = homeSymbol,
                             onOpenLinkedEvent = { eventId ->
                                 homeSelectedEventId = eventId

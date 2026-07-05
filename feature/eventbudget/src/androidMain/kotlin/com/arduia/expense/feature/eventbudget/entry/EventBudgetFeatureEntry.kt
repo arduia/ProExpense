@@ -1,18 +1,9 @@
 package com.arduia.expense.feature.eventbudget.entry
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.arduia.expense.data.CategoryRepository
-import com.arduia.expense.data.EventRepository
-import com.arduia.expense.data.FinanceRecordRepository
-import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.FinanceRecord
@@ -42,6 +33,9 @@ interface EventBudgetFeatureEntry {
         events: List<Event>,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
+        records: List<FinanceRecord> = emptyList(),
+        spentByEvent: Map<String, Money> = emptyMap(),
+        categoryNames: Map<String, String> = emptyMap(),
         modifier: Modifier = Modifier,
         initialSelectedEventId: String? = null,
         onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
@@ -57,6 +51,9 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         events: List<Event>,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
+        records: List<FinanceRecord>,
+        spentByEvent: Map<String, Money>,
+        categoryNames: Map<String, String>,
         modifier: Modifier,
         initialSelectedEventId: String?,
         onAddTaggedExpense: (eventId: String) -> Unit,
@@ -65,35 +62,10 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         isLoading: Boolean,
     ) {
         val scope = rememberCoroutineScope()
-        val eventRepository: EventRepository = koinInject()
-        val financeRecordRepository: FinanceRecordRepository = koinInject()
-        val categoryRepository: CategoryRepository = koinInject()
         val computeProgress: ComputeEventProgressUseCase = koinInject()
         val createEvent: CreateEventUseCase = koinInject()
         val updateEvent: UpdateEventUseCase = koinInject()
         val closeEvent: CloseEventUseCase = koinInject()
-
-        var spentByEvent by remember { mutableStateOf<Map<String, Money>>(emptyMap()) }
-        val records by financeRecordRepository.observeAll().collectAsState(emptyList())
-        var categoryNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
-
-        LaunchedEffect(events) {
-            val spent = mutableMapOf<String, Money>()
-            events.forEach { event ->
-                when (val result = eventRepository.getSpent(event.id)) {
-                    is Result.Success -> spent[event.id.value] = result.data
-                    is Result.Error -> Unit
-                }
-            }
-            spentByEvent = spent
-        }
-
-        LaunchedEffect(Unit) {
-            when (val result = categoryRepository.getAll()) {
-                is Result.Success -> categoryNames = result.data.associate { it.id.value to it.name }
-                is Result.Error -> Unit
-            }
-        }
 
         val linkedByEvent = remember(records) {
             records
@@ -207,13 +179,18 @@ private fun Event.toDetailState(
         closedAtEpochMillis = closedAtEpochMillis,
         nowEpochMillis = System.currentTimeMillis(),
     )
+    val isClosed = status == EventStatus.CLOSED
+    // A closed event gets the muted, bordered inline chip (not the green "active" eyebrow) and a
+    // grayed-out final summary card so its archived state reads visually distinct at a glance.
     return EventDetailUiState(
         id = id.value,
         title = name,
         subtitle = dateRangeLabel(),
-        statusEyebrow = status.name,
+        statusEyebrow = status.name.takeIf { !isClosed },
+        statusInlineChip = status.name.takeIf { isClosed },
         summary = EventBudgetSummaryState(
-            eyebrow = if (progress.remainingCents < 0) "OVER BUDGET" else "REMAINING",
+            eyebrow = (if (isClosed) "FINAL · " else "") +
+                if (progress.remainingCents < 0) "OVER BUDGET" else "REMAINING",
             remainingLabel = AmountInput.formatMoneySigned(progress.remainingCents, currencySymbol),
             spentLabel = AmountInput.formatMoney(progress.spentCents, currencySymbol),
             budgetLabel = AmountInput.formatMoney(progress.budgetCents, currencySymbol),
@@ -221,6 +198,7 @@ private fun Event.toDetailState(
             budgetCaption = "Budget",
             progress = progress.progress,
             tone = eventBudgetTone(progress.progress),
+            isFinal = isClosed,
         ),
         linkedCount = linkedExpenses.size,
         linkedExpenses = linkedExpenses,
@@ -228,5 +206,6 @@ private fun Event.toDetailState(
         // past the grace period is a closed event truly locked.
         showAddTagged = !isReadOnly,
         readOnly = isReadOnly,
+        isClosed = isClosed,
     )
 }
