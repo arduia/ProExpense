@@ -1,6 +1,9 @@
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordChangeSignal
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
@@ -51,6 +54,12 @@ private class FakeFinanceRecordRepository(
     }
     override fun observeAll() = MutableStateFlow<List<FinanceRecord>>(emptyList()).asStateFlow()
     override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
+    override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
+        Result.Success(records.values.toList().take(limit))
+    override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
+        Result.Success(records.values.any { it.categoryId == categoryId })
+    override fun observeChangeSignal() =
+        MutableStateFlow(RecordChangeSignal(records.size.toLong(), 0L)).asStateFlow()
 }
 
 class DeleteRecordUseCaseTest {
@@ -104,6 +113,8 @@ private class FakeHistoryRepository(
     var recordsResult: Result<List<FinanceRecord>> = Result.Success(emptyList()),
 ) : HistoryRepository {
     var lastFilter: RecordHistoryFilter? = null
+    var lastCursor: RecordPageCursor? = null
+    var lastLimit: Int? = null
 
     override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> {
         lastFilter = filter
@@ -112,30 +123,60 @@ private class FakeHistoryRepository(
 
     override suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary> =
         Result.Error("not implemented")
+
+    override suspend fun getRecordsPage(
+        filter: RecordHistoryFilter,
+        cursor: RecordPageCursor?,
+        limit: Int,
+    ): Result<List<FinanceRecord>> {
+        lastFilter = filter
+        lastCursor = cursor
+        lastLimit = limit
+        return recordsResult
+    }
+
+    override suspend fun hasAnyRecordIn(categoryId: CategoryId): Result<Boolean> =
+        Result.Success(false)
+
+    override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(0L, 0L)).asStateFlow()
 }
 
-class SearchRecordsUseCaseTest {
+class LoadJournalPageUseCaseTest {
 
     @Test
-    fun invoke_delegatesToRepositoryWithFilter() = runTest {
+    fun invoke_delegatesToRepositoryWithFilterCursorAndLimit() = runTest {
         val record = sampleRecord("r1")
         val repo = FakeHistoryRepository(recordsResult = Result.Success(listOf(record)))
-        val useCase = SearchRecordsUseCase(repo)
+        val useCase = LoadJournalPageUseCase(repo)
         val filter = RecordHistoryFilter(categoryId = CategoryId("food"), query = "lunch")
+        val cursor = RecordPageCursor(recordedAtEpochMillis = 500L, recordId = RecordId("r0"))
 
-        val result = useCase(filter)
+        val result = useCase(filter, cursor, limit = 20)
 
         assertIs<Result.Success<List<FinanceRecord>>>(result)
         assertEquals(listOf(record), result.data)
         assertEquals(filter, repo.lastFilter)
+        assertEquals(cursor, repo.lastCursor)
+        assertEquals(20, repo.lastLimit)
+    }
+
+    @Test
+    fun invoke_defaultsToFirstPageAtDefaultPageSize() = runTest {
+        val repo = FakeHistoryRepository()
+        val useCase = LoadJournalPageUseCase(repo)
+
+        useCase(RecordHistoryFilter())
+
+        assertEquals(null, repo.lastCursor)
+        assertEquals(LoadJournalPageUseCase.DEFAULT_PAGE_SIZE, repo.lastLimit)
     }
 
     @Test
     fun invoke_propagatesRepositoryError() = runTest {
         val repo = FakeHistoryRepository(recordsResult = Result.Error("db error"))
-        val useCase = SearchRecordsUseCase(repo)
+        val useCase = LoadJournalPageUseCase(repo)
 
-        val result = useCase(RecordHistoryFilter())
+        val result = useCase(RecordHistoryFilter(), limit = 20)
 
         assertIs<Result.Error>(result)
     }

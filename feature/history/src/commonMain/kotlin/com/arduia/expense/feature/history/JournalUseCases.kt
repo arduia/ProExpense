@@ -1,16 +1,24 @@
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordPageCursor
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
 
-/** Filters and searches journal records (design plan §JournalViewModel). */
-class SearchRecordsUseCase(
+/** Loads one keyset-paginated, filter-pushed-down Journal page (design plan §JournalViewModel). */
+class LoadJournalPageUseCase(
     private val historyRepository: HistoryRepository,
 ) {
-    suspend operator fun invoke(filter: RecordHistoryFilter): Result<List<FinanceRecord>> =
-        historyRepository.getRecords(filter)
+    suspend operator fun invoke(
+        filter: RecordHistoryFilter,
+        cursor: RecordPageCursor? = null,
+        limit: Int = DEFAULT_PAGE_SIZE,
+    ): Result<List<FinanceRecord>> = historyRepository.getRecordsPage(filter, cursor, limit)
+
+    companion object {
+        const val DEFAULT_PAGE_SIZE = 40
+    }
 }
 
 /** Deletes a journal record (design plan §JournalViewModel). */

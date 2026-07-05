@@ -1,8 +1,29 @@
 package com.arduia.expense.data
 
+import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
 import kotlinx.coroutines.flow.Flow
+
+/** SQL-pushdown filter for [FinanceRecordRepository.getRecordsPage] — every field is a predicate that's skipped when null. */
+data class RecordPageFilter(
+    val categoryId: CategoryId? = null,
+    val fromEpochMillis: Long? = null,
+    val toEpochMillis: Long? = null,
+    val query: String? = null,
+)
+
+/** Keyset pagination cursor — the last row of the previous page. `null` requests the first page. */
+data class RecordPageCursor(
+    val recordedAtEpochMillis: Long,
+    val recordId: RecordId,
+)
+
+/** Cheap change signal so a paged view can tell "something changed" apart from "load everything again". */
+data class RecordChangeSignal(
+    val count: Long,
+    val lastUpdatedAtEpochMillis: Long,
+)
 
 interface FinanceRecordRepository {
     suspend fun getAll(): Result<List<FinanceRecord>>
@@ -22,4 +43,17 @@ interface FinanceRecordRepository {
      * record is missing or the read fails.
      */
     suspend fun verifyIntegrity(id: RecordId): Result<Boolean>
+
+    /** Keyset-paginated, filter-pushdown page of records ordered by recorded_at DESC, id DESC. */
+    suspend fun getRecordsPage(
+        filter: RecordPageFilter = RecordPageFilter(),
+        cursor: RecordPageCursor? = null,
+        limit: Int,
+    ): Result<List<FinanceRecord>>
+
+    /** Whether any record is currently assigned to [categoryId] — backs the Uncategorized filter chip. */
+    suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean>
+
+    /** Live (count, lastUpdatedAt) signal — lets a paged view detect mutations without re-fetching everything. */
+    fun observeChangeSignal(): Flow<RecordChangeSignal>
 }

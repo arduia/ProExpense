@@ -21,6 +21,8 @@ CREATE TABLE finance_record (
     home_currency_code TEXT
 );
 
+CREATE INDEX finance_record_recorded_at_idx ON finance_record(recorded_at DESC, id DESC);
+
 insertRecord:
 INSERT OR REPLACE INTO finance_record(
     id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, updated_at, tag_type, tag_id, integrity_algo, integrity_hash, home_currency_code
@@ -43,3 +45,26 @@ DELETE FROM finance_record;
 
 clearTagsByType:
 UPDATE finance_record SET tag_type = NULL, tag_id = NULL WHERE tag_type = ?;
+
+-- Keyset ("cursor") pagination: beforeRecordedAt/beforeId NULL selects the first page. Filters are
+-- pushed down to SQL (each `:x IS NULL OR ...` clause turns off the corresponding predicate) so
+-- Journal never has to load or scan the full table client-side.
+selectRecordsPage:
+SELECT * FROM finance_record
+WHERE (:categoryId IS NULL OR category_id = :categoryId)
+  AND (:fromMillis IS NULL OR recorded_at >= :fromMillis)
+  AND (:toMillis IS NULL OR recorded_at <= :toMillis)
+  AND (:query IS NULL OR note LIKE '%' || :query || '%')
+  AND (
+    :beforeRecordedAt IS NULL
+    OR recorded_at < :beforeRecordedAt
+    OR (recorded_at = :beforeRecordedAt AND id < :beforeId)
+  )
+ORDER BY recorded_at DESC, id DESC
+LIMIT :limit;
+
+existsByCategory:
+SELECT EXISTS(SELECT 1 FROM finance_record WHERE category_id = :categoryId) AS found;
+
+countAndLastUpdate:
+SELECT COUNT(*) AS total, COALESCE(MAX(updated_at), 0) AS lastUpdatedAt FROM finance_record;

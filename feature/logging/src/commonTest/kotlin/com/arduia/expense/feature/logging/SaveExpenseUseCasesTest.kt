@@ -1,6 +1,9 @@
 package com.arduia.expense.feature.logging
 
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordChangeSignal
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
@@ -174,6 +177,10 @@ class UpdateExpenseUseCaseTest {
         override suspend fun delete(id: RecordId): Result<Unit> = Result.Success(Unit)
         override fun observeAll() = MutableStateFlow<List<FinanceRecord>>(emptyList()).asStateFlow()
         override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
+        override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
+            Result.Success(emptyList())
+        override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> = Result.Success(false)
+        override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(0L, 0L)).asStateFlow()
     }
 
     @Test
@@ -269,6 +276,11 @@ class LoadExpenseForEditUseCaseTest {
         override suspend fun delete(id: RecordId): Result<Unit> = Result.Success(Unit)
         override fun observeAll() = MutableStateFlow<List<FinanceRecord>>(emptyList()).asStateFlow()
         override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
+        override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
+            Result.Success(byId.values.toList().take(limit))
+        override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
+            Result.Success(byId.values.any { it.categoryId == categoryId })
+        override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(byId.size.toLong(), 0L)).asStateFlow()
     }
 
     @Test

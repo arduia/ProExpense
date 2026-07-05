@@ -2,8 +2,13 @@ package com.arduia.expense.storage.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordChangeSignal
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
+import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordIntegrityVerifier
@@ -102,4 +107,32 @@ class SqlDelightFinanceRecordRepository(
             .asFlow()
             .mapToList(dispatcher)
             .map { rows -> rows.mapNotNull { runCatching { it.toDomain() }.getOrNull() } }
+
+    override suspend fun getRecordsPage(
+        filter: RecordPageFilter,
+        cursor: RecordPageCursor?,
+        limit: Int,
+    ): Result<List<FinanceRecord>> = withContext(dispatcher) {
+        catchingResult {
+            queries.selectRecordsPage(
+                categoryId = filter.categoryId?.value,
+                fromMillis = filter.fromEpochMillis,
+                toMillis = filter.toEpochMillis,
+                query = filter.query?.takeIf { it.isNotBlank() },
+                beforeRecordedAt = cursor?.recordedAtEpochMillis,
+                beforeId = cursor?.recordId?.value,
+                limit = limit.toLong(),
+            ).executeAsList().mapNotNull { runCatching { it.toDomain() }.getOrNull() }
+        }
+    }
+
+    override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> = withContext(dispatcher) {
+        catchingResult { queries.existsByCategory(categoryId.value).executeAsOne().found }
+    }
+
+    override fun observeChangeSignal(): Flow<RecordChangeSignal> =
+        queries.countAndLastUpdate()
+            .asFlow()
+            .mapToOne(dispatcher)
+            .map { RecordChangeSignal(count = it.total, lastUpdatedAtEpochMillis = it.lastUpdatedAt) }
 }

@@ -418,8 +418,6 @@ fun ExpenseApp(
                             onAddClick = { showQuickLog = true },
                             initialSelectedRowId = homeSelectedRecordId,
                             onEditRecord = { editRecordId = it },
-                            records = records,
-                            isLoading = recordsLoading,
                             categories = categories,
                             events = events,
                             debts = debts,

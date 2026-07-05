@@ -1,6 +1,9 @@
 package com.arduia.expense.feature.logging
 
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordChangeSignal
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
@@ -42,6 +45,15 @@ class DefaultLoggingRepositoryTest {
 
         override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> =
             Result.Success(stored.value.any { it.id == id })
+
+        override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
+            Result.Success(stored.value.take(limit))
+
+        override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
+            Result.Success(stored.value.any { it.categoryId == categoryId })
+
+        override fun observeChangeSignal() =
+            MutableStateFlow(RecordChangeSignal(stored.value.size.toLong(), 0L))
     }
 
     private fun input() = LogRecordInput(
