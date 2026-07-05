@@ -38,6 +38,8 @@ data class ProTransactionRowModel(
     val rawNote: String? = null,
     /** "Today · 12:44 AM" style label for Journal Detail — [meta] is category + time, not a date. */
     val detailDateTimeLabel: String? = null,
+    /** Set when [tag] links to an event, so Journal Detail can navigate to that event's detail. */
+    val linkedEventId: String? = null,
 )
 
 @Composable

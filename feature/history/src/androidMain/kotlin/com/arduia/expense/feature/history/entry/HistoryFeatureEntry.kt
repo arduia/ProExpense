@@ -13,6 +13,7 @@ import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.history.DeleteRecordUseCase
@@ -41,6 +42,7 @@ interface HistoryFeatureEntry {
         onEditRecord: (String) -> Unit,
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
+        onOpenLinkedEvent: (String) -> Unit = {},
     )
 }
 
@@ -54,6 +56,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         onEditRecord: (String) -> Unit,
         modifier: Modifier,
         homeCurrencySymbol: String,
+        onOpenLinkedEvent: (String) -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val financeRecordRepository: FinanceRecordRepository = koinInject()
@@ -120,6 +123,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                 scope.launch { updateRecordNote(rowId, note) }
             },
             onEditRecord = onEditRecord,
+            onOpenLinkedEvent = onOpenLinkedEvent,
             modifier = modifier,
         )
     }
@@ -170,4 +174,5 @@ private fun FinanceRecord.toRowModel(
     rawNote = note?.trim(),
     detailDateTimeLabel = "${PlatformDateFormatter.dayLabel(recordedAtEpochMillis)} · " +
         PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
+    linkedEventId = (link as? RecordLink.ToEvent)?.eventId?.value,
 )

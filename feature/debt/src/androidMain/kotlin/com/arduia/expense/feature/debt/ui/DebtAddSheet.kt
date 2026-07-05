@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -62,7 +64,9 @@ fun DebtAddSheetContent(
     val atNoteLimit = form.note.length >= DEBT_NOTE_MAX
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        // Scrollable so the keyboard covering the lower fields never squeezes Save's height —
+        // it stays reachable at full size by scrolling instead of being compressed in place.
+        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         DebtSideToggle(side = form.side, onSideSelected = onSideSelected)
@@ -249,7 +253,7 @@ private fun DebtPersonField(
             .border(BorderStroke(1.dp, colors.lineStrong), shape)
             .background(colors.surface)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        textStyle = typography.body.copy(color = colors.onSurface),
+        textStyle = typography.fieldValue.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
         decorationBox = { inner ->
@@ -258,7 +262,7 @@ private fun DebtPersonField(
                     if (value.isEmpty()) {
                         Text(
                             text = stringResource(R.string.debt_person_placeholder),
-                            style = typography.body,
+                            style = typography.fieldValue,
                             color = colors.muted,
                         )
                     }

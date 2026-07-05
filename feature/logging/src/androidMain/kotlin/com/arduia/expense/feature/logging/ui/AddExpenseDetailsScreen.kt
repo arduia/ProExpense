@@ -156,9 +156,8 @@ fun AddExpenseDetailsScreen(
 
             if (showTagField) {
                 DetailTagField(
-                    tagLabel = state.linkedTagLabel?.let { label ->
-                        stringResource(R.string.event_tag_format, label)
-                    },
+                    // The field's own leading icon already renders "@" — no need to repeat it here.
+                    tagLabel = state.linkedTagLabel,
                     placeholder = stringResource(R.string.add_event_tag),
                     onClick = onOpenTagSheet,
                     onClear = onClearTag,

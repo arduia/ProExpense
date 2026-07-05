@@ -26,6 +26,7 @@ data class JournalListUiState(
 data class JournalLinkedTagUi(
     val title: String,
     val meta: String,
+    val eventId: String? = null,
 )
 
 data class JournalDetailUiState(

@@ -401,6 +401,10 @@ fun ExpenseApp(
                             initialSelectedRowId = homeSelectedRecordId,
                             onEditRecord = { editRecordId = it },
                             homeCurrencySymbol = homeSymbol,
+                            onOpenLinkedEvent = { eventId ->
+                                homeSelectedEventId = eventId
+                                selectedTab = HomeNavTab.Budget
+                            },
                         )
                         HomeNavTab.More -> MoreFlow(
                             features = features,

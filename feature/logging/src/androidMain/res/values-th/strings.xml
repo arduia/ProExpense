@@ -8,7 +8,6 @@
     <string name="next_with_chevron">ถัดไป ></string>
     <string name="amount_must_be_greater_than_zero">จำนวนเงินต้องมากกว่า $0</string>
     <string name="add_event_tag">เชื่อมโยงกิจกรรมหรือหนี้สิน</string>
-    <string name="event_tag_format">@%1$s</string>
     <string name="draft_restore_title">รายจ่ายที่ยังไม่เสร็จ</string>
     <string name="draft_restore_body">คุณมี %1$s ที่ยังทำค้างไว้เมื่อแอปปิด ต้องการทำต่อหรือยกเลิก?</string>
     <string name="draft_continue">ทำต่อ</string>

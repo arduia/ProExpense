@@ -112,6 +112,8 @@ data class ProTypography(
     val body: TextStyle,
     val bodyMedium: TextStyle,
     val bodySemiBold: TextStyle,
+    /** A step larger and bolder than [body] — for a form's single primary "name" input. */
+    val fieldValue: TextStyle,
     val caption: TextStyle,
     val captionMedium: TextStyle,
     val chipLabel: TextStyle,
@@ -232,6 +234,12 @@ val ProDefaultTypography = ProTypography(
         fontSize = 14.sp,
         lineHeight = proLineHeight(14f, 1.4f),
         fontWeight = FontWeight.SemiBold,
+    ),
+    fieldValue = TextStyle(
+        fontFamily = ManropeFamily,
+        fontSize = 16.sp,
+        lineHeight = proLineHeight(16f, 1.4f),
+        fontWeight = FontWeight.Medium,
     ),
     caption = TextStyle(
         fontFamily = ManropeFamily,

@@ -8,7 +8,6 @@
     <string name="next_with_chevron">ရှေ့သို့ ></string>
     <string name="amount_must_be_greater_than_zero">ပမာဏသည် $0 ထက်ကြီးရမည်</string>
     <string name="add_event_tag">ပွဲ (သို့) အကြွေး ချိတ်ဆက်ရန်</string>
-    <string name="event_tag_format">@%1$s</string>
     <string name="draft_restore_title">မပြီးမြောက်သေးသော အသုံးစရိတ်</string>
     <string name="draft_restore_body">အက်ပ်ပိတ်ချိန်တွင် သင့်တွင် %1$s လုပ်ဆောင်ဆဲ ရှိနေပါသည်။ ရပ်ခဲ့ရာမှ ဆက်လုပ်မလား၊ သို့မဟုတ် ဖျက်ပစ်မလား?</string>
     <string name="draft_continue">ဆက်လုပ်ရန်</string>

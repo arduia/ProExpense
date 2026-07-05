@@ -51,6 +51,7 @@ fun JournalFlow(
     onDeleteRecord: (String) -> Unit = {},
     onUpdateNote: (String, String) -> Unit = { _, _ -> },
     onEditRecord: (String) -> Unit = {},
+    onOpenLinkedEvent: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -156,8 +157,9 @@ fun JournalFlow(
                 // defaults would otherwise flash before the real row arrives one frame later.
                 Box(modifier = Modifier.fillMaxSize().background(colors.paper))
             } else {
+                val detail = detailStateFor(rowId, days, categoryNames)
                 JournalDetailScreen(
-                    state = detailStateFor(rowId, days, categoryNames),
+                    state = detail,
                     onBack = {
                         if (initialSelectedRowId != null && rowId == initialSelectedRowId) {
                             onTabSelected(HomeNavTab.Home)
@@ -165,7 +167,9 @@ fun JournalFlow(
                         selectedRowId = null
                     },
                     onActions = { showActions = true },
-                    onLinkedTagClick = {},
+                    onLinkedTagClick = {
+                        detail.linkedTag?.eventId?.let(onOpenLinkedEvent)
+                    },
                     onEdit = { onEditRecord(rowId) },
                     onDelete = { showDeleteConfirm = true },
                 )
@@ -291,7 +295,7 @@ private fun detailStateFor(
         dateTimeLabel = row?.detailDateTimeLabel.orEmpty(),
         note = row?.note.orEmpty(),
         linkedTag = row?.tag?.let { title ->
-            JournalLinkedTagUi(title = title, meta = row.tagSubtitle.orEmpty())
+            JournalLinkedTagUi(title = title, meta = row.tagSubtitle.orEmpty(), eventId = row.linkedEventId)
         },
     )
 }
