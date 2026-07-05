@@ -42,11 +42,14 @@ class DefaultHistoryRepositoryTest {
             val sorted = records.sortedWith(
                 compareByDescending<FinanceRecord> { it.recordedAtEpochMillis }.thenByDescending { it.id.value },
             )
+            val fromEpochMillis = filter.fromEpochMillis
+            val toEpochMillis = filter.toEpochMillis
+            val query = filter.query
             val filtered = sorted.filter { record ->
                 (filter.categoryId == null || record.categoryId == filter.categoryId) &&
-                    (filter.fromEpochMillis == null || record.recordedAtEpochMillis >= filter.fromEpochMillis) &&
-                    (filter.toEpochMillis == null || record.recordedAtEpochMillis <= filter.toEpochMillis) &&
-                    (filter.query.isNullOrBlank() || (record.note?.contains(filter.query!!, ignoreCase = true) ?: false))
+                    (fromEpochMillis == null || record.recordedAtEpochMillis >= fromEpochMillis) &&
+                    (toEpochMillis == null || record.recordedAtEpochMillis <= toEpochMillis) &&
+                    (query.isNullOrBlank() || (record.note?.contains(query, ignoreCase = true) ?: false))
             }
             val afterCursor = if (cursor == null) {
                 filtered

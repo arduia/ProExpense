@@ -58,13 +58,13 @@ WHERE (:categoryId IS NULL OR category_id = :categoryId)
   AND (
     :beforeRecordedAt IS NULL
     OR recorded_at < :beforeRecordedAt
-    OR (recorded_at = :beforeRecordedAt AND id < :beforeId)
+    OR (recorded_at = :beforeRecordedAt AND (:beforeId IS NULL OR id < :beforeId))
   )
 ORDER BY recorded_at DESC, id DESC
 LIMIT :limit;
 
 existsByCategory:
-SELECT EXISTS(SELECT 1 FROM finance_record WHERE category_id = :categoryId) AS found;
+SELECT EXISTS(SELECT 1 FROM finance_record WHERE category_id = :categoryId);
 
 countAndLastUpdate:
 SELECT COUNT(*) AS total, COALESCE(MAX(updated_at), 0) AS lastUpdatedAt FROM finance_record;

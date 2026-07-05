@@ -127,7 +127,7 @@ class SqlDelightFinanceRecordRepository(
     }
 
     override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> = withContext(dispatcher) {
-        catchingResult { queries.existsByCategory(categoryId.value).executeAsOne().found }
+        catchingResult { queries.existsByCategory(categoryId.value).executeAsOne() }
     }
 
     override fun observeChangeSignal(): Flow<RecordChangeSignal> =
