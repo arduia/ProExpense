@@ -21,15 +21,15 @@ object SharedCostSplitLogic {
         return totalCents(rawTotal) / peopleCount
     }
 
-    fun formatCents(cents: Long): String {
+    fun formatCents(cents: Long, currencySymbol: String = "$"): String {
         val whole = cents / 100
         val fraction = cents % 100
-        return "$$whole.${fraction.toString().padStart(2, '0')}"
+        return "$currencySymbol$whole.${fraction.toString().padStart(2, '0')}"
     }
 
-    fun formatRawTotal(rawTotal: String): String {
+    fun formatRawTotal(rawTotal: String, currencySymbol: String = "$"): String {
         val display = AmountInput.formatDisplay(rawTotal.ifEmpty { "0" })
-        return "$$display"
+        return "$currencySymbol$display"
     }
 
     fun defaultParticipantName(index: Int): String = "Person $index"
@@ -68,9 +68,9 @@ object SharedCostSplitLogic {
         }
     }
 
-    fun formatShareRaw(rawShare: String): String {
+    fun formatShareRaw(rawShare: String, currencySymbol: String = "$"): String {
         val display = AmountInput.formatDisplay(rawShare.ifEmpty { "0" })
-        return "$$display"
+        return "$currencySymbol$display"
     }
 
     fun buildParticipants(
@@ -79,15 +79,17 @@ object SharedCostSplitLogic {
         mode: SharedSplitMode,
         names: List<String>,
         customShareRaws: List<String>,
+        currencySymbol: String = "$",
     ): List<Pair<String, String>> {
         val resolvedNames = syncNames(names, peopleCount)
         return resolvedNames.mapIndexed { index, name ->
             val shareLabel = when (mode) {
-                SharedSplitMode.Equal -> formatCents(equalShareCents(rawTotal, peopleCount))
+                SharedSplitMode.Equal -> formatCents(equalShareCents(rawTotal, peopleCount), currencySymbol)
                 SharedSplitMode.Custom -> formatShareRaw(
                     customShareRaws.getOrElse(index) {
                         (equalShareCents(rawTotal, peopleCount) / 100).toString()
                     },
+                    currencySymbol,
                 )
             }
             name to shareLabel

@@ -528,6 +528,7 @@ fun ExpenseApp(
                 features.sharedCost.SharedCostsOverlay(
                     onDismiss = { showSharedCosts = false },
                     homeCurrencySymbol = homeSymbol,
+                    homeCurrencyCode = homeCurrencyCode,
                 )
             }
 

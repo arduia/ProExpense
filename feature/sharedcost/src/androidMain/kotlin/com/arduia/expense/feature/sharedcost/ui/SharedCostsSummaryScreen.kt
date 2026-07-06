@@ -46,6 +46,7 @@ fun SharedCostsSummaryScreen(
     // it from history must not offer Save or the switch-to-custom edit path, only the new-split
     // flow does.
     readOnly: Boolean = false,
+    homeCurrencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -78,6 +79,7 @@ fun SharedCostsSummaryScreen(
 
         AmountDisplay(
             amountText = perPersonDisplay,
+            currencySymbol = homeCurrencySymbol,
             isZero = false,
             eyebrowText = stringResource(R.string.shared_each_person_pays),
             usePrimaryAmount = true,
@@ -89,7 +91,7 @@ fun SharedCostsSummaryScreen(
         Text(
             text = stringResource(
                 R.string.shared_summary_meta,
-                SharedCostSplitLogic.formatRawTotal(state.rawTotal),
+                SharedCostSplitLogic.formatRawTotal(state.rawTotal, homeCurrencySymbol),
                 state.peopleCount,
                 modeLabel,
             ),
@@ -139,7 +141,7 @@ fun SharedCostsSummaryScreen(
 
         if (!readOnly) {
             ProButton(
-                text = stringResource(R.string.shared_save_split_amount, "$$totalDisplay"),
+                text = stringResource(R.string.shared_save_split_amount, "$homeCurrencySymbol$totalDisplay"),
                 onClick = onSave,
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,

@@ -124,3 +124,8 @@ outright (with confirmation, consistent with delete behavior elsewhere in the ap
   it only opens a `ProAlertDialog` confirmation (mirroring the Debt/Category/Journal delete-confirm
   pattern), and only on confirm does `onDeleteSplit` fire. Deletion is atomic with its linked
   `FinanceRecord` — see [US-SHC-4](US-SHC-4.md)'s note for the storage-layer half of that.
+
+* **Gap fix (2026-07):** `SharedCostsHistoryScreen` had no empty-state branch — a first-time user
+  (or anyone after deleting all splits) saw the "Recent splits" header over a blank area with no
+  guidance, unlike Journal/EventBudget which both have a dedicated first-run empty state. Added an
+  `EmptyStateContent` branch (title/body/"New split" action) when `items` is empty.

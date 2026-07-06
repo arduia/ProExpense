@@ -21,6 +21,7 @@
     <string name="shared_total_zero_error">Total amount must be greater than $0</string>
     <string name="shared_save_split_amount">Save split · %1$s</string>
     <string name="shared_history_meta">%1$d people · %2$s each · %3$s</string>
+    <string name="shared_per_person_varies">Varies</string>
     <string name="shared_uneven_split_prompt">Need an uneven split?</string>
     <string name="shared_back_more">More</string>
     <string name="shared_back_split">Split</string>
@@ -37,4 +38,7 @@
     <string name="shared_delete_body">"%1$s" and its saved expense will be removed. This can\'t be undone.</string>
     <string name="shared_delete_confirm">Delete</string>
     <string name="shared_delete_cancel">Cancel</string>
+    <string name="shared_history_empty_title">No splits yet</string>
+    <string name="shared_history_empty_body">Split your first bill with friends, roommates, or travel companions.</string>
+    <string name="shared_history_empty_action">New split</string>
 </resources>

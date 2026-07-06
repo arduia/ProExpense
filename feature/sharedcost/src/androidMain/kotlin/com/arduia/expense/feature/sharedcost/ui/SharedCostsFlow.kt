@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -49,13 +51,14 @@ private data class SharedCostDraft(
     val showZeroValidation: Boolean = false,
     val amountConfirmed: Boolean = false,
 ) {
-    fun toUiState(): SharedCostUiState {
+    fun toUiState(currencySymbol: String): SharedCostUiState {
         val participants = SharedCostSplitLogic.buildParticipants(
             rawTotal = rawTotal,
             peopleCount = peopleCount,
             mode = mode,
             names = names,
             customShareRaws = customShareRaws,
+            currencySymbol = currencySymbol,
         ).map { (name, share) -> SharedCostParticipantUi(name, share) }
         return SharedCostUiState(
             rawTotal = rawTotal,
@@ -68,6 +71,48 @@ private data class SharedCostDraft(
         )
     }
 }
+
+/**
+ * Flattened into a plain [List] (Bundle-safe primitives only) so the entire in-progress split
+ * survives process death — US-SHC-2's NFR promises custom shares survive it "the same as any
+ * other draft input", but a bare `remember` (the previous state) is wiped on rotation or the
+ * process being killed in the background.
+ */
+private val SharedCostDraftSaver: Saver<SharedCostDraft, Any> = listSaver(
+    save = { draft ->
+        listOf(
+            draft.rawTotal,
+            draft.note,
+            draft.peopleCount,
+            draft.mode.name,
+            draft.names.size,
+        ) + draft.names + listOf(draft.customShareRaws.size) + draft.customShareRaws +
+            listOf(draft.showZeroValidation, draft.amountConfirmed)
+    },
+    restore = { saved ->
+        var i = 0
+        val rawTotal = saved[i++] as String
+        val note = saved[i++] as String
+        val peopleCount = saved[i++] as Int
+        val mode = SharedSplitMode.valueOf(saved[i++] as String)
+        val namesSize = saved[i++] as Int
+        val names = (0 until namesSize).map { saved[i++] as String }
+        val sharesSize = saved[i++] as Int
+        val customShareRaws = (0 until sharesSize).map { saved[i++] as String }
+        val showZeroValidation = saved[i++] as Boolean
+        val amountConfirmed = saved[i++] as Boolean
+        SharedCostDraft(
+            rawTotal = rawTotal,
+            note = note,
+            peopleCount = peopleCount,
+            mode = mode,
+            names = names,
+            customShareRaws = customShareRaws,
+            showZeroValidation = showZeroValidation,
+            amountConfirmed = amountConfirmed,
+        )
+    },
+)
 
 private fun SharedCostDraft.withParticipants(): SharedCostDraft = copy(
     names = SharedCostSplitLogic.syncNames(names, peopleCount),
@@ -107,6 +152,7 @@ fun SharedCostsFlow(
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
+    homeCurrencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -114,7 +160,9 @@ fun SharedCostsFlow(
     val startStep = SharedCostStep.History
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
-    var draft by remember { mutableStateOf(SharedCostDraft().withParticipants()) }
+    var draft by rememberSaveable(stateSaver = SharedCostDraftSaver) {
+        mutableStateOf(SharedCostDraft().withParticipants())
+    }
     var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
@@ -186,7 +234,8 @@ fun SharedCostsFlow(
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(
-                        state = draft.toUiState(),
+                        state = draft.toUiState(homeCurrencySymbol),
+                        homeCurrencySymbol = homeCurrencySymbol,
                         onBack = {
                             if (viewingId != null) {
                                 step = SharedCostStep.Summary.name
@@ -254,7 +303,8 @@ fun SharedCostsFlow(
                 }
                 SharedCostStep.Summary -> {
                     SharedCostsSummaryScreen(
-                        state = draft.toUiState(),
+                        state = draft.toUiState(homeCurrencySymbol),
+                        homeCurrencySymbol = homeCurrencySymbol,
                         readOnly = viewingId != null,
                         backLabel = if (viewingId != null) {
                             stringResource(R.string.shared_back_history)

@@ -1,10 +1,15 @@
 package com.arduia.expense.ui.sharedcost
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
@@ -112,5 +117,129 @@ class SharedCostNameResolutionTest {
         val resolved = SharedCostSplitLogic.resolveNames(listOf("  Aiko  "), count = 3)
 
         assertEquals(listOf("Aiko", "Person 2", "Person 3"), resolved)
+    }
+}
+
+/** [SharedCostSplitLogic]'s formatters must reflect the user's actual home currency, not a hardcoded "$". */
+class SharedCostCurrencyFormatTest {
+
+    @Test
+    fun formatCents_usesProvidedCurrencySymbol() {
+        assertEquals("€12.34", SharedCostSplitLogic.formatCents(1234, "€"))
+    }
+
+    @Test
+    fun formatRawTotal_usesProvidedCurrencySymbol() {
+        assertEquals("¥120", SharedCostSplitLogic.formatRawTotal("120", "¥"))
+    }
+
+    @Test
+    fun formatShareRaw_usesProvidedCurrencySymbol() {
+        assertEquals("£60", SharedCostSplitLogic.formatShareRaw("60", "£"))
+    }
+
+    @Test
+    fun formatCents_defaultsToDollarSignWhenSymbolOmitted() {
+        assertEquals("$12.34", SharedCostSplitLogic.formatCents(1234))
+    }
+}
+
+/**
+ * Blocker-audit guard: the input/summary screens previously hardcoded "$" regardless of the
+ * caller's currency, while saved history correctly showed the real symbol — a non-USD user saw
+ * the wrong symbol throughout the entire creation flow.
+ */
+@RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(
+    sdk = [33],
+    qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
+)
+class SharedCostCurrencySymbolWiringTest {
+
+    @get:Rule
+    val rule = createAndroidComposeRule<ComponentActivity>()
+
+    @Test
+    fun inputScreen_showsProvidedCurrencySymbol_notHardcodedDollar() {
+        rule.setContent {
+            ProExpenseTheme {
+                SharedCostsInputScreen(
+                    state = SharedCostUiState(rawTotal = "120", amountConfirmed = false),
+                    onBack = {},
+                    onKey = {},
+                    onBackspace = {},
+                    onNoteChange = {},
+                    onDecrementPeople = {},
+                    onIncrementPeople = {},
+                    onModeSelected = {},
+                    onShareChange = { _, _ -> },
+                    onContinue = {},
+                    showKeypad = false,
+                    homeCurrencySymbol = "€",
+                )
+            }
+        }
+
+        rule.onNodeWithText("€120", substring = true).assertExists()
+    }
+
+    @Test
+    fun summaryScreen_showsProvidedCurrencySymbol_notHardcodedDollar() {
+        rule.setContent {
+            ProExpenseTheme {
+                SharedCostsSummaryScreen(
+                    state = SharedCostUiState(
+                        rawTotal = "120",
+                        peopleCount = 2,
+                        participants = listOf(
+                            SharedCostParticipantUi("Person 1", "€60.00"),
+                            SharedCostParticipantUi("Person 2", "€60.00"),
+                        ),
+                    ),
+                    onBack = {},
+                    onSwitchToCustom = {},
+                    onSave = {},
+                    homeCurrencySymbol = "€",
+                )
+            }
+        }
+
+        rule.onAllNodesWithText("€60", substring = true)[0].assertExists()
+    }
+}
+
+/**
+ * High-audit guard: US-SHC-2's NFR promises custom shares "survive process death the same as
+ * any other draft input" — the draft previously used a bare `remember`, wiped on process death.
+ */
+@RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(
+    sdk = [33],
+    qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
+)
+class SharedCostDraftPersistenceTest {
+
+    @get:Rule
+    val rule = createAndroidComposeRule<ComponentActivity>()
+
+    @Test
+    fun draft_survivesSimulatedProcessDeath() {
+        val restorationTester = StateRestorationTester(rule)
+        restorationTester.setContent {
+            ProExpenseTheme {
+                SharedCostsFlow(onDismiss = {})
+            }
+        }
+
+        rule.onNodeWithText("New split").performClick()
+        rule.onNodeWithText("1").performClick()
+        rule.onNodeWithText("2").performClick()
+        rule.onNodeWithText("0").performClick()
+
+        restorationTester.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("120", substring = true).assertExists()
     }
 }

@@ -51,6 +51,7 @@ fun SharedCostsInputScreen(
     onNameChange: (Int, String) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
     showKeypad: Boolean = true,
+    homeCurrencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -59,7 +60,8 @@ fun SharedCostsInputScreen(
     val isZero = !canProceed
     val showDetails = state.amountConfirmed && canProceed
     val participants = state.participants.map { it.name to it.shareLabel }
-    val perPersonAmount = participants.firstOrNull()?.second ?: SharedCostSplitLogic.formatCents(0)
+    val perPersonAmount = participants.firstOrNull()?.second
+        ?: SharedCostSplitLogic.formatCents(0, homeCurrencySymbol)
 
     Column(
         modifier = modifier
@@ -83,6 +85,7 @@ fun SharedCostsInputScreen(
 
             AmountDisplay(
                 amountText = displayAmount,
+                currencySymbol = homeCurrencySymbol,
                 isZero = isZero,
                 showZeroValidation = state.showZeroValidation,
                 zeroHelperMessage = stringResource(R.string.shared_total_zero_error),

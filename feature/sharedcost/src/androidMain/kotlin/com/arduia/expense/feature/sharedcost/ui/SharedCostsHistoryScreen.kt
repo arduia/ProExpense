@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
+import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
@@ -102,27 +103,39 @@ fun SharedCostsHistoryScreen(
                 )
             }
 
-            Text(
-                text = stringResource(R.string.shared_recent_splits),
-                style = typography.eyebrow,
-                color = colors.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = dimens.space10),
-            )
+            if (items.isEmpty()) {
+                EmptyStateContent(
+                    title = stringResource(R.string.shared_history_empty_title),
+                    subtitle = stringResource(R.string.shared_history_empty_body),
+                    actionLabel = stringResource(R.string.shared_history_empty_action),
+                    onActionClick = onNewSplit,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space32),
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.shared_recent_splits),
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = dimens.space10),
+                )
 
-            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-                items.forEach { item ->
-                    SwipeToDeleteRow(onDelete = { onDeleteRequested(item) }) {
-                        SharedCostHistoryRow(
-                            title = item.title,
-                            meta = stringResource(
-                                R.string.shared_history_meta,
-                                item.peopleCount,
-                                item.perPersonLabel,
-                                item.dateLabel,
-                            ),
-                            total = item.totalLabel,
-                            onClick = { onItemClick(item) },
-                        )
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                    items.forEach { item ->
+                        SwipeToDeleteRow(onDelete = { onDeleteRequested(item) }) {
+                            SharedCostHistoryRow(
+                                title = item.title,
+                                meta = stringResource(
+                                    R.string.shared_history_meta,
+                                    item.peopleCount,
+                                    item.perPersonLabel,
+                                    item.dateLabel,
+                                ),
+                                total = item.totalLabel,
+                                onClick = { onItemClick(item) },
+                            )
+                        }
                     }
                 }
             }
@@ -189,6 +202,24 @@ private fun SharedCostsHistoryPreview() {
     ProExpenseTheme {
         SharedCostsHistoryScreen(
             items = previewSharedHistoryItems,
+            onNewSplit = {},
+            onItemClick = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — history empty",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsHistoryEmptyPreview() {
+    ProExpenseTheme {
+        SharedCostsHistoryScreen(
+            items = emptyList(),
             onNewSplit = {},
             onItemClick = {},
             onBack = {},
