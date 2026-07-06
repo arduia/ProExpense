@@ -228,6 +228,13 @@ fun SharedCostsFlow(
                             updated[index] = raw
                             draft = draft.copy(customShareRaws = updated, mode = SharedSplitMode.Custom)
                         },
+                        onNameChange = { index, name ->
+                            val updated = SharedCostSplitLogic.syncNames(draft.names, draft.peopleCount).toMutableList()
+                            if (index in updated.indices) {
+                                updated[index] = name
+                                draft = draft.copy(names = updated)
+                            }
+                        },
                         onConfirmAmount = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
                                 draft = draft.copy(amountConfirmed = true)
@@ -269,11 +276,14 @@ fun SharedCostsFlow(
                         },
                         onSave = {
                             val title = draft.note.trim().ifEmpty { defaultSplitTitle }
+                            // Cleared name fields fall back to "Person N" — blank participant
+                            // names must never be persisted (US-SHC-1 default-naming rule).
+                            val names = SharedCostSplitLogic.resolveNames(draft.names, draft.peopleCount)
                             val id = viewingId
                             if (id != null) {
-                                onUpdateSplit(id, title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
+                                onUpdateSplit(id, title, draft.rawTotal, draft.mode, names, draft.customShareRaws)
                             } else {
-                                onSaveSplit(title, draft.rawTotal, draft.mode, draft.names, draft.customShareRaws)
+                                onSaveSplit(title, draft.rawTotal, draft.mode, names, draft.customShareRaws)
                             }
                             toastMessage = savedToastMessage
                             onSaved()

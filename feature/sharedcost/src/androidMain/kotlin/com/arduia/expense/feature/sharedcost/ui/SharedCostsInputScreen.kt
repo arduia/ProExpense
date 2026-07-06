@@ -48,6 +48,7 @@ fun SharedCostsInputScreen(
     onShareChange: (Int, String) -> Unit,
     onContinue: () -> Unit,
     onConfirmAmount: () -> Unit = {},
+    onNameChange: (Int, String) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
     showKeypad: Boolean = true,
 ) {
@@ -125,11 +126,15 @@ fun SharedCostsInputScreen(
                             perPersonAmount = perPersonAmount,
                             participants = participants,
                             perPersonEyebrow = stringResource(R.string.shared_per_person),
+                            editableNames = true,
+                            onNameChange = onNameChange,
                         )
                     } else {
                         SharedCostCustomSplitCard(
                             participants = participants,
                             onShareChange = onShareChange,
+                            editableNames = true,
+                            onNameChange = onNameChange,
                         )
                     }
                 }

@@ -109,7 +109,8 @@ fun SharedCostsSummaryScreen(
             state.participants.forEachIndexed { index, participant ->
                 SharedCostParticipantRow(
                     index = index + 1,
-                    name = participant.name,
+                    name = participant.name.trim()
+                        .ifEmpty { SharedCostSplitLogic.defaultParticipantName(index + 1) },
                     amount = participant.shareLabel,
                 )
             }

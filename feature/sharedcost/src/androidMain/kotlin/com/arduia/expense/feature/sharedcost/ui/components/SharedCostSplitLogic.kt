@@ -49,6 +49,12 @@ object SharedCostSplitLogic {
         }
     }
 
+    /** Save-time normalization: a cleared (blank) name falls back to its "Person N" default. */
+    fun resolveNames(current: List<String>, count: Int): List<String> =
+        syncNames(current, count).mapIndexed { index, name ->
+            name.trim().ifEmpty { defaultParticipantName(index + 1) }
+        }
+
     fun syncCustomShares(
         current: List<String>,
         count: Int,
