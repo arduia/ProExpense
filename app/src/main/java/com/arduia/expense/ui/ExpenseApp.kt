@@ -484,6 +484,14 @@ fun ExpenseApp(
                         coroutineScope.launch {
                             withContext(NonCancellable) {
                                 completeOnboarding(handoff.profileName, handoff.currencyCode)
+                                // Resolve pinConfigured before flipping onboardingComplete so both
+                                // land in the same recomposition — otherwise the Home branch below
+                                // briefly falls through to its Splash fallback while pinConfigured
+                                // is still null, flashing the splash screen a second time.
+                                pinConfigured = when (val result = pinAuthRepository.isPinConfigured()) {
+                                    is Result.Success -> result.data
+                                    is Result.Error -> false
+                                }
                             }
                             onboardingComplete = true
                         }
