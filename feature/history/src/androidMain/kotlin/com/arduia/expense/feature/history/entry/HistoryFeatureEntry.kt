@@ -7,11 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.arduia.expense.data.RecordChangeSignal
 import com.arduia.expense.data.RecordPageCursor
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Category
@@ -45,9 +44,21 @@ import org.koin.compose.koinInject
 /** Debounce between the user's last keystroke and the search query reaching the DB (US-HIS §Journal search). */
 private const val SEARCH_DEBOUNCE_MILLIS = 250L
 
+/**
+ * Journal's loaded pages, filter selections, and change-signal bookkeeping. Opaque to callers —
+ * hold it via [HistoryFeatureEntry.rememberJournalTabState] at a scope that survives tab
+ * switching (the app shell), so reselecting the Journal tab resumes where the user left off
+ * instead of reloading from scratch.
+ */
+interface JournalTabState
+
 interface HistoryFeatureEntry {
     @Composable
+    fun rememberJournalTabState(): JournalTabState
+
+    @Composable
     fun JournalTab(
+        state: JournalTabState,
         selectedTab: HomeNavTab,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
@@ -65,7 +76,14 @@ interface HistoryFeatureEntry {
 
 internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
     @Composable
+    override fun rememberJournalTabState(): JournalTabState {
+        val loadJournalPage: LoadJournalPageUseCase = koinInject()
+        return remember { JournalTabStateImpl(loadJournalPage) }
+    }
+
+    @Composable
     override fun JournalTab(
+        state: JournalTabState,
         selectedTab: HomeNavTab,
         onTabSelected: (HomeNavTab) -> Unit,
         onAddClick: () -> Unit,
@@ -79,51 +97,29 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         homeCurrencySymbol: String,
         onOpenLinkedEvent: (String) -> Unit,
     ) {
+        state as JournalTabStateImpl
         val scope = rememberCoroutineScope()
         val deleteRecord: DeleteRecordUseCase = koinInject()
         val updateRecordNote: UpdateRecordNoteUseCase = koinInject()
-        val loadJournalPage: LoadJournalPageUseCase = koinInject()
         val historyRepository: HistoryRepository = koinInject()
         val allFilterLabel = stringResource(R.string.journal_filter_all)
-
-        var query by rememberSaveable { mutableStateOf("") }
-        var debouncedQuery by remember { mutableStateOf("") }
-        var selectedFilterId by rememberSaveable { mutableStateOf("all") }
-        var dateRangeStart by rememberSaveable { mutableStateOf<Long?>(null) }
-        var dateRangeEnd by rememberSaveable { mutableStateOf<Long?>(null) }
-        var hasUncategorized by remember { mutableStateOf(false) }
+        val pager = state.pager
 
         // Search-as-you-type now triggers a DB query per change instead of a free in-memory
         // filter, so raw keystrokes are debounced before they reach the page filter.
-        LaunchedEffect(query) {
+        LaunchedEffect(state.query) {
             delay(SEARCH_DEBOUNCE_MILLIS)
-            debouncedQuery = query
+            state.debouncedQuery = state.query
         }
 
-        val filter = remember(debouncedQuery, selectedFilterId, dateRangeStart, dateRangeEnd) {
-            RecordHistoryFilter(
-                categoryId = selectedFilterId.takeIf { it != "all" }?.let(::CategoryId),
-                fromEpochMillis = dateRangeStart,
-                toEpochMillis = dateRangeEnd,
-                query = debouncedQuery.takeIf { it.isNotBlank() },
-            )
-        }
-        // The pager instance is remembered once (it must survive recomposition to keep its
-        // already-loaded records), but its loadPage lambda must still see the latest filter and
-        // use-case on every call — rememberUpdatedState avoids capturing a stale `filter` from
-        // whichever composition happened to be running when `remember` first created the pager.
-        val currentFilter = rememberUpdatedState(filter)
-        val currentLoadJournalPage = rememberUpdatedState(loadJournalPage)
-        val pager = remember {
-            JournalPager(
-                loadPage = { cursor, limit ->
-                    currentLoadJournalPage.value(currentFilter.value, cursor, limit)
-                },
-            )
-        }
-
+        // The pager still holds whatever it loaded the last time the tab was shown — reload only
+        // when the filter differs from what's actually loaded, so tab revisits are instant.
+        val filter = state.filter
         LaunchedEffect(filter) {
-            pager.loadFirstPage()
+            if (state.loadedFilter != filter) {
+                state.loadedFilter = filter
+                pager.loadFirstPage()
+            }
         }
 
         // Deep link into a record that isn't on the first page yet (e.g. tapping an old expense
@@ -151,19 +147,19 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         // total record count.
         val changeSignal by remember(historyRepository) { historyRepository.observeChangeSignal() }
             .collectAsState(initial = null)
-        var handledFirstSignal by remember { mutableStateOf(false) }
         LaunchedEffect(changeSignal) {
-            // collectAsState's synthetic null runs this effect before the flow ever emits — if it
-            // consumed the first-signal guard, the flow's initial (non-mutation) emission would
-            // trigger a spurious reload right after every tab open, blinking the list.
-            if (changeSignal == null) return@LaunchedEffect
-            if (!handledFirstSignal) {
-                handledFirstSignal = true
-            } else {
+            // collectAsState's synthetic null runs this effect before the flow ever emits.
+            val signal = changeSignal ?: return@LaunchedEffect
+            // Equal signal means nothing changed since the last reload — this is the
+            // subscription's initial echo on a tab revisit; reloading would blink for nothing.
+            if (signal == state.lastSeenSignal) return@LaunchedEffect
+            val isFirstSignal = state.lastSeenSignal == null
+            state.lastSeenSignal = signal
+            if (!isFirstSignal) {
                 pager.loadFirstPage(limit = maxOf(pager.records.size, LoadJournalPageUseCase.DEFAULT_PAGE_SIZE))
             }
             val result = historyRepository.hasAnyRecordIn(CategoryId(UNCATEGORIZED_CATEGORY_ID))
-            hasUncategorized = (result as? Result.Success)?.data ?: false
+            state.hasUncategorized = (result as? Result.Success)?.data ?: false
         }
 
         val eventNames = remember(events) { events.associate { it.id.value to it.name } }
@@ -181,12 +177,12 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val debtSubtitles = remember(debts, homeCurrencySymbol) {
             debts.associate { it.id.value to AmountInput.formatMoney(it.money.amount.valueInCents, currencySymbol(it.money.currency.code)) }
         }
-        val filters = remember(categories, allFilterLabel, hasUncategorized) {
+        val filters = remember(categories, allFilterLabel, state.hasUncategorized) {
             val categoryChips = categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
             // Uncategorized is never seeded as a real Category row (US-CAT-3), so it needs its
             // own chip here whenever a reassigned record actually exists under it — otherwise
             // those records are visible in the list but unreachable by filter.
-            val uncategorizedChip = if (hasUncategorized) {
+            val uncategorizedChip = if (state.hasUncategorized) {
                 listOf(JournalFilterUi(UNCATEGORIZED_CATEGORY_ID, expenseCategoryLabel(UNCATEGORIZED_CATEGORY_ID)))
             } else {
                 emptyList()
@@ -210,15 +206,15 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             isLoading = pager.isLoadingFirstPage,
             isLoadingMore = pager.isLoadingMore,
             onLoadMore = { scope.launch { pager.loadNextPage() } },
-            query = query,
-            onQueryChange = { query = it },
-            selectedFilterId = selectedFilterId,
-            onFilterSelected = { selectedFilterId = it },
-            dateRangeStart = dateRangeStart,
-            dateRangeEnd = dateRangeEnd,
+            query = state.query,
+            onQueryChange = { state.query = it },
+            selectedFilterId = state.selectedFilterId,
+            onFilterSelected = { state.selectedFilterId = it },
+            dateRangeStart = state.dateRangeStart,
+            dateRangeEnd = state.dateRangeEnd,
             onDateRangeChange = { start, end ->
-                dateRangeStart = start
-                dateRangeEnd = end
+                state.dateRangeStart = start
+                state.dateRangeEnd = end
             },
             onDeleteRecord = { rowId ->
                 scope.launch { deleteRecord(rowId) }
@@ -234,6 +230,41 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
 }
 
 object HistoryFeatureUi : HistoryFeatureEntry by HistoryFeatureEntryImpl()
+
+/**
+ * Backing store for [JournalTabState]. Lives above the tab-scoped composition, so everything in
+ * here — the pager's loaded pages, search/filter selections, and the change-signal bookkeeping —
+ * survives switching away from the Journal tab and back.
+ */
+private class JournalTabStateImpl(
+    loadJournalPage: LoadJournalPageUseCase,
+) : JournalTabState {
+    var query by mutableStateOf("")
+    var debouncedQuery by mutableStateOf("")
+    var selectedFilterId by mutableStateOf("all")
+    var dateRangeStart by mutableStateOf<Long?>(null)
+    var dateRangeEnd by mutableStateOf<Long?>(null)
+    var hasUncategorized by mutableStateOf(false)
+
+    // Effect bookkeeping, never read in composition: the filter the pager's records belong to,
+    // and the last change signal acted on — both let tab revisits skip redundant reloads.
+    var loadedFilter: RecordHistoryFilter? = null
+    var lastSeenSignal: RecordChangeSignal? = null
+
+    val filter: RecordHistoryFilter
+        get() = RecordHistoryFilter(
+            categoryId = selectedFilterId.takeIf { it != "all" }?.let(::CategoryId),
+            fromEpochMillis = dateRangeStart,
+            toEpochMillis = dateRangeEnd,
+            query = debouncedQuery.takeIf { it.isNotBlank() },
+        )
+
+    // The lambda reads `filter` at call time, so the pager always pages with the live filter
+    // even though the pager itself is created once and kept for the state holder's lifetime.
+    val pager = JournalPager(
+        loadPage = { cursor, limit -> loadJournalPage(filter, cursor, limit) },
+    )
+}
 
 /**
  * Keyset-paginated loader for the Journal list. Holds only what's been loaded so far (bounded by

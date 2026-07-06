@@ -120,6 +120,9 @@ fun ExpenseApp(
     val context = LocalContext.current
     var quickAccessVisible by remember { mutableStateOf(QuickAccessPrefs.load(context)) }
     val coroutineScope = rememberCoroutineScope()
+    // Hoisted above tab switching (same reason as spentByEvent below) — Journal's loaded pages
+    // and filters live here so reselecting the tab resumes instantly instead of reloading.
+    val journalTabState = features.history.rememberJournalTabState()
 
     // null (not emptyList()) until the first Flow emission arrives, so the empty-state
     // illustration doesn't flash on cold start before real data has had a chance to load.
@@ -413,6 +416,7 @@ fun ExpenseApp(
                             isLoading = eventsLoading,
                         )
                         HomeNavTab.Journal -> features.history.JournalTab(
+                            state = journalTabState,
                             selectedTab = selectedTab,
                             onTabSelected = onTabSelected,
                             onAddClick = { showQuickLog = true },
