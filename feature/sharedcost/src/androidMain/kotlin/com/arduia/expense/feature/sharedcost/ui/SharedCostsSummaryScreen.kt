@@ -108,11 +108,12 @@ fun SharedCostsSummaryScreen(
                 .background(colors.surface)
                 .padding(horizontal = dimens.cardPadding),
         ) {
+            val nameTemplate = stringResource(R.string.shared_default_person_name)
             state.participants.forEachIndexed { index, participant ->
                 SharedCostParticipantRow(
                     index = index + 1,
                     name = participant.name.trim()
-                        .ifEmpty { SharedCostSplitLogic.defaultParticipantName(index + 1) },
+                        .ifEmpty { SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate) },
                     amount = participant.shareLabel,
                 )
             }

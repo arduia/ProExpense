@@ -120,6 +120,34 @@ class SharedCostNameResolutionTest {
     }
 }
 
+/**
+ * i18n guard: `defaultParticipantName`/`syncNames`/`resolveNames` previously hardcoded the
+ * English "Person N" literal directly, even though this module ships `values-th`/`values-my`
+ * translations for everything else. They now accept a `%1$d`-style template
+ * (`R.string.shared_default_person_name` at real call sites) so the default name localizes too.
+ */
+class SharedCostDefaultNameTemplateTest {
+
+    @Test
+    fun defaultParticipantName_usesProvidedTemplate() {
+        assertEquals("P1", SharedCostSplitLogic.defaultParticipantName(1, "P%1\$d"))
+    }
+
+    @Test
+    fun syncNames_generatesMissingNamesUsingProvidedTemplate() {
+        val result = SharedCostSplitLogic.syncNames(emptyList(), count = 2, nameTemplate = "P%1\$d")
+
+        assertEquals(listOf("P1", "P2"), result)
+    }
+
+    @Test
+    fun resolveNames_blankNameFallsBackUsingProvidedTemplate() {
+        val result = SharedCostSplitLogic.resolveNames(listOf("Aiko", ""), count = 2, nameTemplate = "P%1\$d")
+
+        assertEquals(listOf("Aiko", "P2"), result)
+    }
+}
+
 /** [SharedCostSplitLogic]'s formatters must reflect the user's actual home currency, not a hardcoded "$". */
 class SharedCostCurrencyFormatTest {
 

@@ -46,12 +46,16 @@ private data class SharedCostDraft(
     val note: String = "",
     val peopleCount: Int = 2,
     val mode: SharedSplitMode = SharedSplitMode.Equal,
-    val names: List<String> = SharedCostSplitLogic.defaultNames(2),
+    // Deliberately empty, not pre-filled with English "Person N" defaults — every construction
+    // site immediately calls .withParticipants(nameTemplate), and syncNames only (re)generates
+    // names when the list size doesn't already match peopleCount, so a non-empty default here
+    // would permanently freeze the very first render's names in the non-localized fallback.
+    val names: List<String> = emptyList(),
     val customShareRaws: List<String> = emptyList(),
     val showZeroValidation: Boolean = false,
     val amountConfirmed: Boolean = false,
 ) {
-    fun toUiState(currencySymbol: String): SharedCostUiState {
+    fun toUiState(currencySymbol: String, nameTemplate: String): SharedCostUiState {
         val participants = SharedCostSplitLogic.buildParticipants(
             rawTotal = rawTotal,
             peopleCount = peopleCount,
@@ -59,6 +63,7 @@ private data class SharedCostDraft(
             names = names,
             customShareRaws = customShareRaws,
             currencySymbol = currencySymbol,
+            nameTemplate = nameTemplate,
         ).map { (name, share) -> SharedCostParticipantUi(name, share) }
         return SharedCostUiState(
             rawTotal = rawTotal,
@@ -114,19 +119,19 @@ private val SharedCostDraftSaver: Saver<SharedCostDraft, Any> = listSaver(
     },
 )
 
-private fun SharedCostDraft.withParticipants(): SharedCostDraft = copy(
-    names = SharedCostSplitLogic.syncNames(names, peopleCount),
+private fun SharedCostDraft.withParticipants(nameTemplate: String): SharedCostDraft = copy(
+    names = SharedCostSplitLogic.syncNames(names, peopleCount, nameTemplate),
     customShareRaws = SharedCostSplitLogic.syncCustomShares(customShareRaws, peopleCount, rawTotal),
 )
 
-private fun SharedCostUiState.toDraft(): SharedCostDraft = SharedCostDraft(
+private fun SharedCostUiState.toDraft(nameTemplate: String): SharedCostDraft = SharedCostDraft(
     rawTotal = rawTotal,
     note = note,
     peopleCount = peopleCount,
     mode = mode,
     names = participants.map { it.name },
     customShareRaws = shareRaws,
-).withParticipants()
+).withParticipants(nameTemplate)
 
 @Composable
 fun SharedCostsFlow(
@@ -158,10 +163,11 @@ fun SharedCostsFlow(
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
     val startStep = SharedCostStep.History
+    val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     var draft by rememberSaveable(stateSaver = SharedCostDraftSaver) {
-        mutableStateOf(SharedCostDraft().withParticipants())
+        mutableStateOf(SharedCostDraft().withParticipants(nameTemplate))
     }
     var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
@@ -175,7 +181,7 @@ fun SharedCostsFlow(
             SharedCostStep.Summary -> {
                 if (viewingId != null) {
                     viewingId = null
-                    draft = SharedCostDraft().withParticipants()
+                    draft = SharedCostDraft().withParticipants(nameTemplate)
                     step = SharedCostStep.History.name
                 } else {
                     step = SharedCostStep.Input.name
@@ -218,13 +224,13 @@ fun SharedCostsFlow(
                         items = history,
                         onNewSplit = {
                             viewingId = null
-                            draft = SharedCostDraft().withParticipants()
+                            draft = SharedCostDraft().withParticipants(nameTemplate)
                             step = SharedCostStep.Input.name
                         },
                         onItemClick = { item ->
                             sharedCostDetails[item.id]?.let { detail ->
                                 viewingId = item.id
-                                draft = detail.toDraft()
+                                draft = detail.toDraft(nameTemplate)
                                 step = SharedCostStep.Summary.name
                             }
                         },
@@ -234,7 +240,7 @@ fun SharedCostsFlow(
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(
-                        state = draft.toUiState(homeCurrencySymbol),
+                        state = draft.toUiState(homeCurrencySymbol, nameTemplate),
                         homeCurrencySymbol = homeCurrencySymbol,
                         onBack = {
                             if (viewingId != null) {
@@ -249,26 +255,26 @@ fun SharedCostsFlow(
                             draft = draft.copy(
                                 rawTotal = AmountInput.applyKey(draft.rawTotal, key),
                                 showZeroValidation = false,
-                            ).withParticipants()
+                            ).withParticipants(nameTemplate)
                         },
                         onBackspace = {
                             draft = draft.copy(
                                 rawTotal = AmountInput.applyBackspace(draft.rawTotal),
                                 showZeroValidation = false,
-                            ).withParticipants()
+                            ).withParticipants(nameTemplate)
                         },
                         onNoteChange = { note -> draft = draft.copy(note = note) },
                         onDecrementPeople = {
                             if (draft.peopleCount > 2) {
-                                draft = draft.copy(peopleCount = draft.peopleCount - 1).withParticipants()
+                                draft = draft.copy(peopleCount = draft.peopleCount - 1).withParticipants(nameTemplate)
                             }
                         },
                         onIncrementPeople = {
                             if (draft.peopleCount < 20) {
-                                draft = draft.copy(peopleCount = draft.peopleCount + 1).withParticipants()
+                                draft = draft.copy(peopleCount = draft.peopleCount + 1).withParticipants(nameTemplate)
                             }
                         },
-                        onModeSelected = { mode -> draft = draft.copy(mode = mode).withParticipants() },
+                        onModeSelected = { mode -> draft = draft.copy(mode = mode).withParticipants(nameTemplate) },
                         onShareChange = { index, raw ->
                             val updated = draft.customShareRaws.toMutableList()
                             while (updated.size <= index) {
@@ -303,7 +309,7 @@ fun SharedCostsFlow(
                 }
                 SharedCostStep.Summary -> {
                     SharedCostsSummaryScreen(
-                        state = draft.toUiState(homeCurrencySymbol),
+                        state = draft.toUiState(homeCurrencySymbol, nameTemplate),
                         homeCurrencySymbol = homeCurrencySymbol,
                         readOnly = viewingId != null,
                         backLabel = if (viewingId != null) {
@@ -314,21 +320,21 @@ fun SharedCostsFlow(
                         onBack = {
                             if (viewingId != null) {
                                 viewingId = null
-                                draft = SharedCostDraft().withParticipants()
+                                draft = SharedCostDraft().withParticipants(nameTemplate)
                                 step = SharedCostStep.History.name
                             } else {
                                 step = SharedCostStep.Input.name
                             }
                         },
                         onSwitchToCustom = {
-                            draft = draft.copy(mode = SharedSplitMode.Custom).withParticipants()
+                            draft = draft.copy(mode = SharedSplitMode.Custom).withParticipants(nameTemplate)
                             step = SharedCostStep.Input.name
                         },
                         onSave = {
                             val title = draft.note.trim().ifEmpty { defaultSplitTitle }
                             // Cleared name fields fall back to "Person N" — blank participant
                             // names must never be persisted (US-SHC-1 default-naming rule).
-                            val names = SharedCostSplitLogic.resolveNames(draft.names, draft.peopleCount)
+                            val names = SharedCostSplitLogic.resolveNames(draft.names, draft.peopleCount, nameTemplate)
                             val id = viewingId
                             if (id != null) {
                                 onUpdateSplit(id, title, draft.rawTotal, draft.mode, names, draft.customShareRaws)
@@ -338,7 +344,7 @@ fun SharedCostsFlow(
                             toastMessage = savedToastMessage
                             onSaved()
                             viewingId = null
-                            draft = SharedCostDraft().withParticipants()
+                            draft = SharedCostDraft().withParticipants(nameTemplate)
                             step = SharedCostStep.History.name
                         },
                     )

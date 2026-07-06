@@ -9,6 +9,8 @@ enum class SharedSplitMode {
 }
 
 object SharedCostSplitLogic {
+    private const val DEFAULT_NAME_TEMPLATE = "Person %1\$d"
+
     private fun totalCents(rawTotal: String): Long {
         val value = AmountInput.numericValue(rawTotal) ?: 0.0
         return (value * 100).roundToLong()
@@ -32,27 +34,33 @@ object SharedCostSplitLogic {
         return "$currencySymbol$display"
     }
 
-    fun defaultParticipantName(index: Int): String = "Person $index"
+    /**
+     * [nameTemplate] is a `%1$d`-style format string (from `R.string.shared_default_person_name`
+     * at real call sites) — defaults to the English fallback only for contexts with no Android
+     * resources available (tests, previews).
+     */
+    fun defaultParticipantName(index: Int, nameTemplate: String = DEFAULT_NAME_TEMPLATE): String =
+        nameTemplate.format(index)
 
-    fun defaultNames(count: Int): List<String> =
-        (1..count).map { defaultParticipantName(it) }
+    fun defaultNames(count: Int, nameTemplate: String = DEFAULT_NAME_TEMPLATE): List<String> =
+        (1..count).map { defaultParticipantName(it, nameTemplate) }
 
     fun previewNames(count: Int): List<String> = when (count) {
         4 -> listOf("Aiko", "Ben", "Carlos", "Dee")
         else -> defaultNames(count)
     }
 
-    fun syncNames(current: List<String>, count: Int): List<String> {
+    fun syncNames(current: List<String>, count: Int, nameTemplate: String = DEFAULT_NAME_TEMPLATE): List<String> {
         if (current.size == count) return current
         return (0 until count).map { index ->
-            current.getOrNull(index) ?: defaultParticipantName(index + 1)
+            current.getOrNull(index) ?: defaultParticipantName(index + 1, nameTemplate)
         }
     }
 
     /** Save-time normalization: a cleared (blank) name falls back to its "Person N" default. */
-    fun resolveNames(current: List<String>, count: Int): List<String> =
-        syncNames(current, count).mapIndexed { index, name ->
-            name.trim().ifEmpty { defaultParticipantName(index + 1) }
+    fun resolveNames(current: List<String>, count: Int, nameTemplate: String = DEFAULT_NAME_TEMPLATE): List<String> =
+        syncNames(current, count, nameTemplate).mapIndexed { index, name ->
+            name.trim().ifEmpty { defaultParticipantName(index + 1, nameTemplate) }
         }
 
     fun syncCustomShares(
@@ -80,8 +88,9 @@ object SharedCostSplitLogic {
         names: List<String>,
         customShareRaws: List<String>,
         currencySymbol: String = "$",
+        nameTemplate: String = DEFAULT_NAME_TEMPLATE,
     ): List<Pair<String, String>> {
-        val resolvedNames = syncNames(names, peopleCount)
+        val resolvedNames = syncNames(names, peopleCount, nameTemplate)
         return resolvedNames.mapIndexed { index, name ->
             val shareLabel = when (mode) {
                 SharedSplitMode.Equal -> formatCents(equalShareCents(rawTotal, peopleCount), currencySymbol)

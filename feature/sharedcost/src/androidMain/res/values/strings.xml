@@ -41,4 +41,5 @@
     <string name="shared_history_empty_title">No splits yet</string>
     <string name="shared_history_empty_body">Split your first bill with friends, roommates, or travel companions.</string>
     <string name="shared_history_empty_action">New split</string>
+    <string name="shared_default_person_name">Person %1$d</string>
 </resources>

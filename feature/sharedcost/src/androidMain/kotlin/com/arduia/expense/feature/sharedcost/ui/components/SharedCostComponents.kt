@@ -439,6 +439,7 @@ fun SharedCostPerPersonCard(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.card
+    val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     Column(
         modifier = modifier
@@ -469,7 +470,7 @@ fun SharedCostPerPersonCard(
                 showNoteIcon = true,
                 editableName = editableNames,
                 onNameChange = { onNameChange(index, it) },
-                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1),
+                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate),
             )
         }
     }
@@ -486,6 +487,7 @@ fun SharedCostCustomSplitCard(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val shape = ProExpenseTheme.shapes.card
+    val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     Column(
         modifier = modifier
@@ -504,7 +506,7 @@ fun SharedCostCustomSplitCard(
                 onAmountChange = { onShareChange(index, it) },
                 editableName = editableNames,
                 onNameChange = { onNameChange(index, it) },
-                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1),
+                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate),
             )
         }
     }
