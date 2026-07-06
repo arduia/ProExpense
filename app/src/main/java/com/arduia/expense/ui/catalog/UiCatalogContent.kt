@@ -652,7 +652,7 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
                 MoreCurrencyScreen(
                     items = previewMoreCurrencies,
                     selectedCode = "USD",
-                    onSelect = {},
+                    onSave = {},
                     onBack = {},
                 )
             },

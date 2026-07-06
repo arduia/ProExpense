@@ -50,7 +50,7 @@ USD).
 
 **When**
 
-* I pick a currency.
+* I pick a currency and tap Save, then confirm the change in the dialog.
 
 **Then**
 
@@ -75,7 +75,8 @@ USD).
 ## Functional Requirements
 
 * [ ] More → Currency opens the same picker UI used during setup.
-* [ ] Selecting a currency immediately updates the home currency setting.
+* [ ] Tapping a currency only highlights it as pending; the home currency setting is not updated until the user taps Save and confirms in the dialog.
+* [ ] Save is disabled while the pending selection matches the current home currency.
 * [ ] The setting survives app relaunch.
 
 ---
@@ -135,3 +136,11 @@ neither key changes when Settings saves a new currency, so Quick Log kept using 
 currency until the app relaunched. `MoreFlow` now takes an `onCurrencyChanged` callback invoked
 right after `saveHomeCurrency` succeeds, so `ExpenseApp` updates its copy (and therefore Quick Log)
 in the same session, not just after restart.
+
+**Gap fix (2026-07):** More → Currency previously persisted the new home currency the instant a
+row was tapped, with no way to review or back out before the change took effect app-wide.
+`MoreCurrencyScreen` now tracks the tapped row as a local pending selection (highlighted, not yet
+saved) and exposes a bottom Save button (disabled while the pending selection matches the current
+home currency). `CurrencySettingsFlow` shows a `ProAlertDialog` confirmation naming the pending
+currency before calling `onSelect` → `saveHomeCurrency`; cancelling the dialog leaves the current
+home currency untouched.

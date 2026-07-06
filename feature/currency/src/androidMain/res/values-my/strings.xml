@@ -3,4 +3,9 @@
     <string name="more_currency_title">ငွေကြေး</string>
     <string name="more_currency_subtitle">သင့်အခြေခံငွေကြေး။ ထည့်သွင်းမှုအားလုံးအတွက် သက်ရောက်သည်— ထည့်သွင်းမှုတစ်ခုချင်းအတွက် ငွေကြေးအမျိုးမျိုးသည် နောင်တွင်ရရှိမည်။</string>
     <string name="search_currency_placeholder">ငွေကြေး ရှာဖွေရန်...</string>
+    <string name="more_currency_save_action">သိမ်းရန်</string>
+    <string name="more_currency_confirm_title">အခြေခံငွေကြေးကို ပြောင်းမလား?</string>
+    <string name="more_currency_confirm_body">ယခုမှစတင်၍ ထည့်သွင်းမှုအသစ်များတွင် %1$s (%2$s) ကို အသုံးပြုပါမည်။ ရှိပြီးသားမှတ်တမ်းများသည် မူလငွေကြေးအတိုင်း ဆက်ရှိနေပါမည်။</string>
+    <string name="more_currency_confirm_action">သိမ်းရန်</string>
+    <string name="more_currency_confirm_cancel">မလုပ်တော့ပါ</string>
 </resources>

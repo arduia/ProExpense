@@ -109,7 +109,7 @@ class MoreScreenshotTest {
         MoreCurrencyScreen(
             items = previewMoreCurrencies,
             selectedCode = "USD",
-            onSelect = {},
+            onSave = {},
             onBack = {},
         )
     }

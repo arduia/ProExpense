@@ -21,6 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.currency.R
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.feature.currency.ui.preview.MoreCurrencyItemUi
@@ -32,7 +35,7 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 fun MoreCurrencyScreen(
     items: List<MoreCurrencyItemUi>,
     selectedCode: String,
-    onSelect: (String) -> Unit,
+    onSave: (String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,6 +43,7 @@ fun MoreCurrencyScreen(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     var searchQuery by remember { mutableStateOf("") }
+    var pendingCode by remember(selectedCode) { mutableStateOf(selectedCode) }
     val filteredItems = remember(items, searchQuery) {
         items.filter { item ->
             searchQuery.isBlank() ||
@@ -65,10 +69,11 @@ fun MoreCurrencyScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space24),
+                .padding(top = dimens.space8, bottom = dimens.space8),
             verticalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
             Text(
@@ -90,11 +95,23 @@ fun MoreCurrencyScreen(
             filteredItems.forEach { item ->
                 CurrencyCard(
                     item = item,
-                    selected = item.code == selectedCode,
-                    onClick = { onSelect(item.code) },
+                    selected = item.code == pendingCode,
+                    onClick = { pendingCode = item.code },
                 )
             }
         }
+
+        ProButton(
+            text = stringResource(R.string.more_currency_save_action),
+            onClick = { onSave(pendingCode) },
+            variant = ProButtonVariant.Primary,
+            size = ProButtonSize.Lg,
+            fillMaxWidth = true,
+            enabled = pendingCode != selectedCode,
+            modifier = Modifier
+                .padding(horizontal = dimens.screenPadding)
+                .padding(bottom = dimens.space18),
+        )
     }
 }
 
@@ -110,7 +127,7 @@ private fun MoreCurrencyPreview() {
         MoreCurrencyScreen(
             items = previewMoreCurrencies,
             selectedCode = "USD",
-            onSelect = {},
+            onSave = {},
             onBack = {},
         )
     }
