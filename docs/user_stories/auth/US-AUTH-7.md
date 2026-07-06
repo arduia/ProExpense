@@ -138,3 +138,17 @@ all four corners) for its centered, floating card. Fixed at the component level,
 dialog in the app (Debt, Journal, Categories, Clear Data, PIN) gets correctly rounded corners, not
 just this one. Covered by the existing `DebtScreenshotTest.edge_debt_conflict` /
 `edge_debt_settled` baselines (re-recorded).
+
+Gap fix (2026-07): disabling PIN could land on the Category list screen instead of the More hub
+after successfully re-entering the current PIN in Scenario 2's verify step. Root cause:
+`PinEntryScreen` (the composable both `PinLockFlow` and `PinVerifyFlow` render) is displayed as an
+overlay sibling above other screens — during disable-PIN verify, it sits above the still-composed
+`MoreHubScreen` in `MoreFlow`'s `Box`. Its root `Column` had `.fillMaxSize()` but no click-consuming
+modifier of its own, unlike `ProAlertDialog`'s scrim/card or `ProBottomSheetHost`'s scrim, which
+both deliberately swallow taps for this exact reason. A tap landing on empty space in the PIN
+screen (margins, gaps between keypad buttons) fell straight through to whatever card sat at that
+same position on the Hub screen underneath — in the reported case, "Categories". Fixed by adding a
+tap-swallowing `.clickable(indication = null, onClick = {})` to `PinEntryScreen`'s root, and to
+`PinChangeFlow`'s and `PinSetupFlow`'s outer `Box` (used the same way as overlays, sharing the
+identical gap). Covered by `PinOverlayClickThroughTest.tapOnEmptySpace_doesNotReachContentBehindTheOverlay`
+(`app/src/test/.../ui/more/`), which fails without the fix and passes with it.

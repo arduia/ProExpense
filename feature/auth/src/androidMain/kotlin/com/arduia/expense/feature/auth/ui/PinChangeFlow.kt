@@ -2,6 +2,8 @@ package com.arduia.expense.feature.auth.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -49,7 +51,10 @@ fun PinChangeFlow(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ProExpenseTheme.colors.paper),
+            .background(ProExpenseTheme.colors.paper)
+            // Rendered as an overlay sibling above the More hub — swallow taps so they can't
+            // fall through to whatever's underneath (see PinEntryScreen for the same fix).
+            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {}),
     ) {
         AnimatedContent(
             targetState = step,
