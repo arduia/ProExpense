@@ -205,10 +205,12 @@ fun JournalListScreen(
             }
 
             val hasActiveFilter = dateRangeLabel != null || state.selectedFilterId != "all"
-            if (state.isLoading) {
+            if (state.isLoading && state.days.isEmpty()) {
                 // Records load asynchronously after first composition — without this, "no data
                 // yet" and "genuinely no records" render identically and the empty-state
                 // illustration flashes on every visit for a user who actually has records.
+                // Only for the initial load though: a reload with rows already on screen keeps
+                // showing them (blanking mid-reload is the Journal "blink" glitch).
                 Box(modifier = Modifier.weight(1f).fillMaxWidth())
             } else if (state.searchActive && state.days.isEmpty()) {
                 JournalNoResults(

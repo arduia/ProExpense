@@ -153,6 +153,10 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             .collectAsState(initial = null)
         var handledFirstSignal by remember { mutableStateOf(false) }
         LaunchedEffect(changeSignal) {
+            // collectAsState's synthetic null runs this effect before the flow ever emits — if it
+            // consumed the first-signal guard, the flow's initial (non-mutation) emission would
+            // trigger a spurious reload right after every tab open, blinking the list.
+            if (changeSignal == null) return@LaunchedEffect
             if (!handledFirstSignal) {
                 handledFirstSignal = true
             } else {
