@@ -13,7 +13,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import com.arduia.expense.feature.auth.ui.PinEntryScreen
-import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Assert.assertFalse

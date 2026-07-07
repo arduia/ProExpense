@@ -18,7 +18,7 @@ import com.arduia.expense.feature.auth.ui.PinSecurityQuestionScreen
 import com.arduia.expense.feature.auth.ui.PinSetPinScreen
 import com.arduia.expense.feature.auth.ui.PinSetupScreen
 import com.arduia.expense.feature.auth.R
-import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.feature.auth.ui.preview.previewPinEntry
 import com.arduia.expense.feature.auth.ui.preview.previewPinLock

@@ -15,8 +15,8 @@ import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.R
 import com.arduia.expense.feature.auth.VerifyPinResult
 import com.arduia.expense.feature.auth.VerifyPinUseCase
-import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
-import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
+import com.arduia.expense.feature.auth.PinEntryLogic
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.delay
@@ -69,29 +69,28 @@ fun PinVerifyFlow(
                 entryError = false
                 break
             }
-            val totalSeconds = (remaining / 1000).toInt()
-            countdownLabel = "%d:%02d".format(totalSeconds / 60, totalSeconds % 60)
+            countdownLabel = PinEntryLogic.countdownLabel(remaining)
             delay(1000)
         }
     }
 
     fun handleDigit(digit: Int) {
         if (lockoutUntil != null) return
-        if (entryError) {
-            entryError = false
-            entryBuffer = ""
-        }
-        if (entryBuffer.length < 6) {
-            entryBuffer += digit
-            if (entryBuffer.length == 6) {
-                val pin = entryBuffer
+        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit, hadError = entryError)) {
+            is PinEntryLogic.DigitResult.Updated -> {
+                entryError = false
+                entryBuffer = result.buffer
+            }
+            is PinEntryLogic.DigitResult.Completed -> {
+                entryError = false
+                entryBuffer = result.pin
                 scope.launch {
-                    when (val result = verifyPin(pin)) {
+                    when (val verifyResult = verifyPin(result.pin)) {
                         is VerifyPinResult.Unlocked -> onVerified()
                         is VerifyPinResult.Incorrect -> {
                             entryBuffer = ""
                             entryError = true
-                            lockoutUntil = result.lockoutUntilMs
+                            lockoutUntil = verifyResult.lockoutUntilMs
                         }
                         is VerifyPinResult.Error -> {
                             entryBuffer = ""
@@ -106,11 +105,7 @@ fun PinVerifyFlow(
     PinEntryScreen(
         state = PinEntryUiState(
             filledDots = entryBuffer.length,
-            mode = when {
-                lockoutUntil != null -> PinEntryMode.Locked
-                entryError -> PinEntryMode.Error
-                else -> PinEntryMode.Default
-            },
+            mode = PinEntryLogic.entryMode(lockedOut = lockoutUntil != null, error = entryError),
             countdownLabel = countdownLabel,
             showBiometric = false,
         ),
@@ -120,7 +115,7 @@ fun PinVerifyFlow(
         onBack = onCancel,
         backLabel = stringResource(R.string.pin_disable_verify_cancel),
         onDigit = ::handleDigit,
-        onBackspace = { if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1) },
+        onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
         onBiometric = {},
         onForgot = {},
         modifier = modifier,

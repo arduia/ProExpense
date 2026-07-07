@@ -15,7 +15,7 @@ import com.arduia.expense.feature.sharedcost.SaveSharedCostInput
 import com.arduia.expense.feature.sharedcost.SplitMode
 import com.arduia.expense.feature.sharedcost.UpdateSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
-import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState

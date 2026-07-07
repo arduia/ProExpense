@@ -10,8 +10,8 @@ import androidx.compose.ui.test.performTextReplacement
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.theme.ProArtboard

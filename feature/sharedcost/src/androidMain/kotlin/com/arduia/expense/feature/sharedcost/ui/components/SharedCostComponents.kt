@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.sharedcost.R
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.ui.design.DetailFieldCard
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph

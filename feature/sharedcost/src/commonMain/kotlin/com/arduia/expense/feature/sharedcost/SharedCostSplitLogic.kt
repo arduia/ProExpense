@@ -1,7 +1,7 @@
-package com.arduia.expense.feature.sharedcost.ui.components
+package com.arduia.expense.feature.sharedcost
 
-import kotlin.math.roundToLong
 import com.arduia.expense.ui.design.AmountInput
+import kotlin.math.roundToLong
 
 enum class SharedSplitMode {
     Equal,
@@ -37,10 +37,11 @@ object SharedCostSplitLogic {
     /**
      * [nameTemplate] is a `%1$d`-style format string (from `R.string.shared_default_person_name`
      * at real call sites) — defaults to the English fallback only for contexts with no Android
-     * resources available (tests, previews).
+     * resources available (tests, previews). Substituted manually because `String.format` is
+     * JVM-only and this must run on iOS.
      */
     fun defaultParticipantName(index: Int, nameTemplate: String = DEFAULT_NAME_TEMPLATE): String =
-        nameTemplate.format(index)
+        nameTemplate.replace("%1\$d", index.toString()).replace("%d", index.toString())
 
     fun defaultNames(count: Int, nameTemplate: String = DEFAULT_NAME_TEMPLATE): List<String> =
         (1..count).map { defaultParticipantName(it, nameTemplate) }

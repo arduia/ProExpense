@@ -1,16 +1,8 @@
 package com.arduia.expense.feature.auth.ui.preview
 
+import com.arduia.expense.feature.auth.PinEntryMode
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.R
-
-enum class PinEntryMode { Default, Error, Locked }
-
-data class PinEntryUiState(
-    val filledDots: Int,
-    val mode: PinEntryMode = PinEntryMode.Default,
-    val countdownLabel: String? = null,
-    val showBiometric: Boolean = true,
-    val digits: String = "",
-)
 
 data class PinSetupUiState(
     val pinAuthOn: Boolean = true,

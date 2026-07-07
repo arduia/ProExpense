@@ -20,8 +20,9 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.feature.auth.BiometricAuthenticator
 import com.arduia.expense.feature.auth.R
 import com.arduia.expense.feature.auth.SetupPinUseCase
-import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
-import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
+import com.arduia.expense.feature.auth.PinEntryLogic
+import com.arduia.expense.feature.auth.PinEntryMode
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.PinSetupUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.theme.ProArtboard
@@ -132,18 +133,17 @@ fun PinSetupFlow(
                     state = PinEntryUiState(filledDots = entryBuffer.length, digits = entryBuffer),
                     headingRes = R.string.pin_set_new_heading,
                     onDigit = { digit ->
-                        if (entryBuffer.length < 6) {
-                            entryBuffer += digit
-                            if (entryBuffer.length == 6) {
-                                newPin = entryBuffer
+                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit)) {
+                            is PinEntryLogic.DigitResult.Updated -> entryBuffer = result.buffer
+                            is PinEntryLogic.DigitResult.Completed -> {
+                                entryBuffer = result.pin
+                                newPin = result.pin
                                 confirmPin = ""
                                 step = PinSetupStep.Setup
                             }
                         }
                     },
-                    onBackspace = {
-                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
-                    },
+                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
                     onBack = { step = PinSetupStep.Setup },
                 )
                 PinSetupStep.EnterConfirm -> PinSetPinScreen(
@@ -154,15 +154,16 @@ fun PinSetupFlow(
                     ),
                     headingRes = R.string.pin_confirm_heading,
                     onDigit = { digit ->
-                        if (confirmError) {
-                            confirmError = false
-                            entryBuffer = ""
-                        }
-                        if (entryBuffer.length < 6) {
-                            entryBuffer += digit
-                            if (entryBuffer.length == 6) {
-                                if (entryBuffer == newPin) {
-                                    confirmPin = entryBuffer
+                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit, hadError = confirmError)) {
+                            is PinEntryLogic.DigitResult.Updated -> {
+                                confirmError = false
+                                entryBuffer = result.buffer
+                            }
+                            is PinEntryLogic.DigitResult.Completed -> {
+                                confirmError = false
+                                if (result.pin == newPin) {
+                                    entryBuffer = result.pin
+                                    confirmPin = result.pin
                                     step = PinSetupStep.Setup
                                 } else {
                                     confirmError = true
@@ -171,9 +172,7 @@ fun PinSetupFlow(
                             }
                         }
                     },
-                    onBackspace = {
-                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
-                    },
+                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
                     onBack = { step = PinSetupStep.Setup },
                 )
                 PinSetupStep.Security -> PinSecurityQuestionScreen(

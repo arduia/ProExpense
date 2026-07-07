@@ -26,8 +26,8 @@ import com.arduia.expense.feature.sharedcost.ui.components.SharedCostCustomSplit
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostNoteField
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPeopleCard
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
