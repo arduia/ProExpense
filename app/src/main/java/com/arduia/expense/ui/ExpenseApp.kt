@@ -150,18 +150,18 @@ fun ExpenseApp(
     val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
     val categoryNames = remember(categories) { categories.associate { it.id.value to it.name } }
     // Hoisted here (not inside EventsTab) so it survives Budget <-> other tab switches — it
-    // previously lived in a remember/LaunchedEffect scoped to EventsTab itself, which was torn
-    // down and recreated (resetting to an empty map) every time the user navigated away and back.
-    var spentByEvent by remember { mutableStateOf<Map<String, Money>>(emptyMap()) }
-    LaunchedEffect(events) {
-        val spent = mutableMapOf<String, Money>()
-        events.forEach { event ->
-            when (val result = eventRepository.getSpent(event.id)) {
-                is Result.Success -> spent[event.id.value] = result.data
-                is Result.Error -> Unit
-            }
+    // previously lived in a remember scoped to EventsTab itself, which was torn down and
+    // recreated (resetting to an empty map) every time the user navigated away and back.
+    // Summed from the already-observed records Flow (not a one-shot EventRepository.getSpent
+    // call) so the Budget tab and Event Detail summary react immediately to any add/edit/delete
+    // of a linked expense, not just to the event itself changing.
+    val spentByEvent = remember(events, records) {
+        events.associate { event ->
+            val spentCents = records
+                .filter { (it.link as? RecordLink.ToEvent)?.eventId == event.id }
+                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
+            event.id.value to Money(Amount(spentCents), event.budget.currency)
         }
-        spentByEvent = spent
     }
 
     val homeSymbol = currencySymbol(homeCurrencyCode)
@@ -169,16 +169,8 @@ fun ExpenseApp(
     val activeEvent = remember(events) {
         events.filter { it.status == EventStatus.ACTIVE }.maxByOrNull { it.startEpochMillis }
     }
-    // Summed from the already-observed records Flow (not a one-shot EventRepository.getSpent
-    // call) so the progress bar reacts immediately to any add/edit/delete of a linked expense,
-    // not just to the active event itself changing.
-    val activeEventSpent = remember(activeEvent, records) {
-        activeEvent?.let { event ->
-            val spentCents = records
-                .filter { (it.link as? RecordLink.ToEvent)?.eventId == event.id }
-                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
-            Money(Amount(spentCents), event.budget.currency)
-        }
+    val activeEventSpent = remember(activeEvent, spentByEvent) {
+        activeEvent?.let { spentByEvent[it.id.value] }
     }
     val activeEventState = activeEvent?.let { event ->
         val progress = computeEventProgress(event, activeEventSpent)
