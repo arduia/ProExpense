@@ -13,6 +13,18 @@ kotlin {
         }
     }
 
+    iosArm64()
+    iosSimulatorArm64()
+
+    // Compose UI lives entirely in androidMain — see shared/build.gradle.kts for why the Compose
+    // Compiler plugin must be dropped from iOS compiler-plugin classpaths.
+    project.afterEvaluate {
+        configurations.matching { it.name.startsWith("kotlinCompilerPluginClasspathIos") }
+            .configureEach {
+                exclude(group = "org.jetbrains.kotlin", module = "kotlin-compose-compiler-plugin-embeddable")
+            }
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:domain"))
@@ -20,13 +32,14 @@ kotlin {
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.coroutines.test)
         }
         androidMain.dependencies {
-            implementation(project(":core:storage"))
             implementation("io.insert-koin:koin-compose:4.1.1")
             implementation(libs.androidx.activity.compose)
         }

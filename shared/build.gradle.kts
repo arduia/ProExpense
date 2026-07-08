@@ -14,6 +14,21 @@ kotlin {
         }
     }
 
+    iosArm64()
+    iosSimulatorArm64()
+
+    // This module's Compose UI lives entirely in androidMain (Jetpack Compose, not Compose
+    // Multiplatform) — the Compose Compiler plugin still registers itself for every compilation
+    // in the project, including iOS ones with no Composable code, where it fails hard because no
+    // Compose runtime is on that classpath. Drop the plugin from the iOS compiler-plugin
+    // classpaths so those compilations skip Compose IR generation entirely.
+    project.afterEvaluate {
+        configurations.matching { it.name.startsWith("kotlinCompilerPluginClasspathIos") }
+            .configureEach {
+                exclude(group = "org.jetbrains.kotlin", module = "kotlin-compose-compiler-plugin-embeddable")
+            }
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.coroutines.core)

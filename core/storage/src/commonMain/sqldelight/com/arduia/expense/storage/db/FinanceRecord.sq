@@ -3,7 +3,9 @@
 -- of recording (null signals "use amount_cents/currency_code" — same-currency records never carry
 -- the redundant pair). Set together for a converted foreign-currency entry (US-LOG multi-currency).
 -- updated_at: system "last modified" timestamp, distinct from recorded_at (user-chosen, possibly-backdated)
--- integrity_hash: hex HMAC-SHA256 over canonical fields, keyed by dedicated Android Keystore HMAC key
+-- integrity_algo/integrity_hash: portable checksum (default SHA-256) over the record's versioned
+-- canonicalPayload(), computed via the platformDigestHex expect/actual — deliberately not a
+-- device-bound key, so the same value verifies after export/import or a platform switch.
 CREATE TABLE finance_record (
     id TEXT NOT NULL PRIMARY KEY,
     amount_cents INTEGER NOT NULL,
