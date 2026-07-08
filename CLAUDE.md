@@ -26,6 +26,9 @@ The sections below summarize what AGENTS.md covers; follow AGENTS.md for the ful
   any Gradle command (writes `local.properties`, installs SDK 36 / build-tools 36.0.0).
 - **Verify** — Default flavor `devDebug`. Preferred gate: `./gradlew verifyAll`. UI changes also
   require `@Preview` per state and a green `./gradlew :app:verifyRoborazziDevDebug` before push.
+- **iOS compatibility** — every KMP module must declare `iosArm64()` + `iosSimulatorArm64()`;
+  `checkIosTargets` fails the build if one is missing, `verifyIosCompat` cross-compiles iOS klibs
+  (part of `verifyAll`). See `docs/ios_compatibility_plan.md`.
 - **Branches** — When the user names a branch, check it out; don't create a new one. One working
   branch per session. Never open pull requests unless explicitly asked.
 
@@ -33,7 +36,9 @@ The sections below summarize what AGENTS.md covers; follow AGENTS.md for the ful
 
 ```bash
 bash scripts/setup-android-toolchain.sh    # one-time toolchain setup (fresh env)
-./gradlew verifyAll                         # build + unit tests + screenshot tests
+./gradlew verifyAll                         # build + unit tests + screenshot tests + iOS klib compile
+./gradlew verifyIosCompat                   # iOS klib cross-compile only (all KMP modules)
+./gradlew checkIosTargets                   # fails fast if a KMP module lacks iOS targets
 ./gradlew :app:testDevDebugUnitTest         # unit tests (logic changes)
 ./gradlew :app:compileDevDebugKotlin        # fast compile check
 ./gradlew :app:verifyRoborazziDevDebug      # screenshot verify (UI changes)

@@ -21,6 +21,9 @@ kotlin {
         }
     }
 
+    iosArm64()
+    iosSimulatorArm64()
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:domain"))
@@ -50,9 +53,9 @@ kotlin {
             // Pure-JVM driver: exercises real SQL + mappers without SQLCipher/Android.
             implementation(libs.sqldelight.sqlite.driver)
         }
-        // NOTE: an `iosMain` stub (DatabaseDriverFactory.ios.kt) is checked in for iOS readiness
-        // but no iOS target is configured yet, so it is intentionally not compiled. Add the iOS
-        // targets + native SQLDelight driver here when the iosApp phase starts.
+        // NOTE: iosMain now compiles under the iOS klib gate (`./gradlew verifyIosCompat`).
+        // DatabaseDriverFactory.ios.kt is still a TODO stub — add the SQLDelight native driver
+        // (+ SQLCipher-iOS) here and implement it when the iosApp phase starts.
     }
 }
 

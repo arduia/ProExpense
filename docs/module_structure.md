@@ -71,6 +71,14 @@ Phase 2 UI modules already scaffolded: `feature:debt`, `feature:eventbudget`, `f
 
 | Layer | Android | iOS |
 |-------|---------|-----|
-| Database | Room (`core:storage` androidMain) | CoreData (`iosMain`) |
+| Database | Room/SQLDelight (`core:storage` androidMain) | SQLDelight native driver (`iosMain`) |
 | PIN | Keystore (`feature:auth` androidMain) | Keychain (`iosMain`) |
 | UI | Jetpack Compose (`app`) | SwiftUI (`iosApp`) |
+
+## iOS Compatibility (mandatory)
+
+Every module above declares `iosArm64()` + `iosSimulatorArm64()` in addition to `androidTarget()`.
+This is enforced by the `checkIosTargets` Gradle task (fails the build if a KMP module is missing
+either target) and verified end-to-end by `verifyIosCompat` (cross-compiles iOS klibs for every
+module; part of `verifyAll`). See `docs/ios_compatibility_plan.md` for the phased roadmap and
+`AGENTS.md` → "iOS Compatibility" for the enforcement rules new modules must follow.

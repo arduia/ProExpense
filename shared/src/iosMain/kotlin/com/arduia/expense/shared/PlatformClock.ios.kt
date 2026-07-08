@@ -1,7 +1,7 @@
 package com.arduia.expense.shared
 
 /**
- * iOS-readiness stub (not compiled yet — no iOS target is configured). Implement with
+ * iOS-readiness stub (compiles in the iOS klib gate but still throws). Implement with
  * NSDate().timeIntervalSince1970 when the iosApp phase starts.
  */
 actual fun currentEpochMillis(): Long {

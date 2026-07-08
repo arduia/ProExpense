@@ -118,6 +118,25 @@ ProExpense/
 - **Amount** value object — stored as integer ×100 (see `core:domain`)
 - **No cross-feature dependencies** — features compose only at the `app` / UI layer
 
+### iOS Compatibility (mandatory)
+
+Every KMP module (`shared`, `core:*`, `feature:*`) must build for iOS, not just Android. Full
+roadmap: `docs/ios_compatibility_plan.md`. Rules that apply now:
+
+- **Every KMP module declares `iosArm64()` and `iosSimulatorArm64()`** alongside `androidTarget()`
+  in its `build.gradle.kts`. Enforced by the `checkIosTargets` Gradle task — a module missing
+  either target **fails the build**, it is not a warning.
+- **New-module checklist** (any new `feature:*` or `core:*` KMP module): Kotlin Multiplatform
+  plugin + both iOS targets + business logic in `commonMain` + platform seams via `expect`/`actual`
+  (`androidMain` / `iosMain`) + zero `java.*` / `android.*` imports in `commonMain`.
+- **`./gradlew verifyIosCompat`** cross-compiles iOS klibs for every KMP module (Kotlin/Native only
+  — runs without macOS/Xcode). It is part of `verifyAll`, so the default Step 6 gate already covers
+  it. Run it standalone when iterating on `commonMain` or module build files without touching
+  Android UI.
+- iOS actuals may remain `TODO()` stubs (see `shared/src/iosMain/`, `core/storage/src/iosMain/`)
+  until the corresponding Phase 1 work in `docs/ios_compatibility_plan.md` — the gate proves
+  compile-compatibility, not feature completeness.
+
 ---
 
 ## Development Workflow — 8-Step Gate System
@@ -260,6 +279,7 @@ This script:
 | Build check | `./gradlew :app:compileDevDebugKotlin` |
 | Screenshot / Compose UI | `./gradlew :app:verifyRoborazziDevDebug` |
 | Small non-logic | `./gradlew :app:compileDevDebugKotlin` |
+| KMP module / `commonMain` / `expect`-`actual` change or new module | `./gradlew verifyIosCompat` (included in `verifyAll`) |
 
 **UI change gate (mandatory before push):** Any change to Compose screens, themes, or
 `ui/design/` components **must** pass screenshot verification in-session before `git push`:
@@ -337,8 +357,14 @@ bash scripts/setup-android-toolchain.sh
 ```
 
 ```bash
-# Unified verification (build + unit tests + screenshot tests)
+# Unified verification (build + unit tests + screenshot tests + iOS klib compile)
 ./gradlew verifyAll
+
+# iOS compile-time compatibility only (cross-compiles klibs for every KMP module)
+./gradlew verifyIosCompat
+
+# Fails fast if any KMP module is missing iOS targets (no compile)
+./gradlew checkIosTargets
 
 # Unit tests (logic changes)
 ./gradlew :app:testDevDebugUnitTest
