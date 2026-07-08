@@ -1,6 +1,6 @@
 # Pro Expense — Data Layer iOS-Compatibility Report
 
-**Date:** 2026-07-08
+**Date:** 2026-07-08 (original audit) · **Updated:** 2026-07-08 (remediation)
 **Scope:** Audit of the implemented data layer (`core:domain`, `core:data`, `core:storage`,
 `shared`, `feature:*` data code, app composition root) against the iOS-Readiness Principles and
 Phase 0 requirements in `pro-expense-detail-design-plan.md` and the companion
@@ -10,7 +10,41 @@ implementation, and DI module was read directly; commonMain was scanned for JVM-
 
 ---
 
-## 1. Verdict
+## 0. Remediation update
+
+Gaps **G1–G4, G6, G7** below are resolved as of this update — see each gap's status line for what
+changed. **G5** (the security-model deviation) remains an open, deliberate deferral; only the
+documentation-reconciliation half of it is done (§5.2 in the companion design doc now states the
+current model explicitly).
+
+The suggested order of work in §4 was followed in order, plus two real cross-platform bugs it
+didn't anticipate, found only once iOS targets actually existed and were compiled:
+
+- `@JvmInline` needs an explicit `import kotlin.jvm.JvmInline` in commonMain — it's in Kotlin/Native's
+  stdlib but not in Native's default-import set (only the JVM target implicitly imports `kotlin.jvm.*`).
+  `Amount` and every `*Id` value class in `core:domain` had this latent gap.
+- `Dispatchers.IO` does not resolve on this project's Kotlin/Native target with the pinned
+  coroutines version (1.6.4) — every repository's `= Dispatchers.IO` default param had to become a
+  required constructor parameter, with each platform factory passing its own dispatcher explicitly.
+- `java.security.SecureRandom` (PIN/security-answer salt generation) was a second JVM-only API in
+  `PinAuthRepositoryImpl` the original audit missed — `kotlin.random.Random` is multiplatform but
+  not a CSPRNG, so it needed its own `secureRandomBytes` expect/actual seam alongside `platformPbkdf2Sha256`.
+- 7 of 12 feature modules' commonMain Koin DI wiring (`org.koin.dsl.module`) only compiled by
+  accident — Android's single-target build silently merges commonMain and androidMain onto one
+  classpath, so `koin-core` being declared only in `androidMain.dependencies` never surfaced as
+  missing until an iOS-only compile task existed to expose it.
+- The Compose Compiler Gradle plugin registers its IR extension for *every* Kotlin compilation in
+  a project by default, including iOS ones with zero `@Composable` code — it fails hard there with
+  no Compose runtime on the classpath. Fixed by excluding the plugin from each module's
+  `kotlinCompilerPluginClasspathIos*` configurations, since Compose UI in this codebase lives
+  entirely in `androidMain` (Jetpack Compose, not Compose Multiplatform).
+
+None of these would have been caught by code review alone — they only surface when the iOS
+compiler actually runs, which is the core argument for G1 (declare the targets now, not later).
+
+---
+
+## 1. Verdict (original — see §0 for the current state)
 
 **The data layer is substantially iOS-ready in code shape, but not yet iOS-provable in build
 shape.** The commonMain/androidMain discipline held for domain models, contracts, mappers,
@@ -21,15 +55,15 @@ enforces that discipline at compile time; the SQLDelight repository implementati
 deviation from the design plan exists in the security model (PIN is a hash gate, not the
 SQLCipher key source).
 
-Scorecard against the plan's five iOS-Readiness Principles:
+Scorecard against the plan's five iOS-Readiness Principles, **at the time of the original audit**:
 
-| # | Principle | Status |
-|---|-----------|--------|
-| 1 | No business logic in `androidMain` | ⚠️ **Partial** — auth lockout/hash logic and repository coordination logic (event-cache recompute) live in `androidMain` |
-| 2 | `expect/actual` seams declared from day one | ✅ Seams exist (`DatabaseDriverFactory`, `platformDigestHex`, `Platform`) with iOS stub files checked in — ⚠️ but stubs are **not compiled** (no iOS target) |
-| 3 | ViewModels expose platform-agnostic state | ✅ `ProViewModel`/`StatefulViewModel` are pure-KMP (no `androidx.lifecycle`); `LoggingViewModel` is commonMain; no Android types found in any commonMain state |
-| 4 | Repository pattern is the only data access path | ✅ No screen/ViewModel touches SQLDelight; `StorageModule` exposes only `core:data` contracts — ⚠️ one exception: `feature:auth` reaches into `core:storage`'s internal `AppMetaStore` |
-| 5 | Periodic self-check per phase | ⚠️ Not evidenced; the compile gate that would automate it (iOS targets) is absent |
+| # | Principle | Status (original) | Status (after remediation) |
+|---|-----------|--------|--------|
+| 1 | No business logic in `androidMain` | ⚠️ **Partial** — auth lockout/hash logic and repository coordination logic (event-cache recompute) live in `androidMain` | ✅ Resolved — see G2, G3 |
+| 2 | `expect/actual` seams declared from day one | ✅ Seams exist with iOS stub files checked in — ⚠️ but stubs are **not compiled** (no iOS target) | ✅ Fully resolved — see G1 |
+| 3 | ViewModels expose platform-agnostic state | ✅ Already held | ✅ Still holds |
+| 4 | Repository pattern is the only data access path | ✅ Mostly — ⚠️ one exception: `feature:auth` reaches into `core:storage`'s internal `AppMetaStore` | ✅ Fully resolved — see G3, G4 |
+| 5 | Periodic self-check per phase | ⚠️ Not evidenced; the compile gate that would automate it (iOS targets) is absent | ✅ `verifyIos` Gradle task makes this a standing gate, not a one-time check |
 
 ---
 
@@ -84,7 +118,14 @@ commonMain. Only `storageModule` (needs `androidContext()`) is platform-bound, w
 
 ## 3. Gaps and Deviations (ranked by iOS impact)
 
-### G1 — No iOS target is declared in any module ⚠️ *biggest structural gap*
+### G1 — No iOS target is declared in any module ✅ RESOLVED
+
+All 15 KMP modules (`shared`, `core:domain`, `core:data`, `core:storage`, all 11 `feature:*`
+modules) now declare `iosArm64()`/`iosSimulatorArm64()`. A `verifyIos` Gradle task compiles every
+module's `commonMain` for `iosSimulatorArm64` and is wired into `verifyAll`, so this is now a
+standing compiler gate, not a one-time check. `app` intentionally stays Android-only.
+
+*(Original finding, preserved for context:)*
 
 Every KMP module (`shared`, `core:*`, `feature:*`) declares `androidTarget()` only. The `iosMain`
 stub files in `shared` and `core:storage` are **not compiled** — `core/storage/build.gradle.kts`
@@ -104,7 +145,19 @@ half: stub *files* without stub *source sets*. Consequences:
 `core:storage` (the data-layer spine) and make `verifyAll`/CI compile the iOS klibs. Feature and
 UI modules can follow later. This is the cheapest moment to do it — commonMain is currently clean.
 
-### G2 — SQLDelight repository implementations live in `androidMain` unnecessarily
+### G2 — SQLDelight repository implementations live in `androidMain` unnecessarily ✅ RESOLVED
+
+All 8 `SqlDelight*Repository` classes, `AppMetaLocalStore`, and its 6 dependent repositories moved
+to `core:storage/commonMain`. The clock seam is `currentEpochMillis()` in `shared`; the
+`Dispatchers.IO` default became a required constructor param (Android's factory still passes
+`Dispatchers.IO` explicitly — see the remediation update above for why the default itself had to
+go). `AppMetaProfileRepository` no longer touches `android.content.SharedPreferences` directly —
+a new `OnboardingFlagStore` commonMain interface hides it, with an Android actual wrapping
+`SharedPreferences` as before. `ProExpenseStorage` is now a commonMain class assembled by an
+internal `buildProExpenseStorage()`, with a thin androidMain `create()` extension doing only the
+platform parts (Keystore key manager, SQLCipher driver, `SharedPreferences`).
+
+*(Original finding, preserved for context:)*
 
 All eight `SqlDelight*Repository` classes plus `AppMetaLocalStore` are in
 `core:storage/androidMain`, yet their code uses only multiplatform APIs (SQLDelight runtime,
@@ -119,7 +172,17 @@ commonMain. As placed, the entire repository layer would need to be moved or dup
 `core:storage/commonMain`. After that, the iOS delta for the whole storage layer is genuinely just
 `DatabaseDriverFactory.actual` + a key manager.
 
-### G3 — Business logic in `feature:auth/androidMain` (principle #1 violation)
+### G3 — Business logic in `feature:auth/androidMain` (principle #1 violation) ✅ RESOLVED
+
+`PinAuthRepositoryImpl` moved to `feature:auth/commonMain` as `DefaultPinAuthRepository`, built on
+a new `PinCredentialStore` contract in `core:data` (implemented by `AppMetaPinCredentialStore` in
+`core:storage`). The lockout escalation policy, the `v2:<iterations>:<saltHex>:<hashHex>` hash
+format, and the 120,000 PBKDF2 iteration count are preserved exactly — a `commonTest` suite asserts
+the persisted hash still starts with `v2:120000:` and exercises the real PBKDF2 actual (Android,
+today) end-to-end. `platformPbkdf2Sha256` and `secureRandomBytes` expect/actuals were added to
+`shared` alongside the existing `platformDigestHex`.
+
+*(Original finding, preserved for context:)*
 
 `PinAuthRepositoryImpl` (androidMain) contains logic that is not platform-specific:
 
@@ -139,7 +202,14 @@ next to `platformDigestHex` in `shared`; move `PinAuthRepositoryImpl` (policy, f
 to `feature:auth/commonMain`. This is the highest-value single refactor for iOS parity of the
 security screens (14/15).
 
-### G4 — `feature:* → core:storage` dependency-rule violations
+### G4 — `feature:* → core:storage` dependency-rule violations ✅ RESOLVED
+
+Removed the unused `implementation(project(":core:storage"))` declaration from all 10 feature
+modules that didn't need it, and from `feature:importexport`'s `commonMain` block (its `androidMain`
+block already had the real, needed one for file I/O). `feature:auth`'s dependency is gone entirely
+now that it depends only on `core:data`'s `PinCredentialStore`, per G3.
+
+*(Original finding, preserved for context:)*
 
 All 12 feature modules declare `implementation(project(":core:storage"))` in `androidMain`
 (`feature:importexport` also in `commonMain` — the one sanctioned exception per the data-layer
@@ -174,7 +244,13 @@ the iOS phase, or the two platforms will implement different security semantics.
 **Recommendation:** update the two design docs to state the current model + the deferred rotation
 plan, so the docs and code stop disagreeing.
 
-### G6 — Dead and contradictory integrity artifacts
+### G6 — Dead and contradictory integrity artifacts ✅ RESOLVED
+
+Both `IntegrityKeyManager` files deleted; the `FinanceRecord.sq` header comment now describes the
+actual portable `RecordIntegrityVerifier`/`platformDigestHex` scheme instead of the abandoned
+device-bound Keystore HMAC approach.
+
+*(Original finding, preserved for context:)*
 
 `IntegrityKeyManager` (commonMain) + `AndroidIntegrityKeyManager` (device-bound Keystore
 HMAC-SHA256) are **entirely unused** — superseded by the portable `RecordIntegrityVerifier`
@@ -185,32 +261,32 @@ either would build the wrong (non-portable) `actual`.
 
 **Recommendation:** delete both `IntegrityKeyManager` files and fix the `.sq` comment.
 
-### G7 — Minor items
+### G7 — Minor items ✅ RESOLVED (first two items)
 
-- `ProExpenseStorage` publicly exposes `database: ProExpenseDatabase` and
-  `appMetaStore: AppMetaLocalStore` — storage internals available to any module that (improperly)
-  depends on `core:storage` (currently exploited only by `feature:auth`, see G3/G4). Make them
-  `internal` once G3 lands.
-- `LocalDataStore` (`isAvailable()`) is a leftover stub with no implementation or caller — delete.
+- `ProExpenseStorage.database` and `.appMetaStore` are now `internal` — safe now that G3 removed
+  the only external consumer (`feature:auth`).
+- `LocalDataStore` deleted (was dead).
 - `System.loadLibrary("sqlcipher")` in the Android driver factory is correct and correctly placed
-  (androidMain) — no action; noted because the iOS actual needs the equivalent
+  (androidMain) — no action needed; noted because the iOS actual needs the equivalent
   SQLCipher-link-step documented when written.
 
 ---
 
 ## 4. Suggested Order of Work (pre-iOS hardening)
 
-| Step | Item | Size | Gap |
-|------|------|------|-----|
-| 1 | Remove unused `core:storage` deps from feature build files | XS | G4 |
-| 2 | Delete dead `IntegrityKeyManager` pair; fix `FinanceRecord.sq` comment | XS | G6 |
-| 3 | Add iOS targets to `shared`, `core:domain`, `core:data`, `core:storage`; compile klibs in CI | S | G1 |
-| 4 | Clock seam; move `SqlDelight*Repository` + `AppMetaLocalStore` to commonMain | M | G2 |
-| 5 | `platformPbkdf2Sha256` expect/actual; move `PinAuthRepositoryImpl` logic to commonMain behind a `core:data` contract | M | G3 |
-| 6 | Reconcile security-model deferral in both design docs | S | G5 |
+| Step | Item | Size | Gap | Status |
+|------|------|------|-----|--------|
+| 1 | Remove unused `core:storage` deps from feature build files | XS | G4 | ✅ Done |
+| 2 | Delete dead `IntegrityKeyManager` pair; fix `FinanceRecord.sq` comment | XS | G6 | ✅ Done |
+| 3 | Add iOS targets to `shared`, `core:domain`, `core:data`, `core:storage`; compile klibs in CI | S | G1 | ✅ Done — extended to **all 15** KMP modules, not just the spine, plus a `verifyIos` Gradle task |
+| 4 | Clock seam; move `SqlDelight*Repository` + `AppMetaLocalStore` to commonMain | M | G2 | ✅ Done |
+| 5 | `platformPbkdf2Sha256` expect/actual; move `PinAuthRepositoryImpl` logic to commonMain behind a `core:data` contract | M | G3 | ✅ Done |
+| 6 | Reconcile security-model deferral in both design docs | S | G5 | ✅ Doc updated (`pro-expense-data-layer-design.md` §5.2); the deferral itself is still open by design |
 
-Steps 1–3 are safe now and make every later step compiler-enforced. After step 5, the honest
-answer to the plan's Phase-6 self-check — "could this commonMain code run unmodified if we swapped
-in iOS tomorrow?" — becomes **yes** for the entire data layer, with the iOS phase reduced to:
-`DatabaseDriverFactory` actual (SQLCipher-iOS), `DatabaseKeyManager` actual (Keychain),
-`platformDigestHex`/`platformPbkdf2Sha256` actuals (CommonCrypto), and file I/O for import/export.
+All six steps landed. The honest answer to the plan's Phase-6 self-check — "could this commonMain
+code run unmodified if we swapped in iOS tomorrow?" — is now **yes** for the entire data layer,
+verified by `./gradlew verifyIos` rather than asserted. The remaining iOS-phase work is exactly the
+four `actual` implementations this report always said it would be:
+`DatabaseDriverFactory` (SQLCipher-iOS via `NativeSqliteDriver`), `DatabaseKeyManager` (Keychain),
+`platformDigestHex`/`platformPbkdf2Sha256`/`secureRandomBytes` (CommonCrypto), plus file I/O for
+import/export — no logic extraction, no repository rewrite.

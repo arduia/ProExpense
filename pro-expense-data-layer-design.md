@@ -273,7 +273,26 @@ principle #2) even though it won't compile against real CoreData/SQLCipher-iOS u
 this also requires adding the `iosMain` source set to `core/storage/build.gradle.kts`, which
 doesn't exist yet.
 
+**✅ Done (2026-07-08):** `iosArm64()`/`iosSimulatorArm64()` targets are declared on all 15 KMP
+modules (the data-layer spine plus every `feature:*` module), not just `core:storage`. The
+`DatabaseDriverFactory.ios.kt` stub now compiles as part of every `verifyIos` run; `createDriver`
+itself is still `TODO()` — the real `NativeSqliteDriver` + SQLCipher-iOS implementation is iOS-phase
+work, per the iOS-compatibility report's suggested order of work.
+
 ### 5.2 Key lifecycle
+
+**Current implementation state (2026-07-08) — differs from the design below, documented here so
+the two don't silently disagree:** `DatabaseKeyManager`'s shipped interface has a single method,
+`getOrCreateDatabaseKey()` — the DB key is *always* a random 32-byte Keystore-wrapped key, generated
+once on first launch and never rotated. The PIN is stored as a PBKDF2 hash in `app_meta.pin_hash`
+and acts as a **UI gate** (`PinAuthRepository.verifyPin`), not as the source of the SQLCipher key.
+`rotateKey`/`wrapWithBiometric`/`unwrapWithBiometric` below, and the `PRAGMA rekey` lifecycle they
+imply, are **not implemented** — `DatabaseKeyManager`'s KDoc marks this as an intentional Phase-0
+scope cut ("PIN-derived `PRAGMA rekey` rotation and biometric-gated key wrapping build on top of
+this once the storage layer is stable and are intentionally deferred to a later phase"). This means
+Screens 14/15's "verification = successful DB open" framing does not hold yet, and the
+crash-safety flag below is moot until rotation actually exists. Treat the interface and lifecycle
+table below as the target design for that later phase, not the current behavior.
 
 A `DatabaseKeyManager` (commonMain interface, androidMain impl using raw Android Keystore — not
 `androidx-security-crypto`'s `EncryptedSharedPreferences`, since biometric-gated per-operation
@@ -309,9 +328,13 @@ the pragma until that's confirmed safe.
 - **ID generation**: project is on Kotlin 2.4, where `kotlin.uuid.Uuid` is multiplatform-stable —
   no `expect/actual` needed; repository implementations (or domain factory functions) can call
   `Uuid.random().toString()` directly in `commonMain`. Cheaper than rolling a custom expect/actual.
-- **`iosMain` stubs**: `core:storage` currently has only a `commonMain` source set — add empty
-  `androidMain`/`iosMain` directories + Gradle source sets now, consistent with `E13`'s Phase 0
-  requirement, even though Android is the only real target being built.
+- **`iosMain` stubs**: ✅ Done (2026-07-08) — `androidMain`/`iosMain` source sets exist on all 15
+  KMP modules, not just `core:storage`; `verifyIos` compiles every module's `commonMain` for
+  `iosSimulatorArm64` as a standing Gradle task.
+- **Crypto/time seams added beyond the original design**: `currentEpochMillis()`,
+  `platformPbkdf2Sha256()`, `secureRandomBytes()`, and `ByteArray.toHexString()` joined
+  `platformDigestHex()` in `shared` — needed to move the storage repositories and
+  `PinAuthRepository`'s implementation out of `androidMain` (see the iOS-compatibility report's G2/G3).
 
 ---
 
