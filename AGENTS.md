@@ -113,6 +113,9 @@ ProExpense/
 ### Key Patterns
 
 - **KMP feature modules** — one module per MVP use case; business rules in `commonMain`
+- **KMP modules declare iOS targets from creation** — `iosArm64()`/`iosSimulatorArm64()` alongside
+  `androidTarget()`, and the module's path added to `kmpModulesWithIosTargets` in the root
+  `build.gradle.kts` so `verifyIos` actually compiles it — see guard G6, not deferred to "later"
 - **Repository pattern** — contracts in `core:data` / `feature:*`; implementations in platform source sets
 - **Result wrapper** — sealed `Result<T>` in `core:data` for async outcomes
 - **Amount** value object — stored as integer ×100 (see `core:domain`)
@@ -256,10 +259,15 @@ This script:
 |-------------|---------|
 | Any agent change (preferred) | `./gradlew verifyAll` |
 | Logic change | `./gradlew :app:testDevDebugUnitTest` |
+| KMP `commonMain` / multiplatform change (`shared`, `core:*`, `feature:*`) | `./gradlew verifyIos` (compiles every KMP module for iOS — see G6; included in `verifyAll`) |
 | Multi-module | `./gradlew test` |
 | Build check | `./gradlew :app:compileDevDebugKotlin` |
 | Screenshot / Compose UI | `./gradlew :app:verifyRoborazziDevDebug` |
 | Small non-logic | `./gradlew :app:compileDevDebugKotlin` |
+
+**iOS compile gate:** any change touching a KMP module's `commonMain` (or its `build.gradle.kts`)
+is not verified until `./gradlew verifyIos` (or `verifyAll`) exits 0 in-session — `compileDevDebugKotlin`
+and `testDevDebugUnitTest` only prove the Android target compiles, which is not the same claim.
 
 **UI change gate (mandatory before push):** Any change to Compose screens, themes, or
 `ui/design/` components **must** pass screenshot verification in-session before `git push`:
@@ -337,8 +345,11 @@ bash scripts/setup-android-toolchain.sh
 ```
 
 ```bash
-# Unified verification (build + unit tests + screenshot tests)
+# Unified verification (build + unit tests + screenshot tests + iOS compile)
 ./gradlew verifyAll
+
+# iOS compile check only — every KMP module's commonMain for iosSimulatorArm64 (see guard G6)
+./gradlew verifyIos
 
 # Unit tests (logic changes)
 ./gradlew :app:testDevDebugUnitTest
@@ -617,7 +628,7 @@ While the **`refactor/v2-migration`** branch is active and the v2 architecture r
 
 ---
 
-## Retrospectives Guard System (G1–G5)
+## Retrospectives Guard System (G1–G6)
 
 ### G1 — Detect No-Verify Environment Early
 
@@ -663,6 +674,38 @@ declare verification impossible. Treat all code as **unverified**. Compensate pe
   `proSelectable`) inside compact components** (chips, pills, dense rows) — the 48dp floor
   inflates the parent's layout. For a secondary micro-target inside an already-tappable
   surface use `clip(CircleShape)` + `proCircularRippleClickable` instead.
+
+### G6 — New KMP Module Needs iOS Wiring
+
+**Trigger:** A new `core:*` or `feature:*` Kotlin Multiplatform module is created, or an existing
+module's `kotlin {}` block (targets, source sets) is touched.
+
+**Action (all required before push):**
+
+- Declare `iosArm64()` and `iosSimulatorArm64()` alongside `androidTarget()` in the module's
+  `build.gradle.kts` immediately — don't defer this "until the iOS phase." Every KMP module in
+  this codebase carries iOS targets from creation as of the data-layer iOS-compatibility work.
+- Add the module's Gradle path to the `kmpModulesWithIosTargets` list in the root
+  `build.gradle.kts`. A module with iOS targets declared but **missing from this list** is
+  silently unchecked by `verifyIos`/`verifyAll` — the list, not the target declaration alone, is
+  what makes the gate enforce anything.
+- If the module applies the Compose Compiler plugin (`alias(libs.plugins.compose.compiler)`) and
+  its Compose UI lives only in `androidMain` (the norm here — Jetpack Compose, not Compose
+  Multiplatform), add the `kotlinCompilerPluginClasspathIos*` exclusion block — copy the pattern
+  from `shared/build.gradle.kts` — or the iOS compile fails with
+  `IncompatibleComposeRuntimeVersionException` even though the module has zero `@Composable` code
+  outside `androidMain`.
+- `commonMain` code for a new module must compile for Kotlin/Native, not just JVM/Android. Known
+  traps this codebase already hit once: `@JvmInline` needs an explicit
+  `import kotlin.jvm.JvmInline` in `commonMain` (JVM implicitly imports `kotlin.jvm.*`; Native does
+  not); `Dispatchers.IO` does not resolve on this project's Kotlin/Native target — inject
+  `CoroutineDispatcher` as a required constructor param instead of defaulting to it;
+  `java.security.SecureRandom`/`System.currentTimeMillis()`/`"%02x".format(...)` and any other
+  `java.*`/`javax.*` import are JVM-only — use the `shared` seams
+  (`currentEpochMillis`, `platformPbkdf2Sha256`, `secureRandomBytes`, `platformDigestHex`,
+  `ByteArray.toHexString`) or add a new `expect`/`actual` pair following that pattern.
+- Run `./gradlew verifyIos` (or `verifyAll`) before declaring Step 6 green — a module compiling for
+  Android alone proves nothing about iOS.
 
 ### Recording
 
