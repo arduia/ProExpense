@@ -1,6 +1,5 @@
 package com.arduia.expense.storage
 
-import android.content.Context
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.ClearDataRepository
@@ -15,7 +14,6 @@ import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.data.SharedCostRepository
-import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.DEFAULT_CATEGORIES
 import com.arduia.expense.domain.RecordIntegrityVerifier
 import com.arduia.expense.storage.db.ProExpenseDatabase
@@ -27,6 +25,7 @@ import com.arduia.expense.storage.repository.AppMetaLocaleRepository
 import com.arduia.expense.storage.repository.AppMetaLockoutRepository
 import com.arduia.expense.storage.repository.AppMetaProfileRepository
 import com.arduia.expense.storage.repository.AppMetaSecurityStateReader
+import com.arduia.expense.storage.repository.OnboardingFlagStore
 import com.arduia.expense.storage.repository.SqlDelightCategoryRepository
 import com.arduia.expense.storage.repository.SqlDelightClearDataRepository
 import com.arduia.expense.storage.repository.SqlDelightDebtRepository
@@ -35,13 +34,16 @@ import com.arduia.expense.storage.repository.SqlDelightFinanceRecordRepository
 import com.arduia.expense.storage.repository.SqlDelightImportExportRepository
 import com.arduia.expense.storage.repository.SqlDelightSharedCostRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
  * Encapsulated storage composition: opens the encrypted database and exposes only `core:data`
  * contracts so SQLDelight/SQLCipher types never leak past `core:storage`. The app composition root
  * builds feature repositories on top of these.
+ *
+ * Construction is platform-specific (opening the encrypted DB needs a platform driver + key
+ * manager) — see [buildProExpenseStorage] for the shared assembly logic, and the platform `create`
+ * factories (Android: `ProExpenseStorage.create`, in `androidMain`) for the platform entry point.
  */
 class ProExpenseStorage internal constructor(
     val database: ProExpenseDatabase,
@@ -77,59 +79,57 @@ class ProExpenseStorage internal constructor(
         }
     }
 
-    companion object {
-        private const val DEFAULT_HOME_CURRENCY = "USD"
+    companion object
+}
 
-        fun create(
-            context: Context,
-            keyManager: DatabaseKeyManager = AndroidDatabaseKeyManager(context.applicationContext),
-            dispatcher: CoroutineDispatcher = Dispatchers.IO,
-        ): ProExpenseStorage {
-            val passphrase = keyManager.getOrCreateDatabaseKey()
-            val driver = DatabaseDriverFactory(context.applicationContext).createDriver(passphrase)
-            val database = ProExpenseDatabase(driver)
-            val appMetaStore = AppMetaLocalStore(database.appMetaQueries, dispatcher)
-            val onboardingPrefs = context.applicationContext
-                .getSharedPreferences("onboarding_state", Context.MODE_PRIVATE)
-            val integrityVerifier = RecordIntegrityVerifier()
-            val financeRecordRepository = SqlDelightFinanceRecordRepository(
-                queries = database.financeRecordQueries,
-                eventQueries = database.eventQueries,
-                integrityVerifier = integrityVerifier,
-                dispatcher = dispatcher,
-            )
-            val eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher)
-            val debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher)
-            val sharedCostRepository = SqlDelightSharedCostRepository(
-                queries = database.sharedCostQueries,
-                financeRecordRepository = financeRecordRepository,
-                dispatcher = dispatcher,
-            )
-            return ProExpenseStorage(
-                database = database,
-                appMetaStore = appMetaStore,
-                dispatcher = dispatcher,
-                financeRecordRepository = financeRecordRepository,
-                categoryRepository = SqlDelightCategoryRepository(database.categoryQueries, dispatcher),
-                eventRepository = eventRepository,
-                debtRepository = debtRepository,
-                budgetRepository = AppMetaBudgetRepository(appMetaStore),
-                lockoutRepository = AppMetaLockoutRepository(appMetaStore),
-                securityStateReader = AppMetaSecurityStateReader(appMetaStore),
-                currencySettingsRepository = AppMetaCurrencySettingsRepository(appMetaStore),
-                sharedCostRepository = sharedCostRepository,
-                importExportRepository = SqlDelightImportExportRepository(
-                    financeRecordRepository = financeRecordRepository,
-                    eventRepository = eventRepository,
-                    debtRepository = debtRepository,
-                    sharedCostRepository = sharedCostRepository,
-                    dispatcher = dispatcher,
-                ),
-                clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
-                profileRepository = AppMetaProfileRepository(appMetaStore, onboardingPrefs),
-                localeRepository = AppMetaLocaleRepository(appMetaStore),
-                defaultCategoryRepository = AppMetaDefaultCategoryRepository(appMetaStore),
-            )
-        }
-    }
+/**
+ * Assembles every repository on top of an already-open [database]. Platform factories own opening
+ * the encrypted database and constructing platform-specific dependencies (key manager, driver,
+ * [OnboardingFlagStore]) before calling this — this function itself touches no platform API.
+ */
+internal fun buildProExpenseStorage(
+    database: ProExpenseDatabase,
+    dispatcher: CoroutineDispatcher,
+    onboardingFlagStore: OnboardingFlagStore,
+): ProExpenseStorage {
+    val appMetaStore = AppMetaLocalStore(database.appMetaQueries, dispatcher)
+    val integrityVerifier = RecordIntegrityVerifier()
+    val financeRecordRepository = SqlDelightFinanceRecordRepository(
+        queries = database.financeRecordQueries,
+        eventQueries = database.eventQueries,
+        integrityVerifier = integrityVerifier,
+        dispatcher = dispatcher,
+    )
+    val eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher)
+    val debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher)
+    val sharedCostRepository = SqlDelightSharedCostRepository(
+        queries = database.sharedCostQueries,
+        financeRecordRepository = financeRecordRepository,
+        dispatcher = dispatcher,
+    )
+    return ProExpenseStorage(
+        database = database,
+        appMetaStore = appMetaStore,
+        dispatcher = dispatcher,
+        financeRecordRepository = financeRecordRepository,
+        categoryRepository = SqlDelightCategoryRepository(database.categoryQueries, dispatcher),
+        eventRepository = eventRepository,
+        debtRepository = debtRepository,
+        budgetRepository = AppMetaBudgetRepository(appMetaStore),
+        lockoutRepository = AppMetaLockoutRepository(appMetaStore),
+        securityStateReader = AppMetaSecurityStateReader(appMetaStore),
+        currencySettingsRepository = AppMetaCurrencySettingsRepository(appMetaStore),
+        sharedCostRepository = sharedCostRepository,
+        importExportRepository = SqlDelightImportExportRepository(
+            financeRecordRepository = financeRecordRepository,
+            eventRepository = eventRepository,
+            debtRepository = debtRepository,
+            sharedCostRepository = sharedCostRepository,
+            dispatcher = dispatcher,
+        ),
+        clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
+        profileRepository = AppMetaProfileRepository(appMetaStore, onboardingFlagStore),
+        localeRepository = AppMetaLocaleRepository(appMetaStore),
+        defaultCategoryRepository = AppMetaDefaultCategoryRepository(appMetaStore),
+    )
 }

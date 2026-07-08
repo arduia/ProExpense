@@ -9,19 +9,19 @@ import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.Money
+import com.arduia.expense.shared.currentEpochMillis
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.EventQueries
 import com.arduia.expense.storage.mapping.toDomain
 import com.arduia.expense.storage.mapping.toCode
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class SqlDelightEventRepository(
     private val queries: EventQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : EventRepository {
 
     override suspend fun getAll(): Result<List<Event>> = withContext(dispatcher) {
@@ -45,7 +45,7 @@ class SqlDelightEventRepository(
                 budget_cents = event.budget.amount.valueInCents,
                 currency_code = event.budget.currency.code,
                 status = event.status.toCode(),
-                created_at = existing?.created_at ?: System.currentTimeMillis(),
+                created_at = existing?.created_at ?: currentEpochMillis(),
                 cached_spent_cents = existing?.cached_spent_cents ?: 0,
                 cache_updated_at = existing?.cache_updated_at ?: 0,
             )

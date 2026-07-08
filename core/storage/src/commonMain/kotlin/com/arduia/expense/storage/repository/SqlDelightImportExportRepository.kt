@@ -24,7 +24,6 @@ import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.catchingResult
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class SqlDelightImportExportRepository(
@@ -32,7 +31,7 @@ class SqlDelightImportExportRepository(
     private val eventRepository: EventRepository,
     private val debtRepository: DebtRepository,
     private val sharedCostRepository: SharedCostRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : ImportExportRepository {
 
     override suspend fun exportAll(format: ExportFormat): Result<String> = withContext(dispatcher) {

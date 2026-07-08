@@ -22,7 +22,6 @@ import com.arduia.expense.storage.mapping.toDomain
 import com.arduia.expense.storage.mapping.toParticipantsJson
 import com.arduia.expense.storage.mapping.toStrategyJson
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -33,7 +32,7 @@ private const val SHARED_COST_DEFAULT_CATEGORY_ID = "shopping"
 class SqlDelightSharedCostRepository(
     private val queries: SharedCostQueries,
     private val financeRecordRepository: FinanceRecordRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : SharedCostRepository {
 
     override suspend fun create(input: SharedCostInput): Result<SharedCost> = withContext(dispatcher) {

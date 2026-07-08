@@ -6,12 +6,11 @@ import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import com.arduia.expense.storage.mapping.RecordLinkTag
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class SqlDelightClearDataRepository(
     private val database: ProExpenseDatabase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : ClearDataRepository {
 
     override suspend fun clearExpenses(): Result<Unit> = withContext(dispatcher) {

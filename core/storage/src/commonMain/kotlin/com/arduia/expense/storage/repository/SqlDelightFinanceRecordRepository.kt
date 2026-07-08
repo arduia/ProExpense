@@ -9,6 +9,7 @@ import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordIntegrityVerifier
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.toCode
+import com.arduia.expense.shared.currentEpochMillis
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.EventQueries
 import com.arduia.expense.storage.db.FinanceRecordQueries
@@ -17,7 +18,6 @@ import com.arduia.expense.storage.mapping.tagType
 import com.arduia.expense.storage.mapping.toDomain
 import com.arduia.expense.storage.mapping.toRecordLink
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class SqlDelightFinanceRecordRepository(
     private val queries: FinanceRecordQueries,
     private val eventQueries: EventQueries,
     private val integrityVerifier: RecordIntegrityVerifier = RecordIntegrityVerifier(),
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : FinanceRecordRepository {
 
     override suspend fun getAll(): Result<List<FinanceRecord>> = withContext(dispatcher) {
@@ -54,7 +54,7 @@ class SqlDelightFinanceRecordRepository(
                     type = record.type.toCode(),
                     note = record.note,
                     recorded_at = record.recordedAtEpochMillis,
-                    updated_at = System.currentTimeMillis(),
+                    updated_at = currentEpochMillis(),
                     tag_type = record.link.tagType(),
                     tag_id = record.link.tagId(),
                     integrity_algo = checksum.algorithm,
@@ -86,7 +86,7 @@ class SqlDelightFinanceRecordRepository(
     private fun recomputeEventCacheIfLinked(link: RecordLink?) {
         if (link !is RecordLink.ToEvent) return
         val total = queries.sumAmountByEventLink(link.eventId.value).executeAsOne()
-        eventQueries.updateEventCache(total, System.currentTimeMillis(), link.eventId.value)
+        eventQueries.updateEventCache(total, currentEpochMillis(), link.eventId.value)
     }
 
     override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = withContext(dispatcher) {

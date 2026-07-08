@@ -30,6 +30,7 @@ kotlin {
             implementation(project(":core:data"))
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
+            implementation(libs.sqldelight.coroutines)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
         }
@@ -40,7 +41,6 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.coroutines.core)
             implementation(libs.sqldelight.android.driver)
-            implementation(libs.sqldelight.coroutines)
             implementation(libs.androidx.sqlite)
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.sqlcipher.android)

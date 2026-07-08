@@ -1,6 +1,5 @@
 package com.arduia.expense.storage.repository
 
-import android.content.SharedPreferences
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
@@ -20,70 +19,23 @@ import kotlin.test.assertTrue
  */
 private class FakeSharedPreferences(
     private val backing: MutableMap<String, Any?> = mutableMapOf(),
-) : SharedPreferences by UnsupportedSharedPreferences {
-    override fun getBoolean(key: String, defValue: Boolean): Boolean =
-        backing[key] as? Boolean ?: defValue
+) : OnboardingFlagStore {
+    override fun getDisplayName(): String? = backing[KEY_DISPLAY_NAME] as? String
 
-    override fun getString(key: String?, defValue: String?): String? =
-        backing[key] as? String ?: defValue
-
-    override fun edit(): SharedPreferences.Editor = FakeEditor(backing)
-
-    private class FakeEditor(
-        private val backing: MutableMap<String, Any?>,
-    ) : SharedPreferences.Editor by UnsupportedEditor {
-        private val pending = mutableMapOf<String, Any?>()
-
-        override fun putBoolean(key: String, value: Boolean): SharedPreferences.Editor {
-            pending[key] = value
-            return this
-        }
-
-        override fun putString(key: String, value: String?): SharedPreferences.Editor {
-            pending[key] = value
-            return this
-        }
-
-        override fun commit(): Boolean {
-            backing.putAll(pending)
-            return true
-        }
-
-        override fun apply() {
-            backing.putAll(pending)
-        }
+    override fun setDisplayName(name: String) {
+        backing[KEY_DISPLAY_NAME] = name
     }
-}
 
-private object UnsupportedSharedPreferences : SharedPreferences {
-    override fun getAll(): MutableMap<String, *> = throw UnsupportedOperationException()
-    override fun getString(key: String?, defValue: String?) = throw UnsupportedOperationException()
-    override fun getStringSet(key: String?, defValues: MutableSet<String>?) = throw UnsupportedOperationException()
-    override fun getInt(key: String?, defValue: Int) = throw UnsupportedOperationException()
-    override fun getLong(key: String?, defValue: Long) = throw UnsupportedOperationException()
-    override fun getFloat(key: String?, defValue: Float) = throw UnsupportedOperationException()
-    override fun getBoolean(key: String?, defValue: Boolean) = throw UnsupportedOperationException()
-    override fun contains(key: String?) = throw UnsupportedOperationException()
-    override fun edit(): SharedPreferences.Editor = throw UnsupportedOperationException()
-    override fun registerOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
-    ) = throw UnsupportedOperationException()
-    override fun unregisterOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
-    ) = throw UnsupportedOperationException()
-}
+    override fun isOnboardingComplete(): Boolean = backing[KEY_ONBOARDING_COMPLETE] as? Boolean ?: false
 
-private object UnsupportedEditor : SharedPreferences.Editor {
-    override fun putString(key: String?, value: String?) = throw UnsupportedOperationException()
-    override fun putStringSet(key: String?, values: MutableSet<String>?) = throw UnsupportedOperationException()
-    override fun putInt(key: String?, value: Int) = throw UnsupportedOperationException()
-    override fun putLong(key: String?, value: Long) = throw UnsupportedOperationException()
-    override fun putFloat(key: String?, value: Float) = throw UnsupportedOperationException()
-    override fun putBoolean(key: String?, value: Boolean) = throw UnsupportedOperationException()
-    override fun remove(key: String?) = throw UnsupportedOperationException()
-    override fun clear() = throw UnsupportedOperationException()
-    override fun commit() = throw UnsupportedOperationException()
-    override fun apply() = throw UnsupportedOperationException()
+    override fun setOnboardingComplete() {
+        backing[KEY_ONBOARDING_COMPLETE] = true
+    }
+
+    private companion object {
+        const val KEY_ONBOARDING_COMPLETE = "onboarding_complete"
+        const val KEY_DISPLAY_NAME = "display_name"
+    }
 }
 
 class AppMetaRepositoriesTest {

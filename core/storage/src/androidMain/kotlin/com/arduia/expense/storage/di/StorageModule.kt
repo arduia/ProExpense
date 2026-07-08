@@ -1,6 +1,7 @@
 package com.arduia.expense.storage.di
 
 import com.arduia.expense.storage.ProExpenseStorage
+import com.arduia.expense.storage.create
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 

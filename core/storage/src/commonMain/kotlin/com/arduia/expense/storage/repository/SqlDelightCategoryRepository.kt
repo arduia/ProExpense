@@ -10,14 +10,13 @@ import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.CategoryQueries
 import com.arduia.expense.storage.mapping.toDomain
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class SqlDelightCategoryRepository(
     private val queries: CategoryQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : CategoryRepository {
 
     override suspend fun getAll(): Result<List<Category>> = withContext(dispatcher) {

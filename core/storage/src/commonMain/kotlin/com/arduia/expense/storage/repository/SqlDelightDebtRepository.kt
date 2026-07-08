@@ -12,14 +12,13 @@ import com.arduia.expense.storage.db.DebtQueries
 import com.arduia.expense.storage.mapping.toDomain
 import com.arduia.expense.storage.mapping.toCode
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class SqlDelightDebtRepository(
     private val queries: DebtQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : DebtRepository {
 
     override suspend fun getAll(): Result<List<Debt>> = withContext(dispatcher) {

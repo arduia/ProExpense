@@ -2,7 +2,6 @@ package com.arduia.expense.storage.repository
 
 import com.arduia.expense.storage.db.AppMetaQueries
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -54,7 +53,7 @@ data class AppMetaSnapshot(
  */
 class AppMetaLocalStore(
     private val queries: AppMetaQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : AppMetaStore {
     private val mutex = Mutex()
 
