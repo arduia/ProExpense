@@ -33,7 +33,7 @@ private const val SHARED_COST_DEFAULT_CATEGORY_ID = "shopping"
 class SqlDelightSharedCostRepository(
     private val queries: SharedCostQueries,
     private val financeRecordRepository: FinanceRecordRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : SharedCostRepository {
 
     override suspend fun create(input: SharedCostInput): Result<SharedCost> = withContext(dispatcher) {

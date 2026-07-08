@@ -30,6 +30,7 @@ kotlin {
             implementation(project(":core:data"))
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
+            implementation(libs.sqldelight.coroutines)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
         }
@@ -40,7 +41,6 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.coroutines.core)
             implementation(libs.sqldelight.android.driver)
-            implementation(libs.sqldelight.coroutines)
             implementation(libs.androidx.sqlite)
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.sqlcipher.android)
@@ -53,9 +53,9 @@ kotlin {
             // Pure-JVM driver: exercises real SQL + mappers without SQLCipher/Android.
             implementation(libs.sqldelight.sqlite.driver)
         }
-        // NOTE: iosMain now compiles under the iOS klib gate (`./gradlew verifyIosCompat`).
-        // DatabaseDriverFactory.ios.kt is still a TODO stub — add the SQLDelight native driver
-        // (+ SQLCipher-iOS) here and implement it when the iosApp phase starts.
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native.driver)
+        }
     }
 }
 

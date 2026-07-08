@@ -71,8 +71,8 @@ Phase 2 UI modules already scaffolded: `feature:debt`, `feature:eventbudget`, `f
 
 | Layer | Android | iOS |
 |-------|---------|-----|
-| Database | Room/SQLDelight (`core:storage` androidMain) | SQLDelight native driver (`iosMain`) |
-| PIN | Keystore (`feature:auth` androidMain) | Keychain (`iosMain`) |
+| Database (repositories shared in `core:storage` commonMain) | SQLCipher via `AndroidSqliteDriver` + Keystore-wrapped key | SQLDelight `NativeSqliteDriver` + Keychain-stored key (compile-verified; SQLCipher-iOS linking is Phase 3) |
+| PIN | Keystore (`feature:auth` androidMain) | Keychain (`iosMain`, not started) |
 | UI | Jetpack Compose (`app`) | SwiftUI (`iosApp`) |
 
 ## iOS Compatibility (mandatory)

@@ -28,17 +28,39 @@ detail doc referenced by `AGENTS.md` → "iOS Compatibility". Product vision and
 
 Replace `TODO()` stubs with working implementations, one seam at a time:
 
-| Seam | File | iOS implementation |
-|---|---|---|
-| Clock | `shared/src/iosMain/.../PlatformClock.ios.kt` | `NSDate().timeIntervalSince1970` |
-| Digest | `shared/src/iosMain/.../PlatformDigest.ios.kt` | CommonCrypto (`CC_MD5`/`CC_SHA256`) |
-| Date formatting | `shared/src/iosMain/.../PlatformDateFormatter.ios.kt` | `NSDateFormatter` / `NSCalendar` |
-| Local DB driver | `core/storage/src/iosMain/.../DatabaseDriverFactory.ios.kt` | SQLDelight `NativeSqliteDriver` + SQLCipher-iOS (key pragma) |
-| PIN storage | `feature/auth` (new `iosMain`) | Keychain |
+| Seam | File | iOS implementation | Status |
+|---|---|---|---|
+| Clock | `shared/src/iosMain/.../PlatformClock.ios.kt` | `NSDate().timeIntervalSince1970` | ✅ done |
+| Digest | `shared/src/iosMain/.../PlatformDigest.ios.kt` | CommonCrypto (`CC_MD5`/`CC_SHA256`) | ✅ done |
+| Local DB driver | `core/storage/src/iosMain/.../DatabaseDriverFactory.ios.kt` | SQLDelight `NativeSqliteDriver` + `encryptionConfig` key pragma | ✅ done (compile-only — see caveat below) |
+| DB key manager | `core/storage/src/iosMain/.../IosDatabaseKeyManager.kt` | Keychain generic-password item (`SecItemAdd`/`SecItemCopyMatching`) | ✅ done (compile-only — see caveat below) |
+| Fast key-value cache | `core/storage/src/{common,ios}Main/.../PlatformKeyValueStore.kt` | `NSUserDefaults` | ✅ done |
+| Storage repository implementations | `core/storage/src/commonMain/.../repository/*` | moved from androidMain — now shared | ✅ done (15 of 22 files were already platform-free; moved as-is) |
+| Date formatting | `shared/src/iosMain/.../PlatformDateFormatter.ios.kt` | `NSDateFormatter` / `NSCalendar` | not started |
+| PIN storage | `feature/auth` (new `iosMain`) | Keychain | not started |
 
 Each actual gets a backbone unit test in `commonTest` exercised through the `expect` contract
 (fakes at the repository boundary per `AGENTS.md` testing contract), plus platform-specific checks
 where Kotlin/Native test running is available.
+
+**Storage layer notes (from the `core:storage` migration):**
+
+- `core:storage`'s concrete implementations (`SqlDelight*Repository`, `AppMeta*Repository`,
+  `ProExpenseStorage`, the Koin bindings) now live in `commonMain` and are shared by both
+  platforms — only the driver, key manager, and key-value store differ per platform. Each platform
+  keeps its own `ProExpenseStorage.create(...)` convenience overload (`create(context)` on Android,
+  `create()` on iOS) that builds those three pieces and delegates to the portable
+  `ProExpenseStorage.create(driverFactory, keyManager, keyValueStore, dispatcher)`.
+- **Runtime-unverified pieces**: `NativeSqliteDriver`/`DatabaseConfiguration.Encryption` and the
+  Keychain `SecItem*` calls only klib-compile in this environment (no macOS/simulator to run
+  against) — verify the actual read/write round-trip on a real iOS run before relying on them.
+- **SQLCipher-iOS linking caveat**: `NativeSqliteDriver` links the system `sqlite3` by default. The
+  `encryptionConfig` PRAGMA set in `DatabaseDriverFactory.ios.kt` only takes effect once the iosApp
+  build links a SQLCipher-iOS binary in its place — that's Phase 3 work (needs Xcode/macOS); the
+  Kotlin code itself is already final and needs no further change for that switch.
+- Two portability bugs surfaced and were fixed while moving code to `commonMain`: `Dispatchers.IO`
+  isn't available on Kotlin/Native (use `Dispatchers.Default`), and `System.currentTimeMillis()`
+  isn't portable (use `shared`'s `currentEpochMillis()` seam).
 
 ## Phase 2 — iosApp shell
 

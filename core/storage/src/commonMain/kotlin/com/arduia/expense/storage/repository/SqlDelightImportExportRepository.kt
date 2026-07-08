@@ -37,7 +37,7 @@ class SqlDelightImportExportRepository(
     private val eventRepository: EventRepository,
     private val debtRepository: DebtRepository,
     private val sharedCostRepository: SharedCostRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ImportExportRepository {
 
     override suspend fun exportAll(format: ExportFormat): Result<String> = withContext(dispatcher) {

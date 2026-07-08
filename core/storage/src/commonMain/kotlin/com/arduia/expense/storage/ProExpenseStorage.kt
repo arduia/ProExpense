@@ -1,6 +1,5 @@
 package com.arduia.expense.storage
 
-import android.content.Context
 import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.ClearDataRepository
@@ -16,7 +15,6 @@ import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.data.ThemeRepository
-import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.DEFAULT_CATEGORIES
 import com.arduia.expense.domain.RecordIntegrityVerifier
 import com.arduia.expense.storage.db.ProExpenseDatabase
@@ -43,7 +41,9 @@ import kotlinx.coroutines.withContext
 /**
  * Encapsulated storage composition: opens the encrypted database and exposes only `core:data`
  * contracts so SQLDelight/SQLCipher types never leak past `core:storage`. The app composition root
- * builds feature repositories on top of these.
+ * builds feature repositories on top of these. Portable across Android/iOS — platform-specific
+ * pieces (driver, key manager, key-value store) are injected by [create]; each platform exposes its
+ * own convenience overload (see `ProExpenseStorage.create(context)` in androidMain).
  */
 class ProExpenseStorage internal constructor(
     val database: ProExpenseDatabase,
@@ -82,19 +82,22 @@ class ProExpenseStorage internal constructor(
     }
 
     companion object {
-        private const val DEFAULT_HOME_CURRENCY = "USD"
-
+        /**
+         * Portable core: platform pieces (driver, key manager, key-value cache) are injected so
+         * this composition step has no Context/Keychain dependency of its own. Platforms add a
+         * convenience overload building those pieces from their native primitives — see
+         * `ProExpenseStorage.create(context)` (androidMain) / `ProExpenseStorage.create()` (iosMain).
+         */
         fun create(
-            context: Context,
-            keyManager: DatabaseKeyManager = AndroidDatabaseKeyManager(context.applicationContext),
-            dispatcher: CoroutineDispatcher = Dispatchers.IO,
+            driverFactory: DatabaseDriverFactory,
+            keyManager: DatabaseKeyManager,
+            keyValueStore: PlatformKeyValueStore,
+            dispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): ProExpenseStorage {
             val passphrase = keyManager.getOrCreateDatabaseKey()
-            val driver = DatabaseDriverFactory(context.applicationContext).createDriver(passphrase)
+            val driver = driverFactory.createDriver(passphrase)
             val database = ProExpenseDatabase(driver)
             val appMetaStore = AppMetaLocalStore(database.appMetaQueries, dispatcher)
-            val onboardingPrefs = context.applicationContext
-                .getSharedPreferences("onboarding_state", Context.MODE_PRIVATE)
             val integrityVerifier = RecordIntegrityVerifier()
             val financeRecordRepository = SqlDelightFinanceRecordRepository(
                 queries = database.financeRecordQueries,
@@ -130,8 +133,8 @@ class ProExpenseStorage internal constructor(
                     dispatcher = dispatcher,
                 ),
                 clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
-                profileRepository = AppMetaProfileRepository(appMetaStore, onboardingPrefs),
-                localeRepository = AppMetaLocaleRepository(appMetaStore, onboardingPrefs),
+                profileRepository = AppMetaProfileRepository(appMetaStore, keyValueStore),
+                localeRepository = AppMetaLocaleRepository(appMetaStore, keyValueStore),
                 defaultCategoryRepository = AppMetaDefaultCategoryRepository(appMetaStore),
                 themeRepository = AppMetaThemeRepository(appMetaStore),
             )

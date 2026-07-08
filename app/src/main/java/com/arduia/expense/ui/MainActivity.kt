@@ -19,7 +19,7 @@ import com.arduia.expense.ExpenseApplication
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.data.ThemeRepository
-import com.arduia.expense.storage.repository.AppMetaLocaleRepository
+import com.arduia.expense.storage.repository.peekLanguageTag
 import com.arduia.expense.ui.design.AppLanguage
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.koin.compose.koinInject
@@ -33,7 +33,7 @@ class MainActivity : FragmentActivity() {
     // Reads SharedPreferences directly (not through Koin/the suspend repository) since this runs
     // before ExpenseApplication.ensureStarted() / DI is available.
     override fun attachBaseContext(newBase: Context) {
-        val languageTag = AppMetaLocaleRepository.peekLanguageTag(newBase) ?: AppLanguage.DEFAULT.tag
+        val languageTag = peekLanguageTag(newBase) ?: AppLanguage.DEFAULT.tag
         super.attachBaseContext(newBase.withLocale(languageTag))
     }
 

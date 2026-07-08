@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 
 class SqlDelightCategoryRepository(
     private val queries: CategoryQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : CategoryRepository {
 
     override suspend fun getAll(): Result<List<Category>> = withContext(dispatcher) {

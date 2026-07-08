@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 
 class SqlDelightDebtRepository(
     private val queries: DebtQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : DebtRepository {
 
     override suspend fun getAll(): Result<List<Debt>> = withContext(dispatcher) {
