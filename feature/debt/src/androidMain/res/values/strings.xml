@@ -45,6 +45,8 @@
 <string name="debt_due_optional">DUE · OPTIONAL</string>
 <string name="debt_due_none">None</string>
 <string name="debt_person_placeholder">Name</string>
+<string name="debt_note_label">NOTE · OPTIONAL</string>
+<string name="debt_note_placeholder">Add a note</string>
 <string name="debt_person_counter">%1$d/%2$d</string>
 <string name="debt_currency_usd">USD</string>
 <string name="debt_save_record">Save record</string>

@@ -138,3 +138,13 @@ summary sub-screen.
 Scenario 3 is a regression guard: the keypad previously disappeared as soon as the amount became
 valid (even a single digit), with no explicit confirm step — fixed by gating the Details/summary
 transition behind an explicit confirm action rather than auto-advancing on validity.
+
+* **Gap fix (2026-07):** "optionally naming people" was unimplemented — the draft carried a
+  `names` list all the way to save, but every UI surface rendered the name as a read-only `Text`
+  and no `onNameChange` path existed. Participant names are now editable inline on the input
+  screen in both Equal and Custom modes (`SharedCostParticipantRow` gains an editable-name field;
+  a cleared name shows the "Person N" placeholder and falls back to that default at save via
+  `SharedCostSplitLogic.resolveNames`). The custom-share amount field also now requests the
+  decimal number-pad IME (`KeyboardType.Decimal`) and filters input to digits plus one decimal
+  point — previously it opened the full text keyboard. Covered by `SharedCostNameEditingTest`
+  (both modes) and `SharedCostNameResolutionTest` (blank/whitespace/trim fallback rules).

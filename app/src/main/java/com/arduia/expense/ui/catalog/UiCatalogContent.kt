@@ -493,6 +493,7 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
                             onAmountChange = {},
                             onPickDate = {},
                             onPickDue = {},
+                            onNoteChange = {},
                             onSave = {},
                         )
                     }
@@ -651,7 +652,7 @@ fun uiCatalogSections(): List<UiCatalogSection> = listOf(
                 MoreCurrencyScreen(
                     items = previewMoreCurrencies,
                     selectedCode = "USD",
-                    onSelect = {},
+                    onSave = {},
                     onBack = {},
                 )
             },

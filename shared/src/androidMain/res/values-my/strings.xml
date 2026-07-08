@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_home">မူလစာမျက်နှာ</string>
+    <string name="nav_budget">ဘတ်ဂျက်</string>
+    <string name="nav_journal">မှတ်တမ်း</string>
+    <string name="nav_more">နောက်ထပ်</string>
+    <string name="nav_add">ထည့်ရန်</string>
+    <string name="back">နောက်သို့</string>
+    <string name="close">ပိတ်ရန်</string>
+    <string name="more">နောက်ထပ်</string>
+    <string name="backspace">ဖျက်ခလုတ်</string>
+    <string name="add_person">လူထည့်ရန်</string>
+    <string name="remove_person">လူဖယ်ရှားရန်</string>
+    <string name="people_count_state">လူ %1$d ဦး</string>
+    <string name="category_section_default">မူလ</string>
+    <string name="category_section_custom">စိတ်ကြိုက်</string>
+    <string name="category_picker_more">+ ထပ်ကြည့်ရန်</string>
+    <string name="category_picker_add">+ ထည့်ရန်</string>
+    <string name="event_over_budget">ဘတ်ဂျက်ကျော်လွန်</string>
+    <string name="event_over_budget_by">ဘတ်ဂျက် %1$s (%2$d%%) ကျော်လွန်</string>
+    <string name="toast_check_icon">အောင်မြင်ပါသည်</string>
+    <string name="link_to_subtitle">ပွဲတစ်ခု (သို့) အကြွေးတစ်ခုကိုသာ ရွေးပါ — နှစ်ခုစလုံးမရွေးနိုင်ပါ။ တစ်ခုရွေးလိုက်လျှင် အခြားတစ်ခုကို မှိန်ပျောက်သွားစေမည်။</string>
+    <string name="link_events_section">ပွဲများ</string>
+    <string name="link_debts_section">အကြွေးများ</string>
+    <string name="link_debts_unavailable">· ပွဲတစ်ခုရွေးထားစဉ် မရနိုင်ပါ</string>
+</resources>

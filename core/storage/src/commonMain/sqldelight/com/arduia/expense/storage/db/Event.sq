@@ -13,13 +13,14 @@ CREATE TABLE event_record (
     status INTEGER NOT NULL,
     created_at INTEGER NOT NULL,
     cached_spent_cents INTEGER NOT NULL DEFAULT 0,
-    cache_updated_at INTEGER NOT NULL DEFAULT 0
+    cache_updated_at INTEGER NOT NULL DEFAULT 0,
+    closed_at_epoch_millis INTEGER
 );
 
 insertEvent:
 INSERT OR REPLACE INTO event_record(
-    id, name, start_epoch_millis, end_epoch_millis, budget_cents, currency_code, status, created_at, cached_spent_cents, cache_updated_at
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, name, start_epoch_millis, end_epoch_millis, budget_cents, currency_code, status, created_at, cached_spent_cents, cache_updated_at, closed_at_epoch_millis
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteEvent:
 DELETE FROM event_record WHERE id = ?;

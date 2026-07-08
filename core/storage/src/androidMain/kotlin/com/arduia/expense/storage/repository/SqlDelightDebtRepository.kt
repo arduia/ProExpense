@@ -40,6 +40,7 @@ class SqlDelightDebtRepository(
                 direction = debt.direction.toCode(),
                 due_epoch_millis = debt.dueEpochMillis,
                 is_settled = if (debt.isSettled) 1L else 0L,
+                note = debt.note,
             )
             Unit
         }

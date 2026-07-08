@@ -28,8 +28,9 @@ import com.arduia.expense.feature.auth.ResetPinUseCase
 import com.arduia.expense.feature.auth.VerifyPinResult
 import com.arduia.expense.feature.auth.VerifyPinUseCase
 import com.arduia.expense.feature.auth.VerifyRecoveryAnswerUseCase
-import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
-import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
+import com.arduia.expense.feature.auth.PinEntryLogic
+import com.arduia.expense.feature.auth.PinEntryMode
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProButtonVariant
@@ -102,6 +103,11 @@ fun PinLockFlow(
         while (true) {
             val remaining = until - System.currentTimeMillis()
             if (remaining <= 0) {
+                // The countdown completing must reset the *persisted* attempt count (US-AUTH-5:
+                // "attempt counter resets once the countdown completes") — clearing only local UI
+                // state left the next wrong digit escalate straight to the next lockout tier
+                // (30s -> 60s -> 5min) instead of a fresh 5-attempt budget.
+                pinAuthRepository.resetFailedAttempts()
                 lockoutUntil = null
                 countdownLabel = null
                 entryError = false
@@ -109,8 +115,7 @@ fun PinLockFlow(
                 recoveryError = false
                 break
             }
-            val totalSeconds = (remaining / 1000).toInt()
-            countdownLabel = "%d:%02d".format(totalSeconds / 60, totalSeconds % 60)
+            countdownLabel = PinEntryLogic.countdownLabel(remaining)
             delay(1000)
         }
     }
@@ -147,21 +152,21 @@ fun PinLockFlow(
 
     fun handleDigit(digit: Int) {
         if (lockoutUntil != null) return
-        if (entryError) {
-            entryError = false
-            entryBuffer = ""
-        }
-        if (entryBuffer.length < 6) {
-            entryBuffer += digit
-            if (entryBuffer.length == 6) {
-                val pin = entryBuffer
+        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit, hadError = entryError)) {
+            is PinEntryLogic.DigitResult.Updated -> {
+                entryError = false
+                entryBuffer = result.buffer
+            }
+            is PinEntryLogic.DigitResult.Completed -> {
+                entryError = false
+                entryBuffer = result.pin
                 scope.launch {
-                    when (val result = verifyPin(pin)) {
+                    when (val verifyResult = verifyPin(result.pin)) {
                         is VerifyPinResult.Unlocked -> onUnlocked()
                         is VerifyPinResult.Incorrect -> {
                             entryBuffer = ""
                             entryError = true
-                            lockoutUntil = result.lockoutUntilMs
+                            lockoutUntil = verifyResult.lockoutUntilMs
                         }
                         is VerifyPinResult.Error -> {
                             entryBuffer = ""
@@ -193,24 +198,21 @@ fun PinLockFlow(
                 PinLockStep.Entry -> PinEntryScreen(
                     state = PinEntryUiState(
                         filledDots = entryBuffer.length,
-                        mode = when {
-                            lockoutUntil != null -> PinEntryMode.Locked
-                            entryError -> PinEntryMode.Error
-                            else -> PinEntryMode.Default
-                        },
+                        mode = PinEntryLogic.entryMode(lockedOut = lockoutUntil != null, error = entryError),
                         countdownLabel = countdownLabel,
                         showBiometric = canUseBiometric && lockoutUntil == null,
                     ),
                     onDigit = ::handleDigit,
-                    onBackspace = {
-                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
-                    },
+                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
                     onBiometric = { startBiometric() },
                     onForgot = {
+                        // Only the input field and its inline error clear on re-entry — the
+                        // attempt count and exhausted flag must survive a Back/Forgot round trip
+                        // within this session, or a user could reset their 5-attempt recovery
+                        // budget indefinitely just by backing out and tapping Forgot again
+                        // (US-AUTH-8: same lockout pattern as PIN entry).
                         recoveryAnswer = ""
-                        recoveryAttempts = 0
                         recoveryError = false
-                        recoveryExhausted = false
                         scope.launch {
                             when (val result = pinAuthRepository.getSecurityQuestionId()) {
                                 is Result.Success -> recoveryQuestionId = result.data
@@ -278,19 +280,17 @@ fun PinLockFlow(
                     state = PinEntryUiState(filledDots = entryBuffer.length),
                     headingRes = R.string.pin_set_new_heading,
                     onDigit = { digit ->
-                        if (entryBuffer.length < 6) {
-                            entryBuffer += digit
-                            if (entryBuffer.length == 6) {
-                                newPin = entryBuffer
+                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit)) {
+                            is PinEntryLogic.DigitResult.Updated -> entryBuffer = result.buffer
+                            is PinEntryLogic.DigitResult.Completed -> {
+                                newPin = result.pin
                                 entryBuffer = ""
                                 confirmError = false
                                 step = PinLockStep.RecoverConfirmPin
                             }
                         }
                     },
-                    onBackspace = {
-                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
-                    },
+                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
                     onBack = { step = PinLockStep.Recovery },
                 )
                 PinLockStep.RecoverConfirmPin -> PinSetPinScreen(
@@ -300,14 +300,15 @@ fun PinLockFlow(
                     ),
                     headingRes = R.string.pin_confirm_heading,
                     onDigit = { digit ->
-                        if (confirmError) {
-                            confirmError = false
-                            entryBuffer = ""
-                        }
-                        if (entryBuffer.length < 6) {
-                            entryBuffer += digit
-                            if (entryBuffer.length == 6) {
-                                if (entryBuffer == newPin) {
+                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit, hadError = confirmError)) {
+                            is PinEntryLogic.DigitResult.Updated -> {
+                                confirmError = false
+                                entryBuffer = result.buffer
+                            }
+                            is PinEntryLogic.DigitResult.Completed -> {
+                                confirmError = false
+                                if (result.pin == newPin) {
+                                    entryBuffer = result.pin
                                     val confirmedPin = newPin
                                     scope.launch {
                                         resetPin(confirmedPin)
@@ -320,9 +321,7 @@ fun PinLockFlow(
                             }
                         }
                     },
-                    onBackspace = {
-                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
-                    },
+                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
                     onBack = { step = PinLockStep.RecoverNewPin },
                 )
             }

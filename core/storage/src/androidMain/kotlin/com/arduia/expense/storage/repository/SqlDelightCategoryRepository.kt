@@ -31,6 +31,7 @@ class SqlDelightCategoryRepository(
                 name = category.name,
                 is_custom = if (category.isCustom) 1L else 0L,
                 sort_order = category.sortOrder.toLong(),
+                icon_id = category.iconId,
             )
             Unit
         }

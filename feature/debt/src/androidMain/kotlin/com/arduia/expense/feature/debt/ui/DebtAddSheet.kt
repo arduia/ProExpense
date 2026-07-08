@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -30,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.debt.R
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.DetailNoteField
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -37,6 +40,7 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
+import com.arduia.expense.feature.debt.ui.preview.DEBT_NOTE_MAX
 import com.arduia.expense.feature.debt.ui.preview.DEBT_PERSON_MAX
 import com.arduia.expense.feature.debt.ui.preview.DebtAddFormState
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
@@ -52,13 +56,17 @@ fun DebtAddSheetContent(
     onAmountChange: (String) -> Unit,
     onPickDate: () -> Unit,
     onPickDue: () -> Unit,
+    onNoteChange: (String) -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val dimens = ProExpenseTheme.dimensions
+    val atNoteLimit = form.note.length >= DEBT_NOTE_MAX
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        // Scrollable so the keyboard covering the lower fields never squeezes Save's height —
+        // it stays reachable at full size by scrolling instead of being compressed in place.
+        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         DebtSideToggle(side = form.side, onSideSelected = onSideSelected)
@@ -105,6 +113,17 @@ fun DebtAddSheetContent(
                     onClick = onPickDue,
                 )
             }
+        }
+
+        DebtFieldGroup(label = stringResource(R.string.debt_note_label)) {
+            DetailNoteField(
+                value = form.note,
+                onValueChange = onNoteChange,
+                maxLength = DEBT_NOTE_MAX,
+                placeholder = stringResource(R.string.debt_note_placeholder),
+                atLimit = atNoteLimit,
+                errorMessage = null,
+            )
         }
 
         ProButton(
@@ -166,11 +185,10 @@ private fun DebtToggleSegment(
     val typography = ProExpenseTheme.typography
     val containerShape = ProExpenseTheme.shapes.chip
 
-    Text(
-        text = label,
-        style = if (selected) typography.bodySemiBold else typography.bodyMedium,
-        color = if (selected) accent else colors.onSurfaceMuted,
-        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+    // Text has no built-in vertical centering, so a bare Text with a minHeight taller than its
+    // own line height (from the touch-target padding below) renders top-anchored — wrap in a
+    // Box so the label centers within the enlarged touch target instead of sitting "up" a bit.
+    Box(
         modifier = modifier
             .defaultMinSize(minHeight = dimens.touchTargetMin)
             .minimumInteractiveComponentSize()
@@ -185,7 +203,15 @@ private fun DebtToggleSegment(
             )
             .proClickable(onClick = onClick, shape = containerShape)
             .padding(vertical = dimens.space8),
-    )
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = label,
+            style = if (selected) typography.bodySemiBold else typography.bodyMedium,
+            color = if (selected) accent else colors.onSurfaceMuted,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+    }
 }
 
 @Composable
@@ -227,7 +253,7 @@ private fun DebtPersonField(
             .border(BorderStroke(1.dp, colors.lineStrong), shape)
             .background(colors.surface)
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        textStyle = typography.body.copy(color = colors.onSurface),
+        textStyle = typography.fieldValue.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
         decorationBox = { inner ->
@@ -236,7 +262,7 @@ private fun DebtPersonField(
                     if (value.isEmpty()) {
                         Text(
                             text = stringResource(R.string.debt_person_placeholder),
-                            style = typography.body,
+                            style = typography.fieldValue,
                             color = colors.muted,
                         )
                     }
@@ -265,7 +291,10 @@ private fun DebtAmountField(
 
     BasicTextField(
         value = rawValue,
-        onValueChange = { input -> onValueChange(input.filter { it.isDigit() }.take(9)) },
+        // Digits plus a single decimal point, capped like AmountInput (7-digit whole part,
+        // 2-digit fraction) — this used to strip the decimal entirely, silently rounding every
+        // debt amount to whole dollars on both entry and edit-reload.
+        onValueChange = { input -> onValueChange(normalizeDebtAmountInput(input)) },
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
@@ -274,7 +303,7 @@ private fun DebtAmountField(
             .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.detailsAmount.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         visualTransformation = DebtCurrencyTransformation,
         singleLine = true,
         decorationBox = { inner ->
@@ -331,15 +360,35 @@ private fun DebtDatePill(
     }
 }
 
-/** Renders raw amount digits as a grouped "$" figure; cursor pinned to the field end. */
+private const val DEBT_AMOUNT_MAX_WHOLE_DIGITS = 7
+private const val DEBT_AMOUNT_MAX_FRACTION_DIGITS = 2
+
+/** Caps free-text amount input to a single decimal point, 7-digit whole part, 2-digit fraction. */
+private fun normalizeDebtAmountInput(raw: String): String {
+    val filtered = raw.filter { it.isDigit() || it == '.' }
+    val firstDot = filtered.indexOf('.')
+    val singleDot = if (firstDot == -1) {
+        filtered
+    } else {
+        filtered.substring(0, firstDot + 1) + filtered.substring(firstDot + 1).replace(".", "")
+    }
+    val parts = singleDot.split(".")
+    return if (parts.size == 2) {
+        parts[0].take(DEBT_AMOUNT_MAX_WHOLE_DIGITS) + "." + parts[1].take(DEBT_AMOUNT_MAX_FRACTION_DIGITS)
+    } else {
+        singleDot.take(DEBT_AMOUNT_MAX_WHOLE_DIGITS)
+    }
+}
+
+/** Renders the raw "$" amount grouped by thousands; cursor pinned to the field end. */
 private object DebtCurrencyTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val digits = text.text
-        val grouped = if (digits.isEmpty()) "" else AmountInput.formatDisplay(digits)
+        val raw = text.text
+        val grouped = if (raw.isEmpty()) "" else AmountInput.formatDisplay(raw)
         val display = "$$grouped"
         val mapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int = if (offset <= 0) 1 else display.length
-            override fun transformedToOriginal(offset: Int): Int = if (offset <= 1) 0 else digits.length
+            override fun transformedToOriginal(offset: Int): Int = if (offset <= 1) 0 else raw.length
         }
         return TransformedText(AnnotatedString(display), mapping)
     }
@@ -374,6 +423,7 @@ private fun DebtAddSheetPreview() {
                     onAmountChange = {},
                     onPickDate = {},
                     onPickDue = {},
+                    onNoteChange = {},
                     onSave = {},
                 )
             }

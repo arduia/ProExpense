@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordLink
@@ -23,15 +22,14 @@ import com.arduia.expense.feature.logging.TagOptionKind
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.TagLinkKind
 import com.arduia.expense.ui.design.TagLinkOption
-import com.arduia.expense.ui.design.shortDateLabel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.currentKoinScope
-import org.koin.compose.koinInject
 
 interface LoggingFeatureEntry {
     @Composable
@@ -45,6 +43,10 @@ interface LoggingFeatureEntry {
         initialDraftState: ExpenseEntryState? = null,
         homeCurrencySymbol: String = "$",
         homeCurrencyCode: String = currencyCode,
+        onSaveFailed: (String) -> Unit = {},
+        defaultCategories: List<Pair<String, String>> = emptyList(),
+        customCategories: List<Pair<String, String>> = emptyList(),
+        onAddCategory: () -> Unit = {},
     )
 
     @Composable
@@ -54,6 +56,10 @@ interface LoggingFeatureEntry {
         onSaved: () -> Unit,
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
+        onSaveFailed: (String) -> Unit = {},
+        defaultCategories: List<Pair<String, String>> = emptyList(),
+        customCategories: List<Pair<String, String>> = emptyList(),
+        onAddCategory: () -> Unit = {},
     )
 }
 
@@ -69,15 +75,31 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         initialDraftState: ExpenseEntryState?,
         homeCurrencySymbol: String,
         homeCurrencyCode: String,
+        onSaveFailed: (String) -> Unit,
+        defaultCategories: List<Pair<String, String>>,
+        customCategories: List<Pair<String, String>>,
+        onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        val (defaultCategories, customCategories) = rememberCategoryLists()
 
-        val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
-        val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
+        // A resumed draft is unauthenticated (US-LOG-7: shown before any PIN check), so it must
+        // never expose live event/debt names or amounts via the `@` tag sheet — restrict to
+        // exactly what the user already typed until the app is unlocked.
+        val restrictSensitiveData = initialDraftState != null
+        val tagEvents = if (restrictSensitiveData) {
+            emptyList()
+        } else {
+            uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
+        }
+        val tagDebts = if (restrictSensitiveData) {
+            emptyList()
+        } else {
+            uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
+        }
         val linkedEvent = initialLinkedEventId?.let { id -> tagEvents.firstOrNull { it.id == id } }
+        var saveErrorMessage by remember { mutableStateOf<String?>(null) }
 
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
@@ -88,16 +110,22 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 linkedTagId = linkedEvent?.id,
                 linkedTagKind = linkedEvent?.kind,
                 linkedTagLabel = linkedEvent?.title,
+                // recordedAtEpochMillis default is a fixed preview/screenshot fixture (US-LOG
+                // baselines need a deterministic date) — a brand-new entry must start at "now".
+                recordedAtEpochMillis = System.currentTimeMillis(),
             ),
             showDraftPrompt = initialDraftState != null,
             draftAmountLabel = initialDraftState?.let { homeCurrencySymbol + AmountInput.formatDisplay(it.rawAmount) },
             onSaved = { state ->
                 scope.launch {
-                    when (viewModel.save(state.toSaveInput())) {
+                    when (val outcome = viewModel.save(state.toSaveInput())) {
                         is SaveExpenseOutcome.Saved -> onSaved(state.toHandoff())
                         SaveExpenseOutcome.InvalidAmount -> {} // UI already has inline validation
                         SaveExpenseOutcome.InvalidExchangeRate -> {} // UI blocks Save until the rate is valid
-                        is SaveExpenseOutcome.Failed -> {} // Error silently; UI already has toast handling
+                        is SaveExpenseOutcome.Failed -> {
+                            saveErrorMessage = outcome.message
+                            onSaveFailed(outcome.message)
+                        }
                     }
                 }
             },
@@ -106,6 +134,9 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             defaultCategories = defaultCategories,
             customCategories = customCategories,
             modifier = modifier,
+            saveErrorMessage = saveErrorMessage,
+            initialLinkedTag = linkedEvent,
+            onAddCategory = onAddCategory,
         )
     }
 
@@ -116,11 +147,14 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaved: () -> Unit,
         modifier: Modifier,
         homeCurrencySymbol: String,
+        onSaveFailed: (String) -> Unit,
+        defaultCategories: List<Pair<String, String>>,
+        customCategories: List<Pair<String, String>>,
+        onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
         val viewModel = rememberLoggingViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        val (defaultCategories, customCategories) = rememberCategoryLists()
 
         val tagEvents = uiState.tagOptions.toTagLinkOptions(TagOptionKind.EVENT, homeCurrencySymbol)
         val tagDebts = uiState.tagOptions.toTagLinkOptions(TagOptionKind.DEBT, homeCurrencySymbol)
@@ -140,6 +174,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             startState = record.toEntryState(eventNames, debtNames)
         }
 
+        var saveErrorMessage by remember(recordId) { mutableStateOf<String?>(null) }
+
         val loaded = startState
         if (loaded != null && record != null) {
             com.arduia.expense.feature.logging.ui.QuickLogFlow(
@@ -147,11 +183,14 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 startState = loaded,
                 onSaved = { state ->
                     scope.launch {
-                        when (viewModel.update(state.toSaveInput())) {
+                        when (val outcome = viewModel.update(state.toSaveInput())) {
                             is SaveExpenseOutcome.Saved -> onSaved()
                             SaveExpenseOutcome.InvalidAmount -> {}
                             SaveExpenseOutcome.InvalidExchangeRate -> {}
-                            is SaveExpenseOutcome.Failed -> {}
+                            is SaveExpenseOutcome.Failed -> {
+                                saveErrorMessage = outcome.message
+                                onSaveFailed(outcome.message)
+                            }
                         }
                     }
                 },
@@ -160,6 +199,12 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 defaultCategories = defaultCategories,
                 customCategories = customCategories,
                 modifier = modifier,
+                // Editing writes into the existing record via update(), never via the create-path
+                // draft slot — persisting it there would surface as a duplicate-creating "Continue"
+                // prompt after simply backing out of an edit.
+                persistDraft = false,
+                saveErrorMessage = saveErrorMessage,
+                onAddCategory = onAddCategory,
             )
         }
     }
@@ -175,36 +220,23 @@ private fun rememberLoggingViewModel(): LoggingViewModel {
     return viewModel
 }
 
-/** Live default/custom category chip lists sourced from [CategoryRepository], not hardcoded. */
-@Composable
-private fun rememberCategoryLists(): Pair<List<Pair<String, String>>, List<Pair<String, String>>> {
-    val categoryRepository: CategoryRepository = koinInject()
-    val categories by categoryRepository.observeAll().collectAsState(emptyList())
-    val defaultCategories = categories
-        .filter { !it.isCustom }
-        .sortedBy { it.sortOrder }
-        .map { it.id.value to it.name }
-    val customCategories = categories
-        .filter { it.isCustom }
-        .sortedBy { it.sortOrder }
-        .map { it.id.value to it.name }
-    return defaultCategories to customCategories
-}
-
 private fun List<TagOption>.toTagLinkOptions(kind: TagOptionKind, currencySymbol: String): List<TagLinkOption> =
-    filter { it.kind == kind }.map { option ->
+    // Closed events can't take new links (US-EVT-5) — exclude them from what's selectable here.
+    // Debt/event *names* for an already-linked record are still resolved from the full,
+    // unfiltered tagOptions list elsewhere, so this never breaks an existing closed-event link.
+    filter { it.kind == kind && (kind != TagOptionKind.EVENT || !it.eventIsClosed) }.map { option ->
         when (kind) {
             TagOptionKind.EVENT -> TagLinkOption(
                 id = option.id,
                 title = option.eventName.orEmpty(),
-                subtitle = shortDateLabel(option.eventStartEpochMillis ?: 0L) + " - " +
-                    shortDateLabel(option.eventEndEpochMillis ?: 0L),
+                subtitle = PlatformDateFormatter.shortDateLabel(option.eventStartEpochMillis ?: 0L) + " - " +
+                    PlatformDateFormatter.shortDateLabel(option.eventEndEpochMillis ?: 0L),
                 kind = TagLinkKind.Event,
             )
             TagOptionKind.DEBT -> TagLinkOption(
                 id = option.id,
                 title = debtLabel(option),
-                subtitle = moneyLabel(option.debtAmountCents ?: 0L, currencySymbol),
+                subtitle = AmountInput.formatMoney(option.debtAmountCents ?: 0L, currencySymbol),
                 kind = TagLinkKind.Debt,
             )
         }
@@ -279,6 +311,3 @@ private fun FinanceRecord.toEntryState(
         exchangeRateRaw = exchangeRateRaw,
     )
 }
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

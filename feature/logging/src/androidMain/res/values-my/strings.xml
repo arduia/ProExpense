@@ -1,0 +1,21 @@
+<resources>
+    <string name="save">သိမ်းရန်</string>
+    <string name="note">မှတ်ချက်</string>
+    <string name="new_expense">အသုံးစရိတ်အသစ်</string>
+    <string name="details">အသေးစိတ်</string>
+    <string name="amount_step">ပမာဏ</string>
+    <string name="save_expense">အသုံးစရိတ် သိမ်းရန် · %1$s</string>
+    <string name="next_with_chevron">ရှေ့သို့ ></string>
+    <string name="amount_must_be_greater_than_zero">ပမာဏသည် $0 ထက်ကြီးရမည်</string>
+    <string name="add_event_tag">ပွဲ (သို့) အကြွေး ချိတ်ဆက်ရန်</string>
+    <string name="draft_restore_title">မပြီးမြောက်သေးသော အသုံးစရိတ်</string>
+    <string name="draft_restore_body">အက်ပ်ပိတ်ချိန်တွင် သင့်တွင် %1$s လုပ်ဆောင်ဆဲ ရှိနေပါသည်။ ရပ်ခဲ့ရာမှ ဆက်လုပ်မလား၊ သို့မဟုတ် ဖျက်ပစ်မလား?</string>
+    <string name="draft_continue">ဆက်လုပ်ရန်</string>
+    <string name="draft_discard">ဖျက်ပစ်ရန်</string>
+    <string name="note_max_length_error">မှတ်ချက်သည် စာလုံးရေ ၂၀၀ ကျော်၍ မရပါ</string>
+    <string name="link_to_title">ချိတ်ဆက်ရန်…</string>
+    <string name="exchange_rate_label">%1$s ၁ ခုသည် %2$s တွင်</string>
+    <string name="exchange_rate_placeholder">နှုန်း ထည့်ပါ</string>
+    <string name="exchange_rate_converted">≈ %1$s</string>
+    <string name="currency_sheet_title">ငွေကြေး ရွေးချယ်ပါ</string>
+</resources>

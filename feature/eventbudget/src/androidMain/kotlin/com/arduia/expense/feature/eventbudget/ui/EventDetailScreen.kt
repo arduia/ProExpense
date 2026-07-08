@@ -40,6 +40,7 @@ import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventLinkedExpenseUi
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetail
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailClosed
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailNoLinked
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailWarn
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -107,7 +108,7 @@ fun EventDetailScreen(
                 }
             }
 
-            if (state.linkedExpenses.isNotEmpty()) {
+            if (state.linkedExpenses.isNotEmpty() || state.showAddTagged) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.space10)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -136,10 +137,12 @@ fun EventDetailScreen(
                             )
                         }
                     }
-                    EventLinkedExpenseCard(
-                        expenses = state.linkedExpenses,
-                        onExpenseClick = onExpenseClick,
-                    )
+                    if (state.linkedExpenses.isNotEmpty()) {
+                        EventLinkedExpenseCard(
+                            expenses = state.linkedExpenses,
+                            onExpenseClick = onExpenseClick,
+                        )
+                    }
                 }
             }
         }
@@ -330,6 +333,25 @@ private fun EventDetailClosedPreview() {
     ProExpenseTheme {
         EventDetailScreen(
             state = previewEventDetailClosed,
+            onBack = {},
+            onMore = {},
+            onAddTagged = {},
+            onExpenseClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Event detail — no linked expenses",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun EventDetailNoLinkedPreview() {
+    ProExpenseTheme {
+        EventDetailScreen(
+            state = previewEventDetailNoLinked,
             onBack = {},
             onMore = {},
             onAddTagged = {},

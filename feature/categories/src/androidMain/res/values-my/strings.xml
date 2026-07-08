@@ -1,0 +1,27 @@
+<resources>
+<string name="categories_title">အမျိုးအစားများ</string>
+<string name="categories_back">နောက်ထပ်</string>
+<string name="categories_default_label">မူလ · အမြဲပထမဆုံး</string>
+<string name="categories_custom_label">စိတ်ကြိုက် · ဆွဲယူ၍ အစီအစဉ်ပြန်စီပါ</string>
+<string name="categories_locked_word">လော့ခ်ချထား</string>
+<string name="categories_locked_pill">လော့ခ်ချထား</string>
+<string name="categories_create">အမျိုးအစားအသစ် ဖန်တီးရန်</string>
+<string name="categories_footer">ဤနေရာရှိ အစီအစဉ်သည် အသုံးစရိတ်ထည့်ရန်တွင် ချစ်ပ်များစီထားသည့်အတိုင်း ဖြစ်သည်</string>
+<string name="categories_new_title">အမျိုးအစားအသစ်</string>
+<string name="categories_name_placeholder">အမျိုးအစားအမည်</string>
+<string name="categories_name_counter">%1$d/%2$d</string>
+<string name="categories_duplicate_error">ဤအမည်ရှိသော အမျိုးအစား ရှိပြီးသားဖြစ်သည်</string>
+<string name="categories_icon_label">သင်္ကေတ</string>
+<string name="categories_add">အမျိုးအစား ထည့်ရန်</string>
+<string name="categories_edit_title">အမျိုးအစား ပြင်ဆင်ရန်</string>
+<string name="categories_save">ပြောင်းလဲမှုများ သိမ်းရန်</string>
+<string name="categories_action_edit_title">အမျိုးအစား ပြင်ဆင်ရန်</string>
+<string name="categories_action_edit_subtitle">အမည် သို့မဟုတ် သင်္ကေတပြောင်းရန်</string>
+<string name="categories_action_delete_title">အမျိုးအစား ဖျက်ရန်</string>
+<string name="categories_action_delete_subtitle">အသုံးစရိတ်များကို အမျိုးအစားမသတ်မှတ်ရသေးသည့်စာရင်းသို့ ရွှေ့ပါမည်</string>
+<string name="categories_action_cancel">မလုပ်တော့ပါ</string>
+<string name="categories_delete_title">ဒီအမျိုးအစားကို ဖျက်မလား?</string>
+<string name="categories_delete_body">၎င်း၏ အသုံးစရိတ်များကို အမျိုးအစားမသတ်မှတ်ရသေးသည့်စာရင်းသို့ ရွှေ့ပါမည်။ ပြန်လည်ရုပ်သိမ်း၍ မရပါ။</string>
+<string name="categories_delete_confirm">ဖျက်ရန်</string>
+<string name="categories_delete_cancel">မလုပ်တော့ပါ</string>
+</resources>

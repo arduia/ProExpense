@@ -2,6 +2,9 @@ package com.arduia.expense.feature.categories
 
 import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordChangeSignal
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.Category
@@ -77,6 +80,16 @@ class SaveCategoryUseCaseTest {
         assertEquals("Groceries", repo.lastUpsert?.name)
         assertEquals(3, repo.lastUpsert?.sortOrder)
     }
+
+    @Test
+    fun invoke_persistsTheSelectedIconIdInsteadOfDiscardingIt() = runTest {
+        val repo = FakeCategoryRepository()
+        val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+
+        useCase(emptyList(), editingId = null, name = "Coffee Fund", iconId = "coffee")
+
+        assertEquals("coffee", repo.lastUpsert?.iconId)
+    }
 }
 
 private fun sampleRecord(id: String, categoryId: String) = FinanceRecord(
@@ -104,6 +117,12 @@ private class FakeFinanceRecordRepository(
     }
     override fun observeAll() = MutableStateFlow(records.values.toList()).asStateFlow()
     override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
+    override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
+        Result.Success(records.values.toList().take(limit))
+    override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
+        Result.Success(records.values.any { it.categoryId == categoryId })
+    override fun observeChangeSignal() =
+        MutableStateFlow(RecordChangeSignal(records.size.toLong(), 0L)).asStateFlow()
 }
 
 class DeleteCategoryUseCaseTest {

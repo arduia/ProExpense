@@ -2,6 +2,7 @@ package com.arduia.expense.storage.repository
 
 import android.content.SharedPreferences
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Money
@@ -291,5 +292,48 @@ class AppMetaRepositoriesTest {
         assertTrue(budget is Result.Success)
         assertEquals(100, budget.data!!.amount.valueInCents)
         assertEquals("GBP", AppMetaCurrencySettingsRepository(store).getHomeCurrency().let { (it as Result.Success).data!!.code })
+    }
+
+    @Test
+    fun theme_defaultsToDark_thenPersists() = runTest {
+        val store = store()
+        val repo = AppMetaThemeRepository(store)
+
+        val initial = repo.getThemeMode()
+        assertTrue(initial is Result.Success)
+        assertEquals(ThemeMode.DARK, initial.data)
+
+        repo.setThemeMode(ThemeMode.SYSTEM)
+
+        val fetched = repo.getThemeMode()
+        assertTrue(fetched is Result.Success)
+        assertEquals(ThemeMode.SYSTEM, fetched.data)
+    }
+
+    @Test
+    fun locale_defaultsToEnglish_thenPersists() = runTest {
+        val repo = AppMetaLocaleRepository(store(), FakeSharedPreferences())
+
+        val initial = repo.getLanguageTag()
+        assertTrue(initial is Result.Success)
+        assertEquals("en", initial.data)
+
+        repo.setLanguageTag("my")
+
+        val fetched = repo.getLanguageTag()
+        assertTrue(fetched is Result.Success)
+        assertEquals("my", fetched.data)
+    }
+
+    @Test
+    fun locale_setLanguageTag_writesSharedPrefsSynchronously() = runTest {
+        // MainActivity.attachBaseContext() reads this on the next Activity recreation, before
+        // Koin/the suspend repository stack are available — the write must not depend on the DB.
+        val diskBacking = mutableMapOf<String, Any?>()
+        val repo = AppMetaLocaleRepository(store(), FakeSharedPreferences(diskBacking))
+
+        repo.setLanguageTag("th")
+
+        assertEquals("th", diskBacking[AppMetaLocaleRepository.KEY_LANGUAGE_TAG])
     }
 }

@@ -34,6 +34,7 @@ fun EventActionsSheetContent(
     onClose: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
+    showClose: Boolean = true,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -52,15 +53,19 @@ fun EventActionsSheetContent(
             subtitle = stringResource(R.string.event_edit_subtitle),
             onClick = onEdit,
         )
-        EventActionRow(
-            icon = ProIconGlyph.Close,
-            iconTint = colors.danger,
-            iconBackground = colors.dangerTint,
-            title = stringResource(R.string.event_close),
-            titleColor = colors.danger,
-            subtitle = stringResource(R.string.event_close_subtitle),
-            onClick = onClose,
-        )
+        // An already-closed event has nothing left to close (US-EVT-5 grace period may still
+        // allow edits, but re-closing a closed event is meaningless).
+        if (showClose) {
+            EventActionRow(
+                icon = ProIconGlyph.Close,
+                iconTint = colors.danger,
+                iconBackground = colors.dangerTint,
+                title = stringResource(R.string.event_close),
+                titleColor = colors.danger,
+                subtitle = stringResource(R.string.event_close_subtitle),
+                onClick = onClose,
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()

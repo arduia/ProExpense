@@ -17,11 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
-import com.arduia.expense.shared.CurrencyCatalog
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-
-fun currencySymbol(code: String): String = CurrencyCatalog.symbolFor(code)
 
 @Composable
 fun ProfileCurrencyRow(

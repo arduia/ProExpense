@@ -38,6 +38,37 @@ class ExpenseDraftPrefsTest {
     }
 
     @Test
+    fun save_then_load_roundTripsHomeCurrencyAndExchangeRate() {
+        ExpenseDraftPrefs.clear(context)
+        val draft = ExpenseEntryState(
+            rawAmount = "45.00",
+            currencyCode = "EUR",
+            homeCurrencyCode = "USD",
+            exchangeRateRaw = "1.08",
+        )
+
+        ExpenseDraftPrefs.save(context, draft)
+        val loaded = ExpenseDraftPrefs.load(context)
+
+        assertEquals("USD", loaded?.homeCurrencyCode)
+        assertEquals("1.08", loaded?.exchangeRateRaw)
+    }
+
+    @Test
+    fun load_fallsBackHomeCurrencyToDraftCurrencyForPreMultiCurrencyDrafts() {
+        ExpenseDraftPrefs.clear(context)
+        context.getSharedPreferences("expense_draft", android.content.Context.MODE_PRIVATE)
+            .edit()
+            .putString("raw_amount", "12.50")
+            .putString("currency_code", "EUR")
+            .apply()
+
+        val loaded = ExpenseDraftPrefs.load(context)
+
+        assertEquals("EUR", loaded?.homeCurrencyCode)
+    }
+
+    @Test
     fun load_returnsNullWhenNoDraftSaved() {
         ExpenseDraftPrefs.clear(context)
 

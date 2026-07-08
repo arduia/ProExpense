@@ -23,6 +23,11 @@ import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.catchingResult
+import com.arduia.expense.storage.mapping.extractJsonNumber
+import com.arduia.expense.storage.mapping.extractJsonString
+import com.arduia.expense.storage.mapping.extractNestedNumber
+import com.arduia.expense.storage.mapping.extractNestedString
+import com.arduia.expense.storage.mapping.escapeJsonString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -221,13 +226,17 @@ class SqlDelightImportExportRepository(
     }
 
     private fun parseCsv(content: String): List<FinanceRecord> {
-        val lines = content.split("\n")
+        // Every field is written quoted (see toCsv), so a note containing a literal newline is
+        // valid CSV — but naively splitting the whole file on "\n" breaks that one quoted record
+        // into multiple fragments. splitCsvRecords tracks quote state so only an *unquoted*
+        // newline ends a record.
+        val lines = splitCsvRecords(content)
         if (lines.size < 2) return emptyList()
 
         val records = mutableListOf<FinanceRecord>()
         for (i in 1 until lines.size) {
-            val line = lines[i].trim()
-            if (line.isEmpty()) continue
+            val line = lines[i]
+            if (line.isBlank()) continue
 
             val fields = parseCsvLine(line)
             if (fields.size < 9) continue
@@ -350,6 +359,45 @@ class SqlDelightImportExportRepository(
         }
     }
 
+    /**
+     * Splits raw CSV content into per-record strings, treating a newline inside a quoted field
+     * (e.g. a multi-line note) as literal content rather than a record boundary. Mirrors
+     * [parseCsvLine]'s own quote-toggle logic so the two stay consistent.
+     */
+    private fun splitCsvRecords(content: String): List<String> {
+        val records = mutableListOf<String>()
+        var current = StringBuilder()
+        var inQuotes = false
+        var i = 0
+        while (i < content.length) {
+            val c = content[i]
+            when {
+                inQuotes && c == '"' -> {
+                    if (i + 1 < content.length && content[i + 1] == '"') {
+                        current.append('"').append('"')
+                        i++
+                    } else {
+                        inQuotes = false
+                        current.append(c)
+                    }
+                }
+                !inQuotes && c == '"' -> {
+                    inQuotes = true
+                    current.append(c)
+                }
+                !inQuotes && (c == '\n' || c == '\r') -> {
+                    if (c == '\r' && i + 1 < content.length && content[i + 1] == '\n') i++
+                    records.add(current.toString())
+                    current = StringBuilder()
+                }
+                else -> current.append(c)
+            }
+            i++
+        }
+        if (current.isNotEmpty()) records.add(current.toString())
+        return records
+    }
+
     private fun parseCsvLine(line: String): List<String> {
         val fields = mutableListOf<String>()
         var current = StringBuilder()
@@ -387,39 +435,7 @@ class SqlDelightImportExportRepository(
         return fields
     }
 
-    private fun extractJsonString(json: String, key: String): String? {
-        val regex = Regex("\"$key\"\\s*:\\s*\"([^\"]*)\"")
-        return regex.find(json)?.groupValues?.get(1)
-    }
-
-    private fun extractJsonNumber(json: String, key: String): Long? {
-        val regex = Regex("\"$key\"\\s*:\\s*(-?\\d+)")
-        return regex.find(json)?.groupValues?.get(1)?.toLongOrNull()
-    }
-
-    /**
-     * Reads a field from inside a nested `"objectKey":{...}` object rather than the top level —
-     * e.g. `money.cents` in `"money":{"cents":123,"code":"USD"}`. A plain wildcard between the
-     * outer and inner key can't work here since `[^:]*` can never cross the colon that follows
-     * the outer key, so the object's contents are isolated first and searched independently.
-     */
-    private fun extractNestedObject(json: String, objectKey: String): String? =
-        Regex("\"$objectKey\"\\s*:\\s*\\{([^}]*)\\}").find(json)?.groupValues?.get(1)
-
-    private fun extractNestedString(json: String, objectKey: String, fieldKey: String): String? =
-        extractNestedObject(json, objectKey)?.let { extractJsonString(it, fieldKey) }
-
-    private fun extractNestedNumber(json: String, objectKey: String, fieldKey: String): Long? =
-        extractNestedObject(json, objectKey)?.let { extractJsonNumber(it, fieldKey) }
-
     private fun escapeQuotes(str: String): String {
         return str.replace("\"", "\"\"")
-    }
-
-    private fun escapeJsonString(str: String): String {
-        return str.replace("\\", "\\\\")
-            .replace("\"", "\\\"")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
     }
 }

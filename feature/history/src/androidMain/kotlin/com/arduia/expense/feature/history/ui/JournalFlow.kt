@@ -25,15 +25,14 @@ import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
 import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
+import com.arduia.expense.feature.history.ui.preview.JournalLinkedTagUi
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
 import com.arduia.expense.feature.history.ui.preview.journalFilters
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
-import com.arduia.expense.ui.design.UtcTimeZone
-import com.arduia.expense.ui.design.dayKey
+import com.arduia.expense.ui.design.DateZone
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.expenseCategoryLabel
-import com.arduia.expense.ui.design.shortDateLabel
-import com.arduia.expense.ui.design.yearOf
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -48,27 +47,34 @@ fun JournalFlow(
     filters: List<JournalFilterUi> = journalFilters,
     categoryNames: Map<String, String> = emptyMap(),
     initialSelectedRowId: String? = null,
+    isLoading: Boolean = false,
+    isLoadingMore: Boolean = false,
+    onLoadMore: () -> Unit = {},
+    query: String = "",
+    onQueryChange: (String) -> Unit = {},
+    selectedFilterId: String = "all",
+    onFilterSelected: (String) -> Unit = {},
+    dateRangeStart: Long? = null,
+    dateRangeEnd: Long? = null,
+    onDateRangeChange: (Long?, Long?) -> Unit = { _, _ -> },
     onDeleteRecord: (String) -> Unit = {},
     onUpdateNote: (String, String) -> Unit = { _, _ -> },
     onEditRecord: (String) -> Unit = {},
+    onOpenLinkedEvent: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
 
-    // Filter/search state survives config change (rotation, theme switch); transient sheet/dialog
-    // visibility does not need to.
-    var query by rememberSaveable { mutableStateOf("") }
-    var selectedFilterId by rememberSaveable { mutableStateOf("all") }
+    // days/query/filter/date-range are hoisted to the caller (which owns the DB-backed pager) —
+    // only transient sheet/dialog/detail-selection state stays local here.
     var selectedRowId by rememberSaveable { mutableStateOf(initialSelectedRowId) }
     var quickNoteRow by remember { mutableStateOf<ProTransactionRowModel?>(null) }
     var quickNoteText by remember { mutableStateOf("") }
     var showActions by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showDateRangeSheet by remember { mutableStateOf(false) }
-    var dateRangeStart by rememberSaveable { mutableStateOf<Long?>(null) }
-    var dateRangeEnd by rememberSaveable { mutableStateOf<Long?>(null) }
 
     val searchActive = query.isNotBlank()
     // DateRangePickerState reports UTC-midnight millis, not device-local instants — must be
@@ -77,30 +83,24 @@ fun JournalFlow(
         // Omitting the year is ambiguous once the range isn't entirely within the current
         // year (a past year, or one that crosses a year boundary) — show it on both ends
         // whenever that's the case so "Dec 20 – Jan 5" can't be misread as backwards.
-        val currentYear = yearOf(System.currentTimeMillis(), UtcTimeZone)
-        val startYear = yearOf(dateRangeStart!!, UtcTimeZone)
-        val endYear = yearOf(dateRangeEnd!!, UtcTimeZone)
+        val currentYear = PlatformDateFormatter.yearOf(System.currentTimeMillis(), DateZone.Utc)
+        val startYear = PlatformDateFormatter.yearOf(dateRangeStart, DateZone.Utc)
+        val endYear = PlatformDateFormatter.yearOf(dateRangeEnd, DateZone.Utc)
         val withYear = startYear != currentYear || endYear != currentYear
-        "${shortDateLabel(dateRangeStart!!, UtcTimeZone, withYear)} – ${shortDateLabel(dateRangeEnd!!, UtcTimeZone, withYear)}"
+        "${PlatformDateFormatter.shortDateLabel(dateRangeStart, DateZone.Utc, withYear)} – " +
+            PlatformDateFormatter.shortDateLabel(dateRangeEnd, DateZone.Utc, withYear)
     } else {
         null
     }
-    val filteredDays = remember(days, query, selectedFilterId, categoryNames, dateRangeStart, dateRangeEnd) {
-        filterJournalDays(
-            days = days,
-            query = query,
-            selectedFilterId = selectedFilterId,
-            categoryLabelFor = { id -> categoryNames[id] ?: expenseCategoryLabel(id) },
-            startDayKey = dateRangeStart?.let { dayKey(it, UtcTimeZone) },
-            endDayKey = dateRangeEnd?.let { dayKey(it, UtcTimeZone) },
-        )
-    }
+    // Search/category/date-range filtering already happened in SQL for `days` — this state is
+    // presentation only (search-active flag, chip selection, empty-state routing).
     val listState = JournalListUiState(
         query = query,
         selectedFilterId = selectedFilterId,
-        days = filteredDays,
+        days = days,
         filters = filters,
         searchActive = searchActive,
+        isLoading = isLoading,
     )
 
     BackHandler(enabled = selectedRowId != null) {
@@ -129,26 +129,33 @@ fun JournalFlow(
             if (rowId == null) {
                 JournalListScreen(
                     state = listState,
-                    onQueryChange = { query = it },
-                    onFilterSelected = { selectedFilterId = it },
+                    onQueryChange = onQueryChange,
+                    onFilterSelected = onFilterSelected,
                     onRowClick = { selectedRowId = it.id },
                     onRowLongPress = { row ->
                         quickNoteRow = row
-                        quickNoteText = ""
+                        // Pre-fill with the existing note (US-HIS-4) — an empty text field would
+                        // silently overwrite any note already on the record when saved.
+                        quickNoteText = row.rawNote.orEmpty()
                     },
                     selectedTab = selectedTab,
                     onTabSelected = onTabSelected,
                     onAddClick = onAddClick,
                     dateRangeLabel = dateRangeLabel,
                     onDateRangeClick = { showDateRangeSheet = true },
-                    onClearDateRange = {
-                        dateRangeStart = null
-                        dateRangeEnd = null
-                    },
+                    onClearDateRange = { onDateRangeChange(null, null) },
+                    isLoadingMore = isLoadingMore,
+                    onLoadMore = onLoadMore,
                 )
+            } else if (days.flatMap { it.rows }.none { it.id == rowId }) {
+                // Records load asynchronously — a deep link straight into detail (e.g. from
+                // Home) can compose before the Flow emits, and detailStateFor's "food"/blank
+                // defaults would otherwise flash before the real row arrives one frame later.
+                Box(modifier = Modifier.fillMaxSize().background(colors.paper))
             } else {
+                val detail = detailStateFor(rowId, days, categoryNames)
                 JournalDetailScreen(
-                    state = detailStateFor(rowId, days),
+                    state = detail,
                     onBack = {
                         if (initialSelectedRowId != null && rowId == initialSelectedRowId) {
                             onTabSelected(HomeNavTab.Home)
@@ -156,7 +163,9 @@ fun JournalFlow(
                         selectedRowId = null
                     },
                     onActions = { showActions = true },
-                    onLinkedTagClick = {},
+                    onLinkedTagClick = {
+                        detail.linkedTag?.eventId?.let(onOpenLinkedEvent)
+                    },
                     onEdit = { onEditRecord(rowId) },
                     onDelete = { showDeleteConfirm = true },
                 )
@@ -223,58 +232,32 @@ fun JournalFlow(
             visible = showDateRangeSheet,
             initialStartEpochMillis = dateRangeStart,
             initialEndEpochMillis = dateRangeEnd,
-            onConfirm = { start, end ->
-                dateRangeStart = start
-                dateRangeEnd = end
-            },
-            onClear = {
-                dateRangeStart = null
-                dateRangeEnd = null
-            },
+            onConfirm = onDateRangeChange,
+            onClear = { onDateRangeChange(null, null) },
             onDismiss = { showDateRangeSheet = false },
         )
     }
 }
 
-/**
- * Matches search against note, category label, and amount; combined with the selected category
- * filter and an optional inclusive date range (compared via [JournalDayUi.id], the same
- * year/day-of-year `dayKey` string the day was grouped by — lexicographic comparison sorts
- * correctly since the key is fixed-width zero-padded).
- */
-fun filterJournalDays(
+private fun detailStateFor(
+    rowId: String,
     days: List<JournalDayUi>,
-    query: String,
-    selectedFilterId: String,
-    categoryLabelFor: (String) -> String,
-    startDayKey: String? = null,
-    endDayKey: String? = null,
-): List<JournalDayUi> {
-    val searchActive = query.isNotBlank()
-    return days.mapNotNull { day ->
-        if (startDayKey != null && endDayKey != null && day.id !in startDayKey..endDayKey) return@mapNotNull null
-        val matches = day.rows.filter { row ->
-            val matchesFilter = selectedFilterId == "all" || row.categoryId == selectedFilterId
-            val matchesQuery = !searchActive ||
-                row.note.contains(query, ignoreCase = true) ||
-                categoryLabelFor(row.categoryId).contains(query, ignoreCase = true) ||
-                row.amount.contains(query, ignoreCase = true)
-            matchesFilter && matchesQuery
-        }
-        if (matches.isEmpty()) null else day.copy(rows = matches)
-    }
-}
-
-private fun detailStateFor(rowId: String, days: List<JournalDayUi>): JournalDetailUiState {
+    categoryNames: Map<String, String>,
+): JournalDetailUiState {
     val row = days.flatMap { it.rows }.firstOrNull { it.id == rowId }
+    val categoryId = row?.categoryId ?: "food"
     return JournalDetailUiState(
         id = rowId,
-        categoryId = row?.categoryId ?: "food",
-        categoryLabel = (row?.categoryId ?: "food").uppercase(),
+        categoryId = categoryId,
+        // Real category name for custom categories (US-HIS-5) — the raw id (e.g. a generated
+        // "coffee-<timestamp>" slug) is not a label.
+        categoryLabel = (categoryNames[categoryId] ?: expenseCategoryLabel(categoryId)).uppercase(),
         amountLabel = row?.amount.orEmpty(),
-        dateTimeLabel = row?.meta.orEmpty(),
+        dateTimeLabel = row?.detailDateTimeLabel.orEmpty(),
         note = row?.note.orEmpty(),
-        linkedTag = null,
+        linkedTag = row?.tag?.let { title ->
+            JournalLinkedTagUi(title = title, meta = row.tagSubtitle.orEmpty(), eventId = row.linkedEventId)
+        },
     )
 }
 

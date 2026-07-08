@@ -1,12 +1,17 @@
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordChangeSignal
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
+import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordType
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
@@ -63,6 +68,26 @@ class DefaultHistoryRepository(
             }
             is Result.Error -> result
         }
+
+    override suspend fun getRecordsPage(
+        filter: RecordHistoryFilter,
+        cursor: RecordPageCursor?,
+        limit: Int,
+    ): Result<List<FinanceRecord>> = financeRecordRepository.getRecordsPage(
+        filter = RecordPageFilter(
+            categoryId = filter.categoryId,
+            fromEpochMillis = filter.fromEpochMillis,
+            toEpochMillis = filter.toEpochMillis,
+            query = filter.query,
+        ),
+        cursor = cursor,
+        limit = limit,
+    )
+
+    override suspend fun hasAnyRecordIn(categoryId: CategoryId): Result<Boolean> =
+        financeRecordRepository.existsByCategory(categoryId)
+
+    override fun observeChangeSignal(): Flow<RecordChangeSignal> = financeRecordRepository.observeChangeSignal()
 
     private fun periodBounds(period: SummaryPeriod, anchorEpochMillis: Long): Pair<Long, Long> {
         val anchorInstant = Instant.fromEpochMilliseconds(anchorEpochMillis)

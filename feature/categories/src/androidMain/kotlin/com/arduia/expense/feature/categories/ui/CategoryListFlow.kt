@@ -30,7 +30,7 @@ fun CategoryListFlow(
     onBack: () -> Unit,
     state: CategoryListUiState = previewCategoryList,
     onReorderCustom: (List<String>) -> Unit = {},
-    onSaveCategory: (editingId: String?, name: String) -> Unit = { _, _ -> },
+    onSaveCategory: (editingId: String?, name: String, iconId: String) -> Unit = { _, _, _ -> },
     onDeleteCategory: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -89,7 +89,7 @@ fun CategoryListFlow(
                 onIconSelected = { form = form.copy(selectedIconId = it) },
                 onAdd = {
                     if (form.canAdd) {
-                        onSaveCategory(editingRow?.categoryId, form.name.trim())
+                        onSaveCategory(editingRow?.categoryId, form.name.trim(), form.selectedIconId)
                         showSheet = false
                         editingRow = null
                     }
@@ -110,10 +110,11 @@ fun CategoryListFlow(
                     row = row,
                     onEdit = {
                         editingRow = row
+                        val currentIconId = row.iconId.ifBlank { "food" }
                         form = CategoryNewFormState(
                             name = row.label,
-                            selectedIconId = row.categoryId,
-                            iconOptions = (listOf(row.categoryId) +
+                            selectedIconId = currentIconId,
+                            iconOptions = (listOf(currentIconId) +
                                 CategoryNewFormState().iconOptions).distinct().take(4),
                         )
                         actionsRow = null

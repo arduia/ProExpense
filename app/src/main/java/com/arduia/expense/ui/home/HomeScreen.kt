@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +49,7 @@ import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.preview.previewHomeEvent
+import com.arduia.expense.ui.preview.previewHomeLoading
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -69,17 +70,121 @@ fun HomeScreenContent(
     onCustomizeQuickAccess: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     onRowClick: (com.arduia.expense.ui.design.ProTransactionRowModel) -> Unit = {},
-    visibleTiles: Set<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
+    visibleTiles: List<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
 ) {
-    val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = dimens.screenPadding)
-            .padding(top = dimens.space14),
-    ) {
+    // The loading/empty states are short, non-scrolling content, so they stay a plain fixed
+    // Column. Once there are records, everything (header, cards, quick access) scrolls away
+    // together with the list instead of pinning it below a fixed header — the list gets the
+    // screen's full height rather than being squeezed into whatever space is left over.
+    if (state.isLoading || state.isEmpty) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = dimens.screenPadding)
+                .padding(top = dimens.space14),
+        ) {
+            HomeHeaderContent(
+                state = state,
+                showPinSetupBanner = showPinSetupBanner,
+                onPinBannerTap = onPinBannerTap,
+                onPinBannerDismiss = onPinBannerDismiss,
+                onActiveEventClick = onActiveEventClick,
+                onNotificationsClick = onNotificationsClick,
+                onCustomizeQuickAccess = onCustomizeQuickAccess,
+                onReportsClick = onReportsClick,
+                onDebtClick = onDebtClick,
+                onSplitClick = onSplitClick,
+                onEventsClick = onEventsClick,
+                visibleTiles = visibleTiles,
+            )
+
+            if (state.isLoading) {
+                // Records load asynchronously after first composition — without this, "no data
+                // yet" and "genuinely no records" render identically and the empty-state
+                // illustration flashes on every cold start for a user who actually has records.
+                Box(modifier = Modifier.weight(1f).fillMaxWidth())
+            } else {
+                HomeEmptyContent(
+                    onLogFirstExpense = onLogFirstExpense,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(bottom = dimens.navShellBottomInset),
+                )
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = dimens.screenPadding),
+            contentPadding = PaddingValues(top = dimens.space14, bottom = dimens.navShellBottomInset),
+        ) {
+            item {
+                HomeHeaderContent(
+                    state = state,
+                    showPinSetupBanner = showPinSetupBanner,
+                    onPinBannerTap = onPinBannerTap,
+                    onPinBannerDismiss = onPinBannerDismiss,
+                    onActiveEventClick = onActiveEventClick,
+                    onNotificationsClick = onNotificationsClick,
+                    onCustomizeQuickAccess = onCustomizeQuickAccess,
+                    onReportsClick = onReportsClick,
+                    onDebtClick = onDebtClick,
+                    onSplitClick = onSplitClick,
+                    onEventsClick = onEventsClick,
+                    visibleTiles = visibleTiles,
+                )
+            }
+            item {
+                HomeRecentHeader(onSeeAll = onSeeAll, modifier = Modifier.padding(top = dimens.space26))
+            }
+            itemsIndexed(state.dayGroups, key = { _, group -> group.dayTitle }) { index, group ->
+                DayGroup(
+                    title = group.dayTitle,
+                    total = group.dayTotal,
+                    transactions = group.transactions.map { item ->
+                        ProTransactionRowModel(
+                            id = item.id,
+                            categoryId = item.categoryId,
+                            note = item.note,
+                            meta = item.meta,
+                            amount = item.amount,
+                            tag = item.tag,
+                        )
+                    },
+                    cardWrapped = false,
+                    onRowClick = onRowClick,
+                    // The header row below HomeRecentHeader already carries a bottom(space10)
+                    // gap before the first group; only later groups need the between-groups gap.
+                    modifier = if (index == 0) Modifier else Modifier.padding(top = dimens.space12),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeHeaderContent(
+    state: HomeUiState,
+    showPinSetupBanner: Boolean,
+    onPinBannerTap: () -> Unit,
+    onPinBannerDismiss: () -> Unit,
+    onActiveEventClick: (String) -> Unit,
+    onNotificationsClick: () -> Unit,
+    onCustomizeQuickAccess: () -> Unit,
+    onReportsClick: () -> Unit,
+    onDebtClick: () -> Unit,
+    onSplitClick: () -> Unit,
+    onEventsClick: () -> Unit,
+    visibleTiles: List<QuickAccessTileType>,
+    modifier: Modifier = Modifier,
+) {
+    val dimens = ProExpenseTheme.dimensions
+
+    Column(modifier = modifier.fillMaxWidth()) {
         HomeHeader(
             dateLabel = state.dateLabel,
             greetingName = state.greetingName,
@@ -106,7 +211,7 @@ fun HomeScreenContent(
                 monthSpend = state.monthSpend,
                 budgetSummary = state.budgetSummary,
                 monthDelta = state.monthDelta,
-                showEmptyHint = state.showEmptyHint,
+                showEmptyHint = state.showEmptyHint && !state.isLoading,
                 showSparkline = !state.isEmpty && state.sparklinePoints.size >= 2,
                 sparklinePoints = state.sparklinePoints,
             )
@@ -141,25 +246,6 @@ fun HomeScreenContent(
             visibleTiles = visibleTiles,
             modifier = Modifier.padding(top = dimens.space24),
         )
-
-        if (state.isEmpty) {
-            HomeEmptyContent(
-                onLogFirstExpense = onLogFirstExpense,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(bottom = dimens.navShellBottomInset),
-            )
-        } else {
-            HomeRecentSection(
-                groups = state.dayGroups,
-                onSeeAll = onSeeAll,
-                onRowClick = onRowClick,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(top = dimens.space26),
-            )
-        }
     }
 }
 
@@ -200,21 +286,29 @@ private fun HomeHeader(
                 )
             }
         }
+        // proIconClickable already enforces a >=48dp touch target internally — an explicit
+        // .size(touchTargetMin) here forced the *visible* circle to that same 48dp, making it
+        // bigger than it needs to look. Keep the tap target accessible but shrink the circle
+        // itself by sizing only the inner visual layer.
         Box(
-            modifier = Modifier
-                .size(dimens.touchTargetMin)
-                .clip(CircleShape)
-                .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
-                .background(colors.surface)
-                .proIconClickable(onClick = onNotificationsClick),
+            modifier = Modifier.proIconClickable(onClick = onNotificationsClick),
             contentAlignment = Alignment.Center,
         ) {
-            ProIcon(
-                glyph = ProIconGlyph.Bell,
-                contentDescription = stringResource(R.string.notifications),
-                tint = colors.onSurfaceVariant,
-                size = dimens.iconNav,
-            )
+            Box(
+                modifier = Modifier
+                    .size(dimens.buttonSmallHeight)
+                    .clip(CircleShape)
+                    .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
+                    .background(colors.surface),
+                contentAlignment = Alignment.Center,
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.Bell,
+                    contentDescription = stringResource(R.string.notifications),
+                    tint = colors.onSurfaceVariant,
+                    size = dimens.iconInline,
+                )
+            }
         }
     }
 }
@@ -370,7 +464,7 @@ private fun HomeQuickAccessSection(
     onDebtClick: () -> Unit,
     onSplitClick: () -> Unit,
     onEventsClick: () -> Unit,
-    visibleTiles: Set<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
+    visibleTiles: List<QuickAccessTileType> = QuickAccessPrefs.defaultVisible,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -403,35 +497,21 @@ private fun HomeQuickAccessSection(
                 .padding(top = dimens.space10),
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
-            if (QuickAccessTileType.Reports in visibleTiles) {
+            visibleTiles.forEach { tile ->
+                val (icon, labelRes, onClick) = when (tile) {
+                    QuickAccessTileType.Reports ->
+                        Triple(ProIconGlyph.FeatReports, R.string.quick_access_reports, onReportsClick)
+                    QuickAccessTileType.Debt ->
+                        Triple(ProIconGlyph.FeatDebt, R.string.quick_access_debt, onDebtClick)
+                    QuickAccessTileType.Split ->
+                        Triple(ProIconGlyph.FeatSplit, R.string.quick_access_split, onSplitClick)
+                    QuickAccessTileType.Events ->
+                        Triple(ProIconGlyph.FeatEvents, R.string.quick_access_events, onEventsClick)
+                }
                 QuickAccessTile(
-                    label = stringResource(R.string.quick_access_reports),
-                    icon = ProIconGlyph.FeatReports,
-                    onClick = onReportsClick,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            if (QuickAccessTileType.Debt in visibleTiles) {
-                QuickAccessTile(
-                    label = stringResource(R.string.quick_access_debt),
-                    icon = ProIconGlyph.FeatDebt,
-                    onClick = onDebtClick,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            if (QuickAccessTileType.Split in visibleTiles) {
-                QuickAccessTile(
-                    label = stringResource(R.string.quick_access_split),
-                    icon = ProIconGlyph.FeatSplit,
-                    onClick = onSplitClick,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            if (QuickAccessTileType.Events in visibleTiles) {
-                QuickAccessTile(
-                    label = stringResource(R.string.quick_access_events),
-                    icon = ProIconGlyph.FeatEvents,
-                    onClick = onEventsClick,
+                    label = stringResource(labelRes),
+                    icon = icon,
+                    onClick = onClick,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -456,63 +536,32 @@ private fun HomeEmptyContent(
 }
 
 @Composable
-private fun HomeRecentSection(
-    groups: List<com.arduia.expense.ui.preview.HomeDayGroup>,
+private fun HomeRecentHeader(
     onSeeAll: () -> Unit,
-    onRowClick: (com.arduia.expense.ui.design.ProTransactionRowModel) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = dimens.space10),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.recent_section),
-                style = typography.eyebrow,
-                color = colors.onSurface,
-            )
-            ProTextAction(
-                text = stringResource(R.string.see_all),
-                onClick = onSeeAll,
-                style = typography.caption.copy(fontWeight = FontWeight.SemiBold),
-                color = colors.primary,
-            )
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentPadding = PaddingValues(bottom = dimens.navShellBottomInset),
-            verticalArrangement = Arrangement.spacedBy(dimens.space12),
-        ) {
-            items(groups, key = { it.dayTitle }) { group ->
-                DayGroup(
-                    title = group.dayTitle,
-                    total = group.dayTotal,
-                    transactions = group.transactions.map { item ->
-                        ProTransactionRowModel(
-                            id = item.id,
-                            categoryId = item.categoryId,
-                            note = item.note,
-                            meta = item.meta,
-                            amount = item.amount,
-                            tag = item.tag,
-                        )
-                    },
-                    cardWrapped = false,
-                    onRowClick = onRowClick,
-                )
-            }
-        }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = dimens.space10),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.recent_section),
+            style = typography.eyebrow,
+            color = colors.onSurface,
+        )
+        ProTextAction(
+            text = stringResource(R.string.see_all),
+            onClick = onSeeAll,
+            style = typography.caption.copy(fontWeight = FontWeight.SemiBold),
+            color = colors.primary,
+        )
     }
 }
 
@@ -584,6 +633,25 @@ private fun HomeEmptyPreview() {
     ProExpenseTheme {
         HomeScreenContent(
             state = previewHomeEmpty,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeLoadingPreview() {
+    ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeLoading,
             onReportsClick = {},
             onDebtClick = {},
             onSplitClick = {},

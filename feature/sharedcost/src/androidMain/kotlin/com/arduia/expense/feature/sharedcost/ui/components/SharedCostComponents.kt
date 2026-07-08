@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -27,11 +28,14 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.sharedcost.R
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.ui.design.DetailFieldCard
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
@@ -200,6 +204,9 @@ fun SharedCostParticipantRow(
     showNoteIcon: Boolean = false,
     editableAmount: Boolean = false,
     onAmountChange: (String) -> Unit = {},
+    editableName: Boolean = false,
+    onNameChange: (String) -> Unit = {},
+    namePlaceholder: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -231,13 +238,36 @@ fun SharedCostParticipantRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.space4),
         ) {
-            Text(
-                text = name,
-                style = typography.captionMedium,
-                color = colors.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            if (editableName) {
+                BasicTextField(
+                    value = name,
+                    onValueChange = onNameChange,
+                    textStyle = typography.captionMedium.copy(color = colors.onSurface),
+                    cursorBrush = SolidColor(colors.primary),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                    modifier = Modifier.weight(1f, fill = false),
+                    decorationBox = { inner ->
+                        if (name.isEmpty() && namePlaceholder != null) {
+                            Text(
+                                text = namePlaceholder,
+                                style = typography.captionMedium,
+                                color = colors.muted,
+                                maxLines = 1,
+                            )
+                        }
+                        inner()
+                    },
+                )
+            } else {
+                Text(
+                    text = name,
+                    style = typography.captionMedium,
+                    color = colors.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             if (showNoteIcon) {
                 ProIcon(
                     glyph = ProIconGlyph.Note,
@@ -250,7 +280,7 @@ fun SharedCostParticipantRow(
         if (editableAmount) {
             BasicTextField(
                 value = amount.dropWhile { !it.isDigit() },
-                onValueChange = onAmountChange,
+                onValueChange = { raw -> onAmountChange(sanitizeShareInput(raw)) },
                 textStyle = typography.listAmount.copy(
                     color = colors.onSurface,
                     fontFamily = typography.amountFamily,
@@ -258,6 +288,9 @@ fun SharedCostParticipantRow(
                 ),
                 cursorBrush = SolidColor(colors.primary),
                 singleLine = true,
+                // Shares are decimal money values — a plain-text IME here forces a keyboard
+                // switch for every digit and admits letters the amount parser can't use.
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.padding(start = dimens.space8),
             )
         } else {
@@ -268,6 +301,22 @@ fun SharedCostParticipantRow(
             )
         }
     }
+}
+
+/** Digits plus a single decimal point — mirrors what [com.arduia.expense.ui.design.AmountInput] raw strings hold. */
+private fun sanitizeShareInput(raw: String): String {
+    val builder = StringBuilder()
+    var hasDot = false
+    for (char in raw) {
+        when {
+            char.isDigit() -> builder.append(char)
+            char == '.' && !hasDot -> {
+                builder.append(char)
+                hasDot = true
+            }
+        }
+    }
+    return builder.toString()
 }
 
 @Composable
@@ -384,11 +433,14 @@ fun SharedCostPerPersonCard(
     participants: List<Pair<String, String>>,
     modifier: Modifier = Modifier,
     perPersonEyebrow: String,
+    editableNames: Boolean = false,
+    onNameChange: (Int, String) -> Unit = { _, _ -> },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.card
+    val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     Column(
         modifier = modifier
@@ -417,6 +469,9 @@ fun SharedCostPerPersonCard(
                 name = name,
                 amount = amount,
                 showNoteIcon = true,
+                editableName = editableNames,
+                onNameChange = { onNameChange(index, it) },
+                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate),
             )
         }
     }
@@ -427,10 +482,13 @@ fun SharedCostCustomSplitCard(
     participants: List<Pair<String, String>>,
     onShareChange: (Int, String) -> Unit,
     modifier: Modifier = Modifier,
+    editableNames: Boolean = false,
+    onNameChange: (Int, String) -> Unit = { _, _ -> },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val shape = ProExpenseTheme.shapes.card
+    val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     Column(
         modifier = modifier
@@ -447,6 +505,9 @@ fun SharedCostCustomSplitCard(
                 amount = amount.dropWhile { !it.isDigit() },
                 editableAmount = true,
                 onAmountChange = { onShareChange(index, it) },
+                editableName = editableNames,
+                onNameChange = { onNameChange(index, it) },
+                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate),
             )
         }
     }

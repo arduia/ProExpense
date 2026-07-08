@@ -41,6 +41,9 @@ fun NumericKeypad(
     modifier: Modifier = Modifier,
     saveLabel: String = "Save",
     nextLabel: String = "Next",
+    // Some flows (e.g. shared-cost split entry) have only one action — showing "Save"/"Next"
+    // as two identical or one dead button reads as a bug, not a choice.
+    showSaveAction: Boolean = true,
 ) {
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
@@ -77,14 +80,16 @@ fun NumericKeypad(
                 .alpha(actionAlpha),
             horizontalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
-            ProButton(
-                text = saveLabel,
-                onClick = onSave,
-                modifier = Modifier.weight(1f),
-                variant = ProButtonVariant.Secondary,
-                size = ProButtonSize.Lg,
-                enabled = actionsEnabled,
-            )
+            if (showSaveAction) {
+                ProButton(
+                    text = saveLabel,
+                    onClick = onSave,
+                    modifier = Modifier.weight(1f),
+                    variant = ProButtonVariant.Secondary,
+                    size = ProButtonSize.Lg,
+                    enabled = actionsEnabled,
+                )
+            }
             ProButton(
                 text = nextLabel,
                 onClick = onNext,

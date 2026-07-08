@@ -20,6 +20,7 @@ import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateError
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateValid
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetail
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailClosed
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailNoLinked
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailWarn
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
 import com.arduia.expense.ui.theme.ProArtboard
@@ -69,6 +70,19 @@ class EventBudgetScreenshotTest {
             selectedTab = HomeNavTab.Budget,
             onTabSelected = {},
             onAddClick = {},
+        )
+    }
+
+    @Test
+    fun event_loading() = capture {
+        EventBudgetListScreen(
+            events = emptyList(),
+            onCreateEvent = {},
+            onEventClick = {},
+            selectedTab = HomeNavTab.Budget,
+            onTabSelected = {},
+            onAddClick = {},
+            isLoading = true,
         )
     }
 
@@ -166,6 +180,17 @@ class EventBudgetScreenshotTest {
     fun edge_event_closed() = capture {
         EventDetailScreen(
             state = previewEventDetailClosed,
+            onBack = {},
+            onMore = {},
+            onAddTagged = {},
+            onExpenseClick = {},
+        )
+    }
+
+    @Test
+    fun edge_event_no_linked() = capture {
+        EventDetailScreen(
+            state = previewEventDetailNoLinked,
             onBack = {},
             onMore = {},
             onAddTagged = {},

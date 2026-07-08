@@ -182,6 +182,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
             created_at = 0,
             cached_spent_cents = 0,
             cache_updated_at = 0,
+            closed_at_epoch_millis = null,
         )
 
         val all = repo.observeAll().first()
@@ -201,6 +202,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
             direction = 99L,
             due_epoch_millis = null,
             is_settled = 0L,
+            note = null,
         )
 
         val all = repo.observeAll().first()

@@ -4,6 +4,7 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.EventBudgetSummaryState
 import com.arduia.expense.ui.design.EventBudgetTone
+import com.arduia.expense.ui.design.PlatformDateFormatter
 
 data class EventLinkedExpenseUi(
     val id: String,
@@ -24,15 +25,18 @@ data class EventDetailUiState(
     val linkedExpenses: List<EventLinkedExpenseUi> = emptyList(),
     val showAddTagged: Boolean = false,
     val readOnly: Boolean = false,
+    val isClosed: Boolean = false,
 )
 
 data class EventCreateFormState(
     val name: String = "",
     val budgetRaw: String = "",
-    val startLabel: String = "May 12",
-    val endLabel: String = "May 26",
     val startEpochMillis: Long = System.currentTimeMillis(),
     val endEpochMillis: Long = System.currentTimeMillis(),
+    // Defaults derived from the epoch fields above, not hardcoded — a bare EventCreateFormState()
+    // for a brand-new event must show today's date, not a fixed placeholder month.
+    val startLabel: String = PlatformDateFormatter.shortDateLabel(startEpochMillis),
+    val endLabel: String = PlatformDateFormatter.shortDateLabel(endEpochMillis),
     val isDuplicateName: Boolean = false,
     val showBudgetError: Boolean = false,
 ) {
@@ -136,6 +140,28 @@ val previewEventDetailWarn = EventDetailUiState(
     ),
 )
 
+val previewEventDetailNoLinked = EventDetailUiState(
+    id = "birthday",
+    title = "Birthday party",
+    subtitle = "Apr 28 · active",
+    statusEyebrow = "ACTIVE",
+    summary = EventBudgetSummaryState(
+        eyebrow = "REMAINING",
+        remainingLabel = "$400",
+        spentLabel = "$0",
+        budgetLabel = "$400",
+        spentCaption = "Spent",
+        budgetCaption = "Budget",
+        progress = 0f,
+        tone = EventBudgetTone.OnTrack,
+        footerStartLabel = "0% spent",
+        footerEndLabel = "$0/day pace",
+    ),
+    linkedCount = 0,
+    linkedExpenses = emptyList(),
+    showAddTagged = true,
+)
+
 val previewEventDetailClosed = EventDetailUiState(
     id = "wedding",
     title = "John's Wedding",
@@ -148,4 +174,5 @@ val previewEventDetailClosed = EventDetailUiState(
         isFinal = true,
     ),
     readOnly = true,
+    isClosed = true,
 )

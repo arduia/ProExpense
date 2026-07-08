@@ -1,0 +1,27 @@
+<resources>
+<string name="categories_title">หมวดหมู่</string>
+<string name="categories_back">เพิ่มเติม</string>
+<string name="categories_default_label">ค่าเริ่มต้น · แสดงก่อนเสมอ</string>
+<string name="categories_custom_label">กำหนดเอง · ลากเพื่อจัดเรียง</string>
+<string name="categories_locked_word">ล็อก</string>
+<string name="categories_locked_pill">ล็อก</string>
+<string name="categories_create">สร้างหมวดหมู่ใหม่</string>
+<string name="categories_footer">ลำดับที่นี่จะสะท้อนลำดับชิปในหน้าเพิ่มรายจ่าย</string>
+<string name="categories_new_title">หมวดหมู่ใหม่</string>
+<string name="categories_name_placeholder">ชื่อหมวดหมู่</string>
+<string name="categories_name_counter">%1$d/%2$d</string>
+<string name="categories_duplicate_error">มีหมวดหมู่ชื่อนี้อยู่แล้ว</string>
+<string name="categories_icon_label">ไอคอน</string>
+<string name="categories_add">เพิ่มหมวดหมู่</string>
+<string name="categories_edit_title">แก้ไขหมวดหมู่</string>
+<string name="categories_save">บันทึกการเปลี่ยนแปลง</string>
+<string name="categories_action_edit_title">แก้ไขหมวดหมู่</string>
+<string name="categories_action_edit_subtitle">เปลี่ยนชื่อหรือไอคอน</string>
+<string name="categories_action_delete_title">ลบหมวดหมู่</string>
+<string name="categories_action_delete_subtitle">รายจ่ายจะย้ายไปที่ไม่มีหมวดหมู่</string>
+<string name="categories_action_cancel">ยกเลิก</string>
+<string name="categories_delete_title">ลบหมวดหมู่นี้หรือไม่?</string>
+<string name="categories_delete_body">รายจ่ายของหมวดหมู่นี้จะย้ายไปที่ไม่มีหมวดหมู่ ไม่สามารถย้อนกลับได้</string>
+<string name="categories_delete_confirm">ลบ</string>
+<string name="categories_delete_cancel">ยกเลิก</string>
+</resources>

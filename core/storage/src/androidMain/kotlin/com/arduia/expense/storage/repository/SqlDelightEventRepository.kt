@@ -8,11 +8,13 @@ import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventId
+import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.Money
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.EventQueries
 import com.arduia.expense.storage.mapping.toDomain
 import com.arduia.expense.storage.mapping.toCode
+import com.arduia.expense.storage.mapping.toEventStatusFromCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +39,15 @@ class SqlDelightEventRepository(
             // INSERT OR REPLACE rewrites the whole row, so preserve audit/cache columns this
             // method doesn't own across an edit instead of resetting them.
             val existing = queries.selectEventById(event.id.value).executeAsOneOrNull()
+            // Timestamped here, not by the caller — closedAtEpochMillis marks the moment the row
+            // actually transitions to CLOSED (US-EVT-5's 24h edit grace period), so it's set once
+            // on that transition and preserved on every later edit rather than being overwritable.
+            val wasClosed = existing?.status?.toEventStatusFromCode() == EventStatus.CLOSED
+            val closedAt = when {
+                event.status == EventStatus.CLOSED && !wasClosed -> System.currentTimeMillis()
+                event.status == EventStatus.CLOSED -> existing?.closed_at_epoch_millis
+                else -> null
+            }
             queries.insertEvent(
                 id = event.id.value,
                 name = event.name,
@@ -48,6 +59,7 @@ class SqlDelightEventRepository(
                 created_at = existing?.created_at ?: System.currentTimeMillis(),
                 cached_spent_cents = existing?.cached_spent_cents ?: 0,
                 cache_updated_at = existing?.cache_updated_at ?: 0,
+                closed_at_epoch_millis = closedAt,
             )
             Unit
         }

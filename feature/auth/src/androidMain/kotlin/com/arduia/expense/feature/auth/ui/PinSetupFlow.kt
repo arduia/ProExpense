@@ -2,6 +2,8 @@ package com.arduia.expense.feature.auth.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -18,8 +20,9 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.feature.auth.BiometricAuthenticator
 import com.arduia.expense.feature.auth.R
 import com.arduia.expense.feature.auth.SetupPinUseCase
-import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
-import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
+import com.arduia.expense.feature.auth.PinEntryLogic
+import com.arduia.expense.feature.auth.PinEntryMode
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.PinSetupUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.theme.ProArtboard
@@ -35,6 +38,10 @@ private enum class PinSetupStep { Setup, EnterNew, EnterConfirm, Security }
 fun PinSetupFlow(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    // Fired only on a successful save, distinct from onDismiss (also called on cancel/back) —
+    // lets the caller show the "PIN is now active" confirmation (US-AUTH-1 Scenario 3) only when
+    // setup actually completed.
+    onSaved: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -54,13 +61,17 @@ fun PinSetupFlow(
     var selectedQuestion by remember { mutableStateOf("pet") }
     var answer by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isSaving by remember { mutableStateOf(false) }
 
     val canSave = pinAuthOn && newPin.length == 6 && confirmPin.length == 6 && answer.isNotBlank()
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.paper),
+            .background(colors.paper)
+            // Rendered as an overlay sibling above the Home/More screen — swallow taps so they
+            // can't fall through to whatever's underneath (see PinEntryScreen for the same fix).
+            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {}),
     ) {
         AnimatedContent(
             targetState = step,
@@ -96,6 +107,7 @@ fun PinSetupFlow(
                     onRecoveryClick = { step = PinSetupStep.Security },
                     onSave = {
                         errorMessage = null
+                        isSaving = true
                         scope.launch {
                             val result = setupPin(
                                 pin = newPin,
@@ -104,32 +116,34 @@ fun PinSetupFlow(
                                 enableBiometric = biometricOn,
                             )
                             if (result is Result.Error) {
+                                isSaving = false
                                 errorMessage = result.message
                                 return@launch
                             }
+                            onSaved()
                             onDismiss()
                         }
                     },
                     onBack = onDismiss,
                     saveEnabled = canSave,
+                    saving = isSaving,
                     errorMessage = errorMessage,
                 )
                 PinSetupStep.EnterNew -> PinSetPinScreen(
                     state = PinEntryUiState(filledDots = entryBuffer.length, digits = entryBuffer),
                     headingRes = R.string.pin_set_new_heading,
                     onDigit = { digit ->
-                        if (entryBuffer.length < 6) {
-                            entryBuffer += digit
-                            if (entryBuffer.length == 6) {
-                                newPin = entryBuffer
+                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit)) {
+                            is PinEntryLogic.DigitResult.Updated -> entryBuffer = result.buffer
+                            is PinEntryLogic.DigitResult.Completed -> {
+                                entryBuffer = result.pin
+                                newPin = result.pin
                                 confirmPin = ""
                                 step = PinSetupStep.Setup
                             }
                         }
                     },
-                    onBackspace = {
-                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
-                    },
+                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
                     onBack = { step = PinSetupStep.Setup },
                 )
                 PinSetupStep.EnterConfirm -> PinSetPinScreen(
@@ -140,15 +154,16 @@ fun PinSetupFlow(
                     ),
                     headingRes = R.string.pin_confirm_heading,
                     onDigit = { digit ->
-                        if (confirmError) {
-                            confirmError = false
-                            entryBuffer = ""
-                        }
-                        if (entryBuffer.length < 6) {
-                            entryBuffer += digit
-                            if (entryBuffer.length == 6) {
-                                if (entryBuffer == newPin) {
-                                    confirmPin = entryBuffer
+                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit, hadError = confirmError)) {
+                            is PinEntryLogic.DigitResult.Updated -> {
+                                confirmError = false
+                                entryBuffer = result.buffer
+                            }
+                            is PinEntryLogic.DigitResult.Completed -> {
+                                confirmError = false
+                                if (result.pin == newPin) {
+                                    entryBuffer = result.pin
+                                    confirmPin = result.pin
                                     step = PinSetupStep.Setup
                                 } else {
                                     confirmError = true
@@ -157,9 +172,7 @@ fun PinSetupFlow(
                             }
                         }
                     },
-                    onBackspace = {
-                        if (entryBuffer.isNotEmpty()) entryBuffer = entryBuffer.dropLast(1)
-                    },
+                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
                     onBack = { step = PinSetupStep.Setup },
                 )
                 PinSetupStep.Security -> PinSecurityQuestionScreen(

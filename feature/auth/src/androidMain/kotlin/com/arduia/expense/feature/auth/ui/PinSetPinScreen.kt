@@ -29,8 +29,8 @@ import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proIconClickable
-import com.arduia.expense.feature.auth.ui.preview.PinEntryMode
-import com.arduia.expense.feature.auth.ui.preview.PinEntryUiState
+import com.arduia.expense.feature.auth.PinEntryMode
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.previewPinSetConfirmMismatch
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme

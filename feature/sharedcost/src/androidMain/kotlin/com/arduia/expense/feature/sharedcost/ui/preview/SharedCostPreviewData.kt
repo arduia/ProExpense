@@ -1,7 +1,7 @@
 package com.arduia.expense.feature.sharedcost.ui.preview
 
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 
 data class SharedCostParticipantUi(
     val name: String,

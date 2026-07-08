@@ -27,8 +27,8 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostParticipantRow
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
 import com.arduia.expense.ui.theme.ProArtboard
@@ -42,6 +42,11 @@ fun SharedCostsSummaryScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
     backLabel: String = stringResource(R.string.shared_back_split),
+    // A previously saved split is immutable except for deletion (US-SHC-5 Scenario 2) — viewing
+    // it from history must not offer Save or the switch-to-custom edit path, only the new-split
+    // flow does.
+    readOnly: Boolean = false,
+    homeCurrencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -74,6 +79,7 @@ fun SharedCostsSummaryScreen(
 
         AmountDisplay(
             amountText = perPersonDisplay,
+            currencySymbol = homeCurrencySymbol,
             isZero = false,
             eyebrowText = stringResource(R.string.shared_each_person_pays),
             usePrimaryAmount = true,
@@ -85,7 +91,7 @@ fun SharedCostsSummaryScreen(
         Text(
             text = stringResource(
                 R.string.shared_summary_meta,
-                SharedCostSplitLogic.formatRawTotal(state.rawTotal),
+                SharedCostSplitLogic.formatRawTotal(state.rawTotal, homeCurrencySymbol),
                 state.peopleCount,
                 modeLabel,
             ),
@@ -102,16 +108,18 @@ fun SharedCostsSummaryScreen(
                 .background(colors.surface)
                 .padding(horizontal = dimens.cardPadding),
         ) {
+            val nameTemplate = stringResource(R.string.shared_default_person_name)
             state.participants.forEachIndexed { index, participant ->
                 SharedCostParticipantRow(
                     index = index + 1,
-                    name = participant.name,
+                    name = participant.name.trim()
+                        .ifEmpty { SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate) },
                     amount = participant.shareLabel,
                 )
             }
         }
 
-        if (state.mode == SharedSplitMode.Equal) {
+        if (!readOnly && state.mode == SharedSplitMode.Equal) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,13 +140,15 @@ fun SharedCostsSummaryScreen(
             }
         }
 
-        ProButton(
-            text = stringResource(R.string.shared_save_split_amount, "$$totalDisplay"),
-            onClick = onSave,
-            size = ProButtonSize.Lg,
-            fillMaxWidth = true,
-            modifier = Modifier.padding(top = dimens.space24),
-        )
+        if (!readOnly) {
+            ProButton(
+                text = stringResource(R.string.shared_save_split_amount, "$homeCurrencySymbol$totalDisplay"),
+                onClick = onSave,
+                size = ProButtonSize.Lg,
+                fillMaxWidth = true,
+                modifier = Modifier.padding(top = dimens.space24),
+            )
+        }
     }
 }
 

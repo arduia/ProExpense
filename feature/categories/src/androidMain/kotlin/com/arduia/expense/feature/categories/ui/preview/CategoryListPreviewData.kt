@@ -5,6 +5,7 @@ const val CATEGORY_NAME_MAX = 20
 data class CategoryRowUi(
     val categoryId: String,
     val label: String,
+    val iconId: String = "",
 )
 
 data class CategoryListUiState(

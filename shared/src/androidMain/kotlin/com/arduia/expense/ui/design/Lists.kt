@@ -32,6 +32,14 @@ data class ProTransactionRowModel(
     val meta: String,
     val amount: String,
     val tag: String? = null,
+    /** Secondary line for the linked tag (e.g. its date range) shown on Journal Detail. */
+    val tagSubtitle: String? = null,
+    /** The record's actual note, pre-fallback — [note] substitutes a placeholder when blank. */
+    val rawNote: String? = null,
+    /** "Today · 12:44 AM" style label for Journal Detail — [meta] is category + time, not a date. */
+    val detailDateTimeLabel: String? = null,
+    /** Set when [tag] links to an event, so Journal Detail can navigate to that event's detail. */
+    val linkedEventId: String? = null,
 )
 
 @Composable

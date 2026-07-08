@@ -30,14 +30,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.debt.R
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
+import com.arduia.expense.feature.debt.ui.preview.previewDebtLoading
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
 import com.arduia.expense.ui.theme.ProArtboard
@@ -68,8 +72,22 @@ fun DebtListScreen(
                 title = stringResource(R.string.debt_title),
                 onBack = onBack,
                 backLabel = stringResource(R.string.debt_back_more),
-                action = ProTopBarAction.Add,
-                onAction = onAddRecord,
+            )
+            // A small labeled pill, matching Budget's "+ New event" — the plain icon-only
+            // ProTopBarAction.Add tile read as oversized and unlabeled next to it.
+            ProButton(
+                text = stringResource(R.string.debt_new_record),
+                onClick = onAddRecord,
+                size = ProButtonSize.Sm,
+                modifier = Modifier.align(Alignment.CenterEnd),
+                leading = {
+                    ProIcon(
+                        glyph = ProIconGlyph.Plus,
+                        contentDescription = null,
+                        tint = colors.onPrimaryWarm,
+                        size = dimens.iconInline,
+                    )
+                },
             )
         }
 
@@ -93,25 +111,29 @@ fun DebtListScreen(
                 usePrimarySelection = true,
             )
 
-            DebtSummaryCard(state = state)
+            // Debts load asynchronously after first composition — without this check, the summary
+            // card would briefly show "$0 · 0 active" before real data has had a chance to load.
+            if (!state.isLoading) {
+                DebtSummaryCard(state = state)
 
-            if (state.active.isNotEmpty()) {
-                DebtSection(label = stringResource(R.string.debt_section_active)) {
-                    DebtRecordGroup(
-                        records = state.active,
-                        side = state.side,
-                        onRecordClick = onRecordClick,
-                    )
+                if (state.active.isNotEmpty()) {
+                    DebtSection(label = stringResource(R.string.debt_section_active)) {
+                        DebtRecordGroup(
+                            records = state.active,
+                            side = state.side,
+                            onRecordClick = onRecordClick,
+                        )
+                    }
                 }
-            }
 
-            if (state.settled.isNotEmpty()) {
-                DebtSection(label = stringResource(R.string.debt_section_settled)) {
-                    DebtRecordGroup(
-                        records = state.settled,
-                        side = state.side,
-                        onRecordClick = onRecordClick,
-                    )
+                if (state.settled.isNotEmpty()) {
+                    DebtSection(label = stringResource(R.string.debt_section_settled)) {
+                        DebtRecordGroup(
+                            records = state.settled,
+                            side = state.side,
+                            onRecordClick = onRecordClick,
+                        )
+                    }
                 }
             }
         }
@@ -330,6 +352,25 @@ private fun DebtListLentPreview() {
     ProExpenseTheme {
         DebtListScreen(
             state = previewDebtLent,
+            onSideSelected = {},
+            onAddRecord = {},
+            onRecordClick = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Debt — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun DebtListLoadingPreview() {
+    ProExpenseTheme {
+        DebtListScreen(
+            state = previewDebtLoading,
             onSideSelected = {},
             onAddRecord = {},
             onRecordClick = {},

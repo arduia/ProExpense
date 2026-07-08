@@ -124,3 +124,25 @@ keeping the original total as the source of truth.
   use-case-level rebalancing — shares are now stored exactly as entered. Covered by
   `CreateSharedCostUseCaseTest.invoke_buildsCustomSplitStoringSharesExactlyAsEnteredWithoutRebalancing`
   and `SplitStrategyTest`'s `custom split allows shares that do not sum to total`.
+
+* **Gap fix (2026-07):** the NFR "custom shares survive process death the same as any other draft
+  input" was unmet — `SharedCostsFlow`'s entire draft (total, note, people count, mode, names,
+  custom shares) lived in a bare `remember`, wiped on rotation or the process being reclaimed in
+  the background; only the step navigation flag used `rememberSaveable`. Added a `listSaver`-based
+  `SharedCostDraftSaver` (flattens the draft into Bundle-safe primitives) and switched `draft` to
+  `rememberSaveable(stateSaver = ...)`. Covered by
+  `SharedCostDraftPersistenceTest.draft_survivesSimulatedProcessDeath` (uses
+  `StateRestorationTester` to simulate process death mid-entry).
+
+* **Gap fix (2026-07):** the input/summary screens hardcoded a literal `"$"` for every amount
+  shown during split creation (`SharedCostSplitLogic.formatCents/formatRawTotal/formatShareRaw`
+  and both screens' `AmountDisplay` calls never received the caller's currency symbol) — while the
+  saved-history view correctly showed the user's real home-currency symbol. A non-USD user saw
+  `$` throughout entry, then a different symbol once saved. Worse, `CreateSharedCostUseCase`/
+  `UpdateSharedCostUseCase` defaulted `currencyCode` to a hardcoded `"USD"` and
+  `SharedCostFeatureEntry` never overrode it, so every split's linked `FinanceRecord` was
+  permanently persisted as USD regardless of the actual home currency — corrupting Journal/Reports
+  currency labels for any non-USD user. Threaded `homeCurrencySymbol`/`homeCurrencyCode` from
+  `ExpenseApp` through `SharedCostFeatureEntry` → `SharedCostsFlow` → the input/summary screens and
+  into the use-case `currencyCode` argument. Covered by `SharedCostCurrencyFormatTest` and
+  `SharedCostCurrencySymbolWiringTest`.

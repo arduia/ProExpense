@@ -66,6 +66,32 @@ class ObserveTagOptionsUseCaseTest {
     }
 
     @Test
+    fun invoke_marksClosedEventsSoTheyCanBeExcludedFromLinkableOptions() = runTest {
+        val active = Event(
+            id = EventId("ev1"),
+            name = "Trip",
+            startEpochMillis = 100,
+            endEpochMillis = 200,
+            budget = Money(Amount(50_00), CurrencyCode("USD")),
+            status = EventStatus.ACTIVE,
+        )
+        val closed = Event(
+            id = EventId("ev2"),
+            name = "Wedding",
+            startEpochMillis = 100,
+            endEpochMillis = 200,
+            budget = Money(Amount(50_00), CurrencyCode("USD")),
+            status = EventStatus.CLOSED,
+        )
+        val useCase = ObserveTagOptionsUseCase(FakeEventRepository(listOf(active, closed)), FakeDebtRepository())
+
+        val options = useCase().first()
+
+        assertEquals(false, options.first { it.id == "ev1" }.eventIsClosed)
+        assertEquals(true, options.first { it.id == "ev2" }.eventIsClosed)
+    }
+
+    @Test
     fun invoke_emitsEmptyListWhenNoEventsOrDebts() = runTest {
         val useCase = ObserveTagOptionsUseCase(FakeEventRepository(), FakeDebtRepository())
 

@@ -12,6 +12,7 @@ data class TagOption(
     val eventName: String? = null,
     val eventStartEpochMillis: Long? = null,
     val eventEndEpochMillis: Long? = null,
+    val eventIsClosed: Boolean = false,
     val debtPersonName: String? = null,
     val debtIsOwedToMe: Boolean? = null,
     val debtAmountCents: Long? = null,

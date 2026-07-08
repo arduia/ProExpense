@@ -1,0 +1,1 @@
+ALTER TABLE event_record ADD COLUMN closed_at_epoch_millis INTEGER;

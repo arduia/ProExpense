@@ -195,7 +195,7 @@ private fun CategoryRow(row: CategoryRowUi, locked: Boolean) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
-        LogCategoryBadge(categoryId = row.categoryId, size = dimens.iconBadge)
+        LogCategoryBadge(categoryId = row.categoryId, iconId = row.iconId, size = dimens.iconBadge)
         Text(
             text = row.label,
             style = typography.bodyMedium,
@@ -302,7 +302,7 @@ private fun CustomCategoryRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
-        LogCategoryBadge(categoryId = row.categoryId, size = dimens.iconBadge)
+        LogCategoryBadge(categoryId = row.categoryId, iconId = row.iconId, size = dimens.iconBadge)
         Text(
             text = row.label,
             style = typography.bodyMedium,

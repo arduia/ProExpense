@@ -9,7 +9,6 @@
     <string name="amount_must_be_greater_than_zero">Amount must be greater than $0</string>
     <string name="toast_expense_saved">Expense saved</string>
     <string name="add_event_tag">Link event or debt</string>
-    <string name="event_tag_format">@%1$s</string>
     <string name="draft_restore_title">Unfinished expense</string>
     <string name="draft_restore_body">You had %1$s in progress when the app closed. Continue where you left off, or discard it?</string>
     <string name="draft_continue">Continue</string>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="onboarding_welcome_title">ยินดีต้อนรับ</string>
+<string name="onboarding_welcome_subtitle">สมุดบันทึกการเงินส่วนตัวของคุณ</string>
+<string name="onboarding_quick_log_title">บันทึกด่วน</string>
+<string name="onboarding_quick_log_subtitle">บันทึกรายจ่ายในไม่กี่วินาที — จำนวนเงิน หมวดหมู่ เสร็จเรียบร้อย</string>
+<string name="onboarding_shared_costs_title">หารค่าใช้จ่าย</string>
+<string name="onboarding_shared_costs_subtitle">หารบิลได้ทันที — ยอดรวม จำนวนคน เสร็จเรียบร้อย</string>
+<string name="onboarding_event_budget_title">งบประมาณกิจกรรม</string>
+<string name="onboarding_event_budget_subtitle">วางแผนและติดตามงบประมาณกิจกรรมใดก็ได้ — ทริป งานแต่งงาน งานปาร์ตี้</string>
+<string name="onboarding_journal_title">บันทึก</string>
+<string name="onboarding_journal_subtitle">ทบทวนการใช้จ่ายของคุณเหมือนไดอารี่ วันต่อวัน</string>
+<string name="profile_setup_eyebrow">โปรไฟล์ · เสร็จในขั้นตอนเดียว</string>
+<string name="profile_setup_title">ทำให้เป็นของคุณ</string>
+<string name="profile_setup_description">ชื่อและสกุลเงินหลักของคุณรวมกันเป็นโปรไฟล์ของคุณ — ไม่ต้องมีบัญชี เก็บไว้ในอุปกรณ์ของคุณทั้งหมด</string>
+<string name="profile_identity_eyebrow">โปรไฟล์ของคุณ</string>
+<string name="profile_identity_greeting">สวัสดี %1$s</string>
+<string name="profile_identity_greeting_empty">สวัสดี</string>
+<string name="profile_identity_tracking">ติดตามใน %1$s · %2$s</string>
+<string name="profile_name_label">ชื่อโปรไฟล์</string>
+<string name="profile_name_hint">ชื่อของคุณ</string>
+<string name="profile_currency_label">สกุลเงินหลัก</string>
+<string name="profile_currency_hint">ค่าเริ่มต้นสำหรับทุกรายการ</string>
+<string name="profile_more_currencies">สกุลเงินเพิ่มเติม</string>
+<string name="next">ถัดไป</string>
+<string name="skip">ข้าม</string>
+<string name="get_started">เริ่มต้นใช้งาน</string>
+<string name="back">ย้อนกลับ</string>
+<string name="currency_picker_title">สกุลเงินทั้งหมด</string>
+<string name="search_currency_placeholder">ค้นหาสกุลเงิน...</string>
+<string name="start_tracking">เริ่มติดตาม</string>
+</resources>

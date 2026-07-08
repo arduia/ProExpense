@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.history.R
@@ -30,6 +31,7 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proClickable
@@ -48,6 +50,8 @@ fun JournalQuickNoteSheetContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val atLimit = state.note.length >= NOTE_INPUT_MAX_LENGTH
+    val borderColor = if (atLimit) colors.danger else colors.primary
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -63,11 +67,11 @@ fun JournalQuickNoteSheetContent(
 
         BasicTextField(
             value = state.note,
-            onValueChange = onNoteChange,
+            onValueChange = { if (it.length <= NOTE_INPUT_MAX_LENGTH) onNoteChange(it) },
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(ProExpenseTheme.shapes.searchField)
-                .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
+                .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
                 .background(colors.surface)
                 .heightIn(min = dimens.space44 + dimens.space24)
                 .padding(horizontal = dimens.space14, vertical = dimens.space12),
@@ -83,6 +87,14 @@ fun JournalQuickNoteSheetContent(
                 }
                 inner()
             },
+        )
+
+        Text(
+            text = "${state.note.length}/$NOTE_INPUT_MAX_LENGTH",
+            style = typography.caption,
+            color = if (atLimit) colors.danger else colors.muted,
+            textAlign = TextAlign.End,
+            modifier = Modifier.fillMaxWidth(),
         )
 
         ProButton(

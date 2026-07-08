@@ -20,6 +20,8 @@ tasks.register("verifyAll") {
         ":feature:logging:testDebugUnitTest",
         ":feature:currency:testDebugUnitTest",
         ":feature:history:testDebugUnitTest",
+        ":feature:auth:testDebugUnitTest",
+        ":feature:sharedcost:testDebugUnitTest",
     )
 }
 

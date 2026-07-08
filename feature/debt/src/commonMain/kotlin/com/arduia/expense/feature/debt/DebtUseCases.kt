@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.debt
 
 import com.arduia.expense.data.DebtRepository
+import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
@@ -8,6 +9,7 @@ import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordLink
 
 /** Validates and creates a new debt record (design plan §DebtViewModel). */
 class CreateDebtUseCase(
@@ -20,6 +22,7 @@ class CreateDebtUseCase(
         direction: DebtDirection,
         currencyCode: String = "USD",
         dueEpochMillis: Long? = null,
+        note: String? = null,
     ): Boolean {
         val amount = Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 } ?: return false
         val debt = Debt(
@@ -28,6 +31,7 @@ class CreateDebtUseCase(
             money = Money(amount, CurrencyCode(currencyCode)),
             direction = direction,
             dueEpochMillis = dueEpochMillis,
+            note = note?.ifBlank { null },
         )
         debtRepository.upsert(debt)
         return true
@@ -44,6 +48,7 @@ class UpdateDebtUseCase(private val debtRepository: DebtRepository) {
         personName: String,
         rawAmount: String,
         dueEpochMillis: Long?,
+        note: String? = null,
     ): Boolean {
         val amount = Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 } ?: return false
         debtRepository.upsert(
@@ -51,14 +56,23 @@ class UpdateDebtUseCase(private val debtRepository: DebtRepository) {
                 personName = personName,
                 money = existing.money.copy(amount = amount),
                 dueEpochMillis = dueEpochMillis,
+                note = note?.ifBlank { null },
             ),
         )
         return true
     }
 }
 
-class DeleteDebtUseCase(private val debtRepository: DebtRepository) {
+/** Deleting a debt clears its dangling link on any expense still tagged to it (US-DEBT-3). */
+class DeleteDebtUseCase(
+    private val debtRepository: DebtRepository,
+    private val financeRecordRepository: FinanceRecordRepository,
+) {
     suspend operator fun invoke(id: String) {
+        val records = (financeRecordRepository.getAll() as? Result.Success)?.data.orEmpty()
+        records
+            .filter { (it.link as? RecordLink.ToDebt)?.debtId?.value == id }
+            .forEach { record -> financeRecordRepository.upsert(record.copy(link = RecordLink.None)) }
         debtRepository.delete(DebtId(id))
     }
 }

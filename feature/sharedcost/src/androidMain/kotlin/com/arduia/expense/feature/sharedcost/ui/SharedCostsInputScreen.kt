@@ -26,8 +26,8 @@ import com.arduia.expense.feature.sharedcost.ui.components.SharedCostCustomSplit
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostNoteField
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPeopleCard
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.ui.components.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
@@ -48,8 +48,10 @@ fun SharedCostsInputScreen(
     onShareChange: (Int, String) -> Unit,
     onContinue: () -> Unit,
     onConfirmAmount: () -> Unit = {},
+    onNameChange: (Int, String) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
     showKeypad: Boolean = true,
+    homeCurrencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -58,7 +60,8 @@ fun SharedCostsInputScreen(
     val isZero = !canProceed
     val showDetails = state.amountConfirmed && canProceed
     val participants = state.participants.map { it.name to it.shareLabel }
-    val perPersonAmount = participants.firstOrNull()?.second ?: SharedCostSplitLogic.formatCents(0)
+    val perPersonAmount = participants.firstOrNull()?.second
+        ?: SharedCostSplitLogic.formatCents(0, homeCurrencySymbol)
 
     Column(
         modifier = modifier
@@ -82,6 +85,7 @@ fun SharedCostsInputScreen(
 
             AmountDisplay(
                 amountText = displayAmount,
+                currencySymbol = homeCurrencySymbol,
                 isZero = isZero,
                 showZeroValidation = state.showZeroValidation,
                 zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
@@ -125,11 +129,15 @@ fun SharedCostsInputScreen(
                             perPersonAmount = perPersonAmount,
                             participants = participants,
                             perPersonEyebrow = stringResource(R.string.shared_per_person),
+                            editableNames = true,
+                            onNameChange = onNameChange,
                         )
                     } else {
                         SharedCostCustomSplitCard(
                             participants = participants,
                             onShareChange = onShareChange,
+                            editableNames = true,
+                            onNameChange = onNameChange,
                         )
                     }
                 }
@@ -143,8 +151,8 @@ fun SharedCostsInputScreen(
                 onBackspace = onBackspace,
                 onSave = onConfirmAmount,
                 onNext = onConfirmAmount,
-                saveLabel = stringResource(R.string.shared_save_split),
                 nextLabel = stringResource(R.string.shared_save_split),
+                showSaveAction = false,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = dimens.space16),

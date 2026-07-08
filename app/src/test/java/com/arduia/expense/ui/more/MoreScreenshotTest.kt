@@ -109,6 +109,15 @@ class MoreScreenshotTest {
         MoreCurrencyScreen(
             items = previewMoreCurrencies,
             selectedCode = "USD",
+            onSave = {},
+            onBack = {},
+        )
+    }
+
+    @Test
+    fun more_language() = capture {
+        MoreLanguageScreen(
+            selectedLanguage = com.arduia.expense.ui.design.AppLanguage.ENGLISH,
             onSelect = {},
             onBack = {},
         )

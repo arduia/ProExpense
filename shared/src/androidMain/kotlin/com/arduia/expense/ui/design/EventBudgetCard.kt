@@ -34,6 +34,8 @@ data class EventBudgetCardState(
     val isOverBudget: Boolean = false,
     val overAmountLabel: String? = null,
     val dailyAverageLabel: String? = null,
+    /** Rounded percent over 100 (US-EVT-3): 0 normal, 1-10 warning (amber), >10 danger (red, bold). */
+    val overBudgetPercent: Int = 0,
 )
 
 @Composable
@@ -44,7 +46,13 @@ fun EventBudgetCard(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val progressColor = if (state.isOverBudget) colors.danger else colors.primary
+    val isDanger = state.overBudgetPercent > 10
+    val isWarning = state.overBudgetPercent in 1..10
+    val progressColor = when {
+        isDanger -> colors.danger
+        isWarning -> colors.warning
+        else -> colors.primary
+    }
     val spentColor = if (state.isOverBudget) colors.danger else colors.onSurface
 
     Column(
@@ -93,13 +101,19 @@ fun EventBudgetCard(
                     )
                 }
             }
-            if (state.isOverBudget) {
+            if (isWarning || isDanger) {
+                val chipColor = if (isDanger) colors.danger else colors.warning
+                val chipText = if (state.overAmountLabel != null) {
+                    stringResource(R.string.event_over_budget_by, state.overAmountLabel, state.overBudgetPercent)
+                } else {
+                    stringResource(R.string.event_over_budget)
+                }
                 Text(
-                    text = stringResource(R.string.event_over_budget),
-                    style = typography.caption,
-                    color = colors.danger,
+                    text = chipText,
+                    style = if (isDanger) typography.bodySemiBold.copy(fontSize = typography.caption.fontSize) else typography.caption,
+                    color = chipColor,
                     modifier = Modifier
-                        .border(BorderStroke(1.dp, colors.danger), ProExpenseTheme.shapes.chip)
+                        .border(BorderStroke(1.dp, chipColor), ProExpenseTheme.shapes.chip)
                         .padding(horizontal = dimens.space8, vertical = dimens.space4),
                 )
             }

@@ -21,8 +21,7 @@ import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.ui.design.AmountInput
-import com.arduia.expense.ui.design.shortDateLabel
-import java.util.Locale
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -47,23 +46,27 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
         val settleDebt: SettleDebtUseCase = koinInject()
         val checkDebtConflict: CheckDebtConflictUseCase = koinInject()
 
-        val debts by debtRepository.observeAll().collectAsState(emptyList())
+        // null (not emptyList()) until the first Flow emission arrives, so the summary card
+        // doesn't flash "$0 · 0 active" before real data has had a chance to load.
+        val debtsOrNull by debtRepository.observeAll().collectAsState(initial = null)
+        val isLoading = debtsOrNull == null
+        val debts = debtsOrNull.orEmpty()
 
-        val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent, homeCurrencySymbol)
-        val oweState = aggregateDebts(debts, DebtDirection.I_OWE).toUiState(DebtSide.Owe, homeCurrencySymbol)
+        val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent, homeCurrencySymbol, isLoading)
+        val oweState = aggregateDebts(debts, DebtDirection.I_OWE).toUiState(DebtSide.Owe, homeCurrencySymbol, isLoading)
 
         DebtFlow(
             onDismiss = onDismiss,
             lentState = lentState,
             oweState = oweState,
-            onSaveRecord = { side, person, amountRaw, dueEpochMillis ->
+            onSaveRecord = { side, person, amountRaw, dueEpochMillis, note ->
                 val direction = if (side == DebtSide.Lent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE
-                scope.launch { createDebt(person, amountRaw, direction, dueEpochMillis = dueEpochMillis) }
+                scope.launch { createDebt(person, amountRaw, direction, dueEpochMillis = dueEpochMillis, note = note) }
             },
-            onUpdateRecord = { id, person, amountRaw, dueEpochMillis ->
+            onUpdateRecord = { id, person, amountRaw, dueEpochMillis, note ->
                 val debt = debts.firstOrNull { it.id.value == id }
                 if (debt != null) {
-                    scope.launch { updateDebt(debt, person, amountRaw, dueEpochMillis) }
+                    scope.launch { updateDebt(debt, person, amountRaw, dueEpochMillis, note) }
                 }
             },
             onDeleteRecord = { id ->
@@ -86,23 +89,22 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
 
 object DebtFeatureUi : DebtFeatureEntry by DebtFeatureEntryImpl()
 
-private fun DebtAggregate.toUiState(side: DebtSide, currencySymbol: String): DebtListUiState = DebtListUiState(
+private fun DebtAggregate.toUiState(side: DebtSide, currencySymbol: String, isLoading: Boolean): DebtListUiState = DebtListUiState(
     side = side,
-    netLabel = moneyLabel(netCents, currencySymbol),
+    netLabel = AmountInput.formatMoney(netCents, currencySymbol),
     activeCount = active.size,
     active = active.map { it.toRecordUi(settled = false, currencySymbol = currencySymbol) },
     settled = settled.map { it.toRecordUi(settled = true, currencySymbol = currencySymbol) },
+    isLoading = isLoading,
 )
 
 private fun Debt.toRecordUi(settled: Boolean, currencySymbol: String): DebtRecordUi = DebtRecordUi(
     id = id.value,
     name = personName,
-    dateLabel = dueEpochMillis?.let { shortDateLabel(it) } ?: "No due date",
-    amountLabel = moneyLabel(money.amount.valueInCents, currencySymbol),
+    dateLabel = dueEpochMillis?.let { PlatformDateFormatter.shortDateLabel(it) } ?: "No due date",
+    amountLabel = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol),
+    subtitle = note,
     settled = settled,
     amountCents = money.amount.valueInCents,
     dueEpochMillis = dueEpochMillis,
 )
-
-private fun moneyLabel(valueInCents: Long, currencySymbol: String): String =
-    currencySymbol + AmountInput.formatDisplay(String.format(Locale.US, "%.2f", valueInCents / 100.0))

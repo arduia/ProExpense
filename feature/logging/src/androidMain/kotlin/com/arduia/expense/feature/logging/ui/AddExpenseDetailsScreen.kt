@@ -36,6 +36,7 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
 import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.ui.design.TagPickerContent
 import com.arduia.expense.ui.design.currencySymbol
@@ -53,8 +54,6 @@ import com.arduia.expense.feature.logging.ui.preview.previewTagEvents
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-private const val NOTE_MAX_LENGTH = 200
-
 @Composable
 fun AddExpenseDetailsScreen(
     state: ExpenseEntryState,
@@ -69,6 +68,7 @@ fun AddExpenseDetailsScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
     onExchangeRateChange: (String) -> Unit = {},
+    onAddCategory: () -> Unit = {},
     tagEvents: List<TagLinkOption> = previewTagEvents,
     tagDebts: List<TagLinkOption> = previewTagDebts,
     showTagField: Boolean = true,
@@ -79,13 +79,12 @@ fun AddExpenseDetailsScreen(
     val dimens = ProExpenseTheme.dimensions
     val displayAmount = AmountInput.formatDisplay(state.rawAmount)
     val formattedSaveAmount = currencySymbol(state.currencyCode) + displayAmount
-    val atNoteLimit = state.note.length >= NOTE_MAX_LENGTH
+    val atNoteLimit = state.note.length >= NOTE_INPUT_MAX_LENGTH
     val rate = state.exchangeRateRaw.trim().toDoubleOrNull()
     val convertedLabel = if (state.isForeignCurrency() && rate != null && rate > 0.0) {
-        val rawCents = state.rawAmount.toDoubleOrNull() ?: 0.0
-        currencySymbol(state.homeCurrencyCode) + AmountInput.formatDisplay(
-            String.format(java.util.Locale.US, "%.2f", rawCents * rate),
-        )
+        val rawAmount = state.rawAmount.toDoubleOrNull() ?: 0.0
+        val convertedCents = Math.round(rawAmount * rate * 100)
+        AmountInput.formatMoney(convertedCents, currencySymbol(state.homeCurrencyCode))
     } else {
         null
     }
@@ -133,7 +132,7 @@ fun AddExpenseDetailsScreen(
                 onCategorySelected = onCategorySelected,
                 showCustomSection = true,
                 showAddChip = true,
-                onAddClick = {},
+                onAddClick = onAddCategory,
             )
 
             DetailDateTimeField(
@@ -145,7 +144,7 @@ fun AddExpenseDetailsScreen(
             DetailNoteField(
                 value = state.note,
                 onValueChange = onNoteChange,
-                maxLength = NOTE_MAX_LENGTH,
+                maxLength = NOTE_INPUT_MAX_LENGTH,
                 placeholder = stringResource(R.string.note),
                 atLimit = atNoteLimit,
                 errorMessage = if (atNoteLimit) {
@@ -157,9 +156,8 @@ fun AddExpenseDetailsScreen(
 
             if (showTagField) {
                 DetailTagField(
-                    tagLabel = state.linkedTagLabel?.let { label ->
-                        stringResource(R.string.event_tag_format, label)
-                    },
+                    // The field's own leading icon already renders "@" — no need to repeat it here.
+                    tagLabel = state.linkedTagLabel,
                     placeholder = stringResource(R.string.add_event_tag),
                     onClick = onOpenTagSheet,
                     onClear = onClearTag,

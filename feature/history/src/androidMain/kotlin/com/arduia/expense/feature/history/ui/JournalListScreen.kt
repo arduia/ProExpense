@@ -16,11 +16,18 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -51,6 +58,7 @@ import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.feature.history.ui.preview.JournalListUiState
 import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
+import com.arduia.expense.feature.history.ui.preview.previewJournalLoading
 import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -70,10 +78,23 @@ fun JournalListScreen(
     dateRangeLabel: String? = null,
     onDateRangeClick: () -> Unit = {},
     onClearDateRange: () -> Unit = {},
+    isLoadingMore: Boolean = false,
+    onLoadMore: () -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val listState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            layoutInfo.totalItemsCount > 0 && lastVisibleIndex >= layoutInfo.totalItemsCount - 5
+        }
+    }
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) onLoadMore()
+    }
 
     Box(
         modifier = modifier
@@ -184,7 +205,14 @@ fun JournalListScreen(
             }
 
             val hasActiveFilter = dateRangeLabel != null || state.selectedFilterId != "all"
-            if (state.searchActive && state.days.isEmpty()) {
+            if (state.isLoading && state.days.isEmpty()) {
+                // Records load asynchronously after first composition — without this, "no data
+                // yet" and "genuinely no records" render identically and the empty-state
+                // illustration flashes on every visit for a user who actually has records.
+                // Only for the initial load though: a reload with rows already on screen keeps
+                // showing them (blanking mid-reload is the Journal "blink" glitch).
+                Box(modifier = Modifier.weight(1f).fillMaxWidth())
+            } else if (state.searchActive && state.days.isEmpty()) {
                 JournalNoResults(
                     query = state.query,
                     modifier = Modifier
@@ -213,6 +241,7 @@ fun JournalListScreen(
                 )
             } else {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -243,6 +272,24 @@ fun JournalListScreen(
                                     amount = row.amount,
                                     tag = row.tag,
                                     showDivider = index < day.rows.lastIndex,
+                                )
+                            }
+                        }
+                    }
+                    if (isLoadingMore) {
+                        item(key = "journal-loading-more") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = dimens.space16),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .height(dimens.iconInline)
+                                        .width(dimens.iconInline),
+                                    color = colors.onSurfaceMuted,
+                                    strokeWidth = 2.dp,
                                 )
                             }
                         }
@@ -481,6 +528,28 @@ private fun JournalListEmptyPreview() {
 }
 
 @Preview(
+    name = "Journal — loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalListLoadingPreview() {
+    ProExpenseTheme {
+        JournalListScreen(
+            state = previewJournalLoading,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+}
+
+@Preview(
     name = "Journal — filtered empty",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
@@ -499,6 +568,29 @@ private fun JournalListFilteredEmptyPreview() {
             onTabSelected = {},
             onAddClick = {},
             dateRangeLabel = "May 1 – May 15",
+        )
+    }
+}
+
+@Preview(
+    name = "Journal — loading more",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalListLoadingMorePreview() {
+    ProExpenseTheme {
+        JournalListScreen(
+            state = previewJournalList,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+            isLoadingMore = true,
         )
     }
 }

@@ -1,0 +1,31 @@
+<resources>
+<string name="event_create_title">ပွဲအသစ်</string>
+<string name="event_edit">ပြင်ဆင်ရန်</string>
+<string name="event_edit_subtitle">အမည်၊ ရက်စွဲများ၊ သို့မဟုတ် ဘတ်ဂျက် ပြောင်းရန်</string>
+<string name="event_close">ပွဲကို ပိတ်ရန်</string>
+<string name="event_close_subtitle">၎င်းအတွက် အသုံးစရိတ်အသစ် မှတ်တမ်းတင်ခြင်းကို ရပ်ရန်</string>
+<string name="event_actions_cancel">မလုပ်တော့ပါ</string>
+<string name="event_close_confirm_title">%1$s ကို ပိတ်မလား?</string>
+<string name="event_close_confirm_body">ဒီပွဲသည် ဖတ်ရန်သာအခြေအနေသို့ ပြောင်းသွားမည် — နောက်ထပ်အသုံးစရိတ်များကို ချိတ်ဆက်၍ မရတော့ပါ။</string>
+<string name="event_close_confirm">ပိတ်ရန်</string>
+<string name="event_edit_title">ပွဲ ပြင်ဆင်ရန်</string>
+<string name="events_eyebrow">ဘတ်ဂျက်ခြေရာခံခြင်း</string>
+<string name="events_title">ဘတ်ဂျက်</string>
+<string name="event_new">ပွဲအသစ်</string>
+<string name="events_back">ပွဲများ</string>
+<string name="event_empty_heading">ဆောင်ရွက်ဆဲပွဲ မရှိပါ</string>
+<string name="event_empty_body">ခရီးစဉ်၊ မင်္ဂလာဆောင် သို့မဟုတ် ပါတီအတွက် ဘတ်ဂျက်သတ်မှတ်ပြီး — ချက်ချင်းခြေရာခံရန် အသုံးစရိတ်များကို တဂ်တပ်ပါ။</string>
+<string name="event_create_cta">ပွဲဖန်တီးရန်</string>
+<string name="event_name_label">ပွဲအမည်</string>
+<string name="event_name_placeholder">ဥပမာ Bali ခရီးစဉ်</string>
+<string name="event_dates_label">ရက်စွဲများ</string>
+<string name="event_total_budget_label">စုစုပေါင်းဘတ်ဂျက်</string>
+<string name="event_name_counter">%1$d/%2$d</string>
+<string name="event_name_duplicate">ဒီအမည်ရှိသော ပွဲ ရှိပြီးသားဖြစ်သည်</string>
+<string name="event_budget_positive_error">ဘတ်ဂျက်သည် $0 ထက်ကြီးရမည်</string>
+<string name="event_currency_usd">USD</string>
+<string name="event_linked_expenses_count">ချိတ်ဆက်ထားသော အသုံးစရိတ်များ · %1$d</string>
+<string name="event_add_tagged">တဂ်တပ်ထားသည်ထည့်ရန်</string>
+<string name="event_add_expense">အသုံးစရိတ် ထည့်ရန်</string>
+<string name="event_readonly_notice">ဖတ်ရန်သာ — ၂၄ နာရီပြင်ဆင်ချိန် ကုန်ဆုံးသွားပါပြီ။ နောက်ထပ်အသုံးစရိတ်များ ချိတ်ဆက်၍ မရတော့ပါ။</string>
+</resources>

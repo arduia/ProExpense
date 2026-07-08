@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -268,11 +269,15 @@ internal fun ReportsPeriodPill(
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         ProIcon(
-            glyph = ProIconGlyph.Back,
+            // Same chevron as the "next" icon below, mirrored — a back-arrow glyph here read as
+            // a different, unrelated affordance instead of the pair's matching "previous".
+            glyph = ProIconGlyph.ChevronRight,
             contentDescription = stringResource(R.string.reports_prev_period),
             tint = if (prevEnabled) colors.onSurfaceMuted else colors.muted2,
             size = dimens.iconInline,
-            modifier = Modifier.proIconClickable(onClick = onPrev, enabled = prevEnabled),
+            modifier = Modifier
+                .rotate(180f)
+                .proIconClickable(onClick = onPrev, enabled = prevEnabled),
         )
         Text(
             text = label,

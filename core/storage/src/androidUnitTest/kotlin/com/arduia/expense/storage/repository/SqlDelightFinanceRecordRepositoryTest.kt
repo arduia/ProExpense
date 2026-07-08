@@ -1,5 +1,7 @@
 package com.arduia.expense.storage.repository
 
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
@@ -29,14 +31,21 @@ class SqlDelightFinanceRecordRepositoryTest {
             dispatcher = Dispatchers.Unconfined,
         )
 
-    private fun record(id: String, link: RecordLink = RecordLink.None, amountCents: Long = 5_000) = FinanceRecord(
+    private fun record(
+        id: String,
+        link: RecordLink = RecordLink.None,
+        amountCents: Long = 5_000,
+        recordedAtEpochMillis: Long = 1_000,
+        categoryId: String = "food",
+        note: String? = "note-$id",
+    ) = FinanceRecord(
         id = RecordId(id),
         money = Money(Amount(amountCents), CurrencyCode("USD")),
         homeCurrencyMoney = Money(Amount(amountCents), CurrencyCode("USD")),
-        categoryId = CategoryId("food"),
+        categoryId = CategoryId(categoryId),
         type = RecordType.EXPENSE,
-        note = "note-$id",
-        recordedAtEpochMillis = 1_000,
+        note = note,
+        recordedAtEpochMillis = recordedAtEpochMillis,
         link = link,
     )
 
@@ -52,6 +61,7 @@ class SqlDelightFinanceRecordRepositoryTest {
             created_at = 0,
             cached_spent_cents = 0,
             cache_updated_at = 0,
+            closed_at_epoch_millis = null,
         )
     }
 
@@ -270,5 +280,119 @@ class SqlDelightFinanceRecordRepositoryTest {
 
         val event = database.eventQueries.selectEventById("evt-1").executeAsOne()
         assertEquals(0, event.cached_spent_cents)
+    }
+
+    @Test
+    fun getRecordsPage_ordersByRecordedAtThenIdDescending() = runTest {
+        val repo = repository()
+        repo.upsert(record("rec-a", recordedAtEpochMillis = 1_000))
+        repo.upsert(record("rec-c", recordedAtEpochMillis = 3_000))
+        repo.upsert(record("rec-b1", recordedAtEpochMillis = 2_000))
+        repo.upsert(record("rec-b2", recordedAtEpochMillis = 2_000))
+
+        val page = repo.getRecordsPage(limit = 10)
+
+        assertTrue(page is Result.Success)
+        // Same recorded_at (2_000) breaks the tie by id descending — "rec-b2" before "rec-b1".
+        assertEquals(listOf("rec-c", "rec-b2", "rec-b1", "rec-a"), page.data.map { it.id.value })
+    }
+
+    @Test
+    fun getRecordsPage_respectsLimit() = runTest {
+        val repo = repository()
+        repeat(5) { i -> repo.upsert(record("rec-$i", recordedAtEpochMillis = i.toLong())) }
+
+        val page = repo.getRecordsPage(limit = 2)
+
+        assertTrue(page is Result.Success)
+        assertEquals(2, page.data.size)
+        assertEquals(listOf("rec-4", "rec-3"), page.data.map { it.id.value })
+    }
+
+    @Test
+    fun getRecordsPage_cursorAdvancesToNextPageWithoutOverlap() = runTest {
+        val repo = repository()
+        repeat(5) { i -> repo.upsert(record("rec-$i", recordedAtEpochMillis = i.toLong())) }
+
+        val firstPage = (repo.getRecordsPage(limit = 2) as Result.Success).data
+        val last = firstPage.last()
+        val cursor = RecordPageCursor(last.recordedAtEpochMillis, last.id)
+        val secondPage = repo.getRecordsPage(cursor = cursor, limit = 2)
+
+        assertTrue(secondPage is Result.Success)
+        assertEquals(listOf("rec-2", "rec-1"), secondPage.data.map { it.id.value })
+        assertTrue(firstPage.map { it.id.value }.none { it in secondPage.data.map { r -> r.id.value } })
+    }
+
+    @Test
+    fun getRecordsPage_cursorAtEndReturnsEmptyList() = runTest {
+        val repo = repository()
+        repo.upsert(record("rec-1", recordedAtEpochMillis = 1_000))
+        val last = (repo.getRecordsPage(limit = 10) as Result.Success).data.last()
+
+        val page = repo.getRecordsPage(cursor = RecordPageCursor(last.recordedAtEpochMillis, last.id), limit = 10)
+
+        assertTrue(page is Result.Success)
+        assertEquals(emptyList<FinanceRecord>(), page.data)
+    }
+
+    @Test
+    fun getRecordsPage_filtersByCategory() = runTest {
+        val repo = repository()
+        repo.upsert(record("rec-food", categoryId = "food", recordedAtEpochMillis = 1_000))
+        repo.upsert(record("rec-transport", categoryId = "transport", recordedAtEpochMillis = 2_000))
+
+        val page = repo.getRecordsPage(filter = RecordPageFilter(categoryId = CategoryId("food")), limit = 10)
+
+        assertTrue(page is Result.Success)
+        assertEquals(listOf("rec-food"), page.data.map { it.id.value })
+    }
+
+    @Test
+    fun getRecordsPage_filtersByDateRange() = runTest {
+        val repo = repository()
+        repo.upsert(record("rec-early", recordedAtEpochMillis = 1_000))
+        repo.upsert(record("rec-mid", recordedAtEpochMillis = 2_000))
+        repo.upsert(record("rec-late", recordedAtEpochMillis = 3_000))
+
+        val page = repo.getRecordsPage(
+            filter = RecordPageFilter(fromEpochMillis = 1_500, toEpochMillis = 2_500),
+            limit = 10,
+        )
+
+        assertTrue(page is Result.Success)
+        assertEquals(listOf("rec-mid"), page.data.map { it.id.value })
+    }
+
+    @Test
+    fun getRecordsPage_filtersByQueryAgainstNote() = runTest {
+        val repo = repository()
+        repo.upsert(record("rec-1", note = "Coffee with friends", recordedAtEpochMillis = 1_000))
+        repo.upsert(record("rec-2", note = "Groceries", recordedAtEpochMillis = 2_000))
+
+        val page = repo.getRecordsPage(filter = RecordPageFilter(query = "coffee"), limit = 10)
+
+        assertTrue(page is Result.Success)
+        assertEquals(listOf("rec-1"), page.data.map { it.id.value })
+    }
+
+    @Test
+    fun existsByCategory_trueOnlyWhenARecordIsAssigned() = runTest {
+        val repo = repository()
+        repo.upsert(record("rec-1", categoryId = "food"))
+
+        assertEquals(true, (repo.existsByCategory(CategoryId("food")) as Result.Success).data)
+        assertEquals(false, (repo.existsByCategory(CategoryId("uncategorized")) as Result.Success).data)
+    }
+
+    @Test
+    fun observeChangeSignal_reflectsCountAndLatestUpdate() = runTest {
+        val repo = repository()
+        repo.upsert(record("rec-1"))
+
+        val signal = repo.observeChangeSignal().first()
+
+        assertEquals(1L, signal.count)
+        assertTrue(signal.lastUpdatedAtEpochMillis > 0)
     }
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="onboarding_welcome_title">ကြိုဆိုပါတယ်</string>
+<string name="onboarding_welcome_subtitle">သင့်ကိုယ်ပိုင် ငွေကြေးမှတ်စု။</string>
+<string name="onboarding_quick_log_title">အမြန်မှတ်တမ်းတင်ခြင်း</string>
+<string name="onboarding_quick_log_subtitle">စက္ကန့်ပိုင်းအတွင်း အသုံးစရိတ် မှတ်တမ်းတင်ပါ — ပမာဏ၊ အမျိုးအစား၊ ပြီးပါပြီ။</string>
+<string name="onboarding_shared_costs_title">ဝေမျှသောကုန်ကျစရိတ်</string>
+<string name="onboarding_shared_costs_subtitle">ချက်ချင်း ဘေလ်ခွဲပါ — စုစုပေါင်း၊ လူဦးရေ၊ ပြီးပါပြီ။</string>
+<string name="onboarding_event_budget_title">ပွဲဘတ်ဂျက်</string>
+<string name="onboarding_event_budget_subtitle">မည်သည့်ပွဲဘတ်ဂျက်ကိုမဆို စီစဉ်၍ ခြေရာခံပါ — ခရီးစဉ်၊ မင်္ဂလာဆောင်၊ ပါတီများ။</string>
+<string name="onboarding_journal_title">မှတ်တမ်း</string>
+<string name="onboarding_journal_subtitle">သင့်အသုံးစရိတ်ကို နေ့စဉ်မှတ်စုကဲ့သို့ ပြန်လည်ကြည့်ရှုပါ။</string>
+<string name="profile_setup_eyebrow">ပရိုဖိုင် · တစ်ဆင့်တည်းဖြင့် ပြီးပါပြီ</string>
+<string name="profile_setup_title">သင့်ပိုင်ဆိုင်မှု ဖြစ်စေပါ</string>
+<string name="profile_setup_description">သင့်အမည်နှင့် အခြေခံငွေကြေးတို့ပေါင်းစပ်၍ သင့်ပရိုဖိုင်ဖြစ်သည် — အကောင့်မလို၊ ဖုန်းပေါ်တွင်သာ။</string>
+<string name="profile_identity_eyebrow">သင့်ပရိုဖိုင်</string>
+<string name="profile_identity_greeting">မင်္ဂလာပါ၊ %1$s</string>
+<string name="profile_identity_greeting_empty">မင်္ဂလာပါ</string>
+<string name="profile_identity_tracking">%1$s · %2$s ဖြင့် ခြေရာခံနေသည်</string>
+<string name="profile_name_label">ပရိုဖိုင်အမည်</string>
+<string name="profile_name_hint">သင့်အမည်</string>
+<string name="profile_currency_label">အခြေခံငွေကြေး</string>
+<string name="profile_currency_hint">ထည့်သွင်းမှုတိုင်းအတွက် ပုံသေ</string>
+<string name="profile_more_currencies">ငွေကြေးများ ထပ်ကြည့်ရန်</string>
+<string name="next">ရှေ့သို့</string>
+<string name="skip">ကျော်ရန်</string>
+<string name="get_started">စတင်ရန်</string>
+<string name="back">နောက်သို့</string>
+<string name="currency_picker_title">ငွေကြေးအားလုံး</string>
+<string name="search_currency_placeholder">ငွေကြေး ရှာဖွေရန်...</string>
+<string name="start_tracking">ခြေရာခံစတင်ရန်</string>
+</resources>

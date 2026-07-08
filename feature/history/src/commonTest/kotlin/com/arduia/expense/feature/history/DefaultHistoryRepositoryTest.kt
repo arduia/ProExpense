@@ -1,6 +1,9 @@
 package com.arduia.expense.feature.history
 
 import com.arduia.expense.data.FinanceRecordRepository
+import com.arduia.expense.data.RecordChangeSignal
+import com.arduia.expense.data.RecordPageCursor
+import com.arduia.expense.data.RecordPageFilter
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
@@ -30,6 +33,39 @@ class DefaultHistoryRepositoryTest {
         override fun observeAll(): Flow<List<FinanceRecord>> = flowOf(records)
         override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> =
             Result.Success(records.any { it.id == id })
+
+        override suspend fun getRecordsPage(
+            filter: RecordPageFilter,
+            cursor: RecordPageCursor?,
+            limit: Int,
+        ): Result<List<FinanceRecord>> {
+            val sorted = records.sortedWith(
+                compareByDescending<FinanceRecord> { it.recordedAtEpochMillis }.thenByDescending { it.id.value },
+            )
+            val fromEpochMillis = filter.fromEpochMillis
+            val toEpochMillis = filter.toEpochMillis
+            val query = filter.query
+            val filtered = sorted.filter { record ->
+                (filter.categoryId == null || record.categoryId == filter.categoryId) &&
+                    (fromEpochMillis == null || record.recordedAtEpochMillis >= fromEpochMillis) &&
+                    (toEpochMillis == null || record.recordedAtEpochMillis <= toEpochMillis) &&
+                    (query.isNullOrBlank() || (record.note?.contains(query, ignoreCase = true) ?: false))
+            }
+            val afterCursor = if (cursor == null) {
+                filtered
+            } else {
+                filtered.filter {
+                    it.recordedAtEpochMillis < cursor.recordedAtEpochMillis ||
+                        (it.recordedAtEpochMillis == cursor.recordedAtEpochMillis && it.id.value < cursor.recordId.value)
+                }
+            }
+            return Result.Success(afterCursor.take(limit))
+        }
+
+        override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
+            Result.Success(records.any { it.categoryId == categoryId })
+
+        override fun observeChangeSignal() = flowOf(RecordChangeSignal(records.size.toLong(), 0L))
     }
 
     private val usd = CurrencyCode("USD")
@@ -128,5 +164,46 @@ class DefaultHistoryRepositoryTest {
         assertEquals(0, result.data.recordCount)
         assertEquals(0L, result.data.totalInHomeCurrency.amount.valueInCents)
         assertEquals(CurrencyCode("USD"), result.data.totalInHomeCurrency.currency)
+    }
+
+    @Test
+    fun getRecordsPage_mapsRecordHistoryFilterOntoPageFilterAndDelegates() = runTest {
+        val records = listOf(
+            record("a", atUtc(2026, 6, 10), 100, category = "food", note = "Coffee shop"),
+            record("b", atUtc(2026, 6, 20), 200, category = "transport", note = "Taxi"),
+        )
+        val repo = repository(records)
+
+        val page = repo.getRecordsPage(
+            filter = RecordHistoryFilter(categoryId = CategoryId("food")),
+            limit = 10,
+        )
+
+        assertTrue(page is Result.Success)
+        assertEquals(listOf("a"), page.data.map { it.id.value })
+    }
+
+    @Test
+    fun getRecordsPage_passesCursorThrough() = runTest {
+        val records = listOf(
+            record("a", atUtc(2026, 6, 10), 100),
+            record("b", atUtc(2026, 6, 20), 200),
+        )
+        val repo = repository(records)
+        val cursor = RecordPageCursor(atUtc(2026, 6, 20), RecordId("b"))
+
+        val page = repo.getRecordsPage(cursor = cursor, limit = 10)
+
+        assertTrue(page is Result.Success)
+        assertEquals(listOf("a"), page.data.map { it.id.value })
+    }
+
+    @Test
+    fun hasAnyRecordIn_delegatesToExistsByCategory() = runTest {
+        val records = listOf(record("a", atUtc(2026, 6, 10), 100, category = "food"))
+        val repo = repository(records)
+
+        assertEquals(true, (repo.hasAnyRecordIn(CategoryId("food")) as Result.Success).data)
+        assertEquals(false, (repo.hasAnyRecordIn(CategoryId("transport")) as Result.Success).data)
     }
 }

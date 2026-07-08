@@ -26,7 +26,7 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
-import com.arduia.expense.ui.design.shortDateLabel
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -44,6 +44,8 @@ fun EventsFlow(
     onCloseEvent: (id: String) -> Unit = {},
     initialSelectedEventId: String? = null,
     onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
+    onExpenseClick: (recordId: String) -> Unit = {},
+    isLoading: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -90,6 +92,7 @@ fun EventsFlow(
                     selectedTab = HomeNavTab.Budget,
                     onTabSelected = onTabSelected,
                     onAddClick = onAddClick,
+                    isLoading = isLoading,
                 )
             } else {
                 val detail = detailStateFor(targetId, events, eventDetails)
@@ -98,7 +101,7 @@ fun EventsFlow(
                     onBack = { selectedEventId = null },
                     onMore = { if (!detail.readOnly) showActionsSheet = true },
                     onAddTagged = { onAddTaggedExpense(targetId) },
-                    onExpenseClick = {},
+                    onExpenseClick = onExpenseClick,
                 )
             }
         }
@@ -122,6 +125,7 @@ fun EventsFlow(
                     showCloseConfirm = true
                 },
                 onCancel = { showActionsSheet = false },
+                showClose = selectedEventId?.let { !detailStateFor(it, events, eventDetails).isClosed } ?: true,
             )
         }
 
@@ -185,7 +189,7 @@ fun EventsFlow(
             visible = showStartPicker,
             initialEpochMillis = form.startEpochMillis,
             onConfirm = { millis ->
-                form = form.copy(startEpochMillis = millis, startLabel = shortDateLabel(millis))
+                form = form.copy(startEpochMillis = millis, startLabel = PlatformDateFormatter.shortDateLabel(millis))
                 showStartPicker = false
             },
             onDismiss = { showStartPicker = false },
@@ -195,7 +199,7 @@ fun EventsFlow(
             visible = showEndPicker,
             initialEpochMillis = form.endEpochMillis,
             onConfirm = { millis ->
-                form = form.copy(endEpochMillis = millis, endLabel = shortDateLabel(millis))
+                form = form.copy(endEpochMillis = millis, endLabel = PlatformDateFormatter.shortDateLabel(millis))
                 showEndPicker = false
             },
             onDismiss = { showEndPicker = false },

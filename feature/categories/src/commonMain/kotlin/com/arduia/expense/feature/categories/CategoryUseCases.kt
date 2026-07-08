@@ -12,7 +12,7 @@ class SaveCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     private val nowEpochMillis: () -> Long,
 ) {
-    suspend operator fun invoke(categories: List<Category>, editingId: String?, name: String) {
+    suspend operator fun invoke(categories: List<Category>, editingId: String?, name: String, iconId: String = "") {
         val existing = editingId?.let { id -> categories.firstOrNull { it.id.value == id } }
         val customCount = categories.count { it.isCustom }
         categoryRepository.upsert(
@@ -21,6 +21,7 @@ class SaveCategoryUseCase(
                 name = name,
                 isCustom = true,
                 sortOrder = existing?.sortOrder ?: customCount,
+                iconId = iconId,
             ),
         )
     }

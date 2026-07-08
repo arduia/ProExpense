@@ -18,6 +18,7 @@ import com.arduia.expense.feature.history.R
 import com.arduia.expense.feature.history.ui.preview.previewJournalDetail
 import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
+import com.arduia.expense.feature.history.ui.preview.previewJournalLoading
 import com.arduia.expense.feature.history.ui.preview.previewJournalQuickNote
 import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
 import com.arduia.expense.testing.ScreenshotTests
@@ -94,6 +95,20 @@ class JournalScreenshotTest {
     fun journal_empty() = capture {
         JournalListScreen(
             state = previewJournalEmpty,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+
+    @Test
+    fun journal_loading() = capture {
+        JournalListScreen(
+            state = previewJournalLoading,
             onQueryChange = {},
             onFilterSelected = {},
             onRowClick = {},

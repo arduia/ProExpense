@@ -21,6 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.delay
@@ -64,6 +66,9 @@ fun ProToastHost(
     message: String?,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    // Screens with a bottom nav bar (Home) need extra clearance — otherwise the toast lands
+    // behind/under the bar instead of floating above it. Pass dimens.navBarHeight there.
+    bottomBarInset: Dp = 0.dp,
 ) {
     val motion = ProExpenseTheme.motion
 
@@ -82,7 +87,7 @@ fun ProToastHost(
             visible = message != null,
             modifier = Modifier
                 .navigationBarsPadding()
-                .padding(bottom = ProExpenseTheme.dimensions.space24),
+                .padding(bottom = ProExpenseTheme.dimensions.space24 + bottomBarInset),
             enter = fadeIn() + slideInVertically { fullHeight -> fullHeight / 2 },
             exit = fadeOut() + slideOutVertically { fullHeight -> fullHeight / 2 },
         ) {

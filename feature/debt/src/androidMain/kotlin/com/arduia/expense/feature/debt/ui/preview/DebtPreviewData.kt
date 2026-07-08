@@ -1,5 +1,7 @@
 package com.arduia.expense.feature.debt.ui.preview
 
+import com.arduia.expense.ui.design.PlatformDateFormatter
+
 const val DEBT_PERSON_MAX = 30
 const val DEBT_NOTE_MAX = 200
 
@@ -27,6 +29,7 @@ data class DebtListUiState(
     val activeCount: Int,
     val active: List<DebtRecordUi>,
     val settled: List<DebtRecordUi>,
+    val isLoading: Boolean = false,
 )
 
 data class DebtLinkedExpenseUi(
@@ -55,10 +58,12 @@ data class DebtAddFormState(
     val side: DebtSide = DebtSide.Lent,
     val person: String = "",
     val amountRaw: String = "",
-    val dateLabel: String = "May 12",
+    // A new record is recorded today, not a hardcoded placeholder month.
+    val dateLabel: String = PlatformDateFormatter.shortDateLabel(System.currentTimeMillis()),
     val dueLabel: String? = null,
     val editingId: String? = null,
     val dueEpochMillis: Long? = null,
+    val note: String = "",
 ) {
     val canSave: Boolean
         get() = person.isNotBlank() && (amountRaw.toDoubleOrNull() ?: 0.0) > 0.0
@@ -76,6 +81,15 @@ val previewDebtLent = DebtListUiState(
     settled = listOf(
         DebtRecordUi("aiko", "Aiko", "Apr 14", "$20", settled = true),
     ),
+)
+
+val previewDebtLoading = DebtListUiState(
+    side = DebtSide.Lent,
+    netLabel = "$0",
+    activeCount = 0,
+    active = emptyList(),
+    settled = emptyList(),
+    isLoading = true,
 )
 
 val previewDebtOwe = DebtListUiState(

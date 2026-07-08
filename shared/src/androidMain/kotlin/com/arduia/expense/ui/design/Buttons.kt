@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +26,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -55,6 +59,9 @@ fun ProButton(
     size: ProButtonSize = ProButtonSize.Md,
     enabled: Boolean = true,
     fillMaxWidth: Boolean = false,
+    // Shows a spinner in place of the label and blocks clicks — for actions with a suspend call
+    // (PIN setup hashing, saves) where an unchanged button otherwise reads as a frozen screen.
+    loading: Boolean = false,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
@@ -62,6 +69,7 @@ fun ProButton(
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
     val typography = ProExpenseTheme.typography
+    val isEnabled = enabled && !loading
     val buttonSize = when (size) {
         ProButtonSize.Sm -> dimens.buttonSm
         ProButtonSize.Md -> dimens.buttonMd
@@ -74,8 +82,8 @@ fun ProButton(
     }
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
-    val scale = if (pressed && enabled) motion.pressedScale else 1f
-    val pressedAlpha = if (pressed && enabled) motion.pressedOpacity else 1f
+    val scale = if (pressed && isEnabled) motion.pressedScale else 1f
+    val pressedAlpha = if (pressed && isEnabled) motion.pressedOpacity else 1f
     val textStyle = typography.button.merge(
         TextStyle(
             fontSize = buttonSize.fontSizeSp.sp,
@@ -110,7 +118,7 @@ fun ProButton(
             Button(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.primary),
                 colors = ButtonDefaults.buttonColors(
@@ -127,6 +135,7 @@ fun ProButton(
                     textStyle = textStyle,
                     leading = leading,
                     trailing = trailing,
+                    loading = loading,
                 )
             }
         }
@@ -134,7 +143,7 @@ fun ProButton(
             Button(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.primaryDeep),
                 colors = ButtonDefaults.buttonColors(
@@ -146,14 +155,14 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
         ProButtonVariant.Success -> {
             Button(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.success),
                 colors = ButtonDefaults.buttonColors(
@@ -165,14 +174,14 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
         ProButtonVariant.Danger -> {
             Button(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.danger),
                 colors = ButtonDefaults.buttonColors(
@@ -184,14 +193,14 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
         ProButtonVariant.DangerOutline -> {
             OutlinedButton(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.danger),
                 colors = ButtonDefaults.outlinedButtonColors(
@@ -202,14 +211,14 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
         ProButtonVariant.Warning -> {
             Button(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.warning),
                 colors = ButtonDefaults.buttonColors(
@@ -221,14 +230,14 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
         ProButtonVariant.Dark -> {
             Button(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.onSurface),
                 colors = ButtonDefaults.buttonColors(
@@ -240,14 +249,14 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
         ProButtonVariant.Secondary -> {
             OutlinedButton(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.lineStrong),
                 colors = ButtonDefaults.outlinedButtonColors(
@@ -258,14 +267,14 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
         ProButtonVariant.Ghost -> {
             TextButton(
                 onClick = onClick,
                 modifier = scaledModifier,
-                enabled = enabled,
+                enabled = isEnabled,
                 shape = shape,
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = Color.Transparent,
@@ -275,7 +284,7 @@ fun ProButton(
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
-                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing)
+                ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)
             }
         }
     }
@@ -287,9 +296,21 @@ private fun ProButtonLabel(
     textStyle: TextStyle,
     leading: (@Composable () -> Unit)?,
     trailing: (@Composable () -> Unit)?,
+    loading: Boolean = false,
 ) {
+    if (loading) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(textStyle.fontSize.value.dp),
+            color = LocalContentColor.current,
+            strokeWidth = 2.dp,
+        )
+        return
+    }
+
+    // Height is a min-height, not fixed — an unconstrained Text wraps on narrow screens/long
+    // labels (e.g. "Mark as settled" + leading icon) and silently grows the button to 2 lines.
     if (leading == null && trailing == null) {
-        Text(text = text, style = textStyle)
+        Text(text = text, style = textStyle, maxLines = 1, overflow = TextOverflow.Ellipsis)
         return
     }
 
@@ -299,7 +320,7 @@ private fun ProButtonLabel(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         leading?.invoke()
-        Text(text = text, style = textStyle)
+        Text(text = text, style = textStyle, maxLines = 1, overflow = TextOverflow.Ellipsis)
         trailing?.invoke()
     }
 }

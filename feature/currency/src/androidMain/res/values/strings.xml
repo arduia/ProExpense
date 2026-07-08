@@ -3,4 +3,9 @@
     <string name="more_currency_title">Currency</string>
     <string name="more_currency_subtitle">Your home currency. Applied to all entries — multi-currency per entry comes later.</string>
     <string name="search_currency_placeholder">Search currency...</string>
+    <string name="more_currency_save_action">Save</string>
+    <string name="more_currency_confirm_title">Change home currency?</string>
+    <string name="more_currency_confirm_body">New entries will use %1$s (%2$s) going forward. Existing records keep their original currency.</string>
+    <string name="more_currency_confirm_action">Save</string>
+    <string name="more_currency_confirm_cancel">Cancel</string>
 </resources>

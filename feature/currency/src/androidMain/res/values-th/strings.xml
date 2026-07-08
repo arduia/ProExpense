@@ -1,0 +1,11 @@
+<resources>
+    <string name="more_back">เพิ่มเติม</string>
+    <string name="more_currency_title">สกุลเงิน</string>
+    <string name="more_currency_subtitle">สกุลเงินหลักของคุณ ใช้กับทุกรายการ — การรองรับหลายสกุลเงินต่อรายการจะมาในภายหลัง</string>
+    <string name="search_currency_placeholder">ค้นหาสกุลเงิน...</string>
+    <string name="more_currency_save_action">บันทึก</string>
+    <string name="more_currency_confirm_title">เปลี่ยนสกุลเงินหลักหรือไม่?</string>
+    <string name="more_currency_confirm_body">รายการใหม่จะใช้ %1$s (%2$s) ตั้งแต่นี้เป็นต้นไป รายการเดิมจะยังคงสกุลเงินเดิมไว้</string>
+    <string name="more_currency_confirm_action">บันทึก</string>
+    <string name="more_currency_confirm_cancel">ยกเลิก</string>
+</resources>

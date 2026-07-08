@@ -21,4 +21,5 @@ val storageModule = module {
     single { get<ProExpenseStorage>().profileRepository }
     single { get<ProExpenseStorage>().localeRepository }
     single { get<ProExpenseStorage>().defaultCategoryRepository }
+    single { get<ProExpenseStorage>().themeRepository }
 }

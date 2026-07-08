@@ -76,18 +76,20 @@ fun TagPickerContent(
                 )
             }
         }
-        TagPickerSection(
-            title = stringResource(R.string.link_debts_section),
-            unavailableHint = if (debtsDisabled) stringResource(R.string.link_debts_unavailable) else null,
-            disabled = debtsDisabled,
-        ) {
-            debts.forEach { option ->
-                TagLinkRow(
-                    option = option,
-                    selected = selectedId == option.id && selectedKind == TagLinkKind.Debt,
-                    enabled = !debtsDisabled,
-                    onClick = { onSelected(option) },
-                )
+        if (debts.isNotEmpty()) {
+            TagPickerSection(
+                title = stringResource(R.string.link_debts_section),
+                unavailableHint = if (debtsDisabled) stringResource(R.string.link_debts_unavailable) else null,
+                disabled = debtsDisabled,
+            ) {
+                debts.forEach { option ->
+                    TagLinkRow(
+                        option = option,
+                        selected = selectedId == option.id && selectedKind == TagLinkKind.Debt,
+                        enabled = !debtsDisabled,
+                        onClick = { onSelected(option) },
+                    )
+                }
             }
         }
     }
@@ -213,6 +215,23 @@ private fun TagPickerContentPreview() {
             ),
             selectedId = "bali",
             selectedKind = TagLinkKind.Event,
+            onSelected = {},
+            modifier = Modifier.padding(ProExpenseTheme.dimensions.screenPadding),
+        )
+    }
+}
+
+@Preview(name = "No debts", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true)
+@Composable
+private fun TagPickerContentNoDebtsPreview() {
+    ProExpenseTheme {
+        TagPickerContent(
+            events = listOf(
+                TagLinkOption("bali", "Bali Trip", "May 12 — May 26", TagLinkKind.Event),
+            ),
+            debts = emptyList(),
+            selectedId = null,
+            selectedKind = null,
             onSelected = {},
             modifier = Modifier.padding(ProExpenseTheme.dimensions.screenPadding),
         )

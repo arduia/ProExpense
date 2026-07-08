@@ -1,0 +1,24 @@
+<resources>
+<string name="reports_title">အစီရင်ခံစာများ</string>
+<string name="reports_back">နောက်ထပ်</string>
+<string name="reports_total_spent">စုစုပေါင်း အသုံးစရိတ်</string>
+<string name="reports_period_total">%1$s · စုစုပေါင်း အသုံးစရိတ်</string>
+<string name="reports_daily_avg_prefix">နေ့စဉ်ပျမ်းမျှ</string>
+<string name="reports_by_category">အမျိုးအစားအလိုက်</string>
+<string name="reports_top_categories">ထိပ်တန်း အမျိုးအစားများ</string>
+<string name="reports_uncategorized_label">အမျိုးအစားမသတ်မှတ်ရသေး</string>
+<string name="reports_other_category">အခြား</string>
+<string name="reports_uncategorized_tip">အကြံပြုချက်— အမျိုးအစားအလိုက် အသုံးစရိတ်ခွဲခြမ်းစိတ်ဖြာမှု ရရှိရန် သင့်အသုံးစရိတ်များကို အမျိုးအစားသတ်မှတ်ပါ။</string>
+<string name="reports_prev_period">ယခင်ကာလ</string>
+<string name="reports_next_period">နောက်ကာလ</string>
+<string name="reports_empty_title">အချက်အလက် မရှိသေးပါ</string>
+<string name="reports_empty_subtitle">အသုံးစရိတ်အနည်းငယ် မှတ်တမ်းတင်ပါက သင့်အသုံးစရိတ်ခွဲခြမ်းစိတ်ဖြာမှု ဒီနေရာတွင် ပေါ်လာပါမည်။</string>
+<string name="reports_empty_action">ပထမဆုံးအသုံးစရိတ် မှတ်တမ်းတင်ပါ</string>
+<string name="reports_period_empty_title">ဒီကာလအတွင်း အသုံးစရိတ် မရှိပါ</string>
+<string name="reports_period_empty_subtitle">အခြားကာလကို ကြည့်ရန် အထက်ရှိ မြှားများကို ဆွဲ (သို့) နှိပ်ပါ။</string>
+<string name="reports_period_empty_action">အသုံးစရိတ် မှတ်တမ်းတင်ရန်</string>
+<string name="reports_window_empty_title">ဒီအမြင်တွင် အသုံးစရိတ် မရှိပါ</string>
+<string name="reports_window_empty_subtitle">အထက်ရှိ လနှင့် အပတ်ကြား ပြောင်းကြည့်ပါ (သို့) အသုံးစရိတ်အသစ် မှတ်တမ်းတင်ပါ။</string>
+<string name="reports_granularity_month">လ</string>
+<string name="reports_granularity_week">အပတ်</string>
+</resources>

@@ -15,6 +15,8 @@ data class EventProgress(
     val remainingCents: Long,
     val progress: Float,
     val isOverBudget: Boolean,
+    /** Rounded percent over 100 (e.g. 105% spent -> 5); 0 when at or under budget. */
+    val overBudgetPercent: Int = 0,
 )
 
 class ComputeEventProgressUseCase {
@@ -22,12 +24,17 @@ class ComputeEventProgressUseCase {
         val spentCents = spent?.amount?.valueInCents ?: 0L
         val budgetCents = event.budget.amount.valueInCents
         val progress = if (budgetCents > 0) spentCents.toFloat() / budgetCents.toFloat() else 0f
+        // US-EVT-3's tiers (0-100 normal, 101-110 warning, >110 danger) need the *uncapped*
+        // percent over budget — the bar-fill progress below is intentionally capped to 1f.
+        val percentOfBudget = if (budgetCents > 0) (spentCents * 100f / budgetCents) else 0f
+        val overBudgetPercent = (percentOfBudget - 100f).let { if (it > 0f) kotlin.math.round(it).toInt() else 0 }
         return EventProgress(
             spentCents = spentCents,
             budgetCents = budgetCents,
             remainingCents = budgetCents - spentCents,
             progress = progress.coerceIn(0f, 1f),
             isOverBudget = spentCents > budgetCents,
+            overBudgetPercent = overBudgetPercent,
         )
     }
 }
@@ -96,4 +103,17 @@ class CloseEventUseCase(private val eventRepository: EventRepository) {
         eventRepository.upsert(existing.copy(status = EventStatus.CLOSED))
         return true
     }
+}
+
+private const val CLOSED_EVENT_GRACE_PERIOD_MILLIS = 24L * 60 * 60 * 1000
+
+/**
+ * US-EVT-5 lifecycle: Active is always editable; Closed < 24h is a grace period (still editable,
+ * no new links); Closed > 24h locks permanently. An event with no recorded closedAtEpochMillis
+ * (e.g. closed before this field existed) is treated as past the grace period.
+ */
+fun isEventReadOnly(status: EventStatus, closedAtEpochMillis: Long?, nowEpochMillis: Long): Boolean {
+    if (status != EventStatus.CLOSED) return false
+    val closedAt = closedAtEpochMillis ?: return true
+    return nowEpochMillis - closedAt > CLOSED_EVENT_GRACE_PERIOD_MILLIS
 }
