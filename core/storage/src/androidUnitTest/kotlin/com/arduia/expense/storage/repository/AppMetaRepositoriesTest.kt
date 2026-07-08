@@ -1,11 +1,11 @@
 package com.arduia.expense.storage.repository
 
-import android.content.SharedPreferences
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Money
+import com.arduia.expense.storage.PlatformKeyValueStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -15,76 +15,22 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Backs onto a shared mutable map so two [FakeSharedPreferences] built from the same [backing]
- * simulate re-reading the same on-disk file across a fresh process — the scenario that matters
+ * Backs onto a shared mutable map so two [FakeKeyValueStore] built from the same [backing]
+ * simulate re-reading the same on-disk store across a fresh process — the scenario that matters
  * for the onboarding/display-name persistence regression tests below.
  */
-private class FakeSharedPreferences(
+private class FakeKeyValueStore(
     private val backing: MutableMap<String, Any?> = mutableMapOf(),
-) : SharedPreferences by UnsupportedSharedPreferences {
-    override fun getBoolean(key: String, defValue: Boolean): Boolean =
-        backing[key] as? Boolean ?: defValue
-
-    override fun getString(key: String?, defValue: String?): String? =
-        backing[key] as? String ?: defValue
-
-    override fun edit(): SharedPreferences.Editor = FakeEditor(backing)
-
-    private class FakeEditor(
-        private val backing: MutableMap<String, Any?>,
-    ) : SharedPreferences.Editor by UnsupportedEditor {
-        private val pending = mutableMapOf<String, Any?>()
-
-        override fun putBoolean(key: String, value: Boolean): SharedPreferences.Editor {
-            pending[key] = value
-            return this
-        }
-
-        override fun putString(key: String, value: String?): SharedPreferences.Editor {
-            pending[key] = value
-            return this
-        }
-
-        override fun commit(): Boolean {
-            backing.putAll(pending)
-            return true
-        }
-
-        override fun apply() {
-            backing.putAll(pending)
-        }
+) : PlatformKeyValueStore {
+    override fun getString(key: String): String? = backing[key] as? String
+    override fun putString(key: String, value: String) {
+        backing[key] = value
     }
-}
 
-private object UnsupportedSharedPreferences : SharedPreferences {
-    override fun getAll(): MutableMap<String, *> = throw UnsupportedOperationException()
-    override fun getString(key: String?, defValue: String?) = throw UnsupportedOperationException()
-    override fun getStringSet(key: String?, defValues: MutableSet<String>?) = throw UnsupportedOperationException()
-    override fun getInt(key: String?, defValue: Int) = throw UnsupportedOperationException()
-    override fun getLong(key: String?, defValue: Long) = throw UnsupportedOperationException()
-    override fun getFloat(key: String?, defValue: Float) = throw UnsupportedOperationException()
-    override fun getBoolean(key: String?, defValue: Boolean) = throw UnsupportedOperationException()
-    override fun contains(key: String?) = throw UnsupportedOperationException()
-    override fun edit(): SharedPreferences.Editor = throw UnsupportedOperationException()
-    override fun registerOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
-    ) = throw UnsupportedOperationException()
-    override fun unregisterOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?,
-    ) = throw UnsupportedOperationException()
-}
-
-private object UnsupportedEditor : SharedPreferences.Editor {
-    override fun putString(key: String?, value: String?) = throw UnsupportedOperationException()
-    override fun putStringSet(key: String?, values: MutableSet<String>?) = throw UnsupportedOperationException()
-    override fun putInt(key: String?, value: Int) = throw UnsupportedOperationException()
-    override fun putLong(key: String?, value: Long) = throw UnsupportedOperationException()
-    override fun putFloat(key: String?, value: Float) = throw UnsupportedOperationException()
-    override fun putBoolean(key: String?, value: Boolean) = throw UnsupportedOperationException()
-    override fun remove(key: String?) = throw UnsupportedOperationException()
-    override fun clear() = throw UnsupportedOperationException()
-    override fun commit() = throw UnsupportedOperationException()
-    override fun apply() = throw UnsupportedOperationException()
+    override fun getBoolean(key: String, default: Boolean): Boolean = backing[key] as? Boolean ?: default
+    override fun putBoolean(key: String, value: Boolean) {
+        backing[key] = value
+    }
 }
 
 class AppMetaRepositoriesTest {
@@ -94,16 +40,14 @@ class AppMetaRepositoriesTest {
     @Test
     fun profile_onboardingComplete_survivesSimulatedProcessRestart() = runTest {
         // Same on-disk backing map, but a brand new AppMetaLocalStore each time — this mirrors a
-        // cold app restart where Koin rebuilds the DI graph but SharedPreferences persists on disk.
+        // cold app restart where Koin rebuilds the DI graph but the key-value store persists on disk.
         val diskBacking = mutableMapOf<String, Any?>()
-        val firstLaunchPrefs = FakeSharedPreferences(diskBacking)
-        val firstLaunchRepo = AppMetaProfileRepository(store(), firstLaunchPrefs)
+        val firstLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
         assertEquals(Result.Success(false), firstLaunchRepo.isOnboardingComplete())
         firstLaunchRepo.setOnboardingComplete()
 
-        val secondLaunchPrefs = FakeSharedPreferences(diskBacking)
-        val secondLaunchRepo = AppMetaProfileRepository(store(), secondLaunchPrefs)
+        val secondLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
         assertEquals(Result.Success(true), secondLaunchRepo.isOnboardingComplete())
     }
@@ -112,22 +56,21 @@ class AppMetaRepositoriesTest {
     fun profile_onboardingComplete_fallsBackToDbWhenPrefsMissing() = runTest {
         // Simulates an existing install that wrote the flag to the DB before this fix shipped.
         val dbStore = store()
-        AppMetaProfileRepository(dbStore, FakeSharedPreferences()).setOnboardingComplete()
+        AppMetaProfileRepository(dbStore, FakeKeyValueStore()).setOnboardingComplete()
 
-        val freshPrefs = FakeSharedPreferences()
-        val repoWithFreshPrefs = AppMetaProfileRepository(dbStore, freshPrefs)
+        val repoWithFreshStore = AppMetaProfileRepository(dbStore, FakeKeyValueStore())
 
-        assertEquals(Result.Success(true), repoWithFreshPrefs.isOnboardingComplete())
+        assertEquals(Result.Success(true), repoWithFreshStore.isOnboardingComplete())
     }
 
     @Test
     fun profile_displayName_survivesSimulatedProcessRestart() = runTest {
         val diskBacking = mutableMapOf<String, Any?>()
-        val firstLaunchRepo = AppMetaProfileRepository(store(), FakeSharedPreferences(diskBacking))
+        val firstLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
         firstLaunchRepo.setDisplayName("Ada")
 
-        val secondLaunchRepo = AppMetaProfileRepository(store(), FakeSharedPreferences(diskBacking))
+        val secondLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
         assertEquals(Result.Success("Ada"), secondLaunchRepo.getDisplayName())
     }
@@ -136,11 +79,11 @@ class AppMetaRepositoriesTest {
     fun profile_displayName_fallsBackToDbWhenPrefsMissing() = runTest {
         // Simulates an existing install that wrote the name to the DB before this fix shipped.
         val dbStore = store()
-        AppMetaProfileRepository(dbStore, FakeSharedPreferences()).setDisplayName("Ada")
+        AppMetaProfileRepository(dbStore, FakeKeyValueStore()).setDisplayName("Ada")
 
-        val repoWithFreshPrefs = AppMetaProfileRepository(dbStore, FakeSharedPreferences())
+        val repoWithFreshStore = AppMetaProfileRepository(dbStore, FakeKeyValueStore())
 
-        assertEquals(Result.Success("Ada"), repoWithFreshPrefs.getDisplayName())
+        assertEquals(Result.Success("Ada"), repoWithFreshStore.getDisplayName())
     }
 
     @Test
@@ -312,7 +255,7 @@ class AppMetaRepositoriesTest {
 
     @Test
     fun locale_defaultsToEnglish_thenPersists() = runTest {
-        val repo = AppMetaLocaleRepository(store(), FakeSharedPreferences())
+        val repo = AppMetaLocaleRepository(store(), FakeKeyValueStore())
 
         val initial = repo.getLanguageTag()
         assertTrue(initial is Result.Success)
@@ -330,7 +273,7 @@ class AppMetaRepositoriesTest {
         // MainActivity.attachBaseContext() reads this on the next Activity recreation, before
         // Koin/the suspend repository stack are available — the write must not depend on the DB.
         val diskBacking = mutableMapOf<String, Any?>()
-        val repo = AppMetaLocaleRepository(store(), FakeSharedPreferences(diskBacking))
+        val repo = AppMetaLocaleRepository(store(), FakeKeyValueStore(diskBacking))
 
         repo.setLanguageTag("th")
 

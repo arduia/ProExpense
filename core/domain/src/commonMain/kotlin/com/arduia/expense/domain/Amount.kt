@@ -1,5 +1,6 @@
 package com.arduia.expense.domain
 
+import kotlin.jvm.JvmInline
 import kotlin.math.roundToLong
 
 @JvmInline

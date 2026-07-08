@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 
 class SqlDelightClearDataRepository(
     private val database: ProExpenseDatabase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ClearDataRepository {
 
     override suspend fun clearExpenses(): Result<Unit> = withContext(dispatcher) {

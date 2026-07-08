@@ -1,7 +1,7 @@
 package com.arduia.expense.ui.design
 
 /**
- * iOS-readiness stub (not compiled yet — no iOS target is configured). Implement with
+ * iOS-readiness stub (compiles in the iOS klib gate but still throws). Implement with
  * NSDateFormatter / NSCalendar when the iosApp phase starts.
  */
 actual object PlatformDateFormatter : DateFormatter {

@@ -56,7 +56,7 @@ data class AppMetaSnapshot(
  */
 class AppMetaLocalStore(
     private val queries: AppMetaQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : AppMetaStore {
     private val mutex = Mutex()
 

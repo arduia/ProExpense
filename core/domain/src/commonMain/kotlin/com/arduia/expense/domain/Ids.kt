@@ -1,5 +1,7 @@
 package com.arduia.expense.domain
 
+import kotlin.jvm.JvmInline
+
 @JvmInline
 value class RecordId(val value: String) {
     init {
