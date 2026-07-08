@@ -11,6 +11,7 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.ImportExportRepository
 import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.LockoutRepository
+import com.arduia.expense.data.PinCredentialStore
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.data.SharedCostRepository
@@ -23,6 +24,7 @@ import com.arduia.expense.storage.repository.AppMetaDefaultCategoryRepository
 import com.arduia.expense.storage.repository.AppMetaLocalStore
 import com.arduia.expense.storage.repository.AppMetaLocaleRepository
 import com.arduia.expense.storage.repository.AppMetaLockoutRepository
+import com.arduia.expense.storage.repository.AppMetaPinCredentialStore
 import com.arduia.expense.storage.repository.AppMetaProfileRepository
 import com.arduia.expense.storage.repository.AppMetaSecurityStateReader
 import com.arduia.expense.storage.repository.OnboardingFlagStore
@@ -46,8 +48,8 @@ import kotlinx.coroutines.withContext
  * factories (Android: `ProExpenseStorage.create`, in `androidMain`) for the platform entry point.
  */
 class ProExpenseStorage internal constructor(
-    val database: ProExpenseDatabase,
-    val appMetaStore: AppMetaLocalStore,
+    internal val database: ProExpenseDatabase,
+    internal val appMetaStore: AppMetaLocalStore,
     private val dispatcher: CoroutineDispatcher,
     val financeRecordRepository: FinanceRecordRepository,
     val categoryRepository: CategoryRepository,
@@ -63,6 +65,7 @@ class ProExpenseStorage internal constructor(
     val profileRepository: ProfileRepository,
     val localeRepository: LocaleRepository,
     val defaultCategoryRepository: DefaultCategoryRepository,
+    val pinCredentialStore: PinCredentialStore,
 ) {
 
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
@@ -131,5 +134,6 @@ internal fun buildProExpenseStorage(
         profileRepository = AppMetaProfileRepository(appMetaStore, onboardingFlagStore),
         localeRepository = AppMetaLocaleRepository(appMetaStore),
         defaultCategoryRepository = AppMetaDefaultCategoryRepository(appMetaStore),
+        pinCredentialStore = AppMetaPinCredentialStore(appMetaStore),
     )
 }

@@ -1,29 +1,29 @@
 package com.arduia.expense.feature.auth
 
+import com.arduia.expense.data.PinCredentialStore
 import com.arduia.expense.data.Result
-import com.arduia.expense.storage.repository.AppMetaStore
+import com.arduia.expense.shared.currentEpochMillis
+import com.arduia.expense.shared.platformPbkdf2Sha256
+import com.arduia.expense.shared.secureRandomBytes
+import com.arduia.expense.shared.toHexString
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.security.SecureRandom
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.PBEKeySpec
 
 /**
- * PIN/biometric/security-question authentication backed by AppMetaStore.
+ * PIN/biometric/security-question authentication backed by [PinCredentialStore].
  * PIN is hashed using PBKDF2-SHA256 with a unique salt per device.
  * Security question answers are hashed similarly.
  * Biometric enrollment is tracked as a boolean flag + wrapped key placeholder.
  */
-class PinAuthRepositoryImpl(
-    private val appMetaStore: AppMetaStore,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+class DefaultPinAuthRepository(
+    private val credentialStore: PinCredentialStore,
+    private val dispatcher: CoroutineDispatcher,
 ) : PinAuthRepository {
 
     override suspend fun isPinConfigured(): Result<Boolean> = withContext(dispatcher) {
         try {
-            val snapshot = appMetaStore.read()
-            Result.Success(snapshot.pinHash != null)
+            val credentials = credentialStore.read()
+            Result.Success(credentials.pinHash != null)
         } catch (e: Exception) {
             Result.Error("Failed to check PIN configuration", cause = e)
         }
@@ -31,10 +31,10 @@ class PinAuthRepositoryImpl(
 
     override suspend fun setPin(pin: String): Result<Unit> = withContext(dispatcher) {
         try {
-            val salt = ByteArray(16).apply { SecureRandom().nextBytes(this) }
+            val salt = secureRandomBytes(16)
             val hash = hashPin(pin, salt)
-            appMetaStore.update { snapshot ->
-                snapshot.copy(
+            credentialStore.update { credentials ->
+                credentials.copy(
                     pinHash = hash,
                     failedAttemptCount = 0,
                     lockoutUntil = null,
@@ -48,8 +48,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun verifyPin(pin: String): Result<Boolean> = withContext(dispatcher) {
         try {
-            val snapshot = appMetaStore.read()
-            val storedHash = snapshot.pinHash
+            val credentials = credentialStore.read()
+            val storedHash = credentials.pinHash
             if (storedHash == null) {
                 return@withContext Result.Success(false)
             }
@@ -63,8 +63,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun clearPin(): Result<Unit> = withContext(dispatcher) {
         try {
-            appMetaStore.update { snapshot ->
-                snapshot.copy(
+            credentialStore.update { credentials ->
+                credentials.copy(
                     pinHash = null,
                     failedAttemptCount = 0,
                     lockoutUntil = null,
@@ -81,10 +81,10 @@ class PinAuthRepositoryImpl(
     override suspend fun setSecurityQuestion(questionId: String, answer: String): Result<Unit> =
         withContext(dispatcher) {
             try {
-                val salt = ByteArray(16).apply { SecureRandom().nextBytes(this) }
+                val salt = secureRandomBytes(16)
                 val hash = hashPin(answer, salt)
-                appMetaStore.update { snapshot ->
-                    snapshot.copy(
+                credentialStore.update { credentials ->
+                    credentials.copy(
                         securityQuestionId = questionId,
                         securityAnswerHash = hash,
                     )
@@ -97,8 +97,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun getSecurityQuestionId(): Result<String?> = withContext(dispatcher) {
         try {
-            val snapshot = appMetaStore.read()
-            Result.Success(snapshot.securityQuestionId)
+            val credentials = credentialStore.read()
+            Result.Success(credentials.securityQuestionId)
         } catch (e: Exception) {
             Result.Error("Failed to get security question", cause = e)
         }
@@ -106,8 +106,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun verifySecurityAnswer(answer: String): Result<Boolean> = withContext(dispatcher) {
         try {
-            val snapshot = appMetaStore.read()
-            val storedHash = snapshot.securityAnswerHash
+            val credentials = credentialStore.read()
+            val storedHash = credentials.securityAnswerHash
             if (storedHash == null) {
                 return@withContext Result.Success(false)
             }
@@ -120,8 +120,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun isBiometricEnrolled(): Result<Boolean> = withContext(dispatcher) {
         try {
-            val snapshot = appMetaStore.read()
-            Result.Success(snapshot.biometricEnrolled)
+            val credentials = credentialStore.read()
+            Result.Success(credentials.biometricEnrolled)
         } catch (e: Exception) {
             Result.Error("Failed to check biometric enrollment", cause = e)
         }
@@ -129,8 +129,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun enrollBiometric(): Result<Unit> = withContext(dispatcher) {
         try {
-            appMetaStore.update { snapshot ->
-                snapshot.copy(biometricEnrolled = true)
+            credentialStore.update { credentials ->
+                credentials.copy(biometricEnrolled = true)
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -140,8 +140,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun clearBiometric(): Result<Unit> = withContext(dispatcher) {
         try {
-            appMetaStore.update { snapshot ->
-                snapshot.copy(
+            credentialStore.update { credentials ->
+                credentials.copy(
                     biometricEnrolled = false,
                     biometricWrappedKey = null,
                 )
@@ -154,8 +154,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun getFailedAttemptCount(): Result<Long> = withContext(dispatcher) {
         try {
-            val snapshot = appMetaStore.read()
-            Result.Success(snapshot.failedAttemptCount)
+            val credentials = credentialStore.read()
+            Result.Success(credentials.failedAttemptCount)
         } catch (e: Exception) {
             Result.Error("Failed to get failed attempt count", cause = e)
         }
@@ -163,15 +163,15 @@ class PinAuthRepositoryImpl(
 
     override suspend fun incrementFailedAttempts(): Result<Unit> = withContext(dispatcher) {
         try {
-            appMetaStore.update { snapshot ->
-                val newCount = snapshot.failedAttemptCount + 1
+            credentialStore.update { credentials ->
+                val newCount = credentials.failedAttemptCount + 1
                 val lockoutDuration = lockoutDurationMs(newCount)
-                snapshot.copy(
+                credentials.copy(
                     failedAttemptCount = newCount,
                     lockoutUntil = if (lockoutDuration != null) {
-                        System.currentTimeMillis() + lockoutDuration
+                        currentEpochMillis() + lockoutDuration
                     } else {
-                        snapshot.lockoutUntil
+                        credentials.lockoutUntil
                     },
                 )
             }
@@ -183,8 +183,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun resetFailedAttempts(): Result<Unit> = withContext(dispatcher) {
         try {
-            appMetaStore.update { snapshot ->
-                snapshot.copy(failedAttemptCount = 0, lockoutUntil = null)
+            credentialStore.update { credentials ->
+                credentials.copy(failedAttemptCount = 0, lockoutUntil = null)
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -194,8 +194,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun getLockoutUntilMs(): Result<Long?> = withContext(dispatcher) {
         try {
-            val snapshot = appMetaStore.read()
-            Result.Success(snapshot.lockoutUntil)
+            val credentials = credentialStore.read()
+            Result.Success(credentials.lockoutUntil)
         } catch (e: Exception) {
             Result.Error("Failed to get lockout time", cause = e)
         }
@@ -203,8 +203,8 @@ class PinAuthRepositoryImpl(
 
     override suspend fun setLockoutUntilMs(lockedUntilMs: Long): Result<Unit> = withContext(dispatcher) {
         try {
-            appMetaStore.update { snapshot ->
-                snapshot.copy(lockoutUntil = lockedUntilMs)
+            credentialStore.update { credentials ->
+                credentials.copy(lockoutUntil = lockedUntilMs)
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -215,12 +215,9 @@ class PinAuthRepositoryImpl(
     private fun hashPin(pin: String, salt: ByteArray): String {
         val iterations = 120_000
         val keyLength = 256
-        val spec = PBEKeySpec(pin.toCharArray(), salt, iterations, keyLength)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val key = factory.generateSecret(spec)
-        val hashBytes = key.encoded
-        val saltHex = salt.joinToString("") { "%02x".format(it) }
-        val hashHex = hashBytes.joinToString("") { "%02x".format(it) }
+        val hashBytes = platformPbkdf2Sha256(pin.toCharArray(), salt, iterations, keyLength)
+        val saltHex = salt.toHexString()
+        val hashHex = hashBytes.toHexString()
         return "v2:$iterations:$saltHex:$hashHex"
     }
 
@@ -240,10 +237,7 @@ class PinAuthRepositoryImpl(
         val expectedHashHex = parts[3]
 
         val salt = saltHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
-        val spec = PBEKeySpec(input.toCharArray(), salt, iterations, 256)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val key = factory.generateSecret(spec)
-        val computedHashHex = key.encoded.joinToString("") { "%02x".format(it) }
+        val computedHashHex = platformPbkdf2Sha256(input.toCharArray(), salt, iterations, 256).toHexString()
         return computedHashHex == expectedHashHex
     }
 
