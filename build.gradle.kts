@@ -8,18 +8,45 @@ plugins {
     alias(libs.plugins.roborazzi) apply false
 }
 
+val kmpModulesWithIosTargets = listOf(
+    ":shared",
+    ":core:domain",
+    ":core:data",
+    ":core:storage",
+    ":feature:auth",
+    ":feature:categories",
+    ":feature:currency",
+    ":feature:debt",
+    ":feature:eventbudget",
+    ":feature:history",
+    ":feature:importexport",
+    ":feature:logging",
+    ":feature:onboarding",
+    ":feature:reports",
+    ":feature:sharedcost",
+)
+
+tasks.register("verifyIos") {
+    group = "verification"
+    description = "Compile every KMP module's commonMain for iosSimulatorArm64 — proves the data " +
+        "layer (and everything built on it) stays portable to iOS without running Xcode."
+    dependsOn(kmpModulesWithIosTargets.map { "$it:compileKotlinIosSimulatorArm64" })
+}
+
 tasks.register("verifyAll") {
     group = "verification"
-    description = "Build devDebug APK and verify design system screenshots."
+    description = "Build devDebug APK, verify design system screenshots, and compile for iOS."
     dependsOn(
         ":app:assembleDevDebug",
         ":app:testDevDebugUnitTest",
         ":shared:testDebugUnitTest",
         ":core:domain:testDebugUnitTest",
         ":core:storage:testDebugUnitTest",
+        ":feature:auth:testDebugUnitTest",
         ":feature:logging:testDebugUnitTest",
         ":feature:currency:testDebugUnitTest",
         ":feature:history:testDebugUnitTest",
+        "verifyIos",
     )
 }
 
