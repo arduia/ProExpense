@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.hasValidExchangeRate
@@ -63,6 +64,8 @@ fun QuickLogFlow(
     tagDebts: List<TagLinkOption> = emptyList(),
     defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
     customCategories: List<Pair<String, String>> = customExpenseCategories,
+    defaultIncomeCategories: List<Pair<String, String>> = emptyList(),
+    customIncomeCategories: List<Pair<String, String>> = emptyList(),
     // Editing an existing record must never write it into the resumable-draft slot — otherwise
     // backing out of an edit leaves the record's values behind as a "draft" that a later
     // Continue re-creates as a duplicate (US-HIS-6 "no duplicate rows").
@@ -94,6 +97,12 @@ fun QuickLogFlow(
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var showDateTimePicker by remember { mutableStateOf(false) }
     var showCurrencySheet by remember { mutableStateOf(false) }
+
+    // The screens below always render the category list matching the entry's current
+    // direction — Income entries must never show Expense categories (US-LOG income) and
+    // vice versa.
+    val activeDefaultCategories = if (state.type == RecordType.INCOME) defaultIncomeCategories else defaultCategories
+    val activeCustomCategories = if (state.type == RecordType.INCOME) customIncomeCategories else customCategories
 
     // The success toast is shown by the destination screen after this flow dismisses (see
     // ExpenseApp) — this composable unmounts too quickly on save for its own toast to ever
@@ -204,8 +213,17 @@ fun QuickLogFlow(
                             }
                         },
                         onOpenCurrencySheet = { showCurrencySheet = true },
-                        defaultCategories = defaultCategories,
-                        customCategories = customCategories,
+                        onTypeSelected = { type ->
+                            val categories =
+                                if (type == RecordType.INCOME) defaultIncomeCategories else defaultCategories
+                            state =
+                                state.copy(
+                                    type = type,
+                                    selectedCategoryId = categories.firstOrNull()?.first.orEmpty(),
+                                )
+                        },
+                        defaultCategories = activeDefaultCategories,
+                        customCategories = activeCustomCategories,
                     )
                 }
                 QuickLogStep.Details -> {
@@ -243,8 +261,8 @@ fun QuickLogFlow(
                         tagEvents = tagEvents,
                         tagDebts = tagDebts,
                         showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
-                        defaultCategories = defaultCategories,
-                        customCategories = customCategories,
+                        defaultCategories = activeDefaultCategories,
+                        customCategories = activeCustomCategories,
                         onAddCategory = onAddCategory,
                     )
                 }

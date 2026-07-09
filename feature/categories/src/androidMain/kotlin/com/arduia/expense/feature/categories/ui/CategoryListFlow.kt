@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.categories.R
 import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
 import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
@@ -30,7 +31,7 @@ fun CategoryListFlow(
     onBack: () -> Unit,
     state: CategoryListUiState = previewCategoryList,
     onReorderCustom: (List<String>) -> Unit = {},
-    onSaveCategory: (editingId: String?, name: String, iconId: String) -> Unit = { _, _, _ -> },
+    onSaveCategory: (editingId: String?, name: String, iconId: String, type: RecordType) -> Unit = { _, _, _, _ -> },
     onDeleteCategory: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -90,9 +91,10 @@ fun CategoryListFlow(
                         )
                 },
                 onIconSelected = { form = form.copy(selectedIconId = it) },
+                onTypeSelected = { form = form.copy(type = it) },
                 onAdd = {
                     if (form.canAdd) {
-                        onSaveCategory(editingRow?.categoryId, form.name.trim(), form.selectedIconId)
+                        onSaveCategory(editingRow?.categoryId, form.name.trim(), form.selectedIconId, form.type)
                         showSheet = false
                         editingRow = null
                     }
@@ -124,6 +126,7 @@ fun CategoryListFlow(
                                         listOf(currentIconId) +
                                             CategoryNewFormState().iconOptions
                                     ).distinct().take(4),
+                                type = row.type,
                             )
                         actionsRow = null
                         showSheet = true

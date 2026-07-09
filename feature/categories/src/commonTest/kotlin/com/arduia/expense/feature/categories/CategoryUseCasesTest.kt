@@ -101,6 +101,28 @@ class SaveCategoryUseCaseTest {
 
             assertEquals("coffee", repo.lastUpsert?.iconId)
         }
+
+    @Test
+    fun invoke_defaultsTypeToExpenseWhenNotSpecified() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+
+            useCase(emptyList(), editingId = null, name = "Travel")
+
+            assertEquals(RecordType.EXPENSE, repo.lastUpsert?.type)
+        }
+
+    @Test
+    fun invoke_persistsExplicitIncomeType() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+
+            useCase(emptyList(), editingId = null, name = "Freelance", type = RecordType.INCOME)
+
+            assertEquals(RecordType.INCOME, repo.lastUpsert?.type)
+        }
 }
 
 private fun sampleRecord(

@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
+import com.arduia.expense.feature.logging.ui.preview.previewIncomeAmountTyped
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CategoryPicker
@@ -29,11 +31,14 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+
+private val entryTypeOptions = listOf(RecordType.EXPENSE, RecordType.INCOME)
 
 @Composable
 fun AddExpenseAmountScreen(
@@ -46,6 +51,7 @@ fun AddExpenseAmountScreen(
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
     onOpenCurrencySheet: () -> Unit = {},
+    onTypeSelected: (RecordType) -> Unit = {},
     defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
     customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
@@ -54,6 +60,7 @@ fun AddExpenseAmountScreen(
     val displayAmount = AmountInput.formatDisplay(state.rawAmount.ifEmpty { "0" })
     val canProceed = AmountInput.canProceed(state.rawAmount)
     val isZero = !canProceed
+    val titleRes = if (state.type == RecordType.INCOME) R.string.new_income else R.string.new_expense
 
     Column(
         modifier =
@@ -66,13 +73,23 @@ fun AddExpenseAmountScreen(
                 .padding(horizontal = dimens.screenPadding),
     ) {
         ProTopBar(
-            title = stringResource(R.string.new_expense),
+            title = stringResource(titleRes),
             onBack = null,
             action = ProTopBarAction.Close,
             onAction = onClose,
         )
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        SegmentedToggle(
+            options = listOf(stringResource(R.string.type_expense), stringResource(R.string.type_income)),
+            selectedIndex = entryTypeOptions.indexOf(state.type).coerceAtLeast(0),
+            onSelected = { index -> onTypeSelected(entryTypeOptions[index]) },
+            modifier = Modifier.padding(top = dimens.space8),
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = dimens.space8),
+            horizontalArrangement = Arrangement.End,
+        ) {
             ProTextAction(
                 text = state.currencyCode,
                 onClick = onOpenCurrencySheet,
@@ -185,6 +202,28 @@ private fun AddExpenseAmountForeignCurrencyPreview() {
             onCategorySelected = {},
             onSave = {},
             onNext = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add income — amount typed",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddIncomeAmountTypedPreview() {
+    ProExpenseTheme {
+        AddExpenseAmountScreen(
+            state = previewIncomeAmountTyped,
+            onClose = {},
+            onKey = {},
+            onBackspace = {},
+            onCategorySelected = {},
+            onSave = {},
+            onNext = {},
+            defaultCategories = listOf("income" to "Income", "salary" to "Salary", "gift" to "Gift"),
         )
     }
 }

@@ -191,6 +191,28 @@ class LogExpenseUseCaseTest {
             assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(blankRate))
             assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(zeroRate))
         }
+
+    @Test
+    fun invoke_defaultsToExpenseTypeWhenNotSpecified() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
+
+            useCase(sampleInput())
+
+            assertEquals(RecordType.EXPENSE, repo.lastInput?.type)
+        }
+
+    @Test
+    fun invoke_respectsExplicitIncomeType() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
+
+            useCase(sampleInput().copy(type = RecordType.INCOME))
+
+            assertEquals(RecordType.INCOME, repo.lastInput?.type)
+        }
 }
 
 class UpdateExpenseUseCaseTest {
@@ -344,6 +366,18 @@ class UpdateExpenseUseCaseTest {
             val outcome = useCase(sampleRecord(), input)
 
             assertEquals(SaveExpenseOutcome.InvalidExchangeRate, outcome)
+        }
+
+    @Test
+    fun invoke_canFlipAnExistingExpenseRecordToIncome() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateExpenseUseCase(repo)
+            val existing = sampleRecord()
+
+            useCase(existing, sampleInput().copy(type = RecordType.INCOME))
+
+            assertEquals(RecordType.INCOME, repo.lastUpsert?.type)
         }
 }
 

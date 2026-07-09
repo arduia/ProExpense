@@ -45,6 +45,8 @@ interface LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit = {},
         defaultCategories: List<Pair<String, String>> = emptyList(),
         customCategories: List<Pair<String, String>> = emptyList(),
+        defaultIncomeCategories: List<Pair<String, String>> = emptyList(),
+        customIncomeCategories: List<Pair<String, String>> = emptyList(),
         onAddCategory: () -> Unit = {},
     )
 
@@ -58,6 +60,8 @@ interface LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit = {},
         defaultCategories: List<Pair<String, String>> = emptyList(),
         customCategories: List<Pair<String, String>> = emptyList(),
+        defaultIncomeCategories: List<Pair<String, String>> = emptyList(),
+        customIncomeCategories: List<Pair<String, String>> = emptyList(),
         onAddCategory: () -> Unit = {},
     )
 }
@@ -77,6 +81,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit,
         defaultCategories: List<Pair<String, String>>,
         customCategories: List<Pair<String, String>>,
+        defaultIncomeCategories: List<Pair<String, String>>,
+        customIncomeCategories: List<Pair<String, String>>,
         onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
@@ -135,6 +141,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             tagDebts = tagDebts,
             defaultCategories = defaultCategories,
             customCategories = customCategories,
+            defaultIncomeCategories = defaultIncomeCategories,
+            customIncomeCategories = customIncomeCategories,
             modifier = modifier,
             saveErrorMessage = saveErrorMessage,
             initialLinkedTag = linkedEvent,
@@ -152,6 +160,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit,
         defaultCategories: List<Pair<String, String>>,
         customCategories: List<Pair<String, String>>,
+        defaultIncomeCategories: List<Pair<String, String>>,
+        customIncomeCategories: List<Pair<String, String>>,
         onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
@@ -204,6 +214,8 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 tagDebts = tagDebts,
                 defaultCategories = defaultCategories,
                 customCategories = customCategories,
+                defaultIncomeCategories = defaultIncomeCategories,
+                customIncomeCategories = customIncomeCategories,
                 modifier = modifier,
                 // Editing writes into the existing record via update(), never via the create-path
                 // draft slot — persisting it there would surface as a duplicate-creating "Continue"
@@ -275,6 +287,7 @@ private fun ExpenseEntryState.toSaveInput(): SaveExpenseInput =
             },
         homeCurrencyCode = homeCurrencyCode,
         exchangeRateRaw = exchangeRateRaw,
+        type = type,
     )
 
 object LoggingFeatureUi : LoggingFeatureEntry by LoggingFeatureEntryImpl()
@@ -327,5 +340,6 @@ private fun FinanceRecord.toEntryState(
         currencyCode = money.currency.code,
         homeCurrencyCode = homeCurrencyMoney.currency.code,
         exchangeRateRaw = exchangeRateRaw,
+        type = type,
     )
 }

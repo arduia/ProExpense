@@ -6,12 +6,15 @@ package com.arduia.expense.domain
  */
 val DEFAULT_CATEGORIES: List<Category> =
     listOf(
-        Category(CategoryId("food"), "Food"),
-        Category(CategoryId("transport"), "Transport"),
-        Category(CategoryId("shopping"), "Shopping"),
-        Category(CategoryId("bills"), "Bills"),
-        Category(CategoryId("health"), "Health"),
-        Category(CategoryId("entertainment"), "Entertainment"),
+        Category(CategoryId("food"), "Food", type = RecordType.EXPENSE),
+        Category(CategoryId("transport"), "Transport", type = RecordType.EXPENSE),
+        Category(CategoryId("shopping"), "Shopping", type = RecordType.EXPENSE),
+        Category(CategoryId("bills"), "Bills", type = RecordType.EXPENSE),
+        Category(CategoryId("health"), "Health", type = RecordType.EXPENSE),
+        Category(CategoryId("entertainment"), "Entertainment", type = RecordType.EXPENSE),
+        Category(CategoryId("income"), "Income", type = RecordType.INCOME),
+        Category(CategoryId("salary"), "Salary", type = RecordType.INCOME),
+        Category(CategoryId("gift"), "Gift", type = RecordType.INCOME),
     )
 
 /**

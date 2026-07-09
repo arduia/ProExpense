@@ -14,6 +14,8 @@
 <string name="categories_icon_label">သင်္ကေတ</string>
 <string name="categories_add">အမျိုးအစား ထည့်ရန်</string>
 <string name="categories_edit_title">အမျိုးအစား ပြင်ဆင်ရန်</string>
+<string name="categories_type_expense">အသုံးစရိတ်</string>
+<string name="categories_type_income">ဝင်ငွေ</string>
 <string name="categories_save">ပြောင်းလဲမှုများ သိမ်းရန်</string>
 <string name="categories_action_edit_title">အမျိုးအစား ပြင်ဆင်ရန်</string>
 <string name="categories_action_edit_subtitle">အမည် သို့မဟုတ် သင်္ကေတပြောင်းရန်</string>

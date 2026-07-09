@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.categories.R
 import com.arduia.expense.feature.categories.ui.preview.CATEGORY_NAME_MAX
 import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
@@ -32,10 +33,13 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.categoryIcon
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+
+private val categoryTypeOptions = listOf(RecordType.EXPENSE, RecordType.INCOME)
 
 @Composable
 fun CategoryNewSheetContent(
@@ -45,6 +49,7 @@ fun CategoryNewSheetContent(
     onAdd: () -> Unit,
     modifier: Modifier = Modifier,
     confirmLabel: String = stringResource(R.string.categories_add),
+    onTypeSelected: (RecordType) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -55,6 +60,16 @@ fun CategoryNewSheetContent(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
+        SegmentedToggle(
+            options =
+                listOf(
+                    stringResource(R.string.categories_type_expense),
+                    stringResource(R.string.categories_type_income),
+                ),
+            selectedIndex = categoryTypeOptions.indexOf(form.type).coerceAtLeast(0),
+            onSelected = { index -> onTypeSelected(categoryTypeOptions[index]) },
+        )
+
         BasicTextField(
             value = form.name,
             onValueChange = { onNameChange(it.take(CATEGORY_NAME_MAX)) },
@@ -196,6 +211,34 @@ private fun CategoryNewDuplicatePreview() {
                     onNameChange = {},
                     onIconSelected = {},
                     onAdd = {},
+                )
+            }
+        }
+    }
+}
+
+@Preview(
+    name = "Categories — new (income)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun CategoryNewIncomePreview() {
+    ProExpenseTheme {
+        Box(Modifier.fillMaxSize()) {
+            CategoryListScreen(previewCategoryList, {}, {})
+            ProBottomSheetHost(
+                visible = true,
+                title = stringResource(R.string.categories_new_title),
+                onClose = {},
+            ) {
+                CategoryNewSheetContent(
+                    form = CategoryNewFormState(name = "Freelance", type = RecordType.INCOME),
+                    onNameChange = {},
+                    onIconSelected = {},
+                    onAdd = {},
+                    onTypeSelected = {},
                 )
             }
         }

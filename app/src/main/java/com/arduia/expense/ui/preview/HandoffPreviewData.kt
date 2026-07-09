@@ -6,6 +6,7 @@ data class HomeTransactionItem(
     val note: String,
     val meta: String,
     val amount: String,
+    val isIncome: Boolean = false,
     val tag: String? = null,
 )
 

@@ -2,6 +2,9 @@
     <string name="save">Save</string>
     <string name="note">Note</string>
     <string name="new_expense">New expense</string>
+    <string name="new_income">New income</string>
+    <string name="type_expense">Expense</string>
+    <string name="type_income">Income</string>
     <string name="details">Details</string>
     <string name="amount_step">Amount</string>
     <string name="save_expense">Save expense · %1$s</string>

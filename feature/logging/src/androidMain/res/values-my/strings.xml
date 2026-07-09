@@ -2,6 +2,9 @@
     <string name="save">သိမ်းရန်</string>
     <string name="note">မှတ်ချက်</string>
     <string name="new_expense">အသုံးစရိတ်အသစ်</string>
+    <string name="new_income">ဝင်ငွေအသစ်</string>
+    <string name="type_expense">အသုံးစရိတ်</string>
+    <string name="type_income">ဝင်ငွေ</string>
     <string name="details">အသေးစိတ်</string>
     <string name="amount_step">ပမာဏ</string>
     <string name="save_expense">အသုံးစရိတ် သိမ်းရန် · %1$s</string>

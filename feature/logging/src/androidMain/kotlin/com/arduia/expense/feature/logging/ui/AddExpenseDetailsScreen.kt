@@ -30,6 +30,7 @@ import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetails
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrencyNoRate
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLimit
+import com.arduia.expense.feature.logging.ui.preview.previewIncomeAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewTagDebts
 import com.arduia.expense.feature.logging.ui.preview.previewTagEvents
 import com.arduia.expense.ui.design.AmountInput
@@ -376,6 +377,31 @@ private fun AddExpenseDetailsForeignCurrencyNoRatePreview() {
             onTagSelected = {},
             onClearTag = {},
             onSave = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add income — details",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddIncomeDetailsPreview() {
+    ProExpenseTheme {
+        AddExpenseDetailsScreen(
+            state = previewIncomeAmountTyped,
+            onBackToAmount = {},
+            onCategorySelected = {},
+            onNoteChange = {},
+            onDateClick = {},
+            onOpenTagSheet = {},
+            onCloseTagSheet = {},
+            onTagSelected = {},
+            onClearTag = {},
+            onSave = {},
+            defaultCategories = listOf("income" to "Income", "salary" to "Salary", "gift" to "Gift"),
         )
     }
 }

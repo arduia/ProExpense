@@ -19,6 +19,8 @@
 <string name="categories_icon_label">Icon</string>
 <string name="categories_add">Add category</string>
 <string name="categories_edit_title">Edit category</string>
+<string name="categories_type_expense">Expense</string>
+<string name="categories_type_income">Income</string>
 <string name="categories_save">Save changes</string>
 <string name="categories_action_edit_title">Edit category</string>
 <string name="categories_action_edit_subtitle">Rename or change the icon</string>

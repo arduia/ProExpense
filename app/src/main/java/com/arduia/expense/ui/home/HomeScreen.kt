@@ -156,6 +156,7 @@ fun HomeScreenContent(
                                 note = item.note,
                                 meta = item.meta,
                                 amount = item.amount,
+                                isIncome = item.isIncome,
                                 tag = item.tag,
                             )
                         },

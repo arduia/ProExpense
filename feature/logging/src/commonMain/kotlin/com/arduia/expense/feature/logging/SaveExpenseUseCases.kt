@@ -24,6 +24,7 @@ data class SaveExpenseInput(
     val homeCurrencyCode: String = currencyCode,
     /** Manual "1 [currencyCode] = ? [homeCurrencyCode]" rate; ignored when currencies match. */
     val exchangeRateRaw: String = "1",
+    val type: RecordType = RecordType.EXPENSE,
 )
 
 sealed class SaveExpenseOutcome {
@@ -73,7 +74,7 @@ class LogExpenseUseCase(
                 money = money,
                 homeCurrencyMoney = homeCurrencyMoney,
                 categoryId = CategoryId(input.categoryId),
-                type = RecordType.EXPENSE,
+                type = input.type,
                 note = input.note.ifBlank { null },
                 recordedAtEpochMillis = input.recordedAtEpochMillis,
                 link = input.toLink(),
@@ -111,6 +112,7 @@ class UpdateExpenseUseCase(
                 money = money,
                 homeCurrencyMoney = homeCurrencyMoney,
                 categoryId = CategoryId(input.categoryId),
+                type = input.type,
                 note = input.note.ifBlank { null },
                 recordedAtEpochMillis = input.recordedAtEpochMillis,
                 link = link,

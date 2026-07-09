@@ -11,6 +11,7 @@ data class Category(
      * is a catalogue key. Blank falls back to the catalogue's generic default.
      */
     val iconId: String = "",
+    val type: RecordType = RecordType.EXPENSE,
 ) {
     init {
         require(name.isNotBlank()) { "Category name must not be blank" }

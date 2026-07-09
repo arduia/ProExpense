@@ -6,6 +6,7 @@ import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CategoryId
+import com.arduia.expense.domain.toCode
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.CategoryQueries
 import com.arduia.expense.storage.mapping.toDomain
@@ -33,6 +34,7 @@ class SqlDelightCategoryRepository(
                     is_custom = if (category.isCustom) 1L else 0L,
                     sort_order = category.sortOrder.toLong(),
                     icon_id = category.iconId,
+                    type = category.type.toCode(),
                 )
                 Unit
             }

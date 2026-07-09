@@ -1,16 +1,18 @@
+-- type: RecordType code (EXPENSE=0, INCOME=1) — explicit codes, never Kotlin .ordinal
 CREATE TABLE category (
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     is_custom INTEGER NOT NULL DEFAULT 0,
     sort_order INTEGER NOT NULL DEFAULT 0,
-    icon_id TEXT NOT NULL DEFAULT ''
+    icon_id TEXT NOT NULL DEFAULT '',
+    type INTEGER NOT NULL DEFAULT 0
 );
 
 insertCategory:
-INSERT OR REPLACE INTO category(id, name, is_custom, sort_order, icon_id) VALUES (?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO category(id, name, is_custom, sort_order, icon_id, type) VALUES (?, ?, ?, ?, ?, ?);
 
 seedCategory:
-INSERT OR IGNORE INTO category(id, name, is_custom, sort_order, icon_id) VALUES (?, ?, ?, ?, ?);
+INSERT OR IGNORE INTO category(id, name, is_custom, sort_order, icon_id, type) VALUES (?, ?, ?, ?, ?, ?);
 
 deleteCategory:
 DELETE FROM category WHERE id = ?;
