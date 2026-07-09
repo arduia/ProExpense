@@ -319,9 +319,38 @@ fun SharedCostParticipantRow(
             }
         }
         if (editableAmount) {
+            val digitsOnly = amount.dropWhile { !it.isDigit() }
+            // The field's layout box is wider than its right-aligned digits (Row padding, the
+            // currency-symbol decoration) — a tap anywhere in that empty space resolves to text
+            // offset 0, not the end, so a plain tap-to-position cursor would insert new digits
+            // before the number instead of after it. Force the cursor on every change (typed or
+            // external) instead of trusting the tap-computed offset.
+            var fieldValue by
+                remember {
+                    mutableStateOf(TextFieldValue(text = digitsOnly, selection = TextRange(digitsOnly.length)))
+                }
+            if (fieldValue.text != digitsOnly) {
+                fieldValue = TextFieldValue(text = digitsOnly, selection = TextRange(digitsOnly.length))
+            }
+            // Tapping in is meant to overwrite the pre-filled default share, not append after it —
+            // select the whole value so typing replaces it outright. The tap that focuses this
+            // field also repositions the cursor via its own onValueChange call (same text, new
+            // selection) — override precisely that event rather than onFocusChanged alone, which
+            // races with (and loses to) it.
+            var selectAllOnNextChange by remember { mutableStateOf(false) }
             BasicTextField(
-                value = amount.dropWhile { !it.isDigit() },
-                onValueChange = { raw -> onAmountChange(sanitizeShareInput(raw)) },
+                value = fieldValue,
+                onValueChange = { new ->
+                    val sanitized = sanitizeShareInput(new.text)
+                    fieldValue =
+                        if (selectAllOnNextChange) {
+                            selectAllOnNextChange = false
+                            TextFieldValue(text = sanitized, selection = TextRange(0, sanitized.length))
+                        } else {
+                            TextFieldValue(text = sanitized, selection = TextRange(sanitized.length))
+                        }
+                    onAmountChange(sanitized)
+                },
                 textStyle =
                     typography.listAmount.copy(
                         color = colors.onSurface,
@@ -333,7 +362,15 @@ fun SharedCostParticipantRow(
                 // Shares are decimal money values — a plain-text IME here forces a keyboard
                 // switch for every digit and admits letters the amount parser can't use.
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.padding(start = dimens.space8),
+                modifier =
+                    Modifier
+                        .padding(start = dimens.space8)
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                selectAllOnNextChange = true
+                                fieldValue = fieldValue.copy(selection = TextRange(0, fieldValue.text.length))
+                            }
+                        },
                 decorationBox = { inner ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
