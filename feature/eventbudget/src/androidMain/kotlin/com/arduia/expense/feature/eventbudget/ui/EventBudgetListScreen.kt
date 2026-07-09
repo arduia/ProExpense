@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.eventbudget.R
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
 import com.arduia.expense.ui.design.EventBudgetCard
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.HomeBottomNav
@@ -32,7 +33,6 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -52,18 +52,20 @@ fun EventBudgetListScreen(
     val typography = ProExpenseTheme.typography
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimens.screenPadding)
-                    .padding(top = dimens.space14, bottom = dimens.space16),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimens.screenPadding)
+                        .padding(top = dimens.space14, bottom = dimens.space16),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top,
             ) {
@@ -106,31 +108,34 @@ fun EventBudgetListScreen(
                 Box(modifier = Modifier.weight(1f).fillMaxWidth())
             } else if (events.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(bottom = dimens.navShellBottomInset),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(bottom = dimens.navShellBottomInset),
                     contentAlignment = Alignment.Center,
                 ) {
                     EventEmptyContent(onCreateEvent = onCreateEvent)
                 }
             } else {
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = dimens.screenPadding)
-                        .padding(bottom = dimens.navShellBottomInset),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = dimens.screenPadding)
+                            .padding(bottom = dimens.navShellBottomInset),
                     verticalArrangement = Arrangement.spacedBy(dimens.space12),
                 ) {
                     events.forEach { event ->
                         EventBudgetCard(
                             state = event,
-                            modifier = Modifier.proClickable(
-                                onClick = { onEventClick(event.id) },
-                                shape = ProExpenseTheme.shapes.card,
-                            ),
+                            modifier =
+                                Modifier.proClickable(
+                                    onClick = { onEventClick(event.id) },
+                                    shape = ProExpenseTheme.shapes.card,
+                                ),
                         )
                     }
                 }
@@ -154,20 +159,22 @@ private fun EventEmptyContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val titleStyle = typography.bodySemiBold.copy(
-        fontSize = typography.sectionHead.fontSize,
-        lineHeight = typography.sectionHead.lineHeight,
-    )
+    val titleStyle =
+        typography.bodySemiBold.copy(
+            fontSize = typography.sectionHead.fontSize,
+            lineHeight = typography.sectionHead.lineHeight,
+        )
 
     Column(
         modifier = modifier.padding(horizontal = dimens.space32),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.space44 * 2)
-                .clip(ProExpenseTheme.shapes.card)
-                .background(colors.primaryTint),
+            modifier =
+                Modifier
+                    .size(dimens.space44 * 2)
+                    .clip(ProExpenseTheme.shapes.card)
+                    .background(colors.primaryTint),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(

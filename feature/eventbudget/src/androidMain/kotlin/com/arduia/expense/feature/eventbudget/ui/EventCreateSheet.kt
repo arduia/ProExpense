@@ -19,15 +19,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.eventbudget.R
+import com.arduia.expense.feature.eventbudget.ui.preview.EVENT_NAME_MAX
+import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateErrors
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateValid
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -35,12 +41,6 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.eventbudget.ui.preview.EVENT_NAME_MAX
-import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateErrors
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateValid
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
-import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -162,12 +162,13 @@ private fun EventNameField(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(BorderStroke(1.dp, borderColor), shape)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(BorderStroke(1.dp, borderColor), shape)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.body.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         maxLines = 2,
@@ -205,12 +206,13 @@ private fun EventDatePill(
     val shape = ProExpenseTheme.shapes.searchField
 
     Row(
-        modifier = Modifier
-            .clip(shape)
-            .border(BorderStroke(1.dp, colors.lineStrong), shape)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = shape)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .clip(shape)
+                .border(BorderStroke(1.dp, colors.lineStrong), shape)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
@@ -239,12 +241,13 @@ private fun EventBudgetField(
     BasicTextField(
         value = rawValue,
         onValueChange = { input -> onValueChange(input.filter { it.isDigit() }.take(9)) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(BorderStroke(1.dp, borderColor), shape)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(BorderStroke(1.dp, borderColor), shape)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.detailsAmount.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -278,13 +281,12 @@ private object CurrencyVisualTransformation : VisualTransformation {
         val digits = text.text
         val grouped = if (digits.isEmpty()) "" else AmountInput.formatDisplay(digits)
         val display = "$$grouped"
-        val mapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int =
-                if (offset <= 0) 1 else display.length
+        val mapping =
+            object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int = if (offset <= 0) 1 else display.length
 
-            override fun transformedToOriginal(offset: Int): Int =
-                if (offset <= 1) 0 else digits.length
-        }
+                override fun transformedToOriginal(offset: Int): Int = if (offset <= 1) 0 else digits.length
+            }
         return TransformedText(AnnotatedString(display), mapping)
     }
 }

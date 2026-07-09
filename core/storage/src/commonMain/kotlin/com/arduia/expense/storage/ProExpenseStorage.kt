@@ -65,21 +65,21 @@ class ProExpenseStorage internal constructor(
     val defaultCategoryRepository: DefaultCategoryRepository,
     val themeRepository: ThemeRepository,
 ) {
-
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
-    suspend fun seedDefaultCategories() = withContext(dispatcher) {
-        database.categoryQueries.transaction {
-            DEFAULT_CATEGORIES.forEachIndexed { index, category ->
-                database.categoryQueries.seedCategory(
-                    id = category.id.value,
-                    name = category.name,
-                    is_custom = if (category.isCustom) 1L else 0L,
-                    sort_order = index.toLong(),
-                    icon_id = "",
-                )
+    suspend fun seedDefaultCategories() =
+        withContext(dispatcher) {
+            database.categoryQueries.transaction {
+                DEFAULT_CATEGORIES.forEachIndexed { index, category ->
+                    database.categoryQueries.seedCategory(
+                        id = category.id.value,
+                        name = category.name,
+                        is_custom = if (category.isCustom) 1L else 0L,
+                        sort_order = index.toLong(),
+                        icon_id = "",
+                    )
+                }
             }
         }
-    }
 
     companion object {
         /**
@@ -99,19 +99,21 @@ class ProExpenseStorage internal constructor(
             val database = ProExpenseDatabase(driver)
             val appMetaStore = AppMetaLocalStore(database.appMetaQueries, dispatcher)
             val integrityVerifier = RecordIntegrityVerifier()
-            val financeRecordRepository = SqlDelightFinanceRecordRepository(
-                queries = database.financeRecordQueries,
-                eventQueries = database.eventQueries,
-                integrityVerifier = integrityVerifier,
-                dispatcher = dispatcher,
-            )
+            val financeRecordRepository =
+                SqlDelightFinanceRecordRepository(
+                    queries = database.financeRecordQueries,
+                    eventQueries = database.eventQueries,
+                    integrityVerifier = integrityVerifier,
+                    dispatcher = dispatcher,
+                )
             val eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher)
             val debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher)
-            val sharedCostRepository = SqlDelightSharedCostRepository(
-                queries = database.sharedCostQueries,
-                financeRecordRepository = financeRecordRepository,
-                dispatcher = dispatcher,
-            )
+            val sharedCostRepository =
+                SqlDelightSharedCostRepository(
+                    queries = database.sharedCostQueries,
+                    financeRecordRepository = financeRecordRepository,
+                    dispatcher = dispatcher,
+                )
             return ProExpenseStorage(
                 database = database,
                 appMetaStore = appMetaStore,
@@ -125,13 +127,14 @@ class ProExpenseStorage internal constructor(
                 securityStateReader = AppMetaSecurityStateReader(appMetaStore),
                 currencySettingsRepository = AppMetaCurrencySettingsRepository(appMetaStore),
                 sharedCostRepository = sharedCostRepository,
-                importExportRepository = SqlDelightImportExportRepository(
-                    financeRecordRepository = financeRecordRepository,
-                    eventRepository = eventRepository,
-                    debtRepository = debtRepository,
-                    sharedCostRepository = sharedCostRepository,
-                    dispatcher = dispatcher,
-                ),
+                importExportRepository =
+                    SqlDelightImportExportRepository(
+                        financeRecordRepository = financeRecordRepository,
+                        eventRepository = eventRepository,
+                        debtRepository = debtRepository,
+                        sharedCostRepository = sharedCostRepository,
+                        dispatcher = dispatcher,
+                    ),
                 clearDataRepository = SqlDelightClearDataRepository(database, dispatcher),
                 profileRepository = AppMetaProfileRepository(appMetaStore, keyValueStore),
                 localeRepository = AppMetaLocaleRepository(appMetaStore, keyValueStore),

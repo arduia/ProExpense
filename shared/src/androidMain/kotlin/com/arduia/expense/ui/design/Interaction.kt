@@ -51,13 +51,13 @@ fun ProTextAction(
     Row(
         // Clip + ripple sit outermost so the ripple covers the label + its padding. No 48dp
         // minimum-size box — that ballooned the ripple far past short labels like "Skip"/"Back".
-        modifier = modifier
-            .proClickable(
-                onClick = onClick,
-                shape = ProExpenseTheme.shapes.searchField,
-                enabled = enabled,
-            )
-            .padding(horizontal = dimens.space8, vertical = dimens.space6),
+        modifier =
+            modifier
+                .proClickable(
+                    onClick = onClick,
+                    shape = ProExpenseTheme.shapes.searchField,
+                    enabled = enabled,
+                ).padding(horizontal = dimens.space8, vertical = dimens.space6),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
@@ -87,13 +87,14 @@ fun Modifier.proNoRippleClickable(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
     role: Role? = null,
-): Modifier = clickable(
-    interactionSource = interactionSource,
-    indication = null,
-    enabled = enabled,
-    role = role,
-    onClick = onClick,
-)
+): Modifier =
+    clickable(
+        interactionSource = interactionSource,
+        indication = null,
+        enabled = enabled,
+        role = role,
+        onClick = onClick,
+    )
 
 @Composable
 fun Modifier.proPressBackground(
@@ -120,13 +121,14 @@ fun Modifier.proRippleClickable(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
     role: Role? = null,
-): Modifier = clickable(
-    interactionSource = interactionSource,
-    indication = proBoundedRipple(),
-    enabled = enabled,
-    role = role,
-    onClick = onClick,
-)
+): Modifier =
+    clickable(
+        interactionSource = interactionSource,
+        indication = proBoundedRipple(),
+        enabled = enabled,
+        role = role,
+        onClick = onClick,
+    )
 
 /**
  * [proRippleClickable]'s selected-state counterpart — exposes `selected` to TalkBack via
@@ -142,14 +144,15 @@ fun Modifier.proSelectableClickable(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
     role: Role = Role.Tab,
-): Modifier = selectable(
-    selected = selected,
-    onClick = onClick,
-    enabled = enabled,
-    role = role,
-    interactionSource = interactionSource,
-    indication = proBoundedRipple(),
-)
+): Modifier =
+    selectable(
+        selected = selected,
+        onClick = onClick,
+        enabled = enabled,
+        role = role,
+        interactionSource = interactionSource,
+        indication = proBoundedRipple(),
+    )
 
 /** [proClickable]'s selected-state counterpart — same press-scale + clip bundle, but selectable. */
 @Composable
@@ -183,13 +186,14 @@ fun Modifier.proCircularRippleClickable(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
     role: Role? = null,
-): Modifier = clickable(
-    interactionSource = interactionSource,
-    indication = proIconRipple(),
-    enabled = enabled,
-    role = role,
-    onClick = onClick,
-)
+): Modifier =
+    clickable(
+        interactionSource = interactionSource,
+        indication = proIconRipple(),
+        enabled = enabled,
+        role = role,
+        onClick = onClick,
+    )
 
 @Composable
 fun Modifier.proClickable(

@@ -10,7 +10,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class QuickAccessPrefsTest {
-
     private val context = ApplicationProvider.getApplicationContext<android.content.Context>()
 
     @Test
@@ -30,10 +29,12 @@ class QuickAccessPrefsTest {
     @Test
     fun load_withLegacyUnorderedStringSet_migratesToEnumDeclarationOrder() {
         val prefs = context.getSharedPreferences("quick_access_prefs", android.content.Context.MODE_PRIVATE)
-        prefs.edit().putStringSet(
-            "visible_tiles",
-            setOf(QuickAccessTileType.Events.name, QuickAccessTileType.Reports.name),
-        ).apply()
+        prefs
+            .edit()
+            .putStringSet(
+                "visible_tiles",
+                setOf(QuickAccessTileType.Events.name, QuickAccessTileType.Reports.name),
+            ).apply()
 
         val loaded = QuickAccessPrefs.load(context)
 

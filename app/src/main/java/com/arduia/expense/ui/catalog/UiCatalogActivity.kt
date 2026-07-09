@@ -11,7 +11,6 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
  * the `dev` flavor (see `app/src/dev/AndroidManifest.xml`) so production builds are untouched.
  */
 class UiCatalogActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class MoneyTest {
-
     private val usd = CurrencyCode("USD")
     private val eur = CurrencyCode("EUR")
 

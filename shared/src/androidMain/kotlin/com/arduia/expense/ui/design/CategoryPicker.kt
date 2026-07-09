@@ -45,18 +45,19 @@ fun CategoryPicker(
     ) {
         CategoryPickerSection(
             title = stringResource(R.string.category_section_default),
-            trailing = if (onMoreClick != null && !showCustomSection) {
-                {
-                    ProTextAction(
-                        text = stringResource(R.string.category_picker_more),
-                        onClick = onMoreClick,
-                        style = typography.bodyMedium,
-                        color = colors.primary,
-                    )
-                }
-            } else {
-                null
-            },
+            trailing =
+                if (onMoreClick != null && !showCustomSection) {
+                    {
+                        ProTextAction(
+                            text = stringResource(R.string.category_picker_more),
+                            onClick = onMoreClick,
+                            style = typography.bodyMedium,
+                            color = colors.primary,
+                        )
+                    }
+                } else {
+                    null
+                },
         ) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(dimens.space8),
@@ -136,12 +137,13 @@ private fun AddCategoryChip(
     val textStyle = typography.bodyMedium.copy(fontSize = 12.5.sp)
 
     Row(
-        modifier = modifier
-            .proPressScale(interactionSource)
-            .clip(chipShape)
-            .border(BorderStroke(dimens.chipBorderWidth, colors.lineStrong), chipShape)
-            .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
-            .padding(start = dimens.space8, top = 7.dp, end = dimens.space12, bottom = 7.dp),
+        modifier =
+            modifier
+                .proPressScale(interactionSource)
+                .clip(chipShape)
+                .border(BorderStroke(dimens.chipBorderWidth, colors.lineStrong), chipShape)
+                .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
+                .padding(start = dimens.space8, top = 7.dp, end = dimens.space12, bottom = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space6),
     ) {

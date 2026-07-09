@@ -66,45 +66,43 @@ fun TransactionRow(
     val backgroundColor = if (fresh) colors.primaryTint else pulse
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (backgroundColor != Color.Transparent) {
-                    Modifier.background(backgroundColor)
-                } else {
-                    Modifier
-                },
-            )
-            .then(
-                if (onClick != null) {
-                    Modifier.proClickable(
-                        onClick = onClick,
-                        shape = ProExpenseTheme.shapes.searchField,
-                        interactionSource = interactionSource,
-                    )
-                } else {
-                    Modifier
-                },
-            )
-            .then(
-                if (showDivider) {
-                    Modifier.drawBehind {
-                        val stroke = 1.dp.toPx()
-                        drawLine(
-                            color = colors.lineSoft,
-                            start = Offset(0f, size.height - stroke / 2f),
-                            end = Offset(size.width, size.height - stroke / 2f),
-                            strokeWidth = stroke,
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (backgroundColor != Color.Transparent) {
+                        Modifier.background(backgroundColor)
+                    } else {
+                        Modifier
+                    },
+                ).then(
+                    if (onClick != null) {
+                        Modifier.proClickable(
+                            onClick = onClick,
+                            shape = ProExpenseTheme.shapes.searchField,
+                            interactionSource = interactionSource,
                         )
-                    }
-                } else {
-                    Modifier
-                },
-            )
-            .padding(
-                horizontal = dimens.rowPaddingH,
-                vertical = dimens.rowPaddingV,
-            ),
+                    } else {
+                        Modifier
+                    },
+                ).then(
+                    if (showDivider) {
+                        Modifier.drawBehind {
+                            val stroke = 1.dp.toPx()
+                            drawLine(
+                                color = colors.lineSoft,
+                                start = Offset(0f, size.height - stroke / 2f),
+                                end = Offset(size.width, size.height - stroke / 2f),
+                                strokeWidth = stroke,
+                            )
+                        }
+                    } else {
+                        Modifier
+                    },
+                ).padding(
+                    horizontal = dimens.rowPaddingH,
+                    vertical = dimens.rowPaddingV,
+                ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -169,14 +167,15 @@ fun DayHeader(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                start = dimens.rowPaddingH,
-                end = dimens.rowPaddingH,
-                top = dimens.space12,
-                bottom = dimens.space6,
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(
+                    start = dimens.rowPaddingH,
+                    end = dimens.rowPaddingH,
+                    top = dimens.space12,
+                    bottom = dimens.space6,
+                ),
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -207,15 +206,16 @@ fun DayGroup(
 
     val groupContent: @Composable () -> Unit = {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(
-                    if (cardWrapped) {
-                        Modifier.padding(horizontal = dimens.space14, vertical = dimens.space6)
-                    } else {
-                        Modifier
-                    },
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (cardWrapped) {
+                            Modifier.padding(horizontal = dimens.space14, vertical = dimens.space6)
+                        } else {
+                            Modifier
+                        },
+                    ),
         ) {
             DayHeader(title = title, total = total)
             transactions.forEachIndexed { index, item ->
@@ -251,23 +251,24 @@ private fun DayGroupCardPreview() {
         DayGroup(
             title = "Today · May 25",
             total = "$42.00",
-            transactions = listOf(
-                ProTransactionRowModel(
-                    id = "1",
-                    categoryId = "food",
-                    note = "Lunch with M.",
-                    meta = "Food · 12:30 PM",
-                    amount = "$12.40",
+            transactions =
+                listOf(
+                    ProTransactionRowModel(
+                        id = "1",
+                        categoryId = "food",
+                        note = "Lunch with M.",
+                        meta = "Food · 12:30 PM",
+                        amount = "$12.40",
+                    ),
+                    ProTransactionRowModel(
+                        id = "2",
+                        categoryId = "entertainment",
+                        note = "Movie · Dune",
+                        meta = "Entertainment · 08:10 PM",
+                        amount = "$18.00",
+                        tag = "Bali Trip",
+                    ),
                 ),
-                ProTransactionRowModel(
-                    id = "2",
-                    categoryId = "entertainment",
-                    note = "Movie · Dune",
-                    meta = "Entertainment · 08:10 PM",
-                    amount = "$18.00",
-                    tag = "Bali Trip",
-                ),
-            ),
             modifier = Modifier.padding(16.dp),
         )
     }
@@ -280,19 +281,21 @@ private fun DayGroupFlatPreview() {
         DayGroup(
             title = "Today · May 25",
             total = "$42.00",
-            transactions = listOf(
-                ProTransactionRowModel(
-                    id = "1",
-                    categoryId = "food",
-                    note = "Lunch with M.",
-                    meta = "Food · 12:30 PM",
-                    amount = "$12.40",
+            transactions =
+                listOf(
+                    ProTransactionRowModel(
+                        id = "1",
+                        categoryId = "food",
+                        note = "Lunch with M.",
+                        meta = "Food · 12:30 PM",
+                        amount = "$12.40",
+                    ),
                 ),
-            ),
             cardWrapped = false,
-            modifier = Modifier
-                .padding(16.dp)
-                .background(ProExpenseTheme.colors.paper),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .background(ProExpenseTheme.colors.paper),
         )
     }
 }

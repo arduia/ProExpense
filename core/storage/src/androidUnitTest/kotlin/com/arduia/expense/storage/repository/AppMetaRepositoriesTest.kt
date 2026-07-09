@@ -23,260 +23,288 @@ private class FakeKeyValueStore(
     private val backing: MutableMap<String, Any?> = mutableMapOf(),
 ) : PlatformKeyValueStore {
     override fun getString(key: String): String? = backing[key] as? String
-    override fun putString(key: String, value: String) {
+
+    override fun putString(
+        key: String,
+        value: String,
+    ) {
         backing[key] = value
     }
 
-    override fun getBoolean(key: String, default: Boolean): Boolean = backing[key] as? Boolean ?: default
-    override fun putBoolean(key: String, value: Boolean) {
+    override fun getBoolean(
+        key: String,
+        default: Boolean,
+    ): Boolean = backing[key] as? Boolean ?: default
+
+    override fun putBoolean(
+        key: String,
+        value: Boolean,
+    ) {
         backing[key] = value
     }
 }
 
 class AppMetaRepositoriesTest {
-
     private fun store() = AppMetaLocalStore(inMemoryDatabase().appMetaQueries, Dispatchers.Unconfined)
 
     @Test
-    fun profile_onboardingComplete_survivesSimulatedProcessRestart() = runTest {
-        // Same on-disk backing map, but a brand new AppMetaLocalStore each time — this mirrors a
-        // cold app restart where Koin rebuilds the DI graph but the key-value store persists on disk.
-        val diskBacking = mutableMapOf<String, Any?>()
-        val firstLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
+    fun profile_onboardingComplete_survivesSimulatedProcessRestart() =
+        runTest {
+            // Same on-disk backing map, but a brand new AppMetaLocalStore each time — this mirrors a
+            // cold app restart where Koin rebuilds the DI graph but the key-value store persists on disk.
+            val diskBacking = mutableMapOf<String, Any?>()
+            val firstLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
-        assertEquals(Result.Success(false), firstLaunchRepo.isOnboardingComplete())
-        firstLaunchRepo.setOnboardingComplete()
+            assertEquals(Result.Success(false), firstLaunchRepo.isOnboardingComplete())
+            firstLaunchRepo.setOnboardingComplete()
 
-        val secondLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
+            val secondLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
-        assertEquals(Result.Success(true), secondLaunchRepo.isOnboardingComplete())
-    }
-
-    @Test
-    fun profile_onboardingComplete_fallsBackToDbWhenPrefsMissing() = runTest {
-        // Simulates an existing install that wrote the flag to the DB before this fix shipped.
-        val dbStore = store()
-        AppMetaProfileRepository(dbStore, FakeKeyValueStore()).setOnboardingComplete()
-
-        val repoWithFreshStore = AppMetaProfileRepository(dbStore, FakeKeyValueStore())
-
-        assertEquals(Result.Success(true), repoWithFreshStore.isOnboardingComplete())
-    }
+            assertEquals(Result.Success(true), secondLaunchRepo.isOnboardingComplete())
+        }
 
     @Test
-    fun profile_displayName_survivesSimulatedProcessRestart() = runTest {
-        val diskBacking = mutableMapOf<String, Any?>()
-        val firstLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
+    fun profile_onboardingComplete_fallsBackToDbWhenPrefsMissing() =
+        runTest {
+            // Simulates an existing install that wrote the flag to the DB before this fix shipped.
+            val dbStore = store()
+            AppMetaProfileRepository(dbStore, FakeKeyValueStore()).setOnboardingComplete()
 
-        firstLaunchRepo.setDisplayName("Ada")
+            val repoWithFreshStore = AppMetaProfileRepository(dbStore, FakeKeyValueStore())
 
-        val secondLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
-
-        assertEquals(Result.Success("Ada"), secondLaunchRepo.getDisplayName())
-    }
-
-    @Test
-    fun profile_displayName_fallsBackToDbWhenPrefsMissing() = runTest {
-        // Simulates an existing install that wrote the name to the DB before this fix shipped.
-        val dbStore = store()
-        AppMetaProfileRepository(dbStore, FakeKeyValueStore()).setDisplayName("Ada")
-
-        val repoWithFreshStore = AppMetaProfileRepository(dbStore, FakeKeyValueStore())
-
-        assertEquals(Result.Success("Ada"), repoWithFreshStore.getDisplayName())
-    }
+            assertEquals(Result.Success(true), repoWithFreshStore.isOnboardingComplete())
+        }
 
     @Test
-    fun budget_setThenGet_roundTrips() = runTest {
-        val store = store()
-        val repo = AppMetaBudgetRepository(store)
+    fun profile_displayName_survivesSimulatedProcessRestart() =
+        runTest {
+            val diskBacking = mutableMapOf<String, Any?>()
+            val firstLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
-        val initial = repo.getMonthlyBudget()
-        assertTrue(initial is Result.Success)
-        assertNull(initial.data)
+            firstLaunchRepo.setDisplayName("Ada")
 
-        repo.setMonthlyBudget(Money(Amount(150_00), CurrencyCode("USD")))
+            val secondLaunchRepo = AppMetaProfileRepository(store(), FakeKeyValueStore(diskBacking))
 
-        val fetched = repo.getMonthlyBudget()
-        assertTrue(fetched is Result.Success)
-        assertEquals(150_00, fetched.data!!.amount.valueInCents)
-    }
+            assertEquals(Result.Success("Ada"), secondLaunchRepo.getDisplayName())
+        }
 
     @Test
-    fun budget_setNull_clearsBudget() = runTest {
-        val store = store()
-        val repo = AppMetaBudgetRepository(store)
-        repo.setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
+    fun profile_displayName_fallsBackToDbWhenPrefsMissing() =
+        runTest {
+            // Simulates an existing install that wrote the name to the DB before this fix shipped.
+            val dbStore = store()
+            AppMetaProfileRepository(dbStore, FakeKeyValueStore()).setDisplayName("Ada")
 
-        repo.setMonthlyBudget(null)
+            val repoWithFreshStore = AppMetaProfileRepository(dbStore, FakeKeyValueStore())
 
-        val fetched = repo.getMonthlyBudget()
-        assertTrue(fetched is Result.Success)
-        assertNull(fetched.data)
-    }
-
-    @Test
-    fun lockout_locksOnceMaxAttemptsReached() = runTest {
-        val store = store()
-        val repo = AppMetaLockoutRepository(store)
-        val now = 10_000L
-        val durationMs = 30_000L
-
-        val first = repo.recordFailedAttempt(now, maxAttempts = 3, lockoutDurationMs = durationMs)
-        assertFalse(first.isLockedOut)
-        assertEquals(1, first.failedAttempts)
-
-        repo.recordFailedAttempt(now, maxAttempts = 3, lockoutDurationMs = durationMs)
-        val third = repo.recordFailedAttempt(now, maxAttempts = 3, lockoutDurationMs = durationMs)
-
-        assertTrue(third.isLockedOut)
-        assertEquals(3, third.failedAttempts)
-        assertEquals(30, third.secondsRemaining)
-        assertTrue(repo.isLockedOut(now))
-        assertEquals(now + durationMs, repo.getLockoutUntilEpochMillis())
-    }
+            assertEquals(Result.Success("Ada"), repoWithFreshStore.getDisplayName())
+        }
 
     @Test
-    fun lockout_resetClearsCountAndExpiry() = runTest {
-        val store = store()
-        val repo = AppMetaLockoutRepository(store)
-        repo.recordFailedAttempt(0, maxAttempts = 1, lockoutDurationMs = 5_000)
+    fun budget_setThenGet_roundTrips() =
+        runTest {
+            val store = store()
+            val repo = AppMetaBudgetRepository(store)
 
-        repo.resetLockout()
+            val initial = repo.getMonthlyBudget()
+            assertTrue(initial is Result.Success)
+            assertNull(initial.data)
 
-        assertEquals(0, repo.getFailedAttemptCount())
-        assertNull(repo.getLockoutUntilEpochMillis())
-        assertFalse(repo.isLockedOut(0))
-    }
+            repo.setMonthlyBudget(Money(Amount(150_00), CurrencyCode("USD")))
 
-    @Test
-    fun lockout_notLockedAfterExpiryWindow() = runTest {
-        val store = store()
-        val repo = AppMetaLockoutRepository(store)
-        repo.recordFailedAttempt(0, maxAttempts = 1, lockoutDurationMs = 5_000)
-
-        assertFalse(repo.isLockedOut(nowEpochMillis = 6_000))
-    }
+            val fetched = repo.getMonthlyBudget()
+            assertTrue(fetched is Result.Success)
+            assertEquals(150_00, fetched.data!!.amount.valueInCents)
+        }
 
     @Test
-    fun securityState_noPinByDefault() = runTest {
-        val reader = AppMetaSecurityStateReader(store())
-        assertFalse(reader.hasPinConfigured())
-    }
+    fun budget_setNull_clearsBudget() =
+        runTest {
+            val store = store()
+            val repo = AppMetaBudgetRepository(store)
+            repo.setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
+
+            repo.setMonthlyBudget(null)
+
+            val fetched = repo.getMonthlyBudget()
+            assertTrue(fetched is Result.Success)
+            assertNull(fetched.data)
+        }
 
     @Test
-    fun currency_defaultsToUsd_thenPersistsHomeCurrency() = runTest {
-        val store = store()
-        val repo = AppMetaCurrencySettingsRepository(store)
+    fun lockout_locksOnceMaxAttemptsReached() =
+        runTest {
+            val store = store()
+            val repo = AppMetaLockoutRepository(store)
+            val now = 10_000L
+            val durationMs = 30_000L
 
-        val initial = repo.getHomeCurrency()
-        assertTrue(initial is Result.Success)
-        assertEquals("USD", initial.data!!.code)
+            val first = repo.recordFailedAttempt(now, maxAttempts = 3, lockoutDurationMs = durationMs)
+            assertFalse(first.isLockedOut)
+            assertEquals(1, first.failedAttempts)
 
-        repo.setHomeCurrency(CurrencyCode("EUR"))
+            repo.recordFailedAttempt(now, maxAttempts = 3, lockoutDurationMs = durationMs)
+            val third = repo.recordFailedAttempt(now, maxAttempts = 3, lockoutDurationMs = durationMs)
 
-        val fetched = repo.getHomeCurrency()
-        assertTrue(fetched is Result.Success)
-        assertEquals("EUR", fetched.data!!.code)
-    }
-
-    @Test
-    fun currency_changeDoesNotResetBudgetOrLockout() = runTest {
-        val store = store()
-        AppMetaBudgetRepository(store).setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
-        AppMetaLockoutRepository(store).recordFailedAttempt(0, maxAttempts = 5, lockoutDurationMs = 1_000)
-
-        AppMetaCurrencySettingsRepository(store).setHomeCurrency(CurrencyCode("GBP"))
-
-        val budget = AppMetaBudgetRepository(store).getMonthlyBudget()
-        assertTrue(budget is Result.Success)
-        assertEquals(100, budget.data!!.amount.valueInCents)
-        assertEquals(1, AppMetaLockoutRepository(store).getFailedAttemptCount())
-    }
+            assertTrue(third.isLockedOut)
+            assertEquals(3, third.failedAttempts)
+            assertEquals(30, third.secondsRemaining)
+            assertTrue(repo.isLockedOut(now))
+            assertEquals(now + durationMs, repo.getLockoutUntilEpochMillis())
+        }
 
     @Test
-    fun defaultCategory_nullByDefault_thenPersists() = runTest {
-        val store = store()
-        val repo = AppMetaDefaultCategoryRepository(store)
+    fun lockout_resetClearsCountAndExpiry() =
+        runTest {
+            val store = store()
+            val repo = AppMetaLockoutRepository(store)
+            repo.recordFailedAttempt(0, maxAttempts = 1, lockoutDurationMs = 5_000)
 
-        val initial = repo.getDefaultCategoryId()
-        assertTrue(initial is Result.Success)
-        assertNull(initial.data)
+            repo.resetLockout()
 
-        repo.setDefaultCategoryId("coffee")
-
-        val fetched = repo.getDefaultCategoryId()
-        assertTrue(fetched is Result.Success)
-        assertEquals("coffee", fetched.data)
-    }
+            assertEquals(0, repo.getFailedAttemptCount())
+            assertNull(repo.getLockoutUntilEpochMillis())
+            assertFalse(repo.isLockedOut(0))
+        }
 
     @Test
-    fun defaultCategory_setNull_clearsIt() = runTest {
-        val store = store()
-        val repo = AppMetaDefaultCategoryRepository(store)
-        repo.setDefaultCategoryId("coffee")
+    fun lockout_notLockedAfterExpiryWindow() =
+        runTest {
+            val store = store()
+            val repo = AppMetaLockoutRepository(store)
+            repo.recordFailedAttempt(0, maxAttempts = 1, lockoutDurationMs = 5_000)
 
-        repo.setDefaultCategoryId(null)
-
-        val fetched = repo.getDefaultCategoryId()
-        assertTrue(fetched is Result.Success)
-        assertNull(fetched.data)
-    }
+            assertFalse(repo.isLockedOut(nowEpochMillis = 6_000))
+        }
 
     @Test
-    fun defaultCategory_changeDoesNotResetBudgetOrCurrency() = runTest {
-        val store = store()
-        AppMetaBudgetRepository(store).setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
-        AppMetaCurrencySettingsRepository(store).setHomeCurrency(CurrencyCode("GBP"))
-
-        AppMetaDefaultCategoryRepository(store).setDefaultCategoryId("pet")
-
-        val budget = AppMetaBudgetRepository(store).getMonthlyBudget()
-        assertTrue(budget is Result.Success)
-        assertEquals(100, budget.data!!.amount.valueInCents)
-        assertEquals("GBP", AppMetaCurrencySettingsRepository(store).getHomeCurrency().let { (it as Result.Success).data!!.code })
-    }
+    fun securityState_noPinByDefault() =
+        runTest {
+            val reader = AppMetaSecurityStateReader(store())
+            assertFalse(reader.hasPinConfigured())
+        }
 
     @Test
-    fun theme_defaultsToDark_thenPersists() = runTest {
-        val store = store()
-        val repo = AppMetaThemeRepository(store)
+    fun currency_defaultsToUsd_thenPersistsHomeCurrency() =
+        runTest {
+            val store = store()
+            val repo = AppMetaCurrencySettingsRepository(store)
 
-        val initial = repo.getThemeMode()
-        assertTrue(initial is Result.Success)
-        assertEquals(ThemeMode.DARK, initial.data)
+            val initial = repo.getHomeCurrency()
+            assertTrue(initial is Result.Success)
+            assertEquals("USD", initial.data!!.code)
 
-        repo.setThemeMode(ThemeMode.SYSTEM)
+            repo.setHomeCurrency(CurrencyCode("EUR"))
 
-        val fetched = repo.getThemeMode()
-        assertTrue(fetched is Result.Success)
-        assertEquals(ThemeMode.SYSTEM, fetched.data)
-    }
-
-    @Test
-    fun locale_defaultsToEnglish_thenPersists() = runTest {
-        val repo = AppMetaLocaleRepository(store(), FakeKeyValueStore())
-
-        val initial = repo.getLanguageTag()
-        assertTrue(initial is Result.Success)
-        assertEquals("en", initial.data)
-
-        repo.setLanguageTag("my")
-
-        val fetched = repo.getLanguageTag()
-        assertTrue(fetched is Result.Success)
-        assertEquals("my", fetched.data)
-    }
+            val fetched = repo.getHomeCurrency()
+            assertTrue(fetched is Result.Success)
+            assertEquals("EUR", fetched.data!!.code)
+        }
 
     @Test
-    fun locale_setLanguageTag_writesSharedPrefsSynchronously() = runTest {
-        // MainActivity.attachBaseContext() reads this on the next Activity recreation, before
-        // Koin/the suspend repository stack are available — the write must not depend on the DB.
-        val diskBacking = mutableMapOf<String, Any?>()
-        val repo = AppMetaLocaleRepository(store(), FakeKeyValueStore(diskBacking))
+    fun currency_changeDoesNotResetBudgetOrLockout() =
+        runTest {
+            val store = store()
+            AppMetaBudgetRepository(store).setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
+            AppMetaLockoutRepository(store).recordFailedAttempt(0, maxAttempts = 5, lockoutDurationMs = 1_000)
 
-        repo.setLanguageTag("th")
+            AppMetaCurrencySettingsRepository(store).setHomeCurrency(CurrencyCode("GBP"))
 
-        assertEquals("th", diskBacking[AppMetaLocaleRepository.KEY_LANGUAGE_TAG])
-    }
+            val budget = AppMetaBudgetRepository(store).getMonthlyBudget()
+            assertTrue(budget is Result.Success)
+            assertEquals(100, budget.data!!.amount.valueInCents)
+            assertEquals(1, AppMetaLockoutRepository(store).getFailedAttemptCount())
+        }
+
+    @Test
+    fun defaultCategory_nullByDefault_thenPersists() =
+        runTest {
+            val store = store()
+            val repo = AppMetaDefaultCategoryRepository(store)
+
+            val initial = repo.getDefaultCategoryId()
+            assertTrue(initial is Result.Success)
+            assertNull(initial.data)
+
+            repo.setDefaultCategoryId("coffee")
+
+            val fetched = repo.getDefaultCategoryId()
+            assertTrue(fetched is Result.Success)
+            assertEquals("coffee", fetched.data)
+        }
+
+    @Test
+    fun defaultCategory_setNull_clearsIt() =
+        runTest {
+            val store = store()
+            val repo = AppMetaDefaultCategoryRepository(store)
+            repo.setDefaultCategoryId("coffee")
+
+            repo.setDefaultCategoryId(null)
+
+            val fetched = repo.getDefaultCategoryId()
+            assertTrue(fetched is Result.Success)
+            assertNull(fetched.data)
+        }
+
+    @Test
+    fun defaultCategory_changeDoesNotResetBudgetOrCurrency() =
+        runTest {
+            val store = store()
+            AppMetaBudgetRepository(store).setMonthlyBudget(Money(Amount(100), CurrencyCode("USD")))
+            AppMetaCurrencySettingsRepository(store).setHomeCurrency(CurrencyCode("GBP"))
+
+            AppMetaDefaultCategoryRepository(store).setDefaultCategoryId("pet")
+
+            val budget = AppMetaBudgetRepository(store).getMonthlyBudget()
+            assertTrue(budget is Result.Success)
+            assertEquals(100, budget.data!!.amount.valueInCents)
+            assertEquals("GBP", AppMetaCurrencySettingsRepository(store).getHomeCurrency().let { (it as Result.Success).data!!.code })
+        }
+
+    @Test
+    fun theme_defaultsToDark_thenPersists() =
+        runTest {
+            val store = store()
+            val repo = AppMetaThemeRepository(store)
+
+            val initial = repo.getThemeMode()
+            assertTrue(initial is Result.Success)
+            assertEquals(ThemeMode.DARK, initial.data)
+
+            repo.setThemeMode(ThemeMode.SYSTEM)
+
+            val fetched = repo.getThemeMode()
+            assertTrue(fetched is Result.Success)
+            assertEquals(ThemeMode.SYSTEM, fetched.data)
+        }
+
+    @Test
+    fun locale_defaultsToEnglish_thenPersists() =
+        runTest {
+            val repo = AppMetaLocaleRepository(store(), FakeKeyValueStore())
+
+            val initial = repo.getLanguageTag()
+            assertTrue(initial is Result.Success)
+            assertEquals("en", initial.data)
+
+            repo.setLanguageTag("my")
+
+            val fetched = repo.getLanguageTag()
+            assertTrue(fetched is Result.Success)
+            assertEquals("my", fetched.data)
+        }
+
+    @Test
+    fun locale_setLanguageTag_writesSharedPrefsSynchronously() =
+        runTest {
+            // MainActivity.attachBaseContext() reads this on the next Activity recreation, before
+            // Koin/the suspend repository stack are available — the write must not depend on the DB.
+            val diskBacking = mutableMapOf<String, Any?>()
+            val repo = AppMetaLocaleRepository(store(), FakeKeyValueStore(diskBacking))
+
+            repo.setLanguageTag("th")
+
+            assertEquals("th", diskBacking[AppMetaLocaleRepository.KEY_LANGUAGE_TAG])
+        }
 }

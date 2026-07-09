@@ -17,23 +17,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.FragmentActivity
+import com.arduia.expense.R
+import com.arduia.expense.data.BudgetRepository
 import com.arduia.expense.data.DefaultCategoryRepository
+import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
-import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.data.ThemeRepository
-import com.arduia.expense.ui.design.AppLanguage
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.Money
 import com.arduia.expense.feature.auth.BiometricAuthenticator
 import com.arduia.expense.feature.auth.DisablePinUseCase
 import com.arduia.expense.feature.auth.PinAuthRepository
-import com.arduia.expense.feature.auth.R as AuthR
 import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.currency.SaveHomeCurrencyUseCase
 import com.arduia.expense.ui.FeatureUiRegistry
 import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.AppLanguage
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
@@ -51,8 +52,7 @@ import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import com.arduia.expense.data.BudgetRepository
-import com.arduia.expense.R
+import com.arduia.expense.feature.auth.R as AuthR
 
 private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory, Theme, Language }
 
@@ -174,43 +174,60 @@ fun MoreFlow(
         }
     }
 
-    val hubState = remember(
-        selectedCurrency, displayName, pinEnabled, monthlyBudgetLabel, appVersion,
-        biometricEnrolled, biometricCapable, defaultCategoryId, themeMode, languageTag, profileNameFallback,
-        themeLightLabel, themeDarkLabel, themeSystemLabel,
-    ) {
-        // No fictional-persona fallback (US-ONB-3: no name set -> generic, not "Maya").
-        val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
-        previewMoreHub.copy(
-            profile = previewMoreHub.profile.copy(
-                initial = profileInitial,
-                name = displayName.ifBlank { profileNameFallback },
-            ),
-            settings = previewMoreHub.settings.map { setting ->
-                when (setting.id) {
-                    "currency" -> setting.copy(value = selectedCurrency)
-                    "pin" -> setting.copy(value = if (pinEnabled) "On" else "Off")
-                    "biometric" -> setting.copy(
-                        toggleOn = biometricEnrolled,
-                        enabled = pinEnabled && biometricCapable,
-                    )
-                    "budget" -> setting.copy(value = monthlyBudgetLabel)
-                    "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
-                    "theme" -> setting.copy(
-                        value = themeModeLabel(themeMode, themeLightLabel, themeDarkLabel, themeSystemLabel),
-                    )
-                    "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
-                    "version" -> setting.copy(value = appVersion)
-                    else -> setting
-                }
-            },
-        )
-    }
+    val hubState =
+        remember(
+            selectedCurrency,
+            displayName,
+            pinEnabled,
+            monthlyBudgetLabel,
+            appVersion,
+            biometricEnrolled,
+            biometricCapable,
+            defaultCategoryId,
+            themeMode,
+            languageTag,
+            profileNameFallback,
+            themeLightLabel,
+            themeDarkLabel,
+            themeSystemLabel,
+        ) {
+            // No fictional-persona fallback (US-ONB-3: no name set -> generic, not "Maya").
+            val profileInitial = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+            previewMoreHub.copy(
+                profile =
+                    previewMoreHub.profile.copy(
+                        initial = profileInitial,
+                        name = displayName.ifBlank { profileNameFallback },
+                    ),
+                settings =
+                    previewMoreHub.settings.map { setting ->
+                        when (setting.id) {
+                            "currency" -> setting.copy(value = selectedCurrency)
+                            "pin" -> setting.copy(value = if (pinEnabled) "On" else "Off")
+                            "biometric" ->
+                                setting.copy(
+                                    toggleOn = biometricEnrolled,
+                                    enabled = pinEnabled && biometricCapable,
+                                )
+                            "budget" -> setting.copy(value = monthlyBudgetLabel)
+                            "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
+                            "theme" ->
+                                setting.copy(
+                                    value = themeModeLabel(themeMode, themeLightLabel, themeDarkLabel, themeSystemLabel),
+                                )
+                            "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
+                            "version" -> setting.copy(value = appVersion)
+                            else -> setting
+                        }
+                    },
+            )
+        }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         AnimatedContent(
             targetState = step,
@@ -224,126 +241,139 @@ fun MoreFlow(
             label = "moreStep",
         ) { target ->
             when (target) {
-                MoreStep.Hub -> MoreHubScreen(
-                    state = hubState,
-                    onFeatureClick = { id ->
-                        when (id) {
-                            "debt" -> onDebtClick()
-                            "shared" -> onSharedClick()
-                            "reports" -> step = MoreStep.Reports
-                            "categories" -> step = MoreStep.Categories
-                        }
-                    },
-                    onSettingClick = { id ->
-                        when (id) {
-                            "currency" -> step = MoreStep.Currency
-                            "export" -> step = MoreStep.Export
-                            "import" -> step = MoreStep.Import
-                            "clear" -> step = MoreStep.Clear
-                            "pin" -> if (pinEnabled) showPinManageSheet = true else onPinClick()
-                            "budget" -> step = MoreStep.Budget
-                            "category" -> step = MoreStep.DefaultCategory
-                            "theme" -> step = MoreStep.Theme
-                            "language" -> step = MoreStep.Language
-                            "biometric" -> if (!pinEnabled) {
-                                toastMessage = context.getString(R.string.more_biometric_requires_pin)
+                MoreStep.Hub ->
+                    MoreHubScreen(
+                        state = hubState,
+                        onFeatureClick = { id ->
+                            when (id) {
+                                "debt" -> onDebtClick()
+                                "shared" -> onSharedClick()
+                                "reports" -> step = MoreStep.Reports
+                                "categories" -> step = MoreStep.Categories
                             }
-                        }
-                    },
-                    onSettingToggle = { id, on ->
-                        if (id == "biometric" && pinEnabled && biometricCapable) {
+                        },
+                        onSettingClick = { id ->
+                            when (id) {
+                                "currency" -> step = MoreStep.Currency
+                                "export" -> step = MoreStep.Export
+                                "import" -> step = MoreStep.Import
+                                "clear" -> step = MoreStep.Clear
+                                "pin" -> if (pinEnabled) showPinManageSheet = true else onPinClick()
+                                "budget" -> step = MoreStep.Budget
+                                "category" -> step = MoreStep.DefaultCategory
+                                "theme" -> step = MoreStep.Theme
+                                "language" -> step = MoreStep.Language
+                                "biometric" ->
+                                    if (!pinEnabled) {
+                                        toastMessage = context.getString(R.string.more_biometric_requires_pin)
+                                    }
+                            }
+                        },
+                        onSettingToggle = { id, on ->
+                            if (id == "biometric" && pinEnabled && biometricCapable) {
+                                scope.launch {
+                                    if (on) pinAuthRepository.enrollBiometric() else pinAuthRepository.clearBiometric()
+                                    biometricEnrolled = on
+                                }
+                            }
+                        },
+                        selectedTab = selectedTab,
+                        onTabSelected = onTabSelected,
+                        onAddClick = onAddClick,
+                    )
+                MoreStep.Currency ->
+                    features.currency.SettingsFlow(
+                        selectedCode = selectedCurrency,
+                        onSelect = { newCode ->
+                            selectedCurrency = newCode
                             scope.launch {
-                                if (on) pinAuthRepository.enrollBiometric() else pinAuthRepository.clearBiometric()
-                                biometricEnrolled = on
+                                saveHomeCurrency(newCode)
+                                val newCurrency = CurrencyCode(newCode)
+                                homeCurrencyCode = newCurrency
+                                onCurrencyChanged(newCurrency)
                             }
-                        }
-                    },
-                    selectedTab = selectedTab,
-                    onTabSelected = onTabSelected,
-                    onAddClick = onAddClick,
-                )
-                MoreStep.Currency -> features.currency.SettingsFlow(
-                    selectedCode = selectedCurrency,
-                    onSelect = { newCode ->
-                        selectedCurrency = newCode
-                        scope.launch {
-                            saveHomeCurrency(newCode)
-                            val newCurrency = CurrencyCode(newCode)
-                            homeCurrencyCode = newCurrency
-                            onCurrencyChanged(newCurrency)
-                        }
-                    },
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.Export -> features.importExport.ExportFlow(
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.Import -> features.importExport.ImportFlow(
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.Clear -> features.importExport.ClearDataFlow(
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.Reports -> features.reports.ReportsFlow(
-                    onBack = { step = MoreStep.Hub },
-                    onLogFirstExpense = {
-                        step = MoreStep.Hub
-                        onAddClick()
-                    },
-                )
-                MoreStep.Categories -> features.categories.CategoryListFlow(
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.DefaultCategory -> MoreDefaultCategoryScreen(
-                    selectedCategoryId = defaultCategoryId,
-                    onSelect = { categoryId ->
-                        defaultCategoryId = categoryId
-                        onDefaultCategoryChanged(categoryId)
-                        scope.launch {
-                            defaultCategoryRepository.setDefaultCategoryId(categoryId)
-                        }
-                    },
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.Theme -> MoreThemeScreen(
-                    selectedMode = themeMode,
-                    onSelect = { mode ->
-                        themeMode = mode
-                        onThemeModeChanged(mode)
-                        scope.launch { themeRepository.setThemeMode(mode) }
-                    },
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.Language -> MoreLanguageScreen(
-                    selectedLanguage = AppLanguage.fromTag(languageTag),
-                    onSelect = { language ->
-                        languageTag = language.tag
-                        // Persist first (synchronous SharedPrefs write inside), then recreate —
-                        // attachBaseContext() re-reads the fresh value on the new Activity instance.
-                        scope.launch {
-                            localeRepository.setLanguageTag(language.tag)
-                            onLanguageChanged()
-                        }
-                    },
-                    onBack = { step = MoreStep.Hub },
-                )
-                MoreStep.Budget -> MoreBudgetScreen(
-                    currentAmount = monthlyBudgetLabel.takeIf { it != "Off" },
-                    homeCurrency = homeCurrencyCode,
-                    onSave = { money ->
-                        scope.launch {
-                            budgetRepository.setMonthlyBudget(money)
-                            monthlyBudgetLabel = if (money != null) {
-                                AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(homeCurrencyCode.code))
-                            } else {
-                                "Off"
-                            }
-                            onBudgetChanged(money)
+                        },
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Export ->
+                    features.importExport.ExportFlow(
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Import ->
+                    features.importExport.ImportFlow(
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Clear ->
+                    features.importExport.ClearDataFlow(
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Reports ->
+                    features.reports.ReportsFlow(
+                        onBack = { step = MoreStep.Hub },
+                        onLogFirstExpense = {
                             step = MoreStep.Hub
-                        }
-                    },
-                    onBack = { step = MoreStep.Hub },
-                )
+                            onAddClick()
+                        },
+                    )
+                MoreStep.Categories ->
+                    features.categories.CategoryListFlow(
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.DefaultCategory ->
+                    MoreDefaultCategoryScreen(
+                        selectedCategoryId = defaultCategoryId,
+                        onSelect = { categoryId ->
+                            defaultCategoryId = categoryId
+                            onDefaultCategoryChanged(categoryId)
+                            scope.launch {
+                                defaultCategoryRepository.setDefaultCategoryId(categoryId)
+                            }
+                        },
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Theme ->
+                    MoreThemeScreen(
+                        selectedMode = themeMode,
+                        onSelect = { mode ->
+                            themeMode = mode
+                            onThemeModeChanged(mode)
+                            scope.launch { themeRepository.setThemeMode(mode) }
+                        },
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Language ->
+                    MoreLanguageScreen(
+                        selectedLanguage = AppLanguage.fromTag(languageTag),
+                        onSelect = { language ->
+                            languageTag = language.tag
+                            // Persist first (synchronous SharedPrefs write inside), then recreate —
+                            // attachBaseContext() re-reads the fresh value on the new Activity instance.
+                            scope.launch {
+                                localeRepository.setLanguageTag(language.tag)
+                                onLanguageChanged()
+                            }
+                        },
+                        onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Budget ->
+                    MoreBudgetScreen(
+                        currentAmount = monthlyBudgetLabel.takeIf { it != "Off" },
+                        homeCurrency = homeCurrencyCode,
+                        onSave = { money ->
+                            scope.launch {
+                                budgetRepository.setMonthlyBudget(money)
+                                monthlyBudgetLabel =
+                                    if (money != null) {
+                                        AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(homeCurrencyCode.code))
+                                    } else {
+                                        "Off"
+                                    }
+                                onBudgetChanged(money)
+                                step = MoreStep.Hub
+                            }
+                        },
+                        onBack = { step = MoreStep.Hub },
+                    )
             }
         }
 
@@ -429,7 +459,9 @@ private fun PinManageSheetContent(
     val dimens = ProExpenseTheme.dimensions
     androidx.compose.foundation.layout.Column(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(dimens.space12),
+        verticalArrangement =
+            androidx.compose.foundation.layout.Arrangement
+                .spacedBy(dimens.space12),
     ) {
         ProButton(
             text = stringResource(AuthR.string.pin_manage_sheet_change),
@@ -455,7 +487,12 @@ private fun PinManageSheetContent(
     }
 }
 
-private fun themeModeLabel(mode: ThemeMode, lightLabel: String, darkLabel: String, systemLabel: String): String =
+private fun themeModeLabel(
+    mode: ThemeMode,
+    lightLabel: String,
+    darkLabel: String,
+    systemLabel: String,
+): String =
     when (mode) {
         ThemeMode.LIGHT -> lightLabel
         ThemeMode.DARK -> darkLabel

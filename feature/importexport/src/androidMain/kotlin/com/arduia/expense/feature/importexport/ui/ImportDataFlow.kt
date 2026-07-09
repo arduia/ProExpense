@@ -45,39 +45,49 @@ fun ImportDataFlow(
     val readError = stringResource(R.string.more_import_read_error)
     val wrongPassword = stringResource(R.string.more_import_password_wrong)
 
-    suspend fun readAndPreview(uri: Uri, fileName: String, password: String) {
+    suspend fun readAndPreview(
+        uri: Uri,
+        fileName: String,
+        password: String,
+    ) {
         val isZip = fileName.endsWith(".zip", ignoreCase = true)
         // Only a fallback for non-zip files — a zip's actual expenses.csv/expenses.json entry
         // determines the real format (US-IE-1/2: JSON exports are always zipped, so a filename
         // check alone previously made JSON-export zips unreadable).
         val fallbackFormat = if (fileName.endsWith(".json", ignoreCase = true)) ExportFormat.JSON else ExportFormat.CSV
         var format = fallbackFormat
-        val content: String? = if (isZip) {
-            val zipRead = runCatching {
-                context.contentResolver.openInputStream(uri)?.use { stream ->
-                    ImportZipReader.readExpensesCsv(stream, password)
+        val content: String? =
+            if (isZip) {
+                val zipRead =
+                    runCatching {
+                        context.contentResolver.openInputStream(uri)?.use { stream ->
+                            ImportZipReader.readExpensesCsv(stream, password)
+                        }
+                    }.getOrNull()
+                when (zipRead) {
+                    is ImportZipReader.ZipRead.Success -> {
+                        format = zipRead.format
+                        zipRead.content
+                    }
+                    is ImportZipReader.ZipRead.NeedsPassword -> {
+                        state =
+                            state.copy(
+                                needsPassword = true,
+                                previewCount = null,
+                                errorMessage = if (password.isNotBlank()) wrongPassword else null,
+                            )
+                        return
+                    }
+                    else -> null
                 }
-            }.getOrNull()
-            when (zipRead) {
-                is ImportZipReader.ZipRead.Success -> {
-                    format = zipRead.format
-                    zipRead.content
-                }
-                is ImportZipReader.ZipRead.NeedsPassword -> {
-                    state = state.copy(
-                        needsPassword = true,
-                        previewCount = null,
-                        errorMessage = if (password.isNotBlank()) wrongPassword else null,
-                    )
-                    return
-                }
-                else -> null
+            } else {
+                runCatching {
+                    context.contentResolver
+                        .openInputStream(uri)
+                        ?.bufferedReader()
+                        ?.use { it.readText() }
+                }.getOrNull()
             }
-        } else {
-            runCatching {
-                context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
-            }.getOrNull()
-        }
         if (content == null) {
             state = state.copy(errorMessage = readError, needsPassword = false)
             return
@@ -96,16 +106,17 @@ fun ImportDataFlow(
         }
     }
 
-    val pickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-    ) { uri: Uri? ->
-        if (uri == null) return@rememberLauncherForActivityResult
-        val fileName = queryDisplayName(context, uri) ?: uri.lastPathSegment.orEmpty()
-        pendingUri = uri
-        pendingContent = null
-        state = MoreImportUiState(fileName = fileName)
-        scope.launch { readAndPreview(uri, fileName, password = "") }
-    }
+    val pickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenDocument(),
+        ) { uri: Uri? ->
+            if (uri == null) return@rememberLauncherForActivityResult
+            val fileName = queryDisplayName(context, uri) ?: uri.lastPathSegment.orEmpty()
+            pendingUri = uri
+            pendingContent = null
+            state = MoreImportUiState(fileName = fileName)
+            scope.launch { readAndPreview(uri, fileName, password = "") }
+        }
 
     Box(modifier = modifier.fillMaxSize()) {
         MoreImportScreen(
@@ -127,14 +138,16 @@ fun ImportDataFlow(
                 scope.launch {
                     when (val result = importData(content, pendingFormat)) {
                         is Result.Success -> {
-                            state = state.copy(
-                                isImporting = false,
-                                resultMessage = context.getString(
-                                    R.string.more_import_result,
-                                    result.data.importedCount,
-                                    result.data.skippedCount,
-                                ),
-                            )
+                            state =
+                                state.copy(
+                                    isImporting = false,
+                                    resultMessage =
+                                        context.getString(
+                                            R.string.more_import_result,
+                                            result.data.importedCount,
+                                            result.data.skippedCount,
+                                        ),
+                                )
                             pendingContent = null
                         }
                         is Result.Error -> state = state.copy(isImporting = false, errorMessage = readError)
@@ -146,7 +159,10 @@ fun ImportDataFlow(
     }
 }
 
-private fun queryDisplayName(context: Context, uri: Uri): String? =
+private fun queryDisplayName(
+    context: Context,
+    uri: Uri,
+): String? =
     context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
         val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
         if (nameIndex >= 0 && cursor.moveToFirst()) cursor.getString(nameIndex) else null

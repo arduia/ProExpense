@@ -29,24 +29,30 @@ val LocalProElevation = staticCompositionLocalOf { ProDefaultElevation }
 
 // Soft primary-tinted glow shared by the profile identity card and the home Add FAB
 // so the two lifted primary surfaces read identically.
-private val primaryHeroShadow = listOf(
-    ProShadowLayer(0.dp, 8.dp, 20.dp, 0.dp, Color(0x47039BE5)),
-)
+private val primaryHeroShadow =
+    listOf(
+        ProShadowLayer(0.dp, 8.dp, 20.dp, 0.dp, Color(0x47039BE5)),
+    )
 
-val ProDefaultElevation = ProElevation(
-    card = listOf(
-        ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, Color(0x08212121)),
-        ProShadowLayer(0.dp, 6.dp, 16.dp, 0.dp, Color(0x0A212121)),
-    ),
-    identityCard = primaryHeroShadow,
-    sheet = listOf(
-        ProShadowLayer(0.dp, (-8).dp, 24.dp, 0.dp, Color(0x26000000)),
-    ),
-    toast = listOf(
-        ProShadowLayer(0.dp, 8.dp, 18.dp, 0.dp, Color(0x2E000000)),
-    ),
-    nav = listOf(
-        ProShadowLayer(0.dp, (-6).dp, 24.dp, 0.dp, Color(0x1A000000)),
-    ),
-    fab = primaryHeroShadow,
-)
+val ProDefaultElevation =
+    ProElevation(
+        card =
+            listOf(
+                ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, Color(0x08212121)),
+                ProShadowLayer(0.dp, 6.dp, 16.dp, 0.dp, Color(0x0A212121)),
+            ),
+        identityCard = primaryHeroShadow,
+        sheet =
+            listOf(
+                ProShadowLayer(0.dp, (-8).dp, 24.dp, 0.dp, Color(0x26000000)),
+            ),
+        toast =
+            listOf(
+                ProShadowLayer(0.dp, 8.dp, 18.dp, 0.dp, Color(0x2E000000)),
+            ),
+        nav =
+            listOf(
+                ProShadowLayer(0.dp, (-6).dp, 24.dp, 0.dp, Color(0x1A000000)),
+            ),
+        fab = primaryHeroShadow,
+    )

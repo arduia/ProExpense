@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
-import com.arduia.expense.BuildConfig
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -15,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
+import com.arduia.expense.BuildConfig
 import com.arduia.expense.ExpenseApplication
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.ThemeMode
@@ -26,7 +26,6 @@ import org.koin.compose.koinInject
 import java.util.Locale
 
 class MainActivity : FragmentActivity() {
-
     // MainActivity is a plain FragmentActivity, not AppCompatActivity, so AppCompatDelegate's
     // per-app-language API won't auto-recreate it with the stored locale — wrapping the base
     // Context here (the same technique the OS itself uses) is the reliable, API-24+-safe fix.
@@ -80,11 +79,12 @@ private fun ThemedExpenseApp(onLanguageChanged: () -> Unit) {
         }
     }
 
-    val darkTheme = when (themeMode) {
-        ThemeMode.LIGHT -> false
-        ThemeMode.DARK -> true
-        ThemeMode.SYSTEM -> isSystemInDarkTheme()
-    }
+    val darkTheme =
+        when (themeMode) {
+            ThemeMode.LIGHT -> false
+            ThemeMode.DARK -> true
+            ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        }
 
     ProExpenseTheme(darkTheme = darkTheme) {
         ExpenseApp(

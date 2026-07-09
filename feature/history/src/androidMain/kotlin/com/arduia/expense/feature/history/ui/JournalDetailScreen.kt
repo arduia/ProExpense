@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -26,6 +26,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.history.R
+import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
+import com.arduia.expense.feature.history.ui.preview.JournalLinkedTagUi
+import com.arduia.expense.feature.history.ui.preview.previewJournalDetail
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -35,9 +38,6 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
-import com.arduia.expense.feature.history.ui.preview.JournalLinkedTagUi
-import com.arduia.expense.feature.history.ui.preview.previewJournalDetail
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -56,11 +56,12 @@ fun JournalDetailScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -73,11 +74,12 @@ fun JournalDetailScreen(
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space12, bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space12, bottom = dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space20),
         ) {
             Column(
@@ -108,12 +110,13 @@ fun JournalDetailScreen(
 
             JournalSection(label = stringResource(R.string.journal_note_label)) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(ProExpenseTheme.shapes.card)
-                        .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                        .background(colors.surface)
-                        .padding(dimens.cardPadding),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(ProExpenseTheme.shapes.card)
+                            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                            .background(colors.surface)
+                            .padding(dimens.cardPadding),
                 ) {
                     Text(
                         text = "“${state.note}”",
@@ -130,9 +133,10 @@ fun JournalDetailScreen(
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space4),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space4),
                 horizontalArrangement = Arrangement.spacedBy(dimens.space10),
             ) {
                 ProButton(
@@ -181,21 +185,23 @@ private fun JournalLinkedTagCard(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(horizontal = dimens.space16, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
+                .padding(horizontal = dimens.space16, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.iconBadge)
-                .clip(CircleShape)
-                .background(colors.tagTint),
+            modifier =
+                Modifier
+                    .size(dimens.iconBadge)
+                    .clip(CircleShape)
+                    .background(colors.tagTint),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(

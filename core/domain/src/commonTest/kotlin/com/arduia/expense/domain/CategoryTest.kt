@@ -5,7 +5,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
 class CategoryTest {
-
     @Test
     fun `constructs with valid name`() {
         val category = Category(CategoryId("c1"), "Food")

@@ -38,13 +38,22 @@ data class OnboardingSlide(
     val bodyRes: Int,
 )
 
-private val onboardingSlides = listOf(
-    OnboardingSlide(OnboardingIllustration.Welcome, R.string.onboarding_welcome_title, R.string.onboarding_welcome_subtitle),
-    OnboardingSlide(OnboardingIllustration.QuickLog, R.string.onboarding_quick_log_title, R.string.onboarding_quick_log_subtitle),
-    OnboardingSlide(OnboardingIllustration.SharedCosts, R.string.onboarding_shared_costs_title, R.string.onboarding_shared_costs_subtitle),
-    OnboardingSlide(OnboardingIllustration.EventBudget, R.string.onboarding_event_budget_title, R.string.onboarding_event_budget_subtitle),
-    OnboardingSlide(OnboardingIllustration.Journal, R.string.onboarding_journal_title, R.string.onboarding_journal_subtitle),
-)
+private val onboardingSlides =
+    listOf(
+        OnboardingSlide(OnboardingIllustration.Welcome, R.string.onboarding_welcome_title, R.string.onboarding_welcome_subtitle),
+        OnboardingSlide(OnboardingIllustration.QuickLog, R.string.onboarding_quick_log_title, R.string.onboarding_quick_log_subtitle),
+        OnboardingSlide(
+            OnboardingIllustration.SharedCosts,
+            R.string.onboarding_shared_costs_title,
+            R.string.onboarding_shared_costs_subtitle,
+        ),
+        OnboardingSlide(
+            OnboardingIllustration.EventBudget,
+            R.string.onboarding_event_budget_title,
+            R.string.onboarding_event_budget_subtitle,
+        ),
+        OnboardingSlide(OnboardingIllustration.Journal, R.string.onboarding_journal_title, R.string.onboarding_journal_subtitle),
+    )
 
 @Composable
 fun OnboardingScreenContent(
@@ -61,17 +70,19 @@ fun OnboardingScreenContent(
     val lastPage = onboardingSlides.lastIndex
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space16),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space16),
         ) {
             if (pagerState.currentPage < lastPage) {
                 ProTextAction(
@@ -86,9 +97,10 @@ fun OnboardingScreenContent(
 
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
         ) { page ->
             val slide = onboardingSlides[page]
             Column(
@@ -115,10 +127,11 @@ fun OnboardingScreenContent(
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.onboardingNavBottomMargin),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.onboardingNavBottomMargin),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (pagerState.currentPage > 0) {
@@ -164,9 +177,10 @@ fun OnboardingScreenContent(
                         onClick = {
                             scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                         },
-                        style = typography.navAction.copy(
-                            fontWeight = typography.bodySemiBold.fontWeight,
-                        ),
+                        style =
+                            typography.navAction.copy(
+                                fontWeight = typography.bodySemiBold.fontWeight,
+                            ),
                         color = colors.onSurface,
                         trailing = {
                             ProIcon(
@@ -188,9 +202,10 @@ fun OnboardingScreenContent(
             onClick = onGetStarted,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
-            modifier = Modifier
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
         )
     }
 }

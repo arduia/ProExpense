@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.shared.R
-import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 data class EventBudgetCardState(
@@ -48,20 +47,22 @@ fun EventBudgetCard(
     val typography = ProExpenseTheme.typography
     val isDanger = state.overBudgetPercent > 10
     val isWarning = state.overBudgetPercent in 1..10
-    val progressColor = when {
-        isDanger -> colors.danger
-        isWarning -> colors.warning
-        else -> colors.primary
-    }
+    val progressColor =
+        when {
+            isDanger -> colors.danger
+            isWarning -> colors.warning
+            else -> colors.primary
+        }
     val spentColor = if (state.isOverBudget) colors.danger else colors.onSurface
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .padding(dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Row(
@@ -75,10 +76,11 @@ fun EventBudgetCard(
                 modifier = Modifier.weight(1f),
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(dimens.quickAccessIconSize)
-                        .clip(ProExpenseTheme.shapes.tile)
-                        .background(colors.primaryTint),
+                    modifier =
+                        Modifier
+                            .size(dimens.quickAccessIconSize)
+                            .clip(ProExpenseTheme.shapes.tile)
+                            .background(colors.primaryTint),
                     contentAlignment = Alignment.Center,
                 ) {
                     ProIcon(
@@ -103,18 +105,20 @@ fun EventBudgetCard(
             }
             if (isWarning || isDanger) {
                 val chipColor = if (isDanger) colors.danger else colors.warning
-                val chipText = if (state.overAmountLabel != null) {
-                    stringResource(R.string.event_over_budget_by, state.overAmountLabel, state.overBudgetPercent)
-                } else {
-                    stringResource(R.string.event_over_budget)
-                }
+                val chipText =
+                    if (state.overAmountLabel != null) {
+                        stringResource(R.string.event_over_budget_by, state.overAmountLabel, state.overBudgetPercent)
+                    } else {
+                        stringResource(R.string.event_over_budget)
+                    }
                 Text(
                     text = chipText,
                     style = if (isDanger) typography.bodySemiBold.copy(fontSize = typography.caption.fontSize) else typography.caption,
                     color = chipColor,
-                    modifier = Modifier
-                        .border(BorderStroke(1.dp, chipColor), ProExpenseTheme.shapes.chip)
-                        .padding(horizontal = dimens.space8, vertical = dimens.space4),
+                    modifier =
+                        Modifier
+                            .border(BorderStroke(1.dp, chipColor), ProExpenseTheme.shapes.chip)
+                            .padding(horizontal = dimens.space8, vertical = dimens.space4),
                 )
             }
         }
@@ -154,19 +158,21 @@ fun EventBudgetCard(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(6.dp)
-                .clip(ProExpenseTheme.shapes.chip)
-                .background(colors.paperAlt),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(state.progress.coerceIn(0f, 1f))
+            modifier =
+                Modifier
+                    .fillMaxWidth()
                     .height(6.dp)
                     .clip(ProExpenseTheme.shapes.chip)
-                    .background(progressColor)
-                    .align(Alignment.CenterStart),
+                    .background(colors.paperAlt),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(state.progress.coerceIn(0f, 1f))
+                        .height(6.dp)
+                        .clip(ProExpenseTheme.shapes.chip)
+                        .background(progressColor)
+                        .align(Alignment.CenterStart),
             )
         }
     }

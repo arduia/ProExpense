@@ -19,16 +19,17 @@ fun HeroGreeting(
     val typography = ProExpenseTheme.typography
 
     Text(
-        text = buildAnnotatedString {
-            withStyle(typography.heroGreeting.toSpanStyle().copy(color = colors.onSurface)) {
-                append(prefix)
-            }
-            withStyle(
-                typography.heroGreetingEmphasis.toSpanStyle().copy(color = colors.primary),
-            ) {
-                append(name)
-            }
-        },
+        text =
+            buildAnnotatedString {
+                withStyle(typography.heroGreeting.toSpanStyle().copy(color = colors.onSurface)) {
+                    append(prefix)
+                }
+                withStyle(
+                    typography.heroGreetingEmphasis.toSpanStyle().copy(color = colors.primary),
+                ) {
+                    append(name)
+                }
+            },
         style = typography.heroGreeting,
         modifier = modifier,
     )

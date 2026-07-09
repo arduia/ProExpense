@@ -17,11 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import kotlinx.coroutines.launch
 import com.arduia.expense.feature.reports.R
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
-import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 import com.arduia.expense.feature.reports.ui.preview.previewReportsWeekly
@@ -30,6 +28,7 @@ import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import kotlinx.coroutines.launch
 
 /**
  * Reports UI flow. [periods] cycles via period chevrons or a swipe on the body below the pill.
@@ -51,10 +50,11 @@ fun ReportsFlow(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val pagerState = rememberPagerState(
-        initialPage = initialPage.coerceIn(0, (periods.size - 1).coerceAtLeast(0)),
-        pageCount = { periods.size.coerceAtLeast(1) },
-    )
+    val pagerState =
+        rememberPagerState(
+            initialPage = initialPage.coerceIn(0, (periods.size - 1).coerceAtLeast(0)),
+            pageCount = { periods.size.coerceAtLeast(1) },
+        )
     val scope = rememberCoroutineScope()
 
     // `periods` loads asynchronously after first composition, so `initialPage` above is frozen at
@@ -77,11 +77,12 @@ fun ReportsFlow(
     val allPeriodsEmpty = periods.isNotEmpty() && periods.all { it.empty }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -97,9 +98,10 @@ fun ReportsFlow(
 
         if (globalEmpty) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimens.screenPadding),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = dimens.screenPadding),
                 contentAlignment = Alignment.Center,
             ) {
                 EmptyStateContent(
@@ -113,10 +115,11 @@ fun ReportsFlow(
         }
 
         SegmentedToggle(
-            options = listOf(
-                stringResource(R.string.reports_granularity_month),
-                stringResource(R.string.reports_granularity_week),
-            ),
+            options =
+                listOf(
+                    stringResource(R.string.reports_granularity_month),
+                    stringResource(R.string.reports_granularity_week),
+                ),
             selectedIndex = granularityIndex,
             onSelected = { newIndex ->
                 // Anchor the switch to whatever period is currently on screen, so the caller can
@@ -125,18 +128,20 @@ fun ReportsFlow(
                 val anchor = current?.let { it.periodStartEpochMillis to it.periodEndEpochMillis }
                 onGranularityChange(newIndex, anchor)
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
         )
 
         val currentPeriod = periods[pagerState.currentPage % periods.size]
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
             contentAlignment = Alignment.Center,
         ) {
             // periods[0] is the current/most recent period and index grows into the past, so

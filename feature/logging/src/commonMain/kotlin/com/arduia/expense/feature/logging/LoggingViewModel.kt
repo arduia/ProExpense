@@ -16,7 +16,6 @@ class LoggingViewModel(
     private val updateExpense: UpdateExpenseUseCase,
     private val loadExpenseForEdit: LoadExpenseForEditUseCase,
 ) : StatefulViewModel<LoggingUiState>(LoggingUiState()) {
-
     init {
         viewModelScope.launch {
             observeTagOptions().collect { options -> setState { it.copy(tagOptions = options) } }
@@ -31,8 +30,9 @@ class LoggingViewModel(
     }
 
     suspend fun update(input: SaveExpenseInput): SaveExpenseOutcome {
-        val existing = currentState().existingRecord
-            ?: return SaveExpenseOutcome.Failed("Record not found")
+        val existing =
+            currentState().existingRecord
+                ?: return SaveExpenseOutcome.Failed("Record not found")
         return updateExpense(existing, input)
     }
 }

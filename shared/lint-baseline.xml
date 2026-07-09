@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.12.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.12.0)" variant="all" version="8.12.0">
+
+    <issue
+        id="RememberInComposition"
+        message="Calling a @RememberInComposition annotated declaration inside composition without using `remember`"
+        errorLine1="                            interactionSource = MutableInteractionSource(),"
+        errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/ui/design/AlertDialog.kt"
+            line="73"
+            column="49"/>
+    </issue>
+
+    <issue
+        id="RememberInComposition"
+        message="Calling a @RememberInComposition annotated declaration inside composition without using `remember`"
+        errorLine1="                                interactionSource = MutableInteractionSource(),"
+        errorLine2="                                                    ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/ui/design/AlertDialog.kt"
+            line="111"
+            column="53"/>
+    </issue>
+
+    <issue
+        id="RememberInComposition"
+        message="Calling a @RememberInComposition annotated declaration inside composition without using `remember`"
+        errorLine1="                            interactionSource = MutableInteractionSource(),"
+        errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/ui/design/BottomSheet.kt"
+            line="168"
+            column="49"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;shared_people_word&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;shared_people_word&quot;>PEOPLE&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="26"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;people&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;people_count_state&quot;>%1$d people&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="14"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+        errorLine1="        var selected by remember { mutableStateOf(0) }"
+        errorLine2="                                   ~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/ui/design/SegmentedToggle.kt"
+            line="82"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+        errorLine1="        var selected by remember { mutableStateOf(1) }"
+        errorLine2="                                   ~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/ui/design/SegmentedToggle.kt"
+            line="101"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="UseOfNonLambdaOffsetOverload"
+        message="State backed values should use the lambda overload of Modifier.offset"
+        errorLine1="        modifier = modifier.offset(x = shakeOffset.value.dp),"
+        errorLine2="                            ~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/ui/design/AmountDisplay.kt"
+            line="72"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="UseOfNonLambdaOffsetOverload"
+        message="State backed values should use the lambda overload of Modifier.offset"
+        errorLine1="                .offset(x = shakeOffset.value.dp)"
+        errorLine2="                 ~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/ui/design/PinKeypad.kt"
+            line="91"
+            column="18"/>
+    </issue>
+
+</issues>

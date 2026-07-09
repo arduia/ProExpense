@@ -10,14 +10,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.draw.clip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.auth.R
@@ -49,11 +49,12 @@ fun PinRecoveryScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -64,19 +65,21 @@ fun PinRecoveryScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             Box(
-                modifier = Modifier
-                    .size(dimens.space44 + dimens.space8)
-                    .clip(CircleShape)
-                    .background(colors.primaryTint),
+                modifier =
+                    Modifier
+                        .size(dimens.space44 + dimens.space8)
+                        .clip(CircleShape)
+                        .background(colors.primaryTint),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(
@@ -126,9 +129,10 @@ fun PinRecoveryScreen(
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
-            modifier = Modifier
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space18),
         )
     }
 }

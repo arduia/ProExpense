@@ -22,6 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.importexport.R
 import com.arduia.expense.feature.importexport.ui.components.ExportFileRow
 import com.arduia.expense.feature.importexport.ui.components.ImportExportGroupCard
+import com.arduia.expense.feature.importexport.ui.preview.MoreImportUiState
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportEmpty
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportLocked
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
 import com.arduia.expense.ui.design.PasswordField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -29,11 +34,6 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.feature.importexport.ui.preview.MoreImportUiState
-import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportEmpty
-import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
-import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportLocked
-import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -52,11 +52,12 @@ fun MoreImportScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -67,19 +68,21 @@ fun MoreImportScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             Box(
-                modifier = Modifier
-                    .size(dimens.space44 + dimens.space12)
-                    .clip(ProExpenseTheme.shapes.card)
-                    .background(colors.primaryTint),
+                modifier =
+                    Modifier
+                        .size(dimens.space44 + dimens.space12)
+                        .clip(ProExpenseTheme.shapes.card)
+                        .background(colors.primaryTint),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(
@@ -107,13 +110,14 @@ fun MoreImportScreen(
                 ImportExportGroupCard(items = listOf(state)) { picked ->
                     ExportFileRow(
                         fileName = picked.fileName.orEmpty(),
-                        subtitle = picked.errorMessage
-                            ?: picked.resultMessage
-                            ?: if (picked.needsPassword) {
-                                stringResource(R.string.more_import_password_needed)
-                            } else {
-                                stringResource(R.string.more_import_preview_count, picked.previewCount ?: 0)
-                            },
+                        subtitle =
+                            picked.errorMessage
+                                ?: picked.resultMessage
+                                ?: if (picked.needsPassword) {
+                                    stringResource(R.string.more_import_password_needed)
+                                } else {
+                                    stringResource(R.string.more_import_preview_count, picked.previewCount ?: 0)
+                                },
                     )
                 }
             }
@@ -153,9 +157,10 @@ fun MoreImportScreen(
                 variant = ProButtonVariant.Primary,
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,
-                modifier = Modifier
-                    .padding(horizontal = dimens.screenPadding)
-                    .padding(bottom = dimens.space18),
+                modifier =
+                    Modifier
+                        .padding(horizontal = dimens.screenPadding)
+                        .padding(bottom = dimens.space18),
             )
         }
     }

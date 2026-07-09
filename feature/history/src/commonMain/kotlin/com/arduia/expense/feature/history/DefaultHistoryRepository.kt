@@ -26,19 +26,17 @@ class DefaultHistoryRepository(
     private val financeRecordRepository: FinanceRecordRepository,
     private val timeZone: TimeZone = TimeZone.UTC,
 ) : HistoryRepository {
-
-    override suspend fun getRecords(
-        filter: RecordHistoryFilter,
-    ): Result<List<FinanceRecord>> =
+    override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> =
         when (val result = financeRecordRepository.getAll()) {
             is Result.Success -> {
-                val filtered = result.data.filter { record ->
-                    (filter.categoryId == null || record.categoryId == filter.categoryId) &&
+                val filtered =
+                    result.data.filter { record ->
+                        (filter.categoryId == null || record.categoryId == filter.categoryId) &&
                             (filter.currency == null || record.money.currency == filter.currency) &&
                             (filter.fromEpochMillis == null || record.recordedAtEpochMillis >= filter.fromEpochMillis) &&
                             (filter.toEpochMillis == null || record.recordedAtEpochMillis <= filter.toEpochMillis) &&
                             (filter.query.isNullOrBlank() || (record.note?.contains(filter.query!!, ignoreCase = true) ?: false))
-                }
+                    }
                 Result.Success(filtered)
             }
             is Result.Error -> result
@@ -51,11 +49,12 @@ class DefaultHistoryRepository(
         when (val result = financeRecordRepository.getAll()) {
             is Result.Success -> {
                 val (startMillis, endMillis) = periodBounds(period, anchorEpochMillis)
-                val inPeriod = result.data.filter { record ->
-                    record.type == RecordType.EXPENSE &&
+                val inPeriod =
+                    result.data.filter { record ->
+                        record.type == RecordType.EXPENSE &&
                             record.recordedAtEpochMillis >= startMillis &&
                             record.recordedAtEpochMillis < endMillis
-                }
+                    }
                 val homeCurrency = inPeriod.firstOrNull()?.homeCurrencyMoney?.currency ?: CurrencyCode("USD")
                 val totalCents = inPeriod.sumOf { it.homeCurrencyMoney.amount.valueInCents }
                 Result.Success(
@@ -73,23 +72,27 @@ class DefaultHistoryRepository(
         filter: RecordHistoryFilter,
         cursor: RecordPageCursor?,
         limit: Int,
-    ): Result<List<FinanceRecord>> = financeRecordRepository.getRecordsPage(
-        filter = RecordPageFilter(
-            categoryId = filter.categoryId,
-            fromEpochMillis = filter.fromEpochMillis,
-            toEpochMillis = filter.toEpochMillis,
-            query = filter.query,
-        ),
-        cursor = cursor,
-        limit = limit,
-    )
+    ): Result<List<FinanceRecord>> =
+        financeRecordRepository.getRecordsPage(
+            filter =
+                RecordPageFilter(
+                    categoryId = filter.categoryId,
+                    fromEpochMillis = filter.fromEpochMillis,
+                    toEpochMillis = filter.toEpochMillis,
+                    query = filter.query,
+                ),
+            cursor = cursor,
+            limit = limit,
+        )
 
-    override suspend fun hasAnyRecordIn(categoryId: CategoryId): Result<Boolean> =
-        financeRecordRepository.existsByCategory(categoryId)
+    override suspend fun hasAnyRecordIn(categoryId: CategoryId): Result<Boolean> = financeRecordRepository.existsByCategory(categoryId)
 
     override fun observeChangeSignal(): Flow<RecordChangeSignal> = financeRecordRepository.observeChangeSignal()
 
-    private fun periodBounds(period: SummaryPeriod, anchorEpochMillis: Long): Pair<Long, Long> {
+    private fun periodBounds(
+        period: SummaryPeriod,
+        anchorEpochMillis: Long,
+    ): Pair<Long, Long> {
         val anchorInstant = Instant.fromEpochMilliseconds(anchorEpochMillis)
         val anchorDate = anchorInstant.toLocalDateTime(timeZone).date
         return when (period) {

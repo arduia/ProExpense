@@ -26,21 +26,27 @@ private fun buildSplitStrategy(
     input: SaveSharedCostInput,
     participants: List<Participant>,
     total: Money,
-): SplitStrategy = when (input.mode) {
-    SplitMode.EQUAL -> SplitStrategy.EqualSplit
-    SplitMode.CUSTOM -> {
-        // Shares are stored exactly as entered — they need not sum to the total, which remains
-        // the stored source of truth (US-SHC-2/US-SHC-4). Never rebalance a participant's share.
-        val shares = participants.mapIndexed { index, participant ->
-            val raw = input.customShareRaws.getOrElse(index) { "0" }
-            val cents = (Amount.parseOrNull(raw) ?: Amount(0L)).valueInCents.coerceAtLeast(0)
-            participant.id to Money(Amount(cents), total.currency)
-        }.toMap()
-        SplitStrategy.CustomSplit(shares)
+): SplitStrategy =
+    when (input.mode) {
+        SplitMode.EQUAL -> SplitStrategy.EqualSplit
+        SplitMode.CUSTOM -> {
+            // Shares are stored exactly as entered — they need not sum to the total, which remains
+            // the stored source of truth (US-SHC-2/US-SHC-4). Never rebalance a participant's share.
+            val shares =
+                participants
+                    .mapIndexed { index, participant ->
+                        val raw = input.customShareRaws.getOrElse(index) { "0" }
+                        val cents = (Amount.parseOrNull(raw) ?: Amount(0L)).valueInCents.coerceAtLeast(0)
+                        participant.id to Money(Amount(cents), total.currency)
+                    }.toMap()
+            SplitStrategy.CustomSplit(shares)
+        }
     }
-}
 
-private fun buildParticipants(names: List<String>, nowEpochMillis: Long): List<Participant> =
+private fun buildParticipants(
+    names: List<String>,
+    nowEpochMillis: Long,
+): List<Participant> =
     names.mapIndexed { index, name ->
         Participant(ParticipantId(name.trim().lowercase() + "-" + index + "-" + nowEpochMillis), name)
     }
@@ -50,7 +56,10 @@ class CreateSharedCostUseCase(
     private val sharedCostRepository: SharedCostRepository,
     private val nowEpochMillis: () -> Long,
 ) {
-    suspend operator fun invoke(input: SaveSharedCostInput, currencyCode: String = "USD"): Boolean {
+    suspend operator fun invoke(
+        input: SaveSharedCostInput,
+        currencyCode: String = "USD",
+    ): Boolean {
         val totalAmount = Amount.parseOrNull(input.rawTotal) ?: return false
         val total = Money(totalAmount, CurrencyCode(currencyCode))
         val now = nowEpochMillis()
@@ -74,7 +83,11 @@ class UpdateSharedCostUseCase(
     private val sharedCostRepository: SharedCostRepository,
     private val nowEpochMillis: () -> Long,
 ) {
-    suspend operator fun invoke(existing: SharedCost, input: SaveSharedCostInput, currencyCode: String = "USD"): Boolean {
+    suspend operator fun invoke(
+        existing: SharedCost,
+        input: SaveSharedCostInput,
+        currencyCode: String = "USD",
+    ): Boolean {
         val totalAmount = Amount.parseOrNull(input.rawTotal) ?: return false
         val total = Money(totalAmount, CurrencyCode(currencyCode))
         val participants = buildParticipants(input.participantNames, nowEpochMillis())
@@ -91,7 +104,9 @@ class UpdateSharedCostUseCase(
     }
 }
 
-class DeleteSharedCostUseCase(private val sharedCostRepository: SharedCostRepository) {
+class DeleteSharedCostUseCase(
+    private val sharedCostRepository: SharedCostRepository,
+) {
     suspend operator fun invoke(id: String) {
         sharedCostRepository.delete(SharedCostId(id))
     }

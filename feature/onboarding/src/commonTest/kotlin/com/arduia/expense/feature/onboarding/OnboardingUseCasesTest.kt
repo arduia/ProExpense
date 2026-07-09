@@ -46,95 +46,102 @@ private class FakeCurrencySettingsRepository(
 }
 
 class GetOnboardingStatusUseCaseTest {
-
     @Test
-    fun invoke_returnsCompleteStatusAndDisplayName() = runTest {
-        val repo = FakeProfileRepository(displayName = "Ada", onboardingComplete = true)
-        val useCase = GetOnboardingStatusUseCase(repo)
+    fun invoke_returnsCompleteStatusAndDisplayName() =
+        runTest {
+            val repo = FakeProfileRepository(displayName = "Ada", onboardingComplete = true)
+            val useCase = GetOnboardingStatusUseCase(repo)
 
-        val status = useCase()
+            val status = useCase()
 
-        assertEquals(OnboardingStatus(isComplete = true, displayName = "Ada"), status)
-    }
-
-    @Test
-    fun invoke_defaultsToIncompleteOnError() = runTest {
-        val repo = object : ProfileRepository by FakeProfileRepository() {
-            override suspend fun isOnboardingComplete(): Result<Boolean> = Result.Error("db error")
+            assertEquals(OnboardingStatus(isComplete = true, displayName = "Ada"), status)
         }
-        val useCase = GetOnboardingStatusUseCase(repo)
-
-        val status = useCase()
-
-        assertEquals(false, status.isComplete)
-    }
 
     @Test
-    fun invoke_defaultsToEmptyNameOnError() = runTest {
-        val repo = object : ProfileRepository by FakeProfileRepository() {
-            override suspend fun getDisplayName(): Result<String> = Result.Error("db error")
+    fun invoke_defaultsToIncompleteOnError() =
+        runTest {
+            val repo =
+                object : ProfileRepository by FakeProfileRepository() {
+                    override suspend fun isOnboardingComplete(): Result<Boolean> = Result.Error("db error")
+                }
+            val useCase = GetOnboardingStatusUseCase(repo)
+
+            val status = useCase()
+
+            assertEquals(false, status.isComplete)
         }
-        val useCase = GetOnboardingStatusUseCase(repo)
 
-        val status = useCase()
+    @Test
+    fun invoke_defaultsToEmptyNameOnError() =
+        runTest {
+            val repo =
+                object : ProfileRepository by FakeProfileRepository() {
+                    override suspend fun getDisplayName(): Result<String> = Result.Error("db error")
+                }
+            val useCase = GetOnboardingStatusUseCase(repo)
 
-        assertEquals("", status.displayName)
-    }
+            val status = useCase()
+
+            assertEquals("", status.displayName)
+        }
 }
 
 class CompleteOnboardingUseCaseTest {
+    @Test
+    fun invoke_setsNameMarksCompleteAndSetsCurrency() =
+        runTest {
+            val profileRepo = FakeProfileRepository()
+            val currencyRepo = FakeCurrencySettingsRepository()
+            val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
+
+            val result = useCase(displayName = "Ada", currencyCode = "JPY")
+
+            assertIs<Result.Success<Unit>>(result)
+            assertEquals("Ada", profileRepo.displayName)
+            assertEquals(true, profileRepo.onboardingComplete)
+            assertEquals("JPY", currencyRepo.current?.code)
+        }
 
     @Test
-    fun invoke_setsNameMarksCompleteAndSetsCurrency() = runTest {
-        val profileRepo = FakeProfileRepository()
-        val currencyRepo = FakeCurrencySettingsRepository()
-        val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
+    fun invoke_marksCompleteWithoutTouchingNameOrCurrencyWhenBlank() =
+        runTest {
+            val profileRepo = FakeProfileRepository()
+            val currencyRepo = FakeCurrencySettingsRepository()
+            val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
 
-        val result = useCase(displayName = "Ada", currencyCode = "JPY")
+            val result = useCase(displayName = "", currencyCode = "")
 
-        assertIs<Result.Success<Unit>>(result)
-        assertEquals("Ada", profileRepo.displayName)
-        assertEquals(true, profileRepo.onboardingComplete)
-        assertEquals("JPY", currencyRepo.current?.code)
-    }
-
-    @Test
-    fun invoke_marksCompleteWithoutTouchingNameOrCurrencyWhenBlank() = runTest {
-        val profileRepo = FakeProfileRepository()
-        val currencyRepo = FakeCurrencySettingsRepository()
-        val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
-
-        val result = useCase(displayName = "", currencyCode = "")
-
-        assertIs<Result.Success<Unit>>(result)
-        assertEquals("", profileRepo.displayName)
-        assertEquals(true, profileRepo.onboardingComplete)
-        assertEquals(null, currencyRepo.current)
-    }
+            assertIs<Result.Success<Unit>>(result)
+            assertEquals("", profileRepo.displayName)
+            assertEquals(true, profileRepo.onboardingComplete)
+            assertEquals(null, currencyRepo.current)
+        }
 
     @Test
-    fun invoke_completesSuccessfullyEvenWhenSetDisplayNameFails() = runTest {
-        val profileRepo = FakeProfileRepository(setDisplayNameError = "storage failure")
-        val currencyRepo = FakeCurrencySettingsRepository()
-        val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
+    fun invoke_completesSuccessfullyEvenWhenSetDisplayNameFails() =
+        runTest {
+            val profileRepo = FakeProfileRepository(setDisplayNameError = "storage failure")
+            val currencyRepo = FakeCurrencySettingsRepository()
+            val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
 
-        val result = useCase(displayName = "Ada", currencyCode = "JPY")
+            val result = useCase(displayName = "Ada", currencyCode = "JPY")
 
-        // setOnboardingComplete is called first and succeeds; displayName error is best-effort.
-        assertIs<Result.Success<Unit>>(result)
-        assertEquals(true, profileRepo.onboardingComplete)
-        assertEquals("JPY", currencyRepo.current?.code)
-    }
+            // setOnboardingComplete is called first and succeeds; displayName error is best-effort.
+            assertIs<Result.Success<Unit>>(result)
+            assertEquals(true, profileRepo.onboardingComplete)
+            assertEquals("JPY", currencyRepo.current?.code)
+        }
 
     @Test
-    fun invoke_shortCircuitsOnSetOnboardingCompleteError_skippingCurrency() = runTest {
-        val profileRepo = FakeProfileRepository(setOnboardingCompleteError = "storage failure")
-        val currencyRepo = FakeCurrencySettingsRepository()
-        val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
+    fun invoke_shortCircuitsOnSetOnboardingCompleteError_skippingCurrency() =
+        runTest {
+            val profileRepo = FakeProfileRepository(setOnboardingCompleteError = "storage failure")
+            val currencyRepo = FakeCurrencySettingsRepository()
+            val useCase = CompleteOnboardingUseCase(profileRepo, currencyRepo)
 
-        val result = useCase(displayName = "Ada", currencyCode = "JPY")
+            val result = useCase(displayName = "Ada", currencyCode = "JPY")
 
-        assertIs<Result.Error>(result)
-        assertEquals(null, currencyRepo.current)
-    }
+            assertIs<Result.Error>(result)
+            assertEquals(null, currencyRepo.current)
+        }
 }

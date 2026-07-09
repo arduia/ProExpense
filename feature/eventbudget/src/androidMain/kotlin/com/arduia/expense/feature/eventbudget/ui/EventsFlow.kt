@@ -14,19 +14,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.eventbudget.R
+import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
+import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
+import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.EventBudgetSummaryState
 import com.arduia.expense.ui.design.EventBudgetTone
-import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
-import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
-import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -40,7 +40,13 @@ fun EventsFlow(
     eventDetails: Map<String, EventDetailUiState> = emptyMap(),
     eventEditForms: Map<String, EventCreateFormState> = emptyMap(),
     onCreateEvent: (name: String, budgetRaw: String, startEpochMillis: Long, endEpochMillis: Long) -> Unit = { _, _, _, _ -> },
-    onUpdateEvent: (id: String, name: String, budgetRaw: String, startEpochMillis: Long, endEpochMillis: Long) -> Unit = { _, _, _, _, _ -> },
+    onUpdateEvent: (
+        id: String,
+        name: String,
+        budgetRaw: String,
+        startEpochMillis: Long,
+        endEpochMillis: Long,
+    ) -> Unit = { _, _, _, _, _ -> },
     onCloseEvent: (id: String) -> Unit = {},
     initialSelectedEventId: String? = null,
     onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
@@ -66,9 +72,10 @@ fun EventsFlow(
             events.any { it.title.equals(name.trim(), ignoreCase = true) && it.id != editingEventId }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         AnimatedContent(
             targetState = selectedEventId,
@@ -219,16 +226,17 @@ private fun detailStateFor(
         title = event?.title.orEmpty(),
         subtitle = event?.dateRange.orEmpty(),
         statusEyebrow = "ACTIVE",
-        summary = EventBudgetSummaryState(
-            eyebrow = "REMAINING",
-            remainingLabel = event?.budgetLabel?.removePrefix("of ").orEmpty(),
-            spentLabel = "$0",
-            budgetLabel = event?.budgetLabel?.removePrefix("of ").orEmpty(),
-            spentCaption = "Spent",
-            budgetCaption = "Budget",
-            progress = 0f,
-            tone = EventBudgetTone.OnTrack,
-        ),
+        summary =
+            EventBudgetSummaryState(
+                eyebrow = "REMAINING",
+                remainingLabel = event?.budgetLabel?.removePrefix("of ").orEmpty(),
+                spentLabel = "$0",
+                budgetLabel = event?.budgetLabel?.removePrefix("of ").orEmpty(),
+                spentCaption = "Spent",
+                budgetCaption = "Budget",
+                progress = 0f,
+                tone = EventBudgetTone.OnTrack,
+            ),
         showAddTagged = true,
     )
 }

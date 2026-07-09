@@ -19,20 +19,22 @@ class ObserveTagOptionsUseCase(
             events.map { it.toTagOption() } + debts.map { it.toTagOption() }
         }
 
-    private fun Event.toTagOption() = TagOption(
-        id = id.value,
-        kind = TagOptionKind.EVENT,
-        eventName = name,
-        eventStartEpochMillis = startEpochMillis,
-        eventEndEpochMillis = endEpochMillis,
-        eventIsClosed = status == EventStatus.CLOSED,
-    )
+    private fun Event.toTagOption() =
+        TagOption(
+            id = id.value,
+            kind = TagOptionKind.EVENT,
+            eventName = name,
+            eventStartEpochMillis = startEpochMillis,
+            eventEndEpochMillis = endEpochMillis,
+            eventIsClosed = status == EventStatus.CLOSED,
+        )
 
-    private fun Debt.toTagOption() = TagOption(
-        id = id.value,
-        kind = TagOptionKind.DEBT,
-        debtPersonName = personName,
-        debtIsOwedToMe = direction == DebtDirection.OWED_TO_ME,
-        debtAmountCents = money.amount.valueInCents,
-    )
+    private fun Debt.toTagOption() =
+        TagOption(
+            id = id.value,
+            kind = TagOptionKind.DEBT,
+            debtPersonName = personName,
+            debtIsOwedToMe = direction == DebtDirection.OWED_TO_ME,
+            debtAmountCents = money.amount.valueInCents,
+        )
 }

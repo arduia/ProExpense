@@ -20,9 +20,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.importexport.R
-import com.arduia.expense.feature.importexport.ui.components.ClearDataCard
 import com.arduia.expense.feature.importexport.ui.components.ExportFileRow
 import com.arduia.expense.feature.importexport.ui.components.ImportExportGroupCard
+import com.arduia.expense.feature.importexport.ui.preview.MoreExportFileUi
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
 import com.arduia.expense.ui.design.PasswordField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -31,8 +32,6 @@ import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
-import com.arduia.expense.feature.importexport.ui.preview.MoreExportFileUi
-import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -52,11 +51,12 @@ fun MoreExportScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -67,19 +67,21 @@ fun MoreExportScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             Box(
-                modifier = Modifier
-                    .size(dimens.space44 + dimens.space12)
-                    .clip(ProExpenseTheme.shapes.card)
-                    .background(colors.primaryTint),
+                modifier =
+                    Modifier
+                        .size(dimens.space44 + dimens.space12)
+                        .clip(ProExpenseTheme.shapes.card)
+                        .background(colors.primaryTint),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(
@@ -97,21 +99,23 @@ fun MoreExportScreen(
                     color = colors.onSurface,
                 )
                 Text(
-                    text = if (formatIndex == 0) {
-                        stringResource(R.string.more_export_subtitle)
-                    } else {
-                        stringResource(R.string.more_export_subtitle_json)
-                    },
+                    text =
+                        if (formatIndex == 0) {
+                            stringResource(R.string.more_export_subtitle)
+                        } else {
+                            stringResource(R.string.more_export_subtitle_json)
+                        },
                     style = typography.body,
                     color = colors.onSurfaceMuted,
                 )
             }
 
             SegmentedToggle(
-                options = listOf(
-                    stringResource(R.string.more_export_format_csv),
-                    stringResource(R.string.more_export_format_json),
-                ),
+                options =
+                    listOf(
+                        stringResource(R.string.more_export_format_csv),
+                        stringResource(R.string.more_export_format_json),
+                    ),
                 selectedIndex = formatIndex,
                 onSelected = onFormatChange,
             )
@@ -144,18 +148,20 @@ fun MoreExportScreen(
         }
 
         ProButton(
-            text = if (formatIndex == 0) {
-                stringResource(R.string.more_export_action)
-            } else {
-                stringResource(R.string.more_export_action_json)
-            },
+            text =
+                if (formatIndex == 0) {
+                    stringResource(R.string.more_export_action)
+                } else {
+                    stringResource(R.string.more_export_action_json)
+                },
             onClick = onExport,
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
-            modifier = Modifier
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
         )
     }
 }

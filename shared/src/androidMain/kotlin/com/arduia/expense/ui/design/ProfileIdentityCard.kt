@@ -37,20 +37,22 @@ fun ProfileIdentityCard(
     val onCard = colors.onPrimary
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .proIdentityCardShadow(ProExpenseTheme.shapes.identityCard)
-            .clip(ProExpenseTheme.shapes.identityCard)
-            .background(Brush.linearGradient(listOf(colors.primaryDeep, colors.primary)))
-            .padding(horizontal = dimens.space18, vertical = dimens.space18),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .proIdentityCardShadow(ProExpenseTheme.shapes.identityCard)
+                .clip(ProExpenseTheme.shapes.identityCard)
+                .background(Brush.linearGradient(listOf(colors.primaryDeep, colors.primary)))
+                .padding(horizontal = dimens.space18, vertical = dimens.space18),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.identityCardEmblem)
-                .clip(ProExpenseTheme.shapes.tile)
-                .background(onCard.copy(alpha = 0.16f)),
+            modifier =
+                Modifier
+                    .size(dimens.identityCardEmblem)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(onCard.copy(alpha = 0.16f)),
             contentAlignment = Alignment.Center,
         ) {
             Text(

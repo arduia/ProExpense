@@ -27,17 +27,25 @@ data class SaveExpenseInput(
 )
 
 sealed class SaveExpenseOutcome {
-    data class Saved(val record: FinanceRecord) : SaveExpenseOutcome()
+    data class Saved(
+        val record: FinanceRecord,
+    ) : SaveExpenseOutcome()
+
     object InvalidAmount : SaveExpenseOutcome()
+
     object InvalidExchangeRate : SaveExpenseOutcome()
-    data class Failed(val message: String) : SaveExpenseOutcome()
+
+    data class Failed(
+        val message: String,
+    ) : SaveExpenseOutcome()
 }
 
-private fun SaveExpenseInput.toLink(): RecordLink = when (linkTagKind) {
-    TagOptionKind.EVENT -> RecordLink.ToEvent(EventId(linkTagId.orEmpty()))
-    TagOptionKind.DEBT -> RecordLink.ToDebt(DebtId(linkTagId.orEmpty()))
-    null -> RecordLink.None
-}
+private fun SaveExpenseInput.toLink(): RecordLink =
+    when (linkTagKind) {
+        TagOptionKind.EVENT -> RecordLink.ToEvent(EventId(linkTagId.orEmpty()))
+        TagOptionKind.DEBT -> RecordLink.ToDebt(DebtId(linkTagId.orEmpty()))
+        null -> RecordLink.None
+    }
 
 /**
  * Converts [money] into the input's home currency using the manually entered rate. Returns null
@@ -57,17 +65,19 @@ class LogExpenseUseCase(
     suspend operator fun invoke(input: SaveExpenseInput): SaveExpenseOutcome {
         val amount = Amount.parseOrNull(input.rawAmount) ?: return SaveExpenseOutcome.InvalidAmount
         val money = Money(amount, CurrencyCode(input.currencyCode))
-        val homeCurrencyMoney = input.toHomeCurrencyMoneyOrNull(money)
-            ?: return SaveExpenseOutcome.InvalidExchangeRate
-        val recordInput = LogRecordInput(
-            money = money,
-            homeCurrencyMoney = homeCurrencyMoney,
-            categoryId = CategoryId(input.categoryId),
-            type = RecordType.EXPENSE,
-            note = input.note.ifBlank { null },
-            recordedAtEpochMillis = input.recordedAtEpochMillis,
-            link = input.toLink(),
-        )
+        val homeCurrencyMoney =
+            input.toHomeCurrencyMoneyOrNull(money)
+                ?: return SaveExpenseOutcome.InvalidExchangeRate
+        val recordInput =
+            LogRecordInput(
+                money = money,
+                homeCurrencyMoney = homeCurrencyMoney,
+                categoryId = CategoryId(input.categoryId),
+                type = RecordType.EXPENSE,
+                note = input.note.ifBlank { null },
+                recordedAtEpochMillis = input.recordedAtEpochMillis,
+                link = input.toLink(),
+            )
         return when (val result = loggingRepository.createRecord(recordInput)) {
             is Result.Success -> SaveExpenseOutcome.Saved(result.data)
             is Result.Error -> SaveExpenseOutcome.Failed(result.message)
@@ -79,26 +89,32 @@ class LogExpenseUseCase(
 class UpdateExpenseUseCase(
     private val financeRecordRepository: FinanceRecordRepository,
 ) {
-    suspend operator fun invoke(existing: FinanceRecord, input: SaveExpenseInput): SaveExpenseOutcome {
+    suspend operator fun invoke(
+        existing: FinanceRecord,
+        input: SaveExpenseInput,
+    ): SaveExpenseOutcome {
         val amount = Amount.parseOrNull(input.rawAmount) ?: return SaveExpenseOutcome.InvalidAmount
         val money = Money(amount, CurrencyCode(input.currencyCode))
-        val homeCurrencyMoney = input.toHomeCurrencyMoneyOrNull(money)
-            ?: return SaveExpenseOutcome.InvalidExchangeRate
+        val homeCurrencyMoney =
+            input.toHomeCurrencyMoneyOrNull(money)
+                ?: return SaveExpenseOutcome.InvalidExchangeRate
         // Preserves a pre-existing shared-cost link when the user leaves the tag untouched, since
         // the tag picker only surfaces events and debts.
-        val link = if (input.linkTagKind == null && existing.link is RecordLink.ToSharedCost) {
-            existing.link
-        } else {
-            input.toLink()
-        }
-        val updated = existing.copy(
-            money = money,
-            homeCurrencyMoney = homeCurrencyMoney,
-            categoryId = CategoryId(input.categoryId),
-            note = input.note.ifBlank { null },
-            recordedAtEpochMillis = input.recordedAtEpochMillis,
-            link = link,
-        )
+        val link =
+            if (input.linkTagKind == null && existing.link is RecordLink.ToSharedCost) {
+                existing.link
+            } else {
+                input.toLink()
+            }
+        val updated =
+            existing.copy(
+                money = money,
+                homeCurrencyMoney = homeCurrencyMoney,
+                categoryId = CategoryId(input.categoryId),
+                note = input.note.ifBlank { null },
+                recordedAtEpochMillis = input.recordedAtEpochMillis,
+                link = link,
+            )
         return when (val result = financeRecordRepository.upsert(updated)) {
             is Result.Success -> SaveExpenseOutcome.Saved(updated)
             is Result.Error -> SaveExpenseOutcome.Failed(result.message)
@@ -111,7 +127,11 @@ class LoadExpenseForEditUseCase(
     private val financeRecordRepository: FinanceRecordRepository,
 ) {
     suspend operator fun invoke(recordId: String): FinanceRecord? {
-        val result = financeRecordRepository.getById(com.arduia.expense.domain.RecordId(recordId))
+        val result =
+            financeRecordRepository.getById(
+                com.arduia.expense.domain
+                    .RecordId(recordId),
+            )
         return (result as? Result.Success)?.data
     }
 }

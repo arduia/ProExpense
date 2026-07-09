@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:CategoriesModule.kt$factory { SaveCategoryUseCase(get&lt;CategoryRepository&gt;(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }</ID>
+  </CurrentIssues>
+</SmellBaseline>

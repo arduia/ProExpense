@@ -21,7 +21,11 @@ interface CurrencyRepository {
     suspend fun setHomeCurrency(currency: CurrencyCode): Result<Unit>
 }
 
-fun convertToHomeCurrency(money: Money, exchangeRate: Double, homeCurrency: CurrencyCode): Money {
+fun convertToHomeCurrency(
+    money: Money,
+    exchangeRate: Double,
+    homeCurrency: CurrencyCode,
+): Money {
     require(exchangeRate > 0) { "Exchange rate must be positive" }
     return Money(Amount((money.amount.valueInCents * exchangeRate).toLong()), homeCurrency)
 }

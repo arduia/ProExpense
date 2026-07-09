@@ -19,10 +19,11 @@ fun findGranularitySwitchTargetIndex(
     oldPeriodEndEpochMillis: Long,
     newPeriods: List<ReportsPeriodBounds>,
 ): Int {
-    val overlapping = newPeriods.indices.filter { i ->
-        val period = newPeriods[i]
-        period.startEpochMillis < oldPeriodEndEpochMillis && period.endEpochMillis > oldPeriodStartEpochMillis
-    }
+    val overlapping =
+        newPeriods.indices.filter { i ->
+            val period = newPeriods[i]
+            period.startEpochMillis < oldPeriodEndEpochMillis && period.endEpochMillis > oldPeriodStartEpochMillis
+        }
     if (overlapping.isEmpty()) return -1
     return overlapping.firstOrNull { !newPeriods[it].empty } ?: overlapping.first()
 }

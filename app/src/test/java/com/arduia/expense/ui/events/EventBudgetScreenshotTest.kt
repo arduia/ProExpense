@@ -13,9 +13,6 @@ import com.arduia.expense.feature.eventbudget.R
 import com.arduia.expense.feature.eventbudget.ui.EventBudgetListScreen
 import com.arduia.expense.feature.eventbudget.ui.EventCreateSheetContent
 import com.arduia.expense.feature.eventbudget.ui.EventDetailScreen
-import com.arduia.expense.testing.ScreenshotTests
-import com.arduia.expense.ui.design.HomeNavTab
-import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateErrors
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventCreateValid
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetail
@@ -23,6 +20,9 @@ import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailClose
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailNoLinked
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailWarn
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
+import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -42,7 +42,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class EventBudgetScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -62,45 +61,35 @@ class EventBudgetScreenshotTest {
     }
 
     @Test
-    fun event_empty() = capture {
-        EventBudgetListScreen(
-            events = emptyList(),
-            onCreateEvent = {},
-            onEventClick = {},
-            selectedTab = HomeNavTab.Budget,
-            onTabSelected = {},
-            onAddClick = {},
-        )
-    }
+    fun event_empty() =
+        capture {
+            EventBudgetListScreen(
+                events = emptyList(),
+                onCreateEvent = {},
+                onEventClick = {},
+                selectedTab = HomeNavTab.Budget,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
 
     @Test
-    fun event_loading() = capture {
-        EventBudgetListScreen(
-            events = emptyList(),
-            onCreateEvent = {},
-            onEventClick = {},
-            selectedTab = HomeNavTab.Budget,
-            onTabSelected = {},
-            onAddClick = {},
-            isLoading = true,
-        )
-    }
+    fun event_loading() =
+        capture {
+            EventBudgetListScreen(
+                events = emptyList(),
+                onCreateEvent = {},
+                onEventClick = {},
+                selectedTab = HomeNavTab.Budget,
+                onTabSelected = {},
+                onAddClick = {},
+                isLoading = true,
+            )
+        }
 
     @Test
-    fun event_list() = capture {
-        EventBudgetListScreen(
-            events = previewEventList,
-            onCreateEvent = {},
-            onEventClick = {},
-            selectedTab = HomeNavTab.Budget,
-            onTabSelected = {},
-            onAddClick = {},
-        )
-    }
-
-    @Test
-    fun event_create() = capture {
-        Box(Modifier.fillMaxSize()) {
+    fun event_list() =
+        capture {
             EventBudgetListScreen(
                 events = previewEventList,
                 onCreateEvent = {},
@@ -109,92 +98,111 @@ class EventBudgetScreenshotTest {
                 onTabSelected = {},
                 onAddClick = {},
             )
-            ProBottomSheetHost(
-                visible = true,
-                title = stringResource(R.string.event_create_title),
-                onClose = {},
-            ) {
-                EventCreateSheetContent(
-                    form = previewEventCreateValid,
-                    onNameChange = {},
-                    onBudgetChange = {},
-                    onPickStart = {},
-                    onPickEnd = {},
-                    onSave = {},
-                )
-            }
         }
-    }
 
     @Test
-    fun edge_event_errors() = capture {
-        Box(Modifier.fillMaxSize()) {
-            EventBudgetListScreen(
-                events = previewEventList,
-                onCreateEvent = {},
-                onEventClick = {},
-                selectedTab = HomeNavTab.Budget,
-                onTabSelected = {},
-                onAddClick = {},
+    fun event_create() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                EventBudgetListScreen(
+                    events = previewEventList,
+                    onCreateEvent = {},
+                    onEventClick = {},
+                    selectedTab = HomeNavTab.Budget,
+                    onTabSelected = {},
+                    onAddClick = {},
+                )
+                ProBottomSheetHost(
+                    visible = true,
+                    title = stringResource(R.string.event_create_title),
+                    onClose = {},
+                ) {
+                    EventCreateSheetContent(
+                        form = previewEventCreateValid,
+                        onNameChange = {},
+                        onBudgetChange = {},
+                        onPickStart = {},
+                        onPickEnd = {},
+                        onSave = {},
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun edge_event_errors() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                EventBudgetListScreen(
+                    events = previewEventList,
+                    onCreateEvent = {},
+                    onEventClick = {},
+                    selectedTab = HomeNavTab.Budget,
+                    onTabSelected = {},
+                    onAddClick = {},
+                )
+                ProBottomSheetHost(
+                    visible = true,
+                    title = stringResource(R.string.event_create_title),
+                    onClose = {},
+                ) {
+                    EventCreateSheetContent(
+                        form = previewEventCreateErrors,
+                        onNameChange = {},
+                        onBudgetChange = {},
+                        onPickStart = {},
+                        onPickEnd = {},
+                        onSave = {},
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun event_detail() =
+        capture {
+            EventDetailScreen(
+                state = previewEventDetail,
+                onBack = {},
+                onMore = {},
+                onAddTagged = {},
+                onExpenseClick = {},
             )
-            ProBottomSheetHost(
-                visible = true,
-                title = stringResource(R.string.event_create_title),
-                onClose = {},
-            ) {
-                EventCreateSheetContent(
-                    form = previewEventCreateErrors,
-                    onNameChange = {},
-                    onBudgetChange = {},
-                    onPickStart = {},
-                    onPickEnd = {},
-                    onSave = {},
-                )
-            }
         }
-    }
 
     @Test
-    fun event_detail() = capture {
-        EventDetailScreen(
-            state = previewEventDetail,
-            onBack = {},
-            onMore = {},
-            onAddTagged = {},
-            onExpenseClick = {},
-        )
-    }
+    fun edge_event_warn() =
+        capture {
+            EventDetailScreen(
+                state = previewEventDetailWarn,
+                onBack = {},
+                onMore = {},
+                onAddTagged = {},
+                onExpenseClick = {},
+            )
+        }
 
     @Test
-    fun edge_event_warn() = capture {
-        EventDetailScreen(
-            state = previewEventDetailWarn,
-            onBack = {},
-            onMore = {},
-            onAddTagged = {},
-            onExpenseClick = {},
-        )
-    }
+    fun edge_event_closed() =
+        capture {
+            EventDetailScreen(
+                state = previewEventDetailClosed,
+                onBack = {},
+                onMore = {},
+                onAddTagged = {},
+                onExpenseClick = {},
+            )
+        }
 
     @Test
-    fun edge_event_closed() = capture {
-        EventDetailScreen(
-            state = previewEventDetailClosed,
-            onBack = {},
-            onMore = {},
-            onAddTagged = {},
-            onExpenseClick = {},
-        )
-    }
-
-    @Test
-    fun edge_event_no_linked() = capture {
-        EventDetailScreen(
-            state = previewEventDetailNoLinked,
-            onBack = {},
-            onMore = {},
-            onAddTagged = {},
-            onExpenseClick = {},
-        )
-    }
+    fun edge_event_no_linked() =
+        capture {
+            EventDetailScreen(
+                state = previewEventDetailNoLinked,
+                onBack = {},
+                onMore = {},
+                onAddTagged = {},
+                onExpenseClick = {},
+            )
+        }
 }

@@ -18,12 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.importexport.R
 import com.arduia.expense.feature.importexport.ui.components.ClearDataCard
+import com.arduia.expense.feature.importexport.ui.preview.MoreClearOptionUi
+import com.arduia.expense.feature.importexport.ui.preview.previewMoreClearOptions
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.feature.importexport.ui.preview.MoreClearOptionUi
-import com.arduia.expense.feature.importexport.ui.preview.previewMoreClearOptions
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -41,11 +41,12 @@ fun MoreClearScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -56,21 +57,23 @@ fun MoreClearScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
             verticalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
             Text(
                 text = stringResource(R.string.more_clear_subtitle),
                 style = typography.body,
                 color = colors.onSurfaceMuted,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimens.space4),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = dimens.space4),
             )
             options.forEach { option ->
                 ClearDataCard(
@@ -88,9 +91,10 @@ fun MoreClearScreen(
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
             enabled = checkedIds.isNotEmpty(),
-            modifier = Modifier
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
         )
     }
 }

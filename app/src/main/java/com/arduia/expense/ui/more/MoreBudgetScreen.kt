@@ -1,7 +1,6 @@
 package com.arduia.expense.ui.more
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,12 +22,11 @@ import com.arduia.expense.domain.Money
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
-import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -49,13 +47,14 @@ fun MoreBudgetScreen(
     val canProceed = AmountInput.canProceed(rawAmount)
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.screenPadding),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = dimens.screenPadding),
     ) {
         ProTopBar(
             title = "Monthly Budget",
@@ -68,9 +67,10 @@ fun MoreBudgetScreen(
             currencyCode = homeCurrency.code,
             isZero = !canProceed,
             showZeroValidation = false,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8, bottom = dimens.space16),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8, bottom = dimens.space16),
         )
 
         NumericKeypad(
@@ -88,9 +88,10 @@ fun MoreBudgetScreen(
             },
             nextLabel = "Save",
             showSaveAction = false,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = dimens.space16),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimens.space16),
         )
 
         ProButton(
@@ -99,8 +100,9 @@ fun MoreBudgetScreen(
             variant = ProButtonVariant.Ghost,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
-            modifier = Modifier
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .padding(bottom = dimens.space18),
         )
     }
 }

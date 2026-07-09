@@ -1,9 +1,8 @@
 package com.arduia.expense.feature.sharedcost.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,17 +19,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.sharedcost.R
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostParticipantRow
+import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostParticipantRow
-import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.SharedSplitMode
-import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
-import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -52,24 +51,29 @@ fun SharedCostsSummaryScreen(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.card
-    val perPersonDisplay = state.participants.firstOrNull()?.shareLabel
-        ?.dropWhile { !it.isDigit() }
-        ?: "0"
+    val perPersonDisplay =
+        state.participants
+            .firstOrNull()
+            ?.shareLabel
+            ?.dropWhile { !it.isDigit() }
+            ?: "0"
     val totalDisplay = AmountInput.formatDisplay(state.rawTotal)
-    val modeLabel = when (state.mode) {
-        SharedSplitMode.Equal -> stringResource(R.string.shared_split_mode_equal)
-        SharedSplitMode.Custom -> stringResource(R.string.shared_split_custom).lowercase()
-    }
+    val modeLabel =
+        when (state.mode) {
+            SharedSplitMode.Equal -> stringResource(R.string.shared_split_mode_equal)
+            SharedSplitMode.Custom -> stringResource(R.string.shared_split_custom).lowercase()
+        }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.screenPadding)
-            .padding(bottom = dimens.space18),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = dimens.screenPadding)
+                .padding(bottom = dimens.space18),
     ) {
         ProTopBar(
             title = stringResource(R.string.shared_summary_title),
@@ -83,37 +87,42 @@ fun SharedCostsSummaryScreen(
             isZero = false,
             eyebrowText = stringResource(R.string.shared_each_person_pays),
             usePrimaryAmount = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8, bottom = dimens.space8),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8, bottom = dimens.space8),
         )
 
         Text(
-            text = stringResource(
-                R.string.shared_summary_meta,
-                SharedCostSplitLogic.formatRawTotal(state.rawTotal, homeCurrencySymbol),
-                state.peopleCount,
-                modeLabel,
-            ),
+            text =
+                stringResource(
+                    R.string.shared_summary_meta,
+                    SharedCostSplitLogic.formatRawTotal(state.rawTotal, homeCurrencySymbol),
+                    state.peopleCount,
+                    modeLabel,
+                ),
             style = typography.caption,
             color = colors.onSurfaceMuted,
             modifier = Modifier.padding(bottom = dimens.space16),
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape)
-                .border(BorderStroke(1.dp, colors.line), shape)
-                .background(colors.surface)
-                .padding(horizontal = dimens.cardPadding),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(shape)
+                    .border(BorderStroke(1.dp, colors.line), shape)
+                    .background(colors.surface)
+                    .padding(horizontal = dimens.cardPadding),
         ) {
             val nameTemplate = stringResource(R.string.shared_default_person_name)
             state.participants.forEachIndexed { index, participant ->
                 SharedCostParticipantRow(
                     index = index + 1,
-                    name = participant.name.trim()
-                        .ifEmpty { SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate) },
+                    name =
+                        participant.name
+                            .trim()
+                            .ifEmpty { SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate) },
                     amount = participant.shareLabel,
                 )
             }
@@ -121,9 +130,10 @@ fun SharedCostsSummaryScreen(
 
         if (!readOnly && state.mode == SharedSplitMode.Equal) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space16),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space16),
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
             ) {
                 Text(

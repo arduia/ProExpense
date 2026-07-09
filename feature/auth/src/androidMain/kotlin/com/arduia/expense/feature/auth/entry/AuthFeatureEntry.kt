@@ -37,13 +37,22 @@ interface AuthFeatureEntry {
 
 internal class AuthFeatureEntryImpl : AuthFeatureEntry {
     @Composable
-    override fun PinSetupFlow(onDismiss: () -> Unit, modifier: Modifier, onSaved: () -> Unit) {
-        com.arduia.expense.feature.auth.ui.PinSetupFlow(onDismiss = onDismiss, modifier = modifier, onSaved = onSaved)
+    override fun PinSetupFlow(
+        onDismiss: () -> Unit,
+        modifier: Modifier,
+        onSaved: () -> Unit,
+    ) {
+        com.arduia.expense.feature.auth.ui
+            .PinSetupFlow(onDismiss = onDismiss, modifier = modifier, onSaved = onSaved)
     }
 
     @Composable
-    override fun PinLockFlow(onUnlocked: () -> Unit, modifier: Modifier) {
-        com.arduia.expense.feature.auth.ui.PinLockFlow(onUnlocked = onUnlocked, modifier = modifier)
+    override fun PinLockFlow(
+        onUnlocked: () -> Unit,
+        modifier: Modifier,
+    ) {
+        com.arduia.expense.feature.auth.ui
+            .PinLockFlow(onUnlocked = onUnlocked, modifier = modifier)
     }
 
     @Composable
@@ -64,8 +73,13 @@ internal class AuthFeatureEntryImpl : AuthFeatureEntry {
     }
 
     @Composable
-    override fun PinChangeFlow(onDone: () -> Unit, onCancel: () -> Unit, modifier: Modifier) {
-        com.arduia.expense.feature.auth.ui.PinChangeFlow(onDone = onDone, onCancel = onCancel, modifier = modifier)
+    override fun PinChangeFlow(
+        onDone: () -> Unit,
+        onCancel: () -> Unit,
+        modifier: Modifier,
+    ) {
+        com.arduia.expense.feature.auth.ui
+            .PinChangeFlow(onDone = onDone, onCancel = onCancel, modifier = modifier)
     }
 }
 

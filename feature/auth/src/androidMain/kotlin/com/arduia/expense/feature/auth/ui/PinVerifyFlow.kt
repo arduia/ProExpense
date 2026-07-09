@@ -12,11 +12,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.data.Result
 import com.arduia.expense.feature.auth.PinAuthRepository
+import com.arduia.expense.feature.auth.PinEntryLogic
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.R
 import com.arduia.expense.feature.auth.VerifyPinResult
 import com.arduia.expense.feature.auth.VerifyPinUseCase
-import com.arduia.expense.feature.auth.PinEntryLogic
-import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.delay
@@ -103,12 +103,13 @@ fun PinVerifyFlow(
     }
 
     PinEntryScreen(
-        state = PinEntryUiState(
-            filledDots = entryBuffer.length,
-            mode = PinEntryLogic.entryMode(lockedOut = lockoutUntil != null, error = entryError),
-            countdownLabel = countdownLabel,
-            showBiometric = false,
-        ),
+        state =
+            PinEntryUiState(
+                filledDots = entryBuffer.length,
+                mode = PinEntryLogic.entryMode(lockedOut = lockoutUntil != null, error = entryError),
+                countdownLabel = countdownLabel,
+                showBiometric = false,
+            ),
         headingRes = headingRes,
         helperRes = helperRes,
         showForgot = false,

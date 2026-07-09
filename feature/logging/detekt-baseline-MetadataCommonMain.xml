@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ReturnCount:SaveExpenseUseCases.kt$LogExpenseUseCase$suspend operator fun invoke(input: SaveExpenseInput): SaveExpenseOutcome</ID>
+    <ID>ReturnCount:SaveExpenseUseCases.kt$UpdateExpenseUseCase$suspend operator fun invoke( existing: FinanceRecord, input: SaveExpenseInput, ): SaveExpenseOutcome</ID>
+    <ID>ReturnCount:SaveExpenseUseCases.kt$private fun SaveExpenseInput.toHomeCurrencyMoneyOrNull(money: Money): Money?</ID>
+  </CurrentIssues>
+</SmellBaseline>

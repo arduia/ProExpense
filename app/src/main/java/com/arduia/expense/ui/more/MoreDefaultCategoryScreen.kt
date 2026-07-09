@@ -31,18 +31,20 @@ fun MoreDefaultCategoryScreen(
     val dimens = ProExpenseTheme.dimensions
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space24),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space24),
         ) {
             ProTopBar(
                 title = "Default Category",
@@ -53,9 +55,10 @@ fun MoreDefaultCategoryScreen(
                 customCategories = customExpenseCategories,
                 selectedCategoryId = selectedCategoryId,
                 onCategorySelected = onSelect,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space16),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space16),
             )
         }
     }

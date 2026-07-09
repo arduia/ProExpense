@@ -4,7 +4,9 @@ import com.arduia.expense.data.Result
 
 const val PIN_RECOVERY_MAX_ATTEMPTS = 5
 
-class SetupPinUseCase(private val repository: PinAuthRepository) {
+class SetupPinUseCase(
+    private val repository: PinAuthRepository,
+) {
     suspend operator fun invoke(
         pin: String,
         securityQuestionId: String,
@@ -22,13 +24,21 @@ class SetupPinUseCase(private val repository: PinAuthRepository) {
 
 sealed interface VerifyPinResult {
     data object Unlocked : VerifyPinResult
-    data class Incorrect(val lockoutUntilMs: Long?) : VerifyPinResult
-    data class Error(val message: String) : VerifyPinResult
+
+    data class Incorrect(
+        val lockoutUntilMs: Long?,
+    ) : VerifyPinResult
+
+    data class Error(
+        val message: String,
+    ) : VerifyPinResult
 }
 
-class VerifyPinUseCase(private val repository: PinAuthRepository) {
-    suspend operator fun invoke(pin: String): VerifyPinResult {
-        return when (val result = repository.verifyPin(pin)) {
+class VerifyPinUseCase(
+    private val repository: PinAuthRepository,
+) {
+    suspend operator fun invoke(pin: String): VerifyPinResult =
+        when (val result = repository.verifyPin(pin)) {
             is Result.Success -> {
                 if (result.data) {
                     repository.resetFailedAttempts()
@@ -41,18 +51,29 @@ class VerifyPinUseCase(private val repository: PinAuthRepository) {
             }
             is Result.Error -> VerifyPinResult.Error(result.message)
         }
-    }
 }
 
 sealed interface RecoveryAnswerResult {
     data object Correct : RecoveryAnswerResult
-    data class Incorrect(val attempts: Int, val attemptsExhausted: Boolean) : RecoveryAnswerResult
-    data class Error(val message: String) : RecoveryAnswerResult
+
+    data class Incorrect(
+        val attempts: Int,
+        val attemptsExhausted: Boolean,
+    ) : RecoveryAnswerResult
+
+    data class Error(
+        val message: String,
+    ) : RecoveryAnswerResult
 }
 
-class VerifyRecoveryAnswerUseCase(private val repository: PinAuthRepository) {
-    suspend operator fun invoke(answer: String, currentAttempts: Int): RecoveryAnswerResult {
-        return when (val result = repository.verifySecurityAnswer(answer)) {
+class VerifyRecoveryAnswerUseCase(
+    private val repository: PinAuthRepository,
+) {
+    suspend operator fun invoke(
+        answer: String,
+        currentAttempts: Int,
+    ): RecoveryAnswerResult =
+        when (val result = repository.verifySecurityAnswer(answer)) {
             is Result.Success -> {
                 if (result.data) {
                     RecoveryAnswerResult.Correct
@@ -63,10 +84,11 @@ class VerifyRecoveryAnswerUseCase(private val repository: PinAuthRepository) {
             }
             is Result.Error -> RecoveryAnswerResult.Error(result.message)
         }
-    }
 }
 
-class ResetPinUseCase(private val repository: PinAuthRepository) {
+class ResetPinUseCase(
+    private val repository: PinAuthRepository,
+) {
     suspend operator fun invoke(newPin: String): Result<Unit> {
         val result = repository.setPin(newPin)
         if (result is Result.Success) repository.resetFailedAttempts()
@@ -75,7 +97,9 @@ class ResetPinUseCase(private val repository: PinAuthRepository) {
 }
 
 /** Turns off PIN lock entirely, clearing both the PIN and any enrolled biometric. */
-class DisablePinUseCase(private val repository: PinAuthRepository) {
+class DisablePinUseCase(
+    private val repository: PinAuthRepository,
+) {
     suspend operator fun invoke(): Result<Unit> {
         val result = repository.clearPin()
         if (result is Result.Error) return result

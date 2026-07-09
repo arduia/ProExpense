@@ -43,12 +43,13 @@ fun ProfileNameField(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.searchField)
-            .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.searchField)
+                .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.bodyMedium.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
@@ -89,12 +90,13 @@ fun PasswordField(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.searchField)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.searchField)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.searchField)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.searchField)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.bodyMedium.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
@@ -140,13 +142,14 @@ fun SearchField(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.searchField)
-            .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
-            .background(colors.surface)
-            .heightIn(max = dimens.iconInline + dimens.space24)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.searchField)
+                .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
+                .background(colors.surface)
+                .heightIn(max = dimens.iconInline + dimens.space24)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.searchField.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
@@ -197,17 +200,17 @@ fun SearchFieldShell(
     val shellShape = ProExpenseTheme.shapes.searchField
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shellShape)
-            .border(BorderStroke(1.dp, colors.line), shellShape)
-            .background(colors.surface)
-            .proClickable(
-                onClick = onClick,
-                shape = shellShape,
-                interactionSource = interactionSource,
-            )
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shellShape)
+                .border(BorderStroke(1.dp, colors.line), shellShape)
+                .background(colors.surface)
+                .proClickable(
+                    onClick = onClick,
+                    shape = shellShape,
+                    interactionSource = interactionSource,
+                ).padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space10),
     ) {
@@ -256,13 +259,14 @@ fun FilterChip(
         text = label,
         style = textStyle,
         color = contentColor,
-        modifier = modifier
-            .proPressScale(interactionSource)
-            .clip(chipShape)
-            .background(background)
-            .border(BorderStroke(1.dp, borderColor), chipShape)
-            .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
-            .padding(horizontal = dimens.space12, vertical = dimens.space6),
+        modifier =
+            modifier
+                .proPressScale(interactionSource)
+                .clip(chipShape)
+                .background(background)
+                .border(BorderStroke(1.dp, borderColor), chipShape)
+                .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
+                .padding(horizontal = dimens.space12, vertical = dimens.space6),
     )
 }
 

@@ -29,9 +29,10 @@ fun EmptyStateIllustration(modifier: Modifier = Modifier) {
     val dimens = ProExpenseTheme.dimensions
 
     Canvas(
-        modifier = modifier
-            .width(dimens.emptyIllustrationWidth)
-            .height(dimens.emptyIllustrationHeight),
+        modifier =
+            modifier
+                .width(dimens.emptyIllustrationWidth)
+                .height(dimens.emptyIllustrationHeight),
     ) {
         // Artwork coordinates are authored in dp against emptyIllustration{Width,Height};
         // scale by density (px per dp) so the wallet fills the box on every screen, not just mdpi.
@@ -39,7 +40,10 @@ fun EmptyStateIllustration(modifier: Modifier = Modifier) {
         val sy = size.height / dimens.emptyIllustrationHeight.value
         val s = sx
 
-        fun pt(x: Float, y: Float) = Offset(x * sx, y * sy)
+        fun pt(
+            x: Float,
+            y: Float,
+        ) = Offset(x * sx, y * sy)
 
         drawOval(
             color = colors.primaryTint.copy(alpha = 0.55f),
@@ -47,18 +51,19 @@ fun EmptyStateIllustration(modifier: Modifier = Modifier) {
             size = Size(120f * sx, 18f * sy),
         )
 
-        val walletPath = Path().apply {
-            moveTo(42f * sx, 48f * sy)
-            lineTo(138f * sx, 48f * sy)
-            quadraticTo(148f * sx, 48f * sy, 148f * sx, 58f * sy)
-            lineTo(148f * sx, 98f * sy)
-            quadraticTo(148f * sx, 108f * sy, 138f * sx, 108f * sy)
-            lineTo(42f * sx, 108f * sy)
-            quadraticTo(32f * sx, 108f * sy, 32f * sx, 98f * sy)
-            lineTo(32f * sx, 58f * sy)
-            quadraticTo(32f * sx, 48f * sy, 42f * sx, 48f * sy)
-            close()
-        }
+        val walletPath =
+            Path().apply {
+                moveTo(42f * sx, 48f * sy)
+                lineTo(138f * sx, 48f * sy)
+                quadraticTo(148f * sx, 48f * sy, 148f * sx, 58f * sy)
+                lineTo(148f * sx, 98f * sy)
+                quadraticTo(148f * sx, 108f * sy, 138f * sx, 108f * sy)
+                lineTo(42f * sx, 108f * sy)
+                quadraticTo(32f * sx, 108f * sy, 32f * sx, 98f * sy)
+                lineTo(32f * sx, 58f * sy)
+                quadraticTo(32f * sx, 48f * sy, 42f * sx, 48f * sy)
+                close()
+            }
         drawPath(walletPath, color = colors.surface)
         drawPath(walletPath, color = colors.onSurface, style = Stroke(width = 2.2f * s, cap = StrokeCap.Round))
 
@@ -129,11 +134,12 @@ fun EmptyStateContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val titleStyle = typography.bodySemiBold.copy(
-        fontSize = typography.sectionHead.fontSize,
-        lineHeight = typography.sectionHead.lineHeight,
-        letterSpacing = typography.sectionHead.letterSpacing,
-    )
+    val titleStyle =
+        typography.bodySemiBold.copy(
+            fontSize = typography.sectionHead.fontSize,
+            lineHeight = typography.sectionHead.lineHeight,
+            letterSpacing = typography.sectionHead.letterSpacing,
+        )
 
     Column(
         modifier = modifier.padding(horizontal = dimens.space8),

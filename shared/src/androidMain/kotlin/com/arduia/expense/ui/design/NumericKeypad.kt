@@ -24,12 +24,13 @@ import androidx.compose.ui.unit.dp
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-private val keypadKeys = listOf(
-    listOf("1", "2", "3"),
-    listOf("4", "5", "6"),
-    listOf("7", "8", "9"),
-    listOf(".", "0", "backspace"),
-)
+private val keypadKeys =
+    listOf(
+        listOf("1", "2", "3"),
+        listOf("4", "5", "6"),
+        listOf("7", "8", "9"),
+        listOf(".", "0", "backspace"),
+    )
 
 @Composable
 fun NumericKeypad(
@@ -50,11 +51,12 @@ fun NumericKeypad(
     val actionAlpha = if (actionsEnabled) 1f else motion.keypadDisabledOpacity
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            // Vertical breathing room only — horizontal must stay flush with the screen's
-            // content padding so the keys/actions align with the amount and category chips above.
-            .padding(vertical = dimens.space16),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                // Vertical breathing room only — horizontal must stay flush with the screen's
+                // content padding so the keys/actions align with the amount and category chips above.
+                .padding(vertical = dimens.space16),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         keypadKeys.forEach { row ->
@@ -74,10 +76,11 @@ fun NumericKeypad(
             }
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8)
-                .alpha(actionAlpha),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8)
+                    .alpha(actionAlpha),
             horizontalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
             if (showSaveAction) {
@@ -116,18 +119,18 @@ private fun KeypadKey(
     val isBackspace = label == "backspace"
 
     Box(
-        modifier = modifier
-            .aspectRatio(1.45f)
-            .proPressScale(interactionSource)
-            .clip(keyShape)
-            .border(BorderStroke(1.dp, colors.line), keyShape)
-            .proPressBackground(interactionSource, keyShape)
-            .proNoRippleClickable(
-                onClick = onClick,
-                interactionSource = interactionSource,
-                role = Role.Button,
-            )
-            .defaultMinSize(minHeight = dimens.touchTargetMin),
+        modifier =
+            modifier
+                .aspectRatio(1.45f)
+                .proPressScale(interactionSource)
+                .clip(keyShape)
+                .border(BorderStroke(1.dp, colors.line), keyShape)
+                .proPressBackground(interactionSource, keyShape)
+                .proNoRippleClickable(
+                    onClick = onClick,
+                    interactionSource = interactionSource,
+                    role = Role.Button,
+                ).defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,
     ) {
         if (isBackspace) {

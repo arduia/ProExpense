@@ -15,6 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostCustomSplitCard
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostNoteField
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPeopleCard
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
+import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
@@ -22,16 +32,6 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostCustomSplitCard
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostNoteField
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPeopleCard
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
-import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.SharedSplitMode
-import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
-import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
-import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
-import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -60,22 +60,25 @@ fun SharedCostsInputScreen(
     val isZero = !canProceed
     val showDetails = state.amountConfirmed && canProceed
     val participants = state.participants.map { it.name to it.shareLabel }
-    val perPersonAmount = participants.firstOrNull()?.second
-        ?: SharedCostSplitLogic.formatCents(0, homeCurrencySymbol)
+    val perPersonAmount =
+        participants.firstOrNull()?.second
+            ?: SharedCostSplitLogic.formatCents(0, homeCurrencySymbol)
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = dimens.screenPadding)
-            .padding(bottom = dimens.space18),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = dimens.screenPadding)
+                .padding(bottom = dimens.space18),
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
             ProTopBar(
                 title = stringResource(R.string.shared_costs_title),
@@ -90,9 +93,10 @@ fun SharedCostsInputScreen(
                 showZeroValidation = state.showZeroValidation,
                 zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
                 eyebrowText = stringResource(R.string.shared_total_bill),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
             )
 
             if (showDetails) {
@@ -111,10 +115,11 @@ fun SharedCostsInputScreen(
                     )
 
                     SegmentedToggle(
-                        options = listOf(
-                            stringResource(R.string.shared_split_even),
-                            stringResource(R.string.shared_split_custom),
-                        ),
+                        options =
+                            listOf(
+                                stringResource(R.string.shared_split_even),
+                                stringResource(R.string.shared_split_custom),
+                            ),
                         selectedIndex = if (state.mode == SharedSplitMode.Equal) 0 else 1,
                         onSelected = { index ->
                             onModeSelected(
@@ -153,9 +158,10 @@ fun SharedCostsInputScreen(
                 onNext = onConfirmAmount,
                 nextLabel = stringResource(R.string.shared_save_split),
                 showSaveAction = false,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space16),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space16),
             )
         } else {
             ProButton(

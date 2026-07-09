@@ -116,672 +116,685 @@ data class UiCatalogSection(
 )
 
 /** Flat lookup across every section. */
-fun UiCatalogSection.entryOrNull(entryId: String): UiCatalogEntry? =
-    entries.firstOrNull { it.id == entryId }
+fun UiCatalogSection.entryOrNull(entryId: String): UiCatalogEntry? = entries.firstOrNull { it.id == entryId }
 
 /**
  * Every screen and edge-case state from the design spec / PRD, wired to the same public content
  * composables + preview fixtures the Roborazzi suite uses — so this catalog stays in lock-step with
  * what ships. Pure data: the @Composable lambdas are rendered lazily when a state is opened.
  */
-fun uiCatalogSections(): List<UiCatalogSection> = listOf(
-    UiCatalogSection(
-        id = "onboarding",
-        title = "Onboarding & setup",
-        specRef = "01 · 02 · 02P",
-        entries = listOf(
-            UiCatalogEntry("splash", "Splash") { SplashScreen() },
-            UiCatalogEntry("onboarding_welcome", "Onboarding · welcome") {
-                OnboardingScreenContent(onGetStarted = {}, onSkip = {}, initialPage = 0)
-            },
-            UiCatalogEntry("onboarding_quick_log", "Onboarding · quick log") {
-                OnboardingScreenContent(onGetStarted = {}, onSkip = {}, initialPage = 1)
-            },
-            UiCatalogEntry("onboarding_journal", "Onboarding · journal") {
-                OnboardingScreenContent(onGetStarted = {}, onSkip = {}, initialPage = 4)
-            },
-            UiCatalogEntry("profile_merged", "Profile · setup") {
-                ProfileSetupScreenContent(
-                    state = ProfileSetupState(name = "Maya"),
-                    onNameChange = {},
-                    onStartTracking = {},
-                    onSkip = {},
-                    onCurrencySelected = {},
-                    onOpenCurrencySheet = {},
-                    onCloseCurrencySheet = {},
-                    onCurrencySearchChange = {},
-                )
-            },
-            UiCatalogEntry("profile_currency_sheet", "Profile · currency sheet", edge = true) {
-                ProfileSetupScreenContent(
-                    state = ProfileSetupState(
-                        name = "Maya",
-                        showCurrencySheet = true,
-                    ),
-                    onNameChange = {},
-                    onStartTracking = {},
-                    onSkip = {},
-                    onCurrencySelected = {},
-                    onOpenCurrencySheet = {},
-                    onCloseCurrencySheet = {},
-                    onCurrencySearchChange = {},
-                )
-            },
+fun uiCatalogSections(): List<UiCatalogSection> =
+    listOf(
+        UiCatalogSection(
+            id = "onboarding",
+            title = "Onboarding & setup",
+            specRef = "01 · 02 · 02P",
+            entries =
+                listOf(
+                    UiCatalogEntry("splash", "Splash") { SplashScreen() },
+                    UiCatalogEntry("onboarding_welcome", "Onboarding · welcome") {
+                        OnboardingScreenContent(onGetStarted = {}, onSkip = {}, initialPage = 0)
+                    },
+                    UiCatalogEntry("onboarding_quick_log", "Onboarding · quick log") {
+                        OnboardingScreenContent(onGetStarted = {}, onSkip = {}, initialPage = 1)
+                    },
+                    UiCatalogEntry("onboarding_journal", "Onboarding · journal") {
+                        OnboardingScreenContent(onGetStarted = {}, onSkip = {}, initialPage = 4)
+                    },
+                    UiCatalogEntry("profile_merged", "Profile · setup") {
+                        ProfileSetupScreenContent(
+                            state = ProfileSetupState(name = "Maya"),
+                            onNameChange = {},
+                            onStartTracking = {},
+                            onSkip = {},
+                            onCurrencySelected = {},
+                            onOpenCurrencySheet = {},
+                            onCloseCurrencySheet = {},
+                            onCurrencySearchChange = {},
+                        )
+                    },
+                    UiCatalogEntry("profile_currency_sheet", "Profile · currency sheet", edge = true) {
+                        ProfileSetupScreenContent(
+                            state =
+                                ProfileSetupState(
+                                    name = "Maya",
+                                    showCurrencySheet = true,
+                                ),
+                            onNameChange = {},
+                            onStartTracking = {},
+                            onSkip = {},
+                            onCurrencySelected = {},
+                            onOpenCurrencySheet = {},
+                            onCloseCurrencySheet = {},
+                            onCurrencySearchChange = {},
+                        )
+                    },
+                ),
         ),
-    ),
-    UiCatalogSection(
-        id = "home",
-        title = "Home",
-        specRef = "03",
-        entries = listOf(
-            UiCatalogEntry("home_casual", "Home · casual") {
-                HomeShell(previewHomeCasual, HomeNavTab.Home, {}, {})
-            },
-            UiCatalogEntry("home_budget", "Home · budget") {
-                HomeShell(previewHomeBudget, HomeNavTab.Home, {}, {})
-            },
-            UiCatalogEntry("home_event", "Home · event") {
-                HomeShell(previewHomeEvent, HomeNavTab.Home, {}, {})
-            },
-            UiCatalogEntry("home_empty", "Home · empty", edge = true) {
-                HomeShell(previewHomeEmpty, HomeNavTab.Home, {}, {})
-            },
-            UiCatalogEntry("home_pin_banner", "Home · PIN banner", edge = true) {
-                HomeShell(
-                    state = previewHomeCasual,
-                    selectedTab = HomeNavTab.Home,
-                    onTabSelected = {},
-                    onAddClick = {},
-                    showPinSetupBanner = true,
-                )
-            },
-            UiCatalogEntry("home_content_only", "Home · content only") {
-                HomeScreenContent(
-                    state = previewHomeCasual,
-                    onReportsClick = {},
-                    onDebtClick = {},
-                    onSplitClick = {},
-                    onEventsClick = {},
-                )
-            },
+        UiCatalogSection(
+            id = "home",
+            title = "Home",
+            specRef = "03",
+            entries =
+                listOf(
+                    UiCatalogEntry("home_casual", "Home · casual") {
+                        HomeShell(previewHomeCasual, HomeNavTab.Home, {}, {})
+                    },
+                    UiCatalogEntry("home_budget", "Home · budget") {
+                        HomeShell(previewHomeBudget, HomeNavTab.Home, {}, {})
+                    },
+                    UiCatalogEntry("home_event", "Home · event") {
+                        HomeShell(previewHomeEvent, HomeNavTab.Home, {}, {})
+                    },
+                    UiCatalogEntry("home_empty", "Home · empty", edge = true) {
+                        HomeShell(previewHomeEmpty, HomeNavTab.Home, {}, {})
+                    },
+                    UiCatalogEntry("home_pin_banner", "Home · PIN banner", edge = true) {
+                        HomeShell(
+                            state = previewHomeCasual,
+                            selectedTab = HomeNavTab.Home,
+                            onTabSelected = {},
+                            onAddClick = {},
+                            showPinSetupBanner = true,
+                        )
+                    },
+                    UiCatalogEntry("home_content_only", "Home · content only") {
+                        HomeScreenContent(
+                            state = previewHomeCasual,
+                            onReportsClick = {},
+                            onDebtClick = {},
+                            onSplitClick = {},
+                            onEventsClick = {},
+                        )
+                    },
+                ),
         ),
-    ),
-    UiCatalogSection(
-        id = "add_expense",
-        title = "Add expense",
-        specRef = "04",
-        entries = listOf(
-            UiCatalogEntry("add_amount", "Amount") {
-                AddExpenseAmountScreen(
-                    state = previewExpenseAmountTyped,
-                    onClose = {},
-                    onKey = {},
-                    onBackspace = {},
-                    onCategorySelected = {},
-                    onSave = {},
-                    onNext = {},
-                )
-            },
-            UiCatalogEntry("add_zero", "Amount · zero validation", edge = true) {
-                AddExpenseAmountScreen(
-                    state = previewExpenseAmountZeroValidation,
-                    onClose = {},
-                    onKey = {},
-                    onBackspace = {},
-                    onCategorySelected = {},
-                    onSave = {},
-                    onNext = {},
-                )
-            },
-            UiCatalogEntry("add_details", "Details") {
-                AddExpenseDetailsScreen(
-                    state = previewExpenseDetails,
-                    onBackToAmount = {},
-                    onCategorySelected = {},
-                    onNoteChange = {},
-                    onDateClick = {},
-                    onOpenTagSheet = {},
-                    onCloseTagSheet = {},
-                    onTagSelected = {},
-                    onClearTag = {},
-                    onSave = {},
-                )
-            },
-            UiCatalogEntry("add_draft", "Discard draft prompt", edge = true) {
-                QuickLogFlow(onDismiss = {}, showDraftPrompt = true, draftAmountLabel = "$12.50")
-            },
-            UiCatalogEntry("add_note", "Details · note limit", edge = true) {
-                AddExpenseDetailsScreen(
-                    state = previewExpenseDetailsNoteLimit,
-                    onBackToAmount = {},
-                    onCategorySelected = {},
-                    onNoteChange = {},
-                    onDateClick = {},
-                    onOpenTagSheet = {},
-                    onCloseTagSheet = {},
-                    onTagSelected = {},
-                    onClearTag = {},
-                    onSave = {},
-                )
-            },
-            UiCatalogEntry("add_tag", "Details · tag sheet", edge = true) {
-                AddExpenseDetailsScreen(
-                    state = previewExpenseDetails.copy(showTagSheet = true),
-                    onBackToAmount = {},
-                    onCategorySelected = {},
-                    onNoteChange = {},
-                    onDateClick = {},
-                    onOpenTagSheet = {},
-                    onCloseTagSheet = {},
-                    onTagSelected = {},
-                    onClearTag = {},
-                    onSave = {},
-                )
-            },
-        ),
-    ),
-    UiCatalogSection(
-        id = "journal",
-        title = "Journal",
-        specRef = "05 · 06",
-        entries = listOf(
-            UiCatalogEntry("journal_list", "List") {
-                JournalListScreen(
-                    state = previewJournalList,
-                    onQueryChange = {},
-                    onFilterSelected = {},
-                    onRowClick = {},
-                    onRowLongPress = {},
-                    selectedTab = HomeNavTab.Journal,
-                    onTabSelected = {},
-                    onAddClick = {},
-                )
-            },
-            UiCatalogEntry("journal_search_empty", "Search · empty", edge = true) {
-                JournalListScreen(
-                    state = previewJournalSearchEmpty,
-                    onQueryChange = {},
-                    onFilterSelected = {},
-                    onRowClick = {},
-                    onRowLongPress = {},
-                    selectedTab = HomeNavTab.Journal,
-                    onTabSelected = {},
-                    onAddClick = {},
-                )
-            },
-            UiCatalogEntry("journal_detail", "Detail") {
-                JournalDetailScreen(
-                    state = previewJournalDetail,
-                    onBack = {},
-                    onActions = {},
-                    onLinkedTagClick = {},
-                    onEdit = {},
-                    onDelete = {},
-                )
-            },
-            UiCatalogEntry("journal_quicknote", "Quick-note sheet", edge = true) {
-                Box(Modifier.fillMaxSize()) {
-                    JournalListScreen(
-                        state = previewJournalList,
-                        onQueryChange = {},
-                        onFilterSelected = {},
-                        onRowClick = {},
-                        onRowLongPress = {},
-                        selectedTab = HomeNavTab.Journal,
-                        onTabSelected = {},
-                        onAddClick = {},
-                    )
-                    ProBottomSheetHost(
-                        visible = true,
-                        title = stringResource(HistoryR.string.journal_quick_note_title),
-                        onClose = {},
-                    ) {
-                        JournalQuickNoteSheetContent(
-                            state = previewJournalQuickNote,
+        UiCatalogSection(
+            id = "add_expense",
+            title = "Add expense",
+            specRef = "04",
+            entries =
+                listOf(
+                    UiCatalogEntry("add_amount", "Amount") {
+                        AddExpenseAmountScreen(
+                            state = previewExpenseAmountTyped,
+                            onClose = {},
+                            onKey = {},
+                            onBackspace = {},
+                            onCategorySelected = {},
+                            onSave = {},
+                            onNext = {},
+                        )
+                    },
+                    UiCatalogEntry("add_zero", "Amount · zero validation", edge = true) {
+                        AddExpenseAmountScreen(
+                            state = previewExpenseAmountZeroValidation,
+                            onClose = {},
+                            onKey = {},
+                            onBackspace = {},
+                            onCategorySelected = {},
+                            onSave = {},
+                            onNext = {},
+                        )
+                    },
+                    UiCatalogEntry("add_details", "Details") {
+                        AddExpenseDetailsScreen(
+                            state = previewExpenseDetails,
+                            onBackToAmount = {},
+                            onCategorySelected = {},
                             onNoteChange = {},
+                            onDateClick = {},
+                            onOpenTagSheet = {},
+                            onCloseTagSheet = {},
+                            onTagSelected = {},
+                            onClearTag = {},
                             onSave = {},
                         )
-                    }
-                }
-            },
-            UiCatalogEntry("journal_actions", "Actions sheet") {
-                Box(Modifier.fillMaxSize()) {
-                    JournalDetailScreen(
-                        state = previewJournalDetail,
-                        onBack = {},
-                        onActions = {},
-                        onLinkedTagClick = {},
-                        onEdit = {},
-                        onDelete = {},
-                    )
-                    ProBottomSheetHost(visible = true, title = null, onClose = {}) {
-                        JournalActionsSheetContent(onEdit = {}, onDelete = {}, onCancel = {})
-                    }
-                }
-            },
-        ),
-    ),
-    UiCatalogSection(
-        id = "event_budget",
-        title = "Event budget",
-        specRef = "07 · 08",
-        entries = listOf(
-            UiCatalogEntry("event_empty", "List · empty", edge = true) {
-                EventBudgetListScreen(
-                    events = emptyList(),
-                    onCreateEvent = {},
-                    onEventClick = {},
-                    selectedTab = HomeNavTab.Budget,
-                    onTabSelected = {},
-                    onAddClick = {},
-                )
-            },
-            UiCatalogEntry("event_list", "List") {
-                EventBudgetListScreen(
-                    events = previewEventList,
-                    onCreateEvent = {},
-                    onEventClick = {},
-                    selectedTab = HomeNavTab.Budget,
-                    onTabSelected = {},
-                    onAddClick = {},
-                )
-            },
-            UiCatalogEntry("event_create", "Create sheet") {
-                Box(Modifier.fillMaxSize()) {
-                    EventBudgetListScreen(
-                        events = previewEventList,
-                        onCreateEvent = {},
-                        onEventClick = {},
-                        selectedTab = HomeNavTab.Budget,
-                        onTabSelected = {},
-                        onAddClick = {},
-                    )
-                    ProBottomSheetHost(
-                        visible = true,
-                        title = stringResource(EventR.string.event_create_title),
-                        onClose = {},
-                    ) {
-                        EventCreateSheetContent(
-                            form = previewEventCreateValid,
-                            onNameChange = {},
-                            onBudgetChange = {},
-                            onPickStart = {},
-                            onPickEnd = {},
-                            onSave = {},
-                        )
-                    }
-                }
-            },
-            UiCatalogEntry("event_errors", "Create · errors", edge = true) {
-                Box(Modifier.fillMaxSize()) {
-                    EventBudgetListScreen(
-                        events = previewEventList,
-                        onCreateEvent = {},
-                        onEventClick = {},
-                        selectedTab = HomeNavTab.Budget,
-                        onTabSelected = {},
-                        onAddClick = {},
-                    )
-                    ProBottomSheetHost(
-                        visible = true,
-                        title = stringResource(EventR.string.event_create_title),
-                        onClose = {},
-                    ) {
-                        EventCreateSheetContent(
-                            form = previewEventCreateErrors,
-                            onNameChange = {},
-                            onBudgetChange = {},
-                            onPickStart = {},
-                            onPickEnd = {},
-                            onSave = {},
-                        )
-                    }
-                }
-            },
-            UiCatalogEntry("event_detail", "Detail") {
-                EventDetailScreen(
-                    state = previewEventDetail,
-                    onBack = {},
-                    onMore = {},
-                    onAddTagged = {},
-                    onExpenseClick = {},
-                )
-            },
-            UiCatalogEntry("event_warn", "Detail · over budget", edge = true) {
-                EventDetailScreen(
-                    state = previewEventDetailWarn,
-                    onBack = {},
-                    onMore = {},
-                    onAddTagged = {},
-                    onExpenseClick = {},
-                )
-            },
-            UiCatalogEntry("event_closed", "Detail · closed", edge = true) {
-                EventDetailScreen(
-                    state = previewEventDetailClosed,
-                    onBack = {},
-                    onMore = {},
-                    onAddTagged = {},
-                    onExpenseClick = {},
-                )
-            },
-        ),
-    ),
-    UiCatalogSection(
-        id = "debt",
-        title = "Debt tracker",
-        specRef = "09",
-        entries = listOf(
-            UiCatalogEntry("debt_lent", "I lent") {
-                DebtListScreen(previewDebtLent, {}, {}, {}, {})
-            },
-            UiCatalogEntry("debt_owe", "I owe") {
-                DebtListScreen(previewDebtOwe, {}, {}, {}, {})
-            },
-            UiCatalogEntry("debt_add", "Add record sheet") {
-                Box(Modifier.fillMaxSize()) {
-                    DebtListScreen(previewDebtLent, {}, {}, {}, {})
-                    ProBottomSheetHost(
-                        visible = true,
-                        title = stringResource(DebtR.string.debt_new_record),
-                        onClose = {},
-                    ) {
-                        DebtAddSheetContent(
-                            form = previewDebtAddLent,
-                            onSideSelected = {},
-                            onPersonChange = {},
-                            onAmountChange = {},
-                            onPickDate = {},
-                            onPickDue = {},
+                    },
+                    UiCatalogEntry("add_draft", "Discard draft prompt", edge = true) {
+                        QuickLogFlow(onDismiss = {}, showDraftPrompt = true, draftAmountLabel = "$12.50")
+                    },
+                    UiCatalogEntry("add_note", "Details · note limit", edge = true) {
+                        AddExpenseDetailsScreen(
+                            state = previewExpenseDetailsNoteLimit,
+                            onBackToAmount = {},
+                            onCategorySelected = {},
                             onNoteChange = {},
+                            onDateClick = {},
+                            onOpenTagSheet = {},
+                            onCloseTagSheet = {},
+                            onTagSelected = {},
+                            onClearTag = {},
                             onSave = {},
                         )
-                    }
-                }
-            },
-            UiCatalogEntry("debt_lent_detail", "Detail · lent") {
-                DebtDetailScreen(previewDebtLentDetail, {}, {}, {}, {})
-            },
-            UiCatalogEntry("debt_owe_detail", "Detail · owe") {
-                DebtDetailScreen(previewDebtOweDetail, {}, {}, {}, {})
-            },
-            UiCatalogEntry("debt_conflict", "Opposite-side warning", edge = true) {
-                Box(Modifier.fillMaxSize()) {
-                    DebtListScreen(previewDebtLent, {}, {}, {}, {})
-                    ProAlertDialog(
-                        visible = true,
-                        icon = ProIconGlyph.User,
-                        iconTint = ProExpenseTheme.colors.warning,
-                        iconBackground = ProExpenseTheme.colors.warningTint,
-                        title = stringResource(DebtR.string.debt_conflict_title, "John"),
-                        body = AnnotatedString(
-                            stringResource(
-                                DebtR.string.debt_conflict_body,
-                                "John",
-                                "\"" + stringResource(DebtR.string.debt_tab_owe) + "\"",
-                                "\"" + stringResource(DebtR.string.debt_tab_lent) + "\"",
-                            ),
-                        ),
-                        confirmLabel = stringResource(DebtR.string.debt_continue),
-                        onConfirm = {},
-                        dismissLabel = stringResource(DebtR.string.debt_cancel),
-                        onDismiss = {},
-                        confirmVariant = ProButtonVariant.Warning,
-                    )
-                }
-            },
-            UiCatalogEntry("debt_settled", "Delete settled confirm", edge = true) {
-                Box(Modifier.fillMaxSize()) {
-                    DebtListScreen(previewDebtSettled, {}, {}, {}, {})
-                    ProAlertDialog(
-                        visible = true,
-                        icon = ProIconGlyph.Close,
-                        iconTint = ProExpenseTheme.colors.danger,
-                        iconBackground = ProExpenseTheme.colors.dangerTint,
-                        title = stringResource(DebtR.string.debt_delete_title),
-                        body = AnnotatedString(stringResource(DebtR.string.debt_delete_body, "Aiko")),
-                        confirmLabel = stringResource(DebtR.string.debt_delete),
-                        onConfirm = {},
-                        dismissLabel = stringResource(DebtR.string.debt_cancel),
-                        onDismiss = {},
-                        confirmVariant = ProButtonVariant.Danger,
-                    )
-                }
-            },
-        ),
-    ),
-    UiCatalogSection(
-        id = "shared_costs",
-        title = "Shared costs",
-        specRef = "10",
-        entries = listOf(
-            UiCatalogEntry("shared_input", "Input") {
-                SharedCostsInputScreen(
-                    state = previewSharedInputEqual,
-                    onBack = {},
-                    onKey = {},
-                    onBackspace = {},
-                    onNoteChange = {},
-                    onDecrementPeople = {},
-                    onIncrementPeople = {},
-                    onModeSelected = {},
-                    onShareChange = { _, _ -> },
-                    onContinue = {},
-                    showKeypad = false,
-                )
-            },
-            UiCatalogEntry("shared_summary", "Summary") {
-                SharedCostsSummaryScreen(
-                    state = previewSharedSummary,
-                    onBack = {},
-                    onSwitchToCustom = {},
-                    onSave = {},
-                )
-            },
-            UiCatalogEntry("shared_history", "History") {
-                SharedCostsHistoryScreen(
-                    items = previewSharedHistoryItems,
-                    onNewSplit = {},
-                    onItemClick = {},
-                    onBack = {},
-                )
-            },
-            UiCatalogEntry("shared_zero", "Input · zero validation", edge = true) {
-                SharedCostsInputScreen(
-                    state = previewSharedZeroValidation,
-                    onBack = {},
-                    onKey = {},
-                    onBackspace = {},
-                    onNoteChange = {},
-                    onDecrementPeople = {},
-                    onIncrementPeople = {},
-                    onModeSelected = {},
-                    onShareChange = { _, _ -> },
-                    onContinue = {},
-                    showKeypad = false,
-                )
-            },
-            UiCatalogEntry("shared_limits", "Input · custom limits", edge = true) {
-                SharedCostsInputScreen(
-                    state = previewSharedCustomLimits,
-                    onBack = {},
-                    onKey = {},
-                    onBackspace = {},
-                    onNoteChange = {},
-                    onDecrementPeople = {},
-                    onIncrementPeople = {},
-                    onModeSelected = {},
-                    onShareChange = { _, _ -> },
-                    onContinue = {},
-                    showKeypad = false,
-                )
-            },
-        ),
-    ),
-    UiCatalogSection(
-        id = "reports",
-        title = "Reports",
-        specRef = "12",
-        entries = listOf(
-            UiCatalogEntry("reports", "Reports") { ReportsScreen(previewReports, {}, {}, {}) },
-            UiCatalogEntry("reports_unc", "Uncategorized", edge = true) {
-                ReportsScreen(previewReportsUncategorized, {}, {}, {})
-            },
-            UiCatalogEntry("reports_empty", "Empty", edge = true) {
-                ReportsScreen(previewReportsEmpty, {}, {}, {})
-            },
-        ),
-    ),
-    UiCatalogSection(
-        id = "more",
-        title = "More & settings",
-        specRef = "13",
-        entries = listOf(
-            UiCatalogEntry("more_hub", "Hub") {
-                MoreHubScreen(
-                    state = previewMoreHub,
-                    onFeatureClick = {},
-                    onSettingClick = {},
-                    onSettingToggle = { _, _ -> },
-                    selectedTab = HomeNavTab.More,
-                    onTabSelected = {},
-                    onAddClick = {},
-                )
-            },
-            UiCatalogEntry("more_currency", "Currency") {
-                MoreCurrencyScreen(
-                    items = previewMoreCurrencies,
-                    selectedCode = "USD",
-                    onSave = {},
-                    onBack = {},
-                )
-            },
-            UiCatalogEntry("more_export", "Data export") {
-                MoreExportScreen(files = previewMoreExportFiles, onExport = {}, onBack = {})
-            },
-            UiCatalogEntry("more_clear", "Clear data", edge = true) {
-                MoreClearScreen(
-                    options = previewMoreClearOptions,
-                    checkedIds = setOf("expenses"),
-                    onToggle = {},
-                    onClear = {},
-                    onBack = {},
-                )
-            },
-        ),
-    ),
-    UiCatalogSection(
-        id = "categories",
-        title = "Categories",
-        specRef = "11",
-        entries = listOf(
-            UiCatalogEntry("categories", "List") {
-                CategoryListScreen(previewCategoryList, {}, {})
-            },
-            UiCatalogEntry("cat_dup", "New · duplicate", edge = true) {
-                Box(Modifier.fillMaxSize()) {
-                    CategoryListScreen(previewCategoryList, {}, {})
-                    ProBottomSheetHost(
-                        visible = true,
-                        title = stringResource(CategoriesR.string.categories_new_title),
-                        onClose = {},
-                    ) {
-                        CategoryNewSheetContent(
-                            form = previewCategoryNewDuplicate,
-                            onNameChange = {},
-                            onIconSelected = {},
-                            onAdd = {},
+                    },
+                    UiCatalogEntry("add_tag", "Details · tag sheet", edge = true) {
+                        AddExpenseDetailsScreen(
+                            state = previewExpenseDetails.copy(showTagSheet = true),
+                            onBackToAmount = {},
+                            onCategorySelected = {},
+                            onNoteChange = {},
+                            onDateClick = {},
+                            onOpenTagSheet = {},
+                            onCloseTagSheet = {},
+                            onTagSelected = {},
+                            onClearTag = {},
+                            onSave = {},
                         )
-                    }
-                }
-            },
-            UiCatalogEntry("cat_actions", "Actions sheet") {
-                Box(Modifier.fillMaxSize()) {
-                    CategoryListScreen(previewCategoryList, {}, {})
-                    ProBottomSheetHost(visible = true, title = null, onClose = {}) {
-                        CategoryActionsSheetContent(
-                            row = CategoryRowUi("coffee", "Coffee runs"),
+                    },
+                ),
+        ),
+        UiCatalogSection(
+            id = "journal",
+            title = "Journal",
+            specRef = "05 · 06",
+            entries =
+                listOf(
+                    UiCatalogEntry("journal_list", "List") {
+                        JournalListScreen(
+                            state = previewJournalList,
+                            onQueryChange = {},
+                            onFilterSelected = {},
+                            onRowClick = {},
+                            onRowLongPress = {},
+                            selectedTab = HomeNavTab.Journal,
+                            onTabSelected = {},
+                            onAddClick = {},
+                        )
+                    },
+                    UiCatalogEntry("journal_search_empty", "Search · empty", edge = true) {
+                        JournalListScreen(
+                            state = previewJournalSearchEmpty,
+                            onQueryChange = {},
+                            onFilterSelected = {},
+                            onRowClick = {},
+                            onRowLongPress = {},
+                            selectedTab = HomeNavTab.Journal,
+                            onTabSelected = {},
+                            onAddClick = {},
+                        )
+                    },
+                    UiCatalogEntry("journal_detail", "Detail") {
+                        JournalDetailScreen(
+                            state = previewJournalDetail,
+                            onBack = {},
+                            onActions = {},
+                            onLinkedTagClick = {},
                             onEdit = {},
                             onDelete = {},
-                            onCancel = {},
                         )
-                    }
-                }
-            },
-            UiCatalogEntry("cat_edit", "Edit sheet") {
-                Box(Modifier.fillMaxSize()) {
-                    CategoryListScreen(previewCategoryList, {}, {})
-                    ProBottomSheetHost(
-                        visible = true,
-                        title = stringResource(CategoriesR.string.categories_edit_title),
-                        onClose = {},
-                    ) {
-                        CategoryNewSheetContent(
-                            form = CategoryNewFormState(name = "Coffee runs", selectedIconId = "coffee"),
-                            onNameChange = {},
-                            onIconSelected = {},
-                            onAdd = {},
-                            confirmLabel = stringResource(CategoriesR.string.categories_save),
+                    },
+                    UiCatalogEntry("journal_quicknote", "Quick-note sheet", edge = true) {
+                        Box(Modifier.fillMaxSize()) {
+                            JournalListScreen(
+                                state = previewJournalList,
+                                onQueryChange = {},
+                                onFilterSelected = {},
+                                onRowClick = {},
+                                onRowLongPress = {},
+                                selectedTab = HomeNavTab.Journal,
+                                onTabSelected = {},
+                                onAddClick = {},
+                            )
+                            ProBottomSheetHost(
+                                visible = true,
+                                title = stringResource(HistoryR.string.journal_quick_note_title),
+                                onClose = {},
+                            ) {
+                                JournalQuickNoteSheetContent(
+                                    state = previewJournalQuickNote,
+                                    onNoteChange = {},
+                                    onSave = {},
+                                )
+                            }
+                        }
+                    },
+                    UiCatalogEntry("journal_actions", "Actions sheet") {
+                        Box(Modifier.fillMaxSize()) {
+                            JournalDetailScreen(
+                                state = previewJournalDetail,
+                                onBack = {},
+                                onActions = {},
+                                onLinkedTagClick = {},
+                                onEdit = {},
+                                onDelete = {},
+                            )
+                            ProBottomSheetHost(visible = true, title = null, onClose = {}) {
+                                JournalActionsSheetContent(onEdit = {}, onDelete = {}, onCancel = {})
+                            }
+                        }
+                    },
+                ),
+        ),
+        UiCatalogSection(
+            id = "event_budget",
+            title = "Event budget",
+            specRef = "07 · 08",
+            entries =
+                listOf(
+                    UiCatalogEntry("event_empty", "List · empty", edge = true) {
+                        EventBudgetListScreen(
+                            events = emptyList(),
+                            onCreateEvent = {},
+                            onEventClick = {},
+                            selectedTab = HomeNavTab.Budget,
+                            onTabSelected = {},
+                            onAddClick = {},
                         )
-                    }
-                }
-            },
+                    },
+                    UiCatalogEntry("event_list", "List") {
+                        EventBudgetListScreen(
+                            events = previewEventList,
+                            onCreateEvent = {},
+                            onEventClick = {},
+                            selectedTab = HomeNavTab.Budget,
+                            onTabSelected = {},
+                            onAddClick = {},
+                        )
+                    },
+                    UiCatalogEntry("event_create", "Create sheet") {
+                        Box(Modifier.fillMaxSize()) {
+                            EventBudgetListScreen(
+                                events = previewEventList,
+                                onCreateEvent = {},
+                                onEventClick = {},
+                                selectedTab = HomeNavTab.Budget,
+                                onTabSelected = {},
+                                onAddClick = {},
+                            )
+                            ProBottomSheetHost(
+                                visible = true,
+                                title = stringResource(EventR.string.event_create_title),
+                                onClose = {},
+                            ) {
+                                EventCreateSheetContent(
+                                    form = previewEventCreateValid,
+                                    onNameChange = {},
+                                    onBudgetChange = {},
+                                    onPickStart = {},
+                                    onPickEnd = {},
+                                    onSave = {},
+                                )
+                            }
+                        }
+                    },
+                    UiCatalogEntry("event_errors", "Create · errors", edge = true) {
+                        Box(Modifier.fillMaxSize()) {
+                            EventBudgetListScreen(
+                                events = previewEventList,
+                                onCreateEvent = {},
+                                onEventClick = {},
+                                selectedTab = HomeNavTab.Budget,
+                                onTabSelected = {},
+                                onAddClick = {},
+                            )
+                            ProBottomSheetHost(
+                                visible = true,
+                                title = stringResource(EventR.string.event_create_title),
+                                onClose = {},
+                            ) {
+                                EventCreateSheetContent(
+                                    form = previewEventCreateErrors,
+                                    onNameChange = {},
+                                    onBudgetChange = {},
+                                    onPickStart = {},
+                                    onPickEnd = {},
+                                    onSave = {},
+                                )
+                            }
+                        }
+                    },
+                    UiCatalogEntry("event_detail", "Detail") {
+                        EventDetailScreen(
+                            state = previewEventDetail,
+                            onBack = {},
+                            onMore = {},
+                            onAddTagged = {},
+                            onExpenseClick = {},
+                        )
+                    },
+                    UiCatalogEntry("event_warn", "Detail · over budget", edge = true) {
+                        EventDetailScreen(
+                            state = previewEventDetailWarn,
+                            onBack = {},
+                            onMore = {},
+                            onAddTagged = {},
+                            onExpenseClick = {},
+                        )
+                    },
+                    UiCatalogEntry("event_closed", "Detail · closed", edge = true) {
+                        EventDetailScreen(
+                            state = previewEventDetailClosed,
+                            onBack = {},
+                            onMore = {},
+                            onAddTagged = {},
+                            onExpenseClick = {},
+                        )
+                    },
+                ),
         ),
-    ),
-    UiCatalogSection(
-        id = "pin",
-        title = "PIN & recovery",
-        specRef = "14 · 15",
-        entries = listOf(
-            UiCatalogEntry("pin_entry", "Entry") { PinEntryScreen(previewPinEntry, {}, {}, {}, {}) },
-            UiCatalogEntry("pin_wrong", "Entry · wrong PIN", edge = true) {
-                PinEntryScreen(previewPinWrong, {}, {}, {}, {})
-            },
-            UiCatalogEntry("pin_lock", "Entry · locked out", edge = true) {
-                PinEntryScreen(previewPinLock, {}, {}, {}, {})
-            },
-            UiCatalogEntry("pin_setup", "Setup") {
-                PinSetupScreen(
-                    state = previewPinSetup,
-                    onTogglePin = {},
-                    onToggleBiometric = {},
-                    onRevealNew = {},
-                    onRevealConfirm = {},
-                    onRecoveryClick = {},
-                    onSave = {},
-                    onBack = {},
-                )
-            },
-            UiCatalogEntry("pin_mismatch", "Set PIN · mismatch", edge = true) {
-                PinSetPinScreen(
-                    state = previewPinSetConfirmMismatch,
-                    headingRes = AuthR.string.pin_confirm_heading,
-                    onDigit = {},
-                    onBackspace = {},
-                    onBack = {},
-                )
-            },
-            UiCatalogEntry("pin_security", "Security question") {
-                PinSecurityQuestionScreen(
-                    questions = pinSecurityQuestions,
-                    selectedId = "pet",
-                    answer = "Biscuit",
-                    onSelect = {},
-                    onAnswerChange = {},
-                    onEnable = {},
-                    onBack = {},
-                )
-            },
-            UiCatalogEntry("pin_recovery", "Recovery", edge = true) {
-                PinRecoveryScreen(
-                    questionText = stringResource(AuthR.string.security_question_pet),
-                    answer = "Biscuit",
-                    attemptsLabel = stringResource(AuthR.string.pin_recover_attempts, 2, 5),
-                    onAnswerChange = {},
-                    onVerify = {},
-                    onBack = {},
-                )
-            },
+        UiCatalogSection(
+            id = "debt",
+            title = "Debt tracker",
+            specRef = "09",
+            entries =
+                listOf(
+                    UiCatalogEntry("debt_lent", "I lent") {
+                        DebtListScreen(previewDebtLent, {}, {}, {}, {})
+                    },
+                    UiCatalogEntry("debt_owe", "I owe") {
+                        DebtListScreen(previewDebtOwe, {}, {}, {}, {})
+                    },
+                    UiCatalogEntry("debt_add", "Add record sheet") {
+                        Box(Modifier.fillMaxSize()) {
+                            DebtListScreen(previewDebtLent, {}, {}, {}, {})
+                            ProBottomSheetHost(
+                                visible = true,
+                                title = stringResource(DebtR.string.debt_new_record),
+                                onClose = {},
+                            ) {
+                                DebtAddSheetContent(
+                                    form = previewDebtAddLent,
+                                    onSideSelected = {},
+                                    onPersonChange = {},
+                                    onAmountChange = {},
+                                    onPickDate = {},
+                                    onPickDue = {},
+                                    onNoteChange = {},
+                                    onSave = {},
+                                )
+                            }
+                        }
+                    },
+                    UiCatalogEntry("debt_lent_detail", "Detail · lent") {
+                        DebtDetailScreen(previewDebtLentDetail, {}, {}, {}, {})
+                    },
+                    UiCatalogEntry("debt_owe_detail", "Detail · owe") {
+                        DebtDetailScreen(previewDebtOweDetail, {}, {}, {}, {})
+                    },
+                    UiCatalogEntry("debt_conflict", "Opposite-side warning", edge = true) {
+                        Box(Modifier.fillMaxSize()) {
+                            DebtListScreen(previewDebtLent, {}, {}, {}, {})
+                            ProAlertDialog(
+                                visible = true,
+                                icon = ProIconGlyph.User,
+                                iconTint = ProExpenseTheme.colors.warning,
+                                iconBackground = ProExpenseTheme.colors.warningTint,
+                                title = stringResource(DebtR.string.debt_conflict_title, "John"),
+                                body =
+                                    AnnotatedString(
+                                        stringResource(
+                                            DebtR.string.debt_conflict_body,
+                                            "John",
+                                            "\"" + stringResource(DebtR.string.debt_tab_owe) + "\"",
+                                            "\"" + stringResource(DebtR.string.debt_tab_lent) + "\"",
+                                        ),
+                                    ),
+                                confirmLabel = stringResource(DebtR.string.debt_continue),
+                                onConfirm = {},
+                                dismissLabel = stringResource(DebtR.string.debt_cancel),
+                                onDismiss = {},
+                                confirmVariant = ProButtonVariant.Warning,
+                            )
+                        }
+                    },
+                    UiCatalogEntry("debt_settled", "Delete settled confirm", edge = true) {
+                        Box(Modifier.fillMaxSize()) {
+                            DebtListScreen(previewDebtSettled, {}, {}, {}, {})
+                            ProAlertDialog(
+                                visible = true,
+                                icon = ProIconGlyph.Close,
+                                iconTint = ProExpenseTheme.colors.danger,
+                                iconBackground = ProExpenseTheme.colors.dangerTint,
+                                title = stringResource(DebtR.string.debt_delete_title),
+                                body = AnnotatedString(stringResource(DebtR.string.debt_delete_body, "Aiko")),
+                                confirmLabel = stringResource(DebtR.string.debt_delete),
+                                onConfirm = {},
+                                dismissLabel = stringResource(DebtR.string.debt_cancel),
+                                onDismiss = {},
+                                confirmVariant = ProButtonVariant.Danger,
+                            )
+                        }
+                    },
+                ),
         ),
-    ),
-)
+        UiCatalogSection(
+            id = "shared_costs",
+            title = "Shared costs",
+            specRef = "10",
+            entries =
+                listOf(
+                    UiCatalogEntry("shared_input", "Input") {
+                        SharedCostsInputScreen(
+                            state = previewSharedInputEqual,
+                            onBack = {},
+                            onKey = {},
+                            onBackspace = {},
+                            onNoteChange = {},
+                            onDecrementPeople = {},
+                            onIncrementPeople = {},
+                            onModeSelected = {},
+                            onShareChange = { _, _ -> },
+                            onContinue = {},
+                            showKeypad = false,
+                        )
+                    },
+                    UiCatalogEntry("shared_summary", "Summary") {
+                        SharedCostsSummaryScreen(
+                            state = previewSharedSummary,
+                            onBack = {},
+                            onSwitchToCustom = {},
+                            onSave = {},
+                        )
+                    },
+                    UiCatalogEntry("shared_history", "History") {
+                        SharedCostsHistoryScreen(
+                            items = previewSharedHistoryItems,
+                            onNewSplit = {},
+                            onItemClick = {},
+                            onBack = {},
+                        )
+                    },
+                    UiCatalogEntry("shared_zero", "Input · zero validation", edge = true) {
+                        SharedCostsInputScreen(
+                            state = previewSharedZeroValidation,
+                            onBack = {},
+                            onKey = {},
+                            onBackspace = {},
+                            onNoteChange = {},
+                            onDecrementPeople = {},
+                            onIncrementPeople = {},
+                            onModeSelected = {},
+                            onShareChange = { _, _ -> },
+                            onContinue = {},
+                            showKeypad = false,
+                        )
+                    },
+                    UiCatalogEntry("shared_limits", "Input · custom limits", edge = true) {
+                        SharedCostsInputScreen(
+                            state = previewSharedCustomLimits,
+                            onBack = {},
+                            onKey = {},
+                            onBackspace = {},
+                            onNoteChange = {},
+                            onDecrementPeople = {},
+                            onIncrementPeople = {},
+                            onModeSelected = {},
+                            onShareChange = { _, _ -> },
+                            onContinue = {},
+                            showKeypad = false,
+                        )
+                    },
+                ),
+        ),
+        UiCatalogSection(
+            id = "reports",
+            title = "Reports",
+            specRef = "12",
+            entries =
+                listOf(
+                    UiCatalogEntry("reports", "Reports") { ReportsScreen(previewReports, {}, {}, {}) },
+                    UiCatalogEntry("reports_unc", "Uncategorized", edge = true) {
+                        ReportsScreen(previewReportsUncategorized, {}, {}, {})
+                    },
+                    UiCatalogEntry("reports_empty", "Empty", edge = true) {
+                        ReportsScreen(previewReportsEmpty, {}, {}, {})
+                    },
+                ),
+        ),
+        UiCatalogSection(
+            id = "more",
+            title = "More & settings",
+            specRef = "13",
+            entries =
+                listOf(
+                    UiCatalogEntry("more_hub", "Hub") {
+                        MoreHubScreen(
+                            state = previewMoreHub,
+                            onFeatureClick = {},
+                            onSettingClick = {},
+                            onSettingToggle = { _, _ -> },
+                            selectedTab = HomeNavTab.More,
+                            onTabSelected = {},
+                            onAddClick = {},
+                        )
+                    },
+                    UiCatalogEntry("more_currency", "Currency") {
+                        MoreCurrencyScreen(
+                            items = previewMoreCurrencies,
+                            selectedCode = "USD",
+                            onSave = {},
+                            onBack = {},
+                        )
+                    },
+                    UiCatalogEntry("more_export", "Data export") {
+                        MoreExportScreen(files = previewMoreExportFiles, onExport = {}, onBack = {})
+                    },
+                    UiCatalogEntry("more_clear", "Clear data", edge = true) {
+                        MoreClearScreen(
+                            options = previewMoreClearOptions,
+                            checkedIds = setOf("expenses"),
+                            onToggle = {},
+                            onClear = {},
+                            onBack = {},
+                        )
+                    },
+                ),
+        ),
+        UiCatalogSection(
+            id = "categories",
+            title = "Categories",
+            specRef = "11",
+            entries =
+                listOf(
+                    UiCatalogEntry("categories", "List") {
+                        CategoryListScreen(previewCategoryList, {}, {})
+                    },
+                    UiCatalogEntry("cat_dup", "New · duplicate", edge = true) {
+                        Box(Modifier.fillMaxSize()) {
+                            CategoryListScreen(previewCategoryList, {}, {})
+                            ProBottomSheetHost(
+                                visible = true,
+                                title = stringResource(CategoriesR.string.categories_new_title),
+                                onClose = {},
+                            ) {
+                                CategoryNewSheetContent(
+                                    form = previewCategoryNewDuplicate,
+                                    onNameChange = {},
+                                    onIconSelected = {},
+                                    onAdd = {},
+                                )
+                            }
+                        }
+                    },
+                    UiCatalogEntry("cat_actions", "Actions sheet") {
+                        Box(Modifier.fillMaxSize()) {
+                            CategoryListScreen(previewCategoryList, {}, {})
+                            ProBottomSheetHost(visible = true, title = null, onClose = {}) {
+                                CategoryActionsSheetContent(
+                                    row = CategoryRowUi("coffee", "Coffee runs"),
+                                    onEdit = {},
+                                    onDelete = {},
+                                    onCancel = {},
+                                )
+                            }
+                        }
+                    },
+                    UiCatalogEntry("cat_edit", "Edit sheet") {
+                        Box(Modifier.fillMaxSize()) {
+                            CategoryListScreen(previewCategoryList, {}, {})
+                            ProBottomSheetHost(
+                                visible = true,
+                                title = stringResource(CategoriesR.string.categories_edit_title),
+                                onClose = {},
+                            ) {
+                                CategoryNewSheetContent(
+                                    form = CategoryNewFormState(name = "Coffee runs", selectedIconId = "coffee"),
+                                    onNameChange = {},
+                                    onIconSelected = {},
+                                    onAdd = {},
+                                    confirmLabel = stringResource(CategoriesR.string.categories_save),
+                                )
+                            }
+                        }
+                    },
+                ),
+        ),
+        UiCatalogSection(
+            id = "pin",
+            title = "PIN & recovery",
+            specRef = "14 · 15",
+            entries =
+                listOf(
+                    UiCatalogEntry("pin_entry", "Entry") { PinEntryScreen(previewPinEntry, {}, {}, {}, {}) },
+                    UiCatalogEntry("pin_wrong", "Entry · wrong PIN", edge = true) {
+                        PinEntryScreen(previewPinWrong, {}, {}, {}, {})
+                    },
+                    UiCatalogEntry("pin_lock", "Entry · locked out", edge = true) {
+                        PinEntryScreen(previewPinLock, {}, {}, {}, {})
+                    },
+                    UiCatalogEntry("pin_setup", "Setup") {
+                        PinSetupScreen(
+                            state = previewPinSetup,
+                            onTogglePin = {},
+                            onToggleBiometric = {},
+                            onRevealNew = {},
+                            onRevealConfirm = {},
+                            onRecoveryClick = {},
+                            onSave = {},
+                            onBack = {},
+                        )
+                    },
+                    UiCatalogEntry("pin_mismatch", "Set PIN · mismatch", edge = true) {
+                        PinSetPinScreen(
+                            state = previewPinSetConfirmMismatch,
+                            headingRes = AuthR.string.pin_confirm_heading,
+                            onDigit = {},
+                            onBackspace = {},
+                            onBack = {},
+                        )
+                    },
+                    UiCatalogEntry("pin_security", "Security question") {
+                        PinSecurityQuestionScreen(
+                            questions = pinSecurityQuestions,
+                            selectedId = "pet",
+                            answer = "Biscuit",
+                            onSelect = {},
+                            onAnswerChange = {},
+                            onEnable = {},
+                            onBack = {},
+                        )
+                    },
+                    UiCatalogEntry("pin_recovery", "Recovery", edge = true) {
+                        PinRecoveryScreen(
+                            questionText = stringResource(AuthR.string.security_question_pet),
+                            answer = "Biscuit",
+                            attemptsLabel = stringResource(AuthR.string.pin_recover_attempts, 2, 5),
+                            onAnswerChange = {},
+                            onVerify = {},
+                            onBack = {},
+                        )
+                    },
+                ),
+        ),
+    )

@@ -168,32 +168,43 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val categoryNames = remember(categories) { categories.associate { it.id.value to it.name } }
         // Secondary line for Journal Detail's linked-tag card (US-HIS-5) — an event's date range
         // or a debt's amount, mirroring what feature:logging shows in its own tag picker.
-        val eventSubtitles = remember(events) {
-            events.associate {
-                it.id.value to "${PlatformDateFormatter.shortDateLabel(it.startEpochMillis)} - " +
-                    PlatformDateFormatter.shortDateLabel(it.endEpochMillis)
+        val eventSubtitles =
+            remember(events) {
+                events.associate {
+                    it.id.value to "${PlatformDateFormatter.shortDateLabel(it.startEpochMillis)} - " +
+                        PlatformDateFormatter.shortDateLabel(it.endEpochMillis)
+                }
             }
-        }
-        val debtSubtitles = remember(debts, homeCurrencySymbol) {
-            debts.associate { it.id.value to AmountInput.formatMoney(it.money.amount.valueInCents, currencySymbol(it.money.currency.code)) }
-        }
-        val filters = remember(categories, allFilterLabel, state.hasUncategorized) {
-            val categoryChips = categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
-            // Uncategorized is never seeded as a real Category row (US-CAT-3), so it needs its
-            // own chip here whenever a reassigned record actually exists under it — otherwise
-            // those records are visible in the list but unreachable by filter.
-            val uncategorizedChip = if (state.hasUncategorized) {
-                listOf(JournalFilterUi(UNCATEGORIZED_CATEGORY_ID, expenseCategoryLabel(UNCATEGORIZED_CATEGORY_ID)))
-            } else {
-                emptyList()
+        val debtSubtitles =
+            remember(debts, homeCurrencySymbol) {
+                debts.associate {
+                    it.id.value to
+                        AmountInput.formatMoney(
+                            it.money.amount.valueInCents,
+                            currencySymbol(it.money.currency.code),
+                        )
+                }
             }
-            listOf(JournalFilterUi("all", allFilterLabel)) + categoryChips + uncategorizedChip
-        }
+        val filters =
+            remember(categories, allFilterLabel, state.hasUncategorized) {
+                val categoryChips = categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
+                // Uncategorized is never seeded as a real Category row (US-CAT-3), so it needs its
+                // own chip here whenever a reassigned record actually exists under it — otherwise
+                // those records are visible in the list but unreachable by filter.
+                val uncategorizedChip =
+                    if (state.hasUncategorized) {
+                        listOf(JournalFilterUi(UNCATEGORIZED_CATEGORY_ID, expenseCategoryLabel(UNCATEGORIZED_CATEGORY_ID)))
+                    } else {
+                        emptyList()
+                    }
+                listOf(JournalFilterUi("all", allFilterLabel)) + categoryChips + uncategorizedChip
+            }
         // Grouped from whatever's been loaded so far (bounded by scroll depth), never the full
         // table — search/category/date-range filtering already happened in SQL via `filter`.
-        val days = remember(pager.records, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol) {
-            groupByDay(pager.records, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol)
-        }
+        val days =
+            remember(pager.records, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol) {
+                groupByDay(pager.records, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol)
+            }
 
         JournalFlow(
             selectedTab = selectedTab,
@@ -252,18 +263,20 @@ private class JournalTabStateImpl(
     var lastSeenSignal: RecordChangeSignal? = null
 
     val filter: RecordHistoryFilter
-        get() = RecordHistoryFilter(
-            categoryId = selectedFilterId.takeIf { it != "all" }?.let(::CategoryId),
-            fromEpochMillis = dateRangeStart,
-            toEpochMillis = dateRangeEnd,
-            query = debouncedQuery.takeIf { it.isNotBlank() },
-        )
+        get() =
+            RecordHistoryFilter(
+                categoryId = selectedFilterId.takeIf { it != "all" }?.let(::CategoryId),
+                fromEpochMillis = dateRangeStart,
+                toEpochMillis = dateRangeEnd,
+                query = debouncedQuery.takeIf { it.isNotBlank() },
+            )
 
     // The lambda reads `filter` at call time, so the pager always pages with the live filter
     // even though the pager itself is created once and kept for the state holder's lifetime.
-    val pager = JournalPager(
-        loadPage = { cursor, limit -> loadJournalPage(filter, cursor, limit) },
-    )
+    val pager =
+        JournalPager(
+            loadPage = { cursor, limit -> loadJournalPage(filter, cursor, limit) },
+        )
 }
 
 /**
@@ -324,9 +337,10 @@ private fun groupByDay(
                 id = key,
                 title = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
                 total = AmountInput.formatMoney(totalCents, homeCurrencySymbol),
-                rows = dayRecords.map { record ->
-                    record.toRowModel(eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles)
-                },
+                rows =
+                    dayRecords.map { record ->
+                        record.toRowModel(eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles)
+                    },
             )
         }
 }
@@ -337,16 +351,18 @@ private fun FinanceRecord.toRowModel(
     sharedCostNames: Map<String, String>,
     eventSubtitles: Map<String, String>,
     debtSubtitles: Map<String, String>,
-): ProTransactionRowModel = ProTransactionRowModel(
-    id = id.value,
-    categoryId = categoryId.value,
-    note = note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) },
-    meta = "${expenseCategoryLabel(categoryId.value)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
-    amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
-    tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
-    tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
-    rawNote = note?.trim(),
-    detailDateTimeLabel = "${PlatformDateFormatter.dayLabel(recordedAtEpochMillis)} · " +
-        PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
-    linkedEventId = (link as? RecordLink.ToEvent)?.eventId?.value,
-)
+): ProTransactionRowModel =
+    ProTransactionRowModel(
+        id = id.value,
+        categoryId = categoryId.value,
+        note = note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) },
+        meta = "${expenseCategoryLabel(categoryId.value)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
+        amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
+        tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
+        tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
+        rawNote = note?.trim(),
+        detailDateTimeLabel =
+            "${PlatformDateFormatter.dayLabel(recordedAtEpochMillis)} · " +
+                PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
+        linkedEventId = (link as? RecordLink.ToEvent)?.eventId?.value,
+    )

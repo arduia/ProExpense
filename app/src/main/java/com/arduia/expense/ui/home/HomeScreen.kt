@@ -39,8 +39,8 @@ import com.arduia.expense.ui.design.HeroGreeting
 import com.arduia.expense.ui.design.NoticeBanner
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.ProTextAction
+import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
@@ -80,10 +80,11 @@ fun HomeScreenContent(
     // screen's full height rather than being squeezed into whatever space is left over.
     if (state.isLoading || state.isEmpty) {
         Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space14),
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space14),
         ) {
             HomeHeaderContent(
                 state = state,
@@ -108,18 +109,20 @@ fun HomeScreenContent(
             } else {
                 HomeEmptyContent(
                     onLogFirstExpense = onLogFirstExpense,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(bottom = dimens.navShellBottomInset),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(bottom = dimens.navShellBottomInset),
                 )
             }
         }
     } else {
         LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = dimens.screenPadding),
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.screenPadding),
             contentPadding = PaddingValues(top = dimens.space14, bottom = dimens.navShellBottomInset),
         ) {
             item {
@@ -145,16 +148,17 @@ fun HomeScreenContent(
                 DayGroup(
                     title = group.dayTitle,
                     total = group.dayTotal,
-                    transactions = group.transactions.map { item ->
-                        ProTransactionRowModel(
-                            id = item.id,
-                            categoryId = item.categoryId,
-                            note = item.note,
-                            meta = item.meta,
-                            amount = item.amount,
-                            tag = item.tag,
-                        )
-                    },
+                    transactions =
+                        group.transactions.map { item ->
+                            ProTransactionRowModel(
+                                id = item.id,
+                                categoryId = item.categoryId,
+                                note = item.note,
+                                meta = item.meta,
+                                amount = item.amount,
+                                tag = item.tag,
+                            )
+                        },
                     cardWrapped = false,
                     onRowClick = onRowClick,
                     // The header row below HomeRecentHeader already carries a bottom(space10)
@@ -219,19 +223,21 @@ private fun HomeHeaderContent(
             state.activeEvent?.let { event ->
                 val cardShape = ProExpenseTheme.shapes.card
                 EventBudgetCard(
-                    state = EventBudgetCardState(
-                        id = event.eventId,
-                        title = event.title,
-                        dateRange = event.dateRange,
-                        spentLabel = event.spentLabel,
-                        budgetLabel = event.budgetLabel,
-                        progress = event.progress,
-                        isOverBudget = event.isOverBudget,
-                    ),
-                    modifier = Modifier.proClickable(
-                        onClick = { onActiveEventClick(event.eventId) },
-                        shape = cardShape,
-                    ),
+                    state =
+                        EventBudgetCardState(
+                            id = event.eventId,
+                            title = event.title,
+                            dateRange = event.dateRange,
+                            spentLabel = event.spentLabel,
+                            budgetLabel = event.budgetLabel,
+                            progress = event.progress,
+                            isOverBudget = event.isOverBudget,
+                        ),
+                    modifier =
+                        Modifier.proClickable(
+                            onClick = { onActiveEventClick(event.eventId) },
+                            shape = cardShape,
+                        ),
                 )
             }
         }
@@ -260,10 +266,11 @@ private fun HomeHeader(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val greetingPrefix = when (greetingPrefixRes) {
-        "welcome" -> stringResource(R.string.home_welcome_prefix)
-        else -> stringResource(R.string.home_greeting_prefix)
-    }
+    val greetingPrefix =
+        when (greetingPrefixRes) {
+            "welcome" -> stringResource(R.string.home_welcome_prefix)
+            else -> stringResource(R.string.home_greeting_prefix)
+        }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -295,11 +302,12 @@ private fun HomeHeader(
             contentAlignment = Alignment.Center,
         ) {
             Box(
-                modifier = Modifier
-                    .size(dimens.buttonSmallHeight)
-                    .clip(CircleShape)
-                    .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
-                    .background(colors.surface),
+                modifier =
+                    Modifier
+                        .size(dimens.buttonSmallHeight)
+                        .clip(CircleShape)
+                        .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
+                        .background(colors.surface),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(
@@ -329,31 +337,32 @@ private fun MonthSpendCard(
     val typography = ProExpenseTheme.typography
     val cardShape = ProExpenseTheme.shapes.card
     val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
-    val periodLabel = if (monthLabel.isNotBlank()) {
-        stringResource(R.string.home_spent_period, monthLabel.uppercase())
-    } else {
-        stringResource(R.string.home_spend_this_month)
-    }
+    val periodLabel =
+        if (monthLabel.isNotBlank()) {
+            stringResource(R.string.home_spent_period, monthLabel.uppercase())
+        } else {
+            stringResource(R.string.home_spend_this_month)
+        }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (cardElevation != null) {
-                    Modifier.shadow(
-                        elevation = cardElevation.blur,
-                        shape = cardShape,
-                        spotColor = cardElevation.color,
-                        ambientColor = cardElevation.color,
-                    )
-                } else {
-                    Modifier
-                },
-            )
-            .clip(cardShape)
-            .border(BorderStroke(1.dp, colors.line), cardShape)
-            .background(colors.surface)
-            .padding(dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (cardElevation != null) {
+                        Modifier.shadow(
+                            elevation = cardElevation.blur,
+                            shape = cardShape,
+                            spotColor = cardElevation.color,
+                            ambientColor = cardElevation.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).clip(cardShape)
+                .border(BorderStroke(1.dp, colors.line), cardShape)
+                .background(colors.surface)
+                .padding(dimens.cardPadding),
     ) {
         Text(
             text = periodLabel,
@@ -361,23 +370,25 @@ private fun MonthSpendCard(
             color = colors.onSurfaceVariant,
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space4),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space4),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-                Text(
-                    text = monthSpend,
-                    style = typography.summaryAmount,
-                    color = colors.onSurface,
-                )
+            Text(
+                text = monthSpend,
+                style = typography.summaryAmount,
+                color = colors.onSurface,
+            )
             if (showSparkline) {
                 SpendSparkline(
                     points = sparklinePoints,
-                    modifier = Modifier
-                        .width(86.dp)
-                        .height(40.dp),
+                    modifier =
+                        Modifier
+                            .width(86.dp)
+                            .height(40.dp),
                 )
             }
         }
@@ -423,7 +434,10 @@ private fun MonthSpendCard(
 }
 
 @Composable
-private fun SpendSparkline(points: List<Float>, modifier: Modifier = Modifier) {
+private fun SpendSparkline(
+    points: List<Float>,
+    modifier: Modifier = Modifier,
+) {
     val lineColor = ProExpenseTheme.colors.primary
     androidx.compose.foundation.Canvas(modifier = modifier) {
         if (points.size < 2) return@Canvas
@@ -434,15 +448,17 @@ private fun SpendSparkline(points: List<Float>, modifier: Modifier = Modifier) {
 
         fun pointAt(index: Int): androidx.compose.ui.geometry.Offset {
             val normalized = (points[index] - minValue) / range
-            return androidx.compose.ui.geometry.Offset(stepX * index, size.height - normalized * size.height)
+            return androidx.compose.ui.geometry
+                .Offset(stepX * index, size.height - normalized * size.height)
         }
 
-        val path = Path().apply {
-            moveTo(pointAt(0).x, pointAt(0).y)
-            for (index in 1 until points.size) {
-                lineTo(pointAt(index).x, pointAt(index).y)
+        val path =
+            Path().apply {
+                moveTo(pointAt(0).x, pointAt(0).y)
+                for (index in 1 until points.size) {
+                    lineTo(pointAt(index).x, pointAt(index).y)
+                }
             }
-        }
         drawPath(
             path = path,
             color = lineColor,
@@ -492,22 +508,24 @@ private fun HomeQuickAccessSection(
             }
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space10),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space10),
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
             visibleTiles.forEach { tile ->
-                val (icon, labelRes, onClick) = when (tile) {
-                    QuickAccessTileType.Reports ->
-                        Triple(ProIconGlyph.FeatReports, R.string.quick_access_reports, onReportsClick)
-                    QuickAccessTileType.Debt ->
-                        Triple(ProIconGlyph.FeatDebt, R.string.quick_access_debt, onDebtClick)
-                    QuickAccessTileType.Split ->
-                        Triple(ProIconGlyph.FeatSplit, R.string.quick_access_split, onSplitClick)
-                    QuickAccessTileType.Events ->
-                        Triple(ProIconGlyph.FeatEvents, R.string.quick_access_events, onEventsClick)
-                }
+                val (icon, labelRes, onClick) =
+                    when (tile) {
+                        QuickAccessTileType.Reports ->
+                            Triple(ProIconGlyph.FeatReports, R.string.quick_access_reports, onReportsClick)
+                        QuickAccessTileType.Debt ->
+                            Triple(ProIconGlyph.FeatDebt, R.string.quick_access_debt, onDebtClick)
+                        QuickAccessTileType.Split ->
+                            Triple(ProIconGlyph.FeatSplit, R.string.quick_access_split, onSplitClick)
+                        QuickAccessTileType.Events ->
+                            Triple(ProIconGlyph.FeatEvents, R.string.quick_access_events, onEventsClick)
+                    }
                 QuickAccessTile(
                     label = stringResource(labelRes),
                     icon = icon,
@@ -545,9 +563,10 @@ private fun HomeRecentHeader(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = dimens.space10),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(bottom = dimens.space10),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class EventTest {
-
     private val budget = Money(Amount(1000), CurrencyCode("USD"))
 
     @Test

@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongParameterList:DebtUseCases.kt$CreateDebtUseCase$( personName: String, rawAmount: String, direction: DebtDirection, currencyCode: String = "USD", dueEpochMillis: Long? = null, note: String? = null, )</ID>
+    <ID>MaxLineLength:DebtModule.kt$factory { CreateDebtUseCase(get&lt;DebtRepository&gt;(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }</ID>
+  </CurrentIssues>
+</SmellBaseline>

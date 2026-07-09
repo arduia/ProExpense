@@ -9,14 +9,14 @@ class AppMetaProfileRepository(
     private val store: AppMetaLocalStore,
     private val keyValueStore: PlatformKeyValueStore,
 ) : ProfileRepository {
-
-    override suspend fun setDisplayName(name: String): Result<Unit> = catchingResult {
-        // Write to the key-value store synchronously first — survives SQLCipher key-management
-        // failures, same as setOnboardingComplete() below.
-        keyValueStore.putString(KEY_DISPLAY_NAME, name)
-        store.update { it.copy(displayName = name) }
-        Unit
-    }
+    override suspend fun setDisplayName(name: String): Result<Unit> =
+        catchingResult {
+            // Write to the key-value store synchronously first — survives SQLCipher key-management
+            // failures, same as setOnboardingComplete() below.
+            keyValueStore.putString(KEY_DISPLAY_NAME, name)
+            store.update { it.copy(displayName = name) }
+            Unit
+        }
 
     override suspend fun getDisplayName(): Result<String> {
         keyValueStore.getString(KEY_DISPLAY_NAME)?.let { return Result.Success(it) }
@@ -44,12 +44,13 @@ class AppMetaProfileRepository(
         }
     }
 
-    override suspend fun setOnboardingComplete(): Result<Unit> = catchingResult {
-        // Write to the key-value store synchronously first — survives SQLCipher key-management failures.
-        keyValueStore.putBoolean(KEY_ONBOARDING_COMPLETE, true)
-        store.update { it.copy(onboardingCompleted = true) }
-        Unit
-    }
+    override suspend fun setOnboardingComplete(): Result<Unit> =
+        catchingResult {
+            // Write to the key-value store synchronously first — survives SQLCipher key-management failures.
+            keyValueStore.putBoolean(KEY_ONBOARDING_COMPLETE, true)
+            store.update { it.copy(onboardingCompleted = true) }
+            Unit
+        }
 
     companion object {
         const val KEY_ONBOARDING_COMPLETE = "onboarding_complete"

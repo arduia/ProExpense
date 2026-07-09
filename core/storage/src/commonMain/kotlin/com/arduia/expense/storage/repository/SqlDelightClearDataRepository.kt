@@ -13,45 +13,49 @@ class SqlDelightClearDataRepository(
     private val database: ProExpenseDatabase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ClearDataRepository {
-
-    override suspend fun clearExpenses(): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            database.financeRecordQueries.deleteAllRecords()
-            Unit
+    override suspend fun clearExpenses(): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                database.financeRecordQueries.deleteAllRecords()
+                Unit
+            }
         }
-    }
 
-    override suspend fun clearEvents(): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            database.eventQueries.deleteAllEvents()
-            database.financeRecordQueries.clearTagsByType(RecordLinkTag.EVENT)
-            Unit
+    override suspend fun clearEvents(): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                database.eventQueries.deleteAllEvents()
+                database.financeRecordQueries.clearTagsByType(RecordLinkTag.EVENT)
+                Unit
+            }
         }
-    }
 
-    override suspend fun clearDebts(): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            database.debtQueries.deleteAllDebts()
-            database.financeRecordQueries.clearTagsByType(RecordLinkTag.DEBT)
-            Unit
+    override suspend fun clearDebts(): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                database.debtQueries.deleteAllDebts()
+                database.financeRecordQueries.clearTagsByType(RecordLinkTag.DEBT)
+                Unit
+            }
         }
-    }
 
-    override suspend fun clearSharedCosts(): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            database.sharedCostQueries.deleteAllSharedCosts()
-            database.financeRecordQueries.clearTagsByType(RecordLinkTag.SHARED_COST)
-            Unit
+    override suspend fun clearSharedCosts(): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                database.sharedCostQueries.deleteAllSharedCosts()
+                database.financeRecordQueries.clearTagsByType(RecordLinkTag.SHARED_COST)
+                Unit
+            }
         }
-    }
 
-    override suspend fun clearAll(): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            database.financeRecordQueries.deleteAllRecords()
-            database.eventQueries.deleteAllEvents()
-            database.debtQueries.deleteAllDebts()
-            database.sharedCostQueries.deleteAllSharedCosts()
-            Unit
+    override suspend fun clearAll(): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                database.financeRecordQueries.deleteAllRecords()
+                database.eventQueries.deleteAllEvents()
+                database.debtQueries.deleteAllDebts()
+                database.sharedCostQueries.deleteAllSharedCosts()
+                Unit
+            }
         }
-    }
 }

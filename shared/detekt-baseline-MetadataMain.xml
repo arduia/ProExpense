@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:AmountInput.kt$AmountInput$100</ID>
+    <ID>MagicNumber:AmountInput.kt$AmountInput$3</ID>
+    <ID>MagicNumber:EventBudgetTone.kt$1.1f</ID>
+    <ID>ReturnCount:AmountInput.kt$AmountInput$fun applyKey( rawValue: String, key: String, ): String</ID>
+    <ID>ReturnCount:AmountInput.kt$AmountInput$private fun applyDigit( rawValue: String, digit: Char, ): String</ID>
+    <ID>ReturnCount:AmountInput.kt$AmountInput$private fun normalize(value: String): String</ID>
+    <ID>TooManyFunctions:AmountInput.kt$AmountInput</ID>
+  </CurrentIssues>
+</SmellBaseline>

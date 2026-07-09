@@ -17,7 +17,10 @@ interface PinAuthRepository {
     suspend fun clearPin(): Result<Unit>
 
     // Security question recovery (Phase 1)
-    suspend fun setSecurityQuestion(questionId: String, answer: String): Result<Unit>
+    suspend fun setSecurityQuestion(
+        questionId: String,
+        answer: String,
+    ): Result<Unit>
 
     suspend fun getSecurityQuestionId(): Result<String?>
 

@@ -24,14 +24,14 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class ReportsPeriodNavigationTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private val periods = listOf(
-        previewReports.copy(periodLabel = "June 2026"),
-        previewReports.copy(periodLabel = "May 2026"),
-    )
+    private val periods =
+        listOf(
+            previewReports.copy(periodLabel = "June 2026"),
+            previewReports.copy(periodLabel = "May 2026"),
+        )
 
     @Test
     fun tapping_previous_period_moves_to_an_older_period() {

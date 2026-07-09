@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:Amount.kt$Amount.Companion$100</ID>
+    <ID>MagicNumber:CurrencyCode.kt$CurrencyCode$3</ID>
+    <ID>ReturnCount:Amount.kt$Amount.Companion$fun parseOrNull(raw: String): Amount?</ID>
+    <ID>ReturnCount:IntegrityDigester.kt$RecordIntegrityVerifier$fun verify(record: FinanceRecord): Boolean</ID>
+  </CurrentIssues>
+</SmellBaseline>

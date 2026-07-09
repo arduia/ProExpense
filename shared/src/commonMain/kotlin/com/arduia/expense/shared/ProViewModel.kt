@@ -24,7 +24,9 @@ abstract class ProViewModel {
 }
 
 /** Convenience for ViewModels exposing a single [StateFlow] of UI state. */
-abstract class StatefulViewModel<S>(initialState: S) : ProViewModel() {
+abstract class StatefulViewModel<S>(
+    initialState: S,
+) : ProViewModel() {
     private val _uiState = MutableStateFlow(initialState)
     val uiState: StateFlow<S> = _uiState
 

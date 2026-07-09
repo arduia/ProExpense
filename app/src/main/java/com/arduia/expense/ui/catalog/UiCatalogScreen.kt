@@ -44,9 +44,10 @@ import com.arduia.expense.ui.theme.centeredGlyph
 fun UiCatalogScreen(modifier: Modifier = Modifier) {
     val sections = remember { uiCatalogSections() }
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
-    val selected = remember(selectedId, sections) {
-        selectedId?.let { id -> sections.firstNotNullOfOrNull { it.entryOrNull(id) } }
-    }
+    val selected =
+        remember(selectedId, sections) {
+            selectedId?.let { id -> sections.firstNotNullOfOrNull { it.entryOrNull(id) } }
+        }
 
     if (selected == null) {
         UiCatalogIndex(
@@ -79,17 +80,19 @@ private fun UiCatalogIndex(
     val total = sections.sumOf { it.entries.size }
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
-        contentPadding = PaddingValues(
-            start = dimens.screenPadding,
-            end = dimens.screenPadding,
-            top = dimens.space24,
-            bottom = dimens.space24,
-        ),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+        contentPadding =
+            PaddingValues(
+                start = dimens.screenPadding,
+                end = dimens.screenPadding,
+                top = dimens.space24,
+                bottom = dimens.space24,
+            ),
         verticalArrangement = Arrangement.spacedBy(dimens.space24),
     ) {
         item(key = "header") {
@@ -141,18 +144,20 @@ private fun CatalogSectionCard(
             Text(text = section.specRef, style = typography.tabTimestamp, color = colors.muted)
         }
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colors.surface, ProExpenseTheme.shapes.card),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(colors.surface, ProExpenseTheme.shapes.card),
         ) {
             section.entries.forEachIndexed { index, entry ->
                 if (index > 0) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = dimens.space16)
-                            .height(1.dp)
-                            .background(colors.lineSoft),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(start = dimens.space16)
+                                .height(1.dp)
+                                .background(colors.lineSoft),
                     )
                 }
                 CatalogEntryRow(entry = entry, onOpen = onOpen)
@@ -172,10 +177,11 @@ private fun CatalogEntryRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .proClickable(onClick = { onOpen(entry.id) }, shape = RectangleShape)
-            .padding(horizontal = dimens.space16, vertical = dimens.rowPaddingV),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .proClickable(onClick = { onOpen(entry.id) }, shape = RectangleShape)
+                .padding(horizontal = dimens.space16, vertical = dimens.rowPaddingV),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -190,9 +196,10 @@ private fun CatalogEntryRow(
                 text = "EDGE",
                 style = typography.navLabel,
                 color = colors.tag,
-                modifier = Modifier
-                    .background(colors.tagTint, ProExpenseTheme.shapes.chip)
-                    .padding(horizontal = dimens.space8, vertical = dimens.space2),
+                modifier =
+                    Modifier
+                        .background(colors.tagTint, ProExpenseTheme.shapes.chip)
+                        .padding(horizontal = dimens.space8, vertical = dimens.space2),
             )
         }
         ProIcon(
@@ -216,11 +223,12 @@ private fun CatalogReturnBar(
 
     Box(modifier = modifier.statusBarsPadding().padding(dimens.space8)) {
         Row(
-            modifier = Modifier
-                .shadow(8.dp, ProExpenseTheme.shapes.chip, clip = false)
-                .background(colors.onSurface.copy(alpha = 0.9f), ProExpenseTheme.shapes.chip)
-                .proClickable(onClick = onBack, shape = ProExpenseTheme.shapes.chip)
-                .padding(horizontal = dimens.space12, vertical = dimens.space6),
+            modifier =
+                Modifier
+                    .shadow(8.dp, ProExpenseTheme.shapes.chip, clip = false)
+                    .background(colors.onSurface.copy(alpha = 0.9f), ProExpenseTheme.shapes.chip)
+                    .proClickable(onClick = onBack, shape = ProExpenseTheme.shapes.chip)
+                    .padding(horizontal = dimens.space12, vertical = dimens.space6),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.space4),
         ) {

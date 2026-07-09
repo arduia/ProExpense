@@ -7,20 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -28,9 +23,17 @@ import androidx.compose.ui.unit.sp
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-private val categoryIds = listOf(
-    "food", "transport", "shopping", "bills", "health", "entertainment", "coffee", "pet",
-)
+private val categoryIds =
+    listOf(
+        "food",
+        "transport",
+        "shopping",
+        "bills",
+        "health",
+        "entertainment",
+        "coffee",
+        "pet",
+    )
 
 @Composable
 fun SpecCaptureHost(
@@ -39,10 +42,11 @@ fun SpecCaptureHost(
 ) {
     val colors = ProExpenseTheme.colors
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(colors.paper)
-            .padding(28.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(colors.paper)
+                .padding(28.dp),
         contentAlignment = Alignment.Center,
     ) {
         content()
@@ -137,30 +141,31 @@ fun SpecTransactionDayGroupCapture() {
     DayGroup(
         title = "Today · May 25",
         total = "$42",
-        transactions = listOf(
-            ProTransactionRowModel(
-                id = "food-lunch",
-                categoryId = "food",
-                note = "Lunch with M.",
-                meta = "Food · 12:30 PM",
-                amount = "$12.40",
+        transactions =
+            listOf(
+                ProTransactionRowModel(
+                    id = "food-lunch",
+                    categoryId = "food",
+                    note = "Lunch with M.",
+                    meta = "Food · 12:30 PM",
+                    amount = "$12.40",
+                ),
+                ProTransactionRowModel(
+                    id = "coffee-latte",
+                    categoryId = "coffee",
+                    note = "Oat latte",
+                    meta = "Coffee runs · 08:40 AM",
+                    amount = "$5.00",
+                ),
+                ProTransactionRowModel(
+                    id = "entertainment-movie",
+                    categoryId = "entertainment",
+                    note = "Movie · Dune",
+                    meta = "Entertainment",
+                    amount = "$18.00",
+                    tag = "Bali Trip",
+                ),
             ),
-            ProTransactionRowModel(
-                id = "coffee-latte",
-                categoryId = "coffee",
-                note = "Oat latte",
-                meta = "Coffee runs · 08:40 AM",
-                amount = "$5.00",
-            ),
-            ProTransactionRowModel(
-                id = "entertainment-movie",
-                categoryId = "entertainment",
-                note = "Movie · Dune",
-                meta = "Entertainment",
-                amount = "$18.00",
-                tag = "Bali Trip",
-            ),
-        ),
         modifier = Modifier.width(360.dp),
     )
 }
@@ -221,38 +226,38 @@ fun SpecValidationCapture() {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
     Column(
-        modifier = Modifier
-            .width(260.dp)
-            .background(colors.surface, ProExpenseTheme.shapes.card)
-            .padding(22.dp),
+        modifier =
+            Modifier
+                .width(260.dp)
+                .background(colors.surface, ProExpenseTheme.shapes.card)
+                .padding(22.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = buildAnnotatedString {
-                withStyle(
-                    ProExpenseTheme.typography.displayAmount
-                        .copy(
-                            fontSize = 22.sp,
-                            fontFamily = typography.amountFamily,
-                        )
-                        .toSpanStyle()
-                        .copy(color = colors.primary),
-                ) {
-                    append("$")
-                }
-                withStyle(
-                    typography.displayAmount
-                        .copy(
-                            fontSize = 44.sp,
-                            letterSpacing = (-0.025).em,
-                            fontFamily = typography.amountFamily,
-                        )
-                        .toSpanStyle()
-                        .copy(color = colors.muted2),
-                ) {
-                    append("0")
-                }
-            },
+            text =
+                buildAnnotatedString {
+                    withStyle(
+                        ProExpenseTheme.typography.displayAmount
+                            .copy(
+                                fontSize = 22.sp,
+                                fontFamily = typography.amountFamily,
+                            ).toSpanStyle()
+                            .copy(color = colors.primary),
+                    ) {
+                        append("$")
+                    }
+                    withStyle(
+                        typography.displayAmount
+                            .copy(
+                                fontSize = 44.sp,
+                                letterSpacing = (-0.025).em,
+                                fontFamily = typography.amountFamily,
+                            ).toSpanStyle()
+                            .copy(color = colors.muted2),
+                    ) {
+                        append("0")
+                    }
+                },
             style = typography.displayAmount,
         )
         Text(
@@ -290,32 +295,34 @@ fun SpecBottomNavBudgetCapture() {
 fun SpecBottomSheetCapture() {
     val colors = ProExpenseTheme.colors
     Box(
-        modifier = Modifier
-            .width(360.dp)
-            .height(200.dp)
-            .background(colors.scrim),
+        modifier =
+            Modifier
+                .width(360.dp)
+                .height(200.dp)
+                .background(colors.scrim),
     ) {
         Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(
-                    colors.surface,
-                    androidx.compose.foundation.shape.RoundedCornerShape(
-                        topStart = 22.dp,
-                        topEnd = 22.dp,
-                    ),
-                )
-                .padding(horizontal = 20.dp, vertical = 0.dp)
-                .padding(bottom = 20.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(
+                        colors.surface,
+                        androidx.compose.foundation.shape.RoundedCornerShape(
+                            topStart = 22.dp,
+                            topEnd = 22.dp,
+                        ),
+                    ).padding(horizontal = 20.dp, vertical = 0.dp)
+                    .padding(bottom = 20.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 10.dp, bottom = 14.dp)
-                    .width(36.dp)
-                    .height(4.dp)
-                    .background(colors.scrim.copy(alpha = 0.18f), ProExpenseTheme.shapes.chip),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 10.dp, bottom = 14.dp)
+                        .width(36.dp)
+                        .height(4.dp)
+                        .background(colors.scrim.copy(alpha = 0.18f), ProExpenseTheme.shapes.chip),
             )
             Text(
                 text = "Edit expense",
@@ -323,9 +330,10 @@ fun SpecBottomSheetCapture() {
                 color = colors.onSurface,
             )
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 14.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 14.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 ProButton(
@@ -352,19 +360,20 @@ fun SpecToastCapture() {
 @Composable
 fun SpecIconsCapture() {
     val dimens = ProExpenseTheme.dimensions
-    val icons = listOf(
-        ProIconGlyph.Home,
-        ProIconGlyph.Budget,
-        ProIconGlyph.Journal,
-        ProIconGlyph.More,
-        ProIconGlyph.Plus,
-        ProIconGlyph.Search,
-        ProIconGlyph.Check,
-        ProIconGlyph.CatFood,
-        ProIconGlyph.CatTransport,
-        ProIconGlyph.FeatReports,
-        ProIconGlyph.FeatDebt,
-    )
+    val icons =
+        listOf(
+            ProIconGlyph.Home,
+            ProIconGlyph.Budget,
+            ProIconGlyph.Journal,
+            ProIconGlyph.More,
+            ProIconGlyph.Plus,
+            ProIconGlyph.Search,
+            ProIconGlyph.Check,
+            ProIconGlyph.CatFood,
+            ProIconGlyph.CatTransport,
+            ProIconGlyph.FeatReports,
+            ProIconGlyph.FeatDebt,
+        )
     Row(
         modifier = Modifier.width(420.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
@@ -407,17 +416,18 @@ fun SpecNoticeBannerCapture() {
     )
 }
 
-private fun categoryLabel(id: String): String = when (id) {
-    "food" -> "Food"
-    "transport" -> "Transport"
-    "shopping" -> "Shopping"
-    "bills" -> "Bills"
-    "health" -> "Health"
-    "entertainment" -> "Entertainment"
-    "coffee" -> "Coffee runs"
-    "pet" -> "Pet care"
-    else -> id
-}
+private fun categoryLabel(id: String): String =
+    when (id) {
+        "food" -> "Food"
+        "transport" -> "Transport"
+        "shopping" -> "Shopping"
+        "bills" -> "Bills"
+        "health" -> "Health"
+        "entertainment" -> "Entertainment"
+        "coffee" -> "Coffee runs"
+        "pet" -> "Pet care"
+        else -> id
+    }
 
 @Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
 @Composable

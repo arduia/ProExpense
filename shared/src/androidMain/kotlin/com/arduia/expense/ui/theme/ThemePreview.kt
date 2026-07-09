@@ -35,10 +35,11 @@ fun ProExpenseThemeFoundation() {
         val dimens = ProExpenseTheme.dimensions
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(colors.paper)
-                .padding(dimens.space18),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(colors.paper)
+                    .padding(dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             Text(
@@ -107,9 +108,10 @@ private fun ProColorSwatch(
         verticalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
         Column(
-            modifier = Modifier
-                .size(44.dp)
-                .background(color, CircleShape),
+            modifier =
+                Modifier
+                    .size(44.dp)
+                    .background(color, CircleShape),
         ) {}
         Text(
             text = label,

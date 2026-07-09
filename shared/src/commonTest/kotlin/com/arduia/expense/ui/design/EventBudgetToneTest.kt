@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class EventBudgetToneTest {
-
     @Test
     fun eventBudgetTone_atOrUnderBudget_isOnTrack() {
         assertEquals(EventBudgetTone.OnTrack, eventBudgetTone(0f))

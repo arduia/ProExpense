@@ -27,20 +27,21 @@ data class ProShapes(
 
 val LocalProShapes = staticCompositionLocalOf { ProDefaultShapes }
 
-val ProDefaultShapes = ProShapes(
-    chip = RoundedCornerShape(999.dp),
-    tile = RoundedCornerShape(14.dp),
-    quickAccessChip = RoundedCornerShape(11.dp),
-    card = RoundedCornerShape(16.dp),
-    identityCard = RoundedCornerShape(20.dp),
-    sheet = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
-    buttonSm = RoundedCornerShape(10.dp),
-    buttonMd = RoundedCornerShape(12.dp),
-    buttonLg = RoundedCornerShape(14.dp),
-    searchField = RoundedCornerShape(14.dp),
-    keypadKey = RoundedCornerShape(12.dp),
-    navBar = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
-    toast = RoundedCornerShape(999.dp),
-    phone = RoundedCornerShape(54.dp),
-    addHintChip = RoundedCornerShape(6.dp),
-)
+val ProDefaultShapes =
+    ProShapes(
+        chip = RoundedCornerShape(999.dp),
+        tile = RoundedCornerShape(14.dp),
+        quickAccessChip = RoundedCornerShape(11.dp),
+        card = RoundedCornerShape(16.dp),
+        identityCard = RoundedCornerShape(20.dp),
+        sheet = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
+        buttonSm = RoundedCornerShape(10.dp),
+        buttonMd = RoundedCornerShape(12.dp),
+        buttonLg = RoundedCornerShape(14.dp),
+        searchField = RoundedCornerShape(14.dp),
+        keypadKey = RoundedCornerShape(12.dp),
+        navBar = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
+        toast = RoundedCornerShape(999.dp),
+        phone = RoundedCornerShape(54.dp),
+        addHintChip = RoundedCornerShape(6.dp),
+    )

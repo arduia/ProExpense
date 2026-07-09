@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:PlatformClock.ios.kt$1000</ID>
+    <ID>MagicNumber:PlatformDigest.ios.kt$0xFF</ID>
+    <ID>MagicNumber:PlatformDigest.ios.kt$16</ID>
+    <ID>MaxLineLength:PlatformDigest.ios.kt$CC_SHA256(inPinned.addressOf(0), message.size.convert(), outPinned.addressOf(0).reinterpret())</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -7,24 +7,35 @@ import com.arduia.expense.data.ImportSummary
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.FinanceRecord
 
-class ExportDataUseCase(private val repository: ImportExportRepository) {
-    suspend operator fun invoke(format: ExportFormat = ExportFormat.CSV): Result<String> =
-        repository.exportAll(format)
+class ExportDataUseCase(
+    private val repository: ImportExportRepository,
+) {
+    suspend operator fun invoke(format: ExportFormat = ExportFormat.CSV): Result<String> = repository.exportAll(format)
 }
 
 /** Per-record-type CSVs (expenses/events/debts/shared costs), packaged into one zip by the caller. */
-class ExportGroupedDataUseCase(private val repository: ImportExportRepository) {
+class ExportGroupedDataUseCase(
+    private val repository: ImportExportRepository,
+) {
     suspend operator fun invoke(): Result<Map<String, String>> = repository.exportGrouped()
 }
 
-class PreviewImportUseCase(private val repository: ImportExportRepository) {
-    suspend operator fun invoke(content: String, format: ExportFormat): Result<List<FinanceRecord>> =
-        repository.previewImport(content, format)
+class PreviewImportUseCase(
+    private val repository: ImportExportRepository,
+) {
+    suspend operator fun invoke(
+        content: String,
+        format: ExportFormat,
+    ): Result<List<FinanceRecord>> = repository.previewImport(content, format)
 }
 
-class ImportDataUseCase(private val repository: ImportExportRepository) {
-    suspend operator fun invoke(content: String, format: ExportFormat): Result<ImportSummary> =
-        repository.importFrom(content, format)
+class ImportDataUseCase(
+    private val repository: ImportExportRepository,
+) {
+    suspend operator fun invoke(
+        content: String,
+        format: ExportFormat,
+    ): Result<ImportSummary> = repository.importFrom(content, format)
 }
 
 object ClearDataOptionId {
@@ -35,7 +46,9 @@ object ClearDataOptionId {
     const val EVERYTHING = "everything"
 }
 
-class ClearSelectedDataUseCase(private val repository: ClearDataRepository) {
+class ClearSelectedDataUseCase(
+    private val repository: ClearDataRepository,
+) {
     suspend operator fun invoke(selectedIds: Set<String>): Result<Unit> {
         if (ClearDataOptionId.EVERYTHING in selectedIds) {
             return repository.clearAll()

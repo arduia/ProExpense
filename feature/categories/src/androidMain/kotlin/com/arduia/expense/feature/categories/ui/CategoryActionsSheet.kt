@@ -21,12 +21,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.categories.R
+import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -47,12 +47,13 @@ fun CategoryActionsSheetContent(
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(ProExpenseTheme.shapes.card)
-                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                .background(colors.surface)
-                .padding(dimens.space14),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(ProExpenseTheme.shapes.card)
+                    .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                    .background(colors.surface)
+                    .padding(dimens.space14),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
@@ -83,13 +84,14 @@ fun CategoryActionsSheetContent(
             onClick = onDelete,
         )
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(ProExpenseTheme.shapes.card)
-                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                .background(colors.surface)
-                .proClickable(onClick = onCancel, shape = ProExpenseTheme.shapes.card)
-                .padding(vertical = dimens.space16),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(ProExpenseTheme.shapes.card)
+                    .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                    .background(colors.surface)
+                    .proClickable(onClick = onCancel, shape = ProExpenseTheme.shapes.card)
+                    .padding(vertical = dimens.space16),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -116,21 +118,23 @@ private fun CategoryActionRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(dimens.space14),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.iconBadge)
-                .clip(CircleShape)
-                .background(iconBackground),
+            modifier =
+                Modifier
+                    .size(dimens.iconBadge)
+                    .clip(CircleShape)
+                    .background(iconBackground),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(

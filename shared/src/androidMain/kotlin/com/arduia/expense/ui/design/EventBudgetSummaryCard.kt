@@ -21,11 +21,12 @@ import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProColors
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-fun ProColors.eventBudgetBarColor(tone: EventBudgetTone): Color = when (tone) {
-    EventBudgetTone.OnTrack -> primary
-    EventBudgetTone.OverBudget -> warning
-    EventBudgetTone.SignificantlyOver -> danger
-}
+fun ProColors.eventBudgetBarColor(tone: EventBudgetTone): Color =
+    when (tone) {
+        EventBudgetTone.OnTrack -> primary
+        EventBudgetTone.OverBudget -> warning
+        EventBudgetTone.SignificantlyOver -> danger
+    }
 
 data class EventBudgetSummaryState(
     val eyebrow: String,
@@ -51,32 +52,34 @@ fun EventBudgetSummaryCard(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
-    val accent = when {
-        state.isFinal -> colors.onSurfaceMuted
-        else -> colors.eventBudgetBarColor(state.tone)
-    }
+    val accent =
+        when {
+            state.isFinal -> colors.onSurfaceMuted
+            else -> colors.eventBudgetBarColor(state.tone)
+        }
     val containerColor = if (state.isFinal) colors.paperAlt else colors.surface
-    val borderColor = when {
-        state.isFinal -> Color.Transparent
-        state.tone == EventBudgetTone.OnTrack -> colors.line
-        else -> accent
-    }
+    val borderColor =
+        when {
+            state.isFinal -> Color.Transparent
+            state.tone == EventBudgetTone.OnTrack -> colors.line
+            else -> accent
+        }
     val trackColor = if (state.isFinal) colors.lineStrong else colors.paperAlt
     val barFill = if (state.isFinal) colors.muted2 else accent
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .then(
-                if (borderColor != Color.Transparent) {
-                    Modifier.border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
-                } else {
-                    Modifier
-                },
-            )
-            .background(containerColor)
-            .padding(dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .then(
+                    if (borderColor != Color.Transparent) {
+                        Modifier.border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
+                    } else {
+                        Modifier
+                    },
+                ).background(containerColor)
+                .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         Row(
@@ -91,11 +94,12 @@ fun EventBudgetSummaryCard(
                 Text(
                     text = state.eyebrow,
                     style = typography.eyebrow,
-                    color = if (state.isFinal || state.tone == EventBudgetTone.OnTrack) {
-                        colors.onSurfaceMuted
-                    } else {
-                        accent
-                    },
+                    color =
+                        if (state.isFinal || state.tone == EventBudgetTone.OnTrack) {
+                            colors.onSurfaceMuted
+                        } else {
+                            accent
+                        },
                 )
                 Text(
                     text = state.remainingLabel,
@@ -134,19 +138,21 @@ fun EventBudgetSummaryCard(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .clip(ProExpenseTheme.shapes.chip)
-                .background(trackColor),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(state.progress.coerceIn(0f, 1f))
+            modifier =
+                Modifier
+                    .fillMaxWidth()
                     .height(8.dp)
                     .clip(ProExpenseTheme.shapes.chip)
-                    .background(barFill)
-                    .align(Alignment.CenterStart),
+                    .background(trackColor),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(state.progress.coerceIn(0f, 1f))
+                        .height(8.dp)
+                        .clip(ProExpenseTheme.shapes.chip)
+                        .background(barFill)
+                        .align(Alignment.CenterStart),
             )
         }
 

@@ -16,12 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.history.R
-import com.arduia.expense.ui.design.HomeNavTab
-import com.arduia.expense.ui.design.ProAlertDialog
-import com.arduia.expense.ui.design.ProBottomSheetHost
-import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalDetailUiState
 import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
@@ -31,7 +25,13 @@ import com.arduia.expense.feature.history.ui.preview.JournalQuickNoteUiState
 import com.arduia.expense.feature.history.ui.preview.journalFilters
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
 import com.arduia.expense.ui.design.DateZone
+import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.PlatformDateFormatter
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -79,29 +79,31 @@ fun JournalFlow(
     val searchActive = query.isNotBlank()
     // DateRangePickerState reports UTC-midnight millis, not device-local instants — must be
     // read back with the same UTC calendar or the label/filter drift by a day off UTC.
-    val dateRangeLabel = if (dateRangeStart != null && dateRangeEnd != null) {
-        // Omitting the year is ambiguous once the range isn't entirely within the current
-        // year (a past year, or one that crosses a year boundary) — show it on both ends
-        // whenever that's the case so "Dec 20 – Jan 5" can't be misread as backwards.
-        val currentYear = PlatformDateFormatter.yearOf(System.currentTimeMillis(), DateZone.Utc)
-        val startYear = PlatformDateFormatter.yearOf(dateRangeStart, DateZone.Utc)
-        val endYear = PlatformDateFormatter.yearOf(dateRangeEnd, DateZone.Utc)
-        val withYear = startYear != currentYear || endYear != currentYear
-        "${PlatformDateFormatter.shortDateLabel(dateRangeStart, DateZone.Utc, withYear)} – " +
-            PlatformDateFormatter.shortDateLabel(dateRangeEnd, DateZone.Utc, withYear)
-    } else {
-        null
-    }
+    val dateRangeLabel =
+        if (dateRangeStart != null && dateRangeEnd != null) {
+            // Omitting the year is ambiguous once the range isn't entirely within the current
+            // year (a past year, or one that crosses a year boundary) — show it on both ends
+            // whenever that's the case so "Dec 20 – Jan 5" can't be misread as backwards.
+            val currentYear = PlatformDateFormatter.yearOf(System.currentTimeMillis(), DateZone.Utc)
+            val startYear = PlatformDateFormatter.yearOf(dateRangeStart, DateZone.Utc)
+            val endYear = PlatformDateFormatter.yearOf(dateRangeEnd, DateZone.Utc)
+            val withYear = startYear != currentYear || endYear != currentYear
+            "${PlatformDateFormatter.shortDateLabel(dateRangeStart, DateZone.Utc, withYear)} – " +
+                PlatformDateFormatter.shortDateLabel(dateRangeEnd, DateZone.Utc, withYear)
+        } else {
+            null
+        }
     // Search/category/date-range filtering already happened in SQL for `days` — this state is
     // presentation only (search-active flag, chip selection, empty-state routing).
-    val listState = JournalListUiState(
-        query = query,
-        selectedFilterId = selectedFilterId,
-        days = days,
-        filters = filters,
-        searchActive = searchActive,
-        isLoading = isLoading,
-    )
+    val listState =
+        JournalListUiState(
+            query = query,
+            selectedFilterId = selectedFilterId,
+            days = days,
+            filters = filters,
+            searchActive = searchActive,
+            isLoading = isLoading,
+        )
 
     BackHandler(enabled = selectedRowId != null) {
         if (initialSelectedRowId != null && selectedRowId == initialSelectedRowId) {
@@ -111,9 +113,10 @@ fun JournalFlow(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         AnimatedContent(
             targetState = selectedRowId,
@@ -214,9 +217,10 @@ fun JournalFlow(
             iconTint = colors.danger,
             iconBackground = colors.dangerTint,
             title = stringResource(R.string.journal_delete_title),
-            body = buildAnnotatedString {
-                append(stringResource(R.string.journal_delete_body))
-            },
+            body =
+                buildAnnotatedString {
+                    append(stringResource(R.string.journal_delete_body))
+                },
             confirmLabel = stringResource(R.string.journal_delete_action),
             onConfirm = {
                 showDeleteConfirm = false
@@ -255,9 +259,10 @@ private fun detailStateFor(
         amountLabel = row?.amount.orEmpty(),
         dateTimeLabel = row?.detailDateTimeLabel.orEmpty(),
         note = row?.note.orEmpty(),
-        linkedTag = row?.tag?.let { title ->
-            JournalLinkedTagUi(title = title, meta = row.tagSubtitle.orEmpty(), eventId = row.linkedEventId)
-        },
+        linkedTag =
+            row?.tag?.let { title ->
+                JournalLinkedTagUi(title = title, meta = row.tagSubtitle.orEmpty(), eventId = row.linkedEventId)
+            },
     )
 }
 

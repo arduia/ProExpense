@@ -40,28 +40,30 @@ fun AmountDisplay(
     val typography = ProExpenseTheme.typography
     val motion = ProExpenseTheme.motion
     val shakeOffset = remember { Animatable(0f) }
-    val amountAutoSize = remember(typography.displayAmount.fontSize) {
-        TextAutoSize.StepBased(
-            minFontSize = 28.sp,
-            maxFontSize = typography.displayAmount.fontSize,
-            stepSize = 0.5.sp,
-        )
-    }
+    val amountAutoSize =
+        remember(typography.displayAmount.fontSize) {
+            TextAutoSize.StepBased(
+                minFontSize = 28.sp,
+                maxFontSize = typography.displayAmount.fontSize,
+                stepSize = 0.5.sp,
+            )
+        }
 
     LaunchedEffect(showZeroValidation) {
         if (showZeroValidation) {
             shakeOffset.snapTo(0f)
             shakeOffset.animateTo(
                 targetValue = 0f,
-                animationSpec = keyframes {
-                    durationMillis = motion.shakeDurationMillis
-                    0f at 0
-                    4f at (motion.shakeDurationMillis * 0.2f).toInt()
-                    (-4f) at (motion.shakeDurationMillis * 0.4f).toInt()
-                    3f at (motion.shakeDurationMillis * 0.6f).toInt()
-                    (-3f) at (motion.shakeDurationMillis * 0.8f).toInt()
-                    0f at motion.shakeDurationMillis
-                },
+                animationSpec =
+                    keyframes {
+                        durationMillis = motion.shakeDurationMillis
+                        0f at 0
+                        4f at (motion.shakeDurationMillis * 0.2f).toInt()
+                        (-4f) at (motion.shakeDurationMillis * 0.4f).toInt()
+                        3f at (motion.shakeDurationMillis * 0.6f).toInt()
+                        (-3f) at (motion.shakeDurationMillis * 0.8f).toInt()
+                        0f at motion.shakeDurationMillis
+                    },
             )
         }
     }
@@ -76,27 +78,30 @@ fun AmountDisplay(
             color = colors.onSurfaceMuted,
         )
         BasicText(
-            text = buildAmountLine(
-                currencySymbol = currencySymbol,
-                amountText = amountText,
-                isZero = isZero,
-                primaryColor = colors.primary,
-                amountColor = when {
-                    isZero -> colors.muted2
-                    usePrimaryAmount -> colors.primary
-                    else -> colors.onSurface
-                },
-                decimalColor = colors.onSurfaceMuted,
-                amountFamily = typography.amountFamily,
-            ),
+            text =
+                buildAmountLine(
+                    currencySymbol = currencySymbol,
+                    amountText = amountText,
+                    isZero = isZero,
+                    primaryColor = colors.primary,
+                    amountColor =
+                        when {
+                            isZero -> colors.muted2
+                            usePrimaryAmount -> colors.primary
+                            else -> colors.onSurface
+                        },
+                    decimalColor = colors.onSurfaceMuted,
+                    amountFamily = typography.amountFamily,
+                ),
             style = typography.displayAmount,
             autoSize = amountAutoSize,
             maxLines = 1,
             softWrap = false,
             overflow = TextOverflow.Clip,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8),
         )
         if (isZero && showZeroValidation) {
             Text(

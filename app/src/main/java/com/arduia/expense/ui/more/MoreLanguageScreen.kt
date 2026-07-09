@@ -38,38 +38,41 @@ fun MoreLanguageScreen(
     val typography = ProExpenseTheme.typography
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space24),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space24),
         ) {
             ProTopBar(title = stringResource(R.string.more_language), onBack = onBack)
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space8),
                 verticalArrangement = Arrangement.spacedBy(dimens.space8),
             ) {
                 AppLanguage.entries.forEach { language ->
                     val selected = language == selectedLanguage
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(ProExpenseTheme.shapes.searchField)
-                            .background(if (selected) colors.primarySoft else colors.surface)
-                            .proClickable(
-                                onClick = { onSelect(language) },
-                                shape = ProExpenseTheme.shapes.searchField,
-                            )
-                            .padding(horizontal = dimens.space14, vertical = dimens.space14),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clip(ProExpenseTheme.shapes.searchField)
+                                .background(if (selected) colors.primarySoft else colors.surface)
+                                .proClickable(
+                                    onClick = { onSelect(language) },
+                                    shape = ProExpenseTheme.shapes.searchField,
+                                ).padding(horizontal = dimens.space14, vertical = dimens.space14),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {

@@ -1,9 +1,9 @@
 package com.arduia.expense.feature.sharedcost.ui.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,12 +71,13 @@ fun SharedCostPeopleCard(
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape)
-                .border(BorderStroke(1.dp, colors.line), shape)
-                .background(colors.surface)
-                .padding(horizontal = dimens.space16, vertical = dimens.rowPaddingV),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(shape)
+                    .border(BorderStroke(1.dp, colors.line), shape)
+                    .background(colors.surface)
+                    .padding(horizontal = dimens.space16, vertical = dimens.rowPaddingV),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -91,10 +92,11 @@ fun SharedCostPeopleCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 // Merged so TalkBack reads "N people" as one node, and liveRegion announces the
                 // new count automatically on +/- without the user needing to move focus back here.
-                modifier = Modifier.semantics(mergeDescendants = true) {
-                    stateDescription = countDescription
-                    liveRegion = LiveRegionMode.Polite
-                },
+                modifier =
+                    Modifier.semantics(mergeDescendants = true) {
+                        stateDescription = countDescription
+                        liveRegion = LiveRegionMode.Polite
+                    },
             ) {
                 Text(
                     text = count.toString(),
@@ -141,49 +143,51 @@ private fun SharedCostStepperButton(
     val motion = ProExpenseTheme.motion
     val shape = if (filled) ProExpenseTheme.shapes.tile else CircleShape
     val alpha = if (enabled) 1f else motion.keypadDisabledOpacity
-    val background = when {
-        filled && enabled -> colors.primary
-        filled -> colors.primary.copy(alpha = alpha)
-        else -> colors.surface
-    }
-    val tint = when {
-        filled && enabled -> colors.onPrimaryWarm
-        filled -> colors.onPrimaryWarm.copy(alpha = alpha)
-        enabled -> colors.onSurface
-        else -> colors.muted2
-    }
+    val background =
+        when {
+            filled && enabled -> colors.primary
+            filled -> colors.primary.copy(alpha = alpha)
+            else -> colors.surface
+        }
+    val tint =
+        when {
+            filled && enabled -> colors.onPrimaryWarm
+            filled -> colors.onPrimaryWarm.copy(alpha = alpha)
+            enabled -> colors.onSurface
+            else -> colors.muted2
+        }
 
     val interactionSource = remember { MutableInteractionSource() }
 
     Box(
-        modifier = modifier
-            .size(dimens.touchTargetMin)
-            .proPressScale(interactionSource, enabled = enabled)
-            .clip(shape)
-            .then(
-                if (!filled) {
-                    Modifier.border(BorderStroke(1.dp, colors.lineStrong), shape)
-                } else {
-                    Modifier
-                },
-            )
-            .background(background)
-            .then(
-                if (filled) {
-                    Modifier.proRippleClickable(
-                        onClick = onClick,
-                        enabled = enabled,
-                        interactionSource = interactionSource,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier.proIconClickable(
-                        onClick = onClick,
-                        enabled = enabled,
-                        interactionSource = interactionSource,
-                    )
-                },
-            ),
+        modifier =
+            modifier
+                .size(dimens.touchTargetMin)
+                .proPressScale(interactionSource, enabled = enabled)
+                .clip(shape)
+                .then(
+                    if (!filled) {
+                        Modifier.border(BorderStroke(1.dp, colors.lineStrong), shape)
+                    } else {
+                        Modifier
+                    },
+                ).background(background)
+                .then(
+                    if (filled) {
+                        Modifier.proRippleClickable(
+                            onClick = onClick,
+                            enabled = enabled,
+                            interactionSource = interactionSource,
+                            role = Role.Button,
+                        )
+                    } else {
+                        Modifier.proIconClickable(
+                            onClick = onClick,
+                            enabled = enabled,
+                            interactionSource = interactionSource,
+                        )
+                    },
+                ),
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(
@@ -213,17 +217,19 @@ fun SharedCostParticipantRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = dimens.rowPaddingV),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = dimens.rowPaddingV),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.space32)
-                .clip(CircleShape)
-                .background(colors.primarySoft),
+            modifier =
+                Modifier
+                    .size(dimens.space32)
+                    .clip(CircleShape)
+                    .background(colors.primarySoft),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -281,11 +287,12 @@ fun SharedCostParticipantRow(
             BasicTextField(
                 value = amount.dropWhile { !it.isDigit() },
                 onValueChange = { raw -> onAmountChange(sanitizeShareInput(raw)) },
-                textStyle = typography.listAmount.copy(
-                    color = colors.onSurface,
-                    fontFamily = typography.amountFamily,
-                    textAlign = TextAlign.End,
-                ),
+                textStyle =
+                    typography.listAmount.copy(
+                        color = colors.onSurface,
+                        fontFamily = typography.amountFamily,
+                        textAlign = TextAlign.End,
+                    ),
                 cursorBrush = SolidColor(colors.primary),
                 singleLine = true,
                 // Shares are decimal money values — a plain-text IME here forces a keyboard
@@ -333,22 +340,24 @@ fun SharedCostHistoryRow(
     val shape = ProExpenseTheme.shapes.card
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = dimens.touchTargetMin)
-            .clip(shape)
-            .border(BorderStroke(1.dp, colors.line), shape)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = shape)
-            .padding(dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = dimens.touchTargetMin)
+                .clip(shape)
+                .border(BorderStroke(1.dp, colors.line), shape)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(dimens.cardPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.quickAccessIconSize)
-                .clip(ProExpenseTheme.shapes.tile)
-                .background(colors.primarySoft),
+            modifier =
+                Modifier
+                    .size(dimens.quickAccessIconSize)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(colors.primarySoft),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(
@@ -415,9 +424,10 @@ fun SharedCostNoteField(
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
-                        style = typography.body.copy(
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        ),
+                        style =
+                            typography.body.copy(
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            ),
                         color = colors.muted,
                     )
                 }
@@ -443,12 +453,13 @@ fun SharedCostPerPersonCard(
     val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(BorderStroke(1.dp, colors.line), shape)
-            .background(colors.surface)
-            .padding(dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(BorderStroke(1.dp, colors.line), shape)
+                .background(colors.surface)
+                .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
@@ -491,12 +502,13 @@ fun SharedCostCustomSplitCard(
     val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(BorderStroke(1.dp, colors.line), shape)
-            .background(colors.surface)
-            .padding(horizontal = dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(BorderStroke(1.dp, colors.line), shape)
+                .background(colors.surface)
+                .padding(horizontal = dimens.cardPadding),
     ) {
         participants.forEachIndexed { index, (name, amount) ->
             SharedCostParticipantRow(

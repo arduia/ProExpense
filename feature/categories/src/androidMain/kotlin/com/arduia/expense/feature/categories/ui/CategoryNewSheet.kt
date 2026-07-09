@@ -22,6 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.categories.R
+import com.arduia.expense.feature.categories.ui.preview.CATEGORY_NAME_MAX
+import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
+import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
+import com.arduia.expense.feature.categories.ui.preview.previewCategoryNewDuplicate
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -30,10 +34,6 @@ import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.categoryIcon
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.categories.ui.preview.CATEGORY_NAME_MAX
-import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
-import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
-import com.arduia.expense.feature.categories.ui.preview.previewCategoryNewDuplicate
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -58,12 +58,13 @@ fun CategoryNewSheetContent(
         BasicTextField(
             value = form.name,
             onValueChange = { onNameChange(it.take(CATEGORY_NAME_MAX)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(ProExpenseTheme.shapes.searchField)
-                .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
-                .background(colors.surface)
-                .padding(horizontal = dimens.space14, vertical = dimens.space14),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(ProExpenseTheme.shapes.searchField)
+                    .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.searchField)
+                    .background(colors.surface)
+                    .padding(horizontal = dimens.space14, vertical = dimens.space14),
             textStyle = typography.body.copy(color = colors.onSurface),
             cursorBrush = SolidColor(colors.primary),
             singleLine = true,
@@ -80,11 +81,12 @@ fun CategoryNewSheetContent(
                         inner()
                     }
                     Text(
-                        text = stringResource(
-                            R.string.categories_name_counter,
-                            form.name.length,
-                            CATEGORY_NAME_MAX,
-                        ),
+                        text =
+                            stringResource(
+                                R.string.categories_name_counter,
+                                form.name.length,
+                                CATEGORY_NAME_MAX,
+                            ),
                         style = typography.caption,
                         color = if (form.duplicate) colors.danger else colors.onSurfaceMuted,
                         modifier = Modifier.padding(start = dimens.space8),
@@ -155,12 +157,13 @@ private fun CategoryIconTile(
     val border = if (selected) colors.primary else colors.lineStrong
 
     Box(
-        modifier = Modifier
-            .size(dimens.space44)
-            .clip(shape)
-            .border(BorderStroke(1.dp, border), shape)
-            .background(background)
-            .proClickable(onClick = onClick, shape = shape),
+        modifier =
+            Modifier
+                .size(dimens.space44)
+                .clip(shape)
+                .border(BorderStroke(1.dp, border), shape)
+                .background(background)
+                .proClickable(onClick = onClick, shape = shape),
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(

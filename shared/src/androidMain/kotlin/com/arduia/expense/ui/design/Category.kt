@@ -36,10 +36,11 @@ fun LogCategoryBadge(
     val colors = ProExpenseTheme.colors.category(catalogueKey)
     val iconSize = size * 0.52f
     Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(colors.tint),
+        modifier =
+            modifier
+                .size(size)
+                .clip(CircleShape)
+                .background(colors.tint),
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(
@@ -68,17 +69,19 @@ fun CategoryChip(
     val background = if (selected) category.accent else Color.Transparent
     val contentColor = if (selected) colors.onPrimaryWarm else colors.onSurfaceVariant
     val borderColor = if (selected) category.accent else colors.lineStrong
-    val textStyle = (if (selected) typography.bodySemiBold else typography.bodyMedium)
-        .copy(fontSize = 12.5.sp)
+    val textStyle =
+        (if (selected) typography.bodySemiBold else typography.bodyMedium)
+            .copy(fontSize = 12.5.sp)
 
     Row(
-        modifier = modifier
-            .proPressScale(interactionSource)
-            .clip(chipShape)
-            .background(background)
-            .border(BorderStroke(dimens.chipBorderWidth, borderColor), chipShape)
-            .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
-            .padding(start = dimens.space8, top = 7.dp, end = dimens.space12, bottom = 7.dp),
+        modifier =
+            modifier
+                .proPressScale(interactionSource)
+                .clip(chipShape)
+                .background(background)
+                .border(BorderStroke(dimens.chipBorderWidth, borderColor), chipShape)
+                .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
+                .padding(start = dimens.space8, top = 7.dp, end = dimens.space12, bottom = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space6),
     ) {

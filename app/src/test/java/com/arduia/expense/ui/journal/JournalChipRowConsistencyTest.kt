@@ -10,13 +10,13 @@ import com.arduia.expense.feature.history.ui.preview.previewJournalList
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import kotlin.math.absoluteValue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import kotlin.math.absoluteValue
 
 /**
  * Retrospective guard (2026-07): the date-range chip once rendered at 59dp next to 28dp
@@ -31,7 +31,6 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class JournalChipRowConsistencyTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 

@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -91,21 +90,23 @@ private fun ProfileStepProgressBar(
             val active = stepNumber <= currentStep
             if (stepNumber == currentStep) {
                 Box(
-                    modifier = Modifier
-                        .width(dimens.profileStepBarWidth)
-                        .height(dimens.profileStepBarHeight)
-                        .clip(CircleShape)
-                        .background(colors.primary),
+                    modifier =
+                        Modifier
+                            .width(dimens.profileStepBarWidth)
+                            .height(dimens.profileStepBarHeight)
+                            .clip(CircleShape)
+                            .background(colors.primary),
                 )
             } else {
                 Box(
-                    modifier = Modifier
-                        .width(dimens.pageIndicatorDotSize)
-                        .height(dimens.pageIndicatorDotSize)
-                        .clip(CircleShape)
-                        .background(
-                            if (active) colors.primary else colors.onSurface.copy(alpha = 0.18f),
-                        ),
+                    modifier =
+                        Modifier
+                            .width(dimens.pageIndicatorDotSize)
+                            .height(dimens.pageIndicatorDotSize)
+                            .clip(CircleShape)
+                            .background(
+                                if (active) colors.primary else colors.onSurface.copy(alpha = 0.18f),
+                            ),
                 )
             }
         }

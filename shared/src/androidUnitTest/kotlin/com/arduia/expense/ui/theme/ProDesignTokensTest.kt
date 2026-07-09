@@ -8,7 +8,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -16,7 +15,6 @@ import org.junit.Test
 
 @OptIn(ExperimentalTextApi::class, ExperimentalComposeUiApi::class)
 class ProDesignTokensTest {
-
     @Test
     fun primary_semantic_color_matches_handoff() {
         assertEquals(Color(0xFF039BE5), ProLightColors.primary)
@@ -230,13 +228,14 @@ class ProDesignTokensTest {
 
     @Test
     fun amount_styles_never_request_bold() {
-        val amountStyles = listOf(
-            ProDefaultTypography.displayAmount,
-            ProDefaultTypography.summaryAmount,
-            ProDefaultTypography.detailsAmount,
-            ProDefaultTypography.listAmount,
-            ProDefaultTypography.keypadKey,
-        )
+        val amountStyles =
+            listOf(
+                ProDefaultTypography.displayAmount,
+                ProDefaultTypography.summaryAmount,
+                ProDefaultTypography.detailsAmount,
+                ProDefaultTypography.listAmount,
+                ProDefaultTypography.keypadKey,
+            )
         amountStyles.forEach { style ->
             assertEquals(FontWeight.Normal, style.fontWeight)
         }
@@ -244,14 +243,15 @@ class ProDesignTokensTest {
 
     @Test
     fun inter_title_styles_never_request_bold() {
-        val interTitleStyles = listOf(
-            ProDefaultTypography.heroGreetingEmphasis,
-            ProDefaultTypography.sheetTitle,
-            ProDefaultTypography.sectionHead,
-            ProDefaultTypography.screenHeaderTitle,
-            ProDefaultTypography.onboardingSlideTitle,
-            ProDefaultTypography.profileScreenTitle,
-        )
+        val interTitleStyles =
+            listOf(
+                ProDefaultTypography.heroGreetingEmphasis,
+                ProDefaultTypography.sheetTitle,
+                ProDefaultTypography.sectionHead,
+                ProDefaultTypography.screenHeaderTitle,
+                ProDefaultTypography.onboardingSlideTitle,
+                ProDefaultTypography.profileScreenTitle,
+            )
         interTitleStyles.forEach { style ->
             assertEquals(FontWeight.Normal, style.fontWeight)
         }
@@ -259,17 +259,18 @@ class ProDesignTokensTest {
 
     @Test
     fun title_and_amount_styles_use_figma_line_metrics() {
-        val alignedStyles = listOf(
-            ProDefaultTypography.displayAmount,
-            ProDefaultTypography.summaryAmount,
-            ProDefaultTypography.listAmount,
-            ProDefaultTypography.appBarTitle,
-            ProDefaultTypography.heroGreeting,
-            ProDefaultTypography.heroGreetingEmphasis,
-            ProDefaultTypography.sheetTitle,
-            ProDefaultTypography.sectionHead,
-            ProDefaultTypography.keypadKey,
-        )
+        val alignedStyles =
+            listOf(
+                ProDefaultTypography.displayAmount,
+                ProDefaultTypography.summaryAmount,
+                ProDefaultTypography.listAmount,
+                ProDefaultTypography.appBarTitle,
+                ProDefaultTypography.heroGreeting,
+                ProDefaultTypography.heroGreetingEmphasis,
+                ProDefaultTypography.sheetTitle,
+                ProDefaultTypography.sectionHead,
+                ProDefaultTypography.keypadKey,
+            )
         alignedStyles.forEach { style ->
             assertEquals(PlatformTextStyle(includeFontPadding = false), style.platformStyle)
             assertEquals(LineHeightStyle.Alignment.Center, style.lineHeightStyle?.alignment)

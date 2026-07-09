@@ -65,62 +65,69 @@ fun ProAlertDialog(
             exit = fadeOut(tween(motion.fadeDurationMillis, easing = motion.standardEasing)),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(colors.scrim)
-                    .clickable(
-                        interactionSource = MutableInteractionSource(),
-                        indication = null,
-                        onClick = onDismiss,
-                    ),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(colors.scrim)
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null,
+                            onClick = onDismiss,
+                        ),
             )
         }
         AnimatedVisibility(
             visible = visible,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(dimens.space24),
-            enter = fadeIn(tween(motion.fadeDurationMillis, easing = motion.standardEasing)) +
-                scaleIn(tween(motion.fadeDurationMillis, easing = motion.standardEasing), initialScale = 0.92f),
-            exit = fadeOut(tween(motion.fadeDurationMillis, easing = motion.standardEasing)) +
-                scaleOut(tween(motion.fadeDurationMillis, easing = motion.standardEasing), targetScale = 0.92f),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(dimens.space24),
+            enter =
+                fadeIn(tween(motion.fadeDurationMillis, easing = motion.standardEasing)) +
+                    scaleIn(tween(motion.fadeDurationMillis, easing = motion.standardEasing), initialScale = 0.92f),
+            exit =
+                fadeOut(tween(motion.fadeDurationMillis, easing = motion.standardEasing)) +
+                    scaleOut(tween(motion.fadeDurationMillis, easing = motion.standardEasing), targetScale = 0.92f),
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .then(
-                            if (dialogElevation != null) {
-                                Modifier.shadow(
-                                    elevation = dialogElevation.blur,
-                                    shape = ProExpenseTheme.shapes.card,
-                                    spotColor = dialogElevation.color,
-                                    ambientColor = dialogElevation.color,
-                                )
-                            } else {
-                                Modifier
-                            },
-                        )
-                        // Swallow taps on the card so they don't reach the scrim.
-                        .clickable(
-                            interactionSource = MutableInteractionSource(),
-                            indication = null,
-                            onClick = {},
-                        ),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .then(
+                                if (dialogElevation != null) {
+                                    Modifier.shadow(
+                                        elevation = dialogElevation.blur,
+                                        shape = ProExpenseTheme.shapes.card,
+                                        spotColor = dialogElevation.color,
+                                        ambientColor = dialogElevation.color,
+                                    )
+                                } else {
+                                    Modifier
+                                },
+                            )
+                            // Swallow taps on the card so they don't reach the scrim.
+                            .clickable(
+                                interactionSource = MutableInteractionSource(),
+                                indication = null,
+                                onClick = {},
+                            ),
                     shape = ProExpenseTheme.shapes.card,
                     color = colors.surface,
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(dimens.space24),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(dimens.space24),
                         verticalArrangement = Arrangement.spacedBy(dimens.space16),
                     ) {
                         Box(
-                            modifier = Modifier
-                                .size(dimens.touchTargetMin)
-                                .clip(CircleShape)
-                                .background(iconBackground),
+                            modifier =
+                                Modifier
+                                    .size(dimens.touchTargetMin)
+                                    .clip(CircleShape)
+                                    .background(iconBackground),
                             contentAlignment = Alignment.Center,
                         ) {
                             ProIcon(

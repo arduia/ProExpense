@@ -15,27 +15,25 @@ class DefaultLoggingRepository(
     private val financeRecordRepository: FinanceRecordRepository,
     private val idGenerator: () -> String = Identifiers::newId,
 ) : LoggingRepository {
-
     override suspend fun createRecord(input: LogRecordInput): Result<FinanceRecord> {
-        val record = FinanceRecord(
-            id = RecordId(idGenerator()),
-            money = input.money,
-            homeCurrencyMoney = input.homeCurrencyMoney,
-            categoryId = input.categoryId,
-            type = input.type,
-            note = input.note,
-            recordedAtEpochMillis = input.recordedAtEpochMillis,
-            link = input.link,
-        )
+        val record =
+            FinanceRecord(
+                id = RecordId(idGenerator()),
+                money = input.money,
+                homeCurrencyMoney = input.homeCurrencyMoney,
+                categoryId = input.categoryId,
+                type = input.type,
+                note = input.note,
+                recordedAtEpochMillis = input.recordedAtEpochMillis,
+                link = input.link,
+            )
         return when (val result = financeRecordRepository.upsert(record)) {
             is Result.Success -> Result.Success(record)
             is Result.Error -> result
         }
     }
 
-    override suspend fun updateRecord(record: FinanceRecord): Result<Unit> =
-        financeRecordRepository.upsert(record)
+    override suspend fun updateRecord(record: FinanceRecord): Result<Unit> = financeRecordRepository.upsert(record)
 
-    override suspend fun deleteRecord(id: RecordId): Result<Unit> =
-        financeRecordRepository.delete(id)
+    override suspend fun deleteRecord(id: RecordId): Result<Unit> = financeRecordRepository.delete(id)
 }

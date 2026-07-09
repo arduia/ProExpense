@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RecordLinkTest {
-
     @Test
     fun `constructs each link kind`() {
         val none: RecordLink = RecordLink.None
@@ -20,12 +19,13 @@ class RecordLinkTest {
 
     @Test
     fun `is exhaustively matchable without an else branch`() {
-        fun describe(link: RecordLink): String = when (link) {
-            RecordLink.None -> "none"
-            is RecordLink.ToEvent -> "event:${link.eventId.value}"
-            is RecordLink.ToDebt -> "debt:${link.debtId.value}"
-            is RecordLink.ToSharedCost -> "sharedCost:${link.sharedCostId.value}"
-        }
+        fun describe(link: RecordLink): String =
+            when (link) {
+                RecordLink.None -> "none"
+                is RecordLink.ToEvent -> "event:${link.eventId.value}"
+                is RecordLink.ToDebt -> "debt:${link.debtId.value}"
+                is RecordLink.ToSharedCost -> "sharedCost:${link.sharedCostId.value}"
+            }
 
         assertEquals("event:e1", describe(RecordLink.ToEvent(EventId("e1"))))
     }

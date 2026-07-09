@@ -23,13 +23,15 @@ internal fun DebtRow.toDomain(): Debt =
  * Enum codec for DebtDirection — explicit stable codes (OWED_TO_ME=0, I_OWE=1).
  * Never use Kotlin .ordinal as that changes when enum members are reordered.
  */
-internal fun Long.toDebtDirectionFromCode(): DebtDirection = when (this) {
-    0L -> DebtDirection.OWED_TO_ME
-    1L -> DebtDirection.I_OWE
-    else -> error("Unknown DebtDirection code: $this")
-}
+internal fun Long.toDebtDirectionFromCode(): DebtDirection =
+    when (this) {
+        0L -> DebtDirection.OWED_TO_ME
+        1L -> DebtDirection.I_OWE
+        else -> error("Unknown DebtDirection code: $this")
+    }
 
-internal fun DebtDirection.toCode(): Long = when (this) {
-    DebtDirection.OWED_TO_ME -> 0L
-    DebtDirection.I_OWE -> 1L
-}
+internal fun DebtDirection.toCode(): Long =
+    when (this) {
+        DebtDirection.OWED_TO_ME -> 0L
+        DebtDirection.I_OWE -> 1L
+    }

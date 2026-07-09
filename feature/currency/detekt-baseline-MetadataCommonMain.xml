@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:SaveHomeCurrencyUseCase.kt$SaveHomeCurrencyUseCase$suspend operator fun invoke(currencyCode: String): Result&lt;Unit&gt;</ID>
+  </CurrentIssues>
+</SmellBaseline>

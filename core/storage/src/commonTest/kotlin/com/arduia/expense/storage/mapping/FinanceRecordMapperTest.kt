@@ -13,25 +13,25 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class FinanceRecordMapperTest {
-
     @Test
     fun toDomain_foreignCurrencyRecord_usesHomeCurrencyColumnForHomeMoney() {
-        val row = Finance_record(
-            id = "rec-1",
-            amount_cents = 12_345,
-            currency_code = "EUR",
-            home_amount_cents = 11_000,
-            category_id = "food",
-            type = 0L, // EXPENSE
-            note = "lunch",
-            recorded_at = 1_700_000_000_000,
-            updated_at = 1_700_000_000_001,
-            tag_type = null,
-            tag_id = null,
-            integrity_algo = "SHA-256",
-            integrity_hash = "abc123",
-            home_currency_code = "USD",
-        )
+        val row =
+            Finance_record(
+                id = "rec-1",
+                amount_cents = 12_345,
+                currency_code = "EUR",
+                home_amount_cents = 11_000,
+                category_id = "food",
+                type = 0L, // EXPENSE
+                note = "lunch",
+                recorded_at = 1_700_000_000_000,
+                updated_at = 1_700_000_000_001,
+                tag_type = null,
+                tag_id = null,
+                integrity_algo = "SHA-256",
+                integrity_hash = "abc123",
+                home_currency_code = "USD",
+            )
 
         val record = row.toDomain()
 
@@ -51,22 +51,23 @@ class FinanceRecordMapperTest {
 
     @Test
     fun toDomain_sameCurrencyRecord_nullHomeColumnsFallBackToRowCurrency() {
-        val row = Finance_record(
-            id = "rec-2",
-            amount_cents = 5_000,
-            currency_code = "USD",
-            home_amount_cents = null,
-            category_id = "food",
-            type = 0L,
-            note = null,
-            recorded_at = 1_700_000_000_000,
-            updated_at = 1_700_000_000_001,
-            tag_type = null,
-            tag_id = null,
-            integrity_algo = "SHA-256",
-            integrity_hash = "abc123",
-            home_currency_code = null,
-        )
+        val row =
+            Finance_record(
+                id = "rec-2",
+                amount_cents = 5_000,
+                currency_code = "USD",
+                home_amount_cents = null,
+                category_id = "food",
+                type = 0L,
+                note = null,
+                recorded_at = 1_700_000_000_000,
+                updated_at = 1_700_000_000_001,
+                tag_type = null,
+                tag_id = null,
+                integrity_algo = "SHA-256",
+                integrity_hash = "abc123",
+                home_currency_code = null,
+            )
 
         val record = row.toDomain()
 
@@ -83,12 +84,13 @@ class FinanceRecordMapperTest {
 
     @Test
     fun recordLink_roundTripsThroughTagColumns() {
-        val links = listOf(
-            RecordLink.None,
-            RecordLink.ToEvent(EventId("evt-1")),
-            RecordLink.ToDebt(DebtId("debt-1")),
-            RecordLink.ToSharedCost(SharedCostId("sc-1")),
-        )
+        val links =
+            listOf(
+                RecordLink.None,
+                RecordLink.ToEvent(EventId("evt-1")),
+                RecordLink.ToDebt(DebtId("debt-1")),
+                RecordLink.ToSharedCost(SharedCostId("sc-1")),
+            )
 
         links.forEach { link ->
             val restored = toRecordLink(link.tagType(), link.tagId())
@@ -111,9 +113,10 @@ class FinanceRecordMapperTest {
 
     @Test
     fun toRecordLink_missingTagId_fails() {
-        val error = assertFailsWith<IllegalArgumentException> {
-            toRecordLink("EVENT", null)
-        }
+        val error =
+            assertFailsWith<IllegalArgumentException> {
+                toRecordLink("EVENT", null)
+            }
         assertTrue(error.message!!.contains("tag_id"))
     }
 }

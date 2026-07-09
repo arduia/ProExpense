@@ -6,7 +6,8 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 /** Opens the encrypted database once; the shared [storageBindings] expose `core:data` contracts. */
-val storageModule = module {
-    includes(storageBindings)
-    single { ProExpenseStorage.create(androidContext()) }
-}
+val storageModule =
+    module {
+        includes(storageBindings)
+        single { ProExpenseStorage.create(androidContext()) }
+    }

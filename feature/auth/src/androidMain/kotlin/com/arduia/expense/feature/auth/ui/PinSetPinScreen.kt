@@ -1,7 +1,6 @@
 package com.arduia.expense.feature.auth.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,16 +11,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.feature.auth.PinEntryMode
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.ui.preview.previewPinSetConfirmMismatch
 import com.arduia.expense.ui.design.PinDots
 import com.arduia.expense.ui.design.PinKeypadGrid
 import com.arduia.expense.ui.design.PinKeypadState
@@ -29,9 +31,6 @@ import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proIconClickable
-import com.arduia.expense.feature.auth.PinEntryMode
-import com.arduia.expense.feature.auth.PinEntryUiState
-import com.arduia.expense.feature.auth.ui.preview.previewPinSetConfirmMismatch
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -51,12 +50,13 @@ fun PinSetPinScreen(
     var revealed by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = dimens.screenPadding),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = dimens.screenPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -95,10 +95,11 @@ fun PinSetPinScreen(
             ProIcon(
                 glyph = if (revealed) ProIconGlyph.EyeOff else ProIconGlyph.Eye,
                 contentDescription = "Toggle PIN reveal",
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(top = dimens.space16, end = dimens.space16)
-                    .proIconClickable(onClick = { revealed = !revealed }),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(top = dimens.space16, end = dimens.space16)
+                        .proIconClickable(onClick = { revealed = !revealed }),
                 tint = colors.onSurfaceMuted,
             )
         }

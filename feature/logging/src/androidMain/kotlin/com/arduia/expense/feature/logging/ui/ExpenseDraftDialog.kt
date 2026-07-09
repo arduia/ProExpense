@@ -39,9 +39,10 @@ fun ExpenseDraftDialog(
     ProCard(modifier = modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
             Box(
-                modifier = Modifier
-                    .size(dimens.iconBadge)
-                    .background(colors.primaryTint, CircleShape),
+                modifier =
+                    Modifier
+                        .size(dimens.iconBadge)
+                        .background(colors.primaryTint, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(

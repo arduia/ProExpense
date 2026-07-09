@@ -1,8 +1,6 @@
 package com.arduia.expense.ui.design
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import java.util.Calendar
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,25 +57,27 @@ fun DateTimePickerSheet(
         onClose = onDismiss,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space24),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space24),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             val typography = ProExpenseTheme.typography
-            val timeFieldColors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = colors.primary,
-                unfocusedBorderColor = colors.line,
-                focusedLabelColor = colors.primary,
-                unfocusedLabelColor = colors.muted,
-                focusedTextColor = colors.onSurface,
-                unfocusedTextColor = colors.onSurface,
-                cursorColor = colors.primary,
-                focusedContainerColor = colors.surface,
-                unfocusedContainerColor = colors.surface,
-            )
+            val timeFieldColors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = colors.primary,
+                    unfocusedBorderColor = colors.line,
+                    focusedLabelColor = colors.primary,
+                    unfocusedLabelColor = colors.muted,
+                    focusedTextColor = colors.onSurface,
+                    unfocusedTextColor = colors.onSurface,
+                    cursorColor = colors.primary,
+                    focusedContainerColor = colors.surface,
+                    unfocusedContainerColor = colors.surface,
+                )
 
             MaterialTheme(typography = proDatePickerTypography()) {
                 DatePicker(
@@ -91,9 +90,10 @@ fun DateTimePickerSheet(
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space8),
                 horizontalArrangement = Arrangement.spacedBy(dimens.space8),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -129,9 +129,10 @@ fun DateTimePickerSheet(
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space8),
                 horizontalArrangement = Arrangement.spacedBy(dimens.space8),
             ) {
                 ProButton(
@@ -147,12 +148,15 @@ fun DateTimePickerSheet(
                     text = "Confirm",
                     onClick = {
                         val selectedDate = datePickerState.selectedDateMillis ?: initialEpochMillis
-                        val result = Calendar.getInstance().apply {
-                            timeInMillis = selectedDate
-                            set(Calendar.HOUR_OF_DAY, selectedHour)
-                            set(Calendar.MINUTE, selectedMinute)
-                            set(Calendar.SECOND, 0)
-                        }.timeInMillis
+                        val result =
+                            Calendar
+                                .getInstance()
+                                .apply {
+                                    timeInMillis = selectedDate
+                                    set(Calendar.HOUR_OF_DAY, selectedHour)
+                                    set(Calendar.MINUTE, selectedMinute)
+                                    set(Calendar.SECOND, 0)
+                                }.timeInMillis
                         onConfirm(result)
                         onDismiss()
                     },
@@ -166,9 +170,7 @@ fun DateTimePickerSheet(
 }
 
 private class TimeFieldTransformation : VisualTransformation {
-    override fun filter(text: androidx.compose.ui.text.AnnotatedString): TransformedText {
-        return TransformedText(text, OffsetMapping.Identity)
-    }
+    override fun filter(text: androidx.compose.ui.text.AnnotatedString): TransformedText = TransformedText(text, OffsetMapping.Identity)
 }
 
 @Preview(

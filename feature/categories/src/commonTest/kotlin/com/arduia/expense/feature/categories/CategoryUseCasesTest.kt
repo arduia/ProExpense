@@ -21,7 +21,12 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private fun sampleCategory(id: String, name: String = "Food", isCustom: Boolean = true, sortOrder: Int = 0) = Category(
+private fun sampleCategory(
+    id: String,
+    name: String = "Food",
+    isCustom: Boolean = true,
+    sortOrder: Int = 0,
+) = Category(
     id = CategoryId(id),
     name = name,
     isCustom = isCustom,
@@ -36,63 +41,72 @@ private class FakeCategoryRepository(
     var lastReorder: List<CategoryId>? = null
 
     override suspend fun getAll(): Result<List<Category>> = Result.Success(records.values.toList())
+
     override suspend fun upsert(category: Category): Result<Unit> {
         lastUpsert = category
         records[category.id.value] = category
         return Result.Success(Unit)
     }
+
     override suspend fun delete(id: CategoryId): Result<Unit> {
         deletedId = id
         records.remove(id.value)
         return Result.Success(Unit)
     }
+
     override suspend fun reorder(orderedIds: List<CategoryId>): Result<Unit> {
         lastReorder = orderedIds
         return Result.Success(Unit)
     }
+
     override fun observeAll() = MutableStateFlow(records.values.toList()).asStateFlow()
 }
 
 class SaveCategoryUseCaseTest {
+    @Test
+    fun invoke_createsNewCustomCategoryWithSortOrderAfterExistingCustomOnes() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+            val existing = listOf(sampleCategory("a", isCustom = true, sortOrder = 0), sampleCategory("b", isCustom = false, sortOrder = 1))
+
+            useCase(existing, editingId = null, name = "Travel")
+
+            assertEquals("travel-1000", repo.lastUpsert?.id?.value)
+            assertEquals(true, repo.lastUpsert?.isCustom)
+            assertEquals(1, repo.lastUpsert?.sortOrder)
+        }
 
     @Test
-    fun invoke_createsNewCustomCategoryWithSortOrderAfterExistingCustomOnes() = runTest {
-        val repo = FakeCategoryRepository()
-        val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
-        val existing = listOf(sampleCategory("a", isCustom = true, sortOrder = 0), sampleCategory("b", isCustom = false, sortOrder = 1))
+    fun invoke_renamesExistingCategoryPreservingIdAndSortOrder() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+            val existing = listOf(sampleCategory("food", name = "Food", sortOrder = 3))
 
-        useCase(existing, editingId = null, name = "Travel")
+            useCase(existing, editingId = "food", name = "Groceries")
 
-        assertEquals("travel-1000", repo.lastUpsert?.id?.value)
-        assertEquals(true, repo.lastUpsert?.isCustom)
-        assertEquals(1, repo.lastUpsert?.sortOrder)
-    }
-
-    @Test
-    fun invoke_renamesExistingCategoryPreservingIdAndSortOrder() = runTest {
-        val repo = FakeCategoryRepository()
-        val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
-        val existing = listOf(sampleCategory("food", name = "Food", sortOrder = 3))
-
-        useCase(existing, editingId = "food", name = "Groceries")
-
-        assertEquals(CategoryId("food"), repo.lastUpsert?.id)
-        assertEquals("Groceries", repo.lastUpsert?.name)
-        assertEquals(3, repo.lastUpsert?.sortOrder)
-    }
+            assertEquals(CategoryId("food"), repo.lastUpsert?.id)
+            assertEquals("Groceries", repo.lastUpsert?.name)
+            assertEquals(3, repo.lastUpsert?.sortOrder)
+        }
 
     @Test
-    fun invoke_persistsTheSelectedIconIdInsteadOfDiscardingIt() = runTest {
-        val repo = FakeCategoryRepository()
-        val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+    fun invoke_persistsTheSelectedIconIdInsteadOfDiscardingIt() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
 
-        useCase(emptyList(), editingId = null, name = "Coffee Fund", iconId = "coffee")
+            useCase(emptyList(), editingId = null, name = "Coffee Fund", iconId = "coffee")
 
-        assertEquals("coffee", repo.lastUpsert?.iconId)
-    }
+            assertEquals("coffee", repo.lastUpsert?.iconId)
+        }
 }
 
-private fun sampleRecord(id: String, categoryId: String) = FinanceRecord(
+private fun sampleRecord(
+    id: String,
+    categoryId: String,
+) = FinanceRecord(
     id = RecordId(id),
     money = Money(Amount(1000), CurrencyCode("USD")),
     homeCurrencyMoney = Money(Amount(1000), CurrencyCode("USD")),
@@ -106,70 +120,82 @@ private class FakeFinanceRecordRepository(
     private val records: MutableMap<String, FinanceRecord> = mutableMapOf(),
 ) : FinanceRecordRepository {
     override suspend fun getAll(): Result<List<FinanceRecord>> = Result.Success(records.values.toList())
+
     override suspend fun getById(id: RecordId): Result<FinanceRecord?> = Result.Success(records[id.value])
+
     override suspend fun upsert(record: FinanceRecord): Result<Unit> {
         records[record.id.value] = record
         return Result.Success(Unit)
     }
+
     override suspend fun delete(id: RecordId): Result<Unit> {
         records.remove(id.value)
         return Result.Success(Unit)
     }
+
     override fun observeAll() = MutableStateFlow(records.values.toList()).asStateFlow()
+
     override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
-    override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
-        Result.Success(records.values.toList().take(limit))
+
+    override suspend fun getRecordsPage(
+        filter: RecordPageFilter,
+        cursor: RecordPageCursor?,
+        limit: Int,
+    ): Result<List<FinanceRecord>> = Result.Success(records.values.toList().take(limit))
+
     override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
         Result.Success(records.values.any { it.categoryId == categoryId })
-    override fun observeChangeSignal() =
-        MutableStateFlow(RecordChangeSignal(records.size.toLong(), 0L)).asStateFlow()
+
+    override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(records.size.toLong(), 0L)).asStateFlow()
 }
 
 class DeleteCategoryUseCaseTest {
+    @Test
+    fun invoke_deletesCategoryById() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = DeleteCategoryUseCase(repo, FakeFinanceRecordRepository())
+
+            useCase("food")
+
+            assertEquals(CategoryId("food"), repo.deletedId)
+        }
 
     @Test
-    fun invoke_deletesCategoryById() = runTest {
-        val repo = FakeCategoryRepository()
-        val useCase = DeleteCategoryUseCase(repo, FakeFinanceRecordRepository())
+    fun invoke_reassignsLinkedRecordsToUncategorizedBeforeDeleting() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val financeRecordRepo =
+                FakeFinanceRecordRepository(
+                    mutableMapOf(
+                        "r1" to sampleRecord("r1", "coffee"),
+                        "r2" to sampleRecord("r2", "coffee"),
+                        "r3" to sampleRecord("r3", "food"),
+                    ),
+                )
+            val useCase = DeleteCategoryUseCase(repo, financeRecordRepo)
 
-        useCase("food")
+            useCase("coffee")
 
-        assertEquals(CategoryId("food"), repo.deletedId)
-    }
-
-    @Test
-    fun invoke_reassignsLinkedRecordsToUncategorizedBeforeDeleting() = runTest {
-        val repo = FakeCategoryRepository()
-        val financeRecordRepo = FakeFinanceRecordRepository(
-            mutableMapOf(
-                "r1" to sampleRecord("r1", "coffee"),
-                "r2" to sampleRecord("r2", "coffee"),
-                "r3" to sampleRecord("r3", "food"),
-            ),
-        )
-        val useCase = DeleteCategoryUseCase(repo, financeRecordRepo)
-
-        useCase("coffee")
-
-        val reassigned = (financeRecordRepo.getAll() as Result.Success).data.associateBy { it.id.value }
-        assertEquals(CategoryId(UNCATEGORIZED_CATEGORY_ID), reassigned.getValue("r1").categoryId)
-        assertEquals(CategoryId(UNCATEGORIZED_CATEGORY_ID), reassigned.getValue("r2").categoryId)
-        assertEquals(CategoryId("food"), reassigned.getValue("r3").categoryId)
-    }
+            val reassigned = (financeRecordRepo.getAll() as Result.Success).data.associateBy { it.id.value }
+            assertEquals(CategoryId(UNCATEGORIZED_CATEGORY_ID), reassigned.getValue("r1").categoryId)
+            assertEquals(CategoryId(UNCATEGORIZED_CATEGORY_ID), reassigned.getValue("r2").categoryId)
+            assertEquals(CategoryId("food"), reassigned.getValue("r3").categoryId)
+        }
 }
 
 class ReorderCategoriesUseCaseTest {
-
     @Test
-    fun invoke_pinsDefaultIdsFirstThenCustomIds() = runTest {
-        val repo = FakeCategoryRepository()
-        val useCase = ReorderCategoriesUseCase(repo)
+    fun invoke_pinsDefaultIdsFirstThenCustomIds() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = ReorderCategoriesUseCase(repo)
 
-        useCase(defaultIds = listOf("food", "transport"), reorderedCustomIds = listOf("travel", "gifts"))
+            useCase(defaultIds = listOf("food", "transport"), reorderedCustomIds = listOf("travel", "gifts"))
 
-        assertEquals(
-            listOf(CategoryId("food"), CategoryId("transport"), CategoryId("travel"), CategoryId("gifts")),
-            repo.lastReorder,
-        )
-    }
+            assertEquals(
+                listOf(CategoryId("food"), CategoryId("transport"), CategoryId("travel"), CategoryId("gifts")),
+                repo.lastReorder,
+            )
+        }
 }

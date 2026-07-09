@@ -52,9 +52,10 @@ fun TagPickerContent(
     val debtsDisabled = selectedKind == TagLinkKind.Event
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
         Text(
@@ -135,40 +136,41 @@ private fun TagLinkRow(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.searchField
-    val iconGlyph = when (option.kind) {
-        TagLinkKind.Event -> ProIconGlyph.FeatEvents
-        TagLinkKind.Debt -> ProIconGlyph.FeatDebt
-    }
+    val iconGlyph =
+        when (option.kind) {
+            TagLinkKind.Event -> ProIconGlyph.FeatEvents
+            TagLinkKind.Debt -> ProIconGlyph.FeatDebt
+        }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .alpha(if (enabled) 1f else 0.45f)
-            .clip(shape)
-            .border(
-                BorderStroke(
-                    width = dimens.buttonBorderWidth,
-                    color = if (selected) colors.primary else colors.line,
-                ),
-                shape = shape,
-            )
-            .background(if (selected) colors.primaryTint.copy(alpha = 0.45f) else colors.surface)
-            .then(
-                if (enabled) {
-                    Modifier.proClickable(onClick = onClick, shape = shape)
-                } else {
-                    Modifier
-                },
-            )
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .alpha(if (enabled) 1f else 0.45f)
+                .clip(shape)
+                .border(
+                    BorderStroke(
+                        width = dimens.buttonBorderWidth,
+                        color = if (selected) colors.primary else colors.line,
+                    ),
+                    shape = shape,
+                ).background(if (selected) colors.primaryTint.copy(alpha = 0.45f) else colors.surface)
+                .then(
+                    if (enabled) {
+                        Modifier.proClickable(onClick = onClick, shape = shape)
+                    } else {
+                        Modifier
+                    },
+                ).padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.quickAccessIconSize)
-                .clip(ProExpenseTheme.shapes.tile)
-                .background(if (selected) colors.surface else colors.primarySoft),
+            modifier =
+                Modifier
+                    .size(dimens.quickAccessIconSize)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(if (selected) colors.surface else colors.primarySoft),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(
@@ -205,14 +207,16 @@ private fun TagLinkRow(
 private fun TagPickerContentPreview() {
     ProExpenseTheme {
         TagPickerContent(
-            events = listOf(
-                TagLinkOption("bali", "Bali Trip", "May 12 — May 26", TagLinkKind.Event),
-                TagLinkOption("wedding", "John's Wedding", "Jun 04 — Jun 06", TagLinkKind.Event),
-            ),
-            debts = listOf(
-                TagLinkOption("lent-john", "Lent · John", "$50", TagLinkKind.Debt),
-                TagLinkOption("owe-sarah", "Owe · Sarah", "$30", TagLinkKind.Debt),
-            ),
+            events =
+                listOf(
+                    TagLinkOption("bali", "Bali Trip", "May 12 — May 26", TagLinkKind.Event),
+                    TagLinkOption("wedding", "John's Wedding", "Jun 04 — Jun 06", TagLinkKind.Event),
+                ),
+            debts =
+                listOf(
+                    TagLinkOption("lent-john", "Lent · John", "$50", TagLinkKind.Debt),
+                    TagLinkOption("owe-sarah", "Owe · Sarah", "$30", TagLinkKind.Debt),
+                ),
             selectedId = "bali",
             selectedKind = TagLinkKind.Event,
             onSelected = {},
@@ -226,9 +230,10 @@ private fun TagPickerContentPreview() {
 private fun TagPickerContentNoDebtsPreview() {
     ProExpenseTheme {
         TagPickerContent(
-            events = listOf(
-                TagLinkOption("bali", "Bali Trip", "May 12 — May 26", TagLinkKind.Event),
-            ),
+            events =
+                listOf(
+                    TagLinkOption("bali", "Bali Trip", "May 12 — May 26", TagLinkKind.Event),
+                ),
             debts = emptyList(),
             selectedId = null,
             selectedKind = null,

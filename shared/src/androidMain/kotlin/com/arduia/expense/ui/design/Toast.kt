@@ -37,13 +37,14 @@ fun ProToast(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .proToastShadow()
-            .background(colors.onSurface, ProExpenseTheme.shapes.toast)
-            .padding(horizontal = dimens.space16, vertical = dimens.space10)
-            // The toast auto-dismisses on a timer with no user interaction — without a live
-            // region, screen readers never learn it appeared at all.
-            .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+        modifier =
+            modifier
+                .proToastShadow()
+                .background(colors.onSurface, ProExpenseTheme.shapes.toast)
+                .padding(horizontal = dimens.space16, vertical = dimens.space10)
+                // The toast auto-dismisses on a timer with no user interaction — without a live
+                // region, screen readers never learn it appeared at all.
+                .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
@@ -85,9 +86,10 @@ fun ProToastHost(
     ) {
         AnimatedVisibility(
             visible = message != null,
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(bottom = ProExpenseTheme.dimensions.space24 + bottomBarInset),
+            modifier =
+                Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = ProExpenseTheme.dimensions.space24 + bottomBarInset),
             enter = fadeIn() + slideInVertically { fullHeight -> fullHeight / 2 },
             exit = fadeOut() + slideOutVertically { fullHeight -> fullHeight / 2 },
         ) {

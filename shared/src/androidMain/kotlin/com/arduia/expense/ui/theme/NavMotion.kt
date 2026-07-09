@@ -12,11 +12,9 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 
-fun ProMotion.reducedEnter(): EnterTransition =
-    fadeIn(tween(durationMillis = fadeDurationMillis, easing = standardEasing))
+fun ProMotion.reducedEnter(): EnterTransition = fadeIn(tween(durationMillis = fadeDurationMillis, easing = standardEasing))
 
-fun ProMotion.reducedExit(): ExitTransition =
-    fadeOut(tween(durationMillis = fadeDurationMillis, easing = standardEasing))
+fun ProMotion.reducedExit(): ExitTransition = fadeOut(tween(durationMillis = fadeDurationMillis, easing = standardEasing))
 
 fun ProMotion.forwardScreenEnter(reduceMotion: Boolean = false): EnterTransition =
     if (reduceMotion) {
@@ -88,10 +86,9 @@ fun ProMotion.stepTransition(
     fromIndex: Int,
     toIndex: Int,
     reduceMotion: Boolean = false,
-): ContentTransform {
-    return if (toIndex >= fromIndex) {
+): ContentTransform =
+    if (toIndex >= fromIndex) {
         forwardScreenEnter(reduceMotion) togetherWith forwardScreenExit(reduceMotion)
     } else {
         backwardScreenEnter(reduceMotion) togetherWith backwardScreenExit(reduceMotion)
     }
-}

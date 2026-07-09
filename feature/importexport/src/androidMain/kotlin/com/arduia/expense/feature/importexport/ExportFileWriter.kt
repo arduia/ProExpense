@@ -1,10 +1,10 @@
 package com.arduia.expense.feature.importexport
 
 import android.content.Context
-import java.io.File
 import net.lingala.zip4j.ZipFile
 import net.lingala.zip4j.model.ZipParameters
 import net.lingala.zip4j.model.enums.EncryptionMethod
+import java.io.File
 
 /**
  * Writes a grouped export (filename -> CSV content) to the cache dir and zips it into a single
@@ -31,19 +31,21 @@ object ExportFileWriter {
         exportDir.mkdirs()
         exportDir.listFiles()?.forEach { it.delete() }
 
-        val csvFiles = files.map { (name, content) ->
-            File(exportDir, name).apply { writeText(content) }
-        }
+        val csvFiles =
+            files.map { (name, content) ->
+                File(exportDir, name).apply { writeText(content) }
+            }
 
         val zipFile = File(exportDir, zipFileName)
         if (zipFile.exists()) zipFile.delete()
         if (password.isNullOrBlank()) {
             ZipFile(zipFile).addFiles(csvFiles)
         } else {
-            val parameters = ZipParameters().apply {
-                isEncryptFiles = true
-                encryptionMethod = EncryptionMethod.AES
-            }
+            val parameters =
+                ZipParameters().apply {
+                    isEncryptFiles = true
+                    encryptionMethod = EncryptionMethod.AES
+                }
             ZipFile(zipFile, password.toCharArray()).addFiles(csvFiles, parameters)
         }
         return zipFile

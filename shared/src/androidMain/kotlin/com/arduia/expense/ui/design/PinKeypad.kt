@@ -39,12 +39,13 @@ enum class PinKeypadState {
 
 private const val PIN_LENGTH = 6
 
-private val pinRows = listOf(
-    listOf("1", "2", "3"),
-    listOf("4", "5", "6"),
-    listOf("7", "8", "9"),
-    listOf(null, "0", "backspace"),
-)
+private val pinRows =
+    listOf(
+        listOf("1", "2", "3"),
+        listOf("4", "5", "6"),
+        listOf("7", "8", "9"),
+        listOf(null, "0", "backspace"),
+    )
 
 @Composable
 fun PinDots(
@@ -58,10 +59,11 @@ fun PinDots(
     val motion = ProExpenseTheme.motion
     val typography = ProExpenseTheme.typography
     val shakeOffset = remember { Animatable(0f) }
-    val dotColor = when (state) {
-        PinKeypadState.Error -> colors.danger
-        else -> colors.primary
-    }
+    val dotColor =
+        when (state) {
+            PinKeypadState.Error -> colors.danger
+            else -> colors.primary
+        }
     val emptyBorderColor = if (state == PinKeypadState.Error) colors.danger else colors.lineStrong
 
     LaunchedEffect(state) {
@@ -69,23 +71,25 @@ fun PinDots(
             shakeOffset.snapTo(0f)
             shakeOffset.animateTo(
                 targetValue = 0f,
-                animationSpec = keyframes {
-                    durationMillis = motion.shakeDurationMillis
-                    0f at 0
-                    6f at (motion.shakeDurationMillis * 0.25f).toInt()
-                    (-6f) at (motion.shakeDurationMillis * 0.5f).toInt()
-                    4f at (motion.shakeDurationMillis * 0.75f).toInt()
-                    0f at motion.shakeDurationMillis
-                },
+                animationSpec =
+                    keyframes {
+                        durationMillis = motion.shakeDurationMillis
+                        0f at 0
+                        6f at (motion.shakeDurationMillis * 0.25f).toInt()
+                        (-6f) at (motion.shakeDurationMillis * 0.5f).toInt()
+                        4f at (motion.shakeDurationMillis * 0.75f).toInt()
+                        0f at motion.shakeDurationMillis
+                    },
             )
         }
     }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .offset(x = shakeOffset.value.dp)
-            .padding(vertical = dimens.space8),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .offset(x = shakeOffset.value.dp)
+                .padding(vertical = dimens.space8),
         horizontalArrangement = Arrangement.spacedBy(dimens.space12, Alignment.CenterHorizontally),
     ) {
         repeat(PIN_LENGTH) { index ->
@@ -104,16 +108,17 @@ fun PinDots(
                 }
             } else {
                 Box(
-                    modifier = Modifier
-                        .size(dimens.space12)
-                        .clip(CircleShape)
-                        .then(
-                            if (filled) {
-                                Modifier.background(dotColor)
-                            } else {
-                                Modifier.border(BorderStroke(1.5.dp, emptyBorderColor), CircleShape)
-                            },
-                        ),
+                    modifier =
+                        Modifier
+                            .size(dimens.space12)
+                            .clip(CircleShape)
+                            .then(
+                                if (filled) {
+                                    Modifier.background(dotColor)
+                                } else {
+                                    Modifier.border(BorderStroke(1.5.dp, emptyBorderColor), CircleShape)
+                                },
+                            ),
                 )
             }
         }
@@ -148,9 +153,10 @@ fun PinKeypad(
             )
         }
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .alpha(keypadAlpha),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .alpha(keypadAlpha),
             verticalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
             PinKeypadGrid(
@@ -215,31 +221,30 @@ private fun PinKey(
     val rippleShape = if (isBackspace) CircleShape else keyShape
 
     Box(
-        modifier = modifier
-            .aspectRatio(1.45f)
-            .proPressScale(interactionSource, enabled = enabled)
-            .clip(rippleShape)
-            .then(
-                if (isBackspace) {
-                    Modifier.proPressBackground(
-                        interactionSource = interactionSource,
-                        shape = CircleShape,
-                        enabled = enabled,
-                        restingColor = Color.Transparent,
-                    )
-                } else {
-                    Modifier
-                        .border(BorderStroke(1.dp, colors.line), keyShape)
-                        .proPressBackground(interactionSource, keyShape, enabled = enabled)
-                },
-            )
-            .proNoRippleClickable(
-                onClick = onClick,
-                interactionSource = interactionSource,
-                enabled = enabled,
-                role = Role.Button,
-            )
-            .defaultMinSize(minHeight = dimens.touchTargetMin),
+        modifier =
+            modifier
+                .aspectRatio(1.45f)
+                .proPressScale(interactionSource, enabled = enabled)
+                .clip(rippleShape)
+                .then(
+                    if (isBackspace) {
+                        Modifier.proPressBackground(
+                            interactionSource = interactionSource,
+                            shape = CircleShape,
+                            enabled = enabled,
+                            restingColor = Color.Transparent,
+                        )
+                    } else {
+                        Modifier
+                            .border(BorderStroke(1.dp, colors.line), keyShape)
+                            .proPressBackground(interactionSource, keyShape, enabled = enabled)
+                    },
+                ).proNoRippleClickable(
+                    onClick = onClick,
+                    interactionSource = interactionSource,
+                    enabled = enabled,
+                    role = Role.Button,
+                ).defaultMinSize(minHeight = dimens.touchTargetMin),
         contentAlignment = Alignment.Center,
     ) {
         if (isBackspace) {

@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PinEntryLogicTest {
-
     // Rule: digits accumulate until PIN_LENGTH, then the entry completes with the full PIN.
     @Test
     fun appendDigit_completesAtPinLength() {

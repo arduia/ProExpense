@@ -7,10 +7,11 @@ import com.arduia.expense.feature.importexport.ImportDataUseCase
 import com.arduia.expense.feature.importexport.PreviewImportUseCase
 import org.koin.dsl.module
 
-val importExportModule = module {
-    factory { ExportDataUseCase(get()) }
-    factory { ExportGroupedDataUseCase(get()) }
-    factory { PreviewImportUseCase(get()) }
-    factory { ImportDataUseCase(get()) }
-    factory { ClearSelectedDataUseCase(get()) }
-}
+val importExportModule =
+    module {
+        factory { ExportDataUseCase(get()) }
+        factory { ExportGroupedDataUseCase(get()) }
+        factory { PreviewImportUseCase(get()) }
+        factory { ImportDataUseCase(get()) }
+        factory { ClearSelectedDataUseCase(get()) }
+    }

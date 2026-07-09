@@ -12,7 +12,12 @@ class SaveCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     private val nowEpochMillis: () -> Long,
 ) {
-    suspend operator fun invoke(categories: List<Category>, editingId: String?, name: String, iconId: String = "") {
+    suspend operator fun invoke(
+        categories: List<Category>,
+        editingId: String?,
+        name: String,
+        iconId: String = "",
+    ) {
         val existing = editingId?.let { id -> categories.firstOrNull { it.id.value == id } }
         val customCount = categories.count { it.isCustom }
         categoryRepository.upsert(
@@ -26,8 +31,7 @@ class SaveCategoryUseCase(
         )
     }
 
-    private fun newCategoryId(name: String): String =
-        name.trim().lowercase() + "-" + nowEpochMillis()
+    private fun newCategoryId(name: String): String = name.trim().lowercase() + "-" + nowEpochMillis()
 }
 
 /** Deleting a category reassigns its linked records to Uncategorized before removing it. */
@@ -45,8 +49,13 @@ class DeleteCategoryUseCase(
 }
 
 /** Reorders custom categories while keeping default categories pinned first. */
-class ReorderCategoriesUseCase(private val categoryRepository: CategoryRepository) {
-    suspend operator fun invoke(defaultIds: List<String>, reorderedCustomIds: List<String>) {
+class ReorderCategoriesUseCase(
+    private val categoryRepository: CategoryRepository,
+) {
+    suspend operator fun invoke(
+        defaultIds: List<String>,
+        reorderedCustomIds: List<String>,
+    ) {
         val orderedIds = (defaultIds + reorderedCustomIds).map(::CategoryId)
         categoryRepository.reorder(orderedIds)
     }

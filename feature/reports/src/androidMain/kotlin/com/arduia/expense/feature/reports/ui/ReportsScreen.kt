@@ -28,20 +28,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.reports.R
-import com.arduia.expense.ui.design.EmptyStateContent
-import com.arduia.expense.ui.design.LogCategoryBadge
-import com.arduia.expense.ui.design.ProIcon
-import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
 import com.arduia.expense.feature.reports.ui.preview.ReportsUiState
 import com.arduia.expense.feature.reports.ui.preview.previewReports
@@ -49,6 +43,12 @@ import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 import com.arduia.expense.feature.reports.ui.preview.previewReportsWithOtherRollup
+import com.arduia.expense.ui.design.EmptyStateContent
+import com.arduia.expense.ui.design.LogCategoryBadge
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -66,11 +66,12 @@ fun ReportsScreen(
     val dimens = ProExpenseTheme.dimensions
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -87,9 +88,10 @@ fun ReportsScreen(
         // user gets stranded with no way back to a month that has data.
         if (globalEmpty) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimens.screenPadding),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = dimens.screenPadding),
                 contentAlignment = Alignment.Center,
             ) {
                 EmptyStateContent(
@@ -106,10 +108,11 @@ fun ReportsScreen(
         // while only the content underneath changes, so switching periods never reads like
         // navigating to a new screen.
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
             contentAlignment = Alignment.Center,
         ) {
             ReportsPeriodPill(
@@ -138,11 +141,12 @@ internal fun ReportsPeriodContent(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.screenPadding)
-            .padding(top = dimens.space16, bottom = dimens.space24),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = dimens.screenPadding)
+                .padding(top = dimens.space16, bottom = dimens.space24),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(dimens.space16),
     ) {
@@ -151,12 +155,14 @@ internal fun ReportsPeriodContent(
             // window is empty — nudge toward the granularity toggle instead, since that's the
             // only control that can actually surface data at that point.
             EmptyStateContent(
-                title = stringResource(
-                    if (allPeriodsEmpty) R.string.reports_window_empty_title else R.string.reports_period_empty_title,
-                ),
-                subtitle = stringResource(
-                    if (allPeriodsEmpty) R.string.reports_window_empty_subtitle else R.string.reports_period_empty_subtitle,
-                ),
+                title =
+                    stringResource(
+                        if (allPeriodsEmpty) R.string.reports_window_empty_title else R.string.reports_period_empty_title,
+                    ),
+                subtitle =
+                    stringResource(
+                        if (allPeriodsEmpty) R.string.reports_window_empty_subtitle else R.string.reports_period_empty_subtitle,
+                    ),
                 actionLabel = stringResource(R.string.reports_period_empty_action),
                 onActionClick = onLogFirstExpense,
                 modifier = Modifier.padding(vertical = dimens.space24),
@@ -178,13 +184,14 @@ internal fun ReportsPeriodContent(
                     modifier = Modifier.padding(top = dimens.space8),
                 )
                 Text(
-                    text = buildAnnotatedString {
-                        append(stringResource(R.string.reports_daily_avg_prefix) + " ")
-                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = colors.onSurface)) {
-                            append(state.dailyAvgLabel)
-                        }
-                        append(" · ${state.daysLabel}")
-                    },
+                    text =
+                        buildAnnotatedString {
+                            append(stringResource(R.string.reports_daily_avg_prefix) + " ")
+                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = colors.onSurface)) {
+                                append(state.dailyAvgLabel)
+                            }
+                            append(" · ${state.daysLabel}")
+                        },
                     style = typography.caption,
                     color = colors.onSurfaceMuted,
                     modifier = Modifier.padding(top = dimens.space6),
@@ -224,11 +231,12 @@ internal fun ReportsPeriodContent(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(ProExpenseTheme.shapes.card)
-                        .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                        .background(colors.surface),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(ProExpenseTheme.shapes.card)
+                            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                            .background(colors.surface),
                 ) {
                     state.categories.forEachIndexed { index, category ->
                         if (index > 0) {
@@ -260,11 +268,12 @@ internal fun ReportsPeriodPill(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .clip(ProExpenseTheme.shapes.chip)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.chip)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space8, vertical = dimens.space4),
+        modifier =
+            Modifier
+                .clip(ProExpenseTheme.shapes.chip)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.chip)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space8, vertical = dimens.space4),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -275,9 +284,10 @@ internal fun ReportsPeriodPill(
             contentDescription = stringResource(R.string.reports_prev_period),
             tint = if (prevEnabled) colors.onSurfaceMuted else colors.muted2,
             size = dimens.iconInline,
-            modifier = Modifier
-                .rotate(180f)
-                .proIconClickable(onClick = onPrev, enabled = prevEnabled),
+            modifier =
+                Modifier
+                    .rotate(180f)
+                    .proIconClickable(onClick = onPrev, enabled = prevEnabled),
         )
         Text(
             text = label,
@@ -304,11 +314,12 @@ private fun ReportsDonut(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val segments = if (uncategorized) {
-        listOf(1f to colors.lineStrong)
-    } else {
-        categories.map { it.fraction to colors.category(it.categoryId).accent }
-    }
+    val segments =
+        if (uncategorized) {
+            listOf(1f to colors.lineStrong)
+        } else {
+            categories.map { it.fraction to colors.category(it.categoryId).accent }
+        }
     val gapDegrees = if (uncategorized) 0f else 4f
 
     Box(
@@ -327,7 +338,9 @@ private fun ReportsDonut(
                     startAngle = startAngle,
                     sweepAngle = sweep.coerceAtLeast(0f),
                     useCenter = false,
-                    topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
+                    topLeft =
+                        androidx.compose.ui.geometry
+                            .Offset(inset, inset),
                     size = arcSize,
                     style = Stroke(width = stroke, cap = StrokeCap.Round),
                 )
@@ -365,17 +378,19 @@ private fun ReportsRankRow(category: ReportsCategoryUi) {
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space10),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.space8)
-                .clip(CircleShape)
-                .background(colors.category(category.categoryId).accent),
+            modifier =
+                Modifier
+                    .size(dimens.space8)
+                    .clip(CircleShape)
+                    .background(colors.category(category.categoryId).accent),
         )
         LogCategoryBadge(categoryId = category.categoryId, size = dimens.space32)
         Text(
@@ -405,11 +420,12 @@ private fun ReportsTipBanner() {
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .background(colors.primaryTint)
-            .padding(dimens.space14),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .background(colors.primaryTint)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {

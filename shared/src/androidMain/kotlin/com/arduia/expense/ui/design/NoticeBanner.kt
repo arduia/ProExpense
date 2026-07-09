@@ -34,12 +34,13 @@ fun NoticeBanner(
     val shape = ProExpenseTheme.shapes.card
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(colors.primaryTint)
-            .proClickable(onClick = onClick, shape = shape)
-            .padding(dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(colors.primaryTint)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {

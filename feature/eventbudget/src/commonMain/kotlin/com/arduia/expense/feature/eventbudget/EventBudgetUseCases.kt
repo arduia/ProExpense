@@ -20,7 +20,10 @@ data class EventProgress(
 )
 
 class ComputeEventProgressUseCase {
-    operator fun invoke(event: Event, spent: Money?): EventProgress {
+    operator fun invoke(
+        event: Event,
+        spent: Money?,
+    ): EventProgress {
         val spentCents = spent?.amount?.valueInCents ?: 0L
         val budgetCents = event.budget.amount.valueInCents
         val progress = if (budgetCents > 0) spentCents.toFloat() / budgetCents.toFloat() else 0f
@@ -56,24 +59,29 @@ class CreateEventUseCase(
         val start = startEpochMillis ?: now
         val end = endEpochMillis ?: now
         if (end < start) return false
-        val event = Event(
-            id = EventId(newEventId(name, now)),
-            name = name,
-            startEpochMillis = start,
-            endEpochMillis = end,
-            budget = Money(amount, CurrencyCode(currencyCode)),
-            status = EventStatus.ACTIVE,
-        )
+        val event =
+            Event(
+                id = EventId(newEventId(name, now)),
+                name = name,
+                startEpochMillis = start,
+                endEpochMillis = end,
+                budget = Money(amount, CurrencyCode(currencyCode)),
+                status = EventStatus.ACTIVE,
+            )
         eventRepository.upsert(event)
         return true
     }
 
-    private fun newEventId(name: String, now: Long): String =
-        name.trim().lowercase() + "-" + now
+    private fun newEventId(
+        name: String,
+        now: Long,
+    ): String = name.trim().lowercase() + "-" + now
 }
 
 /** Validates and applies edits to an existing event's name, dates, and budget. */
-class UpdateEventUseCase(private val eventRepository: EventRepository) {
+class UpdateEventUseCase(
+    private val eventRepository: EventRepository,
+) {
     suspend operator fun invoke(
         existing: Event,
         name: String,
@@ -97,7 +105,9 @@ class UpdateEventUseCase(private val eventRepository: EventRepository) {
 }
 
 /** Manually closes an active event; closing never happens automatically from the end date. */
-class CloseEventUseCase(private val eventRepository: EventRepository) {
+class CloseEventUseCase(
+    private val eventRepository: EventRepository,
+) {
     suspend operator fun invoke(existing: Event): Boolean {
         if (existing.status == EventStatus.CLOSED) return false
         eventRepository.upsert(existing.copy(status = EventStatus.CLOSED))
@@ -112,7 +122,11 @@ private const val CLOSED_EVENT_GRACE_PERIOD_MILLIS = 24L * 60 * 60 * 1000
  * no new links); Closed > 24h locks permanently. An event with no recorded closedAtEpochMillis
  * (e.g. closed before this field existed) is treated as past the grace period.
  */
-fun isEventReadOnly(status: EventStatus, closedAtEpochMillis: Long?, nowEpochMillis: Long): Boolean {
+fun isEventReadOnly(
+    status: EventStatus,
+    closedAtEpochMillis: Long?,
+    nowEpochMillis: Long,
+): Boolean {
     if (status != EventStatus.CLOSED) return false
     val closedAt = closedAtEpochMillis ?: return true
     return nowEpochMillis - closedAt > CLOSED_EVENT_GRACE_PERIOD_MILLIS

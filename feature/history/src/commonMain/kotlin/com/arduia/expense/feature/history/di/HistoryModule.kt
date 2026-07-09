@@ -8,9 +8,10 @@ import com.arduia.expense.feature.history.LoadJournalPageUseCase
 import com.arduia.expense.feature.history.UpdateRecordNoteUseCase
 import org.koin.dsl.module
 
-val historyModule = module {
-    single<HistoryRepository> { DefaultHistoryRepository(get<FinanceRecordRepository>()) }
-    factory { DeleteRecordUseCase(get<FinanceRecordRepository>()) }
-    factory { UpdateRecordNoteUseCase(get<FinanceRecordRepository>()) }
-    factory { LoadJournalPageUseCase(get<HistoryRepository>()) }
-}
+val historyModule =
+    module {
+        single<HistoryRepository> { DefaultHistoryRepository(get<FinanceRecordRepository>()) }
+        factory { DeleteRecordUseCase(get<FinanceRecordRepository>()) }
+        factory { UpdateRecordNoteUseCase(get<FinanceRecordRepository>()) }
+        factory { LoadJournalPageUseCase(get<HistoryRepository>()) }
+    }

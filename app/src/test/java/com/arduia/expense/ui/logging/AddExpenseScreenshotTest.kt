@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
-import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.AddExpenseAmountScreen
 import com.arduia.expense.feature.logging.ui.AddExpenseDetailsScreen
-import com.arduia.expense.feature.logging.ui.ExpenseDraftDialog
+import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
@@ -18,8 +17,8 @@ import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetails
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeignCurrencyNoRate
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLimit
-import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -39,7 +38,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class AddExpenseScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

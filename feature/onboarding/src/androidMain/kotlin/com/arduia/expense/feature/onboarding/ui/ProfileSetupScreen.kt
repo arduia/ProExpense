@@ -75,22 +75,24 @@ fun ProfileSetupScreenContent(
     val selectedOption = currencyOptions.firstOrNull { it.code == state.selectedCurrencyCode }
     val currencyLabel = selectedOption?.label ?: state.selectedCurrencyCode
     val trimmedName = state.name.trim()
-    val greeting = if (trimmedName.isEmpty()) {
-        stringResource(R.string.profile_identity_greeting_empty)
-    } else {
-        stringResource(R.string.profile_identity_greeting, trimmedName)
-    }
+    val greeting =
+        if (trimmedName.isEmpty()) {
+            stringResource(R.string.profile_identity_greeting_empty)
+        } else {
+            stringResource(R.string.profile_identity_greeting, trimmedName)
+        }
 
     // The four most common currencies, but always surface the selected one so it can stay checked.
-    val quickPicks = remember(currencyOptions, state.selectedCurrencyCode) {
-        val base = currencyOptions.take(CURRENCY_QUICK_PICKS).toMutableList()
-        if (base.none { it.code == state.selectedCurrencyCode }) {
-            currencyOptions.firstOrNull { it.code == state.selectedCurrencyCode }?.let { picked ->
-                if (base.isNotEmpty()) base[base.lastIndex] = picked
+    val quickPicks =
+        remember(currencyOptions, state.selectedCurrencyCode) {
+            val base = currencyOptions.take(CURRENCY_QUICK_PICKS).toMutableList()
+            if (base.none { it.code == state.selectedCurrencyCode }) {
+                currencyOptions.firstOrNull { it.code == state.selectedCurrencyCode }?.let { picked ->
+                    if (base.isNotEmpty()) base[base.lastIndex] = picked
+                }
             }
+            base.toList()
         }
-        base.toList()
-    }
 
     BoxWithSheet(
         showSheet = state.showCurrencySheet,
@@ -102,15 +104,17 @@ fun ProfileSetupScreenContent(
                     value = state.currencySearchQuery,
                     onValueChange = onCurrencySearchChange,
                     placeholder = stringResource(R.string.search_currency_placeholder),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = dimens.space12),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = dimens.space12),
                 )
-                val filtered = currencyOptions.filter { option ->
-                    state.currencySearchQuery.isBlank() ||
-                        option.code.contains(state.currencySearchQuery, ignoreCase = true) ||
-                        option.label.contains(state.currencySearchQuery, ignoreCase = true)
-                }
+                val filtered =
+                    currencyOptions.filter { option ->
+                        state.currencySearchQuery.isBlank() ||
+                            option.code.contains(state.currencySearchQuery, ignoreCase = true) ||
+                            option.label.contains(state.currencySearchQuery, ignoreCase = true)
+                    }
                 CurrencyPickerContent(
                     options = filtered,
                     selectedCode = state.selectedCurrencyCode,
@@ -124,19 +128,21 @@ fun ProfileSetupScreenContent(
         modifier = modifier,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(colors.paper)
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(colors.paper)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(dimens.space20),
             ) {
                 ProfileStepHeader(
@@ -153,11 +159,12 @@ fun ProfileSetupScreenContent(
                 ProfileIdentityCard(
                     eyebrow = stringResource(R.string.profile_identity_eyebrow),
                     greeting = greeting,
-                    trackingLabel = stringResource(
-                        R.string.profile_identity_tracking,
-                        currencyLabel,
-                        state.selectedCurrencyCode,
-                    ),
+                    trackingLabel =
+                        stringResource(
+                            R.string.profile_identity_tracking,
+                            currencyLabel,
+                            state.selectedCurrencyCode,
+                        ),
                     currencySymbol = currencySymbol(state.selectedCurrencyCode),
                 )
 
@@ -262,28 +269,30 @@ private fun MoreCurrenciesButton(
     val borderColor = colors.lineStrong
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .drawBehind {
-                val sw = strokeWidth.toPx()
-                val r = cornerRadius.toPx()
-                drawRoundRect(
-                    color = borderColor,
-                    topLeft = Offset(sw / 2f, sw / 2f),
-                    size = Size(size.width - sw, size.height - sw),
-                    cornerRadius = CornerRadius(r, r),
-                    style = Stroke(
-                        width = sw,
-                        pathEffect = PathEffect.dashPathEffect(
-                            floatArrayOf(dashOn.toPx(), dashOff.toPx()),
-                            0f,
-                        ),
-                    ),
-                )
-            }
-            .proClickable(onClick = onClick, shape = shape)
-            .padding(horizontal = dimens.space14, vertical = dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .drawBehind {
+                    val sw = strokeWidth.toPx()
+                    val r = cornerRadius.toPx()
+                    drawRoundRect(
+                        color = borderColor,
+                        topLeft = Offset(sw / 2f, sw / 2f),
+                        size = Size(size.width - sw, size.height - sw),
+                        cornerRadius = CornerRadius(r, r),
+                        style =
+                            Stroke(
+                                width = sw,
+                                pathEffect =
+                                    PathEffect.dashPathEffect(
+                                        floatArrayOf(dashOn.toPx(), dashOff.toPx()),
+                                        0f,
+                                    ),
+                            ),
+                    )
+                }.proClickable(onClick = onClick, shape = shape)
+                .padding(horizontal = dimens.space14, vertical = dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8, Alignment.CenterHorizontally),
     ) {

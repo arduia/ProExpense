@@ -6,7 +6,8 @@ import com.arduia.expense.feature.currency.DefaultCurrencyRepository
 import com.arduia.expense.feature.currency.SaveHomeCurrencyUseCase
 import org.koin.dsl.module
 
-val currencyModule = module {
-    single<CurrencyRepository> { DefaultCurrencyRepository(get<CurrencySettingsRepository>()) }
-    factory { SaveHomeCurrencyUseCase(get()) }
-}
+val currencyModule =
+    module {
+        single<CurrencyRepository> { DefaultCurrencyRepository(get<CurrencySettingsRepository>()) }
+        factory { SaveHomeCurrencyUseCase(get()) }
+    }

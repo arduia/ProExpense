@@ -8,8 +8,9 @@ import com.arduia.expense.feature.categories.SaveCategoryUseCase
 import kotlinx.datetime.Clock
 import org.koin.dsl.module
 
-val categoriesModule = module {
-    factory { SaveCategoryUseCase(get<CategoryRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
-    factory { DeleteCategoryUseCase(get<CategoryRepository>(), get<FinanceRecordRepository>()) }
-    factory { ReorderCategoriesUseCase(get<CategoryRepository>()) }
-}
+val categoriesModule =
+    module {
+        factory { SaveCategoryUseCase(get<CategoryRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
+        factory { DeleteCategoryUseCase(get<CategoryRepository>(), get<FinanceRecordRepository>()) }
+        factory { ReorderCategoriesUseCase(get<CategoryRepository>()) }
+    }

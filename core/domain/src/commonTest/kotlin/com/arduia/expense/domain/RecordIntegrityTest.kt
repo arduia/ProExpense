@@ -7,17 +7,19 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class RecordIntegrityTest {
-
-    private fun record(id: String = "rec-1", amountCents: Long = 5_000, note: String? = "lunch") =
-        FinanceRecord(
-            id = RecordId(id),
-            money = Money(Amount(amountCents), CurrencyCode("USD")),
-            homeCurrencyMoney = Money(Amount(amountCents), CurrencyCode("USD")),
-            categoryId = CategoryId("food"),
-            type = RecordType.EXPENSE,
-            note = note,
-            recordedAtEpochMillis = 1_000,
-        )
+    private fun record(
+        id: String = "rec-1",
+        amountCents: Long = 5_000,
+        note: String? = "lunch",
+    ) = FinanceRecord(
+        id = RecordId(id),
+        money = Money(Amount(amountCents), CurrencyCode("USD")),
+        homeCurrencyMoney = Money(Amount(amountCents), CurrencyCode("USD")),
+        categoryId = CategoryId("food"),
+        type = RecordType.EXPENSE,
+        note = note,
+        recordedAtEpochMillis = 1_000,
+    )
 
     @Test
     fun sha256Digester_matchesKnownVector() {

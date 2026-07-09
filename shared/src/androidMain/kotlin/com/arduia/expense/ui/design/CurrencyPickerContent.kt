@@ -35,20 +35,22 @@ fun CurrencyPickerContent(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         options.forEach { option ->
             val selected = option.code == selectedCode
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(ProExpenseTheme.shapes.searchField)
-                    .background(if (selected) colors.primarySoft else colors.surface)
-                    .proClickable(onClick = { onSelected(option.code) }, shape = ProExpenseTheme.shapes.searchField)
-                    .padding(horizontal = dimens.space14, vertical = dimens.space12),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(ProExpenseTheme.shapes.searchField)
+                        .background(if (selected) colors.primarySoft else colors.surface)
+                        .proClickable(onClick = { onSelected(option.code) }, shape = ProExpenseTheme.shapes.searchField)
+                        .padding(horizontal = dimens.space14, vertical = dimens.space12),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {

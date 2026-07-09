@@ -1,0 +1,483 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:Buttons.kt$@Composable fun ProButton( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, variant: ProButtonVariant = ProButtonVariant.Primary, size: ProButtonSize = ProButtonSize.Md, enabled: Boolean = true, fillMaxWidth: Boolean = false, // Shows a spinner in place of the label and blocks clicks — for actions with a suspend call // (PIN setup hashing, saves) where an unchanged button otherwise reads as a frozen screen. loading: Boolean = false, leading: (@Composable () -&gt; Unit)? = null, trailing: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>CyclomaticComplexMethod:EventBudgetSummaryCard.kt$@Composable fun EventBudgetSummaryCard( state: EventBudgetSummaryState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:AddHintChip.kt$@Composable fun AddHintChip(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:AddHintChip.kt$@Preview(showBackground = true) @Composable private fun AddHintChipPreview()</ID>
+    <ID>FunctionNaming:AlertDialog.kt$@Composable fun ProAlertDialog( visible: Boolean, icon: ProIconGlyph, iconTint: Color, iconBackground: Color, title: String, body: AnnotatedString, confirmLabel: String, onConfirm: () -&gt; Unit, dismissLabel: String, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, confirmVariant: ProButtonVariant = ProButtonVariant.Primary, )</ID>
+    <ID>FunctionNaming:AlertDialog.kt$@Preview( name = "ProAlertDialog — destructive", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ProAlertDialogDestructivePreview()</ID>
+    <ID>FunctionNaming:AlertDialog.kt$@Preview( name = "ProAlertDialog — warning", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ProAlertDialogWarningPreview()</ID>
+    <ID>FunctionNaming:AmountDisplay.kt$@Composable fun AmountDisplay( amountText: String, modifier: Modifier = Modifier, currencySymbol: String = "$", currencyCode: String = "USD", isZero: Boolean = amountText.toDoubleOrNull()?.let { it &lt;= 0.0 } ?: true, showZeroValidation: Boolean = false, zeroHelperMessage: String = "Amount must be greater than $0", eyebrowText: String? = null, usePrimaryAmount: Boolean = false, )</ID>
+    <ID>FunctionNaming:BottomSheet.kt$@Composable fun ProBottomSheet( title: String?, onClose: () -&gt; Unit, modifier: Modifier = Modifier, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:BottomSheet.kt$@Composable fun ProBottomSheetHost( visible: Boolean, title: String?, onClose: () -&gt; Unit, modifier: Modifier = Modifier, sheetContent: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:Buttons.kt$@Composable fun ProButton( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, variant: ProButtonVariant = ProButtonVariant.Primary, size: ProButtonSize = ProButtonSize.Md, enabled: Boolean = true, fillMaxWidth: Boolean = false, // Shows a spinner in place of the label and blocks clicks — for actions with a suspend call // (PIN setup hashing, saves) where an unchanged button otherwise reads as a frozen screen. loading: Boolean = false, leading: (@Composable () -&gt; Unit)? = null, trailing: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:Buttons.kt$@Composable private fun ProButtonLabel( text: String, textStyle: TextStyle, leading: (@Composable () -&gt; Unit)?, trailing: (@Composable () -&gt; Unit)?, loading: Boolean = false, )</ID>
+    <ID>FunctionNaming:CardSurfaces.kt$@Composable fun ProCard( modifier: Modifier = Modifier, onClick: (() -&gt; Unit)? = null, padding: Dp = ProExpenseTheme.dimensions.cardPadding, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CardSurfaces.kt$@Composable fun SpentTodayCard( eyebrow: String, amount: String, modifier: Modifier = Modifier, showSparkline: Boolean = true, )</ID>
+    <ID>FunctionNaming:CardSurfaces.kt$@Composable private fun SparklinePlaceholder(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:CardSurfaces.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun ProCardPreview()</ID>
+    <ID>FunctionNaming:CardSurfaces.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun SpentTodayCardPreview()</ID>
+    <ID>FunctionNaming:Category.kt$@Composable fun CategoryChip( label: String, categoryId: String, selected: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Category.kt$@Composable fun LogCategoryBadge( categoryId: String, modifier: Modifier = Modifier, size: Dp = ProExpenseTheme.dimensions.iconBadge, // A custom category's own id is a generated slug, not a catalogue key — its chosen iconId // (US-CAT-2) is the real lookup key. Blank/null falls back to categoryId (default categories, // whose id already is the catalogue key). iconId: String? = null, )</ID>
+    <ID>FunctionNaming:CategoryPicker.kt$@Composable private fun AddCategoryChip( onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CategoryPicker.kt$@Composable private fun CategoryPickerSection( title: String, modifier: Modifier = Modifier, trailing: (@Composable () -&gt; Unit)? = null, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CategoryPicker.kt$@OptIn(ExperimentalLayoutApi::class) @Composable fun CategoryPicker( defaultCategories: List&lt;Pair&lt;String, String&gt;&gt;, customCategories: List&lt;Pair&lt;String, String&gt;&gt;, selectedCategoryId: String, onCategorySelected: (String) -&gt; Unit, modifier: Modifier = Modifier, showCustomSection: Boolean = true, onMoreClick: (() -&gt; Unit)? = null, showAddChip: Boolean = false, onAddClick: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:CurrencyPickerContent.kt$@Composable fun CurrencyPickerContent( options: List&lt;CurrencyOption&gt;, selectedCode: String, onSelected: (String) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:DateTimePickerSheet.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun DateTimePickerSheet( visible: Boolean, initialEpochMillis: Long, onConfirm: (Long) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DateTimePickerSheet.kt$@Preview( name = "Date/time picker — open", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DateTimePickerSheetPreview()</ID>
+    <ID>FunctionNaming:DesignSystemGalleryScreen.kt$@Composable fun DesignSystemGalleryScreen(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:DesignSystemGalleryScreen.kt$@Composable private fun GallerySection( number: String, title: String, modifier: Modifier = Modifier, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DesignSystemGalleryScreen.kt$@Composable private fun GalleryStage( label: String, modifier: Modifier = Modifier, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DesignSystemGalleryScreen.kt$@Preview( name = "Design system gallery screen", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DesignSystemGalleryScreenPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemAuthContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemButtonsContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemCategoriesContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemChromeContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemComponents()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemEmptyStateContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemFieldsContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemListsContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemLoggingContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemNavContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable fun ProDesignSystemSheetContent()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Composable private fun DesignSystemSection( title: String, modifier: Modifier = Modifier, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview( name = "Design system — full gallery", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable fun ProDesignSystemGalleryPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — auth", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 640, showBackground = true) @Composable fun ProDesignSystemAuthPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — buttons", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true) @Composable fun ProDesignSystemButtonsPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — categories", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true) @Composable fun ProDesignSystemCategoriesPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — chrome", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 520, showBackground = true) @Composable fun ProDesignSystemChromePreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — fields", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true) @Composable fun ProDesignSystemFieldsPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — lists", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true) @Composable fun ProDesignSystemListsPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — logging", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 720, showBackground = true) @Composable fun ProDesignSystemLoggingPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — navigation", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 200, showBackground = true) @Composable fun ProDesignSystemNavPreview()</ID>
+    <ID>FunctionNaming:DesignSystemPreview.kt$@Preview(name = "Design system — sheets", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true) @Composable fun ProDesignSystemSheetPreview()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecBottomNavBudgetCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecBottomNavHomeCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecBottomSheetCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecButtonSizesCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecButtonStatesCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecButtonVariantsCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecCaptureHost( modifier: Modifier = Modifier, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecCategoryBadgesCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecCategoryChipsCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecEmptyStateAddHintCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecEmptyStateCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecFilterChipsCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecIconsCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecKeypadCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecNoticeBannerCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecQuickAccessCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecSearchEmptyCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecSearchFilledCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecSpentCardCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecToastCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecTransactionDayGroupCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Composable fun SpecValidationCapture()</ID>
+    <ID>FunctionNaming:DesignSystemSpecCaptures.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun SpecCapturesPreview()</ID>
+    <ID>FunctionNaming:DetailFieldCard.kt$@Composable fun DetailAmountSummaryCard( amountLabel: String, onEdit: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:DetailFieldCard.kt$@Composable fun DetailDateTimeField( dateLabel: String, timeLabel: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:DetailFieldCard.kt$@Composable fun DetailFieldCard( modifier: Modifier = Modifier, leading: @Composable () -&gt; Unit, trailing: @Composable (() -&gt; Unit)? = null, onClick: (() -&gt; Unit)? = null, borderColor: Color? = null, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DetailFieldCard.kt$@Composable fun DetailNoteField( value: String, onValueChange: (String) -&gt; Unit, maxLength: Int, modifier: Modifier = Modifier, placeholder: String = "", atLimit: Boolean = false, errorMessage: String? = null, )</ID>
+    <ID>FunctionNaming:DetailFieldCard.kt$@Composable fun DetailTagField( tagLabel: String?, placeholder: String, onClick: () -&gt; Unit, onClear: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:EmptyState.kt$@Composable fun EmptyStateAddHint( prefix: String, suffix: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:EmptyState.kt$@Composable fun EmptyStateContent( title: String, subtitle: String, actionLabel: String, onActionClick: () -&gt; Unit, modifier: Modifier = Modifier, addHintPrefix: String? = null, addHintSuffix: String? = null, )</ID>
+    <ID>FunctionNaming:EmptyState.kt$@Composable fun EmptyStateIllustration(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateContentPreview()</ID>
+    <ID>FunctionNaming:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateIllustrationPreview()</ID>
+    <ID>FunctionNaming:EventBudgetCard.kt$@Composable fun EventBudgetCard( state: EventBudgetCardState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:EventBudgetCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetCardPreview()</ID>
+    <ID>FunctionNaming:EventBudgetSummaryCard.kt$@Composable fun EventBudgetSummaryCard( state: EventBudgetSummaryState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:EventBudgetSummaryCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetSummaryCardPreview()</ID>
+    <ID>FunctionNaming:Fields.kt$@Composable fun FilterChip( label: String, selected: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Fields.kt$@Composable fun PasswordField( value: String, onValueChange: (String) -&gt; Unit, placeholder: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Fields.kt$@Composable fun ProFilterChip( label: String, active: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Fields.kt$@Composable fun ProfileNameField( value: String, onValueChange: (String) -&gt; Unit, placeholder: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Fields.kt$@Composable fun SearchField( value: String, onValueChange: (String) -&gt; Unit, placeholder: String, modifier: Modifier = Modifier, active: Boolean = false, )</ID>
+    <ID>FunctionNaming:Fields.kt$@Composable fun SearchFieldShell( query: String, onClear: () -&gt; Unit, modifier: Modifier = Modifier, placeholder: String = "Search notes, amount, category…", onClick: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:HeroGreeting.kt$@Composable fun HeroGreeting( name: String, modifier: Modifier = Modifier, prefix: String = "Hi, ", )</ID>
+    <ID>FunctionNaming:HeroGreeting.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun HeroGreetingPreview()</ID>
+    <ID>FunctionNaming:HomeBottomNav.kt$@Composable fun HomeBottomNav( selectedTab: HomeNavTab, onTabSelected: (HomeNavTab) -&gt; Unit, onAddClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeBottomNav.kt$@Composable private fun HomeAddFab( onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeBottomNav.kt$@Composable private fun HomeNavSlot( item: HomeNavItem, selected: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeBottomNav.kt$@Preview( name = "HomeBottomNav — Home active", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 160, showBackground = true, ) @Composable private fun HomeBottomNavHomeActivePreview()</ID>
+    <ID>FunctionNaming:HomeBottomNav.kt$@Preview( name = "HomeBottomNav — Journal active", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 160, showBackground = true, ) @Composable private fun HomeBottomNavJournalActivePreview()</ID>
+    <ID>FunctionNaming:Icons.kt$@Composable fun ProIcon( glyph: ProIconGlyph, contentDescription: String?, modifier: Modifier = Modifier, tint: Color = Color.Unspecified, size: Dp = ProExpenseTheme.dimensions.iconNav, )</ID>
+    <ID>FunctionNaming:Interaction.kt$@Composable fun ProTextAction( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, style: TextStyle = ProExpenseTheme.typography.navAction, color: Color = ProExpenseTheme.colors.onSurface, enabled: Boolean = true, leading: (@Composable () -&gt; Unit)? = null, trailing: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:Interaction.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun ProTextActionPreview()</ID>
+    <ID>FunctionNaming:ListRows.kt$@Composable fun DebtRecordRow( personName: String, amount: String, dueLabel: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, isSettled: Boolean = false, )</ID>
+    <ID>FunctionNaming:ListRows.kt$@Composable fun MoreHubRow( title: String, subtitle: String?, onClick: () -&gt; Unit, modifier: Modifier = Modifier, icon: ProIconGlyph? = null, iconTint: Color = ProExpenseTheme.colors.primary, iconBackground: Color = ProExpenseTheme.colors.primarySoft, )</ID>
+    <ID>FunctionNaming:ListRows.kt$@Composable fun ReportsCategoryRow( categoryId: String, categoryLabel: String, amount: String, progress: Float, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:ListRows.kt$@Composable fun SharedPersonRow( name: String, amount: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Lists.kt$@Composable fun DayGroup( title: String, total: String, transactions: List&lt;ProTransactionRowModel&gt;, modifier: Modifier = Modifier, freshRowId: String? = null, onRowClick: ((ProTransactionRowModel) -&gt; Unit)? = null, cardWrapped: Boolean = true, )</ID>
+    <ID>FunctionNaming:Lists.kt$@Composable fun DayHeader( title: String, total: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Lists.kt$@Composable fun TransactionRow( categoryId: String, note: String, meta: String, amount: String, modifier: Modifier = Modifier, tag: String? = null, showDivider: Boolean = true, fresh: Boolean = false, onClick: (() -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:Lists.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun DayGroupCardPreview()</ID>
+    <ID>FunctionNaming:Lists.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun DayGroupFlatPreview()</ID>
+    <ID>FunctionNaming:NoticeBanner.kt$@Composable fun NoticeBanner( title: String, body: String, onClick: () -&gt; Unit, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, icon: ProIconGlyph = ProIconGlyph.Fingerprint, dismissContentDescription: String = stringResource(R.string.close), )</ID>
+    <ID>FunctionNaming:NoticeBanner.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun NoticeBannerPreview()</ID>
+    <ID>FunctionNaming:NumericKeypad.kt$@Composable fun NumericKeypad( actionsEnabled: Boolean, onKey: (String) -&gt; Unit, onBackspace: () -&gt; Unit, onSave: () -&gt; Unit, onNext: () -&gt; Unit, modifier: Modifier = Modifier, saveLabel: String = "Save", nextLabel: String = "Next", // Some flows (e.g. shared-cost split entry) have only one action — showing "Save"/"Next" // as two identical or one dead button reads as a bug, not a choice. showSaveAction: Boolean = true, )</ID>
+    <ID>FunctionNaming:NumericKeypad.kt$@Composable private fun KeypadKey( label: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:OnboardingIllustrations.kt$@Composable fun OnboardingIllustration( type: OnboardingIllustration, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:OnboardingIllustrations.kt$@Composable private fun EventBudgetIllustration(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingIllustrations.kt$@Composable private fun JournalIllustration(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingIllustrations.kt$@Composable private fun QuickLogIllustration(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingIllustrations.kt$@Composable private fun SharedCostsIllustration(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingIllustrations.kt$@Composable private fun WelcomeIllustration(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingIllustrations.kt$@Preview(widthDp = 280, heightDp = 280, showBackground = true) @Composable private fun OnboardingIllustrationsPreview()</ID>
+    <ID>FunctionNaming:OnboardingPageIndicator.kt$@Composable fun OnboardingPageIndicator( pageCount: Int, currentPage: Int, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:OnboardingPageIndicator.kt$@Preview(showBackground = true, widthDp = 120) @Composable private fun OnboardingPageIndicatorPreview()</ID>
+    <ID>FunctionNaming:PeopleStepper.kt$@Composable fun PeopleStepper( count: Int, onDecrement: () -&gt; Unit, onIncrement: () -&gt; Unit, modifier: Modifier = Modifier, min: Int = 2, max: Int = 20, )</ID>
+    <ID>FunctionNaming:PeopleStepper.kt$@Composable private fun StepperButton( glyph: ProIconGlyph, enabled: Boolean, onClick: () -&gt; Unit, contentDescription: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PillButton.kt$@Composable fun ProPillButton( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, enabled: Boolean = true, leading: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:PillButton.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun ProPillButtonPreview()</ID>
+    <ID>FunctionNaming:PinKeypad.kt$@Composable fun PinDots( filledCount: Int, modifier: Modifier = Modifier, state: PinKeypadState = PinKeypadState.Default, digitsText: String? = null, )</ID>
+    <ID>FunctionNaming:PinKeypad.kt$@Composable fun PinKeypad( filledDots: Int, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, modifier: Modifier = Modifier, state: PinKeypadState = PinKeypadState.Default, lockoutMessage: String? = null, )</ID>
+    <ID>FunctionNaming:PinKeypad.kt$@Composable fun PinKeypadGrid( onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, modifier: Modifier = Modifier, enabled: Boolean = true, )</ID>
+    <ID>FunctionNaming:PinKeypad.kt$@Composable private fun PinKey( label: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, enabled: Boolean = true, )</ID>
+    <ID>FunctionNaming:ProfileCurrencyRow.kt$@Composable fun ProfileCurrencyRow( code: String, label: String, selected: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:ProfileCurrencyRow.kt$@Preview(widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun ProfileCurrencyRowPreview()</ID>
+    <ID>FunctionNaming:ProfileIdentityCard.kt$@Composable fun ProfileIdentityCard( eyebrow: String, greeting: String, trackingLabel: String, currencySymbol: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:ProfileIdentityCard.kt$@Preview(widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun ProfileIdentityCardPreview()</ID>
+    <ID>FunctionNaming:ProfileStepHeader.kt$@Composable fun ProfileStepHeader( step: Int, totalSteps: Int, eyebrow: String, title: String, subtitle: String, modifier: Modifier = Modifier, onSkip: (() -&gt; Unit)? = null, skipLabel: String = "Skip", )</ID>
+    <ID>FunctionNaming:ProfileStepHeader.kt$@Composable private fun ProfileStepProgressBar( currentStep: Int, totalSteps: Int, )</ID>
+    <ID>FunctionNaming:ProfileStepHeader.kt$@Preview( widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProfileStepHeaderPreview()</ID>
+    <ID>FunctionNaming:QuickAccessTile.kt$@Composable fun QuickAccessTile( label: String, icon: ProIconGlyph, onClick: () -&gt; Unit, modifier: Modifier = Modifier, iconTint: Color? = null, iconBackground: Color? = null, )</ID>
+    <ID>FunctionNaming:SegmentedToggle.kt$@Composable fun SegmentedToggle( options: List&lt;String&gt;, selectedIndex: Int, onSelected: (Int) -&gt; Unit, modifier: Modifier = Modifier, usePrimarySelection: Boolean = false, )</ID>
+    <ID>FunctionNaming:SegmentedToggle.kt$@Preview( name = "SegmentedToggle — 200% font scale", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, fontScale = 2f, ) @Composable private fun SegmentedToggleLargeFontPreview()</ID>
+    <ID>FunctionNaming:SegmentedToggle.kt$@Preview( name = "SegmentedToggle — default", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun SegmentedTogglePreview()</ID>
+    <ID>FunctionNaming:TagPickerContent.kt$@Composable fun TagPickerContent( events: List&lt;TagLinkOption&gt;, debts: List&lt;TagLinkOption&gt;, selectedId: String?, selectedKind: TagLinkKind?, onSelected: (TagLinkOption) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:TagPickerContent.kt$@Composable private fun TagLinkRow( option: TagLinkOption, selected: Boolean, enabled: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:TagPickerContent.kt$@Composable private fun TagPickerSection( title: String, unavailableHint: String?, disabled: Boolean, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:TagPickerContent.kt$@Preview(name = "No debts", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun TagPickerContentNoDebtsPreview()</ID>
+    <ID>FunctionNaming:TagPickerContent.kt$@Preview(widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun TagPickerContentPreview()</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable fun ProExpenseTheme( darkTheme: Boolean = isSystemInDarkTheme(), colors: ProColors = if (darkTheme) ProDarkColors else ProLightColors, typography: ProTypography = ProDefaultTypography, dimensions: ProDimens = ProDefaultDimens, shapes: ProShapes = ProDefaultShapes, motion: ProMotion = ProDefaultMotion, elevation: ProElevation = ProDefaultElevation, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:ThemePreview.kt$@Composable fun ProExpenseThemeFoundation()</ID>
+    <ID>FunctionNaming:ThemePreview.kt$@Composable private fun ProColorSwatch( color: androidx.compose.ui.graphics.Color, label: String, )</ID>
+    <ID>FunctionNaming:ThemePreview.kt$@Preview( name = "Design system foundation (Pixel 9 Pro)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable fun ProExpenseThemeFoundationPreview()</ID>
+    <ID>FunctionNaming:Toast.kt$@Composable fun ProToast( message: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:Toast.kt$@Composable fun ProToastHost( message: String?, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, // Screens with a bottom nav bar (Home) need extra clearance — otherwise the toast lands // behind/under the bar instead of floating above it. Pass dimens.navBarHeight there. bottomBarInset: Dp = 0.dp, )</ID>
+    <ID>FunctionNaming:TopBar.kt$@Composable fun ProTopBar( title: String, onBack: (() -&gt; Unit)?, modifier: Modifier = Modifier, backLabel: String? = null, action: ProTopBarAction = ProTopBarAction.None, onAction: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:TopBar.kt$@Preview( name = "ProTopBar — app bar title", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProTopBarPreview()</ID>
+    <ID>LongMethod:AlertDialog.kt$@Composable fun ProAlertDialog( visible: Boolean, icon: ProIconGlyph, iconTint: Color, iconBackground: Color, title: String, body: AnnotatedString, confirmLabel: String, onConfirm: () -&gt; Unit, dismissLabel: String, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, confirmVariant: ProButtonVariant = ProButtonVariant.Primary, )</ID>
+    <ID>LongMethod:AmountDisplay.kt$@Composable fun AmountDisplay( amountText: String, modifier: Modifier = Modifier, currencySymbol: String = "$", currencyCode: String = "USD", isZero: Boolean = amountText.toDoubleOrNull()?.let { it &lt;= 0.0 } ?: true, showZeroValidation: Boolean = false, zeroHelperMessage: String = "Amount must be greater than $0", eyebrowText: String? = null, usePrimaryAmount: Boolean = false, )</ID>
+    <ID>LongMethod:BottomSheet.kt$@Composable fun ProBottomSheet( title: String?, onClose: () -&gt; Unit, modifier: Modifier = Modifier, content: @Composable () -&gt; Unit, )</ID>
+    <ID>LongMethod:Buttons.kt$@Composable fun ProButton( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, variant: ProButtonVariant = ProButtonVariant.Primary, size: ProButtonSize = ProButtonSize.Md, enabled: Boolean = true, fillMaxWidth: Boolean = false, // Shows a spinner in place of the label and blocks clicks — for actions with a suspend call // (PIN setup hashing, saves) where an unchanged button otherwise reads as a frozen screen. loading: Boolean = false, leading: (@Composable () -&gt; Unit)? = null, trailing: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>LongMethod:CategoryPicker.kt$@OptIn(ExperimentalLayoutApi::class) @Composable fun CategoryPicker( defaultCategories: List&lt;Pair&lt;String, String&gt;&gt;, customCategories: List&lt;Pair&lt;String, String&gt;&gt;, selectedCategoryId: String, onCategorySelected: (String) -&gt; Unit, modifier: Modifier = Modifier, showCustomSection: Boolean = true, onMoreClick: (() -&gt; Unit)? = null, showAddChip: Boolean = false, onAddClick: () -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:DateTimePickerSheet.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun DateTimePickerSheet( visible: Boolean, initialEpochMillis: Long, onConfirm: (Long) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
+    <ID>LongMethod:DesignSystemGalleryScreen.kt$@Composable fun DesignSystemGalleryScreen(modifier: Modifier = Modifier)</ID>
+    <ID>LongMethod:DetailFieldCard.kt$@Composable fun DetailNoteField( value: String, onValueChange: (String) -&gt; Unit, maxLength: Int, modifier: Modifier = Modifier, placeholder: String = "", atLimit: Boolean = false, errorMessage: String? = null, )</ID>
+    <ID>LongMethod:EventBudgetCard.kt$@Composable fun EventBudgetCard( state: EventBudgetCardState, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:EventBudgetSummaryCard.kt$@Composable fun EventBudgetSummaryCard( state: EventBudgetSummaryState, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:HomeBottomNav.kt$@Composable fun HomeBottomNav( selectedTab: HomeNavTab, onTabSelected: (HomeNavTab) -&gt; Unit, onAddClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:ListRows.kt$@Composable fun MoreHubRow( title: String, subtitle: String?, onClick: () -&gt; Unit, modifier: Modifier = Modifier, icon: ProIconGlyph? = null, iconTint: Color = ProExpenseTheme.colors.primary, iconBackground: Color = ProExpenseTheme.colors.primarySoft, )</ID>
+    <ID>LongMethod:Lists.kt$@Composable fun TransactionRow( categoryId: String, note: String, meta: String, amount: String, modifier: Modifier = Modifier, tag: String? = null, showDivider: Boolean = true, fresh: Boolean = false, onClick: (() -&gt; Unit)? = null, )</ID>
+    <ID>LongMethod:PinKeypad.kt$@Composable fun PinDots( filledCount: Int, modifier: Modifier = Modifier, state: PinKeypadState = PinKeypadState.Default, digitsText: String? = null, )</ID>
+    <ID>LongMethod:TagPickerContent.kt$@Composable private fun TagLinkRow( option: TagLinkOption, selected: Boolean, enabled: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:ThemePreview.kt$@Composable fun ProExpenseThemeFoundation()</ID>
+    <ID>LongMethod:TopBar.kt$@Composable fun ProTopBar( title: String, onBack: (() -&gt; Unit)?, modifier: Modifier = Modifier, backLabel: String? = null, action: ProTopBarAction = ProTopBarAction.None, onAction: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:AlertDialog.kt$( visible: Boolean, icon: ProIconGlyph, iconTint: Color, iconBackground: Color, title: String, body: AnnotatedString, confirmLabel: String, onConfirm: () -&gt; Unit, dismissLabel: String, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, confirmVariant: ProButtonVariant = ProButtonVariant.Primary, )</ID>
+    <ID>LongParameterList:AmountDisplay.kt$( amountText: String, modifier: Modifier = Modifier, currencySymbol: String = "$", currencyCode: String = "USD", isZero: Boolean = amountText.toDoubleOrNull()?.let { it &lt;= 0.0 } ?: true, showZeroValidation: Boolean = false, zeroHelperMessage: String = "Amount must be greater than $0", eyebrowText: String? = null, usePrimaryAmount: Boolean = false, )</ID>
+    <ID>LongParameterList:AmountDisplay.kt$( currencySymbol: String, amountText: String, isZero: Boolean, primaryColor: Color, amountColor: Color, decimalColor: Color, amountFamily: androidx.compose.ui.text.font.FontFamily, )</ID>
+    <ID>LongParameterList:Buttons.kt$( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, variant: ProButtonVariant = ProButtonVariant.Primary, size: ProButtonSize = ProButtonSize.Md, enabled: Boolean = true, fillMaxWidth: Boolean = false, // Shows a spinner in place of the label and blocks clicks — for actions with a suspend call // (PIN setup hashing, saves) where an unchanged button otherwise reads as a frozen screen. loading: Boolean = false, leading: (@Composable () -&gt; Unit)? = null, trailing: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>LongParameterList:CategoryPicker.kt$( defaultCategories: List&lt;Pair&lt;String, String&gt;&gt;, customCategories: List&lt;Pair&lt;String, String&gt;&gt;, selectedCategoryId: String, onCategorySelected: (String) -&gt; Unit, modifier: Modifier = Modifier, showCustomSection: Boolean = true, onMoreClick: (() -&gt; Unit)? = null, showAddChip: Boolean = false, onAddClick: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:DetailFieldCard.kt$( modifier: Modifier = Modifier, leading: @Composable () -&gt; Unit, trailing: @Composable (() -&gt; Unit)? = null, onClick: (() -&gt; Unit)? = null, borderColor: Color? = null, content: @Composable () -&gt; Unit, )</ID>
+    <ID>LongParameterList:DetailFieldCard.kt$( value: String, onValueChange: (String) -&gt; Unit, maxLength: Int, modifier: Modifier = Modifier, placeholder: String = "", atLimit: Boolean = false, errorMessage: String? = null, )</ID>
+    <ID>LongParameterList:EmptyState.kt$( title: String, subtitle: String, actionLabel: String, onActionClick: () -&gt; Unit, modifier: Modifier = Modifier, addHintPrefix: String? = null, addHintSuffix: String? = null, )</ID>
+    <ID>LongParameterList:Interaction.kt$( onClick: () -&gt; Unit, shape: Shape, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, enabled: Boolean = true, role: Role? = null, scaleOnPress: Boolean = true, )</ID>
+    <ID>LongParameterList:Interaction.kt$( selected: Boolean, onClick: () -&gt; Unit, shape: Shape, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, enabled: Boolean = true, role: Role = Role.Tab, scaleOnPress: Boolean = true, )</ID>
+    <ID>LongParameterList:Interaction.kt$( selected: Boolean, onClick: () -&gt; Unit, shape: Shape, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, enabled: Boolean = true, role: Role = Role.Tab, scaleOnPress: Boolean = true, showRipple: Boolean = true, )</ID>
+    <ID>LongParameterList:Interaction.kt$( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, style: TextStyle = ProExpenseTheme.typography.navAction, color: Color = ProExpenseTheme.colors.onSurface, enabled: Boolean = true, leading: (@Composable () -&gt; Unit)? = null, trailing: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>LongParameterList:ListRows.kt$( personName: String, amount: String, dueLabel: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, isSettled: Boolean = false, )</ID>
+    <ID>LongParameterList:ListRows.kt$( title: String, subtitle: String?, onClick: () -&gt; Unit, modifier: Modifier = Modifier, icon: ProIconGlyph? = null, iconTint: Color = ProExpenseTheme.colors.primary, iconBackground: Color = ProExpenseTheme.colors.primarySoft, )</ID>
+    <ID>LongParameterList:Lists.kt$( categoryId: String, note: String, meta: String, amount: String, modifier: Modifier = Modifier, tag: String? = null, showDivider: Boolean = true, fresh: Boolean = false, onClick: (() -&gt; Unit)? = null, )</ID>
+    <ID>LongParameterList:Lists.kt$( title: String, total: String, transactions: List&lt;ProTransactionRowModel&gt;, modifier: Modifier = Modifier, freshRowId: String? = null, onRowClick: ((ProTransactionRowModel) -&gt; Unit)? = null, cardWrapped: Boolean = true, )</ID>
+    <ID>LongParameterList:NoticeBanner.kt$( title: String, body: String, onClick: () -&gt; Unit, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, icon: ProIconGlyph = ProIconGlyph.Fingerprint, dismissContentDescription: String = stringResource(R.string.close), )</ID>
+    <ID>LongParameterList:NumericKeypad.kt$( actionsEnabled: Boolean, onKey: (String) -&gt; Unit, onBackspace: () -&gt; Unit, onSave: () -&gt; Unit, onNext: () -&gt; Unit, modifier: Modifier = Modifier, saveLabel: String = "Save", nextLabel: String = "Next", // Some flows (e.g. shared-cost split entry) have only one action — showing "Save"/"Next" // as two identical or one dead button reads as a bug, not a choice. showSaveAction: Boolean = true, )</ID>
+    <ID>LongParameterList:PeopleStepper.kt$( count: Int, onDecrement: () -&gt; Unit, onIncrement: () -&gt; Unit, modifier: Modifier = Modifier, min: Int = 2, max: Int = 20, )</ID>
+    <ID>LongParameterList:PinKeypad.kt$( filledDots: Int, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, modifier: Modifier = Modifier, state: PinKeypadState = PinKeypadState.Default, lockoutMessage: String? = null, )</ID>
+    <ID>LongParameterList:ProfileStepHeader.kt$( step: Int, totalSteps: Int, eyebrow: String, title: String, subtitle: String, modifier: Modifier = Modifier, onSkip: (() -&gt; Unit)? = null, skipLabel: String = "Skip", )</ID>
+    <ID>LongParameterList:QuickAccessTile.kt$( label: String, icon: ProIconGlyph, onClick: () -&gt; Unit, modifier: Modifier = Modifier, iconTint: Color? = null, iconBackground: Color? = null, )</ID>
+    <ID>LongParameterList:TagPickerContent.kt$( events: List&lt;TagLinkOption&gt;, debts: List&lt;TagLinkOption&gt;, selectedId: String?, selectedKind: TagLinkKind?, onSelected: (TagLinkOption) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongParameterList:Theme.kt$( darkTheme: Boolean = isSystemInDarkTheme(), colors: ProColors = if (darkTheme) ProDarkColors else ProLightColors, typography: ProTypography = ProDefaultTypography, dimensions: ProDimens = ProDefaultDimens, shapes: ProShapes = ProDefaultShapes, motion: ProMotion = ProDefaultMotion, elevation: ProElevation = ProDefaultElevation, content: @Composable () -&gt; Unit, )</ID>
+    <ID>LongParameterList:TopBar.kt$( title: String, onBack: (() -&gt; Unit)?, modifier: Modifier = Modifier, backLabel: String? = null, action: ProTopBarAction = ProTopBarAction.None, onAction: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:Type.kt$( fontFamily: FontFamily, fontSizeSp: Float, lineHeightSp: Float, letterSpacingEm: Float = 0f, fontWeight: FontWeight = FontWeight.Normal, fontStyle: FontStyle = FontStyle.Normal, )</ID>
+    <ID>MagicNumber:AmountDisplay.kt$0.2f</ID>
+    <ID>MagicNumber:AmountDisplay.kt$0.4f</ID>
+    <ID>MagicNumber:AmountDisplay.kt$0.6f</ID>
+    <ID>MagicNumber:AmountDisplay.kt$0.8f</ID>
+    <ID>MagicNumber:AmountDisplay.kt$3f</ID>
+    <ID>MagicNumber:AmountDisplay.kt$4f</ID>
+    <ID>MagicNumber:Buttons.kt$1.4f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.15f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.16f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.25f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.30f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.35f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.44f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.45f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.55f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.58f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.65f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.72f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.75f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.86f</ID>
+    <ID>MagicNumber:CardSurfaces.kt$0.98f</ID>
+    <ID>MagicNumber:Category.kt$0.52f</ID>
+    <ID>MagicNumber:Color.kt$0x0F212121</ID>
+    <ID>MagicNumber:Color.kt$0x0FFFFFFF</ID>
+    <ID>MagicNumber:Color.kt$0x19212121</ID>
+    <ID>MagicNumber:Color.kt$0x19FFFFFF</ID>
+    <ID>MagicNumber:Color.kt$0x6B2B1F17</ID>
+    <ID>MagicNumber:Color.kt$0xCC000000</ID>
+    <ID>MagicNumber:Color.kt$0xFF01579B</ID>
+    <ID>MagicNumber:Color.kt$0xFF0277BD</ID>
+    <ID>MagicNumber:Color.kt$0xFF0288D1</ID>
+    <ID>MagicNumber:Color.kt$0xFF039BE5</ID>
+    <ID>MagicNumber:Color.kt$0xFF0D3348</ID>
+    <ID>MagicNumber:Color.kt$0xFF0D3B52</ID>
+    <ID>MagicNumber:Color.kt$0xFF121212</ID>
+    <ID>MagicNumber:Color.kt$0xFF1A1A1A</ID>
+    <ID>MagicNumber:Color.kt$0xFF1B3D1F</ID>
+    <ID>MagicNumber:Color.kt$0xFF1E1E1E</ID>
+    <ID>MagicNumber:Color.kt$0xFF212121</ID>
+    <ID>MagicNumber:Color.kt$0xFF29B6F6</ID>
+    <ID>MagicNumber:Color.kt$0xFF2C2C2C</ID>
+    <ID>MagicNumber:Color.kt$0xFF3D341B</ID>
+    <ID>MagicNumber:Color.kt$0xFF3E1F1F</ID>
+    <ID>MagicNumber:Color.kt$0xFF3E2723</ID>
+    <ID>MagicNumber:Color.kt$0xFF424242</ID>
+    <ID>MagicNumber:Color.kt$0xFF4CAF50</ID>
+    <ID>MagicNumber:Color.kt$0xFF4FC3F7</ID>
+    <ID>MagicNumber:Color.kt$0xFF5D4037</ID>
+    <ID>MagicNumber:Color.kt$0xFF616161</ID>
+    <ID>MagicNumber:Color.kt$0xFF66BB6A</ID>
+    <ID>MagicNumber:Color.kt$0xFF757575</ID>
+    <ID>MagicNumber:Color.kt$0xFF81C784</ID>
+    <ID>MagicNumber:Color.kt$0xFF81D4FA</ID>
+    <ID>MagicNumber:Color.kt$0xFF8E8E93</ID>
+    <ID>MagicNumber:Color.kt$0xFF9E9E9E</ID>
+    <ID>MagicNumber:Color.kt$0xFFA5D6A7</ID>
+    <ID>MagicNumber:Color.kt$0xFFB3E5FC</ID>
+    <ID>MagicNumber:Color.kt$0xFFBDBDBD</ID>
+    <ID>MagicNumber:Color.kt$0xFFC77F00</ID>
+    <ID>MagicNumber:Color.kt$0xFFC8E6C9</ID>
+    <ID>MagicNumber:Color.kt$0xFFDCEDC8</ID>
+    <ID>MagicNumber:Color.kt$0xFFE0A030</ID>
+    <ID>MagicNumber:Color.kt$0xFFE0E0E0</ID>
+    <ID>MagicNumber:Color.kt$0xFFE1F5FE</ID>
+    <ID>MagicNumber:Color.kt$0xFFE57373</ID>
+    <ID>MagicNumber:Color.kt$0xFFE8E8E8</ID>
+    <ID>MagicNumber:Color.kt$0xFFEEEEEE</ID>
+    <ID>MagicNumber:Color.kt$0xFFEF5350</ID>
+    <ID>MagicNumber:Color.kt$0xFFEF6C00</ID>
+    <ID>MagicNumber:Color.kt$0xFFF5E6A3</ID>
+    <ID>MagicNumber:Color.kt$0xFFF5F5F5</ID>
+    <ID>MagicNumber:Color.kt$0xFFF9A825</ID>
+    <ID>MagicNumber:Color.kt$0xFFFB8C00</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF9800</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFB74D</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFCDD2</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFE0B2</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFEB3B</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFF176</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFFDF6</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFFFFF</ID>
+    <ID>MagicNumber:DateTimePickerSheet.kt$23</ID>
+    <ID>MagicNumber:DateTimePickerSheet.kt$59</ID>
+    <ID>MagicNumber:Elevation.kt$0x08212121</ID>
+    <ID>MagicNumber:Elevation.kt$0x0A212121</ID>
+    <ID>MagicNumber:Elevation.kt$0x1A000000</ID>
+    <ID>MagicNumber:Elevation.kt$0x26000000</ID>
+    <ID>MagicNumber:Elevation.kt$0x2E000000</ID>
+    <ID>MagicNumber:Elevation.kt$0x47039BE5</ID>
+    <ID>MagicNumber:Elevation.kt$6</ID>
+    <ID>MagicNumber:Elevation.kt$8</ID>
+    <ID>MagicNumber:EmptyState.kt$108f</ID>
+    <ID>MagicNumber:EmptyState.kt$113f</ID>
+    <ID>MagicNumber:EmptyState.kt$120f</ID>
+    <ID>MagicNumber:EmptyState.kt$138f</ID>
+    <ID>MagicNumber:EmptyState.kt$148f</ID>
+    <ID>MagicNumber:EmptyState.kt$18f</ID>
+    <ID>MagicNumber:EmptyState.kt$24f</ID>
+    <ID>MagicNumber:EmptyState.kt$28f</ID>
+    <ID>MagicNumber:EmptyState.kt$30f</ID>
+    <ID>MagicNumber:EmptyState.kt$32f</ID>
+    <ID>MagicNumber:EmptyState.kt$34f</ID>
+    <ID>MagicNumber:EmptyState.kt$40f</ID>
+    <ID>MagicNumber:EmptyState.kt$42f</ID>
+    <ID>MagicNumber:EmptyState.kt$48f</ID>
+    <ID>MagicNumber:EmptyState.kt$58f</ID>
+    <ID>MagicNumber:EmptyState.kt$68f</ID>
+    <ID>MagicNumber:EmptyState.kt$6f</ID>
+    <ID>MagicNumber:EmptyState.kt$80f</ID>
+    <ID>MagicNumber:EmptyState.kt$90f</ID>
+    <ID>MagicNumber:EmptyState.kt$96f</ID>
+    <ID>MagicNumber:EmptyState.kt$98f</ID>
+    <ID>MagicNumber:EventBudgetCard.kt$10</ID>
+    <ID>MagicNumber:ListRows.kt$0.05f</ID>
+    <ID>MagicNumber:Motion.kt$0.22f</ID>
+    <ID>MagicNumber:Motion.kt$0.36f</ID>
+    <ID>MagicNumber:Motion.kt$0.61f</ID>
+    <ID>MagicNumber:NumericKeypad.kt$1.45f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$0.88f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$0.92f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$102f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$104f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$108f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$110f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$112f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$116f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$118f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$124f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$126f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$132f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$138f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$140f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$142f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$146f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$148f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$14f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$150f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$154f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$156f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$160f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$164f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$166f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$168f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$16f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$170f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$172f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$176f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$178f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$180f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$182f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$184f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$186f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$188f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$18f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$192f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$193f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$196f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$198f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$202f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$206f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$208f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$214f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$220f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$22f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$280f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$3</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$32f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$34f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$36f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$3f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$40f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$42f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$44f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$48f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$4f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$52f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$54f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$58f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$62f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$68f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$6f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$72f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$82f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$84f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$88f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$8f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$90f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$92f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$94f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$96f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$98f</ID>
+    <ID>MagicNumber:PillButton.kt$1.4f</ID>
+    <ID>MagicNumber:PinKeypad.kt$0.25f</ID>
+    <ID>MagicNumber:PinKeypad.kt$0.5f</ID>
+    <ID>MagicNumber:PinKeypad.kt$0.75f</ID>
+    <ID>MagicNumber:PinKeypad.kt$1.45f</ID>
+    <ID>MagicNumber:PinKeypad.kt$4f</ID>
+    <ID>MagicNumber:PinKeypad.kt$6f</ID>
+    <ID>MagicNumber:PlatformDigest.android.kt$0xFF</ID>
+    <ID>MagicNumber:PlatformDigest.android.kt$4</ID>
+    <ID>MagicNumber:TagPickerContent.kt$0.45f</ID>
+    <ID>MagicNumber:Type.kt$1.2f</ID>
+    <ID>MagicNumber:Type.kt$1.3f</ID>
+    <ID>MagicNumber:Type.kt$1.45f</ID>
+    <ID>MagicNumber:Type.kt$1.4f</ID>
+    <ID>MagicNumber:Type.kt$10f</ID>
+    <ID>MagicNumber:Type.kt$11.5f</ID>
+    <ID>MagicNumber:Type.kt$11f</ID>
+    <ID>MagicNumber:Type.kt$12f</ID>
+    <ID>MagicNumber:Type.kt$13f</ID>
+    <ID>MagicNumber:Type.kt$14f</ID>
+    <ID>MagicNumber:Type.kt$15f</ID>
+    <ID>MagicNumber:Type.kt$16f</ID>
+    <ID>MatchingDeclarationName:CurrencyPickerContent.kt$CurrencyOption</ID>
+    <ID>MatchingDeclarationName:EventBudgetCard.kt$EventBudgetCardState</ID>
+    <ID>MatchingDeclarationName:HomeBottomNav.kt$HomeNavTab</ID>
+    <ID>MatchingDeclarationName:Icons.kt$ProIconGlyph</ID>
+    <ID>MatchingDeclarationName:Lists.kt$ProTransactionRowModel</ID>
+    <ID>MatchingDeclarationName:Motion.kt$ProMotion</ID>
+    <ID>MatchingDeclarationName:OnboardingIllustrations.kt$OnboardingIllustration</ID>
+    <ID>MatchingDeclarationName:PinKeypad.kt$PinKeypadState</ID>
+    <ID>MatchingDeclarationName:Shape.kt$ProShapes</ID>
+    <ID>MaxLineLength:Buttons.kt$ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)</ID>
+    <ID>MaxLineLength:DateTimePickerSheet.kt$Text(":", style = typography.body, color = colors.onSurface, modifier = Modifier.padding(vertical = 8.dp))</ID>
+    <ID>MaxLineLength:DateTimePickerSheet.kt$TimeFieldTransformation$override fun filter(text: androidx.compose.ui.text.AnnotatedString): TransformedText</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — auth", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 640, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — buttons", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — categories", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — chrome", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 520, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — fields", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — lists", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — logging", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 720, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — navigation", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 200, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — sheets", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)</ID>
+    <ID>MaxLineLength:DesignSystemSpecCaptures.kt$QuickAccessTile(label = "Events", icon = ProIconGlyph.FeatEvents, onClick = {}, modifier = Modifier.width(78.dp))</ID>
+    <ID>MaxLineLength:DesignSystemSpecCaptures.kt$QuickAccessTile(label = "Reports", icon = ProIconGlyph.FeatReports, onClick = {}, modifier = Modifier.width(78.dp))</ID>
+    <ID>MaxLineLength:EventBudgetCard.kt$style = if (isDanger) typography.bodySemiBold.copy(fontSize = typography.caption.fontSize) else typography.caption</ID>
+    <ID>MaxLineLength:NavMotion.kt$fun ProMotion.reducedEnter(): EnterTransition</ID>
+    <ID>MaxLineLength:NavMotion.kt$fun ProMotion.reducedExit(): ExitTransition</ID>
+    <ID>MaxLineLength:ProfileStepHeader.kt$subtitle = "Your name personalizes the app — greeting you on the home screen and identifying your records and exports."</ID>
+    <ID>ReturnCount:PlatformDateFormatter.android.kt$PlatformDateFormatter$override fun dayLabel( epochMillis: Long, nowEpochMillis: Long, ): String</ID>
+    <ID>TooManyFunctions:DesignSystemPreview.kt$com.arduia.expense.ui.design.DesignSystemPreview.kt</ID>
+    <ID>TooManyFunctions:DesignSystemSpecCaptures.kt$com.arduia.expense.ui.design.DesignSystemSpecCaptures.kt</ID>
+    <ID>TooManyFunctions:Interaction.kt$com.arduia.expense.ui.design.Interaction.kt</ID>
+    <ID>TooManyFunctions:NavMotion.kt$com.arduia.expense.ui.theme.NavMotion.kt</ID>
+    <ID>UnusedParameter:NavMotion.kt$reduceMotion: Boolean = false</ID>
+    <ID>UnusedPrivateMember:AddHintChip.kt$@Preview(showBackground = true) @Composable private fun AddHintChipPreview()</ID>
+    <ID>UnusedPrivateMember:AlertDialog.kt$@Preview( name = "ProAlertDialog — destructive", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ProAlertDialogDestructivePreview()</ID>
+    <ID>UnusedPrivateMember:AlertDialog.kt$@Preview( name = "ProAlertDialog — warning", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ProAlertDialogWarningPreview()</ID>
+    <ID>UnusedPrivateMember:CardSurfaces.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun ProCardPreview()</ID>
+    <ID>UnusedPrivateMember:CardSurfaces.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun SpentTodayCardPreview()</ID>
+    <ID>UnusedPrivateMember:DateTimePickerSheet.kt$@Preview( name = "Date/time picker — open", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DateTimePickerSheetPreview()</ID>
+    <ID>UnusedPrivateMember:DesignSystemGalleryScreen.kt$@Preview( name = "Design system gallery screen", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DesignSystemGalleryScreenPreview()</ID>
+    <ID>UnusedPrivateMember:DesignSystemSpecCaptures.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun SpecCapturesPreview()</ID>
+    <ID>UnusedPrivateMember:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateContentPreview()</ID>
+    <ID>UnusedPrivateMember:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateIllustrationPreview()</ID>
+    <ID>UnusedPrivateMember:EventBudgetCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetCardPreview()</ID>
+    <ID>UnusedPrivateMember:EventBudgetSummaryCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetSummaryCardPreview()</ID>
+    <ID>UnusedPrivateMember:HeroGreeting.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun HeroGreetingPreview()</ID>
+    <ID>UnusedPrivateMember:HomeBottomNav.kt$@Preview( name = "HomeBottomNav — Home active", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 160, showBackground = true, ) @Composable private fun HomeBottomNavHomeActivePreview()</ID>
+    <ID>UnusedPrivateMember:HomeBottomNav.kt$@Preview( name = "HomeBottomNav — Journal active", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 160, showBackground = true, ) @Composable private fun HomeBottomNavJournalActivePreview()</ID>
+    <ID>UnusedPrivateMember:Interaction.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun ProTextActionPreview()</ID>
+    <ID>UnusedPrivateMember:Lists.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun DayGroupCardPreview()</ID>
+    <ID>UnusedPrivateMember:Lists.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun DayGroupFlatPreview()</ID>
+    <ID>UnusedPrivateMember:NoticeBanner.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun NoticeBannerPreview()</ID>
+    <ID>UnusedPrivateMember:OnboardingIllustrations.kt$@Preview(widthDp = 280, heightDp = 280, showBackground = true) @Composable private fun OnboardingIllustrationsPreview()</ID>
+    <ID>UnusedPrivateMember:OnboardingPageIndicator.kt$@Preview(showBackground = true, widthDp = 120) @Composable private fun OnboardingPageIndicatorPreview()</ID>
+    <ID>UnusedPrivateMember:PillButton.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun ProPillButtonPreview()</ID>
+    <ID>UnusedPrivateMember:ProfileCurrencyRow.kt$@Preview(widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun ProfileCurrencyRowPreview()</ID>
+    <ID>UnusedPrivateMember:ProfileIdentityCard.kt$@Preview(widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun ProfileIdentityCardPreview()</ID>
+    <ID>UnusedPrivateMember:ProfileStepHeader.kt$@Preview( widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProfileStepHeaderPreview()</ID>
+    <ID>UnusedPrivateMember:SegmentedToggle.kt$@Preview( name = "SegmentedToggle — 200% font scale", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, fontScale = 2f, ) @Composable private fun SegmentedToggleLargeFontPreview()</ID>
+    <ID>UnusedPrivateMember:SegmentedToggle.kt$@Preview( name = "SegmentedToggle — default", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun SegmentedTogglePreview()</ID>
+    <ID>UnusedPrivateMember:TagPickerContent.kt$@Preview(name = "No debts", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun TagPickerContentNoDebtsPreview()</ID>
+    <ID>UnusedPrivateMember:TagPickerContent.kt$@Preview(widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun TagPickerContentPreview()</ID>
+    <ID>UnusedPrivateMember:TopBar.kt$@Preview( name = "ProTopBar — app bar title", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProTopBarPreview()</ID>
+  </CurrentIssues>
+</SmellBaseline>

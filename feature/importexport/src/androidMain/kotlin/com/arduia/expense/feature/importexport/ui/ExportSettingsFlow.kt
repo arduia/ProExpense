@@ -25,11 +25,11 @@ import com.arduia.expense.feature.importexport.ui.preview.previewMoreExportFiles
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 @Composable
 fun ExportSettingsFlow(
@@ -57,28 +57,31 @@ fun ExportSettingsFlow(
                 onExport()
                 scope.launch {
                     val timestamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
-                    val filesResult: Result<Map<String, String>> = if (formatIndex == 0) {
-                        exportGroupedData()
-                    } else {
-                        when (val result = exportData(ExportFormat.JSON)) {
-                            is Result.Success -> Result.Success(mapOf("expenses.json" to result.data))
-                            is Result.Error -> result
+                    val filesResult: Result<Map<String, String>> =
+                        if (formatIndex == 0) {
+                            exportGroupedData()
+                        } else {
+                            when (val result = exportData(ExportFormat.JSON)) {
+                                is Result.Success -> Result.Success(mapOf("expenses.json" to result.data))
+                                is Result.Error -> result
+                            }
                         }
-                    }
                     when (filesResult) {
                         is Result.Success -> {
-                            val zip = ExportFileWriter.writeZip(
-                                context = context,
-                                files = filesResult.data,
-                                zipFileName = "pro-expense-export-$timestamp.zip",
-                                password = password,
-                            )
+                            val zip =
+                                ExportFileWriter.writeZip(
+                                    context = context,
+                                    files = filesResult.data,
+                                    zipFileName = "pro-expense-export-$timestamp.zip",
+                                    password = password,
+                                )
                             val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", zip)
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "application/zip"
-                                putExtra(Intent.EXTRA_STREAM, uri)
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            }
+                            val shareIntent =
+                                Intent(Intent.ACTION_SEND).apply {
+                                    type = "application/zip"
+                                    putExtra(Intent.EXTRA_STREAM, uri)
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
                             context.startActivity(Intent.createChooser(shareIntent, null))
                         }
                         is Result.Error -> errorMessage = exportFailedMessage

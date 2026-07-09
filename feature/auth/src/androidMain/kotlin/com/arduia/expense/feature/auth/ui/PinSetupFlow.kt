@@ -18,11 +18,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.FragmentActivity
 import com.arduia.expense.data.Result
 import com.arduia.expense.feature.auth.BiometricAuthenticator
-import com.arduia.expense.feature.auth.R
-import com.arduia.expense.feature.auth.SetupPinUseCase
 import com.arduia.expense.feature.auth.PinEntryLogic
 import com.arduia.expense.feature.auth.PinEntryMode
 import com.arduia.expense.feature.auth.PinEntryUiState
+import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.SetupPinUseCase
 import com.arduia.expense.feature.auth.ui.preview.PinSetupUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.theme.ProArtboard
@@ -66,12 +66,13 @@ fun PinSetupFlow(
     val canSave = pinAuthOn && newPin.length == 6 && confirmPin.length == 6 && answer.isNotBlank()
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            // Rendered as an overlay sibling above the Home/More screen — swallow taps so they
-            // can't fall through to whatever's underneath (see PinEntryScreen for the same fix).
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {}),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                // Rendered as an overlay sibling above the Home/More screen — swallow taps so they
+                // can't fall through to whatever's underneath (see PinEntryScreen for the same fix).
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {}),
     ) {
         AnimatedContent(
             targetState = step,
@@ -85,105 +86,112 @@ fun PinSetupFlow(
             label = "pinSetupStep",
         ) { target ->
             when (target) {
-                PinSetupStep.Setup -> PinSetupScreen(
-                    state = PinSetupUiState(
-                        pinAuthOn = pinAuthOn,
-                        biometricOn = biometricOn,
-                        biometricCapable = biometricCapable,
-                        newPin = newPin,
-                        confirmPin = confirmPin,
-                    ),
-                    onTogglePin = { pinAuthOn = it },
-                    onToggleBiometric = { biometricOn = it },
-                    onRevealNew = {
-                        entryBuffer = ""
-                        step = PinSetupStep.EnterNew
-                    },
-                    onRevealConfirm = {
-                        entryBuffer = ""
-                        confirmError = false
-                        step = PinSetupStep.EnterConfirm
-                    },
-                    onRecoveryClick = { step = PinSetupStep.Security },
-                    onSave = {
-                        errorMessage = null
-                        isSaving = true
-                        scope.launch {
-                            val result = setupPin(
-                                pin = newPin,
-                                securityQuestionId = selectedQuestion,
-                                securityAnswer = answer,
-                                enableBiometric = biometricOn,
-                            )
-                            if (result is Result.Error) {
-                                isSaving = false
-                                errorMessage = result.message
-                                return@launch
+                PinSetupStep.Setup ->
+                    PinSetupScreen(
+                        state =
+                            PinSetupUiState(
+                                pinAuthOn = pinAuthOn,
+                                biometricOn = biometricOn,
+                                biometricCapable = biometricCapable,
+                                newPin = newPin,
+                                confirmPin = confirmPin,
+                            ),
+                        onTogglePin = { pinAuthOn = it },
+                        onToggleBiometric = { biometricOn = it },
+                        onRevealNew = {
+                            entryBuffer = ""
+                            step = PinSetupStep.EnterNew
+                        },
+                        onRevealConfirm = {
+                            entryBuffer = ""
+                            confirmError = false
+                            step = PinSetupStep.EnterConfirm
+                        },
+                        onRecoveryClick = { step = PinSetupStep.Security },
+                        onSave = {
+                            errorMessage = null
+                            isSaving = true
+                            scope.launch {
+                                val result =
+                                    setupPin(
+                                        pin = newPin,
+                                        securityQuestionId = selectedQuestion,
+                                        securityAnswer = answer,
+                                        enableBiometric = biometricOn,
+                                    )
+                                if (result is Result.Error) {
+                                    isSaving = false
+                                    errorMessage = result.message
+                                    return@launch
+                                }
+                                onSaved()
+                                onDismiss()
                             }
-                            onSaved()
-                            onDismiss()
-                        }
-                    },
-                    onBack = onDismiss,
-                    saveEnabled = canSave,
-                    saving = isSaving,
-                    errorMessage = errorMessage,
-                )
-                PinSetupStep.EnterNew -> PinSetPinScreen(
-                    state = PinEntryUiState(filledDots = entryBuffer.length, digits = entryBuffer),
-                    headingRes = R.string.pin_set_new_heading,
-                    onDigit = { digit ->
-                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit)) {
-                            is PinEntryLogic.DigitResult.Updated -> entryBuffer = result.buffer
-                            is PinEntryLogic.DigitResult.Completed -> {
-                                entryBuffer = result.pin
-                                newPin = result.pin
-                                confirmPin = ""
-                                step = PinSetupStep.Setup
-                            }
-                        }
-                    },
-                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
-                    onBack = { step = PinSetupStep.Setup },
-                )
-                PinSetupStep.EnterConfirm -> PinSetPinScreen(
-                    state = PinEntryUiState(
-                        filledDots = entryBuffer.length,
-                        mode = if (confirmError) PinEntryMode.Error else PinEntryMode.Default,
-                        digits = entryBuffer,
-                    ),
-                    headingRes = R.string.pin_confirm_heading,
-                    onDigit = { digit ->
-                        when (val result = PinEntryLogic.appendDigit(entryBuffer, digit, hadError = confirmError)) {
-                            is PinEntryLogic.DigitResult.Updated -> {
-                                confirmError = false
-                                entryBuffer = result.buffer
-                            }
-                            is PinEntryLogic.DigitResult.Completed -> {
-                                confirmError = false
-                                if (result.pin == newPin) {
+                        },
+                        onBack = onDismiss,
+                        saveEnabled = canSave,
+                        saving = isSaving,
+                        errorMessage = errorMessage,
+                    )
+                PinSetupStep.EnterNew ->
+                    PinSetPinScreen(
+                        state = PinEntryUiState(filledDots = entryBuffer.length, digits = entryBuffer),
+                        headingRes = R.string.pin_set_new_heading,
+                        onDigit = { digit ->
+                            when (val result = PinEntryLogic.appendDigit(entryBuffer, digit)) {
+                                is PinEntryLogic.DigitResult.Updated -> entryBuffer = result.buffer
+                                is PinEntryLogic.DigitResult.Completed -> {
                                     entryBuffer = result.pin
-                                    confirmPin = result.pin
+                                    newPin = result.pin
+                                    confirmPin = ""
                                     step = PinSetupStep.Setup
-                                } else {
-                                    confirmError = true
-                                    entryBuffer = ""
                                 }
                             }
-                        }
-                    },
-                    onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
-                    onBack = { step = PinSetupStep.Setup },
-                )
-                PinSetupStep.Security -> PinSecurityQuestionScreen(
-                    questions = pinSecurityQuestions,
-                    selectedId = selectedQuestion,
-                    answer = answer,
-                    onSelect = { selectedQuestion = it },
-                    onAnswerChange = { answer = it },
-                    onEnable = { step = PinSetupStep.Setup },
-                    onBack = { step = PinSetupStep.Setup },
-                )
+                        },
+                        onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
+                        onBack = { step = PinSetupStep.Setup },
+                    )
+                PinSetupStep.EnterConfirm ->
+                    PinSetPinScreen(
+                        state =
+                            PinEntryUiState(
+                                filledDots = entryBuffer.length,
+                                mode = if (confirmError) PinEntryMode.Error else PinEntryMode.Default,
+                                digits = entryBuffer,
+                            ),
+                        headingRes = R.string.pin_confirm_heading,
+                        onDigit = { digit ->
+                            when (val result = PinEntryLogic.appendDigit(entryBuffer, digit, hadError = confirmError)) {
+                                is PinEntryLogic.DigitResult.Updated -> {
+                                    confirmError = false
+                                    entryBuffer = result.buffer
+                                }
+                                is PinEntryLogic.DigitResult.Completed -> {
+                                    confirmError = false
+                                    if (result.pin == newPin) {
+                                        entryBuffer = result.pin
+                                        confirmPin = result.pin
+                                        step = PinSetupStep.Setup
+                                    } else {
+                                        confirmError = true
+                                        entryBuffer = ""
+                                    }
+                                }
+                            }
+                        },
+                        onBackspace = { entryBuffer = PinEntryLogic.backspace(entryBuffer) },
+                        onBack = { step = PinSetupStep.Setup },
+                    )
+                PinSetupStep.Security ->
+                    PinSecurityQuestionScreen(
+                        questions = pinSecurityQuestions,
+                        selectedId = selectedQuestion,
+                        answer = answer,
+                        onSelect = { selectedQuestion = it },
+                        onAnswerChange = { answer = it },
+                        onEnable = { step = PinSetupStep.Setup },
+                        onBack = { step = PinSetupStep.Setup },
+                    )
             }
         }
     }

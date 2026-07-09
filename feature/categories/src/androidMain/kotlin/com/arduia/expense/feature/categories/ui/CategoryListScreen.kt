@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -42,6 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.arduia.expense.feature.categories.R
+import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
+import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
+import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -51,9 +53,6 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
-import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
-import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -71,11 +70,12 @@ fun CategoryListScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -88,11 +88,12 @@ fun CategoryListScreen(
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space24),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space24),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             CategorySectionHeader(
@@ -105,11 +106,12 @@ fun CategoryListScreen(
 
             CategorySectionHeader(
                 label = stringResource(R.string.categories_custom_label),
-                trailing = pluralStringResource(
-                    R.plurals.categories_count,
-                    state.custom.size,
-                    state.custom.size,
-                ),
+                trailing =
+                    pluralStringResource(
+                        R.plurals.categories_count,
+                        state.custom.size,
+                        state.custom.size,
+                    ),
             )
             ReorderableCustomGroup(
                 rows = state.custom,
@@ -145,7 +147,10 @@ fun CategoryListScreen(
 }
 
 @Composable
-private fun CategorySectionHeader(label: String, trailing: String) {
+private fun CategorySectionHeader(
+    label: String,
+    trailing: String,
+) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
 
@@ -167,11 +172,12 @@ private fun CategoryGroupCard(
     val colors = ProExpenseTheme.colors
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
     ) {
         rows.forEachIndexed { index, item ->
             if (index > 0) {
@@ -183,15 +189,19 @@ private fun CategoryGroupCard(
 }
 
 @Composable
-private fun CategoryRow(row: CategoryRowUi, locked: Boolean) {
+private fun CategoryRow(
+    row: CategoryRowUi,
+    locked: Boolean,
+) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -207,9 +217,10 @@ private fun CategoryRow(row: CategoryRowUi, locked: Boolean) {
                 text = stringResource(R.string.categories_locked_pill),
                 style = typography.eyebrow,
                 color = colors.onSurfaceMuted,
-                modifier = Modifier
-                    .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
-                    .padding(horizontal = dimens.space10, vertical = dimens.space4),
+                modifier =
+                    Modifier
+                        .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
+                        .padding(horizontal = dimens.space10, vertical = dimens.space4),
             )
         } else {
             DragHandle()
@@ -230,20 +241,22 @@ private fun ReorderableCustomGroup(
     var itemHeightPx by remember { mutableFloatStateOf(0f) }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
     ) {
         rows.forEachIndexed { index, item ->
             key(item.label) {
                 val dragging = index == draggingIndex
                 Column(
-                    modifier = Modifier
-                        .zIndex(if (dragging) 1f else 0f)
-                        .graphicsLayer { translationY = if (dragging) dragOffsetY else 0f }
-                        .onSizeChanged { if (it.height > 0) itemHeightPx = it.height.toFloat() },
+                    modifier =
+                        Modifier
+                            .zIndex(if (dragging) 1f else 0f)
+                            .graphicsLayer { translationY = if (dragging) dragOffsetY else 0f }
+                            .onSizeChanged { if (it.height > 0) itemHeightPx = it.height.toFloat() },
                 ) {
                     if (index > 0) {
                         Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
@@ -251,32 +264,42 @@ private fun ReorderableCustomGroup(
                     CustomCategoryRow(
                         row = item,
                         onClick = { onRowClick(item) },
-                        dragHandleModifier = Modifier.pointerInput(rows.size) {
-                            detectDragGesturesAfterLongPress(
-                                onDragStart = { draggingIndex = index; dragOffsetY = 0f },
-                                onDragEnd = { draggingIndex = null; dragOffsetY = 0f },
-                                onDragCancel = { draggingIndex = null; dragOffsetY = 0f },
-                                onDrag = { change, drag ->
-                                    change.consume()
-                                    val from = draggingIndex
-                                    if (from != null) {
-                                        dragOffsetY += drag.y
-                                        val h = itemHeightPx
-                                        if (h > 0f) {
-                                            if (dragOffsetY > h / 2f && from < rows.lastIndex) {
-                                                onReorder(from, from + 1)
-                                                draggingIndex = from + 1
-                                                dragOffsetY -= h
-                                            } else if (dragOffsetY < -h / 2f && from > 0) {
-                                                onReorder(from, from - 1)
-                                                draggingIndex = from - 1
-                                                dragOffsetY += h
+                        dragHandleModifier =
+                            Modifier.pointerInput(rows.size) {
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = {
+                                        draggingIndex = index
+                                        dragOffsetY = 0f
+                                    },
+                                    onDragEnd = {
+                                        draggingIndex = null
+                                        dragOffsetY = 0f
+                                    },
+                                    onDragCancel = {
+                                        draggingIndex = null
+                                        dragOffsetY = 0f
+                                    },
+                                    onDrag = { change, drag ->
+                                        change.consume()
+                                        val from = draggingIndex
+                                        if (from != null) {
+                                            dragOffsetY += drag.y
+                                            val h = itemHeightPx
+                                            if (h > 0f) {
+                                                if (dragOffsetY > h / 2f && from < rows.lastIndex) {
+                                                    onReorder(from, from + 1)
+                                                    draggingIndex = from + 1
+                                                    dragOffsetY -= h
+                                                } else if (dragOffsetY < -h / 2f && from > 0) {
+                                                    onReorder(from, from - 1)
+                                                    draggingIndex = from - 1
+                                                    dragOffsetY += h
+                                                }
                                             }
                                         }
-                                    }
-                                },
-                            )
-                        },
+                                    },
+                                )
+                            },
                     )
                 }
             }
@@ -295,10 +318,11 @@ private fun CustomCategoryRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .proClickable(onClick = onClick, shape = RectangleShape, scaleOnPress = false)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .proClickable(onClick = onClick, shape = RectangleShape, scaleOnPress = false)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -330,11 +354,12 @@ private fun DragHandle() {
     ) {
         repeat(3) {
             Box(
-                modifier = Modifier
-                    .width(dimens.space16)
-                    .height(1.5.dp)
-                    .clip(RoundedCornerShape(1.dp))
-                    .background(colors.muted),
+                modifier =
+                    Modifier
+                        .width(dimens.space16)
+                        .height(1.5.dp)
+                        .clip(RoundedCornerShape(1.dp))
+                        .background(colors.muted),
             )
         }
     }

@@ -34,7 +34,10 @@ private class FakePinAuthRepository(
         return Result.Success(Unit)
     }
 
-    override suspend fun setSecurityQuestion(questionId: String, answer: String): Result<Unit> {
+    override suspend fun setSecurityQuestion(
+        questionId: String,
+        answer: String,
+    ): Result<Unit> {
         securityQuestionId = questionId
         securityAnswer = answer
         return Result.Success(Unit)
@@ -80,177 +83,188 @@ private class FakePinAuthRepository(
 }
 
 class SetupPinUseCaseTest {
+    @Test
+    fun invoke_setsPinQuestionAndBiometricOnSuccess() =
+        runTest {
+            val repo = FakePinAuthRepository()
+            val useCase = SetupPinUseCase(repo)
+
+            val result =
+                useCase(
+                    pin = "1234",
+                    securityQuestionId = "pet_name",
+                    securityAnswer = "Rex",
+                    enableBiometric = true,
+                )
+
+            assertIs<Result.Success<Unit>>(result)
+            assertEquals("1234", repo.pin)
+            assertEquals("pet_name", repo.securityQuestionId)
+            assertTrue(repo.biometricEnrolled)
+        }
 
     @Test
-    fun invoke_setsPinQuestionAndBiometricOnSuccess() = runTest {
-        val repo = FakePinAuthRepository()
-        val useCase = SetupPinUseCase(repo)
+    fun invoke_skipsBiometricEnrollmentWhenDisabled() =
+        runTest {
+            val repo = FakePinAuthRepository()
+            val useCase = SetupPinUseCase(repo)
 
-        val result = useCase(
-            pin = "1234",
-            securityQuestionId = "pet_name",
-            securityAnswer = "Rex",
-            enableBiometric = true,
-        )
+            useCase(pin = "1234", securityQuestionId = "pet_name", securityAnswer = "Rex", enableBiometric = false)
 
-        assertIs<Result.Success<Unit>>(result)
-        assertEquals("1234", repo.pin)
-        assertEquals("pet_name", repo.securityQuestionId)
-        assertTrue(repo.biometricEnrolled)
-    }
+            assertTrue(!repo.biometricEnrolled)
+        }
 
     @Test
-    fun invoke_skipsBiometricEnrollmentWhenDisabled() = runTest {
-        val repo = FakePinAuthRepository()
-        val useCase = SetupPinUseCase(repo)
+    fun invoke_shortCircuitsWhenSetPinFails() =
+        runTest {
+            val repo = FakePinAuthRepository(setPinError = "storage failure")
+            val useCase = SetupPinUseCase(repo)
 
-        useCase(pin = "1234", securityQuestionId = "pet_name", securityAnswer = "Rex", enableBiometric = false)
+            val result = useCase(pin = "1234", securityQuestionId = "pet_name", securityAnswer = "Rex", enableBiometric = true)
 
-        assertTrue(!repo.biometricEnrolled)
-    }
-
-    @Test
-    fun invoke_shortCircuitsWhenSetPinFails() = runTest {
-        val repo = FakePinAuthRepository(setPinError = "storage failure")
-        val useCase = SetupPinUseCase(repo)
-
-        val result = useCase(pin = "1234", securityQuestionId = "pet_name", securityAnswer = "Rex", enableBiometric = true)
-
-        assertIs<Result.Error>(result)
-        assertEquals(null, repo.securityQuestionId)
-        assertTrue(!repo.biometricEnrolled)
-    }
+            assertIs<Result.Error>(result)
+            assertEquals(null, repo.securityQuestionId)
+            assertTrue(!repo.biometricEnrolled)
+        }
 }
 
 class VerifyPinUseCaseTest {
-
     @Test
-    fun invoke_unlocksAndResetsAttemptsOnCorrectPin() = runTest {
-        val repo = FakePinAuthRepository(pin = "1234", failedAttempts = 3)
-        val useCase = VerifyPinUseCase(repo)
+    fun invoke_unlocksAndResetsAttemptsOnCorrectPin() =
+        runTest {
+            val repo = FakePinAuthRepository(pin = "1234", failedAttempts = 3)
+            val useCase = VerifyPinUseCase(repo)
 
-        val result = useCase("1234")
+            val result = useCase("1234")
 
-        assertEquals(VerifyPinResult.Unlocked, result)
-        assertEquals(0, repo.failedAttempts)
-    }
-
-    @Test
-    fun invoke_incrementsAttemptsAndReportsLockoutOnWrongPin() = runTest {
-        val repo = FakePinAuthRepository(pin = "1234", lockoutUntilMs = 5000L)
-        val useCase = VerifyPinUseCase(repo)
-
-        val result = useCase("0000")
-
-        assertIs<VerifyPinResult.Incorrect>(result)
-        assertEquals(5000L, (result as VerifyPinResult.Incorrect).lockoutUntilMs)
-        assertEquals(1, repo.failedAttempts)
-    }
-
-    @Test
-    fun invoke_propagatesRepositoryError() = runTest {
-        val repo = object : PinAuthRepository by FakePinAuthRepository() {
-            override suspend fun verifyPin(pin: String): Result<Boolean> = Result.Error("db error")
+            assertEquals(VerifyPinResult.Unlocked, result)
+            assertEquals(0, repo.failedAttempts)
         }
-        val useCase = VerifyPinUseCase(repo)
 
-        val result = useCase("1234")
+    @Test
+    fun invoke_incrementsAttemptsAndReportsLockoutOnWrongPin() =
+        runTest {
+            val repo = FakePinAuthRepository(pin = "1234", lockoutUntilMs = 5000L)
+            val useCase = VerifyPinUseCase(repo)
 
-        assertEquals(VerifyPinResult.Error("db error"), result)
-    }
+            val result = useCase("0000")
+
+            assertIs<VerifyPinResult.Incorrect>(result)
+            assertEquals(5000L, (result as VerifyPinResult.Incorrect).lockoutUntilMs)
+            assertEquals(1, repo.failedAttempts)
+        }
+
+    @Test
+    fun invoke_propagatesRepositoryError() =
+        runTest {
+            val repo =
+                object : PinAuthRepository by FakePinAuthRepository() {
+                    override suspend fun verifyPin(pin: String): Result<Boolean> = Result.Error("db error")
+                }
+            val useCase = VerifyPinUseCase(repo)
+
+            val result = useCase("1234")
+
+            assertEquals(VerifyPinResult.Error("db error"), result)
+        }
 }
 
 class VerifyRecoveryAnswerUseCaseTest {
+    @Test
+    fun invoke_returnsCorrectOnMatchingAnswer() =
+        runTest {
+            val repo = FakePinAuthRepository(securityAnswer = "Rex")
+            val useCase = VerifyRecoveryAnswerUseCase(repo)
+
+            val result = useCase("Rex", currentAttempts = 0)
+
+            assertEquals(RecoveryAnswerResult.Correct, result)
+        }
 
     @Test
-    fun invoke_returnsCorrectOnMatchingAnswer() = runTest {
-        val repo = FakePinAuthRepository(securityAnswer = "Rex")
-        val useCase = VerifyRecoveryAnswerUseCase(repo)
+    fun invoke_incrementsAttemptsAndFlagsExhaustionAtMax() =
+        runTest {
+            val repo = FakePinAuthRepository(securityAnswer = "Rex")
+            val useCase = VerifyRecoveryAnswerUseCase(repo)
 
-        val result = useCase("Rex", currentAttempts = 0)
+            val result = useCase("Fido", currentAttempts = PIN_RECOVERY_MAX_ATTEMPTS - 1)
 
-        assertEquals(RecoveryAnswerResult.Correct, result)
-    }
-
-    @Test
-    fun invoke_incrementsAttemptsAndFlagsExhaustionAtMax() = runTest {
-        val repo = FakePinAuthRepository(securityAnswer = "Rex")
-        val useCase = VerifyRecoveryAnswerUseCase(repo)
-
-        val result = useCase("Fido", currentAttempts = PIN_RECOVERY_MAX_ATTEMPTS - 1)
-
-        assertEquals(RecoveryAnswerResult.Incorrect(PIN_RECOVERY_MAX_ATTEMPTS, attemptsExhausted = true), result)
-    }
+            assertEquals(RecoveryAnswerResult.Incorrect(PIN_RECOVERY_MAX_ATTEMPTS, attemptsExhausted = true), result)
+        }
 
     @Test
-    fun invoke_doesNotFlagExhaustionBelowMax() = runTest {
-        val repo = FakePinAuthRepository(securityAnswer = "Rex")
-        val useCase = VerifyRecoveryAnswerUseCase(repo)
+    fun invoke_doesNotFlagExhaustionBelowMax() =
+        runTest {
+            val repo = FakePinAuthRepository(securityAnswer = "Rex")
+            val useCase = VerifyRecoveryAnswerUseCase(repo)
 
-        val result = useCase("Fido", currentAttempts = 0)
+            val result = useCase("Fido", currentAttempts = 0)
 
-        assertEquals(RecoveryAnswerResult.Incorrect(1, attemptsExhausted = false), result)
-    }
+            assertEquals(RecoveryAnswerResult.Incorrect(1, attemptsExhausted = false), result)
+        }
 
     @Test
-    fun invoke_propagatesRepositoryError() = runTest {
-        val repo = FakePinAuthRepository(verifyAnswerError = "db error")
-        val useCase = VerifyRecoveryAnswerUseCase(repo)
+    fun invoke_propagatesRepositoryError() =
+        runTest {
+            val repo = FakePinAuthRepository(verifyAnswerError = "db error")
+            val useCase = VerifyRecoveryAnswerUseCase(repo)
 
-        val result = useCase("Rex", currentAttempts = 0)
+            val result = useCase("Rex", currentAttempts = 0)
 
-        assertEquals(RecoveryAnswerResult.Error("db error"), result)
-    }
+            assertEquals(RecoveryAnswerResult.Error("db error"), result)
+        }
 }
 
 class ResetPinUseCaseTest {
+    @Test
+    fun invoke_setsNewPinAndResetsFailedAttemptsOnSuccess() =
+        runTest {
+            val repo = FakePinAuthRepository(pin = "old", failedAttempts = 4)
+            val useCase = ResetPinUseCase(repo)
+
+            val result = useCase("new")
+
+            assertIs<Result.Success<Unit>>(result)
+            assertEquals("new", repo.pin)
+            assertEquals(0, repo.failedAttempts)
+        }
 
     @Test
-    fun invoke_setsNewPinAndResetsFailedAttemptsOnSuccess() = runTest {
-        val repo = FakePinAuthRepository(pin = "old", failedAttempts = 4)
-        val useCase = ResetPinUseCase(repo)
+    fun invoke_doesNotResetAttemptsWhenSetPinFails() =
+        runTest {
+            val repo = FakePinAuthRepository(pin = "old", failedAttempts = 4, setPinError = "storage failure")
+            val useCase = ResetPinUseCase(repo)
 
-        val result = useCase("new")
+            val result = useCase("new")
 
-        assertIs<Result.Success<Unit>>(result)
-        assertEquals("new", repo.pin)
-        assertEquals(0, repo.failedAttempts)
-    }
-
-    @Test
-    fun invoke_doesNotResetAttemptsWhenSetPinFails() = runTest {
-        val repo = FakePinAuthRepository(pin = "old", failedAttempts = 4, setPinError = "storage failure")
-        val useCase = ResetPinUseCase(repo)
-
-        val result = useCase("new")
-
-        assertIs<Result.Error>(result)
-        assertEquals(4, repo.failedAttempts)
-    }
+            assertIs<Result.Error>(result)
+            assertEquals(4, repo.failedAttempts)
+        }
 }
 
 class DisablePinUseCaseTest {
+    @Test
+    fun invoke_clearsPinAndBiometricOnSuccess() =
+        runTest {
+            val repo = FakePinAuthRepository(pin = "1234", biometricEnrolled = true)
+            val useCase = DisablePinUseCase(repo)
+
+            val result = useCase()
+
+            assertIs<Result.Success<Unit>>(result)
+            assertEquals(null, repo.pin)
+            assertTrue(!repo.biometricEnrolled)
+        }
 
     @Test
-    fun invoke_clearsPinAndBiometricOnSuccess() = runTest {
-        val repo = FakePinAuthRepository(pin = "1234", biometricEnrolled = true)
-        val useCase = DisablePinUseCase(repo)
+    fun invoke_shortCircuitsWhenClearPinFails() =
+        runTest {
+            val repo = FakePinAuthRepository(pin = "1234", biometricEnrolled = true, clearPinError = "storage failure")
+            val useCase = DisablePinUseCase(repo)
 
-        val result = useCase()
+            val result = useCase()
 
-        assertIs<Result.Success<Unit>>(result)
-        assertEquals(null, repo.pin)
-        assertTrue(!repo.biometricEnrolled)
-    }
-
-    @Test
-    fun invoke_shortCircuitsWhenClearPinFails() = runTest {
-        val repo = FakePinAuthRepository(pin = "1234", biometricEnrolled = true, clearPinError = "storage failure")
-        val useCase = DisablePinUseCase(repo)
-
-        val result = useCase()
-
-        assertIs<Result.Error>(result)
-        assertTrue(repo.biometricEnrolled)
-    }
+            assertIs<Result.Error>(result)
+            assertTrue(repo.biometricEnrolled)
+        }
 }

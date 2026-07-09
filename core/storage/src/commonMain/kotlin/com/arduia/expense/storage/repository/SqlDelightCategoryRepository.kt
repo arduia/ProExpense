@@ -19,41 +19,48 @@ class SqlDelightCategoryRepository(
     private val queries: CategoryQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : CategoryRepository {
-
-    override suspend fun getAll(): Result<List<Category>> = withContext(dispatcher) {
-        catchingResult { queries.selectAllCategories().executeAsList().map { it.toDomain() } }
-    }
-
-    override suspend fun upsert(category: Category): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            queries.insertCategory(
-                id = category.id.value,
-                name = category.name,
-                is_custom = if (category.isCustom) 1L else 0L,
-                sort_order = category.sortOrder.toLong(),
-                icon_id = category.iconId,
-            )
-            Unit
+    override suspend fun getAll(): Result<List<Category>> =
+        withContext(dispatcher) {
+            catchingResult { queries.selectAllCategories().executeAsList().map { it.toDomain() } }
         }
-    }
 
-    override suspend fun delete(id: CategoryId): Result<Unit> = withContext(dispatcher) {
-        catchingResult { queries.deleteCategory(id.value); Unit }
-    }
-
-    override suspend fun reorder(orderedIds: List<CategoryId>): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            queries.transaction {
-                orderedIds.forEachIndexed { i, id ->
-                    queries.updateCategoryOrder(i.toLong(), id.value)
-                }
+    override suspend fun upsert(category: Category): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                queries.insertCategory(
+                    id = category.id.value,
+                    name = category.name,
+                    is_custom = if (category.isCustom) 1L else 0L,
+                    sort_order = category.sortOrder.toLong(),
+                    icon_id = category.iconId,
+                )
+                Unit
             }
-            Unit
         }
-    }
+
+    override suspend fun delete(id: CategoryId): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                queries.deleteCategory(id.value)
+                Unit
+            }
+        }
+
+    override suspend fun reorder(orderedIds: List<CategoryId>): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                queries.transaction {
+                    orderedIds.forEachIndexed { i, id ->
+                        queries.updateCategoryOrder(i.toLong(), id.value)
+                    }
+                }
+                Unit
+            }
+        }
 
     override fun observeAll(): Flow<List<Category>> =
-        queries.selectAllCategories()
+        queries
+            .selectAllCategories()
             .asFlow()
             .mapToList(dispatcher)
             .map { rows -> rows.map { it.toDomain() } }

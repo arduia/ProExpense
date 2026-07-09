@@ -2,7 +2,10 @@ package com.arduia.expense.shared
 
 import java.security.MessageDigest
 
-actual fun platformDigestHex(algorithm: String, input: String): String {
+actual fun platformDigestHex(
+    algorithm: String,
+    input: String,
+): String {
     val bytes = MessageDigest.getInstance(algorithm).digest(input.encodeToByteArray())
     return buildString(bytes.size * 2) {
         bytes.forEach { byte ->

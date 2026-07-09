@@ -35,11 +35,12 @@ class GenerateReportPeriodUseCase {
         periodEndEpochMillis: Long,
         daysInPeriod: Int,
     ): ReportPeriodResult {
-        val inPeriod = records.filter { record ->
-            record.type == RecordType.EXPENSE &&
-                record.recordedAtEpochMillis >= periodStartEpochMillis &&
-                record.recordedAtEpochMillis < periodEndEpochMillis
-        }
+        val inPeriod =
+            records.filter { record ->
+                record.type == RecordType.EXPENSE &&
+                    record.recordedAtEpochMillis >= periodStartEpochMillis &&
+                    record.recordedAtEpochMillis < periodEndEpochMillis
+            }
 
         if (inPeriod.isEmpty()) {
             return ReportPeriodResult(
@@ -55,30 +56,33 @@ class GenerateReportPeriodUseCase {
         val totalCents = inPeriod.sumOf { it.homeCurrencyMoney.amount.valueInCents }
         val dailyAvgCents = if (daysInPeriod > 0) totalCents / daysInPeriod else 0L
 
-        val rankedEntries = inPeriod
-            .groupBy { it.categoryId.value }
-            .mapValues { (_, group) -> group.sumOf { it.homeCurrencyMoney.amount.valueInCents } }
-            .entries
-            .sortedByDescending { it.value }
+        val rankedEntries =
+            inPeriod
+                .groupBy { it.categoryId.value }
+                .mapValues { (_, group) -> group.sumOf { it.homeCurrencyMoney.amount.valueInCents } }
+                .entries
+                .sortedByDescending { it.value }
 
         val topEntries = rankedEntries.take(5)
         val otherCents = rankedEntries.drop(5).sumOf { it.value }
 
-        val categories = topEntries.map { (categoryId, amountCents) ->
-            val fraction = if (totalCents == 0L) 0f else amountCents.toFloat() / totalCents
-            ReportCategoryBreakdown(categoryId, amountCents, fraction)
-        } + if (otherCents > 0L) {
-            listOf(
-                ReportCategoryBreakdown(
-                    categoryId = REPORT_OTHER_CATEGORY_ID,
-                    amountCents = otherCents,
-                    fraction = if (totalCents == 0L) 0f else otherCents.toFloat() / totalCents,
-                    isOtherRollup = true,
-                ),
-            )
-        } else {
-            emptyList()
-        }
+        val categories =
+            topEntries.map { (categoryId, amountCents) ->
+                val fraction = if (totalCents == 0L) 0f else amountCents.toFloat() / totalCents
+                ReportCategoryBreakdown(categoryId, amountCents, fraction)
+            } +
+                if (otherCents > 0L) {
+                    listOf(
+                        ReportCategoryBreakdown(
+                            categoryId = REPORT_OTHER_CATEGORY_ID,
+                            amountCents = otherCents,
+                            fraction = if (totalCents == 0L) 0f else otherCents.toFloat() / totalCents,
+                            isOtherRollup = true,
+                        ),
+                    )
+                } else {
+                    emptyList()
+                }
 
         return ReportPeriodResult(
             periodStartEpochMillis = periodStartEpochMillis,

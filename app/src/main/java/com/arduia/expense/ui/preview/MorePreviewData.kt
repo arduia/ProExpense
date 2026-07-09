@@ -32,29 +32,40 @@ data class MoreHubUiState(
     val settings: List<MoreSettingRowUi>,
 )
 
-val previewMoreHub = MoreHubUiState(
-    profile = MoreProfileUi(
-        initial = "M",
-        name = "Maya",
-        subtitle = "All data local · no account",
-    ),
-    features = listOf(
-        MoreFeatureRowUi("reports", ProIconGlyph.FeatReports, "Reports"),
-        MoreFeatureRowUi("debt", ProIconGlyph.FeatDebt, "Debt Tracker"),
-        MoreFeatureRowUi("shared", ProIconGlyph.FeatSplit, "Shared Costs"),
-        MoreFeatureRowUi("categories", ProIconGlyph.CatDefault, "Category List"),
-    ),
-    settings = listOf(
-        MoreSettingRowUi("currency", ProIconGlyph.Budget, "Currency", value = "USD", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("budget", ProIconGlyph.Note, "Monthly budget", value = "Off", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("pin", ProIconGlyph.Eye, "PIN authentication", value = "Off", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("biometric", ProIconGlyph.Fingerprint, "Biometric unlock", kind = MoreSettingKind.Toggle, toggleOn = false, enabled = false),
-        MoreSettingRowUi("category", ProIconGlyph.CatDefault, "Default category", value = "Food", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("language", ProIconGlyph.Note, "Language", value = "English", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("theme", ProIconGlyph.Sparkle, "Theme", value = "System", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("export", ProIconGlyph.Note, "Data export", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("import", ProIconGlyph.Note, "Data import", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("clear", ProIconGlyph.Close, "Clear data", kind = MoreSettingKind.Nav),
-        MoreSettingRowUi("version", ProIconGlyph.Bell, "App version", value = "2.0.0", kind = MoreSettingKind.Value),
-    ),
-)
+val previewMoreHub =
+    MoreHubUiState(
+        profile =
+            MoreProfileUi(
+                initial = "M",
+                name = "Maya",
+                subtitle = "All data local · no account",
+            ),
+        features =
+            listOf(
+                MoreFeatureRowUi("reports", ProIconGlyph.FeatReports, "Reports"),
+                MoreFeatureRowUi("debt", ProIconGlyph.FeatDebt, "Debt Tracker"),
+                MoreFeatureRowUi("shared", ProIconGlyph.FeatSplit, "Shared Costs"),
+                MoreFeatureRowUi("categories", ProIconGlyph.CatDefault, "Category List"),
+            ),
+        settings =
+            listOf(
+                MoreSettingRowUi("currency", ProIconGlyph.Budget, "Currency", value = "USD", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("budget", ProIconGlyph.Note, "Monthly budget", value = "Off", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("pin", ProIconGlyph.Eye, "PIN authentication", value = "Off", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi(
+                    "biometric",
+                    ProIconGlyph.Fingerprint,
+                    "Biometric unlock",
+                    kind = MoreSettingKind.Toggle,
+                    toggleOn = false,
+                    enabled = false,
+                ),
+                MoreSettingRowUi("category", ProIconGlyph.CatDefault, "Default category", value = "Food", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("language", ProIconGlyph.Note, "Language", value = "English", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("theme", ProIconGlyph.Sparkle, "Theme", value = "System", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("export", ProIconGlyph.Note, "Data export", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("import", ProIconGlyph.Note, "Data import", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("clear", ProIconGlyph.Close, "Clear data", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi("version", ProIconGlyph.Bell, "App version", value = "2.0.0", kind = MoreSettingKind.Value),
+            ),
+    )

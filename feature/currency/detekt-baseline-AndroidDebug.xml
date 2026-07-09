@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:CurrencyComponents.kt$@Composable fun CurrencyCard( item: MoreCurrencyItemUi, selected: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CurrencyFeatureEntry.kt$CurrencyFeatureEntry$@Composable fun SettingsFlow( selectedCode: String, onSelect: (String) -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CurrencySettingsFlow.kt$@Composable fun CurrencySettingsFlow( selectedCode: String, onSelect: (String) -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CurrencySettingsFlow.kt$@Preview( name = "Currency settings flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CurrencySettingsFlowPreview()</ID>
+    <ID>FunctionNaming:MoreCurrencyScreen.kt$@Composable fun MoreCurrencyScreen( items: List&lt;MoreCurrencyItemUi&gt;, selectedCode: String, onSave: (String) -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MoreCurrencyScreen.kt$@Preview( name = "More — currency", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreCurrencyPreview()</ID>
+    <ID>LongMethod:MoreCurrencyScreen.kt$@Composable fun MoreCurrencyScreen( items: List&lt;MoreCurrencyItemUi&gt;, selectedCode: String, onSave: (String) -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>MatchingDeclarationName:CurrencyPreviewData.kt$MoreCurrencyItemUi</ID>
+    <ID>UnusedPrivateMember:CurrencySettingsFlow.kt$@Preview( name = "Currency settings flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CurrencySettingsFlowPreview()</ID>
+    <ID>UnusedPrivateMember:MoreCurrencyScreen.kt$@Preview( name = "More — currency", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreCurrencyPreview()</ID>
+  </CurrentIssues>
+</SmellBaseline>

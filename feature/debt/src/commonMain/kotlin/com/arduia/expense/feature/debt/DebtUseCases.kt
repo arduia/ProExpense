@@ -25,24 +25,29 @@ class CreateDebtUseCase(
         note: String? = null,
     ): Boolean {
         val amount = Amount.parseOrNull(rawAmount)?.takeIf { it.valueInCents > 0 } ?: return false
-        val debt = Debt(
-            id = DebtId(newDebtId(personName, nowEpochMillis())),
-            personName = personName,
-            money = Money(amount, CurrencyCode(currencyCode)),
-            direction = direction,
-            dueEpochMillis = dueEpochMillis,
-            note = note?.ifBlank { null },
-        )
+        val debt =
+            Debt(
+                id = DebtId(newDebtId(personName, nowEpochMillis())),
+                personName = personName,
+                money = Money(amount, CurrencyCode(currencyCode)),
+                direction = direction,
+                dueEpochMillis = dueEpochMillis,
+                note = note?.ifBlank { null },
+            )
         debtRepository.upsert(debt)
         return true
     }
 
-    private fun newDebtId(person: String, now: Long): String =
-        person.trim().lowercase() + "-" + now
+    private fun newDebtId(
+        person: String,
+        now: Long,
+    ): String = person.trim().lowercase() + "-" + now
 }
 
 /** Updates an existing debt's editable fields, preserving its id/direction/settled status. */
-class UpdateDebtUseCase(private val debtRepository: DebtRepository) {
+class UpdateDebtUseCase(
+    private val debtRepository: DebtRepository,
+) {
     suspend operator fun invoke(
         existing: Debt,
         personName: String,
@@ -77,7 +82,9 @@ class DeleteDebtUseCase(
     }
 }
 
-class SettleDebtUseCase(private val debtRepository: DebtRepository) {
+class SettleDebtUseCase(
+    private val debtRepository: DebtRepository,
+) {
     suspend operator fun invoke(debt: Debt) {
         debtRepository.upsert(debt.copy(isSettled = true))
     }
@@ -91,7 +98,10 @@ data class DebtAggregate(
 )
 
 class AggregateDebtsUseCase {
-    operator fun invoke(debts: List<Debt>, direction: DebtDirection): DebtAggregate {
+    operator fun invoke(
+        debts: List<Debt>,
+        direction: DebtDirection,
+    ): DebtAggregate {
         val matching = debts.filter { it.direction == direction }
         val active = matching.filter { !it.isSettled }
         val settled = matching.filter { it.isSettled }
@@ -101,8 +111,13 @@ class AggregateDebtsUseCase {
 }
 
 /** Warns when a person already has an active record on the opposite side (design plan §US-DEBT-4). */
-class CheckDebtConflictUseCase(private val debtRepository: DebtRepository) {
-    suspend operator fun invoke(personName: String, direction: DebtDirection): Boolean {
+class CheckDebtConflictUseCase(
+    private val debtRepository: DebtRepository,
+) {
+    suspend operator fun invoke(
+        personName: String,
+        direction: DebtDirection,
+    ): Boolean {
         val opposite = direction.opposite()
         return when (val result = debtRepository.findByPersonName(personName)) {
             is Result.Success -> result.data.any { it.direction == opposite && !it.isSettled }
@@ -110,8 +125,9 @@ class CheckDebtConflictUseCase(private val debtRepository: DebtRepository) {
         }
     }
 
-    private fun DebtDirection.opposite(): DebtDirection = when (this) {
-        DebtDirection.OWED_TO_ME -> DebtDirection.I_OWE
-        DebtDirection.I_OWE -> DebtDirection.OWED_TO_ME
-    }
+    private fun DebtDirection.opposite(): DebtDirection =
+        when (this) {
+            DebtDirection.OWED_TO_ME -> DebtDirection.I_OWE
+            DebtDirection.I_OWE -> DebtDirection.OWED_TO_ME
+        }
 }

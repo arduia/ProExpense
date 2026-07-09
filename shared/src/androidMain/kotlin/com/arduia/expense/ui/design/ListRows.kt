@@ -35,22 +35,24 @@ fun MoreHubRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         if (icon != null) {
             Box(
-                modifier = Modifier
-                    .size(dimens.quickAccessIconSize)
-                    .clip(ProExpenseTheme.shapes.tile)
-                    .background(iconBackground),
+                modifier =
+                    Modifier
+                        .size(dimens.quickAccessIconSize)
+                        .clip(ProExpenseTheme.shapes.tile)
+                        .background(iconBackground),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(
@@ -103,18 +105,20 @@ fun DebtRecordRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.searchField)
-            .padding(vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.searchField)
+                .padding(vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.quickAccessIconSize)
-                .clip(ProExpenseTheme.shapes.tile)
-                .background(colors.successSoft),
+            modifier =
+                Modifier
+                    .size(dimens.quickAccessIconSize)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(colors.successSoft),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(
@@ -159,21 +163,28 @@ fun SharedPersonRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.space32)
-                .clip(ProExpenseTheme.shapes.tile)
-                .background(colors.tagSoft),
+            modifier =
+                Modifier
+                    .size(dimens.space32)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(colors.tagSoft),
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = name.firstOrNull()?.uppercaseChar()?.toString().orEmpty(),
+                text =
+                    name
+                        .firstOrNull()
+                        ?.uppercaseChar()
+                        ?.toString()
+                        .orEmpty(),
                 style = typography.bodySemiBold,
                 color = colors.tagDeep,
             )
@@ -207,9 +218,10 @@ fun ReportsCategoryRow(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = dimens.space8),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = dimens.space8),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         Row(
@@ -225,18 +237,20 @@ fun ReportsCategoryRow(
                     color = colors.onSurface,
                 )
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = dimens.space8)
-                        .clip(ProExpenseTheme.shapes.chip)
-                        .background(colors.paperAlt),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = dimens.space8)
+                            .clip(ProExpenseTheme.shapes.chip)
+                            .background(colors.paperAlt),
                 ) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth(progress.coerceIn(0.05f, 1f))
-                            .padding(vertical = 3.dp)
-                            .clip(ProExpenseTheme.shapes.chip)
-                            .background(colors.primary),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(progress.coerceIn(0.05f, 1f))
+                                .padding(vertical = 3.dp)
+                                .clip(ProExpenseTheme.shapes.chip)
+                                .background(colors.primary),
                     )
                 }
             }

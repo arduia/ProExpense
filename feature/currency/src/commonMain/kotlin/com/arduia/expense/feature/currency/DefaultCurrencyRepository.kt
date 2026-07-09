@@ -12,13 +12,11 @@ class DefaultCurrencyRepository(
     private val settings: CurrencySettingsRepository,
     private val defaultHomeCurrency: CurrencyCode = CurrencyCode("USD"),
 ) : CurrencyRepository {
-
     override suspend fun getSettings(): Result<CurrencySettings> =
         when (val result = settings.getHomeCurrency()) {
             is Result.Success -> Result.Success(CurrencySettings(result.data ?: defaultHomeCurrency))
             is Result.Error -> result
         }
 
-    override suspend fun setHomeCurrency(currency: CurrencyCode): Result<Unit> =
-        settings.setHomeCurrency(currency)
+    override suspend fun setHomeCurrency(currency: CurrencyCode): Result<Unit> = settings.setHomeCurrency(currency)
 }

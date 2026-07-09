@@ -11,20 +11,20 @@ import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SplitStrategy
 import com.arduia.expense.feature.sharedcost.CreateSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.DeleteSharedCostUseCase
+import com.arduia.expense.feature.sharedcost.R
 import com.arduia.expense.feature.sharedcost.SaveSharedCostInput
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.SplitMode
 import com.arduia.expense.feature.sharedcost.UpdateSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
-import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.PlatformDateFormatter
-import com.arduia.expense.feature.sharedcost.R
-import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import java.util.Locale
 
 interface SharedCostFeatureEntry {
     @Composable
@@ -53,9 +53,10 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
 
         val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
 
-        val history = sharedCosts
-            .sortedByDescending { it.recordedAtEpochMillis }
-            .map { it.toHistoryItemUi(homeCurrencySymbol, variesLabel) }
+        val history =
+            sharedCosts
+                .sortedByDescending { it.recordedAtEpochMillis }
+                .map { it.toHistoryItemUi(homeCurrencySymbol, variesLabel) }
         val sharedCostDetails = sharedCosts.associate { it.id.value to it.toUiState(homeCurrencySymbol) }
 
         SharedCostsFlow(
@@ -92,17 +93,28 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
 
 object SharedCostFeatureUi : SharedCostFeatureEntry by SharedCostFeatureEntryImpl()
 
-private fun SharedSplitMode.toSplitMode(): SplitMode = when (this) {
-    SharedSplitMode.Equal -> SplitMode.EQUAL
-    SharedSplitMode.Custom -> SplitMode.CUSTOM
-}
-
-private fun SharedCost.toHistoryItemUi(currencySymbol: String, variesLabel: String): SharedCostHistoryItemUi {
-    val shares = shares()
-    val perPersonLabel = when (splitStrategy) {
-        is SplitStrategy.EqualSplit -> AmountInput.formatMoney(shares.values.first().amount.valueInCents, currencySymbol)
-        is SplitStrategy.CustomSplit -> variesLabel
+private fun SharedSplitMode.toSplitMode(): SplitMode =
+    when (this) {
+        SharedSplitMode.Equal -> SplitMode.EQUAL
+        SharedSplitMode.Custom -> SplitMode.CUSTOM
     }
+
+private fun SharedCost.toHistoryItemUi(
+    currencySymbol: String,
+    variesLabel: String,
+): SharedCostHistoryItemUi {
+    val shares = shares()
+    val perPersonLabel =
+        when (splitStrategy) {
+            is SplitStrategy.EqualSplit ->
+                AmountInput.formatMoney(
+                    shares.values
+                        .first()
+                        .amount.valueInCents,
+                    currencySymbol,
+                )
+            is SplitStrategy.CustomSplit -> variesLabel
+        }
     return SharedCostHistoryItemUi(
         id = id.value,
         title = title,
@@ -120,14 +132,16 @@ private fun SharedCost.toUiState(currencySymbol: String): SharedCostUiState {
         note = title,
         peopleCount = participants.size,
         mode = if (splitStrategy is SplitStrategy.CustomSplit) SharedSplitMode.Custom else SharedSplitMode.Equal,
-        participants = participants.map { participant ->
-            SharedCostParticipantUi(
-                name = participant.name,
-                shareLabel = AmountInput.formatMoney(shares[participant.id]?.amount?.valueInCents ?: 0L, currencySymbol),
-            )
-        },
-        shareRaws = participants.map { participant ->
-            String.format(Locale.US, "%.2f", (shares[participant.id]?.amount?.valueInCents ?: 0L) / 100.0)
-        },
+        participants =
+            participants.map { participant ->
+                SharedCostParticipantUi(
+                    name = participant.name,
+                    shareLabel = AmountInput.formatMoney(shares[participant.id]?.amount?.valueInCents ?: 0L, currencySymbol),
+                )
+            },
+        shareRaws =
+            participants.map { participant ->
+                String.format(Locale.US, "%.2f", (shares[participant.id]?.amount?.valueInCents ?: 0L) / 100.0)
+            },
     )
 }

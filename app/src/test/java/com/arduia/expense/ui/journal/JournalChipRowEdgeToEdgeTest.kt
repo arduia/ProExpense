@@ -13,10 +13,10 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
-import org.junit.runner.RunWith
 
 /**
  * Retrospective guard (2026-07): the chip row was nested inside the screen's padded content
@@ -31,7 +31,6 @@ import org.junit.runner.RunWith
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class JournalChipRowEdgeToEdgeTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 

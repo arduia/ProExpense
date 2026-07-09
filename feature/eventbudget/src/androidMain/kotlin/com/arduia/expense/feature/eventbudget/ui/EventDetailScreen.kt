@@ -26,6 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.eventbudget.R
+import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
+import com.arduia.expense.feature.eventbudget.ui.preview.EventLinkedExpenseUi
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetail
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailClosed
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailNoLinked
+import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailWarn
 import com.arduia.expense.ui.design.EventBudgetSummaryCard
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
@@ -36,12 +42,6 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
-import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
-import com.arduia.expense.feature.eventbudget.ui.preview.EventLinkedExpenseUi
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetail
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailClosed
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailNoLinked
-import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailWarn
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -59,11 +59,12 @@ fun EventDetailScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.space12)) {
             ProTopBar(
@@ -76,12 +77,13 @@ fun EventDetailScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space20),
         ) {
             EventDetailHeader(state)
@@ -155,9 +157,10 @@ fun EventDetailScreen(
                 size = ProButtonSize.Lg,
                 enabled = false,
                 fillMaxWidth = true,
-                modifier = Modifier
-                    .padding(horizontal = dimens.screenPadding)
-                    .padding(bottom = dimens.space18),
+                modifier =
+                    Modifier
+                        .padding(horizontal = dimens.screenPadding)
+                        .padding(bottom = dimens.space18),
             )
         }
     }
@@ -176,10 +179,11 @@ private fun EventDetailHeader(state: EventDetailUiState) {
                 horizontalArrangement = Arrangement.spacedBy(dimens.space6),
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(dimens.space8)
-                        .clip(CircleShape)
-                        .background(colors.success),
+                    modifier =
+                        Modifier
+                            .size(dimens.space8)
+                            .clip(CircleShape)
+                            .background(colors.success),
                 )
                 Text(
                     text = state.statusEyebrow,
@@ -202,9 +206,10 @@ private fun EventDetailHeader(state: EventDetailUiState) {
                     text = state.statusInlineChip,
                     style = typography.eyebrow,
                     color = colors.onSurfaceMuted,
-                    modifier = Modifier
-                        .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
-                        .padding(horizontal = dimens.space8, vertical = dimens.space4),
+                    modifier =
+                        Modifier
+                            .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
+                            .padding(horizontal = dimens.space8, vertical = dimens.space4),
                 )
             }
         }
@@ -224,19 +229,21 @@ private fun EventLinkedExpenseCard(
     val colors = ProExpenseTheme.colors
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
     ) {
         expenses.forEachIndexed { index, expense ->
             if (index > 0) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.lineSoft),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(colors.lineSoft),
                 )
             }
             EventLinkedExpenseRow(
@@ -257,9 +264,10 @@ private fun EventLinkedExpenseRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = dimens.space16, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.space16, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {

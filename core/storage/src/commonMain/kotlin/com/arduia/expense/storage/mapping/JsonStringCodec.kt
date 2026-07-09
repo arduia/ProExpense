@@ -7,7 +7,8 @@ package com.arduia.expense.storage.mapping
  * a handful of flat, known-shape objects.
  */
 internal fun escapeJsonString(str: String): String =
-    str.replace("\\", "\\\\")
+    str
+        .replace("\\", "\\\\")
         .replace("\"", "\\\"")
         .replace("\n", "\\n")
         .replace("\r", "\\r")
@@ -41,14 +42,28 @@ internal fun unescapeJsonString(str: String): String {
  * (still-escaped) text is then unescaped so `\n`/`\r`/`\"`/`\\` come back as real characters
  * instead of literal two-char sequences.
  */
-internal fun extractJsonString(json: String, key: String): String? {
+internal fun extractJsonString(
+    json: String,
+    key: String,
+): String? {
     val regex = Regex("\"$key\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"")
-    return regex.find(json)?.groupValues?.get(1)?.let(::unescapeJsonString)
+    return regex
+        .find(json)
+        ?.groupValues
+        ?.get(1)
+        ?.let(::unescapeJsonString)
 }
 
-internal fun extractJsonNumber(json: String, key: String): Long? {
+internal fun extractJsonNumber(
+    json: String,
+    key: String,
+): Long? {
     val regex = Regex("\"$key\"\\s*:\\s*(-?\\d+)")
-    return regex.find(json)?.groupValues?.get(1)?.toLongOrNull()
+    return regex
+        .find(json)
+        ?.groupValues
+        ?.get(1)
+        ?.toLongOrNull()
 }
 
 /**
@@ -57,11 +72,19 @@ internal fun extractJsonNumber(json: String, key: String): Long? {
  * inner key can't work here since `[^:]*` can never cross the colon that follows the outer key,
  * so the object's contents are isolated first and searched independently.
  */
-internal fun extractNestedObject(json: String, objectKey: String): String? =
-    Regex("\"$objectKey\"\\s*:\\s*\\{([^}]*)\\}").find(json)?.groupValues?.get(1)
+internal fun extractNestedObject(
+    json: String,
+    objectKey: String,
+): String? = Regex("\"$objectKey\"\\s*:\\s*\\{([^}]*)\\}").find(json)?.groupValues?.get(1)
 
-internal fun extractNestedString(json: String, objectKey: String, fieldKey: String): String? =
-    extractNestedObject(json, objectKey)?.let { extractJsonString(it, fieldKey) }
+internal fun extractNestedString(
+    json: String,
+    objectKey: String,
+    fieldKey: String,
+): String? = extractNestedObject(json, objectKey)?.let { extractJsonString(it, fieldKey) }
 
-internal fun extractNestedNumber(json: String, objectKey: String, fieldKey: String): Long? =
-    extractNestedObject(json, objectKey)?.let { extractJsonNumber(it, fieldKey) }
+internal fun extractNestedNumber(
+    json: String,
+    objectKey: String,
+    fieldKey: String,
+): Long? = extractNestedObject(json, objectKey)?.let { extractJsonNumber(it, fieldKey) }

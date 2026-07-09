@@ -16,17 +16,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-private fun sampleEvent(budgetCents: Long) = Event(
-    id = EventId("ev1"),
-    name = "Trip",
-    startEpochMillis = 100,
-    endEpochMillis = 200,
-    budget = Money(Amount(budgetCents), CurrencyCode("USD")),
-    status = EventStatus.ACTIVE,
-)
+private fun sampleEvent(budgetCents: Long) =
+    Event(
+        id = EventId("ev1"),
+        name = "Trip",
+        startEpochMillis = 100,
+        endEpochMillis = 200,
+        budget = Money(Amount(budgetCents), CurrencyCode("USD")),
+        status = EventStatus.ACTIVE,
+    )
 
 class ComputeEventProgressUseCaseTest {
-
     private val useCase = ComputeEventProgressUseCase()
 
     @Test
@@ -109,160 +109,184 @@ private class FakeEventRepository : EventRepository {
     var lastUpsert: Event? = null
 
     override suspend fun getAll(): Result<List<Event>> = Result.Success(flow.value)
+
     override suspend fun getById(id: EventId): Result<Event?> = Result.Success(flow.value.find { it.id == id })
+
     override suspend fun upsert(event: Event): Result<Unit> {
         lastUpsert = event
         return Result.Success(Unit)
     }
+
     override suspend fun delete(id: EventId): Result<Unit> = Result.Success(Unit)
+
     override fun observeAll() = flow.asStateFlow()
+
     override suspend fun getSpent(id: EventId): Result<Money> = Result.Success(Money.zero(CurrencyCode("USD")))
 }
 
 class CreateEventUseCaseTest {
+    @Test
+    fun invoke_createsActiveEventWithParsedBudget() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+
+            val result = useCase("Trip", "12.50")
+
+            assertTrue(result)
+            assertEquals(
+                1250L,
+                repo.lastUpsert
+                    ?.budget
+                    ?.amount
+                    ?.valueInCents,
+            )
+            assertEquals(EventStatus.ACTIVE, repo.lastUpsert?.status)
+            assertEquals("trip-1000", repo.lastUpsert?.id?.value)
+        }
 
     @Test
-    fun invoke_createsActiveEventWithParsedBudget() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+    fun invoke_returnsFalseForUnparsableBudget() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
 
-        val result = useCase("Trip", "12.50")
+            val result = useCase("Trip", "not-a-number")
 
-        assertTrue(result)
-        assertEquals(1250L, repo.lastUpsert?.budget?.amount?.valueInCents)
-        assertEquals(EventStatus.ACTIVE, repo.lastUpsert?.status)
-        assertEquals("trip-1000", repo.lastUpsert?.id?.value)
-    }
-
-    @Test
-    fun invoke_returnsFalseForUnparsableBudget() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
-
-        val result = useCase("Trip", "not-a-number")
-
-        assertFalse(result)
-        assertEquals(null, repo.lastUpsert)
-    }
+            assertFalse(result)
+            assertEquals(null, repo.lastUpsert)
+        }
 
     @Test
-    fun invoke_usesProvidedStartAndEndDatesWhenGiven() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+    fun invoke_usesProvidedStartAndEndDatesWhenGiven() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
 
-        val result = useCase("Trip", "12.50", startEpochMillis = 500L, endEpochMillis = 900L)
+            val result = useCase("Trip", "12.50", startEpochMillis = 500L, endEpochMillis = 900L)
 
-        assertTrue(result)
-        assertEquals(500L, repo.lastUpsert?.startEpochMillis)
-        assertEquals(900L, repo.lastUpsert?.endEpochMillis)
-    }
-
-    @Test
-    fun invoke_defaultsToNowForBothDatesWhenNotProvided() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
-
-        useCase("Trip", "12.50")
-
-        assertEquals(1_000L, repo.lastUpsert?.startEpochMillis)
-        assertEquals(1_000L, repo.lastUpsert?.endEpochMillis)
-    }
+            assertTrue(result)
+            assertEquals(500L, repo.lastUpsert?.startEpochMillis)
+            assertEquals(900L, repo.lastUpsert?.endEpochMillis)
+        }
 
     @Test
-    fun invoke_returnsFalseWhenEndBeforeStart() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+    fun invoke_defaultsToNowForBothDatesWhenNotProvided() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
 
-        val result = useCase("Trip", "12.50", startEpochMillis = 900L, endEpochMillis = 500L)
+            useCase("Trip", "12.50")
 
-        assertFalse(result)
-        assertEquals(null, repo.lastUpsert)
-    }
+            assertEquals(1_000L, repo.lastUpsert?.startEpochMillis)
+            assertEquals(1_000L, repo.lastUpsert?.endEpochMillis)
+        }
+
+    @Test
+    fun invoke_returnsFalseWhenEndBeforeStart() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
+
+            val result = useCase("Trip", "12.50", startEpochMillis = 900L, endEpochMillis = 500L)
+
+            assertFalse(result)
+            assertEquals(null, repo.lastUpsert)
+        }
 }
 
 class UpdateEventUseCaseTest {
+    @Test
+    fun invoke_appliesNewNameBudgetAndDates() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = UpdateEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00)
+
+            val result = useCase(existing, "Trip 2", "20.00", startEpochMillis = 300, endEpochMillis = 400)
+
+            assertTrue(result)
+            assertEquals("Trip 2", repo.lastUpsert?.name)
+            assertEquals(
+                2000L,
+                repo.lastUpsert
+                    ?.budget
+                    ?.amount
+                    ?.valueInCents,
+            )
+            assertEquals(300L, repo.lastUpsert?.startEpochMillis)
+            assertEquals(400L, repo.lastUpsert?.endEpochMillis)
+        }
 
     @Test
-    fun invoke_appliesNewNameBudgetAndDates() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = UpdateEventUseCase(repo)
-        val existing = sampleEvent(budgetCents = 10_00)
+    fun invoke_returnsFalseForUnparsableBudget() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = UpdateEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00)
 
-        val result = useCase(existing, "Trip 2", "20.00", startEpochMillis = 300, endEpochMillis = 400)
+            val result = useCase(existing, "Trip 2", "not-a-number", startEpochMillis = 300, endEpochMillis = 400)
 
-        assertTrue(result)
-        assertEquals("Trip 2", repo.lastUpsert?.name)
-        assertEquals(2000L, repo.lastUpsert?.budget?.amount?.valueInCents)
-        assertEquals(300L, repo.lastUpsert?.startEpochMillis)
-        assertEquals(400L, repo.lastUpsert?.endEpochMillis)
-    }
+            assertFalse(result)
+            assertEquals(null, repo.lastUpsert)
+        }
 
     @Test
-    fun invoke_returnsFalseForUnparsableBudget() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = UpdateEventUseCase(repo)
-        val existing = sampleEvent(budgetCents = 10_00)
+    fun invoke_returnsFalseForZeroBudget() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = UpdateEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00)
 
-        val result = useCase(existing, "Trip 2", "not-a-number", startEpochMillis = 300, endEpochMillis = 400)
+            val result = useCase(existing, "Trip 2", "0.00", startEpochMillis = 300, endEpochMillis = 400)
 
-        assertFalse(result)
-        assertEquals(null, repo.lastUpsert)
-    }
-
-    @Test
-    fun invoke_returnsFalseForZeroBudget() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = UpdateEventUseCase(repo)
-        val existing = sampleEvent(budgetCents = 10_00)
-
-        val result = useCase(existing, "Trip 2", "0.00", startEpochMillis = 300, endEpochMillis = 400)
-
-        assertFalse(result)
-        assertEquals(null, repo.lastUpsert)
-    }
+            assertFalse(result)
+            assertEquals(null, repo.lastUpsert)
+        }
 
     @Test
-    fun invoke_returnsFalseWhenEndBeforeStart() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = UpdateEventUseCase(repo)
-        val existing = sampleEvent(budgetCents = 10_00)
+    fun invoke_returnsFalseWhenEndBeforeStart() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = UpdateEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00)
 
-        val result = useCase(existing, "Trip 2", "20.00", startEpochMillis = 400, endEpochMillis = 300)
+            val result = useCase(existing, "Trip 2", "20.00", startEpochMillis = 400, endEpochMillis = 300)
 
-        assertFalse(result)
-        assertEquals(null, repo.lastUpsert)
-    }
+            assertFalse(result)
+            assertEquals(null, repo.lastUpsert)
+        }
 }
 
 class CloseEventUseCaseTest {
+    @Test
+    fun invoke_closesActiveEvent() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = CloseEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00)
+
+            val result = useCase(existing)
+
+            assertTrue(result)
+            assertEquals(EventStatus.CLOSED, repo.lastUpsert?.status)
+        }
 
     @Test
-    fun invoke_closesActiveEvent() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = CloseEventUseCase(repo)
-        val existing = sampleEvent(budgetCents = 10_00)
+    fun invoke_returnsFalseWhenAlreadyClosed() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = CloseEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00).copy(status = EventStatus.CLOSED)
 
-        val result = useCase(existing)
+            val result = useCase(existing)
 
-        assertTrue(result)
-        assertEquals(EventStatus.CLOSED, repo.lastUpsert?.status)
-    }
-
-    @Test
-    fun invoke_returnsFalseWhenAlreadyClosed() = runTest {
-        val repo = FakeEventRepository()
-        val useCase = CloseEventUseCase(repo)
-        val existing = sampleEvent(budgetCents = 10_00).copy(status = EventStatus.CLOSED)
-
-        val result = useCase(existing)
-
-        assertFalse(result)
-        assertEquals(null, repo.lastUpsert)
-    }
+            assertFalse(result)
+            assertEquals(null, repo.lastUpsert)
+        }
 }
 
 class IsEventReadOnlyTest {
-
     private val hour = 60 * 60 * 1000L
 
     @Test

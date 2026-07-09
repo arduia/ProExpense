@@ -32,7 +32,10 @@ data class RecordSummary(
 interface HistoryRepository {
     suspend fun getRecords(filter: RecordHistoryFilter = RecordHistoryFilter()): Result<List<FinanceRecord>>
 
-    suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary>
+    suspend fun getSummary(
+        period: SummaryPeriod,
+        anchorEpochMillis: Long,
+    ): Result<RecordSummary>
 
     /** Keyset-paginated, filter-pushed-down Journal page — `cursor = null` requests the first page. */
     suspend fun getRecordsPage(

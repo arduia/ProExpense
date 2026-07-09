@@ -5,8 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,25 +37,27 @@ fun SegmentedToggle(
     val containerShape = ProExpenseTheme.shapes.chip
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(containerShape)
-            .border(1.dp, colors.lineStrong, containerShape)
-            .background(colors.surface)
-            .padding(dimens.space4),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(containerShape)
+                .border(1.dp, colors.lineStrong, containerShape)
+                .background(colors.surface)
+                .padding(dimens.space4),
         horizontalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
         options.forEachIndexed { index, label ->
             val selected = index == selectedIndex
             val selectedBackground = if (usePrimarySelection) colors.primary else colors.onSurface
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .defaultMinSize(minHeight = dimens.touchTargetMin)
-                    .clip(containerShape)
-                    .background(if (selected) selectedBackground else colors.surface)
-                    .proSelectableClip(selected = selected, onClick = { onSelected(index) }, shape = containerShape)
-                    .padding(vertical = dimens.space8),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .defaultMinSize(minHeight = dimens.touchTargetMin)
+                        .clip(containerShape)
+                        .background(if (selected) selectedBackground else colors.surface)
+                        .proSelectableClip(selected = selected, onClick = { onSelected(index) }, shape = containerShape)
+                        .padding(vertical = dimens.space8),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
