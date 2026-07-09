@@ -7,6 +7,7 @@
 .externalNativeBuild
 .cxx
 /.gradle/
+/.kotlin/
 /android-sdk/
 /.idea/
 **/build/outputs/roborazzi/
