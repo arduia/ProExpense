@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.12.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.12.0)" variant="all" version="8.12.0">
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;onboarding_get_started_title&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="&lt;string name=&quot;onboarding_get_started_title&quot;>You are all set&lt;/string>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="13"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;onboarding_get_started_subtitle&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="&lt;string name=&quot;onboarding_get_started_subtitle&quot;>Start logging in seconds. Your notebook stays on your device.&lt;/string>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="14"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;profile_name_helper&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="&lt;string name=&quot;profile_name_helper&quot;>Used on your home screen and CSV exports.&lt;/string>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="24"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;profile_currency_title&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="&lt;string name=&quot;profile_currency_title&quot;>Pick your home currency&lt;/string>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="28"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;profile_currency_description&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="&lt;string name=&quot;profile_currency_description&quot;>All entries default to this. You can still log in any currency per-expense.&lt;/string>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="29"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;continue_label&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="&lt;string name=&quot;continue_label&quot;>Continue&lt;/string>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="37"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="&lt;string name=&quot;search_currency_placeholder&quot;>ငွေကြေး ရှာဖွေရန်...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values-my/strings.xml"
+            line="30"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="&lt;string name=&quot;search_currency_placeholder&quot;>ค้นหาสกุลเงิน...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values-th/strings.xml"
+            line="30"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="&lt;string name=&quot;search_currency_placeholder&quot;>Search currency...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="35"
+            column="44"/>
+    </issue>
+
+</issues>

@@ -6,7 +6,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SharedCostSplitLogicTest {
-
     // Rule: equal mode divides the total in integer cents across participants.
     @Test
     fun equalShareCents_dividesTotal() {
@@ -66,13 +65,14 @@ class SharedCostSplitLogicTest {
     // Success path: equal mode labels every participant with the same formatted share.
     @Test
     fun buildParticipants_equalMode() {
-        val participants = SharedCostSplitLogic.buildParticipants(
-            rawTotal = "90",
-            peopleCount = 3,
-            mode = SharedSplitMode.Equal,
-            names = listOf("Aiko", "Ben", "Cara"),
-            customShareRaws = emptyList(),
-        )
+        val participants =
+            SharedCostSplitLogic.buildParticipants(
+                rawTotal = "90",
+                peopleCount = 3,
+                mode = SharedSplitMode.Equal,
+                names = listOf("Aiko", "Ben", "Cara"),
+                customShareRaws = emptyList(),
+            )
         assertEquals(
             listOf("Aiko" to "$30.00", "Ben" to "$30.00", "Cara" to "$30.00"),
             participants,
@@ -82,13 +82,14 @@ class SharedCostSplitLogicTest {
     // Rule: custom mode formats each raw share as entered.
     @Test
     fun buildParticipants_customMode_usesRawShares() {
-        val participants = SharedCostSplitLogic.buildParticipants(
-            rawTotal = "90",
-            peopleCount = 2,
-            mode = SharedSplitMode.Custom,
-            names = listOf("Aiko", "Ben"),
-            customShareRaws = listOf("60", "30"),
-        )
+        val participants =
+            SharedCostSplitLogic.buildParticipants(
+                rawTotal = "90",
+                peopleCount = 2,
+                mode = SharedSplitMode.Custom,
+                names = listOf("Aiko", "Ben"),
+                customShareRaws = listOf("60", "30"),
+            )
         assertEquals(listOf("Aiko" to "$60", "Ben" to "$30"), participants)
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ReturnCount:ImportExportUseCases.kt$ClearSelectedDataUseCase$suspend operator fun invoke(selectedIds: Set&lt;String&gt;): Result&lt;Unit&gt;</ID>
+  </CurrentIssues>
+</SmellBaseline>

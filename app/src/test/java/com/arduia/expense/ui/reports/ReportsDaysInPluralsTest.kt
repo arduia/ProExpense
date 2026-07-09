@@ -12,7 +12,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class ReportsDaysInPluralsTest {
-
     private val resources = ApplicationProvider.getApplicationContext<Context>().resources
 
     @Test

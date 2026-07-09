@@ -21,13 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.currency.R
+import com.arduia.expense.feature.currency.ui.preview.MoreCurrencyItemUi
+import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SearchField
-import com.arduia.expense.feature.currency.ui.preview.MoreCurrencyItemUi
-import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -44,20 +44,22 @@ fun MoreCurrencyScreen(
     val typography = ProExpenseTheme.typography
     var searchQuery by remember { mutableStateOf("") }
     var pendingCode by remember(selectedCode) { mutableStateOf(selectedCode) }
-    val filteredItems = remember(items, searchQuery) {
-        items.filter { item ->
-            searchQuery.isBlank() ||
-                item.code.contains(searchQuery, ignoreCase = true) ||
-                item.name.contains(searchQuery, ignoreCase = true)
+    val filteredItems =
+        remember(items, searchQuery) {
+            items.filter { item ->
+                searchQuery.isBlank() ||
+                    item.code.contains(searchQuery, ignoreCase = true) ||
+                    item.name.contains(searchQuery, ignoreCase = true)
+            }
         }
-    }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -68,29 +70,32 @@ fun MoreCurrencyScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space8),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space8),
             verticalArrangement = Arrangement.spacedBy(dimens.space8),
         ) {
             Text(
                 text = stringResource(R.string.more_currency_subtitle),
                 style = typography.body,
                 color = colors.onSurfaceMuted,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimens.space8),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = dimens.space8),
             )
             SearchField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 placeholder = stringResource(R.string.search_currency_placeholder),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimens.space4),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = dimens.space4),
             )
             filteredItems.forEach { item ->
                 CurrencyCard(
@@ -108,9 +113,10 @@ fun MoreCurrencyScreen(
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
             enabled = pendingCode != selectedCode,
-            modifier = Modifier
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
         )
     }
 }

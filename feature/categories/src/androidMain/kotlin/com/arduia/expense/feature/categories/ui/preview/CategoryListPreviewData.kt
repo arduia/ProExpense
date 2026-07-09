@@ -23,23 +23,27 @@ data class CategoryNewFormState(
         get() = name.isNotBlank() && !duplicate
 }
 
-val previewCategoryList = CategoryListUiState(
-    defaults = listOf(
-        CategoryRowUi("food", "Food"),
-        CategoryRowUi("transport", "Transport"),
-        CategoryRowUi("shopping", "Shopping"),
-        CategoryRowUi("bills", "Bills"),
-        CategoryRowUi("health", "Health"),
-        CategoryRowUi("entertainment", "Entertainment"),
-    ),
-    custom = listOf(
-        CategoryRowUi("coffee", "Coffee runs"),
-        CategoryRowUi("pet", "Pet care"),
-    ),
-)
+val previewCategoryList =
+    CategoryListUiState(
+        defaults =
+            listOf(
+                CategoryRowUi("food", "Food"),
+                CategoryRowUi("transport", "Transport"),
+                CategoryRowUi("shopping", "Shopping"),
+                CategoryRowUi("bills", "Bills"),
+                CategoryRowUi("health", "Health"),
+                CategoryRowUi("entertainment", "Entertainment"),
+            ),
+        custom =
+            listOf(
+                CategoryRowUi("coffee", "Coffee runs"),
+                CategoryRowUi("pet", "Pet care"),
+            ),
+    )
 
-val previewCategoryNewDuplicate = CategoryNewFormState(
-    name = "Food",
-    selectedIconId = "food",
-    duplicate = true,
-)
+val previewCategoryNewDuplicate =
+    CategoryNewFormState(
+        name = "Food",
+        selectedIconId = "food",
+        duplicate = true,
+    )

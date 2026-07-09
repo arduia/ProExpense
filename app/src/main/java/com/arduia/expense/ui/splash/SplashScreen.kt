@@ -37,10 +37,11 @@ fun SplashScreen(modifier: Modifier = Modifier) {
     val logoSize = 96.dp
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .navigationBarsPadding(),
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -48,16 +49,16 @@ fun SplashScreen(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(dimens.space18),
         ) {
             Box(
-                modifier = Modifier
-                    .size(logoSize)
-                    .shadow(
-                        elevation = dimens.space16,
-                        shape = ProExpenseTheme.shapes.tile,
-                        spotColor = colors.primary.copy(alpha = 0.35f),
-                        ambientColor = colors.primary.copy(alpha = 0.35f),
-                    )
-                    .clip(ProExpenseTheme.shapes.tile)
-                    .background(colors.primary),
+                modifier =
+                    Modifier
+                        .size(logoSize)
+                        .shadow(
+                            elevation = dimens.space16,
+                            shape = ProExpenseTheme.shapes.tile,
+                            spotColor = colors.primary.copy(alpha = 0.35f),
+                            ambientColor = colors.primary.copy(alpha = 0.35f),
+                        ).clip(ProExpenseTheme.shapes.tile)
+                        .background(colors.primary),
                 contentAlignment = Alignment.Center,
             ) {
                 Image(
@@ -75,9 +76,10 @@ fun SplashScreen(modifier: Modifier = Modifier) {
         }
 
         SplashLoadingDots(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = dimens.space44 + dimens.space32),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = dimens.space44 + dimens.space32),
         )
     }
 }
@@ -94,10 +96,11 @@ private fun SplashLoadingDots(modifier: Modifier = Modifier) {
         val alphas = listOf(0.45f, 0.75f, 1f)
         alphas.forEach { alpha ->
             Box(
-                modifier = Modifier
-                    .size(dimens.pageIndicatorDotSize)
-                    .clip(CircleShape)
-                    .background(colors.primary.copy(alpha = alpha)),
+                modifier =
+                    Modifier
+                        .size(dimens.pageIndicatorDotSize)
+                        .clip(CircleShape)
+                        .background(colors.primary.copy(alpha = alpha)),
             )
         }
     }

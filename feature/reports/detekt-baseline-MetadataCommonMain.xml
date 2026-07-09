@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongParameterList:DaysElapsedInPeriod.kt$( periodYear: Int, periodMonth: Int, nowYear: Int, nowMonth: Int, nowDayOfMonth: Int, daysInMonth: Int, )</ID>
+    <ID>MagicNumber:DaysElapsedInWeek.kt$7</ID>
+    <ID>MagicNumber:GenerateReportPeriodUseCase.kt$GenerateReportPeriodUseCase$5</ID>
+    <ID>MatchingDeclarationName:FindGranularitySwitchTargetIndex.kt$ReportsPeriodBounds</ID>
+  </CurrentIssues>
+</SmellBaseline>

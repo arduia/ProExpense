@@ -2,7 +2,6 @@ package com.arduia.expense.ui.design
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
@@ -26,7 +25,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class DesignSystemSpecScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 

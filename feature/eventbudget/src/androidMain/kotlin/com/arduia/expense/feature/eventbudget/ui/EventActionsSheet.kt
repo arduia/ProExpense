@@ -67,13 +67,14 @@ fun EventActionsSheetContent(
             )
         }
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(ProExpenseTheme.shapes.card)
-                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                .background(colors.surface)
-                .proClickable(onClick = onCancel, shape = ProExpenseTheme.shapes.card)
-                .padding(vertical = dimens.space16),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(ProExpenseTheme.shapes.card)
+                    .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                    .background(colors.surface)
+                    .proClickable(onClick = onCancel, shape = ProExpenseTheme.shapes.card)
+                    .padding(vertical = dimens.space16),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -100,21 +101,23 @@ private fun EventActionRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(dimens.space14),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.iconBadge)
-                .clip(CircleShape)
-                .background(iconBackground),
+            modifier =
+                Modifier
+                    .size(dimens.iconBadge)
+                    .clip(CircleShape)
+                    .background(iconBackground),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(

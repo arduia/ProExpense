@@ -41,11 +41,12 @@ fun HomeShell(
     val colors = ProExpenseTheme.colors
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         HomeScreenContent(
             state = state,

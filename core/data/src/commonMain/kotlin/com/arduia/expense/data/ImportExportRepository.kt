@@ -23,7 +23,13 @@ interface ImportExportRepository {
      */
     suspend fun exportGrouped(): Result<Map<String, String>>
 
-    suspend fun importFrom(content: String, format: ExportFormat): Result<ImportSummary>
+    suspend fun importFrom(
+        content: String,
+        format: ExportFormat,
+    ): Result<ImportSummary>
 
-    suspend fun previewImport(content: String, format: ExportFormat): Result<List<FinanceRecord>>
+    suspend fun previewImport(
+        content: String,
+        format: ExportFormat,
+    ): Result<List<FinanceRecord>>
 }

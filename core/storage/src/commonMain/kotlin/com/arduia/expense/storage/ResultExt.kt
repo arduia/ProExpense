@@ -10,7 +10,7 @@ internal inline fun <T> catchingResult(block: () -> T): Result<T> =
     try {
         Result.Success(block())
     } catch (e: kotlin.coroutines.cancellation.CancellationException) {
-        throw e  // never swallow coroutine cancellation
+        throw e // never swallow coroutine cancellation
     } catch (throwable: Throwable) {
         Result.Error(throwable.message ?: "Storage operation failed", throwable)
     }

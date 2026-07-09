@@ -18,6 +18,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.R
+import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
+import com.arduia.expense.feature.logging.ui.preview.hasValidExchangeRate
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseDraft
+import com.arduia.expense.shared.CurrencyCatalog
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CurrencyPickerContent
 import com.arduia.expense.ui.design.DateTimePickerSheet
@@ -26,18 +31,13 @@ import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
-import com.arduia.expense.shared.CurrencyCatalog
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
-import com.arduia.expense.feature.logging.ui.preview.hasValidExchangeRate
-import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
-import com.arduia.expense.feature.logging.ui.preview.previewExpenseDraft
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 private enum class QuickLogStep {
     DraftPrompt,
@@ -45,9 +45,11 @@ private enum class QuickLogStep {
     Details,
 }
 
-private val currencyOptions = CurrencyCatalog.ALL.map {
-    com.arduia.expense.ui.design.CurrencyOption(it.code, it.name)
-}
+private val currencyOptions =
+    CurrencyCatalog.ALL.map {
+        com.arduia.expense.ui.design
+            .CurrencyOption(it.code, it.name)
+    }
 
 @Composable
 fun QuickLogFlow(
@@ -121,9 +123,10 @@ fun QuickLogFlow(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         AnimatedContent(
             targetState = currentStep,
@@ -139,18 +142,20 @@ fun QuickLogFlow(
             when (target) {
                 QuickLogStep.DraftPrompt -> {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(colors.scrim)
-                            .padding(horizontal = dimens.screenPadding),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(colors.scrim)
+                                .padding(horizontal = dimens.screenPadding),
                         contentAlignment = Alignment.Center,
                     ) {
                         ExpenseDraftDialog(
-                            amountLabel = draftAmountLabel ?: "$${
-                                AmountInput.formatDisplay(
-                                    state.rawAmount.ifEmpty { "0" },
-                                )
-                            }",
+                            amountLabel =
+                                draftAmountLabel ?: "$${
+                                    AmountInput.formatDisplay(
+                                        state.rawAmount.ifEmpty { "0" },
+                                    )
+                                }",
                             onContinue = { step = QuickLogStep.Amount.name },
                             onDiscard = {
                                 ExpenseDraftPrefs.clear(context)
@@ -164,16 +169,18 @@ fun QuickLogFlow(
                         state = state,
                         onClose = onDismiss,
                         onKey = { key ->
-                            state = state.copy(
-                                rawAmount = AmountInput.applyKey(state.rawAmount, key),
-                                showZeroValidation = false,
-                            )
+                            state =
+                                state.copy(
+                                    rawAmount = AmountInput.applyKey(state.rawAmount, key),
+                                    showZeroValidation = false,
+                                )
                         },
                         onBackspace = {
-                            state = state.copy(
-                                rawAmount = AmountInput.applyBackspace(state.rawAmount),
-                                showZeroValidation = false,
-                            )
+                            state =
+                                state.copy(
+                                    rawAmount = AmountInput.applyBackspace(state.rawAmount),
+                                    showZeroValidation = false,
+                                )
                         },
                         onCategorySelected = { categoryId ->
                             state = state.copy(selectedCategoryId = categoryId)
@@ -214,18 +221,20 @@ fun QuickLogFlow(
                         onOpenTagSheet = { state = state.copy(showTagSheet = true) },
                         onCloseTagSheet = { state = state.copy(showTagSheet = false) },
                         onTagSelected = { option ->
-                            state = state.copy(
-                                linkedTagId = option.id,
-                                linkedTagKind = option.kind,
-                                linkedTagLabel = option.title,
-                            )
+                            state =
+                                state.copy(
+                                    linkedTagId = option.id,
+                                    linkedTagKind = option.kind,
+                                    linkedTagLabel = option.title,
+                                )
                         },
                         onClearTag = {
-                            state = state.copy(
-                                linkedTagId = null,
-                                linkedTagKind = null,
-                                linkedTagLabel = null,
-                            )
+                            state =
+                                state.copy(
+                                    linkedTagId = null,
+                                    linkedTagKind = null,
+                                    linkedTagLabel = null,
+                                )
                         },
                         onSave = {
                             ExpenseDraftPrefs.clear(context)
@@ -254,11 +263,12 @@ fun QuickLogFlow(
                 val calendar = Calendar.getInstance().apply { timeInMillis = epochMillis }
                 val dateFormat = SimpleDateFormat("MMMM d, yyyy", Locale.US)
                 val timeFormat = SimpleDateFormat("h:mm a", Locale.US)
-                state = state.copy(
-                    recordedAtEpochMillis = epochMillis,
-                    dateLabel = dateFormat.format(calendar.time),
-                    timeLabel = timeFormat.format(calendar.time),
-                )
+                state =
+                    state.copy(
+                        recordedAtEpochMillis = epochMillis,
+                        dateLabel = dateFormat.format(calendar.time),
+                        timeLabel = timeFormat.format(calendar.time),
+                    )
                 showDateTimePicker = false
             },
             onDismiss = { showDateTimePicker = false },
@@ -273,10 +283,11 @@ fun QuickLogFlow(
                     options = currencyOptions,
                     selectedCode = state.currencyCode,
                     onSelected = { code ->
-                        state = state.copy(
-                            currencyCode = code,
-                            exchangeRateRaw = if (code == state.homeCurrencyCode) "1" else "",
-                        )
+                        state =
+                            state.copy(
+                                currencyCode = code,
+                                exchangeRateRaw = if (code == state.homeCurrencyCode) "1" else "",
+                            )
                         showCurrencySheet = false
                     },
                 )

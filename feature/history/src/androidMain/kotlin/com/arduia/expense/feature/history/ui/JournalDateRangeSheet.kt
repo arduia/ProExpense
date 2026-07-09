@@ -63,22 +63,25 @@ fun JournalDateRangeSheet(
         onClose = onDismiss,
     ) {
         key(visible) {
-            val rangeState = rememberDateRangePickerState(
-                initialSelectedStartDateMillis = initialStartEpochMillis,
-                initialSelectedEndDateMillis = initialEndEpochMillis,
-            )
+            val rangeState =
+                rememberDateRangePickerState(
+                    initialSelectedStartDateMillis = initialStartEpochMillis,
+                    initialSelectedEndDateMillis = initialEndEpochMillis,
+                )
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = dimens.screenPadding)
-                        .padding(bottom = dimens.space12),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                            .padding(horizontal = dimens.screenPadding)
+                            .padding(bottom = dimens.space12),
                     horizontalArrangement = Arrangement.spacedBy(dimens.space6),
                 ) {
                     val today = todayUtcRange()
@@ -111,16 +114,18 @@ fun JournalDateRangeSheet(
                 }
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                 ) {
                     MaterialTheme(typography = proDatePickerTypography()) {
                         DateRangePicker(
                             state = rangeState,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clipToBounds(),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .clipToBounds(),
                             title = null,
                             headline = null,
                             // The text-input mode toggle reserves a header row even with title/headline
@@ -135,15 +140,16 @@ fun JournalDateRangeSheet(
                     // clipToBounds alone slices straight through that row instead of hiding it, which
                     // reads as broken. Fade it out instead of cutting it off.
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .height(dimens.space32)
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color.Transparent, ProExpenseTheme.colors.surface),
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .height(dimens.space32)
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(Color.Transparent, ProExpenseTheme.colors.surface),
+                                    ),
                                 ),
-                            ),
                     )
                 }
 
@@ -153,17 +159,19 @@ fun JournalDateRangeSheet(
                     text = stringResource(R.string.journal_date_range_hint),
                     style = ProExpenseTheme.typography.caption,
                     color = ProExpenseTheme.colors.onSurfaceMuted,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimens.screenPadding)
-                        .padding(top = dimens.space12, bottom = dimens.space8),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.screenPadding)
+                            .padding(top = dimens.space12, bottom = dimens.space8),
                 )
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimens.screenPadding)
-                        .padding(bottom = dimens.space24),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.screenPadding)
+                            .padding(bottom = dimens.space24),
                     horizontalArrangement = Arrangement.spacedBy(dimens.space8),
                 ) {
                     ProButton(
@@ -198,7 +206,11 @@ fun JournalDateRangeSheet(
     }
 }
 
-private fun utcMidnight(year: Int, month: Int, dayOfMonth: Int): Long {
+private fun utcMidnight(
+    year: Int,
+    month: Int,
+    dayOfMonth: Int,
+): Long {
     val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
     utc.clear()
     utc.set(year, month, dayOfMonth, 0, 0, 0)
@@ -217,10 +229,11 @@ private fun todayUtcRange(): Pair<Long, Long> {
 
 private fun thisWeekUtcRange(): Pair<Long, Long> {
     val now = Calendar.getInstance()
-    val start = (now.clone() as Calendar).apply {
-        val offset = (get(Calendar.DAY_OF_WEEK) - firstDayOfWeek + 7) % 7
-        add(Calendar.DAY_OF_YEAR, -offset)
-    }
+    val start =
+        (now.clone() as Calendar).apply {
+            val offset = (get(Calendar.DAY_OF_WEEK) - firstDayOfWeek + 7) % 7
+            add(Calendar.DAY_OF_YEAR, -offset)
+        }
     val end = (start.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, 6) }
     return start.toUtcMidnight() to end.toUtcMidnight()
 }
@@ -228,10 +241,11 @@ private fun thisWeekUtcRange(): Pair<Long, Long> {
 private fun thisMonthUtcRange(): Pair<Long, Long> {
     val now = Calendar.getInstance()
     val start = (now.clone() as Calendar).apply { set(Calendar.DAY_OF_MONTH, 1) }
-    val end = (start.clone() as Calendar).apply {
-        add(Calendar.MONTH, 1)
-        add(Calendar.DAY_OF_YEAR, -1)
-    }
+    val end =
+        (start.clone() as Calendar).apply {
+            add(Calendar.MONTH, 1)
+            add(Calendar.DAY_OF_YEAR, -1)
+        }
     return start.toUtcMidnight() to end.toUtcMidnight()
 }
 

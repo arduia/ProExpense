@@ -32,19 +32,21 @@ fun <T> ImportExportGroupCard(
     val colors = ProExpenseTheme.colors
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
     ) {
         items.forEachIndexed { index, item ->
             if (index > 0) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.lineSoft),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(colors.lineSoft),
                 )
             }
             row(item)
@@ -65,13 +67,14 @@ fun ClearDataCard(
     val labelColor = if (option.destructive) colors.danger else colors.onSurface
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .proClickable(onClick = onToggle, shape = ProExpenseTheme.shapes.card)
-            .padding(dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .proClickable(onClick = onToggle, shape = ProExpenseTheme.shapes.card)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -92,19 +95,22 @@ fun ClearDataCard(
 private fun ClearCheckBox(checked: Boolean) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val shape = androidx.compose.foundation.shape.RoundedCornerShape(dimens.space7)
+    val shape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(dimens.space7)
 
     Box(
-        modifier = Modifier
-            .size(dimens.space24)
-            .clip(shape)
-            .then(
-                if (checked) {
-                    Modifier.background(colors.primary)
-                } else {
-                    Modifier.border(BorderStroke(1.5.dp, colors.lineStrong), shape)
-                },
-            ),
+        modifier =
+            Modifier
+                .size(dimens.space24)
+                .clip(shape)
+                .then(
+                    if (checked) {
+                        Modifier.background(colors.primary)
+                    } else {
+                        Modifier.border(BorderStroke(1.5.dp, colors.lineStrong), shape)
+                    },
+                ),
         contentAlignment = Alignment.Center,
     ) {
         if (checked) {
@@ -129,9 +135,10 @@ fun ExportFileRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {

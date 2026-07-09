@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:DatabaseDriverFactory.ios.kt$0xFF</ID>
+    <ID>MagicNumber:DatabaseDriverFactory.ios.kt$16</ID>
+    <ID>SpreadOperator:IosDatabaseKeyManager.kt$(*map.keys.toTypedArray())</ID>
+    <ID>SpreadOperator:IosDatabaseKeyManager.kt$(*map.values.toTypedArray())</ID>
+  </CurrentIssues>
+</SmellBaseline>

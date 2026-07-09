@@ -7,11 +7,11 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
-import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
-import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.theme.ProArtboard
@@ -35,20 +35,21 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class SharedCostNameEditingTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun inputState(mode: SharedSplitMode) = SharedCostUiState(
-        rawTotal = "120",
-        peopleCount = 2,
-        mode = mode,
-        amountConfirmed = true,
-        participants = listOf(
-            SharedCostParticipantUi("Person 1", "$60.00"),
-            SharedCostParticipantUi("Person 2", "$60.00"),
-        ),
-    )
+    private fun inputState(mode: SharedSplitMode) =
+        SharedCostUiState(
+            rawTotal = "120",
+            peopleCount = 2,
+            mode = mode,
+            amountConfirmed = true,
+            participants =
+                listOf(
+                    SharedCostParticipantUi("Person 1", "$60.00"),
+                    SharedCostParticipantUi("Person 2", "$60.00"),
+                ),
+        )
 
     private fun setInputScreen(
         mode: SharedSplitMode,
@@ -97,7 +98,6 @@ class SharedCostNameEditingTest {
 
 /** Save-time name normalization rules for [SharedCostSplitLogic.resolveNames]. */
 class SharedCostNameResolutionTest {
-
     @Test
     fun resolveNames_blankNameFallsBackToDefault() {
         val resolved = SharedCostSplitLogic.resolveNames(listOf("Aiko", ""), count = 2)
@@ -127,7 +127,6 @@ class SharedCostNameResolutionTest {
  * (`R.string.shared_default_person_name` at real call sites) so the default name localizes too.
  */
 class SharedCostDefaultNameTemplateTest {
-
     @Test
     fun defaultParticipantName_usesProvidedTemplate() {
         assertEquals("P1", SharedCostSplitLogic.defaultParticipantName(1, "P%1\$d"))
@@ -150,7 +149,6 @@ class SharedCostDefaultNameTemplateTest {
 
 /** [SharedCostSplitLogic]'s formatters must reflect the user's actual home currency, not a hardcoded "$". */
 class SharedCostCurrencyFormatTest {
-
     @Test
     fun formatCents_usesProvidedCurrencySymbol() {
         assertEquals("€12.34", SharedCostSplitLogic.formatCents(1234, "€"))
@@ -184,7 +182,6 @@ class SharedCostCurrencyFormatTest {
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class SharedCostCurrencySymbolWiringTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
@@ -217,14 +214,16 @@ class SharedCostCurrencySymbolWiringTest {
         rule.setContent {
             ProExpenseTheme {
                 SharedCostsSummaryScreen(
-                    state = SharedCostUiState(
-                        rawTotal = "120",
-                        peopleCount = 2,
-                        participants = listOf(
-                            SharedCostParticipantUi("Person 1", "€60.00"),
-                            SharedCostParticipantUi("Person 2", "€60.00"),
+                    state =
+                        SharedCostUiState(
+                            rawTotal = "120",
+                            peopleCount = 2,
+                            participants =
+                                listOf(
+                                    SharedCostParticipantUi("Person 1", "€60.00"),
+                                    SharedCostParticipantUi("Person 2", "€60.00"),
+                                ),
                         ),
-                    ),
                     onBack = {},
                     onSwitchToCustom = {},
                     onSave = {},
@@ -248,7 +247,6 @@ class SharedCostCurrencySymbolWiringTest {
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class SharedCostDraftPersistenceTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 

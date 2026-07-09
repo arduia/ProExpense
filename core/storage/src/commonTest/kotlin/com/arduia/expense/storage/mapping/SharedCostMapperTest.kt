@@ -6,12 +6,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SharedCostMapperTest {
-
     @Test
     fun participantsJson_roundTripsANameContainingQuotesAndNewlines() {
-        val participants = listOf(
-            Participant(id = ParticipantId("p1"), name = "Alice \"the Great\"\nJones"),
-        )
+        val participants =
+            listOf(
+                Participant(id = ParticipantId("p1"), name = "Alice \"the Great\"\nJones"),
+            )
 
         val json = participants.toParticipantsJson()
         val parsed = parseParticipantsJson(json)

@@ -18,10 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.debt.R
-import com.arduia.expense.ui.design.ProAlertDialog
-import com.arduia.expense.ui.design.ProBottomSheetHost
-import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.feature.debt.ui.preview.DEBT_NOTE_MAX
 import com.arduia.expense.feature.debt.ui.preview.DebtAddFormState
 import com.arduia.expense.feature.debt.ui.preview.DebtDetailUiState
@@ -32,6 +28,10 @@ import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.design.PlatformDateFormatter
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -78,9 +78,10 @@ fun DebtFlow(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         AnimatedContent(
             targetState = selectedRecordId,
@@ -119,22 +120,24 @@ fun DebtFlow(
                     onEdit = {
                         val record = (listState.active + listState.settled).firstOrNull { it.id == recordId }
                         if (record != null) {
-                            addForm = DebtAddFormState(
-                                side = side,
-                                person = record.name,
-                                // Whole dollars when the cents are exactly zero, otherwise a
-                                // 2-decimal string — plain integer division here used to silently
-                                // truncate any cents on every edit-reload.
-                                amountRaw = if (record.amountCents % 100 == 0L) {
-                                    (record.amountCents / 100).toString()
-                                } else {
-                                    String.format(java.util.Locale.US, "%.2f", record.amountCents / 100.0)
-                                },
-                                dueLabel = record.dueEpochMillis?.let { PlatformDateFormatter.shortDateLabel(it) },
-                                editingId = record.id,
-                                dueEpochMillis = record.dueEpochMillis,
-                                note = record.subtitle.orEmpty(),
-                            )
+                            addForm =
+                                DebtAddFormState(
+                                    side = side,
+                                    person = record.name,
+                                    // Whole dollars when the cents are exactly zero, otherwise a
+                                    // 2-decimal string — plain integer division here used to silently
+                                    // truncate any cents on every edit-reload.
+                                    amountRaw =
+                                        if (record.amountCents % 100 == 0L) {
+                                            (record.amountCents / 100).toString()
+                                        } else {
+                                            String.format(java.util.Locale.US, "%.2f", record.amountCents / 100.0)
+                                        },
+                                    dueLabel = record.dueEpochMillis?.let { PlatformDateFormatter.shortDateLabel(it) },
+                                    editingId = record.id,
+                                    dueEpochMillis = record.dueEpochMillis,
+                                    note = record.subtitle.orEmpty(),
+                                )
                             showAdd = true
                         }
                     },
@@ -148,9 +151,10 @@ fun DebtFlow(
 
         ProBottomSheetHost(
             visible = showAdd,
-            title = stringResource(
-                if (addForm.editingId != null) R.string.debt_edit_record else R.string.debt_new_record,
-            ),
+            title =
+                stringResource(
+                    if (addForm.editingId != null) R.string.debt_edit_record else R.string.debt_new_record,
+                ),
             onClose = { showAdd = false },
         ) {
             DebtAddSheetContent(
@@ -195,10 +199,11 @@ fun DebtFlow(
             iconTint = colors.warning,
             iconBackground = colors.warningTint,
             title = stringResource(R.string.debt_conflict_title, conflictPerson.orEmpty()),
-            body = conflictBody(
-                person = conflictPerson.orEmpty(),
-                addingSide = addForm.side,
-            ),
+            body =
+                conflictBody(
+                    person = conflictPerson.orEmpty(),
+                    addingSide = addForm.side,
+                ),
             confirmLabel = stringResource(R.string.debt_continue),
             onConfirm = {
                 conflictPerson = null
@@ -215,9 +220,10 @@ fun DebtFlow(
             iconTint = colors.danger,
             iconBackground = colors.dangerTint,
             title = stringResource(R.string.debt_delete_title),
-            body = buildAnnotatedString {
-                append(stringResource(R.string.debt_delete_body, deleteTarget?.name.orEmpty()))
-            },
+            body =
+                buildAnnotatedString {
+                    append(stringResource(R.string.debt_delete_body, deleteTarget?.name.orEmpty()))
+                },
             confirmLabel = stringResource(R.string.debt_delete),
             onConfirm = {
                 deleteTarget?.let { onDeleteRecord(it.id) }
@@ -231,26 +237,33 @@ fun DebtFlow(
 }
 
 @Composable
-private fun conflictBody(person: String, addingSide: DebtSide) = buildAnnotatedString {
-    val otherSideLabel = stringResource(
-        if (addingSide == DebtSide.Lent) R.string.debt_tab_owe else R.string.debt_tab_lent,
-    )
-    val addingSideLabel = stringResource(
-        if (addingSide == DebtSide.Lent) R.string.debt_tab_lent else R.string.debt_tab_owe,
-    )
+private fun conflictBody(
+    person: String,
+    addingSide: DebtSide,
+) = buildAnnotatedString {
+    val otherSideLabel =
+        stringResource(
+            if (addingSide == DebtSide.Lent) R.string.debt_tab_owe else R.string.debt_tab_lent,
+        )
+    val addingSideLabel =
+        stringResource(
+            if (addingSide == DebtSide.Lent) R.string.debt_tab_lent else R.string.debt_tab_owe,
+        )
     val emphasized = setOf("\"$otherSideLabel\"", "\"$addingSideLabel\"")
-    val raw = stringResource(
-        R.string.debt_conflict_body,
-        person,
-        "\"$otherSideLabel\"",
-        "\"$addingSideLabel\"",
-    )
+    val raw =
+        stringResource(
+            R.string.debt_conflict_body,
+            person,
+            "\"$otherSideLabel\"",
+            "\"$addingSideLabel\"",
+        )
     // Bold the quoted side labels wherever they land in the localized sentence.
     var cursor = 0
     while (cursor < raw.length) {
-        val next = emphasized
-            .mapNotNull { token -> raw.indexOf(token, cursor).takeIf { it >= 0 }?.let { it to token } }
-            .minByOrNull { it.first }
+        val next =
+            emphasized
+                .mapNotNull { token -> raw.indexOf(token, cursor).takeIf { it >= 0 }?.let { it to token } }
+                .minByOrNull { it.first }
         if (next == null) {
             append(raw.substring(cursor))
             break

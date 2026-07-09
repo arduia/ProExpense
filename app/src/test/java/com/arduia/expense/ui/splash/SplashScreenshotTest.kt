@@ -28,7 +28,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class SplashScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -48,7 +47,8 @@ class SplashScreenshotTest {
     }
 
     @Test
-    fun splash() = capture {
-        SplashScreen()
-    }
+    fun splash() =
+        capture {
+            SplashScreen()
+        }
 }

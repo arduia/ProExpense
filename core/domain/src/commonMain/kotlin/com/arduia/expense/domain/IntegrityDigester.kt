@@ -15,11 +15,13 @@ interface IntegrityDigester {
 
 class Md5Digester : IntegrityDigester {
     override val algorithm: String = IntegrityAlgorithms.MD5
+
     override fun digest(payload: String): String = platformDigestHex(algorithm, payload)
 }
 
 class Sha256Digester : IntegrityDigester {
     override val algorithm: String = IntegrityAlgorithms.SHA_256
+
     override fun digest(payload: String): String = platformDigestHex(algorithm, payload)
 }
 
@@ -45,15 +47,21 @@ class RecordIntegrityVerifier(
         }
     }
 
-    fun checksumFor(record: FinanceRecord, algorithm: String = defaultAlgorithm): RecordChecksum {
-        val digester = byAlgorithm[algorithm]
-            ?: error("No digester registered for algorithm '$algorithm'")
+    fun checksumFor(
+        record: FinanceRecord,
+        algorithm: String = defaultAlgorithm,
+    ): RecordChecksum {
+        val digester =
+            byAlgorithm[algorithm]
+                ?: error("No digester registered for algorithm '$algorithm'")
         return RecordChecksum(algorithm, digester.digest(record.canonicalPayload()))
     }
 
     /** Returns the record with a freshly computed checksum (default algorithm). */
-    fun stamp(record: FinanceRecord, algorithm: String = defaultAlgorithm): FinanceRecord =
-        record.copy(integrity = checksumFor(record, algorithm))
+    fun stamp(
+        record: FinanceRecord,
+        algorithm: String = defaultAlgorithm,
+    ): FinanceRecord = record.copy(integrity = checksumFor(record, algorithm))
 
     /**
      * Verifies a record against its own stored checksum. Returns `false` if the record has no

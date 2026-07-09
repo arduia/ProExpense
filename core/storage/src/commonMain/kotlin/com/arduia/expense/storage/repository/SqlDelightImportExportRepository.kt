@@ -16,18 +16,18 @@ import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.catchingResult
+import com.arduia.expense.storage.mapping.escapeJsonString
 import com.arduia.expense.storage.mapping.extractJsonNumber
 import com.arduia.expense.storage.mapping.extractJsonString
 import com.arduia.expense.storage.mapping.extractNestedNumber
 import com.arduia.expense.storage.mapping.extractNestedString
-import com.arduia.expense.storage.mapping.escapeJsonString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -39,170 +39,184 @@ class SqlDelightImportExportRepository(
     private val sharedCostRepository: SharedCostRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ImportExportRepository {
-
-    override suspend fun exportAll(format: ExportFormat): Result<String> = withContext(dispatcher) {
-        val allResult = financeRecordRepository.getAll()
-        catchingResult {
-            val records = when (allResult) {
-                is Result.Success -> allResult.data
-                is Result.Error -> throw Exception(allResult.message, allResult.cause)
-            }
-            when (format) {
-                ExportFormat.CSV -> toCsv(records)
-                ExportFormat.JSON -> toJson(records)
+    override suspend fun exportAll(format: ExportFormat): Result<String> =
+        withContext(dispatcher) {
+            val allResult = financeRecordRepository.getAll()
+            catchingResult {
+                val records =
+                    when (allResult) {
+                        is Result.Success -> allResult.data
+                        is Result.Error -> throw Exception(allResult.message, allResult.cause)
+                    }
+                when (format) {
+                    ExportFormat.CSV -> toCsv(records)
+                    ExportFormat.JSON -> toJson(records)
+                }
             }
         }
-    }
 
-    override suspend fun exportGrouped(): Result<Map<String, String>> = withContext(dispatcher) {
-        catchingResult {
-            val records = financeRecordRepository.getAll().let {
-                when (it) {
-                    is Result.Success -> it.data
-                    is Result.Error -> throw Exception(it.message, it.cause)
-                }
+    override suspend fun exportGrouped(): Result<Map<String, String>> =
+        withContext(dispatcher) {
+            catchingResult {
+                val records =
+                    financeRecordRepository.getAll().let {
+                        when (it) {
+                            is Result.Success -> it.data
+                            is Result.Error -> throw Exception(it.message, it.cause)
+                        }
+                    }
+                val events =
+                    eventRepository.getAll().let {
+                        when (it) {
+                            is Result.Success -> it.data
+                            is Result.Error -> throw Exception(it.message, it.cause)
+                        }
+                    }
+                val debts =
+                    debtRepository.getAll().let {
+                        when (it) {
+                            is Result.Success -> it.data
+                            is Result.Error -> throw Exception(it.message, it.cause)
+                        }
+                    }
+                val sharedCosts =
+                    sharedCostRepository.getAll().let {
+                        when (it) {
+                            is Result.Success -> it.data
+                            is Result.Error -> throw Exception(it.message, it.cause)
+                        }
+                    }
+                mapOf(
+                    "expenses.csv" to toCsv(records),
+                    "events.csv" to eventsToCsv(events),
+                    "debts.csv" to debtsToCsv(debts),
+                    "shared_costs.csv" to sharedCostsToCsv(sharedCosts),
+                )
             }
-            val events = eventRepository.getAll().let {
-                when (it) {
-                    is Result.Success -> it.data
-                    is Result.Error -> throw Exception(it.message, it.cause)
-                }
-            }
-            val debts = debtRepository.getAll().let {
-                when (it) {
-                    is Result.Success -> it.data
-                    is Result.Error -> throw Exception(it.message, it.cause)
-                }
-            }
-            val sharedCosts = sharedCostRepository.getAll().let {
-                when (it) {
-                    is Result.Success -> it.data
-                    is Result.Error -> throw Exception(it.message, it.cause)
-                }
-            }
-            mapOf(
-                "expenses.csv" to toCsv(records),
-                "events.csv" to eventsToCsv(events),
-                "debts.csv" to debtsToCsv(debts),
-                "shared_costs.csv" to sharedCostsToCsv(sharedCosts),
-            )
         }
-    }
 
     private fun eventsToCsv(events: List<Event>): String {
         val header = "id,name,start_at,end_at,budget_cents,currency_code,status"
-        val rows = events.map { event ->
-            listOf(
-                event.id.value,
-                escapeQuotes(event.name),
-                event.startEpochMillis,
-                event.endEpochMillis,
-                event.budget.amount.valueInCents,
-                event.budget.currency.code,
-                event.status.name,
-            ).joinToString(",") { "\"$it\"" }
-        }
+        val rows =
+            events.map { event ->
+                listOf(
+                    event.id.value,
+                    escapeQuotes(event.name),
+                    event.startEpochMillis,
+                    event.endEpochMillis,
+                    event.budget.amount.valueInCents,
+                    event.budget.currency.code,
+                    event.status.name,
+                ).joinToString(",") { "\"$it\"" }
+            }
         return (listOf(header) + rows).joinToString("\n")
     }
 
     private fun debtsToCsv(debts: List<Debt>): String {
         val header = "id,person_name,amount_cents,currency_code,direction,due_at,settled"
-        val rows = debts.map { debt ->
-            listOf(
-                debt.id.value,
-                escapeQuotes(debt.personName),
-                debt.money.amount.valueInCents,
-                debt.money.currency.code,
-                debt.direction.name,
-                debt.dueEpochMillis ?: "",
-                debt.isSettled,
-            ).joinToString(",") { "\"$it\"" }
-        }
+        val rows =
+            debts.map { debt ->
+                listOf(
+                    debt.id.value,
+                    escapeQuotes(debt.personName),
+                    debt.money.amount.valueInCents,
+                    debt.money.currency.code,
+                    debt.direction.name,
+                    debt.dueEpochMillis ?: "",
+                    debt.isSettled,
+                ).joinToString(",") { "\"$it\"" }
+            }
         return (listOf(header) + rows).joinToString("\n")
     }
 
     private fun sharedCostsToCsv(sharedCosts: List<SharedCost>): String {
         val header = "id,title,total_cents,currency_code,participant_count,recorded_at"
-        val rows = sharedCosts.map { sharedCost ->
-            listOf(
-                sharedCost.id.value,
-                escapeQuotes(sharedCost.title),
-                sharedCost.total.amount.valueInCents,
-                sharedCost.total.currency.code,
-                sharedCost.participants.size,
-                sharedCost.recordedAtEpochMillis,
-            ).joinToString(",") { "\"$it\"" }
-        }
+        val rows =
+            sharedCosts.map { sharedCost ->
+                listOf(
+                    sharedCost.id.value,
+                    escapeQuotes(sharedCost.title),
+                    sharedCost.total.amount.valueInCents,
+                    sharedCost.total.currency.code,
+                    sharedCost.participants.size,
+                    sharedCost.recordedAtEpochMillis,
+                ).joinToString(",") { "\"$it\"" }
+            }
         return (listOf(header) + rows).joinToString("\n")
     }
 
     override suspend fun importFrom(
         content: String,
         format: ExportFormat,
-    ): Result<ImportSummary> = withContext(dispatcher) {
-        catchingResult {
-            val records = when (format) {
-                ExportFormat.CSV -> parseCsv(content)
-                ExportFormat.JSON -> parseJson(content)
-            }
+    ): Result<ImportSummary> =
+        withContext(dispatcher) {
+            catchingResult {
+                val records =
+                    when (format) {
+                        ExportFormat.CSV -> parseCsv(content)
+                        ExportFormat.JSON -> parseJson(content)
+                    }
 
-            var importedCount = 0
-            var skippedCount = 0
+                var importedCount = 0
+                var skippedCount = 0
 
-            for (record in records) {
-                val result = financeRecordRepository.upsert(record)
-                if (result is Result.Success) {
-                    importedCount++
-                } else {
-                    skippedCount++
+                for (record in records) {
+                    val result = financeRecordRepository.upsert(record)
+                    if (result is Result.Success) {
+                        importedCount++
+                    } else {
+                        skippedCount++
+                    }
                 }
-            }
 
-            ImportSummary(importedCount, skippedCount)
+                ImportSummary(importedCount, skippedCount)
+            }
         }
-    }
 
     override suspend fun previewImport(
         content: String,
         format: ExportFormat,
-    ): Result<List<FinanceRecord>> = withContext(dispatcher) {
-        catchingResult {
-            when (format) {
-                ExportFormat.CSV -> parseCsv(content)
-                ExportFormat.JSON -> parseJson(content)
+    ): Result<List<FinanceRecord>> =
+        withContext(dispatcher) {
+            catchingResult {
+                when (format) {
+                    ExportFormat.CSV -> parseCsv(content)
+                    ExportFormat.JSON -> parseJson(content)
+                }
             }
         }
-    }
 
     private fun toCsv(records: List<FinanceRecord>): String {
         val header = "id,money_cents,money_code,category_id,type,note,recorded_at,link_type,link_id,home_money_cents,home_money_code"
-        val rows = records.map { record ->
-            val (linkType, linkId) = extractLinkParts(record.link)
+        val rows =
+            records.map { record ->
+                val (linkType, linkId) = extractLinkParts(record.link)
 
-            listOf(
-                record.id.value,
-                record.money.amount.valueInCents,
-                record.money.currency.code,
-                record.categoryId.value,
-                record.type.name,
-                record.note?.let { escapeQuotes(it) } ?: "",
-                record.recordedAtEpochMillis,
-                linkType,
-                linkId,
-                record.homeCurrencyMoney.amount.valueInCents,
-                record.homeCurrencyMoney.currency.code,
-            ).joinToString(",") { "\"$it\"" }
-        }
+                listOf(
+                    record.id.value,
+                    record.money.amount.valueInCents,
+                    record.money.currency.code,
+                    record.categoryId.value,
+                    record.type.name,
+                    record.note?.let { escapeQuotes(it) } ?: "",
+                    record.recordedAtEpochMillis,
+                    linkType,
+                    linkId,
+                    record.homeCurrencyMoney.amount.valueInCents,
+                    record.homeCurrencyMoney.currency.code,
+                ).joinToString(",") { "\"$it\"" }
+            }
         return (listOf(header) + rows).joinToString("\n")
     }
 
     private fun toJson(records: List<FinanceRecord>): String {
-        val jsonRecords = records.map { record ->
-            val linkJson = buildLinkJson(record.link)
-            val note = record.note?.let { escapeJsonString(it) } ?: ""
+        val jsonRecords =
+            records.map { record ->
+                val linkJson = buildLinkJson(record.link)
+                val note = record.note?.let { escapeJsonString(it) } ?: ""
 
-            """{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"homeMoney":{"cents":${record.homeCurrencyMoney.amount.valueInCents},"code":"${record.homeCurrencyMoney.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""
-        }
+                """{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"homeMoney":{"cents":${record.homeCurrencyMoney.amount.valueInCents},"code":"${record.homeCurrencyMoney.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""
+            }
         return "[" + jsonRecords.joinToString(",") + "]"
     }
 
@@ -216,14 +230,13 @@ class SqlDelightImportExportRepository(
         }
     }
 
-    private fun buildLinkJson(link: RecordLink): String {
-        return when {
+    private fun buildLinkJson(link: RecordLink): String =
+        when {
             link is RecordLink.ToEvent -> """{"type":"EVENT","id":"${link.eventId.value}"}"""
             link is RecordLink.ToDebt -> """{"type":"DEBT","id":"${link.debtId.value}"}"""
             link is RecordLink.ToSharedCost -> """{"type":"SHARED_COST","id":"${link.sharedCostId.value}"}"""
             else -> """{"type":"NONE"}"""
         }
-    }
 
     private fun parseCsv(content: String): List<FinanceRecord> {
         // Every field is written quoted (see toCsv), so a note containing a literal newline is
@@ -245,11 +258,12 @@ class SqlDelightImportExportRepository(
                 val link = parseLink(fields[7], fields[8])
                 val money = Money(Amount(fields[1].toLong()), CurrencyCode(fields[2]))
                 // Older exports (9 columns) predate multi-currency — home money always equals money.
-                val homeCurrencyMoney = if (fields.size >= 11 && fields[9].isNotEmpty() && fields[10].isNotEmpty()) {
-                    Money(Amount(fields[9].toLong()), CurrencyCode(fields[10]))
-                } else {
-                    money
-                }
+                val homeCurrencyMoney =
+                    if (fields.size >= 11 && fields[9].isNotEmpty() && fields[10].isNotEmpty()) {
+                        Money(Amount(fields[9].toLong()), CurrencyCode(fields[10]))
+                    } else {
+                        money
+                    }
                 records.add(
                     FinanceRecord(
                         id = RecordId(fields[0]),
@@ -260,7 +274,7 @@ class SqlDelightImportExportRepository(
                         note = if (fields[5].isEmpty()) null else fields[5],
                         recordedAtEpochMillis = fields[6].toLong(),
                         link = link,
-                    )
+                    ),
                 )
             } catch (e: Exception) {
                 // Skip malformed records
@@ -328,12 +342,13 @@ class SqlDelightImportExportRepository(
 
             val linkType = extractNestedString(json, "link", "type") ?: "NONE"
             val linkId = extractNestedString(json, "link", "id")
-            val link = when (linkType) {
-                "EVENT" -> RecordLink.ToEvent(EventId(linkId ?: ""))
-                "DEBT" -> RecordLink.ToDebt(DebtId(linkId ?: ""))
-                "SHARED_COST" -> RecordLink.ToSharedCost(SharedCostId(linkId ?: ""))
-                else -> RecordLink.None
-            }
+            val link =
+                when (linkType) {
+                    "EVENT" -> RecordLink.ToEvent(EventId(linkId ?: ""))
+                    "DEBT" -> RecordLink.ToDebt(DebtId(linkId ?: ""))
+                    "SHARED_COST" -> RecordLink.ToSharedCost(SharedCostId(linkId ?: ""))
+                    else -> RecordLink.None
+                }
 
             FinanceRecord(
                 id = RecordId(id),
@@ -350,14 +365,16 @@ class SqlDelightImportExportRepository(
         }
     }
 
-    private fun parseLink(linkType: String, linkId: String): RecordLink {
-        return when {
+    private fun parseLink(
+        linkType: String,
+        linkId: String,
+    ): RecordLink =
+        when {
             linkType == "EVENT" && linkId.isNotEmpty() -> RecordLink.ToEvent(EventId(linkId))
             linkType == "DEBT" && linkId.isNotEmpty() -> RecordLink.ToDebt(DebtId(linkId))
             linkType == "SHARED_COST" && linkId.isNotEmpty() -> RecordLink.ToSharedCost(SharedCostId(linkId))
             else -> RecordLink.None
         }
-    }
 
     /**
      * Splits raw CSV content into per-record strings, treating a newline inside a quoted field
@@ -435,7 +452,5 @@ class SqlDelightImportExportRepository(
         return fields
     }
 
-    private fun escapeQuotes(str: String): String {
-        return str.replace("\"", "\"\"")
-    }
+    private fun escapeQuotes(str: String): String = str.replace("\"", "\"\"")
 }

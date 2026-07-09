@@ -19,9 +19,10 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-val allCurrencyItems: List<MoreCurrencyItemUi> = CurrencyCatalog.ALL.map {
-    MoreCurrencyItemUi(it.code, it.name, it.symbol)
-}
+val allCurrencyItems: List<MoreCurrencyItemUi> =
+    CurrencyCatalog.ALL.map {
+        MoreCurrencyItemUi(it.code, it.name, it.symbol)
+    }
 
 @Composable
 fun CurrencySettingsFlow(
@@ -48,13 +49,14 @@ fun CurrencySettingsFlow(
             iconTint = colors.primary,
             iconBackground = colors.primaryTint,
             title = stringResource(R.string.more_currency_confirm_title),
-            body = AnnotatedString(
-                stringResource(
-                    R.string.more_currency_confirm_body,
-                    pendingItem?.name.orEmpty(),
-                    pendingItem?.code.orEmpty(),
+            body =
+                AnnotatedString(
+                    stringResource(
+                        R.string.more_currency_confirm_body,
+                        pendingItem?.name.orEmpty(),
+                        pendingItem?.code.orEmpty(),
+                    ),
                 ),
-            ),
             confirmLabel = stringResource(R.string.more_currency_confirm_action),
             onConfirm = {
                 pendingCode?.let(onSelect)

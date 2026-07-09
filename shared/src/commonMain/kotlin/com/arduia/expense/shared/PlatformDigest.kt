@@ -8,4 +8,7 @@ package com.arduia.expense.shared
  *
  * @param algorithm provider algorithm name (e.g. "MD5", "SHA-256").
  */
-expect fun platformDigestHex(algorithm: String, input: String): String
+expect fun platformDigestHex(
+    algorithm: String,
+    input: String,
+): String

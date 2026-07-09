@@ -23,13 +23,15 @@ internal fun EventRow.toDomain(): Event =
  * Enum codec for EventStatus — explicit stable codes (ACTIVE=0, CLOSED=1).
  * Never use Kotlin .ordinal as that changes when enum members are reordered.
  */
-internal fun Long.toEventStatusFromCode(): EventStatus = when (this) {
-    0L -> EventStatus.ACTIVE
-    1L -> EventStatus.CLOSED
-    else -> error("Unknown EventStatus code: $this")
-}
+internal fun Long.toEventStatusFromCode(): EventStatus =
+    when (this) {
+        0L -> EventStatus.ACTIVE
+        1L -> EventStatus.CLOSED
+        else -> error("Unknown EventStatus code: $this")
+    }
 
-internal fun EventStatus.toCode(): Long = when (this) {
-    EventStatus.ACTIVE -> 0L
-    EventStatus.CLOSED -> 1L
-}
+internal fun EventStatus.toCode(): Long =
+    when (this) {
+        EventStatus.ACTIVE -> 0L
+        EventStatus.CLOSED -> 1L
+    }

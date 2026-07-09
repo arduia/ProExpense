@@ -21,10 +21,11 @@ fun AddHintChip(modifier: Modifier = Modifier) {
     val dimens = ProExpenseTheme.dimensions
 
     Box(
-        modifier = modifier
-            .size(dimens.addHintChipSize)
-            .clip(ProExpenseTheme.shapes.addHintChip)
-            .background(colors.primary),
+        modifier =
+            modifier
+                .size(dimens.addHintChipSize)
+                .clip(ProExpenseTheme.shapes.addHintChip)
+                .background(colors.primary),
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(

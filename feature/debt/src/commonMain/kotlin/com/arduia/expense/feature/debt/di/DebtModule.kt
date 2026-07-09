@@ -11,11 +11,12 @@ import com.arduia.expense.feature.debt.UpdateDebtUseCase
 import kotlinx.datetime.Clock
 import org.koin.dsl.module
 
-val debtModule = module {
-    factory { AggregateDebtsUseCase() }
-    factory { CreateDebtUseCase(get<DebtRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
-    factory { UpdateDebtUseCase(get<DebtRepository>()) }
-    factory { DeleteDebtUseCase(get<DebtRepository>(), get<FinanceRecordRepository>()) }
-    factory { SettleDebtUseCase(get<DebtRepository>()) }
-    factory { CheckDebtConflictUseCase(get<DebtRepository>()) }
-}
+val debtModule =
+    module {
+        factory { AggregateDebtsUseCase() }
+        factory { CreateDebtUseCase(get<DebtRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
+        factory { UpdateDebtUseCase(get<DebtRepository>()) }
+        factory { DeleteDebtUseCase(get<DebtRepository>(), get<FinanceRecordRepository>()) }
+        factory { SettleDebtUseCase(get<DebtRepository>()) }
+        factory { CheckDebtConflictUseCase(get<DebtRepository>()) }
+    }

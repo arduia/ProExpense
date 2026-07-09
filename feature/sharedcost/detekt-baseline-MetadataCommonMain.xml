@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongParameterList:SharedCostSplitLogic.kt$SharedCostSplitLogic$( rawTotal: String, peopleCount: Int, mode: SharedSplitMode, names: List&lt;String&gt;, customShareRaws: List&lt;String&gt;, currencySymbol: String = "$", nameTemplate: String = DEFAULT_NAME_TEMPLATE, )</ID>
+    <ID>MagicNumber:SharedCostSplitLogic.kt$SharedCostSplitLogic$100</ID>
+    <ID>MagicNumber:SharedCostSplitLogic.kt$SharedCostSplitLogic$100.0</ID>
+    <ID>MagicNumber:SharedCostSplitLogic.kt$SharedCostSplitLogic$4</ID>
+    <ID>MaxLineLength:SharedCostModule.kt$factory { CreateSharedCostUseCase(get&lt;SharedCostRepository&gt;(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }</ID>
+    <ID>MaxLineLength:SharedCostModule.kt$factory { UpdateSharedCostUseCase(get&lt;SharedCostRepository&gt;(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }</ID>
+    <ID>TooManyFunctions:SharedCostSplitLogic.kt$SharedCostSplitLogic</ID>
+  </CurrentIssues>
+</SmellBaseline>

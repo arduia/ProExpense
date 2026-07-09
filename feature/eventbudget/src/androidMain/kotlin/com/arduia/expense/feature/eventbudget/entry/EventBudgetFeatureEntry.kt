@@ -22,8 +22,8 @@ import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.EventBudgetSummaryState
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.PlatformDateFormatter
-import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.design.eventBudgetTone
+import com.arduia.expense.ui.design.expenseCategoryLabel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -67,21 +67,24 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         val updateEvent: UpdateEventUseCase = koinInject()
         val closeEvent: CloseEventUseCase = koinInject()
 
-        val linkedByEvent = remember(records) {
-            records
-                .filter { it.link is RecordLink.ToEvent }
-                .groupBy { (it.link as RecordLink.ToEvent).eventId.value }
-        }
+        val linkedByEvent =
+            remember(records) {
+                records
+                    .filter { it.link is RecordLink.ToEvent }
+                    .groupBy { (it.link as RecordLink.ToEvent).eventId.value }
+            }
 
         val cards = events.map { it.toCardState(computeProgress(it, spentByEvent[it.id.value]), homeCurrencySymbol) }
-        val details = events.associate { event ->
-            event.id.value to event.toDetailState(
-                progress = computeProgress(event, spentByEvent[event.id.value]),
-                linkedRecords = linkedByEvent[event.id.value].orEmpty(),
-                categoryNames = categoryNames,
-                currencySymbol = homeCurrencySymbol,
-            )
-        }
+        val details =
+            events.associate { event ->
+                event.id.value to
+                    event.toDetailState(
+                        progress = computeProgress(event, spentByEvent[event.id.value]),
+                        linkedRecords = linkedByEvent[event.id.value].orEmpty(),
+                        categoryNames = categoryNames,
+                        currencySymbol = homeCurrencySymbol,
+                    )
+            }
 
         val editForms = events.associate { it.id.value to it.toEditFormState() }
 
@@ -147,11 +150,12 @@ private fun Event.toCardState(
         budgetLabel = "of " + AmountInput.formatMoney(progress.budgetCents, currencySymbol),
         progress = progress.progress,
         isOverBudget = progress.isOverBudget,
-        overAmountLabel = if (progress.isOverBudget) {
-            AmountInput.formatMoney(-progress.remainingCents, currencySymbol)
-        } else {
-            null
-        },
+        overAmountLabel =
+            if (progress.isOverBudget) {
+                AmountInput.formatMoney(-progress.remainingCents, currencySymbol)
+            } else {
+                null
+            },
         overBudgetPercent = progress.overBudgetPercent,
     )
 
@@ -161,24 +165,27 @@ private fun Event.toDetailState(
     categoryNames: Map<String, String>,
     currencySymbol: String,
 ): EventDetailUiState {
-    val linkedExpenses = linkedRecords
-        .sortedByDescending { it.recordedAtEpochMillis }
-        .map { record ->
-            EventLinkedExpenseUi(
-                id = record.id.value,
-                title = record.note?.trim().orEmpty().ifEmpty {
-                    categoryNames[record.categoryId.value] ?: expenseCategoryLabel(record.categoryId.value)
-                },
-                categoryId = record.categoryId.value,
-                categoryLabel = categoryNames[record.categoryId.value] ?: expenseCategoryLabel(record.categoryId.value),
-                amountLabel = AmountInput.formatMoney(record.money.amount.valueInCents, currencySymbol),
-            )
-        }
-    val isReadOnly = com.arduia.expense.feature.eventbudget.isEventReadOnly(
-        status = status,
-        closedAtEpochMillis = closedAtEpochMillis,
-        nowEpochMillis = System.currentTimeMillis(),
-    )
+    val linkedExpenses =
+        linkedRecords
+            .sortedByDescending { it.recordedAtEpochMillis }
+            .map { record ->
+                EventLinkedExpenseUi(
+                    id = record.id.value,
+                    title =
+                        record.note?.trim().orEmpty().ifEmpty {
+                            categoryNames[record.categoryId.value] ?: expenseCategoryLabel(record.categoryId.value)
+                        },
+                    categoryId = record.categoryId.value,
+                    categoryLabel = categoryNames[record.categoryId.value] ?: expenseCategoryLabel(record.categoryId.value),
+                    amountLabel = AmountInput.formatMoney(record.money.amount.valueInCents, currencySymbol),
+                )
+            }
+    val isReadOnly =
+        com.arduia.expense.feature.eventbudget.isEventReadOnly(
+            status = status,
+            closedAtEpochMillis = closedAtEpochMillis,
+            nowEpochMillis = System.currentTimeMillis(),
+        )
     val isClosed = status == EventStatus.CLOSED
     // A closed event gets the muted, bordered inline chip (not the green "active" eyebrow) and a
     // grayed-out final summary card so its archived state reads visually distinct at a glance.
@@ -188,18 +195,20 @@ private fun Event.toDetailState(
         subtitle = dateRangeLabel(),
         statusEyebrow = status.name.takeIf { !isClosed },
         statusInlineChip = status.name.takeIf { isClosed },
-        summary = EventBudgetSummaryState(
-            eyebrow = (if (isClosed) "FINAL · " else "") +
-                if (progress.remainingCents < 0) "OVER BUDGET" else "REMAINING",
-            remainingLabel = AmountInput.formatMoneySigned(progress.remainingCents, currencySymbol),
-            spentLabel = AmountInput.formatMoney(progress.spentCents, currencySymbol),
-            budgetLabel = AmountInput.formatMoney(progress.budgetCents, currencySymbol),
-            spentCaption = "Spent",
-            budgetCaption = "Budget",
-            progress = progress.progress,
-            tone = eventBudgetTone(progress.progress),
-            isFinal = isClosed,
-        ),
+        summary =
+            EventBudgetSummaryState(
+                eyebrow =
+                    (if (isClosed) "FINAL · " else "") +
+                        if (progress.remainingCents < 0) "OVER BUDGET" else "REMAINING",
+                remainingLabel = AmountInput.formatMoneySigned(progress.remainingCents, currencySymbol),
+                spentLabel = AmountInput.formatMoney(progress.spentCents, currencySymbol),
+                budgetLabel = AmountInput.formatMoney(progress.budgetCents, currencySymbol),
+                spentCaption = "Spent",
+                budgetCaption = "Budget",
+                progress = progress.progress,
+                tone = eventBudgetTone(progress.progress),
+                isFinal = isClosed,
+            ),
         linkedCount = linkedExpenses.size,
         linkedExpenses = linkedExpenses,
         // Active and the 24h grace-period window both still allow new links (US-EVT-5); only

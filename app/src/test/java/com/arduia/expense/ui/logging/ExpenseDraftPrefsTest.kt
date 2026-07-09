@@ -13,19 +13,19 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class ExpenseDraftPrefsTest {
-
     private val context = ApplicationProvider.getApplicationContext<android.content.Context>()
 
     @Test
     fun save_then_load_roundTripsDraftFields() {
         ExpenseDraftPrefs.clear(context)
-        val draft = ExpenseEntryState(
-            rawAmount = "12.50",
-            selectedCategoryId = "coffee",
-            note = "Latte",
-            currencyCode = "EUR",
-            recordedAtEpochMillis = 12345L,
-        )
+        val draft =
+            ExpenseEntryState(
+                rawAmount = "12.50",
+                selectedCategoryId = "coffee",
+                note = "Latte",
+                currencyCode = "EUR",
+                recordedAtEpochMillis = 12345L,
+            )
 
         ExpenseDraftPrefs.save(context, draft)
         val loaded = ExpenseDraftPrefs.load(context)
@@ -40,12 +40,13 @@ class ExpenseDraftPrefsTest {
     @Test
     fun save_then_load_roundTripsHomeCurrencyAndExchangeRate() {
         ExpenseDraftPrefs.clear(context)
-        val draft = ExpenseEntryState(
-            rawAmount = "45.00",
-            currencyCode = "EUR",
-            homeCurrencyCode = "USD",
-            exchangeRateRaw = "1.08",
-        )
+        val draft =
+            ExpenseEntryState(
+                rawAmount = "45.00",
+                currencyCode = "EUR",
+                homeCurrencyCode = "USD",
+                exchangeRateRaw = "1.08",
+            )
 
         ExpenseDraftPrefs.save(context, draft)
         val loaded = ExpenseDraftPrefs.load(context)
@@ -57,7 +58,8 @@ class ExpenseDraftPrefsTest {
     @Test
     fun load_fallsBackHomeCurrencyToDraftCurrencyForPreMultiCurrencyDrafts() {
         ExpenseDraftPrefs.clear(context)
-        context.getSharedPreferences("expense_draft", android.content.Context.MODE_PRIVATE)
+        context
+            .getSharedPreferences("expense_draft", android.content.Context.MODE_PRIVATE)
             .edit()
             .putString("raw_amount", "12.50")
             .putString("currency_code", "EUR")

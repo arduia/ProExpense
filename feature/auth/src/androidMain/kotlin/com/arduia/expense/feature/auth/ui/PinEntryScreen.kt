@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +30,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.arduia.expense.feature.auth.PinEntryMode
+import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.ui.preview.previewPinEntry
+import com.arduia.expense.feature.auth.ui.preview.previewPinLock
+import com.arduia.expense.feature.auth.ui.preview.previewPinWrong
 import com.arduia.expense.ui.design.PinDots
 import com.arduia.expense.ui.design.PinKeypadGrid
 import com.arduia.expense.ui.design.PinKeypadState
@@ -40,11 +44,6 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proIconClickable
-import com.arduia.expense.feature.auth.PinEntryMode
-import com.arduia.expense.feature.auth.PinEntryUiState
-import com.arduia.expense.feature.auth.ui.preview.previewPinEntry
-import com.arduia.expense.feature.auth.ui.preview.previewPinLock
-import com.arduia.expense.feature.auth.ui.preview.previewPinWrong
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -66,40 +65,45 @@ fun PinEntryScreen(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val locked = state.mode == PinEntryMode.Locked
-    val keypadState = when (state.mode) {
-        PinEntryMode.Error -> PinKeypadState.Error
-        PinEntryMode.Locked -> PinKeypadState.Locked
-        PinEntryMode.Default -> PinKeypadState.Default
-    }
+    val keypadState =
+        when (state.mode) {
+            PinEntryMode.Error -> PinKeypadState.Error
+            PinEntryMode.Locked -> PinKeypadState.Locked
+            PinEntryMode.Default -> PinKeypadState.Default
+        }
     val titleColor = if (locked) colors.warning else colors.onSurface
-    val helperColor = when (state.mode) {
-        PinEntryMode.Error -> colors.danger
-        PinEntryMode.Locked -> colors.warning
-        PinEntryMode.Default -> colors.onSurfaceMuted
-    }
-    val title = if (locked) {
-        stringResource(R.string.pin_entry_locked_title)
-    } else {
-        stringResource(headingRes)
-    }
-    val helper = when (state.mode) {
-        PinEntryMode.Error -> stringResource(R.string.pin_entry_wrong)
-        PinEntryMode.Locked -> stringResource(R.string.pin_entry_lock_helper)
-        PinEntryMode.Default -> stringResource(helperRes)
-    }
+    val helperColor =
+        when (state.mode) {
+            PinEntryMode.Error -> colors.danger
+            PinEntryMode.Locked -> colors.warning
+            PinEntryMode.Default -> colors.onSurfaceMuted
+        }
+    val title =
+        if (locked) {
+            stringResource(R.string.pin_entry_locked_title)
+        } else {
+            stringResource(headingRes)
+        }
+    val helper =
+        when (state.mode) {
+            PinEntryMode.Error -> stringResource(R.string.pin_entry_wrong)
+            PinEntryMode.Locked -> stringResource(R.string.pin_entry_lock_helper)
+            PinEntryMode.Default -> stringResource(helperRes)
+        }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            // This screen is rendered as an overlay sibling above other screens (e.g. the More
-            // hub during the disable-PIN re-verify step). Without consuming taps here, a tap
-            // landing on empty space (gaps between keypad buttons, margins) falls through to
-            // whatever's rendered underneath, silently triggering its click handler.
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {})
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = dimens.screenPadding),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                // This screen is rendered as an overlay sibling above other screens (e.g. the More
+                // hub during the disable-PIN re-verify step). Without consuming taps here, a tap
+                // landing on empty space (gaps between keypad buttons, margins) falls through to
+                // whatever's rendered underneath, silently triggering its click handler.
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = {})
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = dimens.screenPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (onBack != null) {
@@ -143,12 +147,13 @@ fun PinEntryScreen(
             )
         } else if (state.showBiometric) {
             Box(
-                modifier = Modifier
-                    .padding(top = dimens.space20)
-                    .size(dimens.space44 + dimens.space12)
-                    .clip(CircleShape)
-                    .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
-                    .proIconClickable(onClick = onBiometric),
+                modifier =
+                    Modifier
+                        .padding(top = dimens.space20)
+                        .size(dimens.space44 + dimens.space12)
+                        .clip(CircleShape)
+                        .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
+                        .proIconClickable(onClick = onBiometric),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(
@@ -166,9 +171,10 @@ fun PinEntryScreen(
             onDigit = onDigit,
             onBackspace = onBackspace,
             enabled = !locked,
-            modifier = Modifier.alpha(
-                if (locked) ProExpenseTheme.motion.keypadDisabledOpacity else 1f,
-            ),
+            modifier =
+                Modifier.alpha(
+                    if (locked) ProExpenseTheme.motion.keypadDisabledOpacity else 1f,
+                ),
         )
         if (showForgot) {
             ProTextAction(
@@ -188,10 +194,11 @@ private fun PinBrandTile() {
     val size = 52.dp
 
     Box(
-        modifier = Modifier
-            .size(size)
-            .clip(ProExpenseTheme.shapes.tile)
-            .background(colors.primary),
+        modifier =
+            Modifier
+                .size(size)
+                .clip(ProExpenseTheme.shapes.tile)
+                .background(colors.primary),
         contentAlignment = Alignment.Center,
     ) {
         Image(

@@ -29,17 +29,27 @@ interface ImportExportFeatureEntry {
 
 internal class ImportExportFeatureEntryImpl : ImportExportFeatureEntry {
     @Composable
-    override fun ExportFlow(onBack: () -> Unit, onExport: () -> Unit, modifier: Modifier) {
+    override fun ExportFlow(
+        onBack: () -> Unit,
+        onExport: () -> Unit,
+        modifier: Modifier,
+    ) {
         ExportSettingsFlow(onBack = onBack, onExport = onExport, modifier = modifier)
     }
 
     @Composable
-    override fun ImportFlow(onBack: () -> Unit, modifier: Modifier) {
+    override fun ImportFlow(
+        onBack: () -> Unit,
+        modifier: Modifier,
+    ) {
         ImportDataFlow(onBack = onBack, modifier = modifier)
     }
 
     @Composable
-    override fun ClearDataFlow(onBack: () -> Unit, modifier: Modifier) {
+    override fun ClearDataFlow(
+        onBack: () -> Unit,
+        modifier: Modifier,
+    ) {
         ClearDataFlow(onBack = onBack, modifier = modifier)
     }
 }

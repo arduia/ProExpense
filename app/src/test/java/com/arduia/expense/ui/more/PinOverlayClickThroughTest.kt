@@ -12,8 +12,8 @@ import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
-import com.arduia.expense.feature.auth.ui.PinEntryScreen
 import com.arduia.expense.feature.auth.PinEntryUiState
+import com.arduia.expense.feature.auth.ui.PinEntryScreen
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Assert.assertFalse
@@ -39,7 +39,6 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class PinOverlayClickThroughTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
@@ -51,10 +50,11 @@ class PinOverlayClickThroughTest {
             ProExpenseTheme {
                 Box(Modifier.fillMaxSize()) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Red)
-                            .clickable { behindClicked = true },
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(Color.Red)
+                                .clickable { behindClicked = true },
                     )
                     PinEntryScreen(
                         state = PinEntryUiState(filledDots = 0),

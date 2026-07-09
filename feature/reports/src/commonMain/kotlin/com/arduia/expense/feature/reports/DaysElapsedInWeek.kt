@@ -7,5 +7,7 @@ package com.arduia.expense.feature.reports
  * [daysSinceWeekStart] must be a calendar-day count (e.g. via `Calendar.DAY_OF_YEAR` differencing),
  * not a fixed-24h-millis division — the latter is wrong by one on a DST transition day.
  */
-fun daysElapsedInWeek(isCurrentWeek: Boolean, daysSinceWeekStart: Int): Int =
-    if (isCurrentWeek) daysSinceWeekStart + 1 else 7
+fun daysElapsedInWeek(
+    isCurrentWeek: Boolean,
+    daysSinceWeekStart: Int,
+): Int = if (isCurrentWeek) daysSinceWeekStart + 1 else 7

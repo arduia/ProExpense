@@ -14,8 +14,8 @@ import com.arduia.expense.storage.db.ProExpenseDatabase
  * PBKDF2 derivation here), mirroring Android's `SupportOpenHelperFactory(passphrase: ByteArray)`.
  */
 actual class DatabaseDriverFactory {
-    actual fun createDriver(passphrase: ByteArray): SqlDriver {
-        return NativeSqliteDriver(
+    actual fun createDriver(passphrase: ByteArray): SqlDriver =
+        NativeSqliteDriver(
             schema = ProExpenseDatabase.Schema,
             name = DATABASE_NAME,
             onConfiguration = { config ->
@@ -24,13 +24,13 @@ actual class DatabaseDriverFactory {
                 )
             },
         )
-    }
 
     private companion object {
         const val DATABASE_NAME = "proexpense.db"
     }
 }
 
-private fun ByteArray.toHex(): String = joinToString("") { byte ->
-    (byte.toInt() and 0xFF).toString(16).padStart(2, '0')
-}
+private fun ByteArray.toHex(): String =
+    joinToString("") { byte ->
+        (byte.toInt() and 0xFF).toString(16).padStart(2, '0')
+    }

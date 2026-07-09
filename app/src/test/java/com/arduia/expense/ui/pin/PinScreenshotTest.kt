@@ -12,13 +12,13 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import com.arduia.expense.feature.auth.PinEntryUiState
+import com.arduia.expense.feature.auth.R
 import com.arduia.expense.feature.auth.ui.PinEntryScreen
 import com.arduia.expense.feature.auth.ui.PinRecoveryScreen
 import com.arduia.expense.feature.auth.ui.PinSecurityQuestionScreen
 import com.arduia.expense.feature.auth.ui.PinSetPinScreen
 import com.arduia.expense.feature.auth.ui.PinSetupScreen
-import com.arduia.expense.feature.auth.R
-import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.feature.auth.ui.preview.previewPinEntry
 import com.arduia.expense.feature.auth.ui.preview.previewPinLock
@@ -46,7 +46,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class PinScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -66,49 +65,54 @@ class PinScreenshotTest {
     }
 
     @Test
-    fun pin_entry() = capture {
-        PinEntryScreen(previewPinEntry, {}, {}, {}, {})
-    }
+    fun pin_entry() =
+        capture {
+            PinEntryScreen(previewPinEntry, {}, {}, {}, {})
+        }
 
     @Test
-    fun edge_pin_wrong() = capture {
-        PinEntryScreen(previewPinWrong, {}, {}, {}, {})
-    }
+    fun edge_pin_wrong() =
+        capture {
+            PinEntryScreen(previewPinWrong, {}, {}, {}, {})
+        }
 
     @Test
-    fun pin_lock() = capture {
-        PinEntryScreen(previewPinLock, {}, {}, {}, {})
-    }
+    fun pin_lock() =
+        capture {
+            PinEntryScreen(previewPinLock, {}, {}, {}, {})
+        }
 
     @Test
-    fun edge_pin_verify_disable() = capture {
-        PinEntryScreen(
-            state = PinEntryUiState(filledDots = 4, showBiometric = false),
-            onDigit = {},
-            onBackspace = {},
-            onBiometric = {},
-            onForgot = {},
-            headingRes = R.string.pin_disable_verify_heading,
-            helperRes = R.string.pin_disable_verify_helper,
-            showForgot = false,
-            onBack = {},
-            backLabel = "Cancel",
-        )
-    }
+    fun edge_pin_verify_disable() =
+        capture {
+            PinEntryScreen(
+                state = PinEntryUiState(filledDots = 4, showBiometric = false),
+                onDigit = {},
+                onBackspace = {},
+                onBiometric = {},
+                onForgot = {},
+                headingRes = R.string.pin_disable_verify_heading,
+                helperRes = R.string.pin_disable_verify_helper,
+                showForgot = false,
+                onBack = {},
+                backLabel = "Cancel",
+            )
+        }
 
     @Test
-    fun pin_setup() = capture {
-        PinSetupScreen(
-            state = previewPinSetup,
-            onTogglePin = {},
-            onToggleBiometric = {},
-            onRevealNew = {},
-            onRevealConfirm = {},
-            onRecoveryClick = {},
-            onSave = {},
-            onBack = {},
-        )
-    }
+    fun pin_setup() =
+        capture {
+            PinSetupScreen(
+                state = previewPinSetup,
+                onTogglePin = {},
+                onToggleBiometric = {},
+                onRevealNew = {},
+                onRevealConfirm = {},
+                onRecoveryClick = {},
+                onSave = {},
+                onBack = {},
+            )
+        }
 
     @Test
     fun pin_setup_revealed() {
@@ -137,15 +141,16 @@ class PinScreenshotTest {
     }
 
     @Test
-    fun edge_pin_mismatch() = capture {
-        PinSetPinScreen(
-            state = previewPinSetConfirmMismatch,
-            headingRes = R.string.pin_confirm_heading,
-            onDigit = {},
-            onBackspace = {},
-            onBack = {},
-        )
-    }
+    fun edge_pin_mismatch() =
+        capture {
+            PinSetPinScreen(
+                state = previewPinSetConfirmMismatch,
+                headingRes = R.string.pin_confirm_heading,
+                onDigit = {},
+                onBackspace = {},
+                onBack = {},
+            )
+        }
 
     @Test
     fun pin_set_revealed() {
@@ -171,27 +176,29 @@ class PinScreenshotTest {
     }
 
     @Test
-    fun pin_security() = capture {
-        PinSecurityQuestionScreen(
-            questions = pinSecurityQuestions,
-            selectedId = "pet",
-            answer = "Biscuit",
-            onSelect = {},
-            onAnswerChange = {},
-            onEnable = {},
-            onBack = {},
-        )
-    }
+    fun pin_security() =
+        capture {
+            PinSecurityQuestionScreen(
+                questions = pinSecurityQuestions,
+                selectedId = "pet",
+                answer = "Biscuit",
+                onSelect = {},
+                onAnswerChange = {},
+                onEnable = {},
+                onBack = {},
+            )
+        }
 
     @Test
-    fun edge_pin_recovery() = capture {
-        PinRecoveryScreen(
-            questionText = stringResource(R.string.security_question_pet),
-            answer = "Biscuit",
-            attemptsLabel = stringResource(R.string.pin_recover_attempts, 2, 5),
-            onAnswerChange = {},
-            onVerify = {},
-            onBack = {},
-        )
-    }
+    fun edge_pin_recovery() =
+        capture {
+            PinRecoveryScreen(
+                questionText = stringResource(R.string.security_question_pet),
+                answer = "Biscuit",
+                attemptsLabel = stringResource(R.string.pin_recover_attempts, 2, 5),
+                onAnswerChange = {},
+                onVerify = {},
+                onBack = {},
+            )
+        }
 }

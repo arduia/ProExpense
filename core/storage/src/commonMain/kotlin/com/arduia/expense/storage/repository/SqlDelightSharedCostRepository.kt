@@ -10,7 +10,6 @@ import com.arduia.expense.data.SharedCostInput
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.domain.ParticipantId
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
@@ -35,58 +34,64 @@ class SqlDelightSharedCostRepository(
     private val financeRecordRepository: FinanceRecordRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : SharedCostRepository {
+    override suspend fun create(input: SharedCostInput): Result<SharedCost> =
+        withContext(dispatcher) {
+            catchingResult {
+                val id = generateSharedCostId()
+                val sharedCost =
+                    SharedCost(
+                        id = id,
+                        title = input.title,
+                        total = input.total,
+                        participants = input.participants,
+                        splitStrategy = input.splitStrategy,
+                        recordedAtEpochMillis = input.recordedAtEpochMillis,
+                    )
 
-    override suspend fun create(input: SharedCostInput): Result<SharedCost> = withContext(dispatcher) {
-        catchingResult {
-            val id = generateSharedCostId()
-            val sharedCost = SharedCost(
-                id = id,
-                title = input.title,
-                total = input.total,
-                participants = input.participants,
-                splitStrategy = input.splitStrategy,
-                recordedAtEpochMillis = input.recordedAtEpochMillis,
-            )
-
-            persist(sharedCost)
-            financeRecordRepository.upsert(sharedCost.toFinanceRecord())
-            sharedCost
+                persist(sharedCost)
+                financeRecordRepository.upsert(sharedCost.toFinanceRecord())
+                sharedCost
+            }
         }
-    }
 
-    override suspend fun getAll(): Result<List<SharedCost>> = withContext(dispatcher) {
-        catchingResult {
-            queries.selectAllSharedCosts().executeAsList().map { it.toDomain() }
+    override suspend fun getAll(): Result<List<SharedCost>> =
+        withContext(dispatcher) {
+            catchingResult {
+                queries.selectAllSharedCosts().executeAsList().map { it.toDomain() }
+            }
         }
-    }
 
-    override suspend fun getById(id: SharedCostId): Result<SharedCost?> = withContext(dispatcher) {
-        catchingResult {
-            queries.selectSharedCostById(id.value).executeAsOneOrNull()?.toDomain()
+    override suspend fun getById(id: SharedCostId): Result<SharedCost?> =
+        withContext(dispatcher) {
+            catchingResult {
+                queries.selectSharedCostById(id.value).executeAsOneOrNull()?.toDomain()
+            }
         }
-    }
 
-    override suspend fun update(sharedCost: SharedCost): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            persist(sharedCost)
-            // Same RecordId as create() — this updates the existing linked record in place
-            // rather than creating a second one.
-            financeRecordRepository.upsert(sharedCost.toFinanceRecord())
-            Unit
+    override suspend fun update(sharedCost: SharedCost): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                persist(sharedCost)
+                // Same RecordId as create() — this updates the existing linked record in place
+                // rather than creating a second one.
+                financeRecordRepository.upsert(sharedCost.toFinanceRecord())
+                Unit
+            }
         }
-    }
 
-    override suspend fun delete(id: SharedCostId): Result<Unit> = withContext(dispatcher) {
-        catchingResult {
-            queries.deleteSharedCost(id.value)
-            // Deletion is atomic across both the split and its linked FinanceRecord (US-SHC-5).
-            financeRecordRepository.delete(RecordId(id.value))
-            Unit
+    override suspend fun delete(id: SharedCostId): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                queries.deleteSharedCost(id.value)
+                // Deletion is atomic across both the split and its linked FinanceRecord (US-SHC-5).
+                financeRecordRepository.delete(RecordId(id.value))
+                Unit
+            }
         }
-    }
 
     override fun observeAll(): Flow<List<SharedCost>> =
-        queries.selectAllSharedCosts()
+        queries
+            .selectAllSharedCosts()
             .asFlow()
             .mapToList(dispatcher)
             .map { rows -> rows.mapNotNull { runCatching { it.toDomain() }.getOrNull() } }
@@ -94,20 +99,24 @@ class SqlDelightSharedCostRepository(
     override suspend fun getSettlement(sharedCostId: SharedCostId): Result<SettlementSummary> =
         withContext(dispatcher) {
             catchingResult {
-                val sharedCost = queries.selectAllSharedCosts()
-                    .executeAsList()
-                    .find { it.id == sharedCostId.value }
-                    ?.toDomain()
-                    ?: throw IllegalArgumentException("SharedCost not found: ${sharedCostId.value}")
+                val sharedCost =
+                    queries
+                        .selectAllSharedCosts()
+                        .executeAsList()
+                        .find { it.id == sharedCostId.value }
+                        ?.toDomain()
+                        ?: throw IllegalArgumentException("SharedCost not found: ${sharedCostId.value}")
 
                 val shares = sharedCost.shares()
 
-                val lines = sharedCost.participants.map { participant ->
-                    val owedAmount = shares[participant.id]
-                        ?: throw IllegalStateException("No share calculated for participant ${participant.id}")
+                val lines =
+                    sharedCost.participants.map { participant ->
+                        val owedAmount =
+                            shares[participant.id]
+                                ?: throw IllegalStateException("No share calculated for participant ${participant.id}")
 
-                    SettlementLine(participant, owedAmount)
-                }
+                        SettlementLine(participant, owedAmount)
+                    }
 
                 SettlementSummary(sharedCostId, lines)
             }
@@ -130,23 +139,24 @@ class SqlDelightSharedCostRepository(
      * (US-SHC-4) — reuses the [SharedCostId] string as the [RecordId] so create/update always
      * target the same record instead of accumulating duplicates.
      */
-    private fun SharedCost.toFinanceRecord(): FinanceRecord = FinanceRecord(
-        id = RecordId(id.value),
-        money = total,
-        homeCurrencyMoney = total,
-        categoryId = CategoryId(SHARED_COST_DEFAULT_CATEGORY_ID),
-        type = RecordType.EXPENSE,
-        note = title,
-        recordedAtEpochMillis = recordedAtEpochMillis,
-        link = RecordLink.ToSharedCost(id),
-    )
+    private fun SharedCost.toFinanceRecord(): FinanceRecord =
+        FinanceRecord(
+            id = RecordId(id.value),
+            money = total,
+            homeCurrencyMoney = total,
+            categoryId = CategoryId(SHARED_COST_DEFAULT_CATEGORY_ID),
+            type = RecordType.EXPENSE,
+            note = title,
+            recordedAtEpochMillis = recordedAtEpochMillis,
+            link = RecordLink.ToSharedCost(id),
+        )
 
     private fun generateSharedCostId(): SharedCostId {
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
         return SharedCostId(
             (1..16)
                 .map { chars[Random.nextInt(chars.length)] }
-                .joinToString("")
+                .joinToString(""),
         )
     }
 }

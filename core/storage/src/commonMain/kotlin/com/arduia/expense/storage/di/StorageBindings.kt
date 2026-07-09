@@ -9,20 +9,21 @@ import org.koin.dsl.module
  * instance (driver/key-manager/key-value-store are platform-specific) and `includes` this one —
  * see `storageModule` in androidMain.
  */
-val storageBindings = module {
-    single { get<ProExpenseStorage>().financeRecordRepository }
-    single { get<ProExpenseStorage>().categoryRepository }
-    single { get<ProExpenseStorage>().eventRepository }
-    single { get<ProExpenseStorage>().debtRepository }
-    single { get<ProExpenseStorage>().budgetRepository }
-    single { get<ProExpenseStorage>().lockoutRepository }
-    single { get<ProExpenseStorage>().securityStateReader }
-    single { get<ProExpenseStorage>().currencySettingsRepository }
-    single { get<ProExpenseStorage>().sharedCostRepository }
-    single { get<ProExpenseStorage>().importExportRepository }
-    single { get<ProExpenseStorage>().clearDataRepository }
-    single { get<ProExpenseStorage>().profileRepository }
-    single { get<ProExpenseStorage>().localeRepository }
-    single { get<ProExpenseStorage>().defaultCategoryRepository }
-    single { get<ProExpenseStorage>().themeRepository }
-}
+val storageBindings =
+    module {
+        single { get<ProExpenseStorage>().financeRecordRepository }
+        single { get<ProExpenseStorage>().categoryRepository }
+        single { get<ProExpenseStorage>().eventRepository }
+        single { get<ProExpenseStorage>().debtRepository }
+        single { get<ProExpenseStorage>().budgetRepository }
+        single { get<ProExpenseStorage>().lockoutRepository }
+        single { get<ProExpenseStorage>().securityStateReader }
+        single { get<ProExpenseStorage>().currencySettingsRepository }
+        single { get<ProExpenseStorage>().sharedCostRepository }
+        single { get<ProExpenseStorage>().importExportRepository }
+        single { get<ProExpenseStorage>().clearDataRepository }
+        single { get<ProExpenseStorage>().profileRepository }
+        single { get<ProExpenseStorage>().localeRepository }
+        single { get<ProExpenseStorage>().defaultCategoryRepository }
+        single { get<ProExpenseStorage>().themeRepository }
+    }

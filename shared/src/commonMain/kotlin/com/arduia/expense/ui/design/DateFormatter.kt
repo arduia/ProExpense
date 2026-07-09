@@ -20,18 +20,31 @@ enum class DateZone {
  */
 interface DateFormatter {
     /** "Today" / "Yesterday" / "Tue · Jun 3" relative to [nowEpochMillis]. */
-    fun dayLabel(epochMillis: Long, nowEpochMillis: Long = currentEpochMillis()): String
+    fun dayLabel(
+        epochMillis: Long,
+        nowEpochMillis: Long = currentEpochMillis(),
+    ): String
 
     /** "Jun 3" or "Jun 3, 2026" when [withYear]. */
-    fun shortDateLabel(epochMillis: Long, zone: DateZone = DateZone.DeviceLocal, withYear: Boolean = false): String
+    fun shortDateLabel(
+        epochMillis: Long,
+        zone: DateZone = DateZone.DeviceLocal,
+        withYear: Boolean = false,
+    ): String
 
-    fun yearOf(epochMillis: Long, zone: DateZone = DateZone.DeviceLocal): Int
+    fun yearOf(
+        epochMillis: Long,
+        zone: DateZone = DateZone.DeviceLocal,
+    ): Int
 
     /** "3:45 PM". */
     fun timeLabel(epochMillis: Long): String
 
     /** Stable "yyyy-dayOfYear" bucket key for grouping records by calendar day. */
-    fun dayKey(epochMillis: Long, zone: DateZone = DateZone.DeviceLocal): String
+    fun dayKey(
+        epochMillis: Long,
+        zone: DateZone = DateZone.DeviceLocal,
+    ): String
 }
 
 /** Platform-selected [DateFormatter] singleton — Android today, iOS once a target is added. */

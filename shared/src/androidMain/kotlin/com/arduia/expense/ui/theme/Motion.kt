@@ -25,17 +25,18 @@ val LocalProMotion = staticCompositionLocalOf { ProDefaultMotion }
 
 val ProStandardEasing = CubicBezierEasing(0.22f, 0.61f, 0.36f, 1f)
 
-val ProDefaultMotion = ProMotion(
-    screenDurationMillis = 280,
-    sheetDurationMillis = 340,
-    fadeDurationMillis = 200,
-    tapDurationMillis = 80,
-    shakeDurationMillis = 280,
-    rowPulseDurationMillis = 1800,
-    toastDurationMillis = 2400,
-    standardEasing = ProStandardEasing,
-    pressedScale = 0.97f,
-    pressedOpacity = 0.92f,
-    disabledOpacity = 0.4f,
-    keypadDisabledOpacity = 0.55f,
-)
+val ProDefaultMotion =
+    ProMotion(
+        screenDurationMillis = 280,
+        sheetDurationMillis = 340,
+        fadeDurationMillis = 200,
+        tapDurationMillis = 80,
+        shakeDurationMillis = 280,
+        rowPulseDurationMillis = 1800,
+        toastDurationMillis = 2400,
+        standardEasing = ProStandardEasing,
+        pressedScale = 0.97f,
+        pressedOpacity = 0.92f,
+        disabledOpacity = 0.4f,
+        keypadDisabledOpacity = 0.55f,
+    )

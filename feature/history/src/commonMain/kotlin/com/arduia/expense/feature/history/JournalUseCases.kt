@@ -34,7 +34,10 @@ class DeleteRecordUseCase(
 class UpdateRecordNoteUseCase(
     private val financeRecordRepository: FinanceRecordRepository,
 ) {
-    suspend operator fun invoke(recordId: String, note: String) {
+    suspend operator fun invoke(
+        recordId: String,
+        note: String,
+    ) {
         val result = financeRecordRepository.getById(RecordId(recordId))
         val record = (result as? com.arduia.expense.data.Result.Success)?.data ?: return
         financeRecordRepository.upsert(record.copy(note = note.ifBlank { null }))

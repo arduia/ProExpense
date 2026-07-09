@@ -6,12 +6,17 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PlatformDateFormatterTest {
-
-    private fun utcMidnight(year: Int, month: Int, day: Int): Long =
-        Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
-            clear()
-            set(year, month, day, 0, 0, 0)
-        }.timeInMillis
+    private fun utcMidnight(
+        year: Int,
+        month: Int,
+        day: Int,
+    ): Long =
+        Calendar
+            .getInstance(TimeZone.getTimeZone("UTC"))
+            .apply {
+                clear()
+                set(year, month, day, 0, 0, 0)
+            }.timeInMillis
 
     @Test
     fun dayKey_withUtcZone_readsTheCalendarDateThePickerEncoded() {
@@ -45,10 +50,13 @@ class PlatformDateFormatterTest {
 
     @Test
     fun dayKey_defaultsToDeviceLocalZone() {
-        val localNoon = Calendar.getInstance().apply {
-            clear()
-            set(2026, Calendar.MAY, 15, 12, 0, 0)
-        }.timeInMillis
+        val localNoon =
+            Calendar
+                .getInstance()
+                .apply {
+                    clear()
+                    set(2026, Calendar.MAY, 15, 12, 0, 0)
+                }.timeInMillis
 
         assertEquals(
             PlatformDateFormatter.dayKey(localNoon),

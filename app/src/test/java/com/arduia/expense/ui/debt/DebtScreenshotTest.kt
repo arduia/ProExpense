@@ -14,11 +14,6 @@ import com.arduia.expense.feature.debt.R
 import com.arduia.expense.feature.debt.ui.DebtAddSheetContent
 import com.arduia.expense.feature.debt.ui.DebtDetailScreen
 import com.arduia.expense.feature.debt.ui.DebtListScreen
-import com.arduia.expense.testing.ScreenshotTests
-import com.arduia.expense.ui.design.ProAlertDialog
-import com.arduia.expense.ui.design.ProBottomSheetHost
-import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.feature.debt.ui.preview.previewDebtAddLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLentDetail
@@ -26,6 +21,11 @@ import com.arduia.expense.feature.debt.ui.preview.previewDebtLoading
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOweDetail
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
+import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -45,7 +45,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class DebtScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -65,41 +64,8 @@ class DebtScreenshotTest {
     }
 
     @Test
-    fun debt_lent() = capture {
-        DebtListScreen(
-            state = previewDebtLent,
-            onSideSelected = {},
-            onAddRecord = {},
-            onRecordClick = {},
-            onBack = {},
-        )
-    }
-
-    @Test
-    fun debt_loading() = capture {
-        DebtListScreen(
-            state = previewDebtLoading,
-            onSideSelected = {},
-            onAddRecord = {},
-            onRecordClick = {},
-            onBack = {},
-        )
-    }
-
-    @Test
-    fun debt_owe() = capture {
-        DebtListScreen(
-            state = previewDebtOwe,
-            onSideSelected = {},
-            onAddRecord = {},
-            onRecordClick = {},
-            onBack = {},
-        )
-    }
-
-    @Test
-    fun debt_add() = capture {
-        Box(Modifier.fillMaxSize()) {
+    fun debt_lent() =
+        capture {
             DebtListScreen(
                 state = previewDebtLent,
                 onSideSelected = {},
@@ -107,103 +73,145 @@ class DebtScreenshotTest {
                 onRecordClick = {},
                 onBack = {},
             )
-            ProBottomSheetHost(
-                visible = true,
-                title = stringResource(R.string.debt_new_record),
-                onClose = {},
-            ) {
-                DebtAddSheetContent(
-                    form = previewDebtAddLent,
+        }
+
+    @Test
+    fun debt_loading() =
+        capture {
+            DebtListScreen(
+                state = previewDebtLoading,
+                onSideSelected = {},
+                onAddRecord = {},
+                onRecordClick = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun debt_owe() =
+        capture {
+            DebtListScreen(
+                state = previewDebtOwe,
+                onSideSelected = {},
+                onAddRecord = {},
+                onRecordClick = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun debt_add() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                DebtListScreen(
+                    state = previewDebtLent,
                     onSideSelected = {},
-                    onPersonChange = {},
-                    onAmountChange = {},
-                    onPickDate = {},
-                    onPickDue = {},
-                    onNoteChange = {},
-                    onSave = {},
+                    onAddRecord = {},
+                    onRecordClick = {},
+                    onBack = {},
+                )
+                ProBottomSheetHost(
+                    visible = true,
+                    title = stringResource(R.string.debt_new_record),
+                    onClose = {},
+                ) {
+                    DebtAddSheetContent(
+                        form = previewDebtAddLent,
+                        onSideSelected = {},
+                        onPersonChange = {},
+                        onAmountChange = {},
+                        onPickDate = {},
+                        onPickDue = {},
+                        onNoteChange = {},
+                        onSave = {},
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun debt_lent_detail() =
+        capture {
+            DebtDetailScreen(
+                state = previewDebtLentDetail,
+                onBack = {},
+                onMore = {},
+                onEdit = {},
+                onMarkSettled = {},
+            )
+        }
+
+    @Test
+    fun debt_owe_detail() =
+        capture {
+            DebtDetailScreen(
+                state = previewDebtOweDetail,
+                onBack = {},
+                onMore = {},
+                onEdit = {},
+                onMarkSettled = {},
+            )
+        }
+
+    @Test
+    fun edge_debt_conflict() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                DebtListScreen(
+                    state = previewDebtLent,
+                    onSideSelected = {},
+                    onAddRecord = {},
+                    onRecordClick = {},
+                    onBack = {},
+                )
+                ProAlertDialog(
+                    visible = true,
+                    icon = ProIconGlyph.User,
+                    iconTint = ProExpenseTheme.colors.warning,
+                    iconBackground = ProExpenseTheme.colors.warningTint,
+                    title = stringResource(R.string.debt_conflict_title, "John"),
+                    body =
+                        AnnotatedString(
+                            stringResource(
+                                R.string.debt_conflict_body,
+                                "John",
+                                "\"" + stringResource(R.string.debt_tab_owe) + "\"",
+                                "\"" + stringResource(R.string.debt_tab_lent) + "\"",
+                            ),
+                        ),
+                    confirmLabel = stringResource(R.string.debt_continue),
+                    onConfirm = {},
+                    dismissLabel = stringResource(R.string.debt_cancel),
+                    onDismiss = {},
+                    confirmVariant = ProButtonVariant.Warning,
                 )
             }
         }
-    }
 
     @Test
-    fun debt_lent_detail() = capture {
-        DebtDetailScreen(
-            state = previewDebtLentDetail,
-            onBack = {},
-            onMore = {},
-            onEdit = {},
-            onMarkSettled = {},
-        )
-    }
-
-    @Test
-    fun debt_owe_detail() = capture {
-        DebtDetailScreen(
-            state = previewDebtOweDetail,
-            onBack = {},
-            onMore = {},
-            onEdit = {},
-            onMarkSettled = {},
-        )
-    }
-
-    @Test
-    fun edge_debt_conflict() = capture {
-        Box(Modifier.fillMaxSize()) {
-            DebtListScreen(
-                state = previewDebtLent,
-                onSideSelected = {},
-                onAddRecord = {},
-                onRecordClick = {},
-                onBack = {},
-            )
-            ProAlertDialog(
-                visible = true,
-                icon = ProIconGlyph.User,
-                iconTint = ProExpenseTheme.colors.warning,
-                iconBackground = ProExpenseTheme.colors.warningTint,
-                title = stringResource(R.string.debt_conflict_title, "John"),
-                body = AnnotatedString(
-                    stringResource(
-                        R.string.debt_conflict_body,
-                        "John",
-                        "\"" + stringResource(R.string.debt_tab_owe) + "\"",
-                        "\"" + stringResource(R.string.debt_tab_lent) + "\"",
-                    ),
-                ),
-                confirmLabel = stringResource(R.string.debt_continue),
-                onConfirm = {},
-                dismissLabel = stringResource(R.string.debt_cancel),
-                onDismiss = {},
-                confirmVariant = ProButtonVariant.Warning,
-            )
+    fun edge_debt_settled() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                DebtListScreen(
+                    state = previewDebtSettled,
+                    onSideSelected = {},
+                    onAddRecord = {},
+                    onRecordClick = {},
+                    onBack = {},
+                )
+                ProAlertDialog(
+                    visible = true,
+                    icon = ProIconGlyph.Close,
+                    iconTint = ProExpenseTheme.colors.danger,
+                    iconBackground = ProExpenseTheme.colors.dangerTint,
+                    title = stringResource(R.string.debt_delete_title),
+                    body = AnnotatedString(stringResource(R.string.debt_delete_body, "Aiko")),
+                    confirmLabel = stringResource(R.string.debt_delete),
+                    onConfirm = {},
+                    dismissLabel = stringResource(R.string.debt_cancel),
+                    onDismiss = {},
+                    confirmVariant = ProButtonVariant.Danger,
+                )
+            }
         }
-    }
-
-    @Test
-    fun edge_debt_settled() = capture {
-        Box(Modifier.fillMaxSize()) {
-            DebtListScreen(
-                state = previewDebtSettled,
-                onSideSelected = {},
-                onAddRecord = {},
-                onRecordClick = {},
-                onBack = {},
-            )
-            ProAlertDialog(
-                visible = true,
-                icon = ProIconGlyph.Close,
-                iconTint = ProExpenseTheme.colors.danger,
-                iconBackground = ProExpenseTheme.colors.dangerTint,
-                title = stringResource(R.string.debt_delete_title),
-                body = AnnotatedString(stringResource(R.string.debt_delete_body, "Aiko")),
-                confirmLabel = stringResource(R.string.debt_delete),
-                onConfirm = {},
-                dismissLabel = stringResource(R.string.debt_cancel),
-                onDismiss = {},
-                confirmVariant = ProButtonVariant.Danger,
-            )
-        }
-    }
 }

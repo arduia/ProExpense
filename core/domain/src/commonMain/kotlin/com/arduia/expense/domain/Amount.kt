@@ -4,7 +4,9 @@ import kotlin.jvm.JvmInline
 import kotlin.math.roundToLong
 
 @JvmInline
-value class Amount(val valueInCents: Long) : Comparable<Amount> {
+value class Amount(
+    val valueInCents: Long,
+) : Comparable<Amount> {
     init {
         require(valueInCents in 0..MAX_VALUE_IN_CENTS) {
             "Amount must be between 0 and $MAX_VALUE_IN_CENTS cents"

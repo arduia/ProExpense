@@ -9,12 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.history.R
 import com.arduia.expense.feature.history.ui.JournalActionsSheetContent
 import com.arduia.expense.feature.history.ui.JournalDateRangeSheet
 import com.arduia.expense.feature.history.ui.JournalDetailScreen
 import com.arduia.expense.feature.history.ui.JournalListScreen
 import com.arduia.expense.feature.history.ui.JournalQuickNoteSheetContent
-import com.arduia.expense.feature.history.R
 import com.arduia.expense.feature.history.ui.preview.previewJournalDetail
 import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
@@ -43,7 +43,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class JournalScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -63,125 +62,8 @@ class JournalScreenshotTest {
     }
 
     @Test
-    fun journal_list() = capture {
-        JournalListScreen(
-            state = previewJournalList,
-            onQueryChange = {},
-            onFilterSelected = {},
-            onRowClick = {},
-            onRowLongPress = {},
-            selectedTab = HomeNavTab.Journal,
-            onTabSelected = {},
-            onAddClick = {},
-        )
-    }
-
-    @Test
-    fun journal_list_date_range_active() = capture {
-        JournalListScreen(
-            state = previewJournalList,
-            onQueryChange = {},
-            onFilterSelected = {},
-            onRowClick = {},
-            onRowLongPress = {},
-            selectedTab = HomeNavTab.Journal,
-            onTabSelected = {},
-            onAddClick = {},
-            dateRangeLabel = "May 1 – May 15",
-        )
-    }
-
-    @Test
-    fun journal_empty() = capture {
-        JournalListScreen(
-            state = previewJournalEmpty,
-            onQueryChange = {},
-            onFilterSelected = {},
-            onRowClick = {},
-            onRowLongPress = {},
-            selectedTab = HomeNavTab.Journal,
-            onTabSelected = {},
-            onAddClick = {},
-        )
-    }
-
-    @Test
-    fun journal_loading() = capture {
-        JournalListScreen(
-            state = previewJournalLoading,
-            onQueryChange = {},
-            onFilterSelected = {},
-            onRowClick = {},
-            onRowLongPress = {},
-            selectedTab = HomeNavTab.Journal,
-            onTabSelected = {},
-            onAddClick = {},
-        )
-    }
-
-    @Test
-    fun edge_filtered_empty() = capture {
-        // Zero results from an active date-range filter must not read as "no records ever" —
-        // it needs its own copy and a way to clear the filter, not the first-run empty state.
-        JournalListScreen(
-            state = previewJournalEmpty,
-            onQueryChange = {},
-            onFilterSelected = {},
-            onRowClick = {},
-            onRowLongPress = {},
-            selectedTab = HomeNavTab.Journal,
-            onTabSelected = {},
-            onAddClick = {},
-            dateRangeLabel = "May 1 – May 15",
-        )
-    }
-
-    @Test
-    fun edge_search() = capture {
-        JournalListScreen(
-            state = previewJournalSearchEmpty,
-            onQueryChange = {},
-            onFilterSelected = {},
-            onRowClick = {},
-            onRowLongPress = {},
-            selectedTab = HomeNavTab.Journal,
-            onTabSelected = {},
-            onAddClick = {},
-        )
-    }
-
-    @Test
-    fun edge_search_with_date_range_active() = capture {
-        // The date-range chip must stay visible during search — a "no matches" result while an
-        // unseen date filter is still narrowing results would otherwise be misleading.
-        JournalListScreen(
-            state = previewJournalSearchEmpty,
-            onQueryChange = {},
-            onFilterSelected = {},
-            onRowClick = {},
-            onRowLongPress = {},
-            selectedTab = HomeNavTab.Journal,
-            onTabSelected = {},
-            onAddClick = {},
-            dateRangeLabel = "May 1 – May 15",
-        )
-    }
-
-    @Test
-    fun journal_detail() = capture {
-        JournalDetailScreen(
-            state = previewJournalDetail,
-            onBack = {},
-            onActions = {},
-            onLinkedTagClick = {},
-            onEdit = {},
-            onDelete = {},
-        )
-    }
-
-    @Test
-    fun edge_quicknote() = capture {
-        Box(Modifier.fillMaxSize()) {
+    fun journal_list() =
+        capture {
             JournalListScreen(
                 state = previewJournalList,
                 onQueryChange = {},
@@ -192,23 +74,11 @@ class JournalScreenshotTest {
                 onTabSelected = {},
                 onAddClick = {},
             )
-            ProBottomSheetHost(
-                visible = true,
-                title = stringResource(R.string.journal_quick_note_title),
-                onClose = {},
-            ) {
-                JournalQuickNoteSheetContent(
-                    state = previewJournalQuickNote,
-                    onNoteChange = {},
-                    onSave = {},
-                )
-            }
         }
-    }
 
     @Test
-    fun edge_date_range_sheet() = capture {
-        Box(Modifier.fillMaxSize()) {
+    fun journal_list_date_range_active() =
+        capture {
             JournalListScreen(
                 state = previewJournalList,
                 onQueryChange = {},
@@ -218,21 +88,94 @@ class JournalScreenshotTest {
                 selectedTab = HomeNavTab.Journal,
                 onTabSelected = {},
                 onAddClick = {},
-            )
-            JournalDateRangeSheet(
-                visible = true,
-                initialStartEpochMillis = 1_716_600_000_000L,
-                initialEndEpochMillis = 1_717_200_000_000L,
-                onConfirm = { _, _ -> },
-                onClear = {},
-                onDismiss = {},
+                dateRangeLabel = "May 1 – May 15",
             )
         }
-    }
 
     @Test
-    fun journal_actions() = capture {
-        Box(Modifier.fillMaxSize()) {
+    fun journal_empty() =
+        capture {
+            JournalListScreen(
+                state = previewJournalEmpty,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun journal_loading() =
+        capture {
+            JournalListScreen(
+                state = previewJournalLoading,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun edge_filtered_empty() =
+        capture {
+            // Zero results from an active date-range filter must not read as "no records ever" —
+            // it needs its own copy and a way to clear the filter, not the first-run empty state.
+            JournalListScreen(
+                state = previewJournalEmpty,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+                dateRangeLabel = "May 1 – May 15",
+            )
+        }
+
+    @Test
+    fun edge_search() =
+        capture {
+            JournalListScreen(
+                state = previewJournalSearchEmpty,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun edge_search_with_date_range_active() =
+        capture {
+            // The date-range chip must stay visible during search — a "no matches" result while an
+            // unseen date filter is still narrowing results would otherwise be misleading.
+            JournalListScreen(
+                state = previewJournalSearchEmpty,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+                dateRangeLabel = "May 1 – May 15",
+            )
+        }
+
+    @Test
+    fun journal_detail() =
+        capture {
             JournalDetailScreen(
                 state = previewJournalDetail,
                 onBack = {},
@@ -241,17 +184,84 @@ class JournalScreenshotTest {
                 onEdit = {},
                 onDelete = {},
             )
-            ProBottomSheetHost(
-                visible = true,
-                title = null,
-                onClose = {},
-            ) {
-                JournalActionsSheetContent(
-                    onEdit = {},
-                    onDelete = {},
-                    onCancel = {},
+        }
+
+    @Test
+    fun edge_quicknote() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                JournalListScreen(
+                    state = previewJournalList,
+                    onQueryChange = {},
+                    onFilterSelected = {},
+                    onRowClick = {},
+                    onRowLongPress = {},
+                    selectedTab = HomeNavTab.Journal,
+                    onTabSelected = {},
+                    onAddClick = {},
+                )
+                ProBottomSheetHost(
+                    visible = true,
+                    title = stringResource(R.string.journal_quick_note_title),
+                    onClose = {},
+                ) {
+                    JournalQuickNoteSheetContent(
+                        state = previewJournalQuickNote,
+                        onNoteChange = {},
+                        onSave = {},
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun edge_date_range_sheet() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                JournalListScreen(
+                    state = previewJournalList,
+                    onQueryChange = {},
+                    onFilterSelected = {},
+                    onRowClick = {},
+                    onRowLongPress = {},
+                    selectedTab = HomeNavTab.Journal,
+                    onTabSelected = {},
+                    onAddClick = {},
+                )
+                JournalDateRangeSheet(
+                    visible = true,
+                    initialStartEpochMillis = 1_716_600_000_000L,
+                    initialEndEpochMillis = 1_717_200_000_000L,
+                    onConfirm = { _, _ -> },
+                    onClear = {},
+                    onDismiss = {},
                 )
             }
         }
-    }
+
+    @Test
+    fun journal_actions() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                JournalDetailScreen(
+                    state = previewJournalDetail,
+                    onBack = {},
+                    onActions = {},
+                    onLinkedTagClick = {},
+                    onEdit = {},
+                    onDelete = {},
+                )
+                ProBottomSheetHost(
+                    visible = true,
+                    title = null,
+                    onClose = {},
+                ) {
+                    JournalActionsSheetContent(
+                        onEdit = {},
+                        onDelete = {},
+                        onCancel = {},
+                    )
+                }
+            }
+        }
 }

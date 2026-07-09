@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class JsonStringCodecTest {
-
     @Test
     fun escapeThenUnescape_roundTripsSpecialCharacters() {
         val original = "quote\" backslash\\ newline\n carriage\r"

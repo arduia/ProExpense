@@ -24,15 +24,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostHistoryRow
+import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostHistoryRow
-import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
-import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -50,12 +50,13 @@ fun SharedCostsHistoryScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState()),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -66,15 +67,17 @@ fun SharedCostsHistoryScreen(
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8, bottom = dimens.space16),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space8, bottom = dimens.space16),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top,
             ) {
@@ -109,9 +112,10 @@ fun SharedCostsHistoryScreen(
                     subtitle = stringResource(R.string.shared_history_empty_body),
                     actionLabel = stringResource(R.string.shared_history_empty_action),
                     onActionClick = onNewSplit,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = dimens.space32),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = dimens.space32),
                 )
             } else {
                 Text(
@@ -126,12 +130,13 @@ fun SharedCostsHistoryScreen(
                         SwipeToDeleteRow(onDelete = { onDeleteRequested(item) }) {
                             SharedCostHistoryRow(
                                 title = item.title,
-                                meta = stringResource(
-                                    R.string.shared_history_meta,
-                                    item.peopleCount,
-                                    item.perPersonLabel,
-                                    item.dateLabel,
-                                ),
+                                meta =
+                                    stringResource(
+                                        R.string.shared_history_meta,
+                                        item.peopleCount,
+                                        item.perPersonLabel,
+                                        item.dateLabel,
+                                    ),
                                 total = item.totalLabel,
                                 onClick = { onItemClick(item) },
                             )
@@ -154,14 +159,15 @@ private fun SwipeToDeleteRow(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
-                onDelete()
-            }
-            false
-        },
-    )
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = { value ->
+                if (value == SwipeToDismissBoxValue.EndToStart) {
+                    onDelete()
+                }
+                false
+            },
+        )
 
     SwipeToDismissBox(
         state = dismissState,
@@ -170,11 +176,12 @@ private fun SwipeToDeleteRow(
         enableDismissFromEndToStart = true,
         backgroundContent = {
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(ProExpenseTheme.shapes.card)
-                    .background(colors.danger)
-                    .padding(horizontal = dimens.space20),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(ProExpenseTheme.shapes.card)
+                        .background(colors.danger)
+                        .padding(horizontal = dimens.space20),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End,
             ) {

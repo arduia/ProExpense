@@ -23,25 +23,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.logging.R
-import com.arduia.expense.ui.design.AmountInput
-import com.arduia.expense.ui.design.CategoryPicker
-import com.arduia.expense.ui.design.DetailAmountSummaryCard
-import com.arduia.expense.ui.design.DetailDateTimeField
-import com.arduia.expense.ui.design.DetailFieldCard
-import com.arduia.expense.ui.design.DetailNoteField
-import com.arduia.expense.ui.design.DetailTagField
-import com.arduia.expense.ui.design.ProBottomSheetHost
-import com.arduia.expense.ui.design.ProButton
-import com.arduia.expense.ui.design.ProButtonSize
-import com.arduia.expense.ui.design.ProIcon
-import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
-import com.arduia.expense.ui.design.TagLinkOption
-import com.arduia.expense.ui.design.TagPickerContent
-import com.arduia.expense.ui.design.currencySymbol
-import com.arduia.expense.ui.design.customExpenseCategories
-import com.arduia.expense.ui.design.defaultExpenseCategories
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.hasValidExchangeRate
 import com.arduia.expense.feature.logging.ui.preview.isForeignCurrency
@@ -51,6 +32,25 @@ import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeig
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLimit
 import com.arduia.expense.feature.logging.ui.preview.previewTagDebts
 import com.arduia.expense.feature.logging.ui.preview.previewTagEvents
+import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.CategoryPicker
+import com.arduia.expense.ui.design.DetailAmountSummaryCard
+import com.arduia.expense.ui.design.DetailDateTimeField
+import com.arduia.expense.ui.design.DetailFieldCard
+import com.arduia.expense.ui.design.DetailNoteField
+import com.arduia.expense.ui.design.DetailTagField
+import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
+import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.TagLinkOption
+import com.arduia.expense.ui.design.TagPickerContent
+import com.arduia.expense.ui.design.currencySymbol
+import com.arduia.expense.ui.design.customExpenseCategories
+import com.arduia.expense.ui.design.defaultExpenseCategories
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -81,27 +81,30 @@ fun AddExpenseDetailsScreen(
     val formattedSaveAmount = currencySymbol(state.currencyCode) + displayAmount
     val atNoteLimit = state.note.length >= NOTE_INPUT_MAX_LENGTH
     val rate = state.exchangeRateRaw.trim().toDoubleOrNull()
-    val convertedLabel = if (state.isForeignCurrency() && rate != null && rate > 0.0) {
-        val rawAmount = state.rawAmount.toDoubleOrNull() ?: 0.0
-        val convertedCents = Math.round(rawAmount * rate * 100)
-        AmountInput.formatMoney(convertedCents, currencySymbol(state.homeCurrencyCode))
-    } else {
-        null
-    }
+    val convertedLabel =
+        if (state.isForeignCurrency() && rate != null && rate > 0.0) {
+            val rawAmount = state.rawAmount.toDoubleOrNull() ?: 0.0
+            val convertedCents = Math.round(rawAmount * rate * 100)
+            AmountInput.formatMoney(convertedCents, currencySymbol(state.homeCurrencyCode))
+        } else {
+            null
+        }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             ProTopBar(
@@ -147,11 +150,12 @@ fun AddExpenseDetailsScreen(
                 maxLength = NOTE_INPUT_MAX_LENGTH,
                 placeholder = stringResource(R.string.note),
                 atLimit = atNoteLimit,
-                errorMessage = if (atNoteLimit) {
-                    stringResource(R.string.note_max_length_error)
-                } else {
-                    null
-                },
+                errorMessage =
+                    if (atNoteLimit) {
+                        stringResource(R.string.note_max_length_error)
+                    } else {
+                        null
+                    },
             )
 
             if (showTagField) {

@@ -20,72 +20,81 @@ data class ReportsUiState(
     val periodEndEpochMillis: Long = 0L,
 )
 
-val previewReports = ReportsUiState(
-    periodLabel = "May 2026",
-    totalLabel = "$1,247",
-    dailyAvgLabel = "$50",
-    daysLabel = "25 days in",
-    categories = listOf(
-        ReportsCategoryUi("food", "Food", "38%", "$478", 0.38f),
-        ReportsCategoryUi("transport", "Transport", "22%", "$274", 0.22f),
-        ReportsCategoryUi("shopping", "Shopping", "18%", "$224", 0.18f),
-        ReportsCategoryUi("bills", "Bills", "14%", "$170", 0.14f),
-        ReportsCategoryUi("entertainment", "Entertainment", "8%", "$101", 0.08f),
-    ),
-)
+val previewReports =
+    ReportsUiState(
+        periodLabel = "May 2026",
+        totalLabel = "$1,247",
+        dailyAvgLabel = "$50",
+        daysLabel = "25 days in",
+        categories =
+            listOf(
+                ReportsCategoryUi("food", "Food", "38%", "$478", 0.38f),
+                ReportsCategoryUi("transport", "Transport", "22%", "$274", 0.22f),
+                ReportsCategoryUi("shopping", "Shopping", "18%", "$224", 0.18f),
+                ReportsCategoryUi("bills", "Bills", "14%", "$170", 0.14f),
+                ReportsCategoryUi("entertainment", "Entertainment", "8%", "$101", 0.08f),
+            ),
+    )
 
-val previewReportsWithOtherRollup = ReportsUiState(
-    periodLabel = "May 2026",
-    totalLabel = "$1,247",
-    dailyAvgLabel = "$50",
-    daysLabel = "25 days in",
-    categories = listOf(
-        ReportsCategoryUi("food", "Food", "30%", "$374", 0.30f),
-        ReportsCategoryUi("transport", "Transport", "18%", "$224", 0.18f),
-        ReportsCategoryUi("shopping", "Shopping", "16%", "$200", 0.16f),
-        ReportsCategoryUi("bills", "Bills", "12%", "$150", 0.12f),
-        ReportsCategoryUi("entertainment", "Entertainment", "10%", "$125", 0.10f),
-        ReportsCategoryUi("other", "Other", "14%", "$174", 0.14f),
-    ),
-)
+val previewReportsWithOtherRollup =
+    ReportsUiState(
+        periodLabel = "May 2026",
+        totalLabel = "$1,247",
+        dailyAvgLabel = "$50",
+        daysLabel = "25 days in",
+        categories =
+            listOf(
+                ReportsCategoryUi("food", "Food", "30%", "$374", 0.30f),
+                ReportsCategoryUi("transport", "Transport", "18%", "$224", 0.18f),
+                ReportsCategoryUi("shopping", "Shopping", "16%", "$200", 0.16f),
+                ReportsCategoryUi("bills", "Bills", "12%", "$150", 0.12f),
+                ReportsCategoryUi("entertainment", "Entertainment", "10%", "$125", 0.10f),
+                ReportsCategoryUi("other", "Other", "14%", "$174", 0.14f),
+            ),
+    )
 
-val previewReportsWeekly = ReportsUiState(
-    periodLabel = "May 18 – May 24",
-    totalLabel = "$312",
-    dailyAvgLabel = "$45",
-    daysLabel = "7 days in",
-    categories = listOf(
-        ReportsCategoryUi("food", "Food", "40%", "$125", 0.40f),
-        ReportsCategoryUi("transport", "Transport", "25%", "$78", 0.25f),
-        ReportsCategoryUi("shopping", "Shopping", "20%", "$62", 0.20f),
-        ReportsCategoryUi("bills", "Bills", "15%", "$47", 0.15f),
-    ),
-)
+val previewReportsWeekly =
+    ReportsUiState(
+        periodLabel = "May 18 – May 24",
+        totalLabel = "$312",
+        dailyAvgLabel = "$45",
+        daysLabel = "7 days in",
+        categories =
+            listOf(
+                ReportsCategoryUi("food", "Food", "40%", "$125", 0.40f),
+                ReportsCategoryUi("transport", "Transport", "25%", "$78", 0.25f),
+                ReportsCategoryUi("shopping", "Shopping", "20%", "$62", 0.20f),
+                ReportsCategoryUi("bills", "Bills", "15%", "$47", 0.15f),
+            ),
+    )
 
-val previewReportsUncategorized = ReportsUiState(
-    periodLabel = "May 2026",
-    totalLabel = "$1,247",
-    dailyAvgLabel = "$50",
-    daysLabel = "25 days in",
-    categories = emptyList(),
-    uncategorized = true,
-)
+val previewReportsUncategorized =
+    ReportsUiState(
+        periodLabel = "May 2026",
+        totalLabel = "$1,247",
+        dailyAvgLabel = "$50",
+        daysLabel = "25 days in",
+        categories = emptyList(),
+        uncategorized = true,
+    )
 
-val previewReportsEmpty = ReportsUiState(
-    periodLabel = "",
-    totalLabel = "",
-    dailyAvgLabel = "",
-    daysLabel = "",
-    categories = emptyList(),
-    empty = true,
-)
+val previewReportsEmpty =
+    ReportsUiState(
+        periodLabel = "",
+        totalLabel = "",
+        dailyAvgLabel = "",
+        daysLabel = "",
+        categories = emptyList(),
+        empty = true,
+    )
 
 /** A specific past month with no spending, distinct from [previewReportsEmpty]'s global case. */
-val previewReportsPeriodEmpty = ReportsUiState(
-    periodLabel = "March 2026",
-    totalLabel = "",
-    dailyAvgLabel = "",
-    daysLabel = "",
-    categories = emptyList(),
-    empty = true,
-)
+val previewReportsPeriodEmpty =
+    ReportsUiState(
+        periodLabel = "March 2026",
+        totalLabel = "",
+        dailyAvgLabel = "",
+        daysLabel = "",
+        categories = emptyList(),
+        empty = true,
+    )

@@ -84,21 +84,23 @@ fun ProCard(
     val shape = ProExpenseTheme.shapes.card
     val interactionSource = remember { MutableInteractionSource() }
 
-    var cardModifier = modifier
-        .proCardShadow(shape)
-        .clip(shape)
-        .border(BorderStroke(1.dp, colors.line), shape)
-        .background(colors.surface)
+    var cardModifier =
+        modifier
+            .proCardShadow(shape)
+            .clip(shape)
+            .border(BorderStroke(1.dp, colors.line), shape)
+            .background(colors.surface)
 
-    cardModifier = if (onClick != null) {
-        cardModifier.proClickable(
-            onClick = onClick,
-            shape = shape,
-            interactionSource = interactionSource,
-        )
-    } else {
-        cardModifier
-    }
+    cardModifier =
+        if (onClick != null) {
+            cardModifier.proClickable(
+                onClick = onClick,
+                shape = shape,
+                interactionSource = interactionSource,
+            )
+        } else {
+            cardModifier
+        }
 
     Box(modifier = cardModifier.padding(padding)) {
         content()
@@ -125,11 +127,12 @@ fun SpentTodayCard(
             Column {
                 Text(
                     text = eyebrow.uppercase(),
-                    style = typography.eyebrow.copy(
-                        fontSize = 10.5.sp,
-                        letterSpacing = 0.08.em,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    style =
+                        typography.eyebrow.copy(
+                            fontSize = 10.5.sp,
+                            letterSpacing = 0.08.em,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
                     color = colors.onSurfaceMuted,
                 )
                 Text(
@@ -141,9 +144,10 @@ fun SpentTodayCard(
             }
             if (showSparkline) {
                 SparklinePlaceholder(
-                    modifier = Modifier
-                        .size(width = 86.dp, height = 40.dp)
-                        .padding(top = dimens.space4),
+                    modifier =
+                        Modifier
+                            .size(width = 86.dp, height = 40.dp)
+                            .padding(top = dimens.space4),
                 )
             }
         }
@@ -154,29 +158,33 @@ fun SpentTodayCard(
 private fun SparklinePlaceholder(modifier: Modifier = Modifier) {
     val colors = ProExpenseTheme.colors
     androidx.compose.foundation.Canvas(modifier = modifier) {
-        val path = androidx.compose.ui.graphics.Path().apply {
-            moveTo(2f, size.height * 0.75f)
-            lineTo(size.width * 0.16f, size.height * 0.55f)
-            lineTo(size.width * 0.30f, size.height * 0.65f)
-            lineTo(size.width * 0.44f, size.height * 0.35f)
-            lineTo(size.width * 0.58f, size.height * 0.45f)
-            lineTo(size.width * 0.72f, size.height * 0.25f)
-            lineTo(size.width * 0.86f, size.height * 0.35f)
-            lineTo(size.width * 0.98f, size.height * 0.15f)
-        }
+        val path =
+            androidx.compose.ui.graphics.Path().apply {
+                moveTo(2f, size.height * 0.75f)
+                lineTo(size.width * 0.16f, size.height * 0.55f)
+                lineTo(size.width * 0.30f, size.height * 0.65f)
+                lineTo(size.width * 0.44f, size.height * 0.35f)
+                lineTo(size.width * 0.58f, size.height * 0.45f)
+                lineTo(size.width * 0.72f, size.height * 0.25f)
+                lineTo(size.width * 0.86f, size.height * 0.35f)
+                lineTo(size.width * 0.98f, size.height * 0.15f)
+            }
         drawPath(
             path = path,
             color = colors.primary,
-            style = androidx.compose.ui.graphics.drawscope.Stroke(
-                width = 1.6.dp.toPx(),
-                cap = androidx.compose.ui.graphics.StrokeCap.Round,
-                join = androidx.compose.ui.graphics.StrokeJoin.Round,
-            ),
+            style =
+                androidx.compose.ui.graphics.drawscope.Stroke(
+                    width = 1.6.dp.toPx(),
+                    cap = androidx.compose.ui.graphics.StrokeCap.Round,
+                    join = androidx.compose.ui.graphics.StrokeJoin.Round,
+                ),
         )
         drawCircle(
             color = colors.primary,
             radius = 3.dp.toPx(),
-            center = androidx.compose.ui.geometry.Offset(size.width * 0.98f, size.height * 0.15f),
+            center =
+                androidx.compose.ui.geometry
+                    .Offset(size.width * 0.98f, size.height * 0.15f),
         )
     }
 }

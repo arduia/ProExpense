@@ -25,11 +25,12 @@ fun DesignSystemGalleryScreen(modifier: Modifier = Modifier) {
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.space18, vertical = dimens.space24),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = dimens.space18, vertical = dimens.space24),
         verticalArrangement = Arrangement.spacedBy(dimens.space24),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
@@ -196,10 +197,11 @@ private fun GalleryStage(
             color = colors.muted,
         )
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colors.surface, ProExpenseTheme.shapes.card)
-                .padding(dimens.space16),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(colors.surface, ProExpenseTheme.shapes.card)
+                    .padding(dimens.space16),
             contentAlignment = Alignment.Center,
         ) {
             content()

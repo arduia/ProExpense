@@ -26,7 +26,10 @@ import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-private data class ThemeOptionUi(val mode: ThemeMode, val label: String)
+private data class ThemeOptionUi(
+    val mode: ThemeMode,
+    val label: String,
+)
 
 @Composable
 fun MoreThemeScreen(
@@ -38,45 +41,49 @@ fun MoreThemeScreen(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val options = listOf(
-        ThemeOptionUi(ThemeMode.LIGHT, stringResource(R.string.theme_light)),
-        ThemeOptionUi(ThemeMode.DARK, stringResource(R.string.theme_dark)),
-        ThemeOptionUi(ThemeMode.SYSTEM, stringResource(R.string.theme_system)),
-    )
+    val options =
+        listOf(
+            ThemeOptionUi(ThemeMode.LIGHT, stringResource(R.string.theme_light)),
+            ThemeOptionUi(ThemeMode.DARK, stringResource(R.string.theme_dark)),
+            ThemeOptionUi(ThemeMode.SYSTEM, stringResource(R.string.theme_system)),
+        )
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space24),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space24),
         ) {
             ProTopBar(title = stringResource(R.string.more_theme_title), onBack = onBack)
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space8),
                 verticalArrangement = Arrangement.spacedBy(dimens.space8),
             ) {
                 options.forEach { option ->
                     val selected = option.mode == selectedMode
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(ProExpenseTheme.shapes.searchField)
-                            .background(if (selected) colors.primarySoft else colors.surface)
-                            .proClickable(
-                                onClick = { onSelect(option.mode) },
-                                shape = ProExpenseTheme.shapes.searchField,
-                            )
-                            .padding(horizontal = dimens.space14, vertical = dimens.space14),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clip(ProExpenseTheme.shapes.searchField)
+                                .background(if (selected) colors.primarySoft else colors.surface)
+                                .proClickable(
+                                    onClick = { onSelect(option.mode) },
+                                    shape = ProExpenseTheme.shapes.searchField,
+                                ).padding(horizontal = dimens.space14, vertical = dimens.space14),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {

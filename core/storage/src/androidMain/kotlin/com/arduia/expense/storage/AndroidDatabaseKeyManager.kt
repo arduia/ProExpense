@@ -19,10 +19,12 @@ import javax.crypto.spec.GCMParameterSpec
  * higher-level crypto helper does not expose (design §5.2). The wrapping key created here has no
  * auth gate — that is the first-launch, no-PIN bootstrap case.
  */
-class AndroidDatabaseKeyManager(context: Context) : DatabaseKeyManager {
-
-    private val prefs = context.applicationContext
-        .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+class AndroidDatabaseKeyManager(
+    context: Context,
+) : DatabaseKeyManager {
+    private val prefs =
+        context.applicationContext
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     override fun getOrCreateDatabaseKey(): ByteArray {
         readWrappedKey()?.let { return it }
@@ -36,18 +38,21 @@ class AndroidDatabaseKeyManager(context: Context) : DatabaseKeyManager {
         val payloadB64 = prefs.getString(PREF_PAYLOAD, null) ?: return null
         val iv = Base64.decode(ivB64, Base64.NO_WRAP)
         val payload = Base64.decode(payloadB64, Base64.NO_WRAP)
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.DECRYPT_MODE, wrappingKey(), GCMParameterSpec(GCM_TAG_BITS, iv))
-        }
+        val cipher =
+            Cipher.getInstance(TRANSFORMATION).apply {
+                init(Cipher.DECRYPT_MODE, wrappingKey(), GCMParameterSpec(GCM_TAG_BITS, iv))
+            }
         return cipher.doFinal(payload)
     }
 
     private fun persistWrappedKey(key: ByteArray) {
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.ENCRYPT_MODE, wrappingKey())
-        }
+        val cipher =
+            Cipher.getInstance(TRANSFORMATION).apply {
+                init(Cipher.ENCRYPT_MODE, wrappingKey())
+            }
         val payload = cipher.doFinal(key)
-        prefs.edit()
+        prefs
+            .edit()
             .putString(PREF_IV, Base64.encodeToString(cipher.iv, Base64.NO_WRAP))
             .putString(PREF_PAYLOAD, Base64.encodeToString(payload, Base64.NO_WRAP))
             .apply()
@@ -59,11 +64,11 @@ class AndroidDatabaseKeyManager(context: Context) : DatabaseKeyManager {
             ?.let { return it.secretKey }
         val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
         generator.init(
-            KeyGenParameterSpec.Builder(
-                WRAP_KEY_ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
-            )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            KeyGenParameterSpec
+                .Builder(
+                    WRAP_KEY_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
+                ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .build(),
         )

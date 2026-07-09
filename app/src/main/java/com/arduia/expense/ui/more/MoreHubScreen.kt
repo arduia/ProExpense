@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -41,18 +40,20 @@ fun MoreHubScreen(
     val typography = ProExpenseTheme.typography
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space14, bottom = dimens.navShellBottomInset),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space14, bottom = dimens.navShellBottomInset),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {

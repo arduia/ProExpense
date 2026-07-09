@@ -1,9 +1,7 @@
 package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -55,9 +53,10 @@ fun ProTopBar(
     val typography = ProExpenseTheme.typography
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = dimens.space8),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = dimens.space8),
         contentAlignment = Alignment.Center,
     ) {
         if (onBack != null) {
@@ -81,9 +80,10 @@ fun ProTopBar(
                     glyph = ProIconGlyph.Back,
                     contentDescription = stringResource(R.string.back),
                     tint = colors.onSurface,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .proIconClickable(onClick = onBack),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterStart)
+                            .proIconClickable(onClick = onBack),
                 )
             }
         }
@@ -98,38 +98,44 @@ fun ProTopBar(
         }
 
         when (action) {
-            ProTopBarAction.More -> ProIcon(
-                glyph = ProIconGlyph.More,
-                contentDescription = stringResource(R.string.more),
-                tint = colors.onSurface,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .proIconClickable(onClick = onAction),
-            )
-            ProTopBarAction.Close -> ProIcon(
-                glyph = ProIconGlyph.Close,
-                contentDescription = stringResource(R.string.close),
-                tint = colors.onSurface,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .proIconClickable(onClick = onAction),
-            )
-            ProTopBarAction.Add -> Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(dimens.touchTargetMin)
-                    .clip(ProExpenseTheme.shapes.tile)
-                    .background(colors.primary)
-                    .proIconClickable(onClick = onAction),
-                contentAlignment = Alignment.Center,
-            ) {
+            ProTopBarAction.More ->
                 ProIcon(
-                    glyph = ProIconGlyph.Plus,
-                    contentDescription = stringResource(R.string.nav_add),
-                    tint = colors.onPrimaryWarm,
-                    size = dimens.iconNav,
+                    glyph = ProIconGlyph.More,
+                    contentDescription = stringResource(R.string.more),
+                    tint = colors.onSurface,
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterEnd)
+                            .proIconClickable(onClick = onAction),
                 )
-            }
+            ProTopBarAction.Close ->
+                ProIcon(
+                    glyph = ProIconGlyph.Close,
+                    contentDescription = stringResource(R.string.close),
+                    tint = colors.onSurface,
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterEnd)
+                            .proIconClickable(onClick = onAction),
+                )
+            ProTopBarAction.Add ->
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterEnd)
+                            .size(dimens.touchTargetMin)
+                            .clip(ProExpenseTheme.shapes.tile)
+                            .background(colors.primary)
+                            .proIconClickable(onClick = onAction),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    ProIcon(
+                        glyph = ProIconGlyph.Plus,
+                        contentDescription = stringResource(R.string.nav_add),
+                        tint = colors.onPrimaryWarm,
+                        size = dimens.iconNav,
+                    )
+                }
             ProTopBarAction.None -> Unit
         }
     }

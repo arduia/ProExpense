@@ -21,23 +21,32 @@ object QuickAccessPrefs {
     fun load(context: Context): List<QuickAccessTileType> {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.getString(KEY_TILE_ORDER, null)?.let { stored ->
-            val tiles = stored.split(ORDER_SEPARATOR).mapNotNull { name ->
-                runCatching { QuickAccessTileType.valueOf(name) }.getOrNull()
-            }.distinct()
+            val tiles =
+                stored
+                    .split(ORDER_SEPARATOR)
+                    .mapNotNull { name ->
+                        runCatching { QuickAccessTileType.valueOf(name) }.getOrNull()
+                    }.distinct()
             return tiles.ifEmpty { defaultVisible }
         }
         // No ordered prefs yet — fall back to the legacy unordered set, sorted into the
         // enum's declared order so migration doesn't produce a random-looking first order.
         val legacy = prefs.getStringSet(KEY_VISIBLE_TILES, null) ?: return defaultVisible
-        val tiles = legacy.mapNotNull { name ->
-            runCatching { QuickAccessTileType.valueOf(name) }.getOrNull()
-        }.toSet()
+        val tiles =
+            legacy
+                .mapNotNull { name ->
+                    runCatching { QuickAccessTileType.valueOf(name) }.getOrNull()
+                }.toSet()
         return QuickAccessTileType.entries.filter { it in tiles }.ifEmpty { defaultVisible }
     }
 
-    fun save(context: Context, visible: List<QuickAccessTileType>) {
+    fun save(
+        context: Context,
+        visible: List<QuickAccessTileType>,
+    ) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit()
+        prefs
+            .edit()
             .putString(KEY_TILE_ORDER, visible.joinToString(ORDER_SEPARATOR) { it.name })
             .remove(KEY_VISIBLE_TILES)
             .apply()

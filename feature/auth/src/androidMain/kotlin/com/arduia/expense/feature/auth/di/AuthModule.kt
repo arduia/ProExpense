@@ -10,13 +10,14 @@ import com.arduia.expense.feature.auth.VerifyRecoveryAnswerUseCase
 import com.arduia.expense.storage.ProExpenseStorage
 import org.koin.dsl.module
 
-val authModule = module {
-    single<PinAuthRepository> {
-        PinAuthRepositoryImpl(appMetaStore = get<ProExpenseStorage>().appMetaStore)
+val authModule =
+    module {
+        single<PinAuthRepository> {
+            PinAuthRepositoryImpl(appMetaStore = get<ProExpenseStorage>().appMetaStore)
+        }
+        factory { SetupPinUseCase(get()) }
+        factory { VerifyPinUseCase(get()) }
+        factory { VerifyRecoveryAnswerUseCase(get()) }
+        factory { ResetPinUseCase(get()) }
+        factory { DisablePinUseCase(get()) }
     }
-    factory { SetupPinUseCase(get()) }
-    factory { VerifyPinUseCase(get()) }
-    factory { VerifyRecoveryAnswerUseCase(get()) }
-    factory { ResetPinUseCase(get()) }
-    factory { DisablePinUseCase(get()) }
-}

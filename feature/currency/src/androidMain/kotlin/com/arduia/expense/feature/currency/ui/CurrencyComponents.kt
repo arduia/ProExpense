@@ -39,21 +39,23 @@ fun CurrencyCard(
     val background = if (selected) colors.primaryTint else colors.surface
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
-            .background(background)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
+                .background(background)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.iconBadge)
-                .clip(CircleShape)
-                .background(if (selected) colors.surface else colors.paperAlt),
+            modifier =
+                Modifier
+                    .size(dimens.iconBadge)
+                    .clip(CircleShape)
+                    .background(if (selected) colors.surface else colors.paperAlt),
             contentAlignment = Alignment.Center,
         ) {
             Text(

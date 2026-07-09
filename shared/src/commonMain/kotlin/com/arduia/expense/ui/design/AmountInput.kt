@@ -9,7 +9,10 @@ object AmountInput {
     private const val MAX_WHOLE_DIGITS = 7
     private const val MAX_FRACTION_DIGITS = 2
 
-    fun applyKey(rawValue: String, key: String): String {
+    fun applyKey(
+        rawValue: String,
+        key: String,
+    ): String {
         if (key == ".") return applyDecimal(rawValue)
         if (key.length != 1 || !key[0].isDigit()) return rawValue
         return applyDigit(rawValue, key[0])
@@ -24,7 +27,12 @@ object AmountInput {
         if (rawValue.isEmpty()) return "0"
         val parts = rawValue.split('.')
         val whole = parts[0].ifEmpty { "0" }
-        val groupedWhole = whole.reversed().chunked(3).joinToString(",").reversed()
+        val groupedWhole =
+            whole
+                .reversed()
+                .chunked(3)
+                .joinToString(",")
+                .reversed()
         return if (parts.size > 1) {
             "$groupedWhole.${parts[1]}"
         } else {
@@ -49,15 +57,20 @@ object AmountInput {
     }
 
     /** Convenience for the common case: [formatMoney] with the currency symbol prefixed. */
-    fun formatMoney(valueInCents: Long, currencySymbol: String): String =
-        currencySymbol + formatMoney(valueInCents)
+    fun formatMoney(
+        valueInCents: Long,
+        currencySymbol: String,
+    ): String = currencySymbol + formatMoney(valueInCents)
 
     /**
      * Like [formatMoney] but tolerates a negative [valueInCents] — the minus sign is placed
      * before the currency symbol ("-$50") instead of requiring the caller to abs() and prepend
      * it manually.
      */
-    fun formatMoneySigned(valueInCents: Long, currencySymbol: String): String {
+    fun formatMoneySigned(
+        valueInCents: Long,
+        currencySymbol: String,
+    ): String {
         val sign = if (valueInCents < 0) "-" else ""
         return sign + formatMoney(if (valueInCents < 0) -valueInCents else valueInCents, currencySymbol)
     }
@@ -74,7 +87,10 @@ object AmountInput {
         return normalize(if (rawValue.isEmpty()) "0." else "$rawValue.")
     }
 
-    private fun applyDigit(rawValue: String, digit: Char): String {
+    private fun applyDigit(
+        rawValue: String,
+        digit: Char,
+    ): String {
         val decimalIndex = rawValue.indexOf('.')
         if (decimalIndex < 0) {
             if (rawValue.length >= MAX_WHOLE_DIGITS) return rawValue

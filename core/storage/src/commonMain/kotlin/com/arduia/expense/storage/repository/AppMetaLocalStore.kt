@@ -30,22 +30,23 @@ data class AppMetaSnapshot(
     val themeMode: String,
 ) {
     companion object {
-        val DEFAULT = AppMetaSnapshot(
-            monthlyBudgetCents = null,
-            homeCurrencyCode = "USD",
-            failedAttemptCount = 0,
-            lockoutUntil = null,
-            securityAnswerHash = null,
-            securityQuestionId = null,
-            biometricEnrolled = false,
-            biometricWrappedKey = null,
-            displayName = "",
-            onboardingCompleted = false,
-            pinHash = null,
-            languageTag = "en",
-            defaultCategoryId = null,
-            themeMode = "dark",
-        )
+        val DEFAULT =
+            AppMetaSnapshot(
+                monthlyBudgetCents = null,
+                homeCurrencyCode = "USD",
+                failedAttemptCount = 0,
+                lockoutUntil = null,
+                securityAnswerHash = null,
+                securityQuestionId = null,
+                biometricEnrolled = false,
+                biometricWrappedKey = null,
+                displayName = "",
+                onboardingCompleted = false,
+                pinHash = null,
+                languageTag = "en",
+                defaultCategoryId = null,
+                themeMode = "dark",
+            )
     }
 }
 
@@ -60,9 +61,10 @@ class AppMetaLocalStore(
 ) : AppMetaStore {
     private val mutex = Mutex()
 
-    override suspend fun read(): AppMetaSnapshot = withContext(dispatcher) {
-        mutex.withLock { currentSnapshot() }
-    }
+    override suspend fun read(): AppMetaSnapshot =
+        withContext(dispatcher) {
+            mutex.withLock { currentSnapshot() }
+        }
 
     /** Atomically read-modify-write the row; returns the persisted snapshot. */
     override suspend fun update(transform: (AppMetaSnapshot) -> AppMetaSnapshot): AppMetaSnapshot =

@@ -1,0 +1,12 @@
+root = true
+
+[*.{kt,kts}]
+# @Composable functions are correctly PascalCase per Jetpack Compose convention — exempt them from
+# ktlint's standard function-naming rule (which otherwise demands lowerCamelCase).
+ktlint_function_naming_ignore_when_annotated_with = Composable
+
+# SQLDelight-generated code under build/generated is not source we own — the ktlint-gradle plugin's
+# own file-discovery excludes (KtlintExtension.filter{}, task.exclude()) don't reach the per-KMP-
+# source-set task instances that pick these files up, so disable ktlint at the engine level instead.
+[**/generated/**]
+ktlint = disabled

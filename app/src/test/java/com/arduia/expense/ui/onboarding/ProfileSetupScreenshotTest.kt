@@ -29,7 +29,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class ProfileSetupScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -68,10 +67,11 @@ class ProfileSetupScreenshotTest {
     fun profile_currency_sheet() {
         capture {
             ProfileSetupScreenContent(
-                state = ProfileSetupState(
-                    name = "Maya",
-                    showCurrencySheet = true,
-                ),
+                state =
+                    ProfileSetupState(
+                        name = "Maya",
+                        showCurrencySheet = true,
+                    ),
                 onNameChange = {},
                 onStartTracking = {},
                 onSkip = {},

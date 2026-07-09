@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.shared.R
@@ -48,52 +47,57 @@ fun ProBottomSheet(
     val sheetElevation = ProExpenseTheme.elevation.sheet.firstOrNull()
 
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (sheetElevation != null) {
-                    Modifier.shadow(
-                        elevation = sheetElevation.blur,
-                        shape = ProExpenseTheme.shapes.sheet,
-                        spotColor = sheetElevation.color,
-                        ambientColor = sheetElevation.color,
-                    )
-                } else {
-                    Modifier
-                },
-            )
-            // Sheet is bottom-aligned with no IME handling by default — without this, the
-            // keyboard simply overlaps whatever input sits near the bottom of the sheet (e.g.
-            // New Event's amount field) instead of the sheet shifting up above it.
-            .imePadding(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (sheetElevation != null) {
+                        Modifier.shadow(
+                            elevation = sheetElevation.blur,
+                            shape = ProExpenseTheme.shapes.sheet,
+                            spotColor = sheetElevation.color,
+                            ambientColor = sheetElevation.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                )
+                // Sheet is bottom-aligned with no IME handling by default — without this, the
+                // keyboard simply overlaps whatever input sits near the bottom of the sheet (e.g.
+                // New Event's amount field) instead of the sheet shifting up above it.
+                .imePadding(),
         shape = ProExpenseTheme.shapes.sheet,
         color = colors.surface,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = dimens.artboardHeight * dimens.sheetMaxHeightFraction)
-                .padding(bottom = dimens.space24),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = dimens.artboardHeight * dimens.sheetMaxHeightFraction)
+                    .padding(bottom = dimens.space24),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space10, bottom = dimens.space14),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimens.space10, bottom = dimens.space14),
                 contentAlignment = Alignment.Center,
             ) {
                 Box(
-                    modifier = Modifier
-                        .width(dimens.sheetHandleWidth)
-                        .height(dimens.sheetHandleHeight)
-                        .clip(RoundedCornerShape(999.dp))
-                        .background(colors.onSurface.copy(alpha = 0.18f)),
+                    modifier =
+                        Modifier
+                            .width(dimens.sheetHandleWidth)
+                            .height(dimens.sheetHandleHeight)
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(colors.onSurface.copy(alpha = 0.18f)),
                 )
             }
             if (title != null) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimens.space20, vertical = dimens.space8),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.space20, vertical = dimens.space8),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -111,9 +115,10 @@ fun ProBottomSheet(
                 }
             }
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimens.space18, vertical = dimens.space8),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimens.space18, vertical = dimens.space8),
             ) {
                 content()
             }
@@ -137,35 +142,41 @@ fun ProBottomSheetHost(
         AnimatedVisibility(
             visible = visible,
             modifier = Modifier.fillMaxSize(),
-            enter = fadeIn(
-                animationSpec = tween(
-                    durationMillis = motion.fadeDurationMillis,
-                    easing = motion.standardEasing,
+            enter =
+                fadeIn(
+                    animationSpec =
+                        tween(
+                            durationMillis = motion.fadeDurationMillis,
+                            easing = motion.standardEasing,
+                        ),
                 ),
-            ),
-            exit = fadeOut(
-                animationSpec = tween(
-                    durationMillis = motion.fadeDurationMillis,
-                    easing = motion.standardEasing,
+            exit =
+                fadeOut(
+                    animationSpec =
+                        tween(
+                            durationMillis = motion.fadeDurationMillis,
+                            easing = motion.standardEasing,
+                        ),
                 ),
-            ),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(colors.scrim)
-                    .clickable(
-                        interactionSource = MutableInteractionSource(),
-                        indication = null,
-                        onClick = onClose,
-                    ),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(colors.scrim)
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null,
+                            onClick = onClose,
+                        ),
             )
         }
         AnimatedVisibility(
             visible = visible,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth(),
             enter = motion.sheetEnter(reduceMotion),
             exit = motion.sheetExit(reduceMotion),
         ) {

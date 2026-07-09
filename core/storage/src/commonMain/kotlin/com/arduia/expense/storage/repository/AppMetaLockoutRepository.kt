@@ -6,7 +6,6 @@ import com.arduia.expense.data.LockoutState
 class AppMetaLockoutRepository(
     private val store: AppMetaLocalStore,
 ) : LockoutRepository {
-
     override suspend fun getFailedAttemptCount(): Int = store.read().failedAttemptCount.toInt()
 
     override suspend fun getLockoutUntilEpochMillis(): Long? = store.read().lockoutUntil
@@ -16,14 +15,15 @@ class AppMetaLockoutRepository(
         maxAttempts: Int,
         lockoutDurationMs: Long,
     ): LockoutState {
-        val updated = store.update { snapshot ->
-            val newCount = snapshot.failedAttemptCount + 1
-            val lockedOut = newCount >= maxAttempts
-            snapshot.copy(
-                failedAttemptCount = newCount,
-                lockoutUntil = if (lockedOut) nowEpochMillis + lockoutDurationMs else snapshot.lockoutUntil,
-            )
-        }
+        val updated =
+            store.update { snapshot ->
+                val newCount = snapshot.failedAttemptCount + 1
+                val lockedOut = newCount >= maxAttempts
+                snapshot.copy(
+                    failedAttemptCount = newCount,
+                    lockoutUntil = if (lockedOut) nowEpochMillis + lockoutDurationMs else snapshot.lockoutUntil,
+                )
+            }
         return lockoutStateAt(updated.failedAttemptCount, updated.lockoutUntil, nowEpochMillis)
     }
 
@@ -36,7 +36,11 @@ class AppMetaLockoutRepository(
         return until > nowEpochMillis
     }
 
-    private fun lockoutStateAt(failedAttempts: Long, lockoutUntil: Long?, now: Long): LockoutState {
+    private fun lockoutStateAt(
+        failedAttempts: Long,
+        lockoutUntil: Long?,
+        now: Long,
+    ): LockoutState {
         val remainingMs = if (lockoutUntil != null && lockoutUntil > now) lockoutUntil - now else 0L
         val secondsRemaining = ((remainingMs + MILLIS_PER_SECOND - 1) / MILLIS_PER_SECOND).toInt()
         return LockoutState(

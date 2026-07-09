@@ -28,12 +28,13 @@ fun FirstLaunchFlow(
 
     val step = FirstLaunchStep.valueOf(stepName)
 
-    val profileState = ProfileSetupState(
-        name = name,
-        selectedCurrencyCode = selectedCurrencyCode,
-        showCurrencySheet = showCurrencySheet,
-        currencySearchQuery = currencySearchQuery,
-    )
+    val profileState =
+        ProfileSetupState(
+            name = name,
+            selectedCurrencyCode = selectedCurrencyCode,
+            showCurrencySheet = showCurrencySheet,
+            currencySearchQuery = currencySearchQuery,
+        )
 
     when (step) {
         FirstLaunchStep.Onboarding -> {

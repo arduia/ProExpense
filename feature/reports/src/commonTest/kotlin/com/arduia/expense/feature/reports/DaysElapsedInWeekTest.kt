@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DaysElapsedInWeekTest {
-
     @Test
     fun invoke_returnsElapsedDaysForCurrentWeek() {
         val days = daysElapsedInWeek(isCurrentWeek = true, daysSinceWeekStart = 2)

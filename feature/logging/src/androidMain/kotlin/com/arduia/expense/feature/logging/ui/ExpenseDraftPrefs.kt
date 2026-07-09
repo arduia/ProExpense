@@ -19,12 +19,17 @@ object ExpenseDraftPrefs {
     private const val KEY_EXCHANGE_RATE_RAW = "exchange_rate_raw"
     private const val KEY_RECORDED_AT = "recorded_at"
 
-    fun save(context: Context, state: ExpenseEntryState) {
+    fun save(
+        context: Context,
+        state: ExpenseEntryState,
+    ) {
         if (state.rawAmount.isBlank()) {
             clear(context)
             return
         }
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+        context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
             .putString(KEY_RAW_AMOUNT, state.rawAmount)
             .putString(KEY_CATEGORY_ID, state.selectedCategoryId)
             .putString(KEY_NOTE, state.note)
@@ -55,6 +60,10 @@ object ExpenseDraftPrefs {
     }
 
     fun clear(context: Context) {
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().clear().apply()
+        context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .clear()
+            .apply()
     }
 }

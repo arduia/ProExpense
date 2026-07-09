@@ -7,13 +7,14 @@ import com.arduia.expense.storage.catchingResult
 class AppMetaDefaultCategoryRepository(
     private val store: AppMetaLocalStore,
 ) : DefaultCategoryRepository {
+    override suspend fun getDefaultCategoryId(): Result<String?> =
+        catchingResult {
+            store.read().defaultCategoryId
+        }
 
-    override suspend fun getDefaultCategoryId(): Result<String?> = catchingResult {
-        store.read().defaultCategoryId
-    }
-
-    override suspend fun setDefaultCategoryId(categoryId: String?): Result<Unit> = catchingResult {
-        store.update { it.copy(defaultCategoryId = categoryId) }
-        Unit
-    }
+    override suspend fun setDefaultCategoryId(categoryId: String?): Result<Unit> =
+        catchingResult {
+            store.update { it.copy(defaultCategoryId = categoryId) }
+            Unit
+        }
 }

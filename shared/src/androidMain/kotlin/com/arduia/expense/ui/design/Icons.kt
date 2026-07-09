@@ -11,7 +11,9 @@ import androidx.compose.ui.unit.Dp
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
-enum class ProIconGlyph(@DrawableRes val resId: Int) {
+enum class ProIconGlyph(
+    @DrawableRes val resId: Int,
+) {
     Home(R.drawable.ic_home),
     Budget(R.drawable.ic_budget),
     Journal(R.drawable.ic_journal),
@@ -50,17 +52,18 @@ enum class ProIconGlyph(@DrawableRes val resId: Int) {
     CatDefault(R.drawable.ic_cat_default),
 }
 
-fun categoryIcon(categoryId: String): ProIconGlyph = when (categoryId) {
-    "food" -> ProIconGlyph.CatFood
-    "transport" -> ProIconGlyph.CatTransport
-    "shopping" -> ProIconGlyph.CatShopping
-    "bills" -> ProIconGlyph.CatBills
-    "health" -> ProIconGlyph.CatHealth
-    "entertainment" -> ProIconGlyph.CatEntertainment
-    "coffee" -> ProIconGlyph.CatCoffee
-    "pet" -> ProIconGlyph.CatPet
-    else -> ProIconGlyph.CatDefault
-}
+fun categoryIcon(categoryId: String): ProIconGlyph =
+    when (categoryId) {
+        "food" -> ProIconGlyph.CatFood
+        "transport" -> ProIconGlyph.CatTransport
+        "shopping" -> ProIconGlyph.CatShopping
+        "bills" -> ProIconGlyph.CatBills
+        "health" -> ProIconGlyph.CatHealth
+        "entertainment" -> ProIconGlyph.CatEntertainment
+        "coffee" -> ProIconGlyph.CatCoffee
+        "pet" -> ProIconGlyph.CatPet
+        else -> ProIconGlyph.CatDefault
+    }
 
 @Composable
 fun ProIcon(

@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
-import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 enum class OnboardingIllustration {
@@ -42,23 +41,28 @@ private fun WelcomeIllustration(modifier: Modifier = Modifier) {
     val colors = ProExpenseTheme.colors
     Canvas(modifier = modifier) {
         val s = size.minDimension / 280f
-        fun pt(x: Float, y: Float) = Offset(x * s, y * s)
+
+        fun pt(
+            x: Float,
+            y: Float,
+        ) = Offset(x * s, y * s)
 
         drawCircle(color = colors.primaryTint.copy(alpha = 0.55f), radius = 118f * s, center = pt(140f, 118f))
         drawCircle(color = colors.primaryTint.copy(alpha = 0.35f), radius = 10f * s, center = pt(196f, 72f))
 
-        val book = Path().apply {
-            moveTo(82f * s, 58f * s)
-            lineTo(198f * s, 58f * s)
-            quadraticTo(208f * s, 58f * s, 208f * s, 68f * s)
-            lineTo(208f * s, 178f * s)
-            quadraticTo(208f * s, 188f * s, 198f * s, 188f * s)
-            lineTo(82f * s, 188f * s)
-            quadraticTo(72f * s, 188f * s, 72f * s, 178f * s)
-            lineTo(72f * s, 68f * s)
-            quadraticTo(72f * s, 58f * s, 82f * s, 58f * s)
-            close()
-        }
+        val book =
+            Path().apply {
+                moveTo(82f * s, 58f * s)
+                lineTo(198f * s, 58f * s)
+                quadraticTo(208f * s, 58f * s, 208f * s, 68f * s)
+                lineTo(208f * s, 178f * s)
+                quadraticTo(208f * s, 188f * s, 198f * s, 188f * s)
+                lineTo(82f * s, 188f * s)
+                quadraticTo(72f * s, 188f * s, 72f * s, 178f * s)
+                lineTo(72f * s, 68f * s)
+                quadraticTo(72f * s, 58f * s, 82f * s, 58f * s)
+                close()
+            }
         drawPath(book, color = colors.surface)
         drawPath(book, color = colors.onSurface, style = Stroke(width = 2.2f * s, cap = StrokeCap.Round))
         drawLine(colors.lineStrong, pt(140f, 68f), pt(140f, 178f), strokeWidth = 1.6f * s)
@@ -97,7 +101,11 @@ private fun QuickLogIllustration(modifier: Modifier = Modifier) {
     val colors = ProExpenseTheme.colors
     Canvas(modifier = modifier) {
         val s = size.minDimension / 280f
-        fun pt(x: Float, y: Float) = Offset(x * s, y * s)
+
+        fun pt(
+            x: Float,
+            y: Float,
+        ) = Offset(x * s, y * s)
 
         drawCircle(color = colors.primaryTint.copy(alpha = 0.55f), radius = 118f * s, center = pt(140f, 118f))
         repeat(3) { i ->
@@ -109,18 +117,19 @@ private fun QuickLogIllustration(modifier: Modifier = Modifier) {
             )
         }
 
-        val phone = Path().apply {
-            moveTo(104f * s, 52f * s)
-            lineTo(176f * s, 52f * s)
-            quadraticTo(186f * s, 52f * s, 186f * s, 62f * s)
-            lineTo(186f * s, 196f * s)
-            quadraticTo(186f * s, 206f * s, 176f * s, 206f * s)
-            lineTo(104f * s, 206f * s)
-            quadraticTo(94f * s, 206f * s, 94f * s, 196f * s)
-            lineTo(94f * s, 62f * s)
-            quadraticTo(94f * s, 52f * s, 104f * s, 52f * s)
-            close()
-        }
+        val phone =
+            Path().apply {
+                moveTo(104f * s, 52f * s)
+                lineTo(176f * s, 52f * s)
+                quadraticTo(186f * s, 52f * s, 186f * s, 62f * s)
+                lineTo(186f * s, 196f * s)
+                quadraticTo(186f * s, 206f * s, 176f * s, 206f * s)
+                lineTo(104f * s, 206f * s)
+                quadraticTo(94f * s, 206f * s, 94f * s, 196f * s)
+                lineTo(94f * s, 62f * s)
+                quadraticTo(94f * s, 52f * s, 104f * s, 52f * s)
+                close()
+            }
         drawPath(phone, color = colors.surface)
         drawPath(phone, color = colors.onSurface, style = Stroke(width = 2.2f * s, cap = StrokeCap.Round))
         drawRoundRect(
@@ -152,24 +161,29 @@ private fun SharedCostsIllustration(modifier: Modifier = Modifier) {
     val colors = ProExpenseTheme.colors
     Canvas(modifier = modifier) {
         val s = size.minDimension / 280f
-        fun pt(x: Float, y: Float) = Offset(x * s, y * s)
+
+        fun pt(
+            x: Float,
+            y: Float,
+        ) = Offset(x * s, y * s)
 
         drawCircle(color = colors.primaryTint.copy(alpha = 0.55f), radius = 118f * s, center = pt(140f, 118f))
 
-        val receipt = Path().apply {
-            moveTo(108f * s, 62f * s)
-            lineTo(172f * s, 62f * s)
-            lineTo(172f * s, 132f * s)
-            lineTo(164f * s, 126f * s)
-            lineTo(156f * s, 132f * s)
-            lineTo(148f * s, 126f * s)
-            lineTo(140f * s, 132f * s)
-            lineTo(132f * s, 126f * s)
-            lineTo(124f * s, 132f * s)
-            lineTo(116f * s, 126f * s)
-            lineTo(108f * s, 132f * s)
-            close()
-        }
+        val receipt =
+            Path().apply {
+                moveTo(108f * s, 62f * s)
+                lineTo(172f * s, 62f * s)
+                lineTo(172f * s, 132f * s)
+                lineTo(164f * s, 126f * s)
+                lineTo(156f * s, 132f * s)
+                lineTo(148f * s, 126f * s)
+                lineTo(140f * s, 132f * s)
+                lineTo(132f * s, 126f * s)
+                lineTo(124f * s, 132f * s)
+                lineTo(116f * s, 126f * s)
+                lineTo(108f * s, 132f * s)
+                close()
+            }
         drawPath(receipt, color = colors.surface)
         drawPath(receipt, color = colors.onSurface, style = Stroke(width = 2f * s, cap = StrokeCap.Round))
 
@@ -205,16 +219,21 @@ private fun EventBudgetIllustration(modifier: Modifier = Modifier) {
     val colors = ProExpenseTheme.colors
     Canvas(modifier = modifier) {
         val s = size.minDimension / 280f
-        fun pt(x: Float, y: Float) = Offset(x * s, y * s)
+
+        fun pt(
+            x: Float,
+            y: Float,
+        ) = Offset(x * s, y * s)
 
         drawCircle(color = colors.primaryTint.copy(alpha = 0.55f), radius = 118f * s, center = pt(140f, 118f))
         drawLine(colors.onSurface, pt(118f, 188f), pt(118f, 84f), strokeWidth = 2.2f * s, cap = StrokeCap.Round)
-        val flag = Path().apply {
-            moveTo(118f * s, 84f * s)
-            lineTo(154f * s, 98f * s)
-            lineTo(118f * s, 112f * s)
-            close()
-        }
+        val flag =
+            Path().apply {
+                moveTo(118f * s, 84f * s)
+                lineTo(154f * s, 98f * s)
+                lineTo(118f * s, 112f * s)
+                close()
+            }
         drawPath(flag, color = colors.primary)
         drawRoundRect(
             color = colors.surface,
@@ -257,7 +276,11 @@ private fun JournalIllustration(modifier: Modifier = Modifier) {
     val colors = ProExpenseTheme.colors
     Canvas(modifier = modifier) {
         val s = size.minDimension / 280f
-        fun pt(x: Float, y: Float) = Offset(x * s, y * s)
+
+        fun pt(
+            x: Float,
+            y: Float,
+        ) = Offset(x * s, y * s)
 
         drawCircle(color = colors.primaryTint.copy(alpha = 0.55f), radius = 118f * s, center = pt(140f, 118f))
 

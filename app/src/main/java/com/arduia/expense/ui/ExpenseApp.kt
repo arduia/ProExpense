@@ -43,15 +43,14 @@ import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
 import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProToastHost
-import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
 import com.arduia.expense.ui.home.QuickAccessPrefs
-import com.arduia.expense.ui.home.QuickAccessTileType
 import com.arduia.expense.ui.more.MoreFlow
 import com.arduia.expense.ui.preview.HomeActiveEventState
 import com.arduia.expense.ui.preview.HomeBudgetSummaryState
@@ -60,14 +59,14 @@ import com.arduia.expense.ui.preview.HomeTransactionItem
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.splash.SplashScreen
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 private const val SPLASH_DURATION_MILLIS = 1800L
 private const val RECENT_HOME_LIMIT = 8
@@ -134,12 +133,14 @@ fun ExpenseApp(
     // in the logging flow itself re-queried on every visit and flashed empty chips each time.
     val categoriesOrNull by categoryRepository.observeAll().collectAsState(initial = null)
     val categories = categoriesOrNull.orEmpty()
-    val defaultCategoryChips = remember(categories) {
-        categories.filter { !it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
-    }
-    val customCategoryChips = remember(categories) {
-        categories.filter { it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
-    }
+    val defaultCategoryChips =
+        remember(categories) {
+            categories.filter { !it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
+        }
+    val customCategoryChips =
+        remember(categories) {
+            categories.filter { it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
+        }
     val eventsOrNull by eventRepository.observeAll().collectAsState(initial = null)
     val eventsLoading = eventsOrNull == null
     val events = eventsOrNull.orEmpty()
@@ -155,40 +156,46 @@ fun ExpenseApp(
     // Summed from the already-observed records Flow (not a one-shot EventRepository.getSpent
     // call) so the Budget tab and Event Detail summary react immediately to any add/edit/delete
     // of a linked expense, not just to the event itself changing.
-    val spentByEvent = remember(events, records) {
-        events.associate { event ->
-            val spentCents = records
-                .filter { (it.link as? RecordLink.ToEvent)?.eventId == event.id }
-                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
-            event.id.value to Money(Amount(spentCents), event.budget.currency)
+    val spentByEvent =
+        remember(events, records) {
+            events.associate { event ->
+                val spentCents =
+                    records
+                        .filter { (it.link as? RecordLink.ToEvent)?.eventId == event.id }
+                        .sumOf { it.homeCurrencyMoney.amount.valueInCents }
+                event.id.value to Money(Amount(spentCents), event.budget.currency)
+            }
         }
-    }
 
     val homeSymbol = currencySymbol(homeCurrencyCode)
 
-    val activeEvent = remember(events) {
-        events.filter { it.status == EventStatus.ACTIVE }.maxByOrNull { it.startEpochMillis }
-    }
-    val activeEventSpent = remember(activeEvent, spentByEvent) {
-        activeEvent?.let { spentByEvent[it.id.value] }
-    }
-    val activeEventState = activeEvent?.let { event ->
-        val progress = computeEventProgress(event, activeEventSpent)
-        HomeActiveEventState(
-            eventId = event.id.value,
-            title = event.name,
-            dateRange = if (event.startEpochMillis == event.endEpochMillis) {
-                PlatformDateFormatter.shortDateLabel(event.startEpochMillis)
-            } else {
-                "${PlatformDateFormatter.shortDateLabel(event.startEpochMillis)} — " +
-                    PlatformDateFormatter.shortDateLabel(event.endEpochMillis)
-            },
-            spentLabel = AmountInput.formatMoney(progress.spentCents, homeSymbol),
-            budgetLabel = "of " + AmountInput.formatMoney(progress.budgetCents, homeSymbol),
-            progress = progress.progress,
-            isOverBudget = progress.isOverBudget,
-        )
-    }
+    val activeEvent =
+        remember(events) {
+            events.filter { it.status == EventStatus.ACTIVE }.maxByOrNull { it.startEpochMillis }
+        }
+    val activeEventSpent =
+        remember(activeEvent, spentByEvent) {
+            activeEvent?.let { spentByEvent[it.id.value] }
+        }
+    val activeEventState =
+        activeEvent?.let { event ->
+            val progress = computeEventProgress(event, activeEventSpent)
+            HomeActiveEventState(
+                eventId = event.id.value,
+                title = event.name,
+                dateRange =
+                    if (event.startEpochMillis == event.endEpochMillis) {
+                        PlatformDateFormatter.shortDateLabel(event.startEpochMillis)
+                    } else {
+                        "${PlatformDateFormatter.shortDateLabel(event.startEpochMillis)} — " +
+                            PlatformDateFormatter.shortDateLabel(event.endEpochMillis)
+                    },
+                spentLabel = AmountInput.formatMoney(progress.spentCents, homeSymbol),
+                budgetLabel = "of " + AmountInput.formatMoney(progress.budgetCents, homeSymbol),
+                progress = progress.progress,
+                isOverBudget = progress.isOverBudget,
+            )
+        }
 
     val todaySection = stringResource(R.string.home_today_section)
 
@@ -228,79 +235,89 @@ fun ExpenseApp(
         }
     }
 
-    val homeState = if (records.isEmpty()) {
-        previewHomeEmpty.copy(
-            greetingName = userName,
-            dateLabel = dateLabel,
-            monthLabel = monthLabel,
-            activeEvent = activeEventState,
-            isLoading = recordsLoading,
-        )
-    } else {
-        val monthStart = (Calendar.getInstance() as Calendar).apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
-        val recordsThisMonth = records.filter {
-            it.recordedAtEpochMillis >= monthStart.timeInMillis && it.recordedAtEpochMillis < monthEnd.timeInMillis
-        }
-        // "Spend this month" (US-HOME-1), not all-time — the header label promises a monthly figure.
-        val totalCents = recordsThisMonth.sumOf { it.homeCurrencyMoney.amount.valueInCents }
-        val totalLabel = AmountInput.formatMoney(totalCents, homeSymbol)
-        val budgetSummary = monthlyBudget?.let { budget ->
-            val budgetCents = budget.amount.valueInCents
-            HomeBudgetSummaryState(
-                spentLabel = AmountInput.formatMoney(totalCents, homeSymbol),
-                budgetLabel = "of " + AmountInput.formatMoney(budgetCents, homeSymbol),
-                progress = if (budgetCents > 0) totalCents.toFloat() / budgetCents else 0f,
-                statusLabel = if (totalCents > budgetCents) "Over budget" else "On track",
-                isOverBudget = totalCents > budgetCents,
+    val homeState =
+        if (records.isEmpty()) {
+            previewHomeEmpty.copy(
+                greetingName = userName,
+                dateLabel = dateLabel,
+                monthLabel = monthLabel,
+                activeEvent = activeEventState,
+                isLoading = recordsLoading,
+            )
+        } else {
+            val monthStart =
+                (Calendar.getInstance() as Calendar).apply {
+                    set(Calendar.DAY_OF_MONTH, 1)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+            val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
+            val recordsThisMonth =
+                records.filter {
+                    it.recordedAtEpochMillis >= monthStart.timeInMillis && it.recordedAtEpochMillis < monthEnd.timeInMillis
+                }
+            // "Spend this month" (US-HOME-1), not all-time — the header label promises a monthly figure.
+            val totalCents = recordsThisMonth.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+            val totalLabel = AmountInput.formatMoney(totalCents, homeSymbol)
+            val budgetSummary =
+                monthlyBudget?.let { budget ->
+                    val budgetCents = budget.amount.valueInCents
+                    HomeBudgetSummaryState(
+                        spentLabel = AmountInput.formatMoney(totalCents, homeSymbol),
+                        budgetLabel = "of " + AmountInput.formatMoney(budgetCents, homeSymbol),
+                        progress = if (budgetCents > 0) totalCents.toFloat() / budgetCents else 0f,
+                        statusLabel = if (totalCents > budgetCents) "Over budget" else "On track",
+                        isOverBudget = totalCents > budgetCents,
+                    )
+                }
+            val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
+            // Recent shows the last 5-10 entries (US-HOME-2), not the entire history.
+            val dayGroups =
+                sorted
+                    .take(RECENT_HOME_LIMIT)
+                    .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
+                    .toSortedMap(compareByDescending { it })
+                    .map { (_, dayRecords) ->
+                        val dayTotalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+                        val dayTotalLabel = AmountInput.formatMoney(dayTotalCents, homeSymbol)
+                        HomeDayGroup(
+                            dayTitle = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
+                            dayTotal = dayTotalLabel,
+                            transactions =
+                                dayRecords.map { record ->
+                                    HomeTransactionItem(
+                                        id = record.id.value,
+                                        categoryId = record.categoryId.value,
+                                        note =
+                                            record.note
+                                                ?.trim()
+                                                .orEmpty()
+                                                .ifEmpty { expenseCategoryLabel(record.categoryId.value) },
+                                        meta = PlatformDateFormatter.timeLabel(record.recordedAtEpochMillis),
+                                        amount =
+                                            AmountInput.formatMoney(
+                                                record.money.amount.valueInCents,
+                                                currencySymbol(record.money.currency.code),
+                                            ),
+                                        tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
+                                    )
+                                },
+                        )
+                    }
+            previewHomeEmpty.copy(
+                greetingName = userName,
+                dateLabel = dateLabel,
+                monthLabel = monthLabel,
+                monthSpend = totalLabel,
+                showEmptyHint = false,
+                dayGroups = dayGroups,
+                sparklinePoints = buildSparklinePoints(records),
+                budgetSummary = budgetSummary,
+                activeEvent = activeEventState,
             )
         }
-        val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
-        // Recent shows the last 5-10 entries (US-HOME-2), not the entire history.
-        val dayGroups = sorted
-            .take(RECENT_HOME_LIMIT)
-            .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
-            .toSortedMap(compareByDescending { it })
-            .map { (_, dayRecords) ->
-                val dayTotalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
-                val dayTotalLabel = AmountInput.formatMoney(dayTotalCents, homeSymbol)
-                HomeDayGroup(
-                    dayTitle = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
-                    dayTotal = dayTotalLabel,
-                    transactions = dayRecords.map { record ->
-                        HomeTransactionItem(
-                            id = record.id.value,
-                            categoryId = record.categoryId.value,
-                            note = record.note?.trim().orEmpty()
-                                .ifEmpty { expenseCategoryLabel(record.categoryId.value) },
-                            meta = PlatformDateFormatter.timeLabel(record.recordedAtEpochMillis),
-                            amount = AmountInput.formatMoney(
-                                record.money.amount.valueInCents,
-                                currencySymbol(record.money.currency.code),
-                            ),
-                            tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
-                        )
-                    },
-                )
-            }
-        previewHomeEmpty.copy(
-            greetingName = userName,
-            dateLabel = dateLabel,
-            monthLabel = monthLabel,
-            monthSpend = totalLabel,
-            showEmptyHint = false,
-            dayGroups = dayGroups,
-            sparklinePoints = buildSparklinePoints(records),
-            budgetSummary = budgetSummary,
-            activeEvent = activeEventState,
-        )
-    }
 
     val expenseSavedMessage = stringResource(R.string.toast_expense_saved_home)
     val pinSetupSuccessMessage = stringResource(com.arduia.expense.feature.auth.R.string.pin_setup_success)
@@ -316,8 +333,10 @@ fun ExpenseApp(
     }
 
     val onTabSelected: (HomeNavTab) -> Unit = { tab ->
-        if (tab == HomeNavTab.Home || tab == HomeNavTab.Budget ||
-            tab == HomeNavTab.Journal || tab == HomeNavTab.More
+        if (tab == HomeNavTab.Home ||
+            tab == HomeNavTab.Budget ||
+            tab == HomeNavTab.Journal ||
+            tab == HomeNavTab.More
         ) {
             // When the user manually navigates to Journal, clear the home-originated row
             // selection so the journal doesn't pre-jump to a record from a previous session.
@@ -351,11 +370,12 @@ fun ExpenseApp(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) {
-                unlocked = false
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_STOP) {
+                    unlocked = false
+                }
             }
-        }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
@@ -388,79 +408,83 @@ fun ExpenseApp(
                     )
                 } else if (pinConfigured != null) {
                     when (selectedTab) {
-                        HomeNavTab.Budget -> features.eventBudget.EventsTab(
-                            events = events,
-                            onTabSelected = onTabSelected,
-                            onAddClick = { showQuickLog = true },
-                            records = records,
-                            spentByEvent = spentByEvent,
-                            categoryNames = categoryNames,
-                            initialSelectedEventId = homeSelectedEventId,
-                            onAddTaggedExpense = { eventId ->
-                                quickLogLinkedEventId = eventId
-                                showQuickLog = true
-                            },
-                            onExpenseClick = { recordId ->
-                                homeSelectedRecordId = recordId
-                                selectedTab = HomeNavTab.Journal
-                            },
-                            homeCurrencySymbol = homeSymbol,
-                            isLoading = eventsLoading,
-                        )
-                        HomeNavTab.Journal -> features.history.JournalTab(
-                            state = journalTabState,
-                            selectedTab = selectedTab,
-                            onTabSelected = onTabSelected,
-                            onAddClick = { showQuickLog = true },
-                            initialSelectedRowId = homeSelectedRecordId,
-                            onEditRecord = { editRecordId = it },
-                            categories = categories,
-                            events = events,
-                            debts = debts,
-                            sharedCosts = sharedCosts,
-                            homeCurrencySymbol = homeSymbol,
-                            onOpenLinkedEvent = { eventId ->
-                                homeSelectedEventId = eventId
-                                selectedTab = HomeNavTab.Budget
-                            },
-                        )
-                        HomeNavTab.More -> MoreFlow(
-                            features = features,
-                            selectedTab = selectedTab,
-                            onTabSelected = onTabSelected,
-                            onAddClick = { showQuickLog = true },
-                            onDebtClick = { showDebt = true },
-                            onSharedClick = { showSharedCosts = true },
-                            onPinClick = { showPinSetup = true },
-                            pinConfigured = pinConfigured,
-                            onCurrencyChanged = { homeCurrencyCode = it.code },
-                            onBudgetChanged = { monthlyBudget = it },
-                            onDefaultCategoryChanged = { defaultCategoryId = it },
-                            onThemeModeChanged = onThemeModeChanged,
-                            onLanguageChanged = onLanguageChanged,
-                        )
-                        else -> HomeShell(
-                            state = homeState,
-                            selectedTab = selectedTab,
-                            onTabSelected = onTabSelected,
-                            onAddClick = { showQuickLog = true },
-                            onReportsClick = { showReports = true },
-                            onDebtClick = { showDebt = true },
-                            onSplitClick = { showSharedCosts = true },
-                            onEventsClick = { selectedTab = HomeNavTab.Budget },
-                            onLogFirstExpense = { showQuickLog = true },
-                            onSeeAll = { selectedTab = HomeNavTab.Journal },
-                            onCustomizeQuickAccess = { showQuickAccessPicker = true },
-                            visibleTiles = quickAccessVisible,
-                            onRowClick = { row ->
-                                homeSelectedRecordId = row.id
-                                selectedTab = HomeNavTab.Journal
-                            },
-                            onActiveEventClick = { eventId ->
-                                homeSelectedEventId = eventId
-                                selectedTab = HomeNavTab.Budget
-                            },
-                        )
+                        HomeNavTab.Budget ->
+                            features.eventBudget.EventsTab(
+                                events = events,
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                                records = records,
+                                spentByEvent = spentByEvent,
+                                categoryNames = categoryNames,
+                                initialSelectedEventId = homeSelectedEventId,
+                                onAddTaggedExpense = { eventId ->
+                                    quickLogLinkedEventId = eventId
+                                    showQuickLog = true
+                                },
+                                onExpenseClick = { recordId ->
+                                    homeSelectedRecordId = recordId
+                                    selectedTab = HomeNavTab.Journal
+                                },
+                                homeCurrencySymbol = homeSymbol,
+                                isLoading = eventsLoading,
+                            )
+                        HomeNavTab.Journal ->
+                            features.history.JournalTab(
+                                state = journalTabState,
+                                selectedTab = selectedTab,
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                                initialSelectedRowId = homeSelectedRecordId,
+                                onEditRecord = { editRecordId = it },
+                                categories = categories,
+                                events = events,
+                                debts = debts,
+                                sharedCosts = sharedCosts,
+                                homeCurrencySymbol = homeSymbol,
+                                onOpenLinkedEvent = { eventId ->
+                                    homeSelectedEventId = eventId
+                                    selectedTab = HomeNavTab.Budget
+                                },
+                            )
+                        HomeNavTab.More ->
+                            MoreFlow(
+                                features = features,
+                                selectedTab = selectedTab,
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                                onDebtClick = { showDebt = true },
+                                onSharedClick = { showSharedCosts = true },
+                                onPinClick = { showPinSetup = true },
+                                pinConfigured = pinConfigured,
+                                onCurrencyChanged = { homeCurrencyCode = it.code },
+                                onBudgetChanged = { monthlyBudget = it },
+                                onDefaultCategoryChanged = { defaultCategoryId = it },
+                                onThemeModeChanged = onThemeModeChanged,
+                                onLanguageChanged = onLanguageChanged,
+                            )
+                        else ->
+                            HomeShell(
+                                state = homeState,
+                                selectedTab = selectedTab,
+                                onTabSelected = onTabSelected,
+                                onAddClick = { showQuickLog = true },
+                                onReportsClick = { showReports = true },
+                                onDebtClick = { showDebt = true },
+                                onSplitClick = { showSharedCosts = true },
+                                onEventsClick = { selectedTab = HomeNavTab.Budget },
+                                onLogFirstExpense = { showQuickLog = true },
+                                onSeeAll = { selectedTab = HomeNavTab.Journal },
+                                onCustomizeQuickAccess = { showQuickAccessPicker = true },
+                                visibleTiles = quickAccessVisible,
+                                onRowClick = { row ->
+                                    homeSelectedRecordId = row.id
+                                    selectedTab = HomeNavTab.Journal
+                                },
+                                onActiveEventClick = { eventId ->
+                                    homeSelectedEventId = eventId
+                                    selectedTab = HomeNavTab.Budget
+                                },
+                            )
                     }
                 } else {
                     // pinConfigured loads asynchronously right after onboardingComplete flips
@@ -480,10 +504,11 @@ fun ExpenseApp(
                                 // land in the same recomposition — otherwise the Home branch below
                                 // briefly falls through to its Splash fallback while pinConfigured
                                 // is still null, flashing the splash screen a second time.
-                                pinConfigured = when (val result = pinAuthRepository.isPinConfigured()) {
-                                    is Result.Success -> result.data
-                                    is Result.Error -> false
-                                }
+                                pinConfigured =
+                                    when (val result = pinAuthRepository.isPinConfigured()) {
+                                        is Result.Success -> result.data
+                                        is Result.Error -> false
+                                    }
                             }
                             onboardingComplete = true
                         }
@@ -576,20 +601,22 @@ fun ExpenseApp(
                 QuickAccessPickerSheetContent(
                     order = quickAccessVisible,
                     onToggle = { tile ->
-                        val updated = if (tile in quickAccessVisible) {
-                            if (quickAccessVisible.size > 1) quickAccessVisible - tile else quickAccessVisible
-                        } else {
-                            quickAccessVisible + tile
-                        }
+                        val updated =
+                            if (tile in quickAccessVisible) {
+                                if (quickAccessVisible.size > 1) quickAccessVisible - tile else quickAccessVisible
+                            } else {
+                                quickAccessVisible + tile
+                            }
                         quickAccessVisible = updated
                         QuickAccessPrefs.save(context, updated)
                     },
                     onMoveUp = { tile ->
                         val index = quickAccessVisible.indexOf(tile)
                         if (index > 0) {
-                            val updated = quickAccessVisible.toMutableList().apply {
-                                this[index] = this[index - 1].also { this[index - 1] = this[index] }
-                            }
+                            val updated =
+                                quickAccessVisible.toMutableList().apply {
+                                    this[index] = this[index - 1].also { this[index - 1] = this[index] }
+                                }
                             quickAccessVisible = updated
                             QuickAccessPrefs.save(context, updated)
                         }
@@ -597,9 +624,10 @@ fun ExpenseApp(
                     onMoveDown = { tile ->
                         val index = quickAccessVisible.indexOf(tile)
                         if (index in 0 until quickAccessVisible.lastIndex) {
-                            val updated = quickAccessVisible.toMutableList().apply {
-                                this[index] = this[index + 1].also { this[index + 1] = this[index] }
-                            }
+                            val updated =
+                                quickAccessVisible.toMutableList().apply {
+                                    this[index] = this[index + 1].also { this[index + 1] = this[index] }
+                                }
                             quickAccessVisible = updated
                             QuickAccessPrefs.save(context, updated)
                         }

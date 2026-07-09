@@ -7,8 +7,9 @@ enum class EventBudgetTone {
     SignificantlyOver,
 }
 
-fun eventBudgetTone(spentRatio: Float): EventBudgetTone = when {
-    spentRatio <= 1f -> EventBudgetTone.OnTrack
-    spentRatio <= 1.1f -> EventBudgetTone.OverBudget
-    else -> EventBudgetTone.SignificantlyOver
-}
+fun eventBudgetTone(spentRatio: Float): EventBudgetTone =
+    when {
+        spentRatio <= 1f -> EventBudgetTone.OnTrack
+        spentRatio <= 1.1f -> EventBudgetTone.OverBudget
+        else -> EventBudgetTone.SignificantlyOver
+    }

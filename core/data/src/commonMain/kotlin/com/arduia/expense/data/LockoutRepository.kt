@@ -5,7 +5,11 @@ interface LockoutRepository {
 
     suspend fun getLockoutUntilEpochMillis(): Long?
 
-    suspend fun recordFailedAttempt(nowEpochMillis: Long, maxAttempts: Int, lockoutDurationMs: Long): LockoutState
+    suspend fun recordFailedAttempt(
+        nowEpochMillis: Long,
+        maxAttempts: Int,
+        lockoutDurationMs: Long,
+    ): LockoutState
 
     suspend fun resetLockout()
 

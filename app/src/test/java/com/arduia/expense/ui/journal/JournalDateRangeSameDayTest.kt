@@ -30,7 +30,6 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class JournalDateRangeSameDayTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
@@ -45,7 +44,10 @@ class JournalDateRangeSameDayTest {
                     visible = true,
                     initialStartEpochMillis = null,
                     initialEndEpochMillis = null,
-                    onConfirm = { start, end -> confirmedStart = start; confirmedEnd = end },
+                    onConfirm = { start, end ->
+                        confirmedStart = start
+                        confirmedEnd = end
+                    },
                     onClear = {},
                     onDismiss = {},
                 )

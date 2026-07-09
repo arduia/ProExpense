@@ -43,20 +43,22 @@ fun MoreProfileCard(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .padding(dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.iconBadge)
-                .clip(CircleShape)
-                .background(colors.primaryTint),
+            modifier =
+                Modifier
+                    .size(dimens.iconBadge)
+                    .clip(CircleShape)
+                    .background(colors.primaryTint),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -87,11 +89,12 @@ fun <T> MoreGroupCard(
     val colors = ProExpenseTheme.colors
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
     ) {
         items.forEachIndexed { index, item ->
             if (index > 0) MoreRowDivider()
@@ -104,10 +107,11 @@ fun <T> MoreGroupCard(
 private fun MoreRowDivider() {
     val colors = ProExpenseTheme.colors
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(colors.lineSoft),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(colors.lineSoft),
     )
 }
 
@@ -122,18 +126,20 @@ fun MoreFeatureRow(
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .proClickable(onClick = onClick, shape = androidx.compose.ui.graphics.RectangleShape)
-            .padding(dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .proClickable(onClick = onClick, shape = androidx.compose.ui.graphics.RectangleShape)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.quickAccessIconSize)
-                .clip(ProExpenseTheme.shapes.tile)
-                .background(colors.primaryTint),
+            modifier =
+                Modifier
+                    .size(dimens.quickAccessIconSize)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(colors.primaryTint),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(
@@ -176,28 +182,29 @@ fun MoreSettingRow(
     val isRowClickable = isNav || !setting.enabled
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (isRowClickable) {
-                    Modifier.proClickable(
-                        onClick = onClick,
-                        shape = androidx.compose.ui.graphics.RectangleShape,
-                    )
-                } else {
-                    Modifier
-                },
-            )
-            .padding(horizontal = dimens.space14, vertical = dimens.space12)
-            .alpha(if (setting.enabled) 1f else 0.5f),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (isRowClickable) {
+                        Modifier.proClickable(
+                            onClick = onClick,
+                            shape = androidx.compose.ui.graphics.RectangleShape,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).padding(horizontal = dimens.space14, vertical = dimens.space12)
+                .alpha(if (setting.enabled) 1f else 0.5f),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.quickAccessIconSize)
-                .clip(CircleShape)
-                .background(colors.paperAlt),
+            modifier =
+                Modifier
+                    .size(dimens.quickAccessIconSize)
+                    .clip(CircleShape)
+                    .background(colors.paperAlt),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(
@@ -216,18 +223,20 @@ fun MoreSettingRow(
             overflow = TextOverflow.Ellipsis,
         )
         when (setting.kind) {
-            MoreSettingKind.Toggle -> Switch(
-                checked = setting.toggleOn,
-                onCheckedChange = onToggle,
-                enabled = setting.enabled,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = colors.onPrimaryWarm,
-                    checkedTrackColor = colors.primary,
-                    uncheckedThumbColor = colors.surface,
-                    uncheckedTrackColor = colors.lineStrong,
-                    uncheckedBorderColor = colors.lineStrong,
-                ),
-            )
+            MoreSettingKind.Toggle ->
+                Switch(
+                    checked = setting.toggleOn,
+                    onCheckedChange = onToggle,
+                    enabled = setting.enabled,
+                    colors =
+                        SwitchDefaults.colors(
+                            checkedThumbColor = colors.onPrimaryWarm,
+                            checkedTrackColor = colors.primary,
+                            uncheckedThumbColor = colors.surface,
+                            uncheckedTrackColor = colors.lineStrong,
+                            uncheckedBorderColor = colors.lineStrong,
+                        ),
+                )
             else -> {
                 if (setting.value != null) {
                     Text(

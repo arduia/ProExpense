@@ -1,15 +1,20 @@
 package com.arduia.expense.feature.history.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -17,29 +22,29 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.border
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.Role
 import com.arduia.expense.feature.history.R
+import com.arduia.expense.feature.history.ui.preview.JournalListUiState
+import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
+import com.arduia.expense.feature.history.ui.preview.previewJournalList
+import com.arduia.expense.feature.history.ui.preview.previewJournalLoading
+import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
 import com.arduia.expense.ui.design.DayHeader
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.FilterChip
@@ -55,11 +60,6 @@ import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.design.TransactionRow
 import com.arduia.expense.ui.design.proCircularRippleClickable
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.history.ui.preview.JournalListUiState
-import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
-import com.arduia.expense.feature.history.ui.preview.previewJournalList
-import com.arduia.expense.feature.history.ui.preview.previewJournalLoading
-import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -97,18 +97,20 @@ fun JournalListScreen(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimens.screenPadding)
-                    .padding(top = dimens.space14),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimens.screenPadding)
+                        .padding(top = dimens.space14),
                 verticalArrangement = Arrangement.spacedBy(dimens.space16),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
@@ -141,10 +143,11 @@ fun JournalListScreen(
                             // viewBox whose inscribed-circle radius is 12), so clipping the icon
                             // directly to a same-size CircleShape shaves the corners off. Padding
                             // before the clip gives the icon room inside the circle instead.
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button)
-                                .padding(dimens.space4),
+                            modifier =
+                                Modifier
+                                    .clip(CircleShape)
+                                    .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button)
+                                    .padding(dimens.space4),
                             contentAlignment = Alignment.Center,
                         ) {
                             ProIcon(
@@ -174,10 +177,11 @@ fun JournalListScreen(
             // chips still hide, since they'd otherwise crowd out the query results list.
             if (dateRangeLabel != null || !state.searchActive) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(top = dimens.space16),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                            .padding(top = dimens.space16),
                     horizontalArrangement = Arrangement.spacedBy(dimens.space6),
                 ) {
                     // spacedBy also gaps the leading/trailing Spacer from its neighboring chip,
@@ -215,9 +219,10 @@ fun JournalListScreen(
             } else if (state.searchActive && state.days.isEmpty()) {
                 JournalNoResults(
                     query = state.query,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
                 )
             } else if (!state.searchActive && state.days.isEmpty() && hasActiveFilter) {
                 JournalFilteredEmpty(
@@ -225,9 +230,10 @@ fun JournalListScreen(
                         onClearDateRange()
                         onFilterSelected("all")
                     },
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
                 )
             } else if (!state.searchActive && state.days.isEmpty()) {
                 EmptyStateContent(
@@ -235,21 +241,24 @@ fun JournalListScreen(
                     subtitle = stringResource(R.string.journal_empty_body),
                     actionLabel = stringResource(R.string.journal_empty_action),
                     onActionClick = onAddClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
                 )
             } else {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = dimens.screenPadding),
-                    contentPadding = PaddingValues(
-                        top = dimens.space12,
-                        bottom = dimens.navShellBottomInset,
-                    ),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.screenPadding),
+                    contentPadding =
+                        PaddingValues(
+                            top = dimens.space12,
+                            bottom = dimens.navShellBottomInset,
+                        ),
                 ) {
                     state.days.forEach { day ->
                         item(key = "header-${day.id}") {
@@ -260,10 +269,11 @@ fun JournalListScreen(
                             key = { _, row -> row.id },
                         ) { index, row ->
                             Box(
-                                modifier = Modifier.combinedClickable(
-                                    onClick = { onRowClick(row) },
-                                    onLongClick = { onRowLongPress(row) },
-                                ),
+                                modifier =
+                                    Modifier.combinedClickable(
+                                        onClick = { onRowClick(row) },
+                                        onLongClick = { onRowLongPress(row) },
+                                    ),
                             ) {
                                 TransactionRow(
                                     categoryId = row.categoryId,
@@ -279,15 +289,17 @@ fun JournalListScreen(
                     if (isLoadingMore) {
                         item(key = "journal-loading-more") {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = dimens.space16),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = dimens.space16),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .height(dimens.iconInline)
-                                        .width(dimens.iconInline),
+                                    modifier =
+                                        Modifier
+                                            .height(dimens.iconInline)
+                                            .width(dimens.iconInline),
                                     color = colors.onSurfaceMuted,
                                     strokeWidth = 2.dp,
                                 )
@@ -322,12 +334,13 @@ private fun DateRangeChip(
     val shape = ProExpenseTheme.shapes.chip
 
     Row(
-        modifier = modifier
-            .clip(shape)
-            .background(colors.onSurface)
-            .border(BorderStroke(1.dp, colors.onSurface), shape)
-            .proClickable(onClick = onClick, shape = shape)
-            .padding(start = dimens.space12, end = dimens.space8, top = dimens.space6, bottom = dimens.space6),
+        modifier =
+            modifier
+                .clip(shape)
+                .background(colors.onSurface)
+                .border(BorderStroke(1.dp, colors.onSurface), shape)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(start = dimens.space12, end = dimens.space8, top = dimens.space6, bottom = dimens.space6),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
@@ -344,9 +357,10 @@ private fun DateRangeChip(
             contentDescription = stringResource(R.string.journal_date_range_clear),
             tint = colors.paper,
             size = dimens.iconClear,
-            modifier = Modifier
-                .clip(CircleShape)
-                .proCircularRippleClickable(onClick = onClear, role = Role.Button),
+            modifier =
+                Modifier
+                    .clip(CircleShape)
+                    .proCircularRippleClickable(onClick = onClear, role = Role.Button),
         )
     }
 }
@@ -359,10 +373,11 @@ private fun JournalFilteredEmpty(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val titleStyle = typography.bodySemiBold.copy(
-        fontSize = typography.sectionHead.fontSize,
-        lineHeight = typography.sectionHead.lineHeight,
-    )
+    val titleStyle =
+        typography.bodySemiBold.copy(
+            fontSize = typography.sectionHead.fontSize,
+            lineHeight = typography.sectionHead.lineHeight,
+        )
 
     Column(
         modifier = modifier.padding(horizontal = dimens.space32),
@@ -406,10 +421,11 @@ private fun JournalNoResults(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val titleStyle = typography.bodySemiBold.copy(
-        fontSize = typography.sectionHead.fontSize,
-        lineHeight = typography.sectionHead.lineHeight,
-    )
+    val titleStyle =
+        typography.bodySemiBold.copy(
+            fontSize = typography.sectionHead.fontSize,
+            lineHeight = typography.sectionHead.lineHeight,
+        )
 
     Column(
         modifier = modifier.padding(horizontal = dimens.space32),

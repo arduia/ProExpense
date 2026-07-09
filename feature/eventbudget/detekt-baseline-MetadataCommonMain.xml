@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:EventBudgetUseCases.kt$ComputeEventProgressUseCase$100f</ID>
+    <ID>MaxLineLength:EventBudgetModule.kt$factory { CreateEventUseCase(get&lt;EventRepository&gt;(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }</ID>
+    <ID>ReturnCount:EventBudgetUseCases.kt$CreateEventUseCase$suspend operator fun invoke( name: String, rawBudget: String, currencyCode: String = "USD", startEpochMillis: Long? = null, endEpochMillis: Long? = null, ): Boolean</ID>
+    <ID>ReturnCount:EventBudgetUseCases.kt$UpdateEventUseCase$suspend operator fun invoke( existing: Event, name: String, rawBudget: String, startEpochMillis: Long, endEpochMillis: Long, ): Boolean</ID>
+    <ID>ReturnCount:EventBudgetUseCases.kt$fun isEventReadOnly( status: EventStatus, closedAtEpochMillis: Long?, nowEpochMillis: Long, ): Boolean</ID>
+  </CurrentIssues>
+</SmellBaseline>

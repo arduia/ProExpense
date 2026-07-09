@@ -28,7 +28,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class UiCatalogScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -48,7 +47,8 @@ class UiCatalogScreenshotTest {
     }
 
     @Test
-    fun catalog_index() = capture {
-        UiCatalogScreen()
-    }
+    fun catalog_index() =
+        capture {
+            UiCatalogScreen()
+        }
 }

@@ -8,9 +8,10 @@ import com.arduia.expense.feature.eventbudget.UpdateEventUseCase
 import kotlinx.datetime.Clock
 import org.koin.dsl.module
 
-val eventBudgetModule = module {
-    factory { ComputeEventProgressUseCase() }
-    factory { CreateEventUseCase(get<EventRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
-    factory { UpdateEventUseCase(get<EventRepository>()) }
-    factory { CloseEventUseCase(get<EventRepository>()) }
-}
+val eventBudgetModule =
+    module {
+        factory { ComputeEventProgressUseCase() }
+        factory { CreateEventUseCase(get<EventRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
+        factory { UpdateEventUseCase(get<EventRepository>()) }
+        factory { CloseEventUseCase(get<EventRepository>()) }
+    }

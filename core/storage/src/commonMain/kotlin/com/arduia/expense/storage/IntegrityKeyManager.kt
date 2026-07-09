@@ -19,5 +19,8 @@ interface IntegrityKeyManager {
      * Verifies that the given hex-encoded HMAC-SHA256 signature matches the computed signature
      * of the canonical string. Returns success if the signature is valid, error otherwise.
      */
-    suspend fun verify(canonical: String, hash: String): Result<Unit>
+    suspend fun verify(
+        canonical: String,
+        hash: String,
+    ): Result<Unit>
 }

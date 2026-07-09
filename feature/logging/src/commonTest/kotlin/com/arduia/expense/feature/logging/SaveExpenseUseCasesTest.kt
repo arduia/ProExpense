@@ -52,7 +52,6 @@ private fun sampleInput(
 )
 
 class LogExpenseUseCaseTest {
-
     private class FakeLoggingRepository(
         var createResult: Result<FinanceRecord>? = null,
     ) : LoggingRepository {
@@ -75,230 +74,325 @@ class LogExpenseUseCaseTest {
         }
 
         override suspend fun updateRecord(record: FinanceRecord): Result<Unit> = Result.Success(Unit)
+
         override suspend fun deleteRecord(id: RecordId): Result<Unit> = Result.Success(Unit)
     }
 
     @Test
-    fun invoke_savesValidAmountAsExpense() = runTest {
-        val repo = FakeLoggingRepository()
-        val useCase = LogExpenseUseCase(repo)
+    fun invoke_savesValidAmountAsExpense() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
 
-        val outcome = useCase(sampleInput(rawAmount = "12.50"))
+            val outcome = useCase(sampleInput(rawAmount = "12.50"))
 
-        assertIs<SaveExpenseOutcome.Saved>(outcome)
-        assertEquals(1250L, repo.lastInput?.money?.amount?.valueInCents)
-    }
-
-    @Test
-    fun invoke_returnsInvalidAmountForUnparsableInput() = runTest {
-        val repo = FakeLoggingRepository()
-        val useCase = LogExpenseUseCase(repo)
-
-        val outcome = useCase(sampleInput(rawAmount = "not-a-number"))
-
-        assertEquals(SaveExpenseOutcome.InvalidAmount, outcome)
-    }
+            assertIs<SaveExpenseOutcome.Saved>(outcome)
+            assertEquals(
+                1250L,
+                repo.lastInput
+                    ?.money
+                    ?.amount
+                    ?.valueInCents,
+            )
+        }
 
     @Test
-    fun invoke_mapsRepositoryErrorToFailedOutcome() = runTest {
-        val repo = FakeLoggingRepository(createResult = Result.Error("disk full"))
-        val useCase = LogExpenseUseCase(repo)
+    fun invoke_returnsInvalidAmountForUnparsableInput() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
 
-        val outcome = useCase(sampleInput())
+            val outcome = useCase(sampleInput(rawAmount = "not-a-number"))
 
-        assertEquals(SaveExpenseOutcome.Failed("disk full"), outcome)
-    }
-
-    @Test
-    fun invoke_linksToEventWhenTagKindIsEvent() = runTest {
-        val repo = FakeLoggingRepository()
-        val useCase = LogExpenseUseCase(repo)
-
-        useCase(sampleInput(linkTagId = "ev1", linkTagKind = TagOptionKind.EVENT))
-
-        assertEquals(RecordLink.ToEvent(EventId("ev1")), repo.lastInput?.link)
-    }
+            assertEquals(SaveExpenseOutcome.InvalidAmount, outcome)
+        }
 
     @Test
-    fun invoke_sameCurrencyLeavesHomeCurrencyMoneyUnconverted() = runTest {
-        val repo = FakeLoggingRepository()
-        val useCase = LogExpenseUseCase(repo)
+    fun invoke_mapsRepositoryErrorToFailedOutcome() =
+        runTest {
+            val repo = FakeLoggingRepository(createResult = Result.Error("disk full"))
+            val useCase = LogExpenseUseCase(repo)
 
-        useCase(sampleInput(rawAmount = "10.00"))
+            val outcome = useCase(sampleInput())
 
-        assertEquals(1000L, repo.lastInput?.homeCurrencyMoney?.amount?.valueInCents)
-        assertEquals(CurrencyCode("USD"), repo.lastInput?.homeCurrencyMoney?.currency)
-    }
-
-    @Test
-    fun invoke_foreignCurrencyConvertsHomeCurrencyMoneyUsingManualRate() = runTest {
-        val repo = FakeLoggingRepository()
-        val useCase = LogExpenseUseCase(repo)
-        val input = sampleInput(rawAmount = "10.00").copy(
-            currencyCode = "EUR",
-            homeCurrencyCode = "USD",
-            exchangeRateRaw = "1.08",
-        )
-
-        val outcome = useCase(input)
-
-        assertIs<SaveExpenseOutcome.Saved>(outcome)
-        assertEquals(1000L, repo.lastInput?.money?.amount?.valueInCents)
-        assertEquals(CurrencyCode("EUR"), repo.lastInput?.money?.currency)
-        assertEquals(1080L, repo.lastInput?.homeCurrencyMoney?.amount?.valueInCents)
-        assertEquals(CurrencyCode("USD"), repo.lastInput?.homeCurrencyMoney?.currency)
-    }
+            assertEquals(SaveExpenseOutcome.Failed("disk full"), outcome)
+        }
 
     @Test
-    fun invoke_foreignCurrencyWithBlankOrZeroRateReturnsInvalidExchangeRate() = runTest {
-        val repo = FakeLoggingRepository()
-        val useCase = LogExpenseUseCase(repo)
-        val blankRate = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "")
-        val zeroRate = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "0")
+    fun invoke_linksToEventWhenTagKindIsEvent() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
 
-        assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(blankRate))
-        assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(zeroRate))
-    }
+            useCase(sampleInput(linkTagId = "ev1", linkTagKind = TagOptionKind.EVENT))
+
+            assertEquals(RecordLink.ToEvent(EventId("ev1")), repo.lastInput?.link)
+        }
+
+    @Test
+    fun invoke_sameCurrencyLeavesHomeCurrencyMoneyUnconverted() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
+
+            useCase(sampleInput(rawAmount = "10.00"))
+
+            assertEquals(
+                1000L,
+                repo.lastInput
+                    ?.homeCurrencyMoney
+                    ?.amount
+                    ?.valueInCents,
+            )
+            assertEquals(CurrencyCode("USD"), repo.lastInput?.homeCurrencyMoney?.currency)
+        }
+
+    @Test
+    fun invoke_foreignCurrencyConvertsHomeCurrencyMoneyUsingManualRate() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
+            val input =
+                sampleInput(rawAmount = "10.00").copy(
+                    currencyCode = "EUR",
+                    homeCurrencyCode = "USD",
+                    exchangeRateRaw = "1.08",
+                )
+
+            val outcome = useCase(input)
+
+            assertIs<SaveExpenseOutcome.Saved>(outcome)
+            assertEquals(
+                1000L,
+                repo.lastInput
+                    ?.money
+                    ?.amount
+                    ?.valueInCents,
+            )
+            assertEquals(CurrencyCode("EUR"), repo.lastInput?.money?.currency)
+            assertEquals(
+                1080L,
+                repo.lastInput
+                    ?.homeCurrencyMoney
+                    ?.amount
+                    ?.valueInCents,
+            )
+            assertEquals(CurrencyCode("USD"), repo.lastInput?.homeCurrencyMoney?.currency)
+        }
+
+    @Test
+    fun invoke_foreignCurrencyWithBlankOrZeroRateReturnsInvalidExchangeRate() =
+        runTest {
+            val repo = FakeLoggingRepository()
+            val useCase = LogExpenseUseCase(repo)
+            val blankRate = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "")
+            val zeroRate = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "0")
+
+            assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(blankRate))
+            assertEquals(SaveExpenseOutcome.InvalidExchangeRate, useCase(zeroRate))
+        }
 }
 
 class UpdateExpenseUseCaseTest {
-
     private class FakeFinanceRecordRepository(
         var upsertResult: Result<Unit> = Result.Success(Unit),
     ) : FinanceRecordRepository {
         var lastUpsert: FinanceRecord? = null
 
         override suspend fun getAll(): Result<List<FinanceRecord>> = Result.Success(emptyList())
+
         override suspend fun getById(id: RecordId): Result<FinanceRecord?> = Result.Success(null)
+
         override suspend fun upsert(record: FinanceRecord): Result<Unit> {
             lastUpsert = record
             return upsertResult
         }
+
         override suspend fun delete(id: RecordId): Result<Unit> = Result.Success(Unit)
+
         override fun observeAll() = MutableStateFlow<List<FinanceRecord>>(emptyList()).asStateFlow()
+
         override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
-        override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
-            Result.Success(emptyList())
+
+        override suspend fun getRecordsPage(
+            filter: RecordPageFilter,
+            cursor: RecordPageCursor?,
+            limit: Int,
+        ): Result<List<FinanceRecord>> = Result.Success(emptyList())
+
         override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> = Result.Success(false)
+
         override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(0L, 0L)).asStateFlow()
     }
 
     @Test
-    fun invoke_appliesNewAmountAndCategory() = runTest {
-        val repo = FakeFinanceRecordRepository()
-        val useCase = UpdateExpenseUseCase(repo)
-        val existing = sampleRecord()
+    fun invoke_appliesNewAmountAndCategory() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateExpenseUseCase(repo)
+            val existing = sampleRecord()
 
-        val outcome = useCase(existing, sampleInput(rawAmount = "20.00"))
+            val outcome = useCase(existing, sampleInput(rawAmount = "20.00"))
 
-        assertIs<SaveExpenseOutcome.Saved>(outcome)
-        assertEquals(2000L, repo.lastUpsert?.money?.amount?.valueInCents)
-    }
-
-    @Test
-    fun invoke_preservesSharedCostLinkWhenTagUntouched() = runTest {
-        val repo = FakeFinanceRecordRepository()
-        val useCase = UpdateExpenseUseCase(repo)
-        val existing = sampleRecord(link = RecordLink.ToSharedCost(com.arduia.expense.domain.SharedCostId("sc1")))
-
-        useCase(existing, sampleInput(linkTagId = null, linkTagKind = null))
-
-        assertEquals(RecordLink.ToSharedCost(com.arduia.expense.domain.SharedCostId("sc1")), repo.lastUpsert?.link)
-    }
+            assertIs<SaveExpenseOutcome.Saved>(outcome)
+            assertEquals(
+                2000L,
+                repo.lastUpsert
+                    ?.money
+                    ?.amount
+                    ?.valueInCents,
+            )
+        }
 
     @Test
-    fun invoke_replacesLinkWhenTagExplicitlyChanged() = runTest {
-        val repo = FakeFinanceRecordRepository()
-        val useCase = UpdateExpenseUseCase(repo)
-        val existing = sampleRecord(link = RecordLink.ToSharedCost(com.arduia.expense.domain.SharedCostId("sc1")))
+    fun invoke_preservesSharedCostLinkWhenTagUntouched() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateExpenseUseCase(repo)
+            val existing =
+                sampleRecord(
+                    link =
+                        RecordLink.ToSharedCost(
+                            com.arduia.expense.domain
+                                .SharedCostId("sc1"),
+                        ),
+                )
 
-        useCase(existing, sampleInput(linkTagId = "d1", linkTagKind = TagOptionKind.DEBT))
+            useCase(existing, sampleInput(linkTagId = null, linkTagKind = null))
 
-        assertEquals(RecordLink.ToDebt(DebtId("d1")), repo.lastUpsert?.link)
-    }
-
-    @Test
-    fun invoke_returnsInvalidAmountForUnparsableInput() = runTest {
-        val repo = FakeFinanceRecordRepository()
-        val useCase = UpdateExpenseUseCase(repo)
-
-        val outcome = useCase(sampleRecord(), sampleInput(rawAmount = "bad"))
-
-        assertEquals(SaveExpenseOutcome.InvalidAmount, outcome)
-    }
-
-    @Test
-    fun invoke_mapsRepositoryErrorToFailedOutcome() = runTest {
-        val repo = FakeFinanceRecordRepository(upsertResult = Result.Error("disk full"))
-        val useCase = UpdateExpenseUseCase(repo)
-
-        val outcome = useCase(sampleRecord(), sampleInput())
-
-        assertEquals(SaveExpenseOutcome.Failed("disk full"), outcome)
-    }
+            assertEquals(
+                RecordLink.ToSharedCost(
+                    com.arduia.expense.domain
+                        .SharedCostId("sc1"),
+                ),
+                repo.lastUpsert?.link,
+            )
+        }
 
     @Test
-    fun invoke_foreignCurrencyConvertsHomeCurrencyMoneyUsingManualRate() = runTest {
-        val repo = FakeFinanceRecordRepository()
-        val useCase = UpdateExpenseUseCase(repo)
-        val input = sampleInput(rawAmount = "10.00").copy(
-            currencyCode = "EUR",
-            homeCurrencyCode = "USD",
-            exchangeRateRaw = "1.08",
-        )
+    fun invoke_replacesLinkWhenTagExplicitlyChanged() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateExpenseUseCase(repo)
+            val existing =
+                sampleRecord(
+                    link =
+                        RecordLink.ToSharedCost(
+                            com.arduia.expense.domain
+                                .SharedCostId("sc1"),
+                        ),
+                )
 
-        useCase(sampleRecord(), input)
+            useCase(existing, sampleInput(linkTagId = "d1", linkTagKind = TagOptionKind.DEBT))
 
-        assertEquals(1080L, repo.lastUpsert?.homeCurrencyMoney?.amount?.valueInCents)
-        assertEquals(CurrencyCode("USD"), repo.lastUpsert?.homeCurrencyMoney?.currency)
-    }
+            assertEquals(RecordLink.ToDebt(DebtId("d1")), repo.lastUpsert?.link)
+        }
 
     @Test
-    fun invoke_foreignCurrencyWithInvalidRateReturnsInvalidExchangeRate() = runTest {
-        val repo = FakeFinanceRecordRepository()
-        val useCase = UpdateExpenseUseCase(repo)
-        val input = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "not-a-number")
+    fun invoke_returnsInvalidAmountForUnparsableInput() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateExpenseUseCase(repo)
 
-        val outcome = useCase(sampleRecord(), input)
+            val outcome = useCase(sampleRecord(), sampleInput(rawAmount = "bad"))
 
-        assertEquals(SaveExpenseOutcome.InvalidExchangeRate, outcome)
-    }
+            assertEquals(SaveExpenseOutcome.InvalidAmount, outcome)
+        }
+
+    @Test
+    fun invoke_mapsRepositoryErrorToFailedOutcome() =
+        runTest {
+            val repo = FakeFinanceRecordRepository(upsertResult = Result.Error("disk full"))
+            val useCase = UpdateExpenseUseCase(repo)
+
+            val outcome = useCase(sampleRecord(), sampleInput())
+
+            assertEquals(SaveExpenseOutcome.Failed("disk full"), outcome)
+        }
+
+    @Test
+    fun invoke_foreignCurrencyConvertsHomeCurrencyMoneyUsingManualRate() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateExpenseUseCase(repo)
+            val input =
+                sampleInput(rawAmount = "10.00").copy(
+                    currencyCode = "EUR",
+                    homeCurrencyCode = "USD",
+                    exchangeRateRaw = "1.08",
+                )
+
+            useCase(sampleRecord(), input)
+
+            assertEquals(
+                1080L,
+                repo.lastUpsert
+                    ?.homeCurrencyMoney
+                    ?.amount
+                    ?.valueInCents,
+            )
+            assertEquals(CurrencyCode("USD"), repo.lastUpsert?.homeCurrencyMoney?.currency)
+        }
+
+    @Test
+    fun invoke_foreignCurrencyWithInvalidRateReturnsInvalidExchangeRate() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateExpenseUseCase(repo)
+            val input = sampleInput().copy(currencyCode = "EUR", homeCurrencyCode = "USD", exchangeRateRaw = "not-a-number")
+
+            val outcome = useCase(sampleRecord(), input)
+
+            assertEquals(SaveExpenseOutcome.InvalidExchangeRate, outcome)
+        }
 }
 
 class LoadExpenseForEditUseCaseTest {
-
     private class FakeFinanceRecordRepository(
         private val byId: Map<String, FinanceRecord>,
     ) : FinanceRecordRepository {
         override suspend fun getAll(): Result<List<FinanceRecord>> = Result.Success(byId.values.toList())
+
         override suspend fun getById(id: RecordId): Result<FinanceRecord?> = Result.Success(byId[id.value])
+
         override suspend fun upsert(record: FinanceRecord): Result<Unit> = Result.Success(Unit)
+
         override suspend fun delete(id: RecordId): Result<Unit> = Result.Success(Unit)
+
         override fun observeAll() = MutableStateFlow<List<FinanceRecord>>(emptyList()).asStateFlow()
+
         override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
-        override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
-            Result.Success(byId.values.toList().take(limit))
+
+        override suspend fun getRecordsPage(
+            filter: RecordPageFilter,
+            cursor: RecordPageCursor?,
+            limit: Int,
+        ): Result<List<FinanceRecord>> = Result.Success(byId.values.toList().take(limit))
+
         override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
             Result.Success(byId.values.any { it.categoryId == categoryId })
+
         override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(byId.size.toLong(), 0L)).asStateFlow()
     }
 
     @Test
-    fun invoke_returnsRecordWhenFound() = runTest {
-        val record = sampleRecord(id = "r1")
-        val useCase = LoadExpenseForEditUseCase(FakeFinanceRecordRepository(mapOf("r1" to record)))
+    fun invoke_returnsRecordWhenFound() =
+        runTest {
+            val record = sampleRecord(id = "r1")
+            val useCase = LoadExpenseForEditUseCase(FakeFinanceRecordRepository(mapOf("r1" to record)))
 
-        val result = useCase("r1")
+            val result = useCase("r1")
 
-        assertEquals(record, result)
-    }
+            assertEquals(record, result)
+        }
 
     @Test
-    fun invoke_returnsNullWhenNotFound() = runTest {
-        val useCase = LoadExpenseForEditUseCase(FakeFinanceRecordRepository(emptyMap()))
+    fun invoke_returnsNullWhenNotFound() =
+        runTest {
+            val useCase = LoadExpenseForEditUseCase(FakeFinanceRecordRepository(emptyMap()))
 
-        val result = useCase("missing")
+            val result = useCase("missing")
 
-        assertEquals(null, result)
-    }
+            assertEquals(null, result)
+        }
 }

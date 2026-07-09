@@ -8,8 +8,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class SqlDelightClearDataRepositoryTest {
-
-    private fun seedRecord(database: com.arduia.expense.storage.db.ProExpenseDatabase, id: String, tagType: String?, tagId: String?) {
+    private fun seedRecord(
+        database: com.arduia.expense.storage.db.ProExpenseDatabase,
+        id: String,
+        tagType: String?,
+        tagId: String?,
+    ) {
         database.financeRecordQueries.insertRecord(
             id = id,
             amount_cents = 1_000,
@@ -29,64 +33,74 @@ class SqlDelightClearDataRepositoryTest {
     }
 
     @Test
-    fun clearEvents_detachesDanglingEventLinks_onSurvivingRecords() = runTest {
-        val database = inMemoryDatabase()
-        seedRecord(database, "rec-1", "EVENT", "evt-1")
-        seedRecord(database, "rec-2", null, null)
-        val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
+    fun clearEvents_detachesDanglingEventLinks_onSurvivingRecords() =
+        runTest {
+            val database = inMemoryDatabase()
+            seedRecord(database, "rec-1", "EVENT", "evt-1")
+            seedRecord(database, "rec-2", null, null)
+            val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
 
-        assertTrue(repo.clearEvents() is Result.Success)
+            assertTrue(repo.clearEvents() is Result.Success)
 
-        val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
-        assertEquals(null, row.tag_type)
-        assertEquals(null, row.tag_id)
-    }
-
-    @Test
-    fun clearDebts_detachesDanglingDebtLinks_onSurvivingRecords() = runTest {
-        val database = inMemoryDatabase()
-        seedRecord(database, "rec-1", "DEBT", "debt-1")
-        val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
-
-        assertTrue(repo.clearDebts() is Result.Success)
-
-        val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
-        assertEquals(null, row.tag_type)
-    }
+            val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
+            assertEquals(null, row.tag_type)
+            assertEquals(null, row.tag_id)
+        }
 
     @Test
-    fun clearSharedCosts_detachesDanglingSharedCostLinks_onSurvivingRecords() = runTest {
-        val database = inMemoryDatabase()
-        seedRecord(database, "rec-1", "SHARED_COST", "sc-1")
-        val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
+    fun clearDebts_detachesDanglingDebtLinks_onSurvivingRecords() =
+        runTest {
+            val database = inMemoryDatabase()
+            seedRecord(database, "rec-1", "DEBT", "debt-1")
+            val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
 
-        assertTrue(repo.clearSharedCosts() is Result.Success)
+            assertTrue(repo.clearDebts() is Result.Success)
 
-        val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
-        assertEquals(null, row.tag_type)
-    }
-
-    @Test
-    fun clearEvents_leavesUnrelatedTagsIntact() = runTest {
-        val database = inMemoryDatabase()
-        seedRecord(database, "rec-1", "DEBT", "debt-1")
-        val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
-
-        assertTrue(repo.clearEvents() is Result.Success)
-
-        val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
-        assertEquals("DEBT", row.tag_type)
-        assertEquals("debt-1", row.tag_id)
-    }
+            val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
+            assertEquals(null, row.tag_type)
+        }
 
     @Test
-    fun clearAll_removesEveryTable() = runTest {
-        val database = inMemoryDatabase()
-        seedRecord(database, "rec-1", "EVENT", "evt-1")
-        val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
+    fun clearSharedCosts_detachesDanglingSharedCostLinks_onSurvivingRecords() =
+        runTest {
+            val database = inMemoryDatabase()
+            seedRecord(database, "rec-1", "SHARED_COST", "sc-1")
+            val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
 
-        assertTrue(repo.clearAll() is Result.Success)
+            assertTrue(repo.clearSharedCosts() is Result.Success)
 
-        assertTrue(database.financeRecordQueries.selectAllRecords().executeAsList().isEmpty())
-    }
+            val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
+            assertEquals(null, row.tag_type)
+        }
+
+    @Test
+    fun clearEvents_leavesUnrelatedTagsIntact() =
+        runTest {
+            val database = inMemoryDatabase()
+            seedRecord(database, "rec-1", "DEBT", "debt-1")
+            val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
+
+            assertTrue(repo.clearEvents() is Result.Success)
+
+            val row = database.financeRecordQueries.selectRecordById("rec-1").executeAsOne()
+            assertEquals("DEBT", row.tag_type)
+            assertEquals("debt-1", row.tag_id)
+        }
+
+    @Test
+    fun clearAll_removesEveryTable() =
+        runTest {
+            val database = inMemoryDatabase()
+            seedRecord(database, "rec-1", "EVENT", "evt-1")
+            val repo = SqlDelightClearDataRepository(database, Dispatchers.Unconfined)
+
+            assertTrue(repo.clearAll() is Result.Success)
+
+            assertTrue(
+                database.financeRecordQueries
+                    .selectAllRecords()
+                    .executeAsList()
+                    .isEmpty(),
+            )
+        }
 }

@@ -15,8 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -38,20 +36,22 @@ fun OnboardingPageIndicator(
             val active = index == currentPage
             val width by animateDpAsState(
                 targetValue = if (active) dimens.pageIndicatorActiveWidth else dimens.pageIndicatorDotSize,
-                animationSpec = tween(
-                    durationMillis = motion.screenDurationMillis,
-                    easing = motion.standardEasing,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = motion.screenDurationMillis,
+                        easing = motion.standardEasing,
+                    ),
                 label = "onboarding-dot-width",
             )
             Box(
-                modifier = Modifier
-                    .width(width)
-                    .height(dimens.pageIndicatorDotSize)
-                    .clip(CircleShape)
-                    .background(
-                        if (active) colors.primary else colors.onSurface.copy(alpha = 0.18f),
-                    ),
+                modifier =
+                    Modifier
+                        .width(width)
+                        .height(dimens.pageIndicatorDotSize)
+                        .clip(CircleShape)
+                        .background(
+                            if (active) colors.primary else colors.onSurface.copy(alpha = 0.18f),
+                        ),
             )
         }
     }

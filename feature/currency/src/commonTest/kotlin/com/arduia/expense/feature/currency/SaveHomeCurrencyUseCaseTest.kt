@@ -8,7 +8,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class SaveHomeCurrencyUseCaseTest {
-
     private class FakeCurrencyRepository(
         var settings: CurrencySettings = CurrencySettings(CurrencyCode("USD")),
         var setHomeCurrencyError: String? = null,
@@ -23,24 +22,26 @@ class SaveHomeCurrencyUseCaseTest {
     }
 
     @Test
-    fun invoke_storesHomeCurrencyCode() = runTest {
-        val repo = FakeCurrencyRepository()
-        val useCase = SaveHomeCurrencyUseCase(repo)
+    fun invoke_storesHomeCurrencyCode() =
+        runTest {
+            val repo = FakeCurrencyRepository()
+            val useCase = SaveHomeCurrencyUseCase(repo)
 
-        val result = useCase("JPY")
+            val result = useCase("JPY")
 
-        assertIs<Result.Success<Unit>>(result)
-        assertEquals("JPY", repo.settings.homeCurrency.code)
-    }
+            assertIs<Result.Success<Unit>>(result)
+            assertEquals("JPY", repo.settings.homeCurrency.code)
+        }
 
     @Test
-    fun invoke_propagatesRepositoryError() = runTest {
-        val repo = FakeCurrencyRepository(setHomeCurrencyError = "storage failure")
-        val useCase = SaveHomeCurrencyUseCase(repo)
+    fun invoke_propagatesRepositoryError() =
+        runTest {
+            val repo = FakeCurrencyRepository(setHomeCurrencyError = "storage failure")
+            val useCase = SaveHomeCurrencyUseCase(repo)
 
-        val result = useCase("JPY")
+            val result = useCase("JPY")
 
-        assertIs<Result.Error>(result)
-        assertEquals("storage failure", (result as Result.Error).message)
-    }
+            assertIs<Result.Error>(result)
+            assertEquals("storage failure", (result as Result.Error).message)
+        }
 }

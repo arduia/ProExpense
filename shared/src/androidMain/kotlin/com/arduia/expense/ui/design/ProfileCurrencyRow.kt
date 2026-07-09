@@ -34,27 +34,28 @@ fun ProfileCurrencyRow(
     val shape = ProExpenseTheme.shapes.searchField
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(
-                BorderStroke(
-                    width = dimens.buttonBorderWidth,
-                    color = if (selected) colors.primary else colors.line,
-                ),
-                shape = shape,
-            )
-            .background(if (selected) colors.primaryTint.copy(alpha = 0.45f) else colors.surface)
-            .proClickable(onClick = onClick, shape = shape)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(
+                    BorderStroke(
+                        width = dimens.buttonBorderWidth,
+                        color = if (selected) colors.primary else colors.line,
+                    ),
+                    shape = shape,
+                ).background(if (selected) colors.primaryTint.copy(alpha = 0.45f) else colors.surface)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.currencySymbolSize)
-                .clip(CircleShape)
-                .background(if (selected) colors.surface else colors.paperAlt),
+            modifier =
+                Modifier
+                    .size(dimens.currencySymbolSize)
+                    .clip(CircleShape)
+                    .background(if (selected) colors.surface else colors.paperAlt),
             contentAlignment = Alignment.Center,
         ) {
             Text(

@@ -18,11 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
-import com.arduia.expense.ui.design.AmountInput
-import com.arduia.expense.ui.design.ProAlertDialog
-import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
@@ -30,6 +25,11 @@ import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
+import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.rememberProReduceMotion
@@ -55,16 +55,21 @@ private data class SharedCostDraft(
     val showZeroValidation: Boolean = false,
     val amountConfirmed: Boolean = false,
 ) {
-    fun toUiState(currencySymbol: String, nameTemplate: String): SharedCostUiState {
-        val participants = SharedCostSplitLogic.buildParticipants(
-            rawTotal = rawTotal,
-            peopleCount = peopleCount,
-            mode = mode,
-            names = names,
-            customShareRaws = customShareRaws,
-            currencySymbol = currencySymbol,
-            nameTemplate = nameTemplate,
-        ).map { (name, share) -> SharedCostParticipantUi(name, share) }
+    fun toUiState(
+        currencySymbol: String,
+        nameTemplate: String,
+    ): SharedCostUiState {
+        val participants =
+            SharedCostSplitLogic
+                .buildParticipants(
+                    rawTotal = rawTotal,
+                    peopleCount = peopleCount,
+                    mode = mode,
+                    names = names,
+                    customShareRaws = customShareRaws,
+                    currencySymbol = currencySymbol,
+                    nameTemplate = nameTemplate,
+                ).map { (name, share) -> SharedCostParticipantUi(name, share) }
         return SharedCostUiState(
             rawTotal = rawTotal,
             note = note,
@@ -83,55 +88,58 @@ private data class SharedCostDraft(
  * other draft input", but a bare `remember` (the previous state) is wiped on rotation or the
  * process being killed in the background.
  */
-private val SharedCostDraftSaver: Saver<SharedCostDraft, Any> = listSaver(
-    save = { draft ->
-        listOf(
-            draft.rawTotal,
-            draft.note,
-            draft.peopleCount,
-            draft.mode.name,
-            draft.names.size,
-        ) + draft.names + listOf(draft.customShareRaws.size) + draft.customShareRaws +
-            listOf(draft.showZeroValidation, draft.amountConfirmed)
-    },
-    restore = { saved ->
-        var i = 0
-        val rawTotal = saved[i++] as String
-        val note = saved[i++] as String
-        val peopleCount = saved[i++] as Int
-        val mode = SharedSplitMode.valueOf(saved[i++] as String)
-        val namesSize = saved[i++] as Int
-        val names = (0 until namesSize).map { saved[i++] as String }
-        val sharesSize = saved[i++] as Int
-        val customShareRaws = (0 until sharesSize).map { saved[i++] as String }
-        val showZeroValidation = saved[i++] as Boolean
-        val amountConfirmed = saved[i++] as Boolean
-        SharedCostDraft(
-            rawTotal = rawTotal,
-            note = note,
-            peopleCount = peopleCount,
-            mode = mode,
-            names = names,
-            customShareRaws = customShareRaws,
-            showZeroValidation = showZeroValidation,
-            amountConfirmed = amountConfirmed,
-        )
-    },
-)
+private val SharedCostDraftSaver: Saver<SharedCostDraft, Any> =
+    listSaver(
+        save = { draft ->
+            listOf(
+                draft.rawTotal,
+                draft.note,
+                draft.peopleCount,
+                draft.mode.name,
+                draft.names.size,
+            ) + draft.names + listOf(draft.customShareRaws.size) + draft.customShareRaws +
+                listOf(draft.showZeroValidation, draft.amountConfirmed)
+        },
+        restore = { saved ->
+            var i = 0
+            val rawTotal = saved[i++] as String
+            val note = saved[i++] as String
+            val peopleCount = saved[i++] as Int
+            val mode = SharedSplitMode.valueOf(saved[i++] as String)
+            val namesSize = saved[i++] as Int
+            val names = (0 until namesSize).map { saved[i++] as String }
+            val sharesSize = saved[i++] as Int
+            val customShareRaws = (0 until sharesSize).map { saved[i++] as String }
+            val showZeroValidation = saved[i++] as Boolean
+            val amountConfirmed = saved[i++] as Boolean
+            SharedCostDraft(
+                rawTotal = rawTotal,
+                note = note,
+                peopleCount = peopleCount,
+                mode = mode,
+                names = names,
+                customShareRaws = customShareRaws,
+                showZeroValidation = showZeroValidation,
+                amountConfirmed = amountConfirmed,
+            )
+        },
+    )
 
-private fun SharedCostDraft.withParticipants(nameTemplate: String): SharedCostDraft = copy(
-    names = SharedCostSplitLogic.syncNames(names, peopleCount, nameTemplate),
-    customShareRaws = SharedCostSplitLogic.syncCustomShares(customShareRaws, peopleCount, rawTotal),
-)
+private fun SharedCostDraft.withParticipants(nameTemplate: String): SharedCostDraft =
+    copy(
+        names = SharedCostSplitLogic.syncNames(names, peopleCount, nameTemplate),
+        customShareRaws = SharedCostSplitLogic.syncCustomShares(customShareRaws, peopleCount, rawTotal),
+    )
 
-private fun SharedCostUiState.toDraft(nameTemplate: String): SharedCostDraft = SharedCostDraft(
-    rawTotal = rawTotal,
-    note = note,
-    peopleCount = peopleCount,
-    mode = mode,
-    names = participants.map { it.name },
-    customShareRaws = shareRaws,
-).withParticipants(nameTemplate)
+private fun SharedCostUiState.toDraft(nameTemplate: String): SharedCostDraft =
+    SharedCostDraft(
+        rawTotal = rawTotal,
+        note = note,
+        peopleCount = peopleCount,
+        mode = mode,
+        names = participants.map { it.name },
+        customShareRaws = shareRaws,
+    ).withParticipants(nameTemplate)
 
 @Composable
 fun SharedCostsFlow(
@@ -203,9 +211,10 @@ fun SharedCostsFlow(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         AnimatedContent(
             targetState = currentStep,
@@ -252,16 +261,20 @@ fun SharedCostsFlow(
                             }
                         },
                         onKey = { key ->
-                            draft = draft.copy(
-                                rawTotal = AmountInput.applyKey(draft.rawTotal, key),
-                                showZeroValidation = false,
-                            ).withParticipants(nameTemplate)
+                            draft =
+                                draft
+                                    .copy(
+                                        rawTotal = AmountInput.applyKey(draft.rawTotal, key),
+                                        showZeroValidation = false,
+                                    ).withParticipants(nameTemplate)
                         },
                         onBackspace = {
-                            draft = draft.copy(
-                                rawTotal = AmountInput.applyBackspace(draft.rawTotal),
-                                showZeroValidation = false,
-                            ).withParticipants(nameTemplate)
+                            draft =
+                                draft
+                                    .copy(
+                                        rawTotal = AmountInput.applyBackspace(draft.rawTotal),
+                                        showZeroValidation = false,
+                                    ).withParticipants(nameTemplate)
                         },
                         onNoteChange = { note -> draft = draft.copy(note = note) },
                         onDecrementPeople = {
@@ -312,11 +325,12 @@ fun SharedCostsFlow(
                         state = draft.toUiState(homeCurrencySymbol, nameTemplate),
                         homeCurrencySymbol = homeCurrencySymbol,
                         readOnly = viewingId != null,
-                        backLabel = if (viewingId != null) {
-                            stringResource(R.string.shared_back_history)
-                        } else {
-                            stringResource(R.string.shared_back_split)
-                        },
+                        backLabel =
+                            if (viewingId != null) {
+                                stringResource(R.string.shared_back_history)
+                            } else {
+                                stringResource(R.string.shared_back_split)
+                            },
                         onBack = {
                             if (viewingId != null) {
                                 viewingId = null
@@ -363,9 +377,10 @@ fun SharedCostsFlow(
             iconTint = colors.danger,
             iconBackground = colors.dangerTint,
             title = stringResource(R.string.shared_delete_title),
-            body = buildAnnotatedString {
-                append(stringResource(R.string.shared_delete_body, deleteTarget?.title.orEmpty()))
-            },
+            body =
+                buildAnnotatedString {
+                    append(stringResource(R.string.shared_delete_body, deleteTarget?.title.orEmpty()))
+                },
             confirmLabel = stringResource(R.string.shared_delete_confirm),
             onConfirm = {
                 deleteTarget?.let { onDeleteSplit(it.id) }

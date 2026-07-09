@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SelectInitialPeriodIndexTest {
-
     @Test
     fun invoke_returnsZeroWhenCurrentMonthHasData() {
         val index = selectInitialPeriodIndex(listOf(false, false, true))

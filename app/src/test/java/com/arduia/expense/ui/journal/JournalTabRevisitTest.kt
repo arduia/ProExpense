@@ -51,20 +51,20 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class JournalTabRevisitTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
     fun reselectingJournalTab_showsLoadedRowsWithoutReloadingFromScratch() {
         val fakeHistory = FakeHistoryRepository(listOf(record("r1", "Sushi dinner")))
-        val testModule = module {
-            single<HistoryRepository> { fakeHistory }
-            single<FinanceRecordRepository> { UnusedFinanceRecordRepository() }
-            factory { LoadJournalPageUseCase(get()) }
-            factory { DeleteRecordUseCase(get()) }
-            factory { UpdateRecordNoteUseCase(get()) }
-        }
+        val testModule =
+            module {
+                single<HistoryRepository> { fakeHistory }
+                single<FinanceRecordRepository> { UnusedFinanceRecordRepository() }
+                factory { LoadJournalPageUseCase(get()) }
+                factory { DeleteRecordUseCase(get()) }
+                factory { UpdateRecordNoteUseCase(get()) }
+            }
         val journalVisible = mutableStateOf(true)
 
         rule.setContent {
@@ -105,7 +105,10 @@ class JournalTabRevisitTest {
         }
     }
 
-    private fun record(id: String, note: String) = FinanceRecord(
+    private fun record(
+        id: String,
+        note: String,
+    ) = FinanceRecord(
         id = RecordId(id),
         money = Money(Amount(1240), CurrencyCode("USD")),
         homeCurrencyMoney = Money(Amount(1240), CurrencyCode("USD")),
@@ -122,11 +125,12 @@ class JournalTabRevisitTest {
             private set
         private val signal = MutableStateFlow(RecordChangeSignal(page.size.toLong(), 1L))
 
-        override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> =
-            Result.Success(page)
+        override suspend fun getRecords(filter: RecordHistoryFilter): Result<List<FinanceRecord>> = Result.Success(page)
 
-        override suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary> =
-            error("unused in this test")
+        override suspend fun getSummary(
+            period: SummaryPeriod,
+            anchorEpochMillis: Long,
+        ): Result<RecordSummary> = error("unused in this test")
 
         override suspend fun getRecordsPage(
             filter: RecordHistoryFilter,
@@ -144,17 +148,25 @@ class JournalTabRevisitTest {
 
     private class UnusedFinanceRecordRepository : FinanceRecordRepository {
         override suspend fun getAll(): Result<List<FinanceRecord>> = error("unused in this test")
+
         override suspend fun getById(id: RecordId): Result<FinanceRecord?> = error("unused in this test")
+
         override suspend fun upsert(record: FinanceRecord): Result<Unit> = error("unused in this test")
+
         override suspend fun delete(id: RecordId): Result<Unit> = error("unused in this test")
+
         override fun observeAll(): Flow<List<FinanceRecord>> = error("unused in this test")
+
         override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = error("unused in this test")
+
         override suspend fun getRecordsPage(
             filter: com.arduia.expense.data.RecordPageFilter,
             cursor: RecordPageCursor?,
             limit: Int,
         ): Result<List<FinanceRecord>> = error("unused in this test")
+
         override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> = error("unused in this test")
+
         override fun observeChangeSignal(): Flow<RecordChangeSignal> = error("unused in this test")
     }
 }

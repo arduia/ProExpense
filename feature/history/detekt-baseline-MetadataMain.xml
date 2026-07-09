@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:DefaultHistoryRepository.kt$DefaultHistoryRepository$7</ID>
+    <ID>MaxLineLength:DefaultHistoryRepository.kt$DefaultHistoryRepository$(filter.fromEpochMillis == null || record.recordedAtEpochMillis &gt;= filter.fromEpochMillis)</ID>
+    <ID>MaxLineLength:DefaultHistoryRepository.kt$DefaultHistoryRepository$(filter.query.isNullOrBlank() || (record.note?.contains(filter.query!!, ignoreCase = true) ?: false))</ID>
+    <ID>MaxLineLength:DefaultHistoryRepository.kt$DefaultHistoryRepository$override suspend fun hasAnyRecordIn(categoryId: CategoryId): Result&lt;Boolean&gt;</ID>
+  </CurrentIssues>
+</SmellBaseline>

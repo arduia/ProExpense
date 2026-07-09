@@ -16,6 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.logging.R
+import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CategoryPicker
@@ -28,10 +32,6 @@ import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
-import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
-import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
-import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
-import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -56,13 +56,14 @@ fun AddExpenseAmountScreen(
     val isZero = !canProceed
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = dimens.screenPadding),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = dimens.screenPadding),
     ) {
         ProTopBar(
             title = stringResource(R.string.new_expense),
@@ -94,9 +95,10 @@ fun AddExpenseAmountScreen(
             isZero = isZero,
             showZeroValidation = state.showZeroValidation,
             zeroHelperMessage = stringResource(R.string.amount_must_be_greater_than_zero),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = dimens.space8, bottom = dimens.space16),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = dimens.space8, bottom = dimens.space16),
         )
 
         CategoryPicker(
@@ -116,9 +118,10 @@ fun AddExpenseAmountScreen(
             onNext = onNext,
             saveLabel = stringResource(R.string.save),
             nextLabel = stringResource(R.string.next_with_chevron),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimens.space18),
         )
     }
 }

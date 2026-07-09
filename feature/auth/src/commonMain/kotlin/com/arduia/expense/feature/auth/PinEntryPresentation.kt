@@ -18,15 +18,24 @@ object PinEntryLogic {
     const val PIN_LENGTH = 6
 
     sealed interface DigitResult {
-        data class Updated(val buffer: String) : DigitResult
-        data class Completed(val pin: String) : DigitResult
+        data class Updated(
+            val buffer: String,
+        ) : DigitResult
+
+        data class Completed(
+            val pin: String,
+        ) : DigitResult
     }
 
     /**
      * A digit typed while the previous attempt's error is still showing starts a fresh buffer —
      * the error state consumes the old digits, matching the reference PIN screens.
      */
-    fun appendDigit(buffer: String, digit: Int, hadError: Boolean = false): DigitResult {
+    fun appendDigit(
+        buffer: String,
+        digit: Int,
+        hadError: Boolean = false,
+    ): DigitResult {
         val base = if (hadError) "" else buffer
         if (base.length >= PIN_LENGTH) return DigitResult.Updated(base)
         val updated = base + digit
@@ -40,11 +49,15 @@ object PinEntryLogic {
     fun backspace(buffer: String): String = buffer.dropLast(1)
 
     /** Lockout takes precedence over a wrong-PIN error when both apply. */
-    fun entryMode(lockedOut: Boolean, error: Boolean): PinEntryMode = when {
-        lockedOut -> PinEntryMode.Locked
-        error -> PinEntryMode.Error
-        else -> PinEntryMode.Default
-    }
+    fun entryMode(
+        lockedOut: Boolean,
+        error: Boolean,
+    ): PinEntryMode =
+        when {
+            lockedOut -> PinEntryMode.Locked
+            error -> PinEntryMode.Error
+            else -> PinEntryMode.Default
+        }
 
     /** "m:ss" label for the lockout countdown, e.g. 65_000ms -> "1:05". Clamps at "0:00". */
     fun countdownLabel(remainingMs: Long): String {

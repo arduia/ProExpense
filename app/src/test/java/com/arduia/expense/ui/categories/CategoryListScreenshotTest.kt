@@ -13,12 +13,12 @@ import com.arduia.expense.feature.categories.R
 import com.arduia.expense.feature.categories.ui.CategoryActionsSheetContent
 import com.arduia.expense.feature.categories.ui.CategoryListScreen
 import com.arduia.expense.feature.categories.ui.CategoryNewSheetContent
-import com.arduia.expense.testing.ScreenshotTests
-import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
 import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryNewDuplicate
+import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -38,7 +38,6 @@ import org.robolectric.annotation.GraphicsMode
 )
 @Category(ScreenshotTests::class)
 class CategoryListScreenshotTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
@@ -58,61 +57,65 @@ class CategoryListScreenshotTest {
     }
 
     @Test
-    fun categories() = capture {
-        CategoryListScreen(previewCategoryList, {}, {})
-    }
+    fun categories() =
+        capture {
+            CategoryListScreen(previewCategoryList, {}, {})
+        }
 
     @Test
-    fun edge_cat_dup() = capture {
-        Box(Modifier.fillMaxSize()) {
-            CategoryListScreen(previewCategoryList, {}, {})
-            ProBottomSheetHost(
-                visible = true,
-                title = stringResource(R.string.categories_new_title),
-                onClose = {},
-            ) {
-                CategoryNewSheetContent(
-                    form = previewCategoryNewDuplicate,
-                    onNameChange = {},
-                    onIconSelected = {},
-                    onAdd = {},
-                )
+    fun edge_cat_dup() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                CategoryListScreen(previewCategoryList, {}, {})
+                ProBottomSheetHost(
+                    visible = true,
+                    title = stringResource(R.string.categories_new_title),
+                    onClose = {},
+                ) {
+                    CategoryNewSheetContent(
+                        form = previewCategoryNewDuplicate,
+                        onNameChange = {},
+                        onIconSelected = {},
+                        onAdd = {},
+                    )
+                }
             }
         }
-    }
 
     @Test
-    fun cat_actions() = capture {
-        Box(Modifier.fillMaxSize()) {
-            CategoryListScreen(previewCategoryList, {}, {})
-            ProBottomSheetHost(visible = true, title = null, onClose = {}) {
-                CategoryActionsSheetContent(
-                    row = CategoryRowUi("coffee", "Coffee runs"),
-                    onEdit = {},
-                    onDelete = {},
-                    onCancel = {},
-                )
+    fun cat_actions() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                CategoryListScreen(previewCategoryList, {}, {})
+                ProBottomSheetHost(visible = true, title = null, onClose = {}) {
+                    CategoryActionsSheetContent(
+                        row = CategoryRowUi("coffee", "Coffee runs"),
+                        onEdit = {},
+                        onDelete = {},
+                        onCancel = {},
+                    )
+                }
             }
         }
-    }
 
     @Test
-    fun cat_edit() = capture {
-        Box(Modifier.fillMaxSize()) {
-            CategoryListScreen(previewCategoryList, {}, {})
-            ProBottomSheetHost(
-                visible = true,
-                title = stringResource(R.string.categories_edit_title),
-                onClose = {},
-            ) {
-                CategoryNewSheetContent(
-                    form = CategoryNewFormState(name = "Coffee runs", selectedIconId = "coffee"),
-                    onNameChange = {},
-                    onIconSelected = {},
-                    onAdd = {},
-                    confirmLabel = stringResource(R.string.categories_save),
-                )
+    fun cat_edit() =
+        capture {
+            Box(Modifier.fillMaxSize()) {
+                CategoryListScreen(previewCategoryList, {}, {})
+                ProBottomSheetHost(
+                    visible = true,
+                    title = stringResource(R.string.categories_edit_title),
+                    onClose = {},
+                ) {
+                    CategoryNewSheetContent(
+                        form = CategoryNewFormState(name = "Coffee runs", selectedIconId = "coffee"),
+                        onNameChange = {},
+                        onIconSelected = {},
+                        onAdd = {},
+                        confirmLabel = stringResource(R.string.categories_save),
+                    )
+                }
             }
         }
-    }
 }

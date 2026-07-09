@@ -42,39 +42,39 @@ fun ProPillButton(
     val shape = ProExpenseTheme.shapes.chip
     val heroShadow = ProExpenseTheme.elevation.fab.firstOrNull()
     val interactionSource = remember { MutableInteractionSource() }
-    val textStyle = typography.button.merge(
-        TextStyle(
-            fontSize = dimens.buttonLg.fontSizeSp.sp,
-            lineHeight = proLineHeight(dimens.buttonLg.fontSizeSp, 1.4f),
-        ),
-    )
+    val textStyle =
+        typography.button.merge(
+            TextStyle(
+                fontSize = dimens.buttonLg.fontSizeSp.sp,
+                lineHeight = proLineHeight(dimens.buttonLg.fontSizeSp, 1.4f),
+            ),
+        )
 
     Row(
-        modifier = modifier
-            .proPressScale(interactionSource, enabled = enabled)
-            .alpha(if (enabled) 1f else motion.disabledOpacity)
-            .then(
-                if (heroShadow != null) {
-                    Modifier.shadow(
-                        elevation = heroShadow.blur,
-                        shape = shape,
-                        spotColor = heroShadow.color,
-                        ambientColor = heroShadow.color,
-                    )
-                } else {
-                    Modifier
-                },
-            )
-            .clip(shape)
-            .background(colors.primary)
-            .proRippleClickable(
-                onClick = onClick,
-                interactionSource = interactionSource,
-                enabled = enabled,
-                role = Role.Button,
-            )
-            .defaultMinSize(minHeight = dimens.buttonLg.height)
-            .padding(horizontal = dimens.space26, vertical = dimens.space12),
+        modifier =
+            modifier
+                .proPressScale(interactionSource, enabled = enabled)
+                .alpha(if (enabled) 1f else motion.disabledOpacity)
+                .then(
+                    if (heroShadow != null) {
+                        Modifier.shadow(
+                            elevation = heroShadow.blur,
+                            shape = shape,
+                            spotColor = heroShadow.color,
+                            ambientColor = heroShadow.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).clip(shape)
+                .background(colors.primary)
+                .proRippleClickable(
+                    onClick = onClick,
+                    interactionSource = interactionSource,
+                    enabled = enabled,
+                    role = Role.Button,
+                ).defaultMinSize(minHeight = dimens.buttonLg.height)
+                .padding(horizontal = dimens.space26, vertical = dimens.space12),
         horizontalArrangement = Arrangement.spacedBy(dimens.space8, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {

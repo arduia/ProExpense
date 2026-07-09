@@ -36,19 +36,19 @@ fun DetailFieldCard(
     val strokeColor = borderColor ?: colors.line
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (onClick != null) {
-                    Modifier.proClickable(onClick = onClick, shape = shape)
-                } else {
-                    Modifier
-                },
-            )
-            .clip(shape)
-            .border(BorderStroke(1.dp, strokeColor), shape)
-            .background(colors.surface)
-            .padding(dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (onClick != null) {
+                        Modifier.proClickable(onClick = onClick, shape = shape)
+                    } else {
+                        Modifier
+                    },
+                ).clip(shape)
+                .border(BorderStroke(1.dp, strokeColor), shape)
+                .background(colors.surface)
+                .padding(dimens.space14),
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -99,9 +99,10 @@ fun DetailNoteField(
                 onValueChange = { if (it.length <= maxLength) onValueChange(it) },
                 textStyle = typography.body.copy(color = colors.onSurface),
                 cursorBrush = SolidColor(colors.primary),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 72.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 72.dp),
                 decorationBox = { inner ->
                     if (value.isEmpty()) {
                         Text(text = placeholder, style = typography.body, color = colors.muted)
@@ -198,21 +199,23 @@ fun DetailTagField(
                 size = dimens.iconNav,
             )
         },
-        trailing = if (hasTag) {
-            {
-                Text(
-                    text = "Clear",
-                    style = typography.caption,
-                    color = colors.onSurfaceMuted,
-                    modifier = Modifier
-                        .clip(ProExpenseTheme.shapes.chip)
-                        .proClickable(onClick = onClear, shape = ProExpenseTheme.shapes.chip)
-                        .padding(horizontal = dimens.space8, vertical = dimens.space4),
-                )
-            }
-        } else {
-            null
-        },
+        trailing =
+            if (hasTag) {
+                {
+                    Text(
+                        text = "Clear",
+                        style = typography.caption,
+                        color = colors.onSurfaceMuted,
+                        modifier =
+                            Modifier
+                                .clip(ProExpenseTheme.shapes.chip)
+                                .proClickable(onClick = onClear, shape = ProExpenseTheme.shapes.chip)
+                                .padding(horizontal = dimens.space8, vertical = dimens.space4),
+                    )
+                }
+            } else {
+                null
+            },
     ) {
         Text(
             text = tagLabel ?: placeholder,
@@ -233,12 +236,13 @@ fun DetailAmountSummaryCard(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .padding(dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         Row(
@@ -248,9 +252,10 @@ fun DetailAmountSummaryCard(
         ) {
             Text(text = "AMOUNT", style = typography.eyebrow, color = colors.onSurfaceMuted)
             Row(
-                modifier = Modifier
-                    .proClickable(onClick = onEdit, shape = ProExpenseTheme.shapes.chip)
-                    .padding(horizontal = dimens.space4, vertical = dimens.space2),
+                modifier =
+                    Modifier
+                        .proClickable(onClick = onEdit, shape = ProExpenseTheme.shapes.chip)
+                        .padding(horizontal = dimens.space4, vertical = dimens.space2),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimens.space4),
             ) {

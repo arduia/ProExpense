@@ -14,14 +14,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.categories.R
-import com.arduia.expense.ui.design.ProAlertDialog
-import com.arduia.expense.ui.design.ProBottomSheetHost
-import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
 import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
 import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
+import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -51,9 +51,10 @@ fun CategoryListFlow(
             .toSet()
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper),
     ) {
         CategoryListScreen(
             state = state.copy(custom = custom),
@@ -72,19 +73,21 @@ fun CategoryListFlow(
 
         ProBottomSheetHost(
             visible = showSheet,
-            title = stringResource(
-                if (editingRow == null) R.string.categories_new_title else R.string.categories_edit_title,
-            ),
+            title =
+                stringResource(
+                    if (editingRow == null) R.string.categories_new_title else R.string.categories_edit_title,
+                ),
             onClose = { showSheet = false },
         ) {
             CategoryNewSheetContent(
                 form = form,
                 onNameChange = { name ->
                     val taken = takenNames(editingRow)
-                    form = form.copy(
-                        name = name,
-                        duplicate = name.isNotBlank() && name.trim().lowercase() in taken,
-                    )
+                    form =
+                        form.copy(
+                            name = name,
+                            duplicate = name.isNotBlank() && name.trim().lowercase() in taken,
+                        )
                 },
                 onIconSelected = { form = form.copy(selectedIconId = it) },
                 onAdd = {
@@ -94,9 +97,10 @@ fun CategoryListFlow(
                         editingRow = null
                     }
                 },
-                confirmLabel = stringResource(
-                    if (editingRow == null) R.string.categories_add else R.string.categories_save,
-                ),
+                confirmLabel =
+                    stringResource(
+                        if (editingRow == null) R.string.categories_add else R.string.categories_save,
+                    ),
             )
         }
 
@@ -111,12 +115,16 @@ fun CategoryListFlow(
                     onEdit = {
                         editingRow = row
                         val currentIconId = row.iconId.ifBlank { "food" }
-                        form = CategoryNewFormState(
-                            name = row.label,
-                            selectedIconId = currentIconId,
-                            iconOptions = (listOf(currentIconId) +
-                                CategoryNewFormState().iconOptions).distinct().take(4),
-                        )
+                        form =
+                            CategoryNewFormState(
+                                name = row.label,
+                                selectedIconId = currentIconId,
+                                iconOptions =
+                                    (
+                                        listOf(currentIconId) +
+                                            CategoryNewFormState().iconOptions
+                                    ).distinct().take(4),
+                            )
                         actionsRow = null
                         showSheet = true
                     },

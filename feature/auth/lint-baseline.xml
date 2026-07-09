@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.12.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.12.0)" variant="all" version="8.12.0">
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of io.insert-koin:koin-compose than 4.1.1 is available: 4.2.2"
+        errorLine1="            implementation(&quot;io.insert-koin:koin-compose:4.1.1&quot;)"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle.kts"
+            line="42"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="ContextCastToActivity"
+        message="LocalContext should not be cast to Activity, use LocalActivity instead"
+        errorLine1="    val activity = LocalContext.current as? FragmentActivity"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/feature/auth/ui/PinLockFlow.kt"
+            line="64"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="ContextCastToActivity"
+        message="LocalContext should not be cast to Activity, use LocalActivity instead"
+        errorLine1="    val activity = LocalContext.current as? FragmentActivity"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/feature/auth/ui/PinSetupFlow.kt"
+            line="51"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_setup_success&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_setup_success&quot;>PIN is now active. You\&apos;ll be asked to enter it on your next launch.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="29"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_disable_confirm_title&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_disable_confirm_title&quot;>Turn off PIN?&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="53"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_disable_confirm_body&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_disable_confirm_body&quot;>Your PIN, security question, and biometric unlock will be removed. Anyone with this device can open Pro Expense.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="54"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_disable_confirm_action&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_disable_confirm_action&quot;>Turn off&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="55"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_disable_confirm_cancel&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_disable_confirm_cancel&quot;>Cancel&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="56"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_manage_sheet_change&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_manage_sheet_change&quot;>Change PIN&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="60"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_manage_sheet_disable&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_manage_sheet_disable&quot;>Turn off PIN protection&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="61"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_manage_sheet_cancel&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_manage_sheet_cancel&quot;>Cancel&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="62"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;pin_change_success&quot; is not translated in &quot;th&quot; (Thai) or &quot;my&quot; (Burmese)"
+        errorLine1="    &lt;string name=&quot;pin_change_success&quot;>PIN changed&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="66"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;attempts&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;pin_recover_attempts&quot;>%1$d of %2$d attempts used&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/res/values/strings.xml"
+            line="42"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+        errorLine1="    var recoveryAttempts by remember { mutableStateOf(0) }"
+        errorLine2="                                       ~~~~~~~~~~~~~~">
+        <location
+            file="src/androidMain/kotlin/com/arduia/expense/feature/auth/ui/PinLockFlow.kt"
+            line="75"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="UseTomlInstead"
+        message="Use version catalog instead"
+        errorLine1="            implementation(&quot;io.insert-koin:koin-compose:4.1.1&quot;)"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle.kts"
+            line="42"
+            column="28"/>
+    </issue>
+
+</issues>

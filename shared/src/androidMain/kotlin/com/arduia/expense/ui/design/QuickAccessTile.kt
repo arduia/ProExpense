@@ -41,22 +41,24 @@ fun QuickAccessTile(
     val resolvedIconBackground = iconBackground ?: colors.primaryTint
 
     Column(
-        modifier = modifier
-            .defaultMinSize(minHeight = dimens.touchTargetMin)
-            .proPressScale(interactionSource)
-            .clip(tileShape)
-            .border(BorderStroke(1.dp, colors.line), tileShape)
-            .background(colors.surface)
-            .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
-            .padding(horizontal = dimens.space4, vertical = dimens.space12),
+        modifier =
+            modifier
+                .defaultMinSize(minHeight = dimens.touchTargetMin)
+                .proPressScale(interactionSource)
+                .clip(tileShape)
+                .border(BorderStroke(1.dp, colors.line), tileShape)
+                .background(colors.surface)
+                .proRippleClickable(onClick = onClick, interactionSource = interactionSource)
+                .padding(horizontal = dimens.space4, vertical = dimens.space12),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(dimens.space7),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.quickAccessIconSize)
-                .clip(shapes.quickAccessChip)
-                .background(resolvedIconBackground),
+            modifier =
+                Modifier
+                    .size(dimens.quickAccessIconSize)
+                    .clip(shapes.quickAccessChip)
+                    .background(resolvedIconBackground),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(

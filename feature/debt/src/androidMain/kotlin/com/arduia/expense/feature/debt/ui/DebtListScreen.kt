@@ -30,13 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.debt.R
-import com.arduia.expense.ui.design.ProButton
-import com.arduia.expense.ui.design.ProButtonSize
-import com.arduia.expense.ui.design.ProIcon
-import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.SegmentedToggle
-import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.feature.debt.ui.preview.DebtListUiState
 import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
@@ -44,6 +37,13 @@ import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLoading
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.SegmentedToggle
+import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.centeredGlyph
@@ -61,11 +61,12 @@ fun DebtListScreen(
     val dimens = ProExpenseTheme.dimensions
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -92,18 +93,20 @@ fun DebtListScreen(
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space24),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space24),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             SegmentedToggle(
-                options = listOf(
-                    stringResource(R.string.debt_tab_lent),
-                    stringResource(R.string.debt_tab_owe),
-                ),
+                options =
+                    listOf(
+                        stringResource(R.string.debt_tab_lent),
+                        stringResource(R.string.debt_tab_owe),
+                    ),
                 selectedIndex = if (state.side == DebtSide.Lent) 0 else 1,
                 onSelected = { index ->
                     onSideSelected(if (index == 0) DebtSide.Lent else DebtSide.Owe)
@@ -149,19 +152,21 @@ private fun DebtSummaryCard(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val accent = if (state.side == DebtSide.Lent) colors.success else colors.danger
-    val eyebrow = if (state.side == DebtSide.Lent) {
-        stringResource(R.string.debt_youre_owed)
-    } else {
-        stringResource(R.string.debt_you_owe)
-    }
+    val eyebrow =
+        if (state.side == DebtSide.Lent) {
+            stringResource(R.string.debt_youre_owed)
+        } else {
+            stringResource(R.string.debt_you_owe)
+        }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .padding(dimens.cardPadding),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .padding(dimens.cardPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -176,11 +181,12 @@ private fun DebtSummaryCard(
             )
         }
         Text(
-            text = androidx.compose.ui.res.pluralStringResource(
-                R.plurals.debt_active_count,
-                state.activeCount,
-                state.activeCount,
-            ),
+            text =
+                androidx.compose.ui.res.pluralStringResource(
+                    R.plurals.debt_active_count,
+                    state.activeCount,
+                    state.activeCount,
+                ),
             style = typography.caption,
             color = colors.onSurfaceMuted,
         )
@@ -216,19 +222,21 @@ private fun DebtRecordGroup(
     val colors = ProExpenseTheme.colors
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
     ) {
         records.forEachIndexed { index, record ->
             if (index > 0) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.lineSoft),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(colors.lineSoft),
                 )
             }
             DebtRecordRow(
@@ -252,29 +260,32 @@ private fun DebtRecordRow(
     val typography = ProExpenseTheme.typography
     val accent = if (side == DebtSide.Lent) colors.success else colors.danger
     val rowAlpha = if (record.settled) 0.5f else 1f
-    val meta = if (record.subtitle != null) {
-        "${record.dateLabel} · ${record.subtitle}"
-    } else {
-        record.dateLabel
-    }
+    val meta =
+        if (record.subtitle != null) {
+            "${record.dateLabel} · ${record.subtitle}"
+        } else {
+            record.dateLabel
+        }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .alpha(rowAlpha)
-            .proClickable(onClick = onClick, shape = androidx.compose.ui.graphics.RectangleShape)
-            .padding(horizontal = dimens.space16, vertical = dimens.rowPaddingV),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .alpha(rowAlpha)
+                .proClickable(onClick = onClick, shape = androidx.compose.ui.graphics.RectangleShape)
+                .padding(horizontal = dimens.space16, vertical = dimens.rowPaddingV),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         DebtAvatar(
             initial = record.initial,
             tint = if (record.settled) colors.onSurfaceMuted else accent,
-            background = when {
-                record.settled -> colors.paperAlt
-                side == DebtSide.Lent -> colors.successTint
-                else -> colors.dangerTint
-            },
+            background =
+                when {
+                    record.settled -> colors.paperAlt
+                    side == DebtSide.Lent -> colors.successTint
+                    else -> colors.dangerTint
+                },
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -285,11 +296,12 @@ private fun DebtRecordRow(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = if (record.settled) {
-                    stringResource(R.string.debt_settled_meta, record.dateLabel)
-                } else {
-                    meta
-                },
+                text =
+                    if (record.settled) {
+                        stringResource(R.string.debt_settled_meta, record.dateLabel)
+                    } else {
+                        meta
+                    },
                 style = typography.caption,
                 color = colors.onSurfaceMuted,
                 maxLines = 1,
@@ -302,9 +314,10 @@ private fun DebtRecordRow(
                 text = stringResource(R.string.debt_settled_chip),
                 style = typography.eyebrow,
                 color = colors.onSurfaceMuted,
-                modifier = Modifier
-                    .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
-                    .padding(horizontal = dimens.space10, vertical = dimens.space4),
+                modifier =
+                    Modifier
+                        .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
+                        .padding(horizontal = dimens.space10, vertical = dimens.space4),
             )
         } else {
             Text(
@@ -326,10 +339,11 @@ internal fun DebtAvatar(
 ) {
     val typography = ProExpenseTheme.typography
     Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(background),
+        modifier =
+            modifier
+                .size(size)
+                .clip(CircleShape)
+                .background(background),
         contentAlignment = Alignment.Center,
     ) {
         Text(

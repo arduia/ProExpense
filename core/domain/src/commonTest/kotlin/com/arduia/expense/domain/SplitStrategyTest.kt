@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class SplitStrategyTest {
-
     private val usd = CurrencyCode("USD")
     private val p1 = Participant(ParticipantId("p1"), "Alice")
     private val p2 = Participant(ParticipantId("p2"), "Bob")
@@ -26,9 +25,10 @@ class SplitStrategyTest {
     @Test
     fun `custom split returns shares matching participant keys`() {
         val total = Money(Amount(100), usd)
-        val strategy = SplitStrategy.CustomSplit(
-            mapOf(p1.id to Money(Amount(60), usd), p2.id to Money(Amount(40), usd)),
-        )
+        val strategy =
+            SplitStrategy.CustomSplit(
+                mapOf(p1.id to Money(Amount(60), usd), p2.id to Money(Amount(40), usd)),
+            )
 
         val shares = SplitStrategy.resolve(strategy, listOf(p1, p2), total)
         assertEquals(strategy.shares, shares)
@@ -37,9 +37,10 @@ class SplitStrategyTest {
     @Test
     fun `custom split rejects mismatched participant keys`() {
         val total = Money(Amount(100), usd)
-        val strategy = SplitStrategy.CustomSplit(
-            mapOf(p1.id to Money(Amount(60), usd), p2.id to Money(Amount(40), usd)),
-        )
+        val strategy =
+            SplitStrategy.CustomSplit(
+                mapOf(p1.id to Money(Amount(60), usd), p2.id to Money(Amount(40), usd)),
+            )
 
         assertFailsWith<IllegalArgumentException> {
             SplitStrategy.resolve(strategy, listOf(p1, p3), total)
@@ -49,9 +50,10 @@ class SplitStrategyTest {
     @Test
     fun `custom split allows shares that do not sum to total`() {
         val total = Money(Amount(100), usd)
-        val strategy = SplitStrategy.CustomSplit(
-            mapOf(p1.id to Money(Amount(60), usd), p2.id to Money(Amount(30), usd)),
-        )
+        val strategy =
+            SplitStrategy.CustomSplit(
+                mapOf(p1.id to Money(Amount(60), usd), p2.id to Money(Amount(30), usd)),
+            )
 
         val shares = SplitStrategy.resolve(strategy, listOf(p1, p2), total)
 
@@ -61,9 +63,10 @@ class SplitStrategyTest {
     @Test
     fun `custom split rejects shares in a different currency`() {
         val total = Money(Amount(100), usd)
-        val strategy = SplitStrategy.CustomSplit(
-            mapOf(p1.id to Money(Amount(100), CurrencyCode("EUR"))),
-        )
+        val strategy =
+            SplitStrategy.CustomSplit(
+                mapOf(p1.id to Money(Amount(100), CurrencyCode("EUR"))),
+            )
 
         assertFailsWith<IllegalArgumentException> {
             SplitStrategy.resolve(strategy, listOf(p1), total)

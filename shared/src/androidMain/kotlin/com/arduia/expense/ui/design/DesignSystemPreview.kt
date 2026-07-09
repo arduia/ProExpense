@@ -107,23 +107,24 @@ fun ProDesignSystemListsContent() {
     DayGroup(
         title = "Today · May 25",
         total = "$80.90",
-        transactions = listOf(
-            ProTransactionRowModel(
-                id = "food-lunch",
-                categoryId = "food",
-                note = "Lunch with M.",
-                meta = "Food · 12:30 PM",
-                amount = "$12.40",
+        transactions =
+            listOf(
+                ProTransactionRowModel(
+                    id = "food-lunch",
+                    categoryId = "food",
+                    note = "Lunch with M.",
+                    meta = "Food · 12:30 PM",
+                    amount = "$12.40",
+                ),
+                ProTransactionRowModel(
+                    id = "entertainment-movie",
+                    categoryId = "entertainment",
+                    note = "Movie · Dune",
+                    meta = "Entertainment · 08:10 PM",
+                    amount = "$18.00",
+                    tag = "Bali Trip",
+                ),
             ),
-            ProTransactionRowModel(
-                id = "entertainment-movie",
-                categoryId = "entertainment",
-                note = "Movie · Dune",
-                meta = "Entertainment · 08:10 PM",
-                amount = "$18.00",
-                tag = "Bali Trip",
-            ),
-        ),
     )
 }
 
@@ -240,11 +241,12 @@ fun ProDesignSystemComponents() {
     val dimens = ProExpenseTheme.dimensions
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .verticalScroll(rememberScrollState())
-            .padding(dimens.space18),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .verticalScroll(rememberScrollState())
+                .padding(dimens.space18),
         verticalArrangement = Arrangement.spacedBy(dimens.space24),
     ) {
         DesignSystemSection(title = "BUTTONS") { ProDesignSystemButtonsContent() }

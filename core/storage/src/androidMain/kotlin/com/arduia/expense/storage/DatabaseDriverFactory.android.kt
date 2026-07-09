@@ -6,7 +6,9 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 
-actual class DatabaseDriverFactory(private val context: Context) {
+actual class DatabaseDriverFactory(
+    private val context: Context,
+) {
     actual fun createDriver(passphrase: ByteArray): SqlDriver {
         // sqlcipher-android (4.5.0+) ships the native lib but does not auto-load it.
         System.loadLibrary("sqlcipher")

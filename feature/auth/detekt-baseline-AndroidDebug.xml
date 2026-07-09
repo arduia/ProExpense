@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:PinLockFlow.kt$!hasAutoPromptedBiometric &amp;&amp; canUseBiometric &amp;&amp; lockoutUntil == null &amp;&amp; step == PinLockStep.Entry</ID>
+    <ID>CyclomaticComplexMethod:PinEntryScreen.kt$@Composable fun PinEntryScreen( state: PinEntryUiState, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBiometric: () -&gt; Unit, onForgot: () -&gt; Unit, modifier: Modifier = Modifier, headingRes: Int = R.string.pin_entry_heading, helperRes: Int = R.string.pin_entry_helper, showForgot: Boolean = true, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, )</ID>
+    <ID>CyclomaticComplexMethod:PinLockFlow.kt$@Composable fun PinLockFlow( onUnlocked: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>CyclomaticComplexMethod:PinSetupFlow.kt$@Composable fun PinSetupFlow( onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, // Fired only on a successful save, distinct from onDismiss (also called on cancel/back) — // lets the caller show the "PIN is now active" confirmation (US-AUTH-1 Scenario 3) only when // setup actually completed. onSaved: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:AuthFeatureEntry.kt$AuthFeatureEntry$@Composable fun PinChangeFlow( onDone: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier, )</ID>
+    <ID>FunctionNaming:AuthFeatureEntry.kt$AuthFeatureEntry$@Composable fun PinLockFlow( onUnlocked: () -&gt; Unit, modifier: Modifier, )</ID>
+    <ID>FunctionNaming:AuthFeatureEntry.kt$AuthFeatureEntry$@Composable fun PinSetupFlow( onDismiss: () -&gt; Unit, modifier: Modifier, onSaved: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:AuthFeatureEntry.kt$AuthFeatureEntry$@Composable fun PinVerifyFlow( headingRes: Int, helperRes: Int, onVerified: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier, )</ID>
+    <ID>FunctionNaming:PinChangeFlow.kt$@Composable fun PinChangeFlow( onDone: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PinChangeFlow.kt$@Preview( name = "PIN change flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinChangeFlowPreview()</ID>
+    <ID>FunctionNaming:PinEntryScreen.kt$@Composable fun PinEntryScreen( state: PinEntryUiState, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBiometric: () -&gt; Unit, onForgot: () -&gt; Unit, modifier: Modifier = Modifier, headingRes: Int = R.string.pin_entry_heading, helperRes: Int = R.string.pin_entry_helper, showForgot: Boolean = true, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, )</ID>
+    <ID>FunctionNaming:PinEntryScreen.kt$@Composable private fun PinBrandTile()</ID>
+    <ID>FunctionNaming:PinEntryScreen.kt$@Preview( name = "PIN entry — default", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinEntryPreview()</ID>
+    <ID>FunctionNaming:PinEntryScreen.kt$@Preview( name = "PIN entry — locked", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinLockPreview()</ID>
+    <ID>FunctionNaming:PinEntryScreen.kt$@Preview( name = "PIN entry — verify to disable", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinVerifyDisablePreview()</ID>
+    <ID>FunctionNaming:PinEntryScreen.kt$@Preview( name = "PIN entry — wrong", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinWrongPreview()</ID>
+    <ID>FunctionNaming:PinLockFlow.kt$@Composable fun PinLockFlow( onUnlocked: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PinLockFlow.kt$@Preview( name = "PIN lock flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinLockFlowPreview()</ID>
+    <ID>FunctionNaming:PinRecoveryScreen.kt$@Composable fun PinRecoveryScreen( questionText: String, answer: String, attemptsLabel: String, onAnswerChange: (String) -&gt; Unit, onVerify: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, verifyEnabled: Boolean = true, showResetOption: Boolean = false, onResetApp: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:PinRecoveryScreen.kt$@Preview( name = "PIN — recovery exhausted (last resort)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinRecoveryExhaustedPreview()</ID>
+    <ID>FunctionNaming:PinRecoveryScreen.kt$@Preview( name = "PIN — recovery", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinRecoveryPreview()</ID>
+    <ID>FunctionNaming:PinSecurityQuestionScreen.kt$@Composable fun PinSecurityQuestionScreen( questions: List&lt;PinSecurityQuestionUi&gt;, selectedId: String, answer: String, onSelect: (String) -&gt; Unit, onAnswerChange: (String) -&gt; Unit, onEnable: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PinSecurityQuestionScreen.kt$@Composable internal fun PinAnswerField( value: String, onValueChange: (String) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PinSecurityQuestionScreen.kt$@Composable private fun PinQuestionRow( text: String, selected: Boolean, onClick: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:PinSecurityQuestionScreen.kt$@Preview( name = "PIN — security question", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSecurityQuestionPreview()</ID>
+    <ID>FunctionNaming:PinSetPinScreen.kt$@Composable fun PinSetPinScreen( state: PinEntryUiState, headingRes: Int, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PinSetPinScreen.kt$@Preview( name = "PIN set — mismatch", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSetMismatchPreview()</ID>
+    <ID>FunctionNaming:PinSetupFlow.kt$@Composable fun PinSetupFlow( onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, // Fired only on a successful save, distinct from onDismiss (also called on cancel/back) — // lets the caller show the "PIN is now active" confirmation (US-AUTH-1 Scenario 3) only when // setup actually completed. onSaved: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:PinSetupFlow.kt$@Preview( name = "PIN setup flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSetupFlowPreview()</ID>
+    <ID>FunctionNaming:PinSetupScreen.kt$@Composable fun PinSetupScreen( state: PinSetupUiState, onTogglePin: (Boolean) -&gt; Unit, onToggleBiometric: (Boolean) -&gt; Unit, onRevealNew: () -&gt; Unit, onRevealConfirm: () -&gt; Unit, onRecoveryClick: () -&gt; Unit, onSave: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, saveEnabled: Boolean = true, saving: Boolean = false, errorMessage: String? = null, )</ID>
+    <ID>FunctionNaming:PinSetupScreen.kt$@Composable private fun PinFieldSection( label: String, digits: String, dotColor: Color, active: Boolean, onFieldClick: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:PinSetupScreen.kt$@Composable private fun PinSwitchRow( icon: ProIconGlyph, title: String, subtitle: String?, checked: Boolean, enabled: Boolean, onCheckedChange: (Boolean) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:PinSetupScreen.kt$@Preview( name = "PIN setup — enable", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSetupPreview()</ID>
+    <ID>FunctionNaming:PinVerifyFlow.kt$@Composable fun PinVerifyFlow( headingRes: Int, helperRes: Int, onVerified: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PinVerifyFlow.kt$@Preview( name = "PIN verify — disable", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinVerifyFlowPreview()</ID>
+    <ID>LongMethod:PinChangeFlow.kt$@Composable fun PinChangeFlow( onDone: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:PinEntryScreen.kt$@Composable fun PinEntryScreen( state: PinEntryUiState, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBiometric: () -&gt; Unit, onForgot: () -&gt; Unit, modifier: Modifier = Modifier, headingRes: Int = R.string.pin_entry_heading, helperRes: Int = R.string.pin_entry_helper, showForgot: Boolean = true, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, )</ID>
+    <ID>LongMethod:PinLockFlow.kt$@Composable fun PinLockFlow( onUnlocked: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:PinRecoveryScreen.kt$@Composable fun PinRecoveryScreen( questionText: String, answer: String, attemptsLabel: String, onAnswerChange: (String) -&gt; Unit, onVerify: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, verifyEnabled: Boolean = true, showResetOption: Boolean = false, onResetApp: () -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:PinSecurityQuestionScreen.kt$@Composable fun PinSecurityQuestionScreen( questions: List&lt;PinSecurityQuestionUi&gt;, selectedId: String, answer: String, onSelect: (String) -&gt; Unit, onAnswerChange: (String) -&gt; Unit, onEnable: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:PinSetPinScreen.kt$@Composable fun PinSetPinScreen( state: PinEntryUiState, headingRes: Int, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:PinSetupFlow.kt$@Composable fun PinSetupFlow( onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, // Fired only on a successful save, distinct from onDismiss (also called on cancel/back) — // lets the caller show the "PIN is now active" confirmation (US-AUTH-1 Scenario 3) only when // setup actually completed. onSaved: () -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:PinSetupScreen.kt$@Composable fun PinSetupScreen( state: PinSetupUiState, onTogglePin: (Boolean) -&gt; Unit, onToggleBiometric: (Boolean) -&gt; Unit, onRevealNew: () -&gt; Unit, onRevealConfirm: () -&gt; Unit, onRecoveryClick: () -&gt; Unit, onSave: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, saveEnabled: Boolean = true, saving: Boolean = false, errorMessage: String? = null, )</ID>
+    <ID>LongMethod:PinSetupScreen.kt$@Composable private fun PinFieldSection( label: String, digits: String, dotColor: Color, active: Boolean, onFieldClick: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:BiometricAuthenticator.kt$BiometricAuthenticator$( activity: FragmentActivity, title: String, subtitle: String, negativeButtonText: String, onSuccess: () -&gt; Unit, onError: (String) -&gt; Unit, )</ID>
+    <ID>LongParameterList:PinEntryScreen.kt$( state: PinEntryUiState, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBiometric: () -&gt; Unit, onForgot: () -&gt; Unit, modifier: Modifier = Modifier, headingRes: Int = R.string.pin_entry_heading, helperRes: Int = R.string.pin_entry_helper, showForgot: Boolean = true, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, )</ID>
+    <ID>LongParameterList:PinRecoveryScreen.kt$( questionText: String, answer: String, attemptsLabel: String, onAnswerChange: (String) -&gt; Unit, onVerify: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, verifyEnabled: Boolean = true, showResetOption: Boolean = false, onResetApp: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:PinSecurityQuestionScreen.kt$( questions: List&lt;PinSecurityQuestionUi&gt;, selectedId: String, answer: String, onSelect: (String) -&gt; Unit, onAnswerChange: (String) -&gt; Unit, onEnable: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongParameterList:PinSetPinScreen.kt$( state: PinEntryUiState, headingRes: Int, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongParameterList:PinSetupScreen.kt$( icon: ProIconGlyph, title: String, subtitle: String?, checked: Boolean, enabled: Boolean, onCheckedChange: (Boolean) -&gt; Unit, )</ID>
+    <ID>LongParameterList:PinSetupScreen.kt$( state: PinSetupUiState, onTogglePin: (Boolean) -&gt; Unit, onToggleBiometric: (Boolean) -&gt; Unit, onRevealNew: () -&gt; Unit, onRevealConfirm: () -&gt; Unit, onRecoveryClick: () -&gt; Unit, onSave: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, saveEnabled: Boolean = true, saving: Boolean = false, errorMessage: String? = null, )</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$1000</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$120_000</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$16</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$256</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$3</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$30</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$4</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$5</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$5L</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$60</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$6L</ID>
+    <ID>MagicNumber:PinLockFlow.kt$1000</ID>
+    <ID>MagicNumber:PinRecoveryScreen.kt$5</ID>
+    <ID>MagicNumber:PinSetupFlow.kt$6</ID>
+    <ID>MagicNumber:PinSetupScreen.kt$6</ID>
+    <ID>MagicNumber:PinVerifyFlow.kt$1000</ID>
+    <ID>MaxLineLength:PinChangeFlow.kt$.</ID>
+    <ID>MaxLineLength:PinSetupFlow.kt$.</ID>
+    <ID>ReturnCount:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$private fun verifyPbkdf2( input: String, storedHash: String, ): Boolean</ID>
+    <ID>TooGenericExceptionCaught:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$e: Exception</ID>
+    <ID>TooManyFunctions:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl : PinAuthRepository</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$return computedHashHex == expectedHashHex</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val computedHashHex = key.encoded.joinToString("") { "%02x".format(it) }</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val expectedHashHex = parts[3]</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val iterations = parts[1].toIntOrNull() ?: return false</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val key = factory.generateSecret(spec)</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val salt = saltHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val saltHex = parts[2]</ID>
+    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val spec = PBEKeySpec(input.toCharArray(), salt, iterations, 256)</ID>
+    <ID>UnusedPrivateMember:PinChangeFlow.kt$@Preview( name = "PIN change flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinChangeFlowPreview()</ID>
+    <ID>UnusedPrivateMember:PinEntryScreen.kt$@Preview( name = "PIN entry — default", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinEntryPreview()</ID>
+    <ID>UnusedPrivateMember:PinEntryScreen.kt$@Preview( name = "PIN entry — locked", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinLockPreview()</ID>
+    <ID>UnusedPrivateMember:PinEntryScreen.kt$@Preview( name = "PIN entry — verify to disable", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinVerifyDisablePreview()</ID>
+    <ID>UnusedPrivateMember:PinEntryScreen.kt$@Preview( name = "PIN entry — wrong", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinWrongPreview()</ID>
+    <ID>UnusedPrivateMember:PinLockFlow.kt$@Preview( name = "PIN lock flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinLockFlowPreview()</ID>
+    <ID>UnusedPrivateMember:PinRecoveryScreen.kt$@Preview( name = "PIN — recovery exhausted (last resort)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinRecoveryExhaustedPreview()</ID>
+    <ID>UnusedPrivateMember:PinRecoveryScreen.kt$@Preview( name = "PIN — recovery", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinRecoveryPreview()</ID>
+    <ID>UnusedPrivateMember:PinSecurityQuestionScreen.kt$@Preview( name = "PIN — security question", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSecurityQuestionPreview()</ID>
+    <ID>UnusedPrivateMember:PinSetPinScreen.kt$@Preview( name = "PIN set — mismatch", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSetMismatchPreview()</ID>
+    <ID>UnusedPrivateMember:PinSetupFlow.kt$@Preview( name = "PIN setup flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSetupFlowPreview()</ID>
+    <ID>UnusedPrivateMember:PinSetupScreen.kt$@Preview( name = "PIN setup — enable", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinSetupPreview()</ID>
+    <ID>UnusedPrivateMember:PinVerifyFlow.kt$@Preview( name = "PIN verify — disable", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinVerifyFlowPreview()</ID>
+    <ID>UseOrEmpty:PinLockFlow.kt$pinSecurityQuestions .firstOrNull { it.id == recoveryQuestionId } ?.let { stringResource(it.textRes) } ?: ""</ID>
+  </CurrentIssues>
+</SmellBaseline>

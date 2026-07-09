@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:PinEntryPresentation.kt$PinEntryLogic$1000</ID>
+    <ID>MagicNumber:PinEntryPresentation.kt$PinEntryLogic$60</ID>
+    <ID>ReturnCount:AuthUseCases.kt$SetupPinUseCase$suspend operator fun invoke( pin: String, securityQuestionId: String, securityAnswer: String, enableBiometric: Boolean, ): Result&lt;Unit&gt;</ID>
+    <ID>TooManyFunctions:PinAuthRepository.kt$PinAuthRepository</ID>
+  </CurrentIssues>
+</SmellBaseline>

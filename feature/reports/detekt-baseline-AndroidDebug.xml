@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:ReportsFeatureEntry.kt$ReportsFeatureEntry$@Composable fun ReportsFlow( onBack: () -&gt; Unit, modifier: Modifier = Modifier, empty: Boolean = false, onLogFirstExpense: () -&gt; Unit = {}, homeCurrencySymbol: String = "$", )</ID>
+    <ID>FunctionNaming:ReportsFlow.kt$@Composable fun ReportsFlow( onBack: () -&gt; Unit, modifier: Modifier = Modifier, periods: List&lt;ReportsUiState&gt; = listOf(previewReports, previewReportsUncategorized), initialPage: Int = 0, empty: Boolean = false, isLoading: Boolean = false, onLogFirstExpense: () -&gt; Unit = {}, granularityIndex: Int = 0, onGranularityChange: (index: Int, anchor: Pair&lt;Long, Long&gt;?) -&gt; Unit = { _, _ -&gt; }, )</ID>
+    <ID>FunctionNaming:ReportsFlow.kt$@Preview( name = "Reports flow — all periods empty", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowAllPeriodsEmptyPreview()</ID>
+    <ID>FunctionNaming:ReportsFlow.kt$@Preview( name = "Reports flow — data", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowPreview()</ID>
+    <ID>FunctionNaming:ReportsFlow.kt$@Preview( name = "Reports flow — empty", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowEmptyPreview()</ID>
+    <ID>FunctionNaming:ReportsFlow.kt$@Preview( name = "Reports flow — loading", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowLoadingPreview()</ID>
+    <ID>FunctionNaming:ReportsFlow.kt$@Preview( name = "Reports flow — weekly", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowWeeklyPreview()</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Composable fun ReportsScreen( state: ReportsUiState, onBack: () -&gt; Unit, onPrevPeriod: () -&gt; Unit, onNextPeriod: () -&gt; Unit, modifier: Modifier = Modifier, globalEmpty: Boolean = state.empty, onLogFirstExpense: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Composable internal fun ReportsPeriodContent( state: ReportsUiState, onLogFirstExpense: () -&gt; Unit, modifier: Modifier = Modifier, allPeriodsEmpty: Boolean = false, )</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Composable internal fun ReportsPeriodPill( label: String, onPrev: () -&gt; Unit, onNext: () -&gt; Unit, prevEnabled: Boolean = true, nextEnabled: Boolean = true, )</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Composable private fun ReportsDonut( categories: List&lt;ReportsCategoryUi&gt;, uncategorized: Boolean, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Composable private fun ReportsRankRow(category: ReportsCategoryUi)</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Composable private fun ReportsTipBanner()</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Preview( name = "Reports — all uncategorized", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsUncategorizedPreview()</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Preview( name = "Reports — empty month (pill stays visible)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsPeriodEmptyPreview()</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Preview( name = "Reports — monthly", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsPreview()</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Preview( name = "Reports — no data yet", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsEmptyPreview()</ID>
+    <ID>FunctionNaming:ReportsScreen.kt$@Preview( name = "Reports — other rollup", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsOtherRollupPreview()</ID>
+    <ID>LongMethod:ReportsFeatureEntry.kt$ReportsFeatureEntryImpl$@Composable override fun ReportsFlow( onBack: () -&gt; Unit, modifier: Modifier, empty: Boolean, onLogFirstExpense: () -&gt; Unit, homeCurrencySymbol: String, )</ID>
+    <ID>LongMethod:ReportsFlow.kt$@Composable fun ReportsFlow( onBack: () -&gt; Unit, modifier: Modifier = Modifier, periods: List&lt;ReportsUiState&gt; = listOf(previewReports, previewReportsUncategorized), initialPage: Int = 0, empty: Boolean = false, isLoading: Boolean = false, onLogFirstExpense: () -&gt; Unit = {}, granularityIndex: Int = 0, onGranularityChange: (index: Int, anchor: Pair&lt;Long, Long&gt;?) -&gt; Unit = { _, _ -&gt; }, )</ID>
+    <ID>LongMethod:ReportsScreen.kt$@Composable internal fun ReportsPeriodContent( state: ReportsUiState, onLogFirstExpense: () -&gt; Unit, modifier: Modifier = Modifier, allPeriodsEmpty: Boolean = false, )</ID>
+    <ID>LongParameterList:ReportsFeatureEntry.kt$( generateReportPeriod: GenerateReportPeriodUseCase, records: List&lt;com.arduia.expense.domain.FinanceRecord&gt;, window: PeriodWindow, categoryNames: Map&lt;String, String&gt;, otherCategoryLabel: String, currencySymbol: String, daysInLabel: (Int) -&gt; String, )</ID>
+    <ID>LongParameterList:ReportsFlow.kt$( onBack: () -&gt; Unit, modifier: Modifier = Modifier, periods: List&lt;ReportsUiState&gt; = listOf(previewReports, previewReportsUncategorized), initialPage: Int = 0, empty: Boolean = false, isLoading: Boolean = false, onLogFirstExpense: () -&gt; Unit = {}, granularityIndex: Int = 0, onGranularityChange: (index: Int, anchor: Pair&lt;Long, Long&gt;?) -&gt; Unit = { _, _ -&gt; }, )</ID>
+    <ID>LongParameterList:ReportsScreen.kt$( state: ReportsUiState, onBack: () -&gt; Unit, onPrevPeriod: () -&gt; Unit, onNextPeriod: () -&gt; Unit, modifier: Modifier = Modifier, globalEmpty: Boolean = state.empty, onLogFirstExpense: () -&gt; Unit = {}, )</ID>
+    <ID>MagicNumber:ReportsFeatureEntry.kt$7</ID>
+    <ID>MagicNumber:ReportsFlow.kt$3</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.08f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.10f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.12f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.14f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.15f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.16f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.18f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.20f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.22f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.25f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.30f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.38f</ID>
+    <ID>MagicNumber:ReportsPreviewData.kt$0.40f</ID>
+    <ID>MagicNumber:ReportsScreen.kt$180f</ID>
+    <ID>MagicNumber:ReportsScreen.kt$360f</ID>
+    <ID>MagicNumber:ReportsScreen.kt$4f</ID>
+    <ID>MagicNumber:ReportsScreen.kt$90f</ID>
+    <ID>MaxLineLength:ReportsFeatureEntry.kt$ReportsFeatureEntryImpl$newPeriods = periods.map { ReportsPeriodBounds(it.periodStartEpochMillis, it.periodEndEpochMillis, it.empty) }</ID>
+    <ID>MaxLineLength:ReportsScreen.kt$if (allPeriodsEmpty) R.string.reports_window_empty_subtitle else R.string.reports_period_empty_subtitle</ID>
+    <ID>MaxLineLength:ReportsScreen.kt$if (allPeriodsEmpty) R.string.reports_window_empty_title else R.string.reports_period_empty_title</ID>
+    <ID>TooManyFunctions:ReportsScreen.kt$com.arduia.expense.feature.reports.ui.ReportsScreen.kt</ID>
+    <ID>UnusedPrivateMember:ReportsFlow.kt$@Preview( name = "Reports flow — all periods empty", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowAllPeriodsEmptyPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsFlow.kt$@Preview( name = "Reports flow — data", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsFlow.kt$@Preview( name = "Reports flow — empty", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowEmptyPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsFlow.kt$@Preview( name = "Reports flow — loading", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowLoadingPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsFlow.kt$@Preview( name = "Reports flow — weekly", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsFlowWeeklyPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsScreen.kt$@Preview( name = "Reports — all uncategorized", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsUncategorizedPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsScreen.kt$@Preview( name = "Reports — empty month (pill stays visible)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsPeriodEmptyPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsScreen.kt$@Preview( name = "Reports — monthly", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsScreen.kt$@Preview( name = "Reports — no data yet", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsEmptyPreview()</ID>
+    <ID>UnusedPrivateMember:ReportsScreen.kt$@Preview( name = "Reports — other rollup", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun ReportsOtherRollupPreview()</ID>
+  </CurrentIssues>
+</SmellBaseline>

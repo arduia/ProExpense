@@ -36,11 +36,12 @@ fun PeopleStepper(
     val countDescription = stringResource(R.string.people_count_state, count)
 
     Row(
-        modifier = modifier
-            .clip(shape)
-            .border(1.dp, colors.lineStrong, shape)
-            .background(colors.surface)
-            .padding(dimens.space4),
+        modifier =
+            modifier
+                .clip(shape)
+                .border(1.dp, colors.lineStrong, shape)
+                .background(colors.surface)
+                .padding(dimens.space4),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
@@ -54,14 +55,15 @@ fun PeopleStepper(
             text = count.toString(),
             style = typography.sectionHead,
             color = colors.onSurface,
-            modifier = Modifier
-                .padding(horizontal = dimens.space16)
-                // Merged + live so TalkBack announces the new count on +/- without the user
-                // needing to move focus back to this node.
-                .semantics(mergeDescendants = true) {
-                    stateDescription = countDescription
-                    liveRegion = LiveRegionMode.Polite
-                },
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.space16)
+                    // Merged + live so TalkBack announces the new count on +/- without the user
+                    // needing to move focus back to this node.
+                    .semantics(mergeDescendants = true) {
+                        stateDescription = countDescription
+                        liveRegion = LiveRegionMode.Polite
+                    },
         )
         StepperButton(
             glyph = ProIconGlyph.Plus,
@@ -88,9 +90,10 @@ private fun StepperButton(
         glyph = glyph,
         contentDescription = contentDescription,
         tint = colors.onSurface.copy(alpha = alpha),
-        modifier = modifier
-            .size(dimens.touchTargetMin)
-            .clip(ProExpenseTheme.shapes.tile)
-            .proIconClickable(onClick = onClick, enabled = enabled),
+        modifier =
+            modifier
+                .size(dimens.touchTargetMin)
+                .clip(ProExpenseTheme.shapes.tile)
+                .proIconClickable(onClick = onClick, enabled = enabled),
     )
 }

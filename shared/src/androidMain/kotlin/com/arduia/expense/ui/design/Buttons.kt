@@ -70,48 +70,52 @@ fun ProButton(
     val motion = ProExpenseTheme.motion
     val typography = ProExpenseTheme.typography
     val isEnabled = enabled && !loading
-    val buttonSize = when (size) {
-        ProButtonSize.Sm -> dimens.buttonSm
-        ProButtonSize.Md -> dimens.buttonMd
-        ProButtonSize.Lg -> dimens.buttonLg
-    }
-    val shape = when (size) {
-        ProButtonSize.Sm -> ProExpenseTheme.shapes.buttonSm
-        ProButtonSize.Md -> ProExpenseTheme.shapes.buttonMd
-        ProButtonSize.Lg -> ProExpenseTheme.shapes.buttonLg
-    }
+    val buttonSize =
+        when (size) {
+            ProButtonSize.Sm -> dimens.buttonSm
+            ProButtonSize.Md -> dimens.buttonMd
+            ProButtonSize.Lg -> dimens.buttonLg
+        }
+    val shape =
+        when (size) {
+            ProButtonSize.Sm -> ProExpenseTheme.shapes.buttonSm
+            ProButtonSize.Md -> ProExpenseTheme.shapes.buttonMd
+            ProButtonSize.Lg -> ProExpenseTheme.shapes.buttonLg
+        }
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale = if (pressed && isEnabled) motion.pressedScale else 1f
     val pressedAlpha = if (pressed && isEnabled) motion.pressedOpacity else 1f
-    val textStyle = typography.button.merge(
-        TextStyle(
-            fontSize = buttonSize.fontSizeSp.sp,
-            lineHeight = proLineHeight(buttonSize.fontSizeSp, 1.4f),
-        ),
-    )
-    val contentPadding = PaddingValues(
-        horizontal = buttonSize.horizontalPadding,
-        vertical = buttonSize.verticalPadding,
-    )
-    val scaledModifier = modifier
-        .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
-        .then(
-            if (variant == ProButtonVariant.Primary && fillMaxWidth) {
-                val shadowColor = colors.primary.copy(alpha = 0.25f)
-                Modifier.shadow(
-                    elevation = 6.dp,
-                    shape = shape,
-                    spotColor = shadowColor,
-                    ambientColor = shadowColor,
-                )
-            } else {
-                Modifier
-            },
+    val textStyle =
+        typography.button.merge(
+            TextStyle(
+                fontSize = buttonSize.fontSizeSp.sp,
+                lineHeight = proLineHeight(buttonSize.fontSizeSp, 1.4f),
+            ),
         )
-        .scale(scale)
-        .alpha(pressedAlpha)
-        .defaultMinSize(minHeight = buttonSize.height)
+    val contentPadding =
+        PaddingValues(
+            horizontal = buttonSize.horizontalPadding,
+            vertical = buttonSize.verticalPadding,
+        )
+    val scaledModifier =
+        modifier
+            .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
+            .then(
+                if (variant == ProButtonVariant.Primary && fillMaxWidth) {
+                    val shadowColor = colors.primary.copy(alpha = 0.25f)
+                    Modifier.shadow(
+                        elevation = 6.dp,
+                        shape = shape,
+                        spotColor = shadowColor,
+                        ambientColor = shadowColor,
+                    )
+                } else {
+                    Modifier
+                },
+            ).scale(scale)
+            .alpha(pressedAlpha)
+            .defaultMinSize(minHeight = buttonSize.height)
 
     when (variant) {
         ProButtonVariant.Primary -> {
@@ -121,12 +125,13 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.primary),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.primary,
-                    contentColor = colors.onPrimaryWarm,
-                    disabledContainerColor = colors.primary.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = colors.primary,
+                        contentColor = colors.onPrimaryWarm,
+                        disabledContainerColor = colors.primary.copy(alpha = motion.disabledOpacity),
+                        disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -146,12 +151,13 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.primaryDeep),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.primaryDeep,
-                    contentColor = colors.onPrimaryWarm,
-                    disabledContainerColor = colors.primaryDeep.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = colors.primaryDeep,
+                        contentColor = colors.onPrimaryWarm,
+                        disabledContainerColor = colors.primaryDeep.copy(alpha = motion.disabledOpacity),
+                        disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -165,12 +171,13 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.success),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.success,
-                    contentColor = colors.onPrimaryWarm,
-                    disabledContainerColor = colors.success.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = colors.success,
+                        contentColor = colors.onPrimaryWarm,
+                        disabledContainerColor = colors.success.copy(alpha = motion.disabledOpacity),
+                        disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -184,12 +191,13 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.danger),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.danger,
-                    contentColor = colors.onPrimaryWarm,
-                    disabledContainerColor = colors.danger.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = colors.danger,
+                        contentColor = colors.onPrimaryWarm,
+                        disabledContainerColor = colors.danger.copy(alpha = motion.disabledOpacity),
+                        disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -203,11 +211,12 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.danger),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = colors.danger,
-                    disabledContentColor = colors.danger.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = colors.danger,
+                        disabledContentColor = colors.danger.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -221,12 +230,13 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.warning),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.warning,
-                    contentColor = colors.onPrimaryWarm,
-                    disabledContainerColor = colors.warning.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = colors.warning,
+                        contentColor = colors.onPrimaryWarm,
+                        disabledContainerColor = colors.warning.copy(alpha = motion.disabledOpacity),
+                        disabledContentColor = colors.onPrimaryWarm.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -240,12 +250,13 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.onSurface),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.onSurface,
-                    contentColor = colors.paper,
-                    disabledContainerColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
-                    disabledContentColor = colors.paper.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = colors.onSurface,
+                        contentColor = colors.paper,
+                        disabledContainerColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
+                        disabledContentColor = colors.paper.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -259,11 +270,12 @@ fun ProButton(
                 enabled = isEnabled,
                 shape = shape,
                 border = BorderStroke(dimens.buttonBorderWidth, colors.lineStrong),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = colors.onSurface,
-                    disabledContentColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = colors.onSurface,
+                        disabledContentColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {
@@ -276,11 +288,12 @@ fun ProButton(
                 modifier = scaledModifier,
                 enabled = isEnabled,
                 shape = shape,
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = colors.onSurface,
-                    disabledContentColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
-                ),
+                colors =
+                    ButtonDefaults.textButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = colors.onSurface,
+                        disabledContentColor = colors.onSurface.copy(alpha = motion.disabledOpacity),
+                    ),
                 contentPadding = contentPadding,
                 interactionSource = interactionSource,
             ) {

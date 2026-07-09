@@ -27,10 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,15 +52,17 @@ private data class HomeNavItem(
     val icon: ProIconGlyph,
 )
 
-private val homeNavLeadingItems = listOf(
-    HomeNavItem(HomeNavTab.Home, R.string.nav_home, ProIconGlyph.Home),
-    HomeNavItem(HomeNavTab.Budget, R.string.nav_budget, ProIconGlyph.Budget),
-)
+private val homeNavLeadingItems =
+    listOf(
+        HomeNavItem(HomeNavTab.Home, R.string.nav_home, ProIconGlyph.Home),
+        HomeNavItem(HomeNavTab.Budget, R.string.nav_budget, ProIconGlyph.Budget),
+    )
 
-private val homeNavTrailingItems = listOf(
-    HomeNavItem(HomeNavTab.Journal, R.string.nav_journal, ProIconGlyph.Journal),
-    HomeNavItem(HomeNavTab.More, R.string.nav_more, ProIconGlyph.More),
-)
+private val homeNavTrailingItems =
+    listOf(
+        HomeNavItem(HomeNavTab.Journal, R.string.nav_journal, ProIconGlyph.Journal),
+        HomeNavItem(HomeNavTab.More, R.string.nav_more, ProIconGlyph.More),
+    )
 
 @Composable
 fun HomeBottomNav(
@@ -77,36 +79,38 @@ fun HomeBottomNav(
         modifier = modifier.fillMaxWidth(),
     ) {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimens.navBarHeight)
-                .align(Alignment.BottomCenter)
-                .then(
-                    if (navElevation != null) {
-                        Modifier.shadow(
-                            elevation = navElevation.blur,
-                            shape = ProExpenseTheme.shapes.navBar,
-                            spotColor = navElevation.color,
-                            ambientColor = navElevation.color,
-                        )
-                    } else {
-                        Modifier
-                    },
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(dimens.navBarHeight)
+                    .align(Alignment.BottomCenter)
+                    .then(
+                        if (navElevation != null) {
+                            Modifier.shadow(
+                                elevation = navElevation.blur,
+                                shape = ProExpenseTheme.shapes.navBar,
+                                spotColor = navElevation.color,
+                                ambientColor = navElevation.color,
+                            )
+                        } else {
+                            Modifier
+                        },
+                    ),
             shape = ProExpenseTheme.shapes.navBar,
             color = colors.surface.copy(alpha = dimens.navSurfaceAlpha),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        start = dimens.space12,
-                        end = dimens.space12,
-                        top = dimens.navItemPaddingVertical,
-                        bottom = dimens.space16,
-                    ),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(
+                            start = dimens.space12,
+                            end = dimens.space12,
+                            top = dimens.navItemPaddingVertical,
+                            bottom = dimens.space16,
+                        ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 homeNavLeadingItems.forEach { item ->
@@ -130,11 +134,12 @@ fun HomeBottomNav(
         }
         HomeAddFab(
             onClick = onAddClick,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(
-                    y = -(dimens.navBarHeight - dimens.fabSize + dimens.navFabProtrusion),
-                ),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(
+                        y = -(dimens.navBarHeight - dimens.fabSize + dimens.navFabProtrusion),
+                    ),
         )
     }
 }
@@ -152,30 +157,32 @@ private fun HomeNavSlot(
     val interactionSource = remember { MutableInteractionSource() }
     val tint = if (selected) colors.primary else colors.navInactive
     val label = stringResource(item.labelRes)
-    val labelStyle = if (selected) {
-        typography.navLabel.copy(fontWeight = FontWeight.SemiBold)
-    } else {
-        typography.navLabel
-    }
+    val labelStyle =
+        if (selected) {
+            typography.navLabel.copy(fontWeight = FontWeight.SemiBold)
+        } else {
+            typography.navLabel
+        }
 
     Column(
-        modifier = modifier
-            .defaultMinSize(minHeight = dimens.touchTargetMin),
+        modifier =
+            modifier
+                .defaultMinSize(minHeight = dimens.touchTargetMin),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Column(
-            modifier = Modifier
-                .semantics { contentDescription = label }
-                .proSelectable(
-                    selected = selected,
-                    onClick = onClick,
-                    shape = RoundedCornerShape(dimens.navCornerRadius),
-                    interactionSource = interactionSource,
-                    role = Role.Tab,
-                    showRipple = false,
-                )
-                .padding(horizontal = dimens.space8),
+            modifier =
+                Modifier
+                    .semantics { contentDescription = label }
+                    .proSelectable(
+                        selected = selected,
+                        onClick = onClick,
+                        shape = RoundedCornerShape(dimens.navCornerRadius),
+                        interactionSource = interactionSource,
+                        role = Role.Tab,
+                        showRipple = false,
+                    ).padding(horizontal = dimens.space8),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(dimens.space4),
         ) {
@@ -207,35 +214,36 @@ private fun HomeAddFab(
     val addContentDescription = stringResource(R.string.nav_add)
 
     Box(
-        modifier = modifier
-            .defaultMinSize(minHeight = dimens.touchTargetMin)
-            .proPressScale(interactionSource),
+        modifier =
+            modifier
+                .defaultMinSize(minHeight = dimens.touchTargetMin)
+                .proPressScale(interactionSource),
         contentAlignment = Alignment.Center,
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.fabSize)
-                .then(
-                    if (fabElevation != null) {
-                        Modifier.shadow(
-                            elevation = fabElevation.blur,
-                            shape = CircleShape,
-                            spotColor = fabElevation.color,
-                            ambientColor = fabElevation.color,
-                        )
-                    } else {
-                        Modifier
-                    },
-                )
-                .clip(CircleShape)
-                .border(BorderStroke(3.dp, colors.primary.copy(alpha = 0.8f)), CircleShape)
-                .background(colors.primary)
-                .semantics { contentDescription = addContentDescription }
-                .proCircularRippleClickable(
-                    onClick = onClick,
-                    interactionSource = interactionSource,
-                    role = Role.Button,
-                ),
+            modifier =
+                Modifier
+                    .size(dimens.fabSize)
+                    .then(
+                        if (fabElevation != null) {
+                            Modifier.shadow(
+                                elevation = fabElevation.blur,
+                                shape = CircleShape,
+                                spotColor = fabElevation.color,
+                                ambientColor = fabElevation.color,
+                            )
+                        } else {
+                            Modifier
+                        },
+                    ).clip(CircleShape)
+                    .border(BorderStroke(3.dp, colors.primary.copy(alpha = 0.8f)), CircleShape)
+                    .background(colors.primary)
+                    .semantics { contentDescription = addContentDescription }
+                    .proCircularRippleClickable(
+                        onClick = onClick,
+                        interactionSource = interactionSource,
+                        role = Role.Button,
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             Column(
@@ -268,9 +276,10 @@ private fun HomeAddFab(
 private fun HomeBottomNavHomeActivePreview() {
     ProExpenseTheme {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = ProExpenseTheme.dimensions.space24),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = ProExpenseTheme.dimensions.space24),
             contentAlignment = Alignment.BottomCenter,
         ) {
             HomeBottomNav(
@@ -292,9 +301,10 @@ private fun HomeBottomNavHomeActivePreview() {
 private fun HomeBottomNavJournalActivePreview() {
     ProExpenseTheme {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = ProExpenseTheme.dimensions.space24),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = ProExpenseTheme.dimensions.space24),
             contentAlignment = Alignment.BottomCenter,
         ) {
             HomeBottomNav(

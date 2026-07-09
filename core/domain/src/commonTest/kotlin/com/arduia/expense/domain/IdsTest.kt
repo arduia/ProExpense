@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class IdsTest {
-
     @Test
     fun `constructs with non-blank value`() {
         assertEquals("r1", RecordId("r1").value)

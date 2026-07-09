@@ -31,6 +31,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.debt.R
+import com.arduia.expense.feature.debt.ui.preview.DEBT_NOTE_MAX
+import com.arduia.expense.feature.debt.ui.preview.DEBT_PERSON_MAX
+import com.arduia.expense.feature.debt.ui.preview.DebtAddFormState
+import com.arduia.expense.feature.debt.ui.preview.DebtSide
+import com.arduia.expense.feature.debt.ui.preview.previewDebtAddLent
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.DetailNoteField
 import com.arduia.expense.ui.design.ProBottomSheetHost
@@ -40,11 +45,6 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.debt.ui.preview.DEBT_NOTE_MAX
-import com.arduia.expense.feature.debt.ui.preview.DEBT_PERSON_MAX
-import com.arduia.expense.feature.debt.ui.preview.DebtAddFormState
-import com.arduia.expense.feature.debt.ui.preview.DebtSide
-import com.arduia.expense.feature.debt.ui.preview.previewDebtAddLent
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -74,11 +74,12 @@ fun DebtAddSheetContent(
         DebtFieldGroup(label = stringResource(R.string.debt_person_label)) {
             DebtPersonField(
                 value = form.person,
-                counter = stringResource(
-                    R.string.debt_person_counter,
-                    form.person.length,
-                    DEBT_PERSON_MAX,
-                ),
+                counter =
+                    stringResource(
+                        R.string.debt_person_counter,
+                        form.person.length,
+                        DEBT_PERSON_MAX,
+                    ),
                 onValueChange = { onPersonChange(it.take(DEBT_PERSON_MAX)) },
             )
         }
@@ -148,11 +149,12 @@ private fun DebtSideToggle(
     val containerShape = ProExpenseTheme.shapes.chip
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(containerShape)
-            .background(colors.paperAlt)
-            .padding(dimens.space4),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(containerShape)
+                .background(colors.paperAlt)
+                .padding(dimens.space4),
         horizontalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
         DebtToggleSegment(
@@ -189,20 +191,20 @@ private fun DebtToggleSegment(
     // own line height (from the touch-target padding below) renders top-anchored — wrap in a
     // Box so the label centers within the enlarged touch target instead of sitting "up" a bit.
     Box(
-        modifier = modifier
-            .defaultMinSize(minHeight = dimens.touchTargetMin)
-            .minimumInteractiveComponentSize()
-            .clip(containerShape)
-            .background(if (selected) colors.surface else colors.paperAlt)
-            .then(
-                if (selected) {
-                    Modifier.border(BorderStroke(1.dp, colors.line), containerShape)
-                } else {
-                    Modifier
-                },
-            )
-            .proClickable(onClick = onClick, shape = containerShape)
-            .padding(vertical = dimens.space8),
+        modifier =
+            modifier
+                .defaultMinSize(minHeight = dimens.touchTargetMin)
+                .minimumInteractiveComponentSize()
+                .clip(containerShape)
+                .background(if (selected) colors.surface else colors.paperAlt)
+                .then(
+                    if (selected) {
+                        Modifier.border(BorderStroke(1.dp, colors.line), containerShape)
+                    } else {
+                        Modifier
+                    },
+                ).proClickable(onClick = onClick, shape = containerShape)
+                .padding(vertical = dimens.space8),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -247,12 +249,13 @@ private fun DebtPersonField(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(BorderStroke(1.dp, colors.lineStrong), shape)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(BorderStroke(1.dp, colors.lineStrong), shape)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.fieldValue.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
@@ -295,12 +298,13 @@ private fun DebtAmountField(
         // 2-digit fraction) — this used to strip the decimal entirely, silently rounding every
         // debt amount to whole dollars on both entry and edit-reload.
         onValueChange = { input -> onValueChange(normalizeDebtAmountInput(input)) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(BorderStroke(1.dp, colors.lineStrong), shape)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(BorderStroke(1.dp, colors.lineStrong), shape)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         textStyle = typography.detailsAmount.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -336,13 +340,14 @@ private fun DebtDatePill(
     val shape = ProExpenseTheme.shapes.searchField
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(BorderStroke(1.dp, colors.lineStrong), shape)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = shape)
-            .padding(horizontal = dimens.space14, vertical = dimens.space12),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(BorderStroke(1.dp, colors.lineStrong), shape)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
@@ -367,11 +372,12 @@ private const val DEBT_AMOUNT_MAX_FRACTION_DIGITS = 2
 private fun normalizeDebtAmountInput(raw: String): String {
     val filtered = raw.filter { it.isDigit() || it == '.' }
     val firstDot = filtered.indexOf('.')
-    val singleDot = if (firstDot == -1) {
-        filtered
-    } else {
-        filtered.substring(0, firstDot + 1) + filtered.substring(firstDot + 1).replace(".", "")
-    }
+    val singleDot =
+        if (firstDot == -1) {
+            filtered
+        } else {
+            filtered.substring(0, firstDot + 1) + filtered.substring(firstDot + 1).replace(".", "")
+        }
     val parts = singleDot.split(".")
     return if (parts.size == 2) {
         parts[0].take(DEBT_AMOUNT_MAX_WHOLE_DIGITS) + "." + parts[1].take(DEBT_AMOUNT_MAX_FRACTION_DIGITS)
@@ -386,10 +392,12 @@ private object DebtCurrencyTransformation : VisualTransformation {
         val raw = text.text
         val grouped = if (raw.isEmpty()) "" else AmountInput.formatDisplay(raw)
         val display = "$$grouped"
-        val mapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int = if (offset <= 0) 1 else display.length
-            override fun transformedToOriginal(offset: Int): Int = if (offset <= 1) 0 else raw.length
-        }
+        val mapping =
+            object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int = if (offset <= 0) 1 else display.length
+
+                override fun transformedToOriginal(offset: Int): Int = if (offset <= 1) 0 else raw.length
+            }
         return TransformedText(AnnotatedString(display), mapping)
     }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:CategoriesFeatureEntry.kt$CategoriesFeatureEntry$@Composable fun CategoryListFlow( onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CategoryActionsSheet.kt$@Composable fun CategoryActionsSheetContent( row: CategoryRowUi, onEdit: () -&gt; Unit, onDelete: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CategoryActionsSheet.kt$@Composable private fun CategoryActionRow( icon: ProIconGlyph, iconTint: Color, iconBackground: Color, title: String, titleColor: Color, subtitle: String, onClick: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CategoryActionsSheet.kt$@Preview( name = "Categories — row actions", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryActionsSheetPreview()</ID>
+    <ID>FunctionNaming:CategoryListFlow.kt$@Composable fun CategoryListFlow( onBack: () -&gt; Unit, state: CategoryListUiState = previewCategoryList, onReorderCustom: (List&lt;String&gt;) -&gt; Unit = {}, onSaveCategory: (editingId: String?, name: String, iconId: String) -&gt; Unit = { _, _, _ -&gt; }, onDeleteCategory: (String) -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CategoryListFlow.kt$@Preview( name = "Category list flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListFlowPreview()</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable fun CategoryListScreen( state: CategoryListUiState, onBack: () -&gt; Unit, onCreate: () -&gt; Unit, modifier: Modifier = Modifier, onCustomRowClick: (CategoryRowUi) -&gt; Unit = {}, onReorder: (Int, Int) -&gt; Unit = { _, _ -&gt; }, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CategoryGroupCard( rows: List&lt;CategoryRowUi&gt;, row: @Composable (CategoryRowUi) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CategoryRow( row: CategoryRowUi, locked: Boolean, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CategorySectionHeader( label: String, trailing: String, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CustomCategoryRow( row: CategoryRowUi, onClick: () -&gt; Unit, dragHandleModifier: Modifier, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun DragHandle()</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun ReorderableCustomGroup( rows: List&lt;CategoryRowUi&gt;, onRowClick: (CategoryRowUi) -&gt; Unit, onReorder: (Int, Int) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Preview( name = "Categories — default + custom", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListPreview()</ID>
+    <ID>FunctionNaming:CategoryNewSheet.kt$@Composable fun CategoryNewSheetContent( form: CategoryNewFormState, onNameChange: (String) -&gt; Unit, onIconSelected: (String) -&gt; Unit, onAdd: () -&gt; Unit, modifier: Modifier = Modifier, confirmLabel: String = stringResource(R.string.categories_add), )</ID>
+    <ID>FunctionNaming:CategoryNewSheet.kt$@Composable private fun CategoryIconTile( iconId: String, selected: Boolean, onClick: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CategoryNewSheet.kt$@Preview( name = "Categories — new (duplicate)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryNewDuplicatePreview()</ID>
+    <ID>LongMethod:CategoryActionsSheet.kt$@Composable fun CategoryActionsSheetContent( row: CategoryRowUi, onEdit: () -&gt; Unit, onDelete: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:CategoryListFlow.kt$@Composable fun CategoryListFlow( onBack: () -&gt; Unit, state: CategoryListUiState = previewCategoryList, onReorderCustom: (List&lt;String&gt;) -&gt; Unit = {}, onSaveCategory: (editingId: String?, name: String, iconId: String) -&gt; Unit = { _, _, _ -&gt; }, onDeleteCategory: (String) -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:CategoryListScreen.kt$@Composable fun CategoryListScreen( state: CategoryListUiState, onBack: () -&gt; Unit, onCreate: () -&gt; Unit, modifier: Modifier = Modifier, onCustomRowClick: (CategoryRowUi) -&gt; Unit = {}, onReorder: (Int, Int) -&gt; Unit = { _, _ -&gt; }, )</ID>
+    <ID>LongMethod:CategoryListScreen.kt$@Composable private fun ReorderableCustomGroup( rows: List&lt;CategoryRowUi&gt;, onRowClick: (CategoryRowUi) -&gt; Unit, onReorder: (Int, Int) -&gt; Unit, )</ID>
+    <ID>LongMethod:CategoryNewSheet.kt$@Composable fun CategoryNewSheetContent( form: CategoryNewFormState, onNameChange: (String) -&gt; Unit, onIconSelected: (String) -&gt; Unit, onAdd: () -&gt; Unit, modifier: Modifier = Modifier, confirmLabel: String = stringResource(R.string.categories_add), )</ID>
+    <ID>LongParameterList:CategoryActionsSheet.kt$( icon: ProIconGlyph, iconTint: Color, iconBackground: Color, title: String, titleColor: Color, subtitle: String, onClick: () -&gt; Unit, )</ID>
+    <ID>LongParameterList:CategoryListFlow.kt$( onBack: () -&gt; Unit, state: CategoryListUiState = previewCategoryList, onReorderCustom: (List&lt;String&gt;) -&gt; Unit = {}, onSaveCategory: (editingId: String?, name: String, iconId: String) -&gt; Unit = { _, _, _ -&gt; }, onDeleteCategory: (String) -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
+    <ID>LongParameterList:CategoryListScreen.kt$( state: CategoryListUiState, onBack: () -&gt; Unit, onCreate: () -&gt; Unit, modifier: Modifier = Modifier, onCustomRowClick: (CategoryRowUi) -&gt; Unit = {}, onReorder: (Int, Int) -&gt; Unit = { _, _ -&gt; }, )</ID>
+    <ID>LongParameterList:CategoryNewSheet.kt$( form: CategoryNewFormState, onNameChange: (String) -&gt; Unit, onIconSelected: (String) -&gt; Unit, onAdd: () -&gt; Unit, modifier: Modifier = Modifier, confirmLabel: String = stringResource(R.string.categories_add), )</ID>
+    <ID>MagicNumber:CategoryListFlow.kt$4</ID>
+    <ID>MagicNumber:CategoryListScreen.kt$3</ID>
+    <ID>UnusedPrivateMember:CategoryActionsSheet.kt$@Preview( name = "Categories — row actions", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryActionsSheetPreview()</ID>
+    <ID>UnusedPrivateMember:CategoryListFlow.kt$@Preview( name = "Category list flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListFlowPreview()</ID>
+    <ID>UnusedPrivateMember:CategoryListScreen.kt$@Preview( name = "Categories — default + custom", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListPreview()</ID>
+    <ID>UnusedPrivateMember:CategoryNewSheet.kt$@Preview( name = "Categories — new (duplicate)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryNewDuplicatePreview()</ID>
+  </CurrentIssues>
+</SmellBaseline>

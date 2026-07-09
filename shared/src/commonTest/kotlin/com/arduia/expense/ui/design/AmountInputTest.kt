@@ -6,7 +6,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AmountInputTest {
-
     @Test
     fun applyDigit_buildsWholeAmount() {
         assertEquals("12", AmountInput.applyKey("", "1").let { AmountInput.applyKey(it, "2") })

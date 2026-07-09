@@ -25,7 +25,10 @@ interface CategoriesFeatureEntry {
 
 internal class CategoriesFeatureEntryImpl : CategoriesFeatureEntry {
     @Composable
-    override fun CategoryListFlow(onBack: () -> Unit, modifier: Modifier) {
+    override fun CategoryListFlow(
+        onBack: () -> Unit,
+        modifier: Modifier,
+    ) {
         val scope = rememberCoroutineScope()
         val categoryRepository: CategoryRepository = koinInject()
         val saveCategory: SaveCategoryUseCase = koinInject()

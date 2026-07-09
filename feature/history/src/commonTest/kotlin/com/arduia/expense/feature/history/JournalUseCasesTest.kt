@@ -20,7 +20,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 
-private fun sampleRecord(id: String = "r1", note: String? = "lunch") = FinanceRecord(
+private fun sampleRecord(
+    id: String = "r1",
+    note: String? = "lunch",
+) = FinanceRecord(
     id = RecordId(id),
     money = Money(Amount(1000), CurrencyCode("USD")),
     homeCurrencyMoney = Money(Amount(1000), CurrencyCode("USD")),
@@ -41,72 +44,84 @@ private class FakeFinanceRecordRepository(
     }
 
     override suspend fun getAll(): Result<List<FinanceRecord>> = Result.Success(records.values.toList())
+
     override suspend fun getById(id: RecordId): Result<FinanceRecord?> = Result.Success(records[id.value])
+
     override suspend fun upsert(record: FinanceRecord): Result<Unit> {
         lastUpsert = record
         records[record.id.value] = record
         return Result.Success(Unit)
     }
+
     override suspend fun delete(id: RecordId): Result<Unit> {
         deletedId = id
         records.remove(id.value)
         return Result.Success(Unit)
     }
+
     override fun observeAll() = MutableStateFlow<List<FinanceRecord>>(emptyList()).asStateFlow()
+
     override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
-    override suspend fun getRecordsPage(filter: RecordPageFilter, cursor: RecordPageCursor?, limit: Int): Result<List<FinanceRecord>> =
-        Result.Success(records.values.toList().take(limit))
+
+    override suspend fun getRecordsPage(
+        filter: RecordPageFilter,
+        cursor: RecordPageCursor?,
+        limit: Int,
+    ): Result<List<FinanceRecord>> = Result.Success(records.values.toList().take(limit))
+
     override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> =
         Result.Success(records.values.any { it.categoryId == categoryId })
-    override fun observeChangeSignal() =
-        MutableStateFlow(RecordChangeSignal(records.size.toLong(), 0L)).asStateFlow()
+
+    override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(records.size.toLong(), 0L)).asStateFlow()
 }
 
 class DeleteRecordUseCaseTest {
-
     @Test
-    fun invoke_deletesRecordById() = runTest {
-        val repo = FakeFinanceRecordRepository().apply { put(sampleRecord("r1")) }
-        val useCase = DeleteRecordUseCase(repo)
+    fun invoke_deletesRecordById() =
+        runTest {
+            val repo = FakeFinanceRecordRepository().apply { put(sampleRecord("r1")) }
+            val useCase = DeleteRecordUseCase(repo)
 
-        useCase("r1")
+            useCase("r1")
 
-        assertEquals(RecordId("r1"), repo.deletedId)
-    }
+            assertEquals(RecordId("r1"), repo.deletedId)
+        }
 }
 
 class UpdateRecordNoteUseCaseTest {
+    @Test
+    fun invoke_updatesNoteLeavingOtherFieldsUntouched() =
+        runTest {
+            val repo = FakeFinanceRecordRepository().apply { put(sampleRecord("r1", note = "old")) }
+            val useCase = UpdateRecordNoteUseCase(repo)
+
+            useCase("r1", "new note")
+
+            assertEquals("new note", repo.lastUpsert?.note)
+            assertEquals(CategoryId("food"), repo.lastUpsert?.categoryId)
+        }
 
     @Test
-    fun invoke_updatesNoteLeavingOtherFieldsUntouched() = runTest {
-        val repo = FakeFinanceRecordRepository().apply { put(sampleRecord("r1", note = "old")) }
-        val useCase = UpdateRecordNoteUseCase(repo)
+    fun invoke_blankNoteIsStoredAsNull() =
+        runTest {
+            val repo = FakeFinanceRecordRepository().apply { put(sampleRecord("r1", note = "old")) }
+            val useCase = UpdateRecordNoteUseCase(repo)
 
-        useCase("r1", "new note")
+            useCase("r1", "   ")
 
-        assertEquals("new note", repo.lastUpsert?.note)
-        assertEquals(CategoryId("food"), repo.lastUpsert?.categoryId)
-    }
-
-    @Test
-    fun invoke_blankNoteIsStoredAsNull() = runTest {
-        val repo = FakeFinanceRecordRepository().apply { put(sampleRecord("r1", note = "old")) }
-        val useCase = UpdateRecordNoteUseCase(repo)
-
-        useCase("r1", "   ")
-
-        assertNull(repo.lastUpsert?.note)
-    }
+            assertNull(repo.lastUpsert?.note)
+        }
 
     @Test
-    fun invoke_doesNothingWhenRecordMissing() = runTest {
-        val repo = FakeFinanceRecordRepository()
-        val useCase = UpdateRecordNoteUseCase(repo)
+    fun invoke_doesNothingWhenRecordMissing() =
+        runTest {
+            val repo = FakeFinanceRecordRepository()
+            val useCase = UpdateRecordNoteUseCase(repo)
 
-        useCase("missing", "note")
+            useCase("missing", "note")
 
-        assertEquals(null, repo.lastUpsert)
-    }
+            assertEquals(null, repo.lastUpsert)
+        }
 }
 
 private class FakeHistoryRepository(
@@ -121,8 +136,10 @@ private class FakeHistoryRepository(
         return recordsResult
     }
 
-    override suspend fun getSummary(period: SummaryPeriod, anchorEpochMillis: Long): Result<RecordSummary> =
-        Result.Error("not implemented")
+    override suspend fun getSummary(
+        period: SummaryPeriod,
+        anchorEpochMillis: Long,
+    ): Result<RecordSummary> = Result.Error("not implemented")
 
     override suspend fun getRecordsPage(
         filter: RecordHistoryFilter,
@@ -135,49 +152,50 @@ private class FakeHistoryRepository(
         return recordsResult
     }
 
-    override suspend fun hasAnyRecordIn(categoryId: CategoryId): Result<Boolean> =
-        Result.Success(false)
+    override suspend fun hasAnyRecordIn(categoryId: CategoryId): Result<Boolean> = Result.Success(false)
 
     override fun observeChangeSignal() = MutableStateFlow(RecordChangeSignal(0L, 0L)).asStateFlow()
 }
 
 class LoadJournalPageUseCaseTest {
+    @Test
+    fun invoke_delegatesToRepositoryWithFilterCursorAndLimit() =
+        runTest {
+            val record = sampleRecord("r1")
+            val repo = FakeHistoryRepository(recordsResult = Result.Success(listOf(record)))
+            val useCase = LoadJournalPageUseCase(repo)
+            val filter = RecordHistoryFilter(categoryId = CategoryId("food"), query = "lunch")
+            val cursor = RecordPageCursor(recordedAtEpochMillis = 500L, recordId = RecordId("r0"))
+
+            val result = useCase(filter, cursor, limit = 20)
+
+            assertIs<Result.Success<List<FinanceRecord>>>(result)
+            assertEquals(listOf(record), result.data)
+            assertEquals(filter, repo.lastFilter)
+            assertEquals(cursor, repo.lastCursor)
+            assertEquals(20, repo.lastLimit)
+        }
 
     @Test
-    fun invoke_delegatesToRepositoryWithFilterCursorAndLimit() = runTest {
-        val record = sampleRecord("r1")
-        val repo = FakeHistoryRepository(recordsResult = Result.Success(listOf(record)))
-        val useCase = LoadJournalPageUseCase(repo)
-        val filter = RecordHistoryFilter(categoryId = CategoryId("food"), query = "lunch")
-        val cursor = RecordPageCursor(recordedAtEpochMillis = 500L, recordId = RecordId("r0"))
+    fun invoke_defaultsToFirstPageAtDefaultPageSize() =
+        runTest {
+            val repo = FakeHistoryRepository()
+            val useCase = LoadJournalPageUseCase(repo)
 
-        val result = useCase(filter, cursor, limit = 20)
+            useCase(RecordHistoryFilter())
 
-        assertIs<Result.Success<List<FinanceRecord>>>(result)
-        assertEquals(listOf(record), result.data)
-        assertEquals(filter, repo.lastFilter)
-        assertEquals(cursor, repo.lastCursor)
-        assertEquals(20, repo.lastLimit)
-    }
+            assertEquals(null, repo.lastCursor)
+            assertEquals(LoadJournalPageUseCase.DEFAULT_PAGE_SIZE, repo.lastLimit)
+        }
 
     @Test
-    fun invoke_defaultsToFirstPageAtDefaultPageSize() = runTest {
-        val repo = FakeHistoryRepository()
-        val useCase = LoadJournalPageUseCase(repo)
+    fun invoke_propagatesRepositoryError() =
+        runTest {
+            val repo = FakeHistoryRepository(recordsResult = Result.Error("db error"))
+            val useCase = LoadJournalPageUseCase(repo)
 
-        useCase(RecordHistoryFilter())
+            val result = useCase(RecordHistoryFilter(), limit = 20)
 
-        assertEquals(null, repo.lastCursor)
-        assertEquals(LoadJournalPageUseCase.DEFAULT_PAGE_SIZE, repo.lastLimit)
-    }
-
-    @Test
-    fun invoke_propagatesRepositoryError() = runTest {
-        val repo = FakeHistoryRepository(recordsResult = Result.Error("db error"))
-        val useCase = LoadJournalPageUseCase(repo)
-
-        val result = useCase(RecordHistoryFilter(), limit = 20)
-
-        assertIs<Result.Error>(result)
-    }
+            assertIs<Result.Error>(result)
+        }
 }

@@ -28,7 +28,6 @@ private fun record(
 )
 
 class GenerateReportPeriodUseCaseTest {
-
     private val useCase = GenerateReportPeriodUseCase()
 
     @Test
@@ -43,12 +42,13 @@ class GenerateReportPeriodUseCaseTest {
 
     @Test
     fun invoke_filtersByTypeAndDateRangeAndComputesTotals() {
-        val records = listOf(
-            record("r1", "food", 1000, recordedAtEpochMillis = 10),
-            record("r2", "food", 500, recordedAtEpochMillis = 50, type = RecordType.INCOME),
-            record("r3", "food", 2000, recordedAtEpochMillis = 200),
-            record("r4", "food", 3000, recordedAtEpochMillis = 99),
-        )
+        val records =
+            listOf(
+                record("r1", "food", 1000, recordedAtEpochMillis = 10),
+                record("r2", "food", 500, recordedAtEpochMillis = 50, type = RecordType.INCOME),
+                record("r3", "food", 2000, recordedAtEpochMillis = 200),
+                record("r4", "food", 3000, recordedAtEpochMillis = 99),
+            )
 
         val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 4)
 
@@ -59,9 +59,10 @@ class GenerateReportPeriodUseCaseTest {
 
     @Test
     fun invoke_returnsTopFiveCategoriesSortedDescendingWithFraction() {
-        val records = (1..5).map { i ->
-            record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
-        }
+        val records =
+            (1..5).map { i ->
+                record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
+            }
 
         val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
 
@@ -74,9 +75,10 @@ class GenerateReportPeriodUseCaseTest {
 
     @Test
     fun invoke_rollsUpCategoriesBeyondTopFiveIntoOther() {
-        val records = (1..7).map { i ->
-            record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
-        }
+        val records =
+            (1..7).map { i ->
+                record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
+            }
 
         val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
 
@@ -93,9 +95,10 @@ class GenerateReportPeriodUseCaseTest {
 
     @Test
     fun invoke_omitsOtherBucketWhenFiveOrFewerCategories() {
-        val records = (1..5).map { i ->
-            record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
-        }
+        val records =
+            (1..5).map { i ->
+                record("r$i", "cat$i", amountCents = (100L * i), recordedAtEpochMillis = 10)
+            }
 
         val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
 
@@ -104,10 +107,11 @@ class GenerateReportPeriodUseCaseTest {
 
     @Test
     fun invoke_flagsAllUncategorizedWhenEveryRecordIsUncategorized() {
-        val records = listOf(
-            record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
-            record("r2", "uncategorized", 500, recordedAtEpochMillis = 20),
-        )
+        val records =
+            listOf(
+                record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
+                record("r2", "uncategorized", 500, recordedAtEpochMillis = 20),
+            )
 
         val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
 
@@ -116,10 +120,11 @@ class GenerateReportPeriodUseCaseTest {
 
     @Test
     fun invoke_doesNotFlagAllUncategorizedWhenOnlySomeRecordsAreUncategorized() {
-        val records = listOf(
-            record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
-            record("r2", "food", 500, recordedAtEpochMillis = 20),
-        )
+        val records =
+            listOf(
+                record("r1", "uncategorized", 1000, recordedAtEpochMillis = 10),
+                record("r2", "food", 500, recordedAtEpochMillis = 20),
+            )
 
         val result = useCase(records, periodStartEpochMillis = 0, periodEndEpochMillis = 100, daysInPeriod = 1)
 

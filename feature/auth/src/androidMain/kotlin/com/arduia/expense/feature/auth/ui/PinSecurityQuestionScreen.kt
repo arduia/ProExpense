@@ -27,13 +27,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.ui.preview.PinSecurityQuestionUi
+import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proClickable
-import com.arduia.expense.feature.auth.ui.preview.PinSecurityQuestionUi
-import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -53,11 +53,12 @@ fun PinSecurityQuestionScreen(
     val typography = ProExpenseTheme.typography
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -68,12 +69,13 @@ fun PinSecurityQuestionScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
@@ -120,9 +122,10 @@ fun PinSecurityQuestionScreen(
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,
-            modifier = Modifier
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space18),
         )
     }
 }
@@ -140,29 +143,32 @@ private fun PinQuestionRow(
     val background = if (selected) colors.primaryTint else colors.surface
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
-            .background(background)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(dimens.space14),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
+                .background(background)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.space20)
-                .clip(CircleShape)
-                .border(BorderStroke(2.dp, if (selected) colors.primary else colors.lineStrong), CircleShape),
+            modifier =
+                Modifier
+                    .size(dimens.space20)
+                    .clip(CircleShape)
+                    .border(BorderStroke(2.dp, if (selected) colors.primary else colors.lineStrong), CircleShape),
             contentAlignment = Alignment.Center,
         ) {
             if (selected) {
                 Box(
-                    modifier = Modifier
-                        .size(dimens.space10)
-                        .clip(CircleShape)
-                        .background(colors.primary),
+                    modifier =
+                        Modifier
+                            .size(dimens.space10)
+                            .clip(CircleShape)
+                            .background(colors.primary),
                 )
             }
         }
@@ -188,12 +194,13 @@ internal fun PinAnswerField(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.searchField)
-            .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
-            .background(colors.surface)
-            .padding(horizontal = dimens.space14, vertical = dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.searchField)
+                .border(BorderStroke(1.dp, colors.primary), ProExpenseTheme.shapes.searchField)
+                .background(colors.surface)
+                .padding(horizontal = dimens.space14, vertical = dimens.space14),
         textStyle = typography.body.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,

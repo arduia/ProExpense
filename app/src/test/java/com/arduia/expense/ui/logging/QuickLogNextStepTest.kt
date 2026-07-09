@@ -23,7 +23,6 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class QuickLogNextStepTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
@@ -50,12 +49,13 @@ class QuickLogNextStepTest {
             ProExpenseTheme {
                 QuickLogFlow(
                     onDismiss = {},
-                    startState = ExpenseEntryState(
-                        rawAmount = "10",
-                        currencyCode = "EUR",
-                        homeCurrencyCode = "USD",
-                        exchangeRateRaw = "",
-                    ),
+                    startState =
+                        ExpenseEntryState(
+                            rawAmount = "10",
+                            currencyCode = "EUR",
+                            homeCurrencyCode = "USD",
+                            exchangeRateRaw = "",
+                        ),
                 )
             }
         }

@@ -26,6 +26,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.debt.R
+import com.arduia.expense.feature.debt.ui.preview.DebtDetailUiState
+import com.arduia.expense.feature.debt.ui.preview.DebtSide
+import com.arduia.expense.feature.debt.ui.preview.previewDebtLentDetail
+import com.arduia.expense.feature.debt.ui.preview.previewDebtOweDetail
 import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
@@ -34,10 +38,6 @@ import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
-import com.arduia.expense.feature.debt.ui.preview.DebtDetailUiState
-import com.arduia.expense.feature.debt.ui.preview.DebtSide
-import com.arduia.expense.feature.debt.ui.preview.previewDebtLentDetail
-import com.arduia.expense.feature.debt.ui.preview.previewDebtOweDetail
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -54,11 +54,12 @@ fun DebtDetailScreen(
     val dimens = ProExpenseTheme.dimensions
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.paper)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(colors.paper)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
             ProTopBar(
@@ -71,12 +72,13 @@ fun DebtDetailScreen(
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding)
-                .padding(top = dimens.space8, bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(top = dimens.space8, bottom = dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space20),
         ) {
             DebtDetailHeader(state)
@@ -93,10 +95,11 @@ fun DebtDetailScreen(
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.screenPadding)
-                .padding(bottom = dimens.space18),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {
             ProButton(
@@ -110,11 +113,12 @@ fun DebtDetailScreen(
             ProButton(
                 text = stringResource(R.string.debt_mark_as_settled),
                 onClick = onMarkSettled,
-                variant = if (state.side == DebtSide.Lent) {
-                    ProButtonVariant.Success
-                } else {
-                    ProButtonVariant.Danger
-                },
+                variant =
+                    if (state.side == DebtSide.Lent) {
+                        ProButtonVariant.Success
+                    } else {
+                        ProButtonVariant.Danger
+                    },
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,
                 enabled = !state.settled,
@@ -138,11 +142,12 @@ private fun DebtDetailHeader(state: DebtDetailUiState) {
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val accent = if (state.side == DebtSide.Lent) colors.success else colors.danger
-    val eyebrow = if (state.side == DebtSide.Lent) {
-        stringResource(R.string.debt_you_lent)
-    } else {
-        stringResource(R.string.debt_you_owe_caps)
-    }
+    val eyebrow =
+        if (state.side == DebtSide.Lent) {
+            stringResource(R.string.debt_you_lent)
+        } else {
+            stringResource(R.string.debt_you_owe_caps)
+        }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -181,11 +186,12 @@ private fun DebtFieldsCard(state: DebtDetailUiState) {
     val colors = ProExpenseTheme.colors
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
     ) {
         DebtFieldRow(
             label = stringResource(R.string.debt_date_recorded),
@@ -205,15 +211,19 @@ private fun DebtFieldsCard(state: DebtDetailUiState) {
 }
 
 @Composable
-private fun DebtFieldRow(label: String, value: String) {
+private fun DebtFieldRow(
+    label: String,
+    value: String,
+) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = dimens.cardPadding, vertical = dimens.space14),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimens.cardPadding, vertical = dimens.space14),
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -236,10 +246,11 @@ private fun DebtFieldRow(label: String, value: String) {
 private fun DebtFieldDivider() {
     val colors = ProExpenseTheme.colors
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(colors.lineSoft),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(colors.lineSoft),
     )
 }
 
@@ -250,12 +261,13 @@ private fun DebtNoteCard(note: String) {
     val typography = ProExpenseTheme.typography
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .padding(dimens.cardPadding),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .padding(dimens.cardPadding),
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -288,12 +300,13 @@ private fun DebtLinkedExpenseSection(state: DebtDetailUiState) {
             color = colors.onSurfaceVariant,
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(ProExpenseTheme.shapes.card)
-                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                .background(colors.surface)
-                .padding(horizontal = dimens.space16, vertical = dimens.space12),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(ProExpenseTheme.shapes.card)
+                    .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                    .background(colors.surface)
+                    .padding(horizontal = dimens.space16, vertical = dimens.space12),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.space12),
         ) {

@@ -6,7 +6,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class AmountTest {
-
     @Test
     fun `constructs with valid cents`() {
         val amount = Amount(1000)

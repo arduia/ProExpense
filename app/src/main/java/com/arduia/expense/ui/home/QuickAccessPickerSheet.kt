@@ -91,21 +91,23 @@ private fun QuickAccessPickerRow(
     val (icon, labelRes) = remember(tile) { tileIconAndLabel(tile) }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(ProExpenseTheme.shapes.card)
-            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-            .background(colors.surface)
-            .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
-            .padding(dimens.space14),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.card)
+                .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Box(
-            modifier = Modifier
-                .size(dimens.iconBadge)
-                .clip(CircleShape)
-                .background(colors.paperAlt),
+            modifier =
+                Modifier
+                    .size(dimens.iconBadge)
+                    .clip(CircleShape)
+                    .background(colors.paperAlt),
             contentAlignment = Alignment.Center,
         ) {
             ProIcon(
@@ -160,9 +162,10 @@ private fun MoveButton(
     val dimens = ProExpenseTheme.dimensions
 
     Box(
-        modifier = Modifier
-            .alpha(if (enabled) 1f else ProExpenseTheme.motion.disabledOpacity)
-            .proIconClickable(onClick = onClick, enabled = enabled),
+        modifier =
+            Modifier
+                .alpha(if (enabled) 1f else ProExpenseTheme.motion.disabledOpacity)
+                .proIconClickable(onClick = onClick, enabled = enabled),
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(
@@ -175,12 +178,13 @@ private fun MoveButton(
     }
 }
 
-private fun tileIconAndLabel(tile: QuickAccessTileType): Pair<ProIconGlyph, Int> = when (tile) {
-    QuickAccessTileType.Reports -> ProIconGlyph.FeatReports to R.string.quick_access_reports
-    QuickAccessTileType.Debt -> ProIconGlyph.FeatDebt to R.string.quick_access_debt
-    QuickAccessTileType.Split -> ProIconGlyph.FeatSplit to R.string.quick_access_split
-    QuickAccessTileType.Events -> ProIconGlyph.FeatEvents to R.string.quick_access_events
-}
+private fun tileIconAndLabel(tile: QuickAccessTileType): Pair<ProIconGlyph, Int> =
+    when (tile) {
+        QuickAccessTileType.Reports -> ProIconGlyph.FeatReports to R.string.quick_access_reports
+        QuickAccessTileType.Debt -> ProIconGlyph.FeatDebt to R.string.quick_access_debt
+        QuickAccessTileType.Split -> ProIconGlyph.FeatSplit to R.string.quick_access_split
+        QuickAccessTileType.Events -> ProIconGlyph.FeatEvents to R.string.quick_access_events
+    }
 
 @Preview(
     name = "Quick access — customize sheet",

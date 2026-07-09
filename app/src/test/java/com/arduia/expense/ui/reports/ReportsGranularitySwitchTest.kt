@@ -23,7 +23,6 @@ import org.robolectric.annotation.GraphicsMode
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 class ReportsGranularitySwitchTest {
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
@@ -31,13 +30,14 @@ class ReportsGranularitySwitchTest {
     fun tapping_the_granularity_toggle_reportsTheCurrentlyDisplayedPeriodAsTheSwitchAnchor() {
         var reportedIndex: Int? = null
         var reportedAnchor: Pair<Long, Long>? = null
-        val periods = listOf(
-            previewReports.copy(
-                periodLabel = "May 2026",
-                periodStartEpochMillis = 1_000L,
-                periodEndEpochMillis = 2_000L,
-            ),
-        )
+        val periods =
+            listOf(
+                previewReports.copy(
+                    periodLabel = "May 2026",
+                    periodStartEpochMillis = 1_000L,
+                    periodEndEpochMillis = 2_000L,
+                ),
+            )
 
         rule.setContent {
             ProExpenseTheme {

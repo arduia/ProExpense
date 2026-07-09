@@ -9,13 +9,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ExportImportZipRoundTripTest {
-
     private val tempDir = File(System.getProperty("java.io.tmpdir"), "export-test-${System.nanoTime()}")
 
-    private val files = mapOf(
-        "expenses.csv" to "id,money_cents\n\"r1\",\"5000\"",
-        "events.csv" to "id,name\n\"e1\",\"Trip\"",
-    )
+    private val files =
+        mapOf(
+            "expenses.csv" to "id,money_cents\n\"r1\",\"5000\"",
+            "events.csv" to "id,name\n\"e1\",\"Trip\"",
+        )
 
     @AfterTest
     fun cleanup() {

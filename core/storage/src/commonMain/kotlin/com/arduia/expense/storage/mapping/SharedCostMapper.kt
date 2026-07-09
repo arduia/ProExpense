@@ -43,7 +43,7 @@ internal fun parseParticipantsJson(json: String): List<Participant> {
                 Participant(
                     id = ParticipantId(id),
                     name = name,
-                )
+                ),
             )
         }
 
@@ -69,10 +69,11 @@ internal fun parseStrategyJson(json: String?): SplitStrategy {
             val cents = match.groupValues[2].toLong()
             val code = match.groupValues[3]
 
-            shares[ParticipantId(participantId)] = Money(
-                Amount(cents),
-                CurrencyCode(code)
-            )
+            shares[ParticipantId(participantId)] =
+                Money(
+                    Amount(cents),
+                    CurrencyCode(code),
+                )
         }
 
         SplitStrategy.CustomSplit(shares)
@@ -83,17 +84,20 @@ internal fun parseStrategyJson(json: String?): SplitStrategy {
 
 internal fun List<Participant>.toParticipantsJson(): String {
     if (isEmpty()) return "[]"
-    return "[" + joinToString(",") { participant ->
-        """{"id":"${participant.id.value}","name":"${escapeJsonString(participant.name)}"}"""
-    } + "]"
+    return "[" +
+        joinToString(",") { participant ->
+            """{"id":"${participant.id.value}","name":"${escapeJsonString(participant.name)}"}"""
+        } + "]"
 }
 
-internal fun SplitStrategy.toStrategyJson(): String? = when (this) {
-    is SplitStrategy.EqualSplit -> null
-    is SplitStrategy.CustomSplit -> {
-        val sharesJson = shares.entries.joinToString(",") { (participantId, money) ->
-            """"${participantId.value}":{"cents":${money.amount.valueInCents},"code":"${money.currency.code}"}"""
+internal fun SplitStrategy.toStrategyJson(): String? =
+    when (this) {
+        is SplitStrategy.EqualSplit -> null
+        is SplitStrategy.CustomSplit -> {
+            val sharesJson =
+                shares.entries.joinToString(",") { (participantId, money) ->
+                    """"${participantId.value}":{"cents":${money.amount.valueInCents},"code":"${money.currency.code}"}"""
+                }
+            """{"type":"custom","shares":{$sharesJson}}"""
         }
-        """{"type":"custom","shares":{$sharesJson}}"""
     }
-}
