@@ -27,6 +27,7 @@ val verifyAll = tasks.register("verifyAll") {
         ":feature:history:testDebugUnitTest",
         ":feature:auth:testDebugUnitTest",
         ":feature:sharedcost:testDebugUnitTest",
+        ":konsist-test:test",
     )
 }
 

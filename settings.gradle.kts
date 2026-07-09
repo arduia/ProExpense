@@ -39,3 +39,6 @@ include(":feature:eventbudget")
 include(":feature:reports")
 include(":feature:categories")
 include(":feature:onboarding")
+
+// Architecture-rule tests (Konsist) — see AGENTS.md dependency table
+include(":konsist-test")
