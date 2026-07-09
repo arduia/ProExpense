@@ -348,11 +348,12 @@ fun SharedCostsFlow(
                             },
                         onBack = {
                             if (viewingId != null) {
-                                // Thrown away — the next onNewSplit/onItemClick always sets a
-                                // fresh draft before Input/Summary shows again; no need to (and,
-                                // per the initial `draft` declaration above, must not) seed it here.
+                                // Not resetting `draft` here: the outgoing Summary content still
+                                // reads it while AnimatedContent's exit transition plays, so
+                                // clearing it now would flash a zero/empty split for the
+                                // transition's duration. `onNewSplit` and `onItemClick` already
+                                // set a fresh `draft` before the next Input/Summary show.
                                 viewingId = null
-                                draft = SharedCostDraft()
                                 step = SharedCostStep.History.name
                             } else {
                                 step = SharedCostStep.Input.name
