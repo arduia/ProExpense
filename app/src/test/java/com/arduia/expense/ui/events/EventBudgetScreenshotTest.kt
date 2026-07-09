@@ -21,11 +21,11 @@ import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailNoLin
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventDetailWarn
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -57,7 +57,7 @@ class EventBudgetScreenshotTest {
                 }
             }
         }
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test

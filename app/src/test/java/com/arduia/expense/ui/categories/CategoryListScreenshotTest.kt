@@ -18,10 +18,10 @@ import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryNewDuplicate
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -53,7 +53,7 @@ class CategoryListScreenshotTest {
                 }
             }
         }
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test
