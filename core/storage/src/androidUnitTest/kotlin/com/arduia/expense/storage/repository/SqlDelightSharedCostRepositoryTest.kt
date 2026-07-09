@@ -137,6 +137,46 @@ class SqlDelightSharedCostRepositoryTest {
             assertEquals("Dinner", all.single().title)
         }
 
+    /**
+     * Blocker guard: a custom split with 2+ participants (every real split — minimum is 2 people)
+     * used to disappear from the list entirely after saving. `parseStrategyJson`'s previous regex
+     * couldn't span the nested per-participant `{...}` objects inside `"shares":{...}`, so decoding
+     * threw, and `observeAll()`'s per-row `runCatching { }.getOrNull()` silently dropped the row.
+     */
+    @Test
+    fun observeAll_emitsCreatedCustomSplitWithMultipleParticipants() =
+        runTest {
+            val repo = sharedCostRepo(inMemoryDatabase())
+            val input =
+                SharedCostInput(
+                    title = "Dinner",
+                    total = Money(Amount(120_00), home),
+                    participants =
+                        listOf(
+                            Participant(ParticipantId("p1"), "Alice"),
+                            Participant(ParticipantId("p2"), "Bob"),
+                        ),
+                    splitStrategy =
+                        SplitStrategy.CustomSplit(
+                            shares =
+                                mapOf(
+                                    ParticipantId("p1") to Money(Amount(75_00), home),
+                                    ParticipantId("p2") to Money(Amount(45_00), home),
+                                ),
+                        ),
+                    recordedAtEpochMillis = 1000,
+                )
+
+            val created = repo.create(input)
+            assertTrue(created is Result.Success)
+
+            val all = repo.observeAll().first()
+            assertEquals(listOf("Dinner"), all.map { it.title })
+            val shares = all.single().shares()
+            assertEquals(75_00L, shares[ParticipantId("p1")]?.amount?.valueInCents)
+            assertEquals(45_00L, shares[ParticipantId("p2")]?.amount?.valueInCents)
+        }
+
     @Test
     fun observeAll_skipsRowWithUnmappableParticipants_insteadOfThrowing() =
         runTest {
