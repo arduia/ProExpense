@@ -175,8 +175,12 @@ fun SharedCostsFlow(
     val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
+    // Not seeding via withParticipants() here: rawTotal is empty at this point, and
+    // syncCustomShares only reseeds while the share list size differs from peopleCount — an
+    // early seed off an empty/zero total would freeze custom shares at "0" forever, never
+    // reflecting the total once it's actually entered. onConfirmAmount seeds for real.
     var draft by rememberSaveable(stateSaver = SharedCostDraftSaver) {
-        mutableStateOf(SharedCostDraft().withParticipants(nameTemplate))
+        mutableStateOf(SharedCostDraft())
     }
     var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
@@ -237,8 +241,10 @@ fun SharedCostsFlow(
                         items = history,
                         isLoading = isLoading,
                         onNewSplit = {
+                            // Not seeding via withParticipants() here — see the initial `draft`
+                            // declaration above for why an empty-total seed would stick forever.
                             viewingId = null
-                            draft = SharedCostDraft().withParticipants(nameTemplate)
+                            draft = SharedCostDraft()
                             step = SharedCostStep.Input.name
                         },
                         onItemClick = { item ->
@@ -265,21 +271,25 @@ fun SharedCostsFlow(
                                 onDismiss()
                             }
                         },
+                        // Total is still being typed here — the amount isn't final yet, so this
+                        // must not seed names/shares (withParticipants) off a partial rawTotal.
+                        // syncCustomShares only reseeds while list size differs from peopleCount,
+                        // so an early seed off e.g. "1" (mid-keystroke toward "120") would freeze
+                        // custom shares at the wrong amount forever — reseeding happens once, in
+                        // onConfirmAmount, off the finished total instead.
                         onKey = { key ->
                             draft =
-                                draft
-                                    .copy(
-                                        rawTotal = AmountInput.applyKey(draft.rawTotal, key),
-                                        showZeroValidation = false,
-                                    ).withParticipants(nameTemplate)
+                                draft.copy(
+                                    rawTotal = AmountInput.applyKey(draft.rawTotal, key),
+                                    showZeroValidation = false,
+                                )
                         },
                         onBackspace = {
                             draft =
-                                draft
-                                    .copy(
-                                        rawTotal = AmountInput.applyBackspace(draft.rawTotal),
-                                        showZeroValidation = false,
-                                    ).withParticipants(nameTemplate)
+                                draft.copy(
+                                    rawTotal = AmountInput.applyBackspace(draft.rawTotal),
+                                    showZeroValidation = false,
+                                )
                         },
                         onNoteChange = { note -> draft = draft.copy(note = note) },
                         onDecrementPeople = {
@@ -310,7 +320,7 @@ fun SharedCostsFlow(
                         },
                         onConfirmAmount = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
-                                draft = draft.copy(amountConfirmed = true)
+                                draft = draft.copy(amountConfirmed = true).withParticipants(nameTemplate)
                             } else {
                                 draft = draft.copy(showZeroValidation = true)
                             }
@@ -338,8 +348,11 @@ fun SharedCostsFlow(
                             },
                         onBack = {
                             if (viewingId != null) {
+                                // Thrown away — the next onNewSplit/onItemClick always sets a
+                                // fresh draft before Input/Summary shows again; no need to (and,
+                                // per the initial `draft` declaration above, must not) seed it here.
                                 viewingId = null
-                                draft = SharedCostDraft().withParticipants(nameTemplate)
+                                draft = SharedCostDraft()
                                 step = SharedCostStep.History.name
                             } else {
                                 step = SharedCostStep.Input.name
