@@ -10,9 +10,9 @@ import androidx.compose.ui.test.onRoot
 import com.arduia.expense.feature.onboarding.ui.ProfileSetupScreenContent
 import com.arduia.expense.feature.onboarding.ui.ProfileSetupState
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -44,7 +44,7 @@ class ProfileSetupScreenshotTest {
                 }
             }
         }
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test

@@ -17,10 +17,14 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -28,8 +32,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -211,6 +217,7 @@ fun SharedCostParticipantRow(
     editableName: Boolean = false,
     onNameChange: (String) -> Unit = {},
     namePlaceholder: String? = null,
+    currencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -245,14 +252,42 @@ fun SharedCostParticipantRow(
             horizontalArrangement = Arrangement.spacedBy(dimens.space4),
         ) {
             if (editableName) {
+                var fieldValue by remember { mutableStateOf(TextFieldValue(text = name)) }
+                if (fieldValue.text != name) {
+                    fieldValue = fieldValue.copy(text = name, selection = TextRange(name.length))
+                }
+                // The tap that focuses this field also positions the cursor at the tap offset,
+                // via its own onValueChange call — overriding selection from onFocusChanged alone
+                // races with (and loses to) that call. Instead, force the *next* onValueChange
+                // after gaining focus (the tap's own cursor placement) to select everything.
+                var selectAllOnNextChange by remember { mutableStateOf(false) }
                 BasicTextField(
-                    value = name,
-                    onValueChange = onNameChange,
+                    value = fieldValue,
+                    onValueChange = { new ->
+                        fieldValue =
+                            if (selectAllOnNextChange) {
+                                selectAllOnNextChange = false
+                                new.copy(selection = TextRange(0, new.text.length))
+                            } else {
+                                new
+                            }
+                        onNameChange(fieldValue.text)
+                    },
                     textStyle = typography.captionMedium.copy(color = colors.onSurface),
                     cursorBrush = SolidColor(colors.primary),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                    modifier = Modifier.weight(1f, fill = false),
+                    modifier =
+                        Modifier
+                            .weight(1f, fill = false)
+                            // Tapping in is meant to overwrite the "Person N" default, not append
+                            // to it — select the whole value so typing replaces it outright.
+                            .onFocusChanged { focusState ->
+                                if (focusState.isFocused) {
+                                    selectAllOnNextChange = true
+                                    fieldValue = fieldValue.copy(selection = TextRange(0, fieldValue.text.length))
+                                }
+                            },
                     decorationBox = { inner ->
                         if (name.isEmpty() && namePlaceholder != null) {
                             Text(
@@ -299,6 +334,19 @@ fun SharedCostParticipantRow(
                 // switch for every digit and admits letters the amount parser can't use.
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.padding(start = dimens.space8),
+                decorationBox = { inner ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = currencySymbol,
+                            style =
+                                typography.listAmount.copy(
+                                    color = colors.onSurface,
+                                    fontFamily = typography.amountFamily,
+                                ),
+                        )
+                        inner()
+                    }
+                },
             )
         } else {
             Text(
@@ -495,6 +543,7 @@ fun SharedCostCustomSplitCard(
     modifier: Modifier = Modifier,
     editableNames: Boolean = false,
     onNameChange: (Int, String) -> Unit = { _, _ -> },
+    currencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -520,6 +569,7 @@ fun SharedCostCustomSplitCard(
                 editableName = editableNames,
                 onNameChange = { onNameChange(index, it) },
                 namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate),
+                currencySymbol = currencySymbol,
             )
         }
     }

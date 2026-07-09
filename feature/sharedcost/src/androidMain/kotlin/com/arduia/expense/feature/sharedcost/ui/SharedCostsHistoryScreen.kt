@@ -43,6 +43,7 @@ fun SharedCostsHistoryScreen(
     onItemClick: (SharedCostHistoryItemUi) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     onDeleteRequested: (SharedCostHistoryItemUi) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
@@ -106,40 +107,45 @@ fun SharedCostsHistoryScreen(
                 )
             }
 
-            if (items.isEmpty()) {
-                EmptyStateContent(
-                    title = stringResource(R.string.shared_history_empty_title),
-                    subtitle = stringResource(R.string.shared_history_empty_body),
-                    actionLabel = stringResource(R.string.shared_history_empty_action),
-                    onActionClick = onNewSplit,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = dimens.space32),
-                )
-            } else {
-                Text(
-                    text = stringResource(R.string.shared_recent_splits),
-                    style = typography.eyebrow,
-                    color = colors.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = dimens.space10),
-                )
+            // Splits load asynchronously after first composition — without this check, the
+            // history would briefly show "No splits yet" before real data has had a chance to
+            // load.
+            if (!isLoading) {
+                if (items.isEmpty()) {
+                    EmptyStateContent(
+                        title = stringResource(R.string.shared_history_empty_title),
+                        subtitle = stringResource(R.string.shared_history_empty_body),
+                        actionLabel = stringResource(R.string.shared_history_empty_action),
+                        onActionClick = onNewSplit,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = dimens.space32),
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.shared_recent_splits),
+                        style = typography.eyebrow,
+                        color = colors.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = dimens.space10),
+                    )
 
-                Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-                    items.forEach { item ->
-                        SwipeToDeleteRow(onDelete = { onDeleteRequested(item) }) {
-                            SharedCostHistoryRow(
-                                title = item.title,
-                                meta =
-                                    stringResource(
-                                        R.string.shared_history_meta,
-                                        item.peopleCount,
-                                        item.perPersonLabel,
-                                        item.dateLabel,
-                                    ),
-                                total = item.totalLabel,
-                                onClick = { onItemClick(item) },
-                            )
+                    Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                        items.forEach { item ->
+                            SwipeToDeleteRow(onDelete = { onDeleteRequested(item) }) {
+                                SharedCostHistoryRow(
+                                    title = item.title,
+                                    meta =
+                                        stringResource(
+                                            R.string.shared_history_meta,
+                                            item.peopleCount,
+                                            item.perPersonLabel,
+                                            item.dateLabel,
+                                        ),
+                                    total = item.totalLabel,
+                                    onClick = { onItemClick(item) },
+                                )
+                            }
                         }
                     }
                 }
@@ -227,6 +233,25 @@ private fun SharedCostsHistoryEmptyPreview() {
     ProExpenseTheme {
         SharedCostsHistoryScreen(
             items = emptyList(),
+            onNewSplit = {},
+            onItemClick = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — history loading",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsHistoryLoadingPreview() {
+    ProExpenseTheme {
+        SharedCostsHistoryScreen(
+            items = emptyList(),
+            isLoading = true,
             onNewSplit = {},
             onItemClick = {},
             onBack = {},

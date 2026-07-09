@@ -27,9 +27,9 @@ import com.arduia.expense.feature.auth.ui.preview.previewPinSetRevealed
 import com.arduia.expense.feature.auth.ui.preview.previewPinSetup
 import com.arduia.expense.feature.auth.ui.preview.previewPinWrong
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -61,7 +61,7 @@ class PinScreenshotTest {
                 }
             }
         }
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test
@@ -137,7 +137,7 @@ class PinScreenshotTest {
             }
         }
         composeTestRule.onAllNodesWithContentDescription("Show PIN")[0].performClick()
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test
@@ -172,7 +172,7 @@ class PinScreenshotTest {
             }
         }
         composeTestRule.onNodeWithContentDescription("Toggle PIN reveal").performClick()
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test

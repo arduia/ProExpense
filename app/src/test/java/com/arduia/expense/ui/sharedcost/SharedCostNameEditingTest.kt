@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
@@ -93,6 +94,23 @@ class SharedCostNameEditingTest {
         rule.onNodeWithText("Person 1").performTextReplacement("Aiko")
 
         assertEquals(0 to "Aiko", edited)
+    }
+
+    /**
+     * Tapping into a pre-filled name field is meant to overwrite it — the whole value must be
+     * selected on focus so typing replaces it outright, instead of appending after the cursor
+     * (e.g. "Person 2" + "Zoe" -> "Person 2Zoe").
+     */
+    @Test
+    fun focusingExistingName_selectsAllSoTypingOverwritesIt() {
+        var edited: Pair<Int, String>? = null
+        setInputScreen(SharedSplitMode.Equal) { index, name -> edited = index to name }
+
+        val field = rule.onNodeWithText("Person 2")
+        field.performClick()
+        field.performTextInput("Zoe")
+
+        assertEquals(1 to "Zoe", edited)
     }
 }
 

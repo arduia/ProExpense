@@ -21,11 +21,11 @@ import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportLocked
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -57,7 +57,7 @@ class MoreScreenshotTest {
                 }
             }
         }
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test

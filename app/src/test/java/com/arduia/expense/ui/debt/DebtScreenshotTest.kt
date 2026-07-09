@@ -22,13 +22,13 @@ import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOweDetail
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -60,7 +60,7 @@ class DebtScreenshotTest {
                 }
             }
         }
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test

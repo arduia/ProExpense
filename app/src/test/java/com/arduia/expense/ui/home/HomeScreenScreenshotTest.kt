@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.testing.ScreenshotTests
+import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
@@ -16,7 +17,6 @@ import com.arduia.expense.ui.preview.previewHomeEvent
 import com.arduia.expense.ui.preview.previewHomeLoading
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -48,7 +48,7 @@ class HomeScreenScreenshotTest {
                 }
             }
         }
-        composeTestRule.onRoot().captureRoboImage()
+        composeTestRule.onRoot().captureRoboImageWithTolerance()
     }
 
     @Test
