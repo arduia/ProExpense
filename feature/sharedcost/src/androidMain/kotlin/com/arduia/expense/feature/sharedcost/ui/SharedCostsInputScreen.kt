@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -71,6 +72,9 @@ fun SharedCostsInputScreen(
                 .background(colors.paper)
                 .statusBarsPadding()
                 .navigationBarsPadding()
+                // Name/amount fields below open the system IME — without this, the keyboard
+                // simply overlaps the Save button instead of the screen shifting up above it.
+                .imePadding()
                 .padding(horizontal = dimens.screenPadding)
                 .padding(bottom = dimens.space18),
     ) {
@@ -143,6 +147,7 @@ fun SharedCostsInputScreen(
                             onShareChange = onShareChange,
                             editableNames = true,
                             onNameChange = onNameChange,
+                            currencySymbol = homeCurrencySymbol,
                         )
                     }
                 }

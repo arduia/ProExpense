@@ -164,9 +164,12 @@ fun EventsFlow(
                         } else {
                             onCreateEvent(form.name.trim(), form.budgetRaw, form.startEpochMillis, form.endEpochMillis)
                         }
+                        // Not resetting `form` here: it's still read by this sheet's content
+                        // while ProBottomSheetHost's exit animation plays, so clearing it now
+                        // would flash an empty form for the animation's duration. Every entry
+                        // point (create/edit) already sets a fresh `form` before showing again.
                         showCreate = false
                         editingEventId = null
-                        form = EventCreateFormState()
                     }
                 },
             )

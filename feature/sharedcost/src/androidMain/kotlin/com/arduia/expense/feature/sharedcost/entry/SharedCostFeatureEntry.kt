@@ -51,7 +51,11 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         val deleteSharedCost: DeleteSharedCostUseCase = koinInject()
         val variesLabel = stringResource(R.string.shared_per_person_varies)
 
-        val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
+        // null (not emptyList()) until the first Flow emission arrives, so the history list
+        // doesn't flash "No splits yet" before real data has had a chance to load.
+        val sharedCostsOrNull by sharedCostRepository.observeAll().collectAsState(initial = null)
+        val isLoading = sharedCostsOrNull == null
+        val sharedCosts = sharedCostsOrNull.orEmpty()
 
         val history =
             sharedCosts
@@ -62,6 +66,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         SharedCostsFlow(
             onDismiss = onDismiss,
             history = history,
+            isLoading = isLoading,
             sharedCostDetails = sharedCostDetails,
             onSaveSplit = { title, rawTotal, mode, names, customShareRaws ->
                 scope.launch {

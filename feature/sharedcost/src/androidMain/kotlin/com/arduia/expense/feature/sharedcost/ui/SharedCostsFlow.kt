@@ -145,6 +145,7 @@ private fun SharedCostUiState.toDraft(nameTemplate: String): SharedCostDraft =
 fun SharedCostsFlow(
     onDismiss: () -> Unit,
     history: List<SharedCostHistoryItemUi> = previewSharedHistoryItems,
+    isLoading: Boolean = false,
     sharedCostDetails: Map<String, SharedCostUiState> = emptyMap(),
     onSaveSplit: (
         title: String,
@@ -188,8 +189,11 @@ fun SharedCostsFlow(
         when (currentStep) {
             SharedCostStep.Summary -> {
                 if (viewingId != null) {
+                    // Not resetting `draft` here: the outgoing Summary content still reads it
+                    // while AnimatedContent's exit transition plays, so clearing it now would
+                    // flash an empty split for the transition's duration. `onNewSplit` and
+                    // `onItemClick` already set a fresh `draft` before the next Input/Summary show.
                     viewingId = null
-                    draft = SharedCostDraft().withParticipants(nameTemplate)
                     step = SharedCostStep.History.name
                 } else {
                     step = SharedCostStep.Input.name
@@ -231,6 +235,7 @@ fun SharedCostsFlow(
                 SharedCostStep.History -> {
                     SharedCostsHistoryScreen(
                         items = history,
+                        isLoading = isLoading,
                         onNewSplit = {
                             viewingId = null
                             draft = SharedCostDraft().withParticipants(nameTemplate)
@@ -357,8 +362,11 @@ fun SharedCostsFlow(
                             }
                             toastMessage = savedToastMessage
                             onSaved()
+                            // Not resetting `draft` here: the outgoing Summary content still reads
+                            // it while AnimatedContent's exit transition plays, so clearing it now
+                            // would flash an empty split for the transition's duration. `onNewSplit`
+                            // and `onItemClick` already set a fresh `draft` before the next show.
                             viewingId = null
-                            draft = SharedCostDraft().withParticipants(nameTemplate)
                             step = SharedCostStep.History.name
                         },
                     )
