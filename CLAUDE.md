@@ -49,4 +49,6 @@ bash scripts/setup-android-toolchain.sh    # one-time toolchain setup (fresh env
 
 Project Compose workflow skills live under `.agents/skills/`
 (`design-spec-to-compose`, `compose-motion-polish`, `compose-product-auditor`) alongside the
-official Android skills. AGENTS.md and the product docs take precedence when a skill conflicts.
+official Android skills. `kotlin-lint-style` is cross-cutting — read it before/while editing
+any `.kt` file to avoid ktlint/detekt failures. AGENTS.md and the product docs take
+precedence when a skill conflicts.
