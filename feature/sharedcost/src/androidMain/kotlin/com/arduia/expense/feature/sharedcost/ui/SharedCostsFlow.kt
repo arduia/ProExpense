@@ -193,11 +193,12 @@ fun SharedCostsFlow(
         when (currentStep) {
             SharedCostStep.Summary -> {
                 if (viewingId != null) {
-                    // Not resetting `draft` here: the outgoing Summary content still reads it
-                    // while AnimatedContent's exit transition plays, so clearing it now would
-                    // flash an empty split for the transition's duration. `onNewSplit` and
-                    // `onItemClick` already set a fresh `draft` before the next Input/Summary show.
-                    viewingId = null
+                    // Not resetting `draft` or `viewingId` here: the outgoing Summary content
+                    // still reads them while AnimatedContent's exit transition plays. Clearing
+                    // `draft` would flash an empty split; clearing `viewingId` would flip
+                    // `readOnly` to false mid-transition, flashing the Save button on a split
+                    // that's supposed to be view-only. `onNewSplit` and `onItemClick` already set
+                    // a fresh `viewingId`/`draft` before the next Input/Summary show.
                     step = SharedCostStep.History.name
                 } else {
                     step = SharedCostStep.Input.name
@@ -348,12 +349,13 @@ fun SharedCostsFlow(
                             },
                         onBack = {
                             if (viewingId != null) {
-                                // Not resetting `draft` here: the outgoing Summary content still
-                                // reads it while AnimatedContent's exit transition plays, so
-                                // clearing it now would flash a zero/empty split for the
-                                // transition's duration. `onNewSplit` and `onItemClick` already
-                                // set a fresh `draft` before the next Input/Summary show.
-                                viewingId = null
+                                // Not resetting `draft` or `viewingId` here: the outgoing Summary
+                                // content still reads them while AnimatedContent's exit transition
+                                // plays. Clearing `draft` would flash a zero/empty split; clearing
+                                // `viewingId` would flip `readOnly` to false mid-transition,
+                                // flashing the Save button on a split that's supposed to be
+                                // view-only. `onNewSplit` and `onItemClick` already set a fresh
+                                // `viewingId`/`draft` before the next Input/Summary show.
                                 step = SharedCostStep.History.name
                             } else {
                                 step = SharedCostStep.Input.name
