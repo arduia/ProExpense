@@ -3,6 +3,7 @@ package com.arduia.expense.feature.sharedcost.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -13,9 +14,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
@@ -26,6 +33,7 @@ import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPeopleCard
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputConfirmed
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
 import com.arduia.expense.ui.design.AmountDisplay
@@ -33,6 +41,9 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
@@ -50,6 +61,7 @@ fun SharedCostsInputScreen(
     onModeSelected: (SharedSplitMode) -> Unit,
     onContinue: () -> Unit,
     onConfirmAmount: () -> Unit = {},
+    onEditAmount: () -> Unit = {},
     onEditPerson: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     showKeypad: Boolean = true,
@@ -57,10 +69,21 @@ fun SharedCostsInputScreen(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val noteFocusRequester = remember { FocusRequester() }
     val displayAmount = AmountInput.formatDisplay(state.rawTotal.ifEmpty { "0" })
     val canProceed = SharedCostSplitLogic.canSave(state.rawTotal)
     val isZero = !canProceed
     val showDetails = state.amountConfirmed && canProceed
+
+    // Fires once per false->true edge (right after the total is confirmed) — not on every
+    // recomposition while details stay visible, so it never steals focus back while typing.
+    LaunchedEffect(showDetails) {
+        if (showDetails && state.note.isEmpty()) {
+            noteFocusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
     val participants = state.participants.map { it.name to it.shareLabel }
     val perPersonAmount =
         participants.firstOrNull()?.second
@@ -124,18 +147,46 @@ fun SharedCostsInputScreen(
                 backLabel = stringResource(R.string.shared_back_more),
             )
 
-            AmountDisplay(
-                amountText = displayAmount,
-                currencySymbol = homeCurrencySymbol,
-                isZero = isZero,
-                showZeroValidation = state.showZeroValidation,
-                zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
-                eyebrowText = stringResource(R.string.shared_total_bill),
+            Row(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
-            )
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                AmountDisplay(
+                    amountText = displayAmount,
+                    currencySymbol = homeCurrencySymbol,
+                    isZero = isZero,
+                    showZeroValidation = state.showZeroValidation,
+                    zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
+                    eyebrowText = stringResource(R.string.shared_total_bill),
+                    modifier = Modifier.weight(1f),
+                )
+                if (showDetails) {
+                    val editAmountDescription = stringResource(R.string.shared_edit_amount_cd)
+                    ProTextAction(
+                        text = stringResource(R.string.shared_edit_action_label),
+                        onClick = onEditAmount,
+                        style = ProExpenseTheme.typography.captionMedium,
+                        color = colors.primary,
+                        leading = {
+                            ProIcon(
+                                glyph = ProIconGlyph.Edit,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                size = dimens.iconTag,
+                            )
+                        },
+                        modifier =
+                            Modifier
+                                .padding(bottom = dimens.space4)
+                                .semantics(mergeDescendants = true) {
+                                    contentDescription = editAmountDescription
+                                },
+                    )
+                }
+            }
 
             if (showDetails) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
@@ -143,6 +194,7 @@ fun SharedCostsInputScreen(
                         value = state.note,
                         onValueChange = onNoteChange,
                         placeholder = stringResource(R.string.shared_note_placeholder),
+                        focusRequester = noteFocusRequester,
                     )
 
                     SharedCostPeopleCard(
@@ -235,6 +287,30 @@ private fun SharedCostsInputEqualPreview() {
     ProExpenseTheme {
         SharedCostsInputScreen(
             state = previewSharedInputEqual,
+            onBack = {},
+            onKey = {},
+            onBackspace = {},
+            onNoteChange = {},
+            onDecrementPeople = {},
+            onIncrementPeople = {},
+            onModeSelected = {},
+            onContinue = {},
+            showKeypad = false,
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — input confirmed",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsInputConfirmedPreview() {
+    ProExpenseTheme {
+        SharedCostsInputScreen(
+            state = previewSharedInputConfirmed,
             onBack = {},
             onKey = {},
             onBackspace = {},

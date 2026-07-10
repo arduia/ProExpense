@@ -71,6 +71,21 @@ val previewSharedSummary =
             ),
     )
 
+val previewSharedInputConfirmed =
+    SharedCostUiState(
+        rawTotal = "120",
+        note = "Dinner at Nobu",
+        peopleCount = 4,
+        mode = SharedSplitMode.Equal,
+        participants =
+            buildParticipants(
+                rawTotal = "120",
+                peopleCount = 4,
+                names = SharedCostSplitLogic.previewNames(4),
+            ),
+        amountConfirmed = true,
+    )
+
 val previewSharedZeroValidation =
     SharedCostUiState(
         rawTotal = "0",

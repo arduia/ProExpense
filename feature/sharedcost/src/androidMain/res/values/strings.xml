@@ -50,6 +50,8 @@
     <string name="shared_switch_to_custom_hint">Switch the split to Custom to set exact amounts per person.</string>
     <string name="shared_edit_split_cd">Edit split</string>
     <string name="shared_edit_person_cd">Edit %1$s</string>
+    <string name="shared_edit_action_label">Edit</string>
+    <string name="shared_edit_amount_cd">Edit total amount</string>
     <string name="shared_done">Done</string>
     <string name="shared_next">Next</string>
     <string name="shared_review">Review</string>

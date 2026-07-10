@@ -42,6 +42,8 @@
     <string name="shared_switch_to_custom_hint">တစ်ဦးစီ၏ အတိအကျ ပမာဏများ သတ်မှတ်ရန် ခွဲဝေမှုကို စိတ်ကြိုက်သို့ ပြောင်းပါ။</string>
     <string name="shared_edit_split_cd">ခွဲဝေမှု တည်းဖြတ်ရန်</string>
     <string name="shared_edit_person_cd">%1$s ကို တည်းဖြတ်ရန်</string>
+    <string name="shared_edit_action_label">တည်းဖြတ်ရန်</string>
+    <string name="shared_edit_amount_cd">စုစုပေါင်းပမာဏကို တည်းဖြတ်ရန်</string>
     <string name="shared_done">ပြီးပါပြီ</string>
     <string name="shared_next">နောက်တစ်ခု</string>
     <string name="shared_review">သုံးသပ်ရန်</string>

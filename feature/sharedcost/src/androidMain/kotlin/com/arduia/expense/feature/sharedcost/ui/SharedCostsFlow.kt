@@ -350,6 +350,7 @@ fun SharedCostsFlow(
                                 draft = draft.copy(showZeroValidation = true)
                             }
                         },
+                        onEditAmount = { draft = draft.copy(amountConfirmed = false) },
                         onContinue = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
                                 step = SharedCostStep.Summary.name

@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,14 +28,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -164,6 +170,7 @@ fun SharedCostsEditPersonSheetContent(
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.tile
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val isCustom = mode == SharedSplitMode.Custom
     var showAmountKeypad by remember(activeIndex) { mutableStateOf(false) }
     var amountFreshEntry by remember(activeIndex) { mutableStateOf(true) }
@@ -171,6 +178,18 @@ fun SharedCostsEditPersonSheetContent(
     val fieldActive = nameHasFocus || showAmountKeypad
     val activePerson = people.getOrNull(activeIndex)
     val activeAmountDisplay = AmountInput.formatDisplay(activeAmountRaw.ifEmpty { "0" })
+    val nameFocusRequester = remember(activeIndex) { FocusRequester() }
+    // Selecting the whole name on open/person-switch lets the first keystroke overwrite it
+    // outright — the same "select all on focus" UX the amount field's freshEntry flag gives.
+    var nameFieldValue by
+        remember(activeIndex) {
+            val name = activePerson?.name.orEmpty()
+            mutableStateOf(TextFieldValue(text = name, selection = TextRange(0, name.length)))
+        }
+    LaunchedEffect(activeIndex) {
+        nameFocusRequester.requestFocus()
+        keyboardController?.show()
+    }
     val amountValueColor = if (isCustom) colors.onSurface else colors.onSurfaceVariant
     val currencySymbolColor = if (isCustom) colors.primary else colors.onSurfaceVariant
     val isLastPerson = activeIndex >= people.size - 1
@@ -259,8 +278,11 @@ fun SharedCostsEditPersonSheetContent(
                         )
                     }
                     BasicTextField(
-                        value = activePerson?.name.orEmpty(),
-                        onValueChange = onNameChange,
+                        value = nameFieldValue,
+                        onValueChange = { new ->
+                            nameFieldValue = new
+                            onNameChange(new.text)
+                        },
                         textStyle = typography.body.copy(color = colors.onSurface),
                         cursorBrush = SolidColor(colors.primary),
                         singleLine = true,
@@ -268,6 +290,7 @@ fun SharedCostsEditPersonSheetContent(
                         modifier =
                             Modifier
                                 .weight(1f)
+                                .focusRequester(nameFocusRequester)
                                 .onFocusChanged { focusState ->
                                     nameHasFocus = focusState.isFocused
                                     if (focusState.isFocused) showAmountKeypad = false

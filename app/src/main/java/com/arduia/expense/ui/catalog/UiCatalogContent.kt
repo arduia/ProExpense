@@ -79,6 +79,7 @@ import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimit
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonCustom
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputConfirmed
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
@@ -571,6 +572,20 @@ fun uiCatalogSections(): List<UiCatalogSection> =
                     UiCatalogEntry("shared_input", "Input") {
                         SharedCostsInputScreen(
                             state = previewSharedInputEqual,
+                            onBack = {},
+                            onKey = {},
+                            onBackspace = {},
+                            onNoteChange = {},
+                            onDecrementPeople = {},
+                            onIncrementPeople = {},
+                            onModeSelected = {},
+                            onContinue = {},
+                            showKeypad = false,
+                        )
+                    },
+                    UiCatalogEntry("shared_input_confirmed", "Input · confirmed") {
+                        SharedCostsInputScreen(
+                            state = previewSharedInputConfirmed,
                             onBack = {},
                             onKey = {},
                             onBackspace = {},

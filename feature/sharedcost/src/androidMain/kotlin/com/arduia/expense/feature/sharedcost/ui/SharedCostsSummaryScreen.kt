@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.sharedcost.R
@@ -80,6 +81,18 @@ fun SharedCostsSummaryScreen(
             onBack = onBack,
             backLabel = backLabel,
         )
+
+        val noteTitle = state.note.trim()
+        if (noteTitle.isNotEmpty()) {
+            Text(
+                text = noteTitle,
+                style = typography.sectionHead,
+                color = colors.onSurface,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = dimens.space8),
+            )
+        }
 
         AmountDisplay(
             amountText = perPersonDisplay,

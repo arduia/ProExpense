@@ -42,6 +42,8 @@
     <string name="shared_switch_to_custom_hint">เปลี่ยนการหารเป็นแบบกำหนดเองเพื่อกำหนดจำนวนเงินที่แน่นอนของแต่ละคน</string>
     <string name="shared_edit_split_cd">แก้ไขการหาร</string>
     <string name="shared_edit_person_cd">แก้ไข %1$s</string>
+    <string name="shared_edit_action_label">แก้ไข</string>
+    <string name="shared_edit_amount_cd">แก้ไขยอดรวม</string>
     <string name="shared_done">เสร็จสิ้น</string>
     <string name="shared_next">ถัดไป</string>
     <string name="shared_review">ตรวจทาน</string>

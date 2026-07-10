@@ -21,11 +21,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -38,6 +42,7 @@ import com.arduia.expense.feature.sharedcost.R
 import com.arduia.expense.ui.design.DetailFieldCard
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.proCircularRippleClickable
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
@@ -216,7 +221,15 @@ fun SharedCostParticipantRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(vertical = dimens.rowPaddingV),
+                .then(
+                    // The whole row navigates to the same Edit-person sheet as the trailing icon —
+                    // a bigger, easier tap target than the small icon alone.
+                    if (onEditClick != null) {
+                        Modifier.proClickable(onClick = onEditClick, shape = RectangleShape)
+                    } else {
+                        Modifier
+                    },
+                ).padding(vertical = dimens.rowPaddingV),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -373,6 +386,7 @@ fun SharedCostNoteField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
@@ -394,7 +408,16 @@ fun SharedCostNoteField(
             textStyle = typography.body.copy(color = colors.onSurface),
             cursorBrush = SolidColor(colors.primary),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (focusRequester != null) {
+                            Modifier.focusRequester(focusRequester)
+                        } else {
+                            Modifier
+                        },
+                    ),
             decorationBox = { inner ->
                 if (value.isEmpty()) {
                     Text(
@@ -471,12 +494,25 @@ fun SharedCostPerPersonCard(
                 }
             }
             if (onHeaderEditClick != null) {
-                SharedCostEditIconButton(
+                ProTextAction(
+                    text = stringResource(R.string.shared_edit_action_label),
                     onClick = onHeaderEditClick,
-                    contentDescription = headerEditContentDescription,
-                    size = dimens.space32,
-                    iconSize = dimens.iconInline,
-                    filledBackground = true,
+                    style = typography.captionMedium,
+                    color = colors.primary,
+                    leading = {
+                        ProIcon(
+                            glyph = ProIconGlyph.Edit,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            size = dimens.iconTag,
+                        )
+                    },
+                    // The visible label reads "Edit"; keep the richer a11y name ("Edit split")
+                    // that existing content-description-based navigation/tests rely on.
+                    modifier =
+                        Modifier.semantics(mergeDescendants = true) {
+                            contentDescription = headerEditContentDescription
+                        },
                 )
             }
         }

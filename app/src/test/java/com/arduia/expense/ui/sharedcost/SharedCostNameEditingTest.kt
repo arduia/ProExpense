@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.unit.width
 import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
@@ -261,6 +262,38 @@ class SharedCostEditPersonSheetFlowTest {
         rule.onNodeWithText("Done").performClick()
 
         rule.onNodeWithText("Split a bill").assertExists()
+    }
+
+    /**
+     * US-SHC-2 guard: person info (names) must carry over when switching between Equal and
+     * Custom — only amounts are mode-specific (Equal is always computed, never the stored
+     * custom share). A rename made in one mode must still be visible after switching modes.
+     */
+    @Test
+    fun renamingInEqualMode_persistsAfterSwitchingToCustom() {
+        startNewSplitDetails()
+
+        rule.onNodeWithContentDescription("Edit Person 2").performScrollTo().performClick()
+        rule.onNode(hasText("Person 2") and hasSetTextAction()).performTextReplacement("Zara")
+        rule.onNodeWithText("Done").performClick()
+
+        rule.onNodeWithText("Custom split").performClick()
+
+        rule.onNodeWithText("Zara").assertExists()
+    }
+
+    @Test
+    fun renamingInCustomMode_persistsAfterSwitchingBackToEqual() {
+        startNewSplitDetails()
+        rule.onNodeWithText("Custom split").performClick()
+
+        rule.onNodeWithContentDescription("Edit Person 2").performScrollTo().performClick()
+        rule.onNode(hasText("Person 2") and hasSetTextAction()).performTextReplacement("Zara")
+        rule.onNodeWithText("Done").performClick()
+
+        rule.onNodeWithText("Even split").performClick()
+
+        rule.onNodeWithText("Zara").assertExists()
     }
 }
 

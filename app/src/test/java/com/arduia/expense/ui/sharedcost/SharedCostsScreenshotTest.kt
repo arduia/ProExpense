@@ -16,6 +16,7 @@ import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimit
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonCustom
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputConfirmed
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
@@ -62,6 +63,24 @@ class SharedCostsScreenshotTest {
         capture {
             SharedCostsInputScreen(
                 state = previewSharedInputEqual,
+                onBack = {},
+                onKey = {},
+                onBackspace = {},
+                onNoteChange = {},
+                onDecrementPeople = {},
+                onIncrementPeople = {},
+                onModeSelected = {},
+                onContinue = {},
+                showKeypad = false,
+            )
+        }
+    }
+
+    @Test
+    fun shared_input_confirmed() {
+        capture {
+            SharedCostsInputScreen(
+                state = previewSharedInputConfirmed,
                 onBack = {},
                 onKey = {},
                 onBackspace = {},
