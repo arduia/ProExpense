@@ -27,6 +27,7 @@ import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItem
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProAlertDialog
+import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProToastHost
@@ -77,6 +78,7 @@ private data class SharedCostDraft(
             mode = mode,
             participants = participants,
             showZeroValidation = showZeroValidation,
+            shareRaws = customShareRaws,
             amountConfirmed = amountConfirmed,
         )
     }
@@ -185,11 +187,44 @@ fun SharedCostsFlow(
     var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
+    // editingIndex is deliberately not cleared when the sheet closes (Done / last-person Next) —
+    // ProBottomSheetHost's exit fade keeps rendering `sheetContent()` for its duration, and
+    // nulling the index immediately would flash person 0 mid-fade. editSheetVisible drives
+    // visibility; onEditPerson sets a fresh editingIndex before the sheet opens again.
+    var editingIndex by remember { mutableStateOf<Int?>(null) }
+    var editSheetVisible by remember { mutableStateOf(false) }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
     val currentStep = SharedCostStep.valueOf(step)
 
+    fun updateParticipantName(
+        index: Int,
+        name: String,
+    ) {
+        val updated = SharedCostSplitLogic.syncNames(draft.names, draft.peopleCount, nameTemplate).toMutableList()
+        if (index in updated.indices) {
+            updated[index] = name
+            draft = draft.copy(names = updated)
+        }
+    }
+
+    fun applyCustomShareEdit(
+        index: Int,
+        transform: (String) -> String,
+    ) {
+        val updated = SharedCostSplitLogic.syncCustomShares(draft.customShareRaws, draft.peopleCount, draft.rawTotal).toMutableList()
+        while (updated.size <= index) {
+            updated.add("")
+        }
+        updated[index] = transform(updated[index])
+        draft = draft.copy(customShareRaws = updated)
+    }
+
     BackHandler(enabled = true) {
+        if (editSheetVisible) {
+            editSheetVisible = false
+            return@BackHandler
+        }
         when (currentStep) {
             SharedCostStep.Summary -> {
                 if (viewingId != null) {
@@ -304,20 +339,9 @@ fun SharedCostsFlow(
                             }
                         },
                         onModeSelected = { mode -> draft = draft.copy(mode = mode).withParticipants(nameTemplate) },
-                        onShareChange = { index, raw ->
-                            val updated = draft.customShareRaws.toMutableList()
-                            while (updated.size <= index) {
-                                updated.add("")
-                            }
-                            updated[index] = raw
-                            draft = draft.copy(customShareRaws = updated, mode = SharedSplitMode.Custom)
-                        },
-                        onNameChange = { index, name ->
-                            val updated = SharedCostSplitLogic.syncNames(draft.names, draft.peopleCount).toMutableList()
-                            if (index in updated.indices) {
-                                updated[index] = name
-                                draft = draft.copy(names = updated)
-                            }
+                        onEditPerson = { index ->
+                            editingIndex = index
+                            editSheetVisible = true
                         },
                         onConfirmAmount = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
@@ -390,6 +414,48 @@ fun SharedCostsFlow(
             }
         }
 
+        ProBottomSheetHost(
+            visible = editSheetVisible,
+            title = stringResource(R.string.shared_edit_person_title),
+            onClose = { editSheetVisible = false },
+        ) {
+            val index = editingIndex ?: 0
+            val equalShareLabel =
+                SharedCostSplitLogic.formatCents(
+                    SharedCostSplitLogic.equalShareCents(draft.rawTotal, draft.peopleCount),
+                    homeCurrencySymbol,
+                )
+            SharedCostsEditPersonSheetContent(
+                people = draft.toUiState(homeCurrencySymbol, nameTemplate).participants,
+                activeIndex = index,
+                mode = draft.mode,
+                activeAmountRaw = draft.customShareRaws.getOrElse(index) { "" },
+                equalShareLabel = equalShareLabel,
+                onPickPerson = { editingIndex = it },
+                onNameChange = { name -> updateParticipantName(index, name) },
+                onAmountKey = { key, freshEntry ->
+                    applyCustomShareEdit(index) { current ->
+                        AmountInput.applyKey(if (freshEntry) "" else current, key)
+                    }
+                },
+                onAmountBackspace = { freshEntry ->
+                    applyCustomShareEdit(index) { current ->
+                        if (freshEntry) "" else AmountInput.applyBackspace(current)
+                    }
+                },
+                onDone = { editSheetVisible = false },
+                onNext = {
+                    if (index < draft.peopleCount - 1) {
+                        editingIndex = index + 1
+                    } else {
+                        editSheetVisible = false
+                        step = SharedCostStep.Summary.name
+                    }
+                },
+                homeCurrencySymbol = homeCurrencySymbol,
+            )
+        }
+
         ProToastHost(
             message = toastMessage,
             onDismiss = { toastMessage = null },
@@ -448,7 +514,6 @@ private fun SharedCostsFlowInputPreview() {
             onDecrementPeople = {},
             onIncrementPeople = {},
             onModeSelected = {},
-            onShareChange = { _, _ -> },
             onContinue = {},
             showKeypad = false,
         )

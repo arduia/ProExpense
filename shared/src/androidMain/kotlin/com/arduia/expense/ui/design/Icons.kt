@@ -33,6 +33,8 @@ enum class ProIconGlyph(
     Calendar(R.drawable.ic_calendar),
     Clock(R.drawable.ic_clock),
     Note(R.drawable.ic_note),
+    Edit(R.drawable.ic_edit),
+    Lock(R.drawable.ic_lock),
     User(R.drawable.ic_user),
     Eye(R.drawable.ic_eye),
     EyeOff(R.drawable.ic_eye_off),

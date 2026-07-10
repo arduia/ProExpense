@@ -59,22 +59,7 @@ fun NumericKeypad(
                 .padding(vertical = dimens.space16),
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
-        keypadKeys.forEach { row ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-            ) {
-                row.forEach { key ->
-                    KeypadKey(
-                        label = key,
-                        onClick = {
-                            if (key == "backspace") onBackspace() else onKey(key)
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-            }
-        }
+        DigitKeypadGrid(onKey = onKey, onBackspace = onBackspace)
         Row(
             modifier =
                 Modifier
@@ -101,6 +86,40 @@ fun NumericKeypad(
                 enabled = actionsEnabled,
                 fillMaxWidth = true,
             )
+        }
+    }
+}
+
+/** The bare 4x3 digit grid (1-9, ., 0, backspace) with no Save/Next action row — reused by
+ *  [NumericKeypad] and by flows that host their own action footer (e.g. the shared-cost edit
+ *  person sheet). */
+@Composable
+fun DigitKeypadGrid(
+    onKey: (String) -> Unit,
+    onBackspace: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val dimens = ProExpenseTheme.dimensions
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        keypadKeys.forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                row.forEach { key ->
+                    KeypadKey(
+                        label = key,
+                        onClick = {
+                            if (key == "backspace") onBackspace() else onKey(key)
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
         }
     }
 }

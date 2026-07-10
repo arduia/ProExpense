@@ -11,7 +11,7 @@ enum class SharedSplitMode {
 object SharedCostSplitLogic {
     private const val DEFAULT_NAME_TEMPLATE = "Person %1\$d"
 
-    private fun totalCents(rawTotal: String): Long {
+    fun totalCents(rawTotal: String): Long {
         val value = AmountInput.numericValue(rawTotal) ?: 0.0
         return (value * 100).roundToLong()
     }
@@ -99,6 +99,11 @@ object SharedCostSplitLogic {
             current.getOrNull(index) ?: equalShare
         }
     }
+
+    /** Sum of the custom per-person shares, in cents — used to show whether a Custom split
+     *  "matches" the total or still diverges from it. Shares are never auto-rebalanced, so this
+     *  can legitimately land above or below [totalCents]. */
+    fun customShareSumCents(customShareRaws: List<String>): Long = customShareRaws.sumOf { totalCents(it) }
 
     fun formatShareRaw(
         rawShare: String,

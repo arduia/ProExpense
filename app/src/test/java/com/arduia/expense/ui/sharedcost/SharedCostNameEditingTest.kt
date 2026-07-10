@@ -1,15 +1,18 @@
 package com.arduia.expense.ui.sharedcost
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsEditPersonSheetContent
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
@@ -18,6 +21,8 @@ import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +32,8 @@ import org.robolectric.annotation.GraphicsMode
 
 /**
  * US-SHC-1 guard: "optionally naming people (default 'Person 1…')" — participant names must be
- * editable on the input screen (previously rendered as static Text with no edit path at all).
+ * editable, now via the dedicated Edit-person sheet (`EditPersonSheetV4` in the design handoff)
+ * rather than inline fields on the input screen.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -35,92 +41,139 @@ import org.robolectric.annotation.GraphicsMode
     sdk = [33],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
-class SharedCostNameEditingTest {
+class SharedCostEditPersonSheetContentTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun inputState(mode: SharedSplitMode) =
-        SharedCostUiState(
-            rawTotal = "120",
-            peopleCount = 2,
-            mode = mode,
-            amountConfirmed = true,
-            participants =
-                listOf(
-                    SharedCostParticipantUi("Person 1", "$60.00"),
-                    SharedCostParticipantUi("Person 2", "$60.00"),
-                ),
+    private val people =
+        listOf(
+            SharedCostParticipantUi("Aiko", "$30.00"),
+            SharedCostParticipantUi("Ben", "$30.00"),
         )
 
-    private fun setInputScreen(
-        mode: SharedSplitMode,
-        onNameChange: (Int, String) -> Unit,
+    @Suppress("LongParameterList")
+    private fun setSheet(
+        mode: SharedSplitMode = SharedSplitMode.Equal,
+        activeIndex: Int = 0,
+        activeAmountRaw: String = "30",
+        onPickPerson: (Int) -> Unit = {},
+        onNameChange: (String) -> Unit = {},
+        onAmountKey: (key: String, freshEntry: Boolean) -> Unit = { _, _ -> },
+        onAmountBackspace: (freshEntry: Boolean) -> Unit = {},
+        onDone: () -> Unit = {},
+        onNext: () -> Unit = {},
     ) {
         rule.setContent {
             ProExpenseTheme {
-                SharedCostsInputScreen(
-                    state = inputState(mode),
-                    onBack = {},
-                    onKey = {},
-                    onBackspace = {},
-                    onNoteChange = {},
-                    onDecrementPeople = {},
-                    onIncrementPeople = {},
-                    onModeSelected = {},
-                    onShareChange = { _, _ -> },
-                    onContinue = {},
+                SharedCostsEditPersonSheetContent(
+                    people = people,
+                    activeIndex = activeIndex,
+                    mode = mode,
+                    activeAmountRaw = activeAmountRaw,
+                    equalShareLabel = "$30.00",
+                    onPickPerson = onPickPerson,
                     onNameChange = onNameChange,
-                    showKeypad = false,
+                    onAmountKey = onAmountKey,
+                    onAmountBackspace = onAmountBackspace,
+                    onDone = onDone,
+                    onNext = onNext,
                 )
             }
         }
     }
 
     @Test
-    fun equalMode_participantNameIsEditable() {
-        var edited: Pair<Int, String>? = null
-        setInputScreen(SharedSplitMode.Equal) { index, name -> edited = index to name }
+    fun nameField_editingActivePerson_invokesOnNameChange() {
+        var edited: String? = null
+        setSheet(activeIndex = 0, onNameChange = { edited = it })
 
-        rule.onNodeWithText("Person 2").performTextReplacement("Maya")
+        // "Aiko" also appears in the read-only roster row above the editable field — narrow to
+        // the node that actually accepts text input.
+        rule.onNode(hasText("Aiko") and hasSetTextAction()).performTextReplacement("Maya")
 
-        assertEquals(1 to "Maya", edited)
+        assertEquals("Maya", edited)
     }
 
     @Test
-    fun customMode_participantNameIsEditable() {
-        var edited: Pair<Int, String>? = null
-        setInputScreen(SharedSplitMode.Custom) { index, name -> edited = index to name }
+    fun rosterTap_invokesOnPickPersonWithTappedIndex() {
+        var picked: Int? = null
+        setSheet(activeIndex = 0, onPickPerson = { picked = it })
 
-        rule.onNodeWithText("Person 1").performTextReplacement("Aiko")
+        rule.onNodeWithText("Ben").performClick()
 
-        assertEquals(0 to "Aiko", edited)
+        assertEquals(1, picked)
+    }
+
+    @Test
+    fun equalMode_amountIsLocked_tappingNeverRevealsKeypad() {
+        setSheet(mode = SharedSplitMode.Equal)
+
+        rule.onNodeWithContentDescription("Amount").performClick()
+
+        rule.onNodeWithText("7").assertDoesNotExist()
+    }
+
+    @Test
+    fun customMode_tappingAmount_revealsKeypadAndKeyPressInvokesCallback() {
+        var pressedKey: String? = null
+        setSheet(mode = SharedSplitMode.Custom, activeAmountRaw = "40", onAmountKey = { key, _ -> pressedKey = key })
+
+        rule.onNodeWithText("7").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Amount").performClick()
+        rule.onNodeWithText("7").performClick()
+
+        assertEquals("7", pressedKey)
     }
 
     /**
-     * Tapping into a pre-filled name field is meant to overwrite it — the whole value must be
-     * selected on focus so typing replaces it outright, instead of appending after the cursor
-     * (e.g. "Person 2" + "Zoe" -> "Person 2Zoe").
+     * Regression guard: the amount field arrives pre-filled with the computed equal share (or a
+     * previously-set custom value) — the first keystroke after activating it must report
+     * `freshEntry = true` so the caller overwrites rather than appends onto it (the same
+     * "560.00" append bug the old inline field's select-all-on-focus behavior guarded against).
      */
     @Test
-    fun focusingExistingName_selectsAllSoTypingOverwritesIt() {
-        var edited: Pair<Int, String>? = null
-        setInputScreen(SharedSplitMode.Equal) { index, name -> edited = index to name }
+    fun customMode_firstKeyAfterActivation_reportsFreshEntry_subsequentKeysDoNot() {
+        val freshFlags = mutableListOf<Boolean>()
+        setSheet(
+            mode = SharedSplitMode.Custom,
+            activeAmountRaw = "40",
+            onAmountKey = { _, fresh -> freshFlags.add(fresh) },
+        )
 
-        val field = rule.onNodeWithText("Person 2")
-        field.performClick()
-        field.performTextInput("Zoe")
+        rule.onNodeWithContentDescription("Amount").performClick()
+        rule.onNodeWithText("7").performClick()
+        rule.onNodeWithText("5").performClick()
 
-        assertEquals(1 to "Zoe", edited)
+        assertEquals(listOf(true, false), freshFlags)
+    }
+
+    @Test
+    fun done_invokesOnDone_withoutTouchingOnNext() {
+        var doneCalled = false
+        var nextCalled = false
+        setSheet(onDone = { doneCalled = true }, onNext = { nextCalled = true })
+
+        rule.onNodeWithText("Done").performClick()
+
+        assertTrue(doneCalled)
+        assertFalse(nextCalled)
+    }
+
+    @Test
+    fun next_invokesOnNext() {
+        var nextCalled = false
+        setSheet(onNext = { nextCalled = true })
+
+        rule.onNodeWithText("Next").performClick()
+
+        assertTrue(nextCalled)
     }
 }
 
 /**
- * Custom-split share amounts must be editable, and tapping a pre-filled default share is meant to
- * overwrite it — same reasoning as [SharedCostNameEditingTest.focusingExistingName_selectsAllSoTypingOverwritesIt].
- * The amount field's layout box is wider than its right-aligned digits (row padding, the currency
- * symbol prefix), so a tap anywhere in that empty space resolves to text offset 0 — without an
- * explicit cursor override, typing a digit landed *before* the existing amount instead of
- * replacing it (e.g. "60.00" + "5" -> "560.00").
+ * Integration guard: the Edit-person sheet is reached from Screen 1's edit-icon buttons, and
+ * "Next" walks through every person before landing on Split summary — "Done" only closes the
+ * sheet.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -128,51 +181,52 @@ class SharedCostNameEditingTest {
     sdk = [33],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
-class SharedCostCustomAmountEditingTest {
+class SharedCostEditPersonSheetFlowTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun setCustomInputScreen(onShareChange: (Int, String) -> Unit) {
+    /** New split, total "120" confirmed — lands on the input screen's Details section (default 2 people). */
+    private fun startNewSplitDetails() {
         rule.setContent {
             ProExpenseTheme {
-                SharedCostsInputScreen(
-                    state =
-                        SharedCostUiState(
-                            rawTotal = "120",
-                            peopleCount = 2,
-                            mode = SharedSplitMode.Custom,
-                            amountConfirmed = true,
-                            participants =
-                                listOf(
-                                    SharedCostParticipantUi("Person 1", "$60.00"),
-                                    SharedCostParticipantUi("Person 2", "$60.00"),
-                                ),
-                        ),
-                    onBack = {},
-                    onKey = {},
-                    onBackspace = {},
-                    onNoteChange = {},
-                    onDecrementPeople = {},
-                    onIncrementPeople = {},
-                    onModeSelected = {},
-                    onShareChange = onShareChange,
-                    onContinue = {},
-                    showKeypad = false,
-                )
+                SharedCostsFlow(onDismiss = {})
             }
         }
+        rule.onNodeWithText("New split").performClick()
+        rule.onNodeWithText("1").performClick()
+        rule.onNodeWithText("2").performClick()
+        rule.onNodeWithText("0").performClick()
+        rule.onNodeWithText("Save split").performClick()
     }
 
     @Test
-    fun focusingPrefilledShare_selectsAllSoTypingReplacesIt() {
-        var edited: Pair<Int, String>? = null
-        setCustomInputScreen { index, raw -> edited = index to raw }
+    fun tappingEditSplitIcon_opensEditPersonSheet() {
+        startNewSplitDetails()
 
-        val field = rule.onAllNodesWithText("60.00", substring = true)[0]
-        field.performClick()
-        field.performTextInput("75")
+        rule.onNodeWithContentDescription("Edit split").performClick()
 
-        assertEquals(0 to "75", edited)
+        rule.onNodeWithText("Edit person").assertExists()
+    }
+
+    @Test
+    fun nextThroughAllPeople_landsOnSplitSummary() {
+        startNewSplitDetails()
+
+        rule.onNodeWithContentDescription("Edit split").performClick()
+        rule.onNodeWithText("Next").performClick()
+        rule.onNodeWithText("Next").performClick()
+
+        rule.onNodeWithText("Split summary").assertExists()
+    }
+
+    @Test
+    fun done_closesSheetWithoutNavigatingToSummary() {
+        startNewSplitDetails()
+
+        rule.onNodeWithContentDescription("Edit split").performClick()
+        rule.onNodeWithText("Done").performClick()
+
+        rule.onNodeWithText("Split a bill").assertExists()
     }
 }
 
@@ -278,7 +332,6 @@ class SharedCostCurrencySymbolWiringTest {
                     onDecrementPeople = {},
                     onIncrementPeople = {},
                     onModeSelected = {},
-                    onShareChange = { _, _ -> },
                     onContinue = {},
                     showKeypad = false,
                     homeCurrencySymbol = "€",

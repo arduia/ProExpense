@@ -1,0 +1,392 @@
+package com.arduia.expense.feature.sharedcost.ui
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.arduia.expense.feature.sharedcost.R
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonCustom
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonEqual
+import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.ui.design.DigitKeypadGrid
+import com.arduia.expense.ui.design.ProButton
+import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.proRippleClickable
+import com.arduia.expense.ui.theme.ProArtboard
+import com.arduia.expense.ui.theme.ProExpenseTheme
+import com.arduia.expense.ui.theme.centeredGlyph
+
+/**
+ * Compact roster of every person in the split, shown at the top of the Edit-person sheet for
+ * context and quick jump — the active person is highlighted, others show a check.
+ */
+@Composable
+fun SharedCostPeopleRoster(
+    people: List<SharedCostParticipantUi>,
+    activeIndex: Int,
+    onPick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val shape = ProExpenseTheme.shapes.tile
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.paper)
+                .padding(dimens.space8),
+    ) {
+        people.forEachIndexed { index, person ->
+            val active = index == activeIndex
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(shape)
+                        .background(if (active) colors.primarySoft else Color.Transparent)
+                        .proRippleClickable(onClick = { onPick(index) })
+                        .padding(horizontal = dimens.space8, vertical = dimens.space8),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(dimens.space26)
+                            .clip(CircleShape)
+                            .background(if (active) colors.primary else colors.primarySoft),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = (index + 1).toString(),
+                        style = typography.captionMedium.centeredGlyph(),
+                        color = if (active) colors.onPrimaryWarm else colors.primary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+                Text(
+                    text = person.name,
+                    style = if (active) typography.bodySemiBold else typography.captionMedium,
+                    color = if (active) colors.onSurface else colors.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = person.shareLabel,
+                    style = typography.captionMedium,
+                    color = if (active) colors.onSurface else colors.onSurfaceVariant,
+                )
+                ProIcon(
+                    glyph = if (active) ProIconGlyph.Edit else ProIconGlyph.Check,
+                    contentDescription = null,
+                    tint = if (active) colors.primary else colors.success,
+                    size = dimens.iconTag,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Dedicated name + amount editor for one person, reached only from Screen 1's edit-icon buttons
+ * (`EditPersonSheetV4` in the handoff). Name is always a real text field; the amount is editable
+ * only in Custom mode, driven by an on-screen keypad (matching the Add Expense amount pattern)
+ * rather than the system IME — Equal-mode amounts are computed, not entered.
+ */
+@Composable
+fun SharedCostsEditPersonSheetContent(
+    people: List<SharedCostParticipantUi>,
+    activeIndex: Int,
+    mode: SharedSplitMode,
+    activeAmountRaw: String,
+    equalShareLabel: String,
+    onPickPerson: (Int) -> Unit,
+    onNameChange: (String) -> Unit,
+    // `freshEntry` is true for the first key/backspace right after the amount field is tapped —
+    // the field arrives pre-filled with the computed equal share (or a previously-set custom
+    // value), and typing is meant to overwrite it outright rather than append onto it, exactly
+    // like the old inline field's "select all on focus" behavior it replaces.
+    onAmountKey: (key: String, freshEntry: Boolean) -> Unit,
+    onAmountBackspace: (freshEntry: Boolean) -> Unit,
+    onDone: () -> Unit,
+    onNext: () -> Unit,
+    modifier: Modifier = Modifier,
+    homeCurrencySymbol: String = "$",
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val shape = ProExpenseTheme.shapes.tile
+    val focusManager = LocalFocusManager.current
+    val isCustom = mode == SharedSplitMode.Custom
+    var showAmountKeypad by remember(activeIndex) { mutableStateOf(false) }
+    var amountFreshEntry by remember(activeIndex) { mutableStateOf(true) }
+    var nameHasFocus by remember(activeIndex) { mutableStateOf(false) }
+    val fieldActive = nameHasFocus || showAmountKeypad
+    val activePerson = people.getOrNull(activeIndex)
+    val activeAmountDisplay = AmountInput.formatDisplay(activeAmountRaw.ifEmpty { "0" })
+
+    Column(
+        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(dimens.space16),
+    ) {
+        SharedCostPeopleRoster(people = people, activeIndex = activeIndex, onPick = onPickPerson)
+
+        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(R.string.shared_field_name),
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceVariant,
+                )
+                if (isCustom) {
+                    Text(
+                        text = stringResource(R.string.shared_field_amount),
+                        style = typography.eyebrow,
+                        color = colors.onSurfaceVariant,
+                    )
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(dimens.space4),
+                    ) {
+                        ProIcon(
+                            glyph = ProIconGlyph.Lock,
+                            contentDescription = null,
+                            tint = colors.muted,
+                            size = dimens.iconTag,
+                        )
+                        Text(
+                            text = stringResource(R.string.shared_field_equal_share),
+                            style = typography.eyebrow,
+                            color = colors.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(shape)
+                        .background(if (fieldActive) colors.surface else colors.paper)
+                        .border(
+                            BorderStroke(1.4.dp, if (fieldActive) colors.primary else colors.line),
+                            shape,
+                        ).padding(horizontal = dimens.space14, vertical = dimens.rowPaddingV),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimens.space10),
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(dimens.space32)
+                            .clip(CircleShape)
+                            .background(colors.primarySoft),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = (activeIndex + 1).toString(),
+                        style = typography.bodySemiBold.centeredGlyph(),
+                        color = colors.primary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+                BasicTextField(
+                    value = activePerson?.name.orEmpty(),
+                    onValueChange = onNameChange,
+                    textStyle = typography.body.copy(color = colors.onSurface),
+                    cursorBrush = SolidColor(colors.primary),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .onFocusChanged { focusState ->
+                                nameHasFocus = focusState.isFocused
+                                if (focusState.isFocused) showAmountKeypad = false
+                            },
+                )
+                Box(
+                    modifier =
+                        Modifier
+                            .width(1.dp)
+                            .height(dimens.space20)
+                            .background(colors.line),
+                )
+                val amountFieldDescription = stringResource(R.string.shared_field_amount)
+                Row(
+                    modifier =
+                        Modifier
+                            .semantics { contentDescription = amountFieldDescription }
+                            .then(
+                                if (isCustom) {
+                                    Modifier.proRippleClickable(
+                                        onClick = {
+                                            showAmountKeypad = true
+                                            focusManager.clearFocus()
+                                        },
+                                    )
+                                } else {
+                                    Modifier
+                                },
+                            ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = homeCurrencySymbol,
+                        style = typography.listAmount.copy(fontFamily = typography.amountFamily, color = colors.primary),
+                    )
+                    Text(
+                        text = if (isCustom) activeAmountDisplay else equalShareLabel.dropWhile { !it.isDigit() },
+                        style =
+                            typography.listAmount.copy(
+                                fontFamily = typography.amountFamily,
+                                color = if (isCustom) colors.onSurface else colors.onSurfaceVariant,
+                            ),
+                    )
+                }
+            }
+
+            if (isCustom) {
+                Text(
+                    text = stringResource(R.string.shared_equal_share_would_be, equalShareLabel),
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.shared_switch_to_custom_hint),
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+
+        if (showAmountKeypad) {
+            DigitKeypadGrid(
+                onKey = { key ->
+                    onAmountKey(key, amountFreshEntry)
+                    amountFreshEntry = false
+                },
+                onBackspace = {
+                    onAmountBackspace(amountFreshEntry)
+                    amountFreshEntry = false
+                },
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+        ) {
+            ProButton(
+                text = stringResource(R.string.shared_done),
+                onClick = onDone,
+                variant = ProButtonVariant.Secondary,
+                size = ProButtonSize.Lg,
+                modifier = Modifier.weight(1f),
+            )
+            ProButton(
+                text = stringResource(R.string.shared_next),
+                onClick = onNext,
+                size = ProButtonSize.Lg,
+                fillMaxWidth = true,
+                modifier = Modifier.weight(1.4f),
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
+@Composable
+private fun SharedCostsEditPersonSheetEqualPreview() {
+    ProExpenseTheme {
+        SharedCostsEditPersonSheetContent(
+            people = previewSharedEditPersonEqual,
+            activeIndex = 0,
+            mode = SharedSplitMode.Equal,
+            activeAmountRaw = "30",
+            equalShareLabel = "$30.00",
+            onPickPerson = {},
+            onNameChange = {},
+            onAmountKey = { _, _ -> },
+            onAmountBackspace = {},
+            onDone = {},
+            onNext = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
+@Composable
+private fun SharedCostsEditPersonSheetCustomPreview() {
+    ProExpenseTheme {
+        SharedCostsEditPersonSheetContent(
+            people = previewSharedEditPersonCustom,
+            activeIndex = 2,
+            mode = SharedSplitMode.Custom,
+            activeAmountRaw = "40",
+            equalShareLabel = "$30.00",
+            onPickPerson = {},
+            onNameChange = {},
+            onAmountKey = { _, _ -> },
+            onAmountBackspace = {},
+            onDone = {},
+            onNext = {},
+        )
+    }
+}

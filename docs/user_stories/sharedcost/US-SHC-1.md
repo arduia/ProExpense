@@ -148,3 +148,13 @@ transition behind an explicit confirm action rather than auto-advancing on valid
   decimal number-pad IME (`KeyboardType.Decimal`) and filters input to digits plus one decimal
   point — previously it opened the full text keyboard. Covered by `SharedCostNameEditingTest`
   (both modes) and `SharedCostNameResolutionTest` (blank/whitespace/trim fallback rules).
+
+* **Gap fix (2026-07 v2):** the inline editable-name/editable-amount fields above were replaced by
+  a dedicated **Edit person** bottom sheet (Flow 08 v2 design handoff) — per-person rows on the
+  input screen are now read-only with a trailing edit-icon button; tapping it (or the per-person
+  card's header edit button) opens the sheet scoped to that participant. Naming still works the
+  same way functionally (real text field, "Person N" fallback on blank/whitespace via
+  `SharedCostSplitLogic.resolveNames`), and Custom-mode amount editing now uses an on-screen keypad
+  instead of the decimal IME, matching the Add Expense amount pattern. Covered by
+  `SharedCostEditPersonSheetContentTest` and `SharedCostEditPersonSheetFlowTest` in
+  `SharedCostNameEditingTest.kt`.
