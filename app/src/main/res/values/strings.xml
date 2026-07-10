@@ -161,7 +161,7 @@
     <string name="quick_access_reports">Reports</string>
     <string name="quick_access_debt">Debt</string>
     <string name="quick_access_split">Split</string>
-    <string name="quick_access_events">Events</string>
+    <string name="quick_access_events">Goals</string>
     <string name="quick_access_customize_title">Customize quick access</string>
     <string name="quick_access_customize_hint">Choose which shortcuts to show on Home and reorder them</string>
     <string name="quick_access_move_up">Move up</string>
