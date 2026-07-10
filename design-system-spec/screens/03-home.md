@@ -28,9 +28,9 @@
 - Contextual header switches by persona: Casual → total spent this month; Budget Planner → spent vs. budget ($320 / $500 + progress); Event Organizer → active event name + remaining balance.
 - With multiple overlapping active events, the header shows the most recently created one.
 - Active Event card appears only when an event is running.
-- Recent transactions: last 5–10 entries (badge, note, meta, amount). “See all” → Journal.
+- Recent transactions: last 5–10 entries (badge, note, meta, amount). “See all” → Journal. Income entries render their amount in success green instead of ink (see `04-add-expense.md` / `components/category.md`).
 - Empty state (fresh user): illustrated, “No expenses yet…”, single CTA “Log your first expense”.
-- Quick-access tiles deep-link to Reports / Debt / Split / Events.
+- Quick-access tiles deep-link to Reports / Debt / Split / **Goals** (renamed from “Events” — see `components/quick-access.md`).
 - Bottom nav (Home active) + raised center Add are always present on top-level screens.
 
 ## Component composition · M3 mapping

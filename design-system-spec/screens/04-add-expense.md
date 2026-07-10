@@ -22,6 +22,8 @@
 ## Behavior & interactions
 
 - Sub-screen 1 (Amount): keypad auto-opens; amount is large + centered. Category chips scroll horizontally, “Food” pre-selected.
+- Category chips include **Income** categories (Income / Salary / Gift) alongside Expense categories in the same single-select row — there is no separate expense/income toggle. Direction (`RecordType.EXPENSE` vs `INCOME`) is derived purely from the selected category.
+- Income entries render their amount in **success green** wherever they surface (this screen's read-back, Home recent list, Journal) instead of `ink` — see Color tokens below.
 - Input rules: whole part ≤ 7 digits, fraction ≤ 2; single decimal; leading zeros stripped (except “0.”); commas grouped live.
 - canProceed = value > 0. Save (quick-commit) and Next are disabled until amount > $0.
 - Tapping a disabled action shakes the field (±4dp) and shows “Amount must be greater than $0”.
@@ -57,6 +59,7 @@
 - empty figure = muted2 #BDBDBD, $ stays clay
 - helper / shake text = clay (error affordance)
 - tag = #FB8C00
+- income amount = success `#4CAF50` (light) / `#81C784` (dark) · expense amount = `ink`
 
 **Shape · spacing**
 

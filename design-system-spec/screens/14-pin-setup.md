@@ -21,8 +21,9 @@
 - Biometric (Face ID / fingerprint) is offered but requires the PIN to be set first.
 - Security question is REQUIRED — pick from a predefined list + answer; cannot enable PIN without it.
 - Success: “PIN is now active. You’ll be asked to enter it on your next launch.”
-- Change PIN: verify current → new → confirm (same mismatch handling).
-- Disable PIN: enter current PIN to confirm → disabling also turns biometric off.
+- Change PIN: a dedicated 3-step overlay (Verify current → Enter new → Confirm new). Step 1 reuses the same re-verification screen as Disable PIN (heading “Confirm your current PIN”); mismatch on the confirm step clears the buffer and shows an inline error without leaving the step; Back from Confirm returns to Enter-new (not a full cancel).
+- Disable PIN: tapping Disable in the manage sheet first shows a plain confirm dialog, then gates the actual disable behind the same re-verification overlay (heading “Confirm your PIN”, helper “Enter your current PIN to turn off protection”) — intent alone never disables it. Cancel from the overlay dismisses back to More with no partial state. Disabling also turns biometric off.
+- Both re-verification overlays **reuse the main unlock screen's lockout state** (same attempt counter / countdown) so they can't be used to brute-force around the lock screen, and both swallow taps on the surface beneath them (rendered as an overlay sibling, not a real destination).
 - Recovery options: security question (verify identity) or reset app (clear all data) as last resort.
 
 ## Component composition · M3 mapping

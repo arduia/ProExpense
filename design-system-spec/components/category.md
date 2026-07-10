@@ -3,16 +3,21 @@
 Every expense maps to a category, each with a dedicated icon, accent colour and matching tint. **Badges** appear in list rows (read-only); **chips** drive selection.
 
 ## Catalogue
-| id | Label | Accent | Tint | Custom |
-|---|---|---|---|---|
-| `food` | Food | `#039BE5` | `#E1F5FE` | — |
-| `transport` | Transport | `#0288D1` | `#B3E5FC` | — |
-| `shopping` | Shopping | `#EF5350` | `#FFCDD2` | — |
-| `bills` | Bills | `#757575` | `#EEEEEE` | — |
-| `health` | Health | `#4CAF50` | `#C8E6C9` | — |
-| `entertainment` | Entertainment | `#0277BD` | `#81D4FA` | — |
-| `coffee` | Coffee runs | `#9E9E9E` | `#E0E0E0` | ✓ |
-| `pet` | Pet care | `#66BB6A` | `#DCEDC8` | ✓ |
+| id | Label | Accent | Tint | Custom | Type |
+|---|---|---|---|---|---|
+| `food` | Food | `#039BE5` | `#E1F5FE` | — | Expense |
+| `transport` | Transport | `#0288D1` | `#B3E5FC` | — | Expense |
+| `shopping` | Shopping | `#EF5350` | `#FFCDD2` | — | Expense |
+| `bills` | Bills | `#757575` | `#EEEEEE` | — | Expense |
+| `health` | Health | `#4CAF50` | `#C8E6C9` | — | Expense |
+| `entertainment` | Entertainment | `#0277BD` | `#81D4FA` | — | Expense |
+| `coffee` | Coffee runs | `#9E9E9E` | `#E0E0E0` | ✓ | Expense |
+| `pet` | Pet care | `#66BB6A` | `#DCEDC8` | ✓ | Expense |
+| `income` | Income | — | — | — | Income |
+| `salary` | Salary | — | — | — | Income |
+| `gift` | Gift | — | — | — | Income |
+
+Income categories sit in the same single-select chip row as expense categories — picking one is what sets a record's direction (`RecordType.INCOME`), not a separate toggle. Amounts on income records render in **success green** (see `04-add-expense.md`) everywhere they surface (Add Expense, Home recent list, Journal).
 
 ## Badge
 ![Category badges](../screenshots/cat-badges.png)

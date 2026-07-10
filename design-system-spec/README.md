@@ -6,6 +6,7 @@ Implementation reference for the **Pro Expense** finance tracker, extracted from
 
 ## Foundations
 - [**Design Tokens**](tokens.md) — colour, typography, shape, spacing, elevation, motion + M3 `ColorScheme` / `Typography` mapping.
+- [**Requirements Sync — 2026-07-10**](REQUIREMENTS-SYNC-2026-07-10.md) — drift between this spec and the shipped app since the spec was captured; the punch list for the next design pass.
 
 ## Components
 | Component | Spec | M3 mapping |

@@ -21,12 +21,11 @@
 
 ## Behavior & interactions
 
-- Enter total (large), people count via stepper (min 2, max 20), optional names (default “Person 1…”).
-- Split mode Equal (default) or Custom (each share manually adjustable, updates live).
+- Enter total (large, prefixed with the home currency symbol, decimal keypad), people count via stepper (min 2, max 20), names are **editable text fields** (default prefill “Person 1…”, not static labels).
+- Split mode Equal (default) or Custom — each share is a decimal-keyboard field with the currency symbol prefix, manually adjustable, updates live. Custom shares are **never auto-rebalanced**: they need not sum to the total, and editing one share never adjusts the others. The total remains the stored source of truth.
 - Split summary sub-screen shows per-person amounts; Back persists all values.
-- Save always stores the original TOTAL as the expense (splits are reference only). Total is the source of truth.
-- Saved splits appear in Shared Costs history only — NOT in Journal.
-- History: tap to view full split; swipe-left to delete (confirm). Editing not supported (reference only).
+- Save stores the TOTAL as a linked expense record — saved splits **do appear in Journal and Reports** (one `FinanceRecord` per split, upserted alongside the split itself).
+- History: tap to view full split; swipe-left to delete (confirm) — deleting a split also removes its linked Journal record atomically. Editing a split updates its linked record in place.
 
 ## Component composition · M3 mapping
 

@@ -21,6 +21,8 @@
 
 ## Behavior & interactions
 
+> **Naming note:** the Home quick-access tile and its create CTA now read “Goals” / “New goal” (renamed from “Events” / “New event”); this screen's own title (“Budget”) and back-label (“Events”) were not part of that rename — flag this inconsistency when updating Hi-Fi mockups.
+
 - Empty state: piggy/jar illustration, “No active events…”, single CTA “Create event”.
 - Create (bottom sheet): name (req, ≤ 30), start date (today default, past allowed), end date (≥ start), total budget (req, > $0).
 - Save is disabled until budget > $0; duplicate names are blocked inline.
