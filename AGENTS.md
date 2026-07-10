@@ -786,7 +786,6 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `docs/project_philosophy.md` | Project goal, beliefs, decision framework (derived from PRD) |
 | `docs/finance_tracker_product.md` | Authoritative product vision, MVP scope, roadmap |
 | `docs/module_structure.md` | KMP module map and dependency rules |
-| `design/DESIGN-SYSTEM.md` | Legacy path — use `design-system-spec/tokens.md` |
 | `design-system-spec/` | **Authoritative screen specs** (markdown + PNGs + component specs + tokens) |
 | Claude Design project **"Pro Expense - Finance Tracker"** | Hi-Fi mockup canvas mirroring `design-system-spec/` — find it via the design-sync tool's project listing (matched by name, scoped to the maintainer's account); no link is committed here since this repo is public |
 | `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
