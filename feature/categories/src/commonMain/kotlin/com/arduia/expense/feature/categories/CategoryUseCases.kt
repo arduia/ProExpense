@@ -5,6 +5,7 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CategoryId
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 
 /** Creates a new custom category or renames an existing one (design plan §CategoriesViewModel). */
@@ -17,6 +18,7 @@ class SaveCategoryUseCase(
         editingId: String?,
         name: String,
         iconId: String = "",
+        type: RecordType = RecordType.EXPENSE,
     ) {
         val existing = editingId?.let { id -> categories.firstOrNull { it.id.value == id } }
         val customCount = categories.count { it.isCustom }
@@ -27,6 +29,7 @@ class SaveCategoryUseCase(
                 isCustom = true,
                 sortOrder = existing?.sortOrder ?: customCount,
                 iconId = iconId,
+                type = type,
             ),
         )
     }

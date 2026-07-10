@@ -114,6 +114,68 @@ class SharedCostNameEditingTest {
     }
 }
 
+/**
+ * Custom-split share amounts must be editable, and tapping a pre-filled default share is meant to
+ * overwrite it — same reasoning as [SharedCostNameEditingTest.focusingExistingName_selectsAllSoTypingOverwritesIt].
+ * The amount field's layout box is wider than its right-aligned digits (row padding, the currency
+ * symbol prefix), so a tap anywhere in that empty space resolves to text offset 0 — without an
+ * explicit cursor override, typing a digit landed *before* the existing amount instead of
+ * replacing it (e.g. "60.00" + "5" -> "560.00").
+ */
+@RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(
+    sdk = [33],
+    qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
+)
+class SharedCostCustomAmountEditingTest {
+    @get:Rule
+    val rule = createAndroidComposeRule<ComponentActivity>()
+
+    private fun setCustomInputScreen(onShareChange: (Int, String) -> Unit) {
+        rule.setContent {
+            ProExpenseTheme {
+                SharedCostsInputScreen(
+                    state =
+                        SharedCostUiState(
+                            rawTotal = "120",
+                            peopleCount = 2,
+                            mode = SharedSplitMode.Custom,
+                            amountConfirmed = true,
+                            participants =
+                                listOf(
+                                    SharedCostParticipantUi("Person 1", "$60.00"),
+                                    SharedCostParticipantUi("Person 2", "$60.00"),
+                                ),
+                        ),
+                    onBack = {},
+                    onKey = {},
+                    onBackspace = {},
+                    onNoteChange = {},
+                    onDecrementPeople = {},
+                    onIncrementPeople = {},
+                    onModeSelected = {},
+                    onShareChange = onShareChange,
+                    onContinue = {},
+                    showKeypad = false,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun focusingPrefilledShare_selectsAllSoTypingReplacesIt() {
+        var edited: Pair<Int, String>? = null
+        setCustomInputScreen { index, raw -> edited = index to raw }
+
+        val field = rule.onAllNodesWithText("60.00", substring = true)[0]
+        field.performClick()
+        field.performTextInput("75")
+
+        assertEquals(0 to "75", edited)
+    }
+}
+
 /** Save-time name normalization rules for [SharedCostSplitLogic.resolveNames]. */
 class SharedCostNameResolutionTest {
     @Test

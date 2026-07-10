@@ -29,6 +29,12 @@ Compose implementation workflow — run in order for new UI; linked from `AGENTS
 | 2 — Polish | `compose-motion-polish` | `.agents/skills/compose-motion-polish/SKILL.md` |
 | 3 — Audit | `compose-product-auditor` | `.agents/skills/compose-product-auditor/SKILL.md` |
 
+Cross-cutting — applies to any `.kt` file, not just Compose UI:
+
+| Skill | Path |
+|-------|------|
+| `kotlin-lint-style` | `.agents/skills/kotlin-lint-style/SKILL.md` |
+
 **Official Android skills** (installed/updated via `install-android-skills.sh`):
 
 ## Precedence
@@ -42,6 +48,7 @@ Project `AGENTS.md` takes precedence over skill guidance when they conflict.
 | **`design-spec-to-compose`** | **Step 1 — Building Compose UI from `design-system-spec/` screen + component specs and PNGs** |
 | **`compose-motion-polish`** | **Step 2 — Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
 | **`compose-product-auditor`** | **Step 3 — Pre-merge audit: states, wiring, a11y, i18n, performance, sensitive data** |
+| **`kotlin-lint-style`** | **Any `.kt` edit — ktlint formatting + detekt baseline regeneration workflow** |
 | `android-cli` | SDK, emulator, docs search, layout inspection |
 | `testing-setup` | Unit, instrumented, screenshot test setup |
 | `edge-to-edge` | System bar insets and window layout |

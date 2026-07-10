@@ -19,6 +19,7 @@ import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordLink
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
 import com.arduia.expense.domain.tagLabel
@@ -358,6 +359,7 @@ private fun FinanceRecord.toRowModel(
         note = note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) },
         meta = "${expenseCategoryLabel(categoryId.value)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
         amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
+        isIncome = type == RecordType.INCOME,
         tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
         tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
         rawNote = note?.trim(),

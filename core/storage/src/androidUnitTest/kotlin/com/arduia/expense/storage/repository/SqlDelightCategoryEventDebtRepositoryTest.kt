@@ -12,6 +12,7 @@ import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -38,6 +39,28 @@ class SqlDelightCategoryEventDebtRepositoryTest {
             val afterDelete = repo.getAll()
             assertTrue(afterDelete is Result.Success)
             assertTrue(afterDelete.data.isEmpty())
+        }
+
+    @Test
+    fun category_upsert_defaultsTypeToExpense() =
+        runTest {
+            val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)
+            repo.upsert(Category(CategoryId("food"), "Food"))
+
+            val all = repo.getAll()
+            assertTrue(all is Result.Success)
+            assertEquals(RecordType.EXPENSE, all.data.single().type)
+        }
+
+    @Test
+    fun category_upsert_roundTripsIncomeType() =
+        runTest {
+            val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)
+            repo.upsert(Category(CategoryId("salary"), "Salary", type = RecordType.INCOME))
+
+            val all = repo.getAll()
+            assertTrue(all is Result.Success)
+            assertEquals(RecordType.INCOME, all.data.single().type)
         }
 
     @Test

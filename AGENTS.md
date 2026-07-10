@@ -281,6 +281,12 @@ This script:
 | Small non-logic | `./gradlew :app:compileDevDebugKotlin` |
 | KMP module / `commonMain` / `expect`-`actual` change or new module | `./gradlew verifyIosCompat` (included in `verifyAll`) |
 
+`verifyAll` includes ktlint + detekt for every module. Before writing/editing any `.kt`
+file, and before treating a ktlint/detekt failure as a real bug, read
+[`.agents/skills/kotlin-lint-style/SKILL.md`](.agents/skills/kotlin-lint-style/SKILL.md) —
+most detekt failures on an agent diff are pre-existing findings de-baselined by a signature
+change, not new problems, and the skill covers the exact regeneration workflow.
+
 **UI change gate (mandatory before push):** Any change to Compose screens, themes, or
 `ui/design/` components **must** pass screenshot verification in-session before `git push`:
 
@@ -746,6 +752,7 @@ docs take precedence** when they conflict with a skill.
 | **`design-spec-to-compose`** | **Step 1 — Implementing UI from `design-system-spec/` screen + component specs and PNGs** |
 | **`compose-motion-polish`** | **Step 2 — Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
 | **`compose-product-auditor`** | **Step 3 — Pre-merge product audit (states, wiring, a11y, i18n, resilience)** |
+| **`kotlin-lint-style`** | **Writing/editing any `.kt` file — ktlint formatting + detekt baseline workflow, avoids Step 6 verify failures** |
 | `android-cli` | SDK, emulator, docs, layout inspection |
 | `testing-setup` | Unit / instrumented / screenshot tests |
 | `edge-to-edge` | System bar insets |
@@ -784,9 +791,10 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
 | `.agents/skills/compose-product-auditor/` | Step 3 — Pre-merge Compose product auditor |
+| `.agents/skills/kotlin-lint-style/` | ktlint formatting rules + detekt baseline regeneration workflow |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
-| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project Compose workflow (`design-spec-to-compose`, `compose-motion-polish`, `compose-product-auditor`) |
+| `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project Compose workflow (`design-spec-to-compose`, `compose-motion-polish`, `compose-product-auditor`) + `kotlin-lint-style` |
 | `.cursor/context/project_codebase.md` | Live codebase snapshot |
 | `.cursor/context/retrospectives.md` | Append-only post-mortem guard log |
 | `app/build.gradle.kts` | App module build config |

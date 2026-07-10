@@ -14,6 +14,8 @@
 <string name="categories_icon_label">ไอคอน</string>
 <string name="categories_add">เพิ่มหมวดหมู่</string>
 <string name="categories_edit_title">แก้ไขหมวดหมู่</string>
+<string name="categories_type_expense">รายจ่าย</string>
+<string name="categories_type_income">รายรับ</string>
 <string name="categories_save">บันทึกการเปลี่ยนแปลง</string>
 <string name="categories_action_edit_title">แก้ไขหมวดหมู่</string>
 <string name="categories_action_edit_subtitle">เปลี่ยนชื่อหรือไอคอน</string>

@@ -32,6 +32,7 @@ import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordLink
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.currency.CurrencyRepository
@@ -133,6 +134,8 @@ fun ExpenseApp(
     // in the logging flow itself re-queried on every visit and flashed empty chips each time.
     val categoriesOrNull by categoryRepository.observeAll().collectAsState(initial = null)
     val categories = categoriesOrNull.orEmpty()
+    // Both expense and income categories show together — direction is decided by which
+    // category the user picks, not by a separate toggle (US-LOG income).
     val defaultCategoryChips =
         remember(categories) {
             categories.filter { !it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
@@ -140,6 +143,10 @@ fun ExpenseApp(
     val customCategoryChips =
         remember(categories) {
             categories.filter { it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
+        }
+    val categoryTypeById =
+        remember(categories) {
+            categories.associate { it.id.value to it.type }
         }
     val eventsOrNull by eventRepository.observeAll().collectAsState(initial = null)
     val eventsLoading = eventsOrNull == null
@@ -258,8 +265,12 @@ fun ExpenseApp(
                 records.filter {
                     it.recordedAtEpochMillis >= monthStart.timeInMillis && it.recordedAtEpochMillis < monthEnd.timeInMillis
                 }
-            // "Spend this month" (US-HOME-1), not all-time — the header label promises a monthly figure.
-            val totalCents = recordsThisMonth.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+            // "Spend this month" (US-HOME-1), not all-time — the header label promises a monthly
+            // figure, and only expenses count as spend (income must not offset it).
+            val totalCents =
+                recordsThisMonth
+                    .filter { it.type == RecordType.EXPENSE }
+                    .sumOf { it.homeCurrencyMoney.amount.valueInCents }
             val totalLabel = AmountInput.formatMoney(totalCents, homeSymbol)
             val budgetSummary =
                 monthlyBudget?.let { budget ->
@@ -280,7 +291,10 @@ fun ExpenseApp(
                     .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
                     .toSortedMap(compareByDescending { it })
                     .map { (_, dayRecords) ->
-                        val dayTotalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+                        val dayTotalCents =
+                            dayRecords
+                                .filter { it.type == RecordType.EXPENSE }
+                                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
                         val dayTotalLabel = AmountInput.formatMoney(dayTotalCents, homeSymbol)
                         HomeDayGroup(
                             dayTitle = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
@@ -301,6 +315,7 @@ fun ExpenseApp(
                                                 record.money.amount.valueInCents,
                                                 currencySymbol(record.money.currency.code),
                                             ),
+                                        isIncome = record.type == RecordType.INCOME,
                                         tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
                                     )
                                 },
@@ -399,6 +414,7 @@ fun ExpenseApp(
                         homeCurrencySymbol = homeSymbol,
                         defaultCategories = defaultCategoryChips,
                         customCategories = customCategoryChips,
+                        categoryTypes = categoryTypeById,
                         onAddCategory = { showCategoryManager = true },
                     )
                 } else if (pinConfigured == true && !unlocked) {
@@ -529,6 +545,7 @@ fun ExpenseApp(
                     homeCurrencySymbol = homeSymbol,
                     defaultCategories = defaultCategoryChips,
                     customCategories = customCategoryChips,
+                    categoryTypes = categoryTypeById,
                     onAddCategory = { showCategoryManager = true },
                 )
             }
@@ -541,6 +558,7 @@ fun ExpenseApp(
                     homeCurrencySymbol = homeSymbol,
                     defaultCategories = defaultCategoryChips,
                     customCategories = customCategoryChips,
+                    categoryTypes = categoryTypeById,
                     onAddCategory = { showCategoryManager = true },
                 )
             }
@@ -652,7 +670,7 @@ private fun buildSparklinePoints(records: List<FinanceRecord>): List<Float> {
         val day = (today.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -offset) }
         val key = PlatformDateFormatter.dayKey(day.timeInMillis)
         records
-            .filter { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) == key }
+            .filter { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) == key && it.type == RecordType.EXPENSE }
             // homeCurrencyMoney, not the record's own currency (US-CUR-4) — otherwise a foreign
             // currency amount is added into the sparkline as if it were home-currency cents.
             .sumOf { it.homeCurrencyMoney.amount.valueInCents }

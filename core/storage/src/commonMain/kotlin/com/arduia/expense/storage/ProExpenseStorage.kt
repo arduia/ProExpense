@@ -17,6 +17,7 @@ import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.data.ThemeRepository
 import com.arduia.expense.domain.DEFAULT_CATEGORIES
 import com.arduia.expense.domain.RecordIntegrityVerifier
+import com.arduia.expense.domain.toCode
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import com.arduia.expense.storage.repository.AppMetaBudgetRepository
 import com.arduia.expense.storage.repository.AppMetaCurrencySettingsRepository
@@ -76,6 +77,7 @@ class ProExpenseStorage internal constructor(
                         is_custom = if (category.isCustom) 1L else 0L,
                         sort_order = index.toLong(),
                         icon_id = "",
+                        type = category.type.toCode(),
                     )
                 }
             }

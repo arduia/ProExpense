@@ -2,6 +2,7 @@
     <string name="save">บันทึก</string>
     <string name="note">บันทึกย่อ</string>
     <string name="new_expense">รายจ่ายใหม่</string>
+    <string name="new_income">รายรับใหม่</string>
     <string name="details">รายละเอียด</string>
     <string name="amount_step">จำนวนเงิน</string>
     <string name="save_expense">บันทึกรายจ่าย · %1$s</string>

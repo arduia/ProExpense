@@ -31,6 +31,8 @@ data class ProTransactionRowModel(
     val note: String,
     val meta: String,
     val amount: String,
+    /** True for an income record — [TransactionRow] renders the amount in the success/green tone. */
+    val isIncome: Boolean = false,
     val tag: String? = null,
     /** Secondary line for the linked tag (e.g. its date range) shown on Journal Detail. */
     val tagSubtitle: String? = null,
@@ -49,6 +51,7 @@ fun TransactionRow(
     meta: String,
     amount: String,
     modifier: Modifier = Modifier,
+    isIncome: Boolean = false,
     tag: String? = null,
     showDivider: Boolean = true,
     fresh: Boolean = false,
@@ -151,7 +154,7 @@ fun TransactionRow(
         Text(
             text = amount,
             style = typography.listAmount,
-            color = colors.onSurface,
+            color = if (isIncome) colors.success else colors.onSurface,
         )
     }
 }
@@ -224,6 +227,7 @@ fun DayGroup(
                     note = item.note,
                     meta = item.meta,
                     amount = item.amount,
+                    isIncome = item.isIncome,
                     tag = item.tag,
                     fresh = item.id == freshRowId,
                     showDivider = index < transactions.lastIndex,
@@ -296,6 +300,36 @@ private fun DayGroupFlatPreview() {
                 Modifier
                     .padding(16.dp)
                     .background(ProExpenseTheme.colors.paper),
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
+@Composable
+private fun DayGroupMixedIncomeExpensePreview() {
+    ProExpenseTheme {
+        DayGroup(
+            title = "Today · May 25",
+            total = "$487.60",
+            transactions =
+                listOf(
+                    ProTransactionRowModel(
+                        id = "1",
+                        categoryId = "salary",
+                        note = "Paycheck",
+                        meta = "Salary · 09:00 AM",
+                        amount = "$500.00",
+                        isIncome = true,
+                    ),
+                    ProTransactionRowModel(
+                        id = "2",
+                        categoryId = "food",
+                        note = "Lunch with M.",
+                        meta = "Food · 12:30 PM",
+                        amount = "$12.40",
+                    ),
+                ),
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

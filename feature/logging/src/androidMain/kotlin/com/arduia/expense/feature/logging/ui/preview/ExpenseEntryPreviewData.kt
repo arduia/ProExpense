@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.logging.ui.preview
 
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.ui.design.TagLinkKind
 import com.arduia.expense.ui.design.TagLinkOption
 import java.text.SimpleDateFormat
@@ -32,6 +33,7 @@ data class ExpenseEntryState(
     val homeCurrencyCode: String = "USD",
     val exchangeRateRaw: String = "1",
     val showCurrencySheet: Boolean = false,
+    val type: RecordType = RecordType.EXPENSE,
 )
 
 /** True when the entry's currency differs from the account's home currency (US-LOG multi-currency). */
@@ -42,6 +44,9 @@ fun ExpenseEntryState.hasValidExchangeRate(): Boolean =
     !isForeignCurrency() || (exchangeRateRaw.trim().toDoubleOrNull()?.let { it > 0.0 } == true)
 
 val previewExpenseAmountTyped = ExpenseEntryState(rawAmount = "12.50")
+
+val previewIncomeAmountTyped =
+    ExpenseEntryState(rawAmount = "500.00", selectedCategoryId = "salary", type = RecordType.INCOME)
 
 val previewExpenseAmountZero = ExpenseEntryState(rawAmount = "0")
 

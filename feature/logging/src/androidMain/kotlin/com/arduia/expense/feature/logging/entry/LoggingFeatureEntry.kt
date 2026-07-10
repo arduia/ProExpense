@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordLink
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.feature.logging.LoggingViewModel
 import com.arduia.expense.feature.logging.SaveExpenseInput
@@ -45,6 +46,7 @@ interface LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit = {},
         defaultCategories: List<Pair<String, String>> = emptyList(),
         customCategories: List<Pair<String, String>> = emptyList(),
+        categoryTypes: Map<String, RecordType> = emptyMap(),
         onAddCategory: () -> Unit = {},
     )
 
@@ -58,6 +60,7 @@ interface LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit = {},
         defaultCategories: List<Pair<String, String>> = emptyList(),
         customCategories: List<Pair<String, String>> = emptyList(),
+        categoryTypes: Map<String, RecordType> = emptyMap(),
         onAddCategory: () -> Unit = {},
     )
 }
@@ -77,6 +80,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit,
         defaultCategories: List<Pair<String, String>>,
         customCategories: List<Pair<String, String>>,
+        categoryTypes: Map<String, RecordType>,
         onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
@@ -135,6 +139,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             tagDebts = tagDebts,
             defaultCategories = defaultCategories,
             customCategories = customCategories,
+            categoryTypes = categoryTypes,
             modifier = modifier,
             saveErrorMessage = saveErrorMessage,
             initialLinkedTag = linkedEvent,
@@ -152,6 +157,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
         onSaveFailed: (String) -> Unit,
         defaultCategories: List<Pair<String, String>>,
         customCategories: List<Pair<String, String>>,
+        categoryTypes: Map<String, RecordType>,
         onAddCategory: () -> Unit,
     ) {
         val scope = rememberCoroutineScope()
@@ -204,6 +210,7 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
                 tagDebts = tagDebts,
                 defaultCategories = defaultCategories,
                 customCategories = customCategories,
+                categoryTypes = categoryTypes,
                 modifier = modifier,
                 // Editing writes into the existing record via update(), never via the create-path
                 // draft slot — persisting it there would surface as a duplicate-creating "Continue"
@@ -275,6 +282,7 @@ private fun ExpenseEntryState.toSaveInput(): SaveExpenseInput =
             },
         homeCurrencyCode = homeCurrencyCode,
         exchangeRateRaw = exchangeRateRaw,
+        type = type,
     )
 
 object LoggingFeatureUi : LoggingFeatureEntry by LoggingFeatureEntryImpl()
@@ -327,5 +335,6 @@ private fun FinanceRecord.toEntryState(
         currencyCode = money.currency.code,
         homeCurrencyCode = homeCurrencyMoney.currency.code,
         exchangeRateRaw = exchangeRateRaw,
+        type = type,
     )
 }

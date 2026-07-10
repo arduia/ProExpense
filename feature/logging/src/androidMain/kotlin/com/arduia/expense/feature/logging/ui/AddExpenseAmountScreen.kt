@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
+import com.arduia.expense.feature.logging.ui.preview.previewIncomeAmountTyped
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CategoryPicker
@@ -54,6 +56,7 @@ fun AddExpenseAmountScreen(
     val displayAmount = AmountInput.formatDisplay(state.rawAmount.ifEmpty { "0" })
     val canProceed = AmountInput.canProceed(state.rawAmount)
     val isZero = !canProceed
+    val titleRes = if (state.type == RecordType.INCOME) R.string.new_income else R.string.new_expense
 
     Column(
         modifier =
@@ -66,7 +69,7 @@ fun AddExpenseAmountScreen(
                 .padding(horizontal = dimens.screenPadding),
     ) {
         ProTopBar(
-            title = stringResource(R.string.new_expense),
+            title = stringResource(titleRes),
             onBack = null,
             action = ProTopBarAction.Close,
             onAction = onClose,
@@ -185,6 +188,28 @@ private fun AddExpenseAmountForeignCurrencyPreview() {
             onCategorySelected = {},
             onSave = {},
             onNext = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add income — amount typed",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddIncomeAmountTypedPreview() {
+    ProExpenseTheme {
+        AddExpenseAmountScreen(
+            state = previewIncomeAmountTyped,
+            onClose = {},
+            onKey = {},
+            onBackspace = {},
+            onCategorySelected = {},
+            onSave = {},
+            onNext = {},
+            defaultCategories = listOf("income" to "Income", "salary" to "Salary", "gift" to "Gift"),
         )
     }
 }

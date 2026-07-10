@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.logging.R
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.logging.ui.preview.hasValidExchangeRate
@@ -63,6 +64,9 @@ fun QuickLogFlow(
     tagDebts: List<TagLinkOption> = emptyList(),
     defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
     customCategories: List<Pair<String, String>> = customExpenseCategories,
+    // Direction (expense vs income) is derived from the selected category's own type — looked
+    // up here, not set via a separate toggle (US-LOG income: "income is part of category only").
+    categoryTypes: Map<String, RecordType> = emptyMap(),
     // Editing an existing record must never write it into the resumable-draft slot — otherwise
     // backing out of an edit leaves the record's values behind as a "draft" that a later
     // Continue re-creates as a duplicate (US-HIS-6 "no duplicate rows").
@@ -94,6 +98,16 @@ fun QuickLogFlow(
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var showDateTimePicker by remember { mutableStateOf(false) }
     var showCurrencySheet by remember { mutableStateOf(false) }
+
+    // Picking a category sets the entry's direction to that category's own type — this is the
+    // only place direction is decided (US-LOG income: no separate expense/income control).
+    fun onCategorySelected(categoryId: String) {
+        state =
+            state.copy(
+                selectedCategoryId = categoryId,
+                type = categoryTypes[categoryId] ?: state.type,
+            )
+    }
 
     // The success toast is shown by the destination screen after this flow dismisses (see
     // ExpenseApp) — this composable unmounts too quickly on save for its own toast to ever
@@ -182,9 +196,7 @@ fun QuickLogFlow(
                                     showZeroValidation = false,
                                 )
                         },
-                        onCategorySelected = { categoryId ->
-                            state = state.copy(selectedCategoryId = categoryId)
-                        },
+                        onCategorySelected = { categoryId -> onCategorySelected(categoryId) },
                         onSave = {
                             if (!AmountInput.canProceed(state.rawAmount)) {
                                 state = state.copy(showZeroValidation = true)
@@ -212,9 +224,7 @@ fun QuickLogFlow(
                     AddExpenseDetailsScreen(
                         state = state,
                         onBackToAmount = { step = QuickLogStep.Amount.name },
-                        onCategorySelected = { categoryId ->
-                            state = state.copy(selectedCategoryId = categoryId)
-                        },
+                        onCategorySelected = { categoryId -> onCategorySelected(categoryId) },
                         onNoteChange = { note -> state = state.copy(note = note) },
                         onDateClick = { showDateTimePicker = true },
                         onExchangeRateChange = { rate -> state = state.copy(exchangeRateRaw = rate) },
