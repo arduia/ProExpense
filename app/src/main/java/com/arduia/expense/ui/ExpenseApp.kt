@@ -134,33 +134,19 @@ fun ExpenseApp(
     // in the logging flow itself re-queried on every visit and flashed empty chips each time.
     val categoriesOrNull by categoryRepository.observeAll().collectAsState(initial = null)
     val categories = categoriesOrNull.orEmpty()
+    // Both expense and income categories show together — direction is decided by which
+    // category the user picks, not by a separate toggle (US-LOG income).
     val defaultCategoryChips =
         remember(categories) {
-            categories
-                .filter { !it.isCustom && it.type == RecordType.EXPENSE }
-                .sortedBy { it.sortOrder }
-                .map { it.id.value to it.name }
+            categories.filter { !it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
         }
     val customCategoryChips =
         remember(categories) {
-            categories
-                .filter { it.isCustom && it.type == RecordType.EXPENSE }
-                .sortedBy { it.sortOrder }
-                .map { it.id.value to it.name }
+            categories.filter { it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
         }
-    val defaultIncomeCategoryChips =
+    val categoryTypeById =
         remember(categories) {
-            categories
-                .filter { !it.isCustom && it.type == RecordType.INCOME }
-                .sortedBy { it.sortOrder }
-                .map { it.id.value to it.name }
-        }
-    val customIncomeCategoryChips =
-        remember(categories) {
-            categories
-                .filter { it.isCustom && it.type == RecordType.INCOME }
-                .sortedBy { it.sortOrder }
-                .map { it.id.value to it.name }
+            categories.associate { it.id.value to it.type }
         }
     val eventsOrNull by eventRepository.observeAll().collectAsState(initial = null)
     val eventsLoading = eventsOrNull == null
@@ -428,8 +414,7 @@ fun ExpenseApp(
                         homeCurrencySymbol = homeSymbol,
                         defaultCategories = defaultCategoryChips,
                         customCategories = customCategoryChips,
-                        defaultIncomeCategories = defaultIncomeCategoryChips,
-                        customIncomeCategories = customIncomeCategoryChips,
+                        categoryTypes = categoryTypeById,
                         onAddCategory = { showCategoryManager = true },
                     )
                 } else if (pinConfigured == true && !unlocked) {
@@ -560,8 +545,7 @@ fun ExpenseApp(
                     homeCurrencySymbol = homeSymbol,
                     defaultCategories = defaultCategoryChips,
                     customCategories = customCategoryChips,
-                    defaultIncomeCategories = defaultIncomeCategoryChips,
-                    customIncomeCategories = customIncomeCategoryChips,
+                    categoryTypes = categoryTypeById,
                     onAddCategory = { showCategoryManager = true },
                 )
             }
@@ -574,8 +558,7 @@ fun ExpenseApp(
                     homeCurrencySymbol = homeSymbol,
                     defaultCategories = defaultCategoryChips,
                     customCategories = customCategoryChips,
-                    defaultIncomeCategories = defaultIncomeCategoryChips,
-                    customIncomeCategories = customIncomeCategoryChips,
+                    categoryTypes = categoryTypeById,
                     onAddCategory = { showCategoryManager = true },
                 )
             }

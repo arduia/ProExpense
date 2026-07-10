@@ -31,14 +31,11 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.ProTopBarAction
-import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
-
-private val entryTypeOptions = listOf(RecordType.EXPENSE, RecordType.INCOME)
 
 @Composable
 fun AddExpenseAmountScreen(
@@ -51,7 +48,6 @@ fun AddExpenseAmountScreen(
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
     onOpenCurrencySheet: () -> Unit = {},
-    onTypeSelected: (RecordType) -> Unit = {},
     defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
     customCategories: List<Pair<String, String>> = customExpenseCategories,
 ) {
@@ -79,17 +75,7 @@ fun AddExpenseAmountScreen(
             onAction = onClose,
         )
 
-        SegmentedToggle(
-            options = listOf(stringResource(R.string.type_expense), stringResource(R.string.type_income)),
-            selectedIndex = entryTypeOptions.indexOf(state.type).coerceAtLeast(0),
-            onSelected = { index -> onTypeSelected(entryTypeOptions[index]) },
-            modifier = Modifier.padding(top = dimens.space8),
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = dimens.space8),
-            horizontalArrangement = Arrangement.End,
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             ProTextAction(
                 text = state.currencyCode,
                 onClick = onOpenCurrencySheet,

@@ -64,8 +64,9 @@ fun QuickLogFlow(
     tagDebts: List<TagLinkOption> = emptyList(),
     defaultCategories: List<Pair<String, String>> = defaultExpenseCategories,
     customCategories: List<Pair<String, String>> = customExpenseCategories,
-    defaultIncomeCategories: List<Pair<String, String>> = emptyList(),
-    customIncomeCategories: List<Pair<String, String>> = emptyList(),
+    // Direction (expense vs income) is derived from the selected category's own type — looked
+    // up here, not set via a separate toggle (US-LOG income: "income is part of category only").
+    categoryTypes: Map<String, RecordType> = emptyMap(),
     // Editing an existing record must never write it into the resumable-draft slot — otherwise
     // backing out of an edit leaves the record's values behind as a "draft" that a later
     // Continue re-creates as a duplicate (US-HIS-6 "no duplicate rows").
@@ -98,11 +99,15 @@ fun QuickLogFlow(
     var showDateTimePicker by remember { mutableStateOf(false) }
     var showCurrencySheet by remember { mutableStateOf(false) }
 
-    // The screens below always render the category list matching the entry's current
-    // direction — Income entries must never show Expense categories (US-LOG income) and
-    // vice versa.
-    val activeDefaultCategories = if (state.type == RecordType.INCOME) defaultIncomeCategories else defaultCategories
-    val activeCustomCategories = if (state.type == RecordType.INCOME) customIncomeCategories else customCategories
+    // Picking a category sets the entry's direction to that category's own type — this is the
+    // only place direction is decided (US-LOG income: no separate expense/income control).
+    fun onCategorySelected(categoryId: String) {
+        state =
+            state.copy(
+                selectedCategoryId = categoryId,
+                type = categoryTypes[categoryId] ?: state.type,
+            )
+    }
 
     // The success toast is shown by the destination screen after this flow dismisses (see
     // ExpenseApp) — this composable unmounts too quickly on save for its own toast to ever
@@ -191,9 +196,7 @@ fun QuickLogFlow(
                                     showZeroValidation = false,
                                 )
                         },
-                        onCategorySelected = { categoryId ->
-                            state = state.copy(selectedCategoryId = categoryId)
-                        },
+                        onCategorySelected = { categoryId -> onCategorySelected(categoryId) },
                         onSave = {
                             if (!AmountInput.canProceed(state.rawAmount)) {
                                 state = state.copy(showZeroValidation = true)
@@ -213,26 +216,15 @@ fun QuickLogFlow(
                             }
                         },
                         onOpenCurrencySheet = { showCurrencySheet = true },
-                        onTypeSelected = { type ->
-                            val categories =
-                                if (type == RecordType.INCOME) defaultIncomeCategories else defaultCategories
-                            state =
-                                state.copy(
-                                    type = type,
-                                    selectedCategoryId = categories.firstOrNull()?.first.orEmpty(),
-                                )
-                        },
-                        defaultCategories = activeDefaultCategories,
-                        customCategories = activeCustomCategories,
+                        defaultCategories = defaultCategories,
+                        customCategories = customCategories,
                     )
                 }
                 QuickLogStep.Details -> {
                     AddExpenseDetailsScreen(
                         state = state,
                         onBackToAmount = { step = QuickLogStep.Amount.name },
-                        onCategorySelected = { categoryId ->
-                            state = state.copy(selectedCategoryId = categoryId)
-                        },
+                        onCategorySelected = { categoryId -> onCategorySelected(categoryId) },
                         onNoteChange = { note -> state = state.copy(note = note) },
                         onDateClick = { showDateTimePicker = true },
                         onExchangeRateChange = { rate -> state = state.copy(exchangeRateRaw = rate) },
@@ -261,8 +253,8 @@ fun QuickLogFlow(
                         tagEvents = tagEvents,
                         tagDebts = tagDebts,
                         showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
-                        defaultCategories = activeDefaultCategories,
-                        customCategories = activeCustomCategories,
+                        defaultCategories = defaultCategories,
+                        customCategories = customCategories,
                         onAddCategory = onAddCategory,
                     )
                 }
