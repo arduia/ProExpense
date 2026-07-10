@@ -67,10 +67,12 @@ class SharedCostCustomSplitSaveTest {
         rule.onNodeWithContentDescription("Edit split").performScrollTo().performClick()
 
         rule.onNodeWithText("Edit person").assertExists()
-        rule.onNodeWithContentDescription("Amount").performScrollTo().performClick()
-        rule.onNodeWithText("7").performScrollTo().performClick()
-        rule.onNodeWithText("5").performScrollTo().performClick()
-        rule.onNodeWithText("Done").performScrollTo().performClick()
+        // The name/amount editor and Done/Next buttons are pinned to the sheet's bottom (only
+        // the roster above them scrolls), so no performScrollTo() is needed here.
+        rule.onNodeWithContentDescription("Amount").performClick()
+        rule.onNodeWithText("7").performClick()
+        rule.onNodeWithText("5").performClick()
+        rule.onNodeWithText("Done").performClick()
 
         rule.onNodeWithText("Save split").performClick()
         rule.onNodeWithText("Save split", substring = true).performClick()

@@ -58,6 +58,7 @@ data class ProDimens(
     val tileRadius: Dp,
     val sheetRadiusTop: Dp,
     val sheetMaxHeightFraction: Float,
+    val sheetFullHeightFraction: Float,
     val fabSize: Dp,
     val touchTargetMin: Dp,
     val artboardWidth: Dp,
@@ -153,6 +154,7 @@ val ProDefaultDimens =
         tileRadius = 14.dp,
         sheetRadiusTop = 22.dp,
         sheetMaxHeightFraction = 0.78f,
+        sheetFullHeightFraction = 0.94f,
         fabSize = 64.dp,
         // Android's Material minimum interactive size is 48dp — several call sites use this as a
         // fixed .size() (not just a floor other modifiers can grow past), so the token itself must

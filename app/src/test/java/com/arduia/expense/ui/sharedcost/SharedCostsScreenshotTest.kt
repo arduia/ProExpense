@@ -172,4 +172,23 @@ class SharedCostsScreenshotTest {
             )
         }
     }
+
+    @Test
+    fun shared_edit_person_last() {
+        capture {
+            SharedCostsEditPersonSheetContent(
+                people = previewSharedEditPersonCustom,
+                activeIndex = previewSharedEditPersonCustom.lastIndex,
+                mode = SharedSplitMode.Custom,
+                activeAmountRaw = "25",
+                equalShareLabel = "$30.00",
+                onPickPerson = {},
+                onNameChange = {},
+                onAmountKey = { _, _ -> },
+                onAmountBackspace = {},
+                onDone = {},
+                onNext = {},
+            )
+        }
+    }
 }

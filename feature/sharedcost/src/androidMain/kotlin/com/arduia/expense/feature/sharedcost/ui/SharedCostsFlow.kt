@@ -418,6 +418,7 @@ fun SharedCostsFlow(
             visible = editSheetVisible,
             title = stringResource(R.string.shared_edit_person_title),
             onClose = { editSheetVisible = false },
+            fullHeight = true,
         ) {
             val index = editingIndex ?: 0
             val equalShareLabel =

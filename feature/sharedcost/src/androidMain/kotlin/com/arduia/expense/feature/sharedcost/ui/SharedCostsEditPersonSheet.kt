@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -170,188 +171,210 @@ fun SharedCostsEditPersonSheetContent(
     val fieldActive = nameHasFocus || showAmountKeypad
     val activePerson = people.getOrNull(activeIndex)
     val activeAmountDisplay = AmountInput.formatDisplay(activeAmountRaw.ifEmpty { "0" })
+    val amountValueColor = if (isCustom) colors.onSurface else colors.onSurfaceVariant
+    val currencySymbolColor = if (isCustom) colors.primary else colors.onSurfaceVariant
+    val isLastPerson = activeIndex >= people.size - 1
+    val nextLabel =
+        if (isLastPerson) {
+            stringResource(R.string.shared_review)
+        } else {
+            stringResource(R.string.shared_next)
+        }
 
-    Column(
-        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(dimens.space16),
-    ) {
-        SharedCostPeopleRoster(people = people, activeIndex = activeIndex, onPick = onPickPerson)
+    Column(modifier = modifier.fillMaxWidth().fillMaxHeight()) {
+        // Roster scrolls within the space left over by the sticky fields below — so a long
+        // participant list never pushes the name/amount editor (or Done/Next) off-screen.
+        Column(
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+        ) {
+            SharedCostPeopleRoster(people = people, activeIndex = activeIndex, onPick = onPickPerson)
+        }
 
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = stringResource(R.string.shared_field_name),
-                    style = typography.eyebrow,
-                    color = colors.onSurfaceVariant,
-                )
-                if (isCustom) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(top = dimens.space16),
+            verticalArrangement = Arrangement.spacedBy(dimens.space16),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
                     Text(
-                        text = stringResource(R.string.shared_field_amount),
+                        text = stringResource(R.string.shared_field_name),
                         style = typography.eyebrow,
                         color = colors.onSurfaceVariant,
                     )
-                } else {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(dimens.space4),
-                    ) {
-                        ProIcon(
-                            glyph = ProIconGlyph.Lock,
-                            contentDescription = null,
-                            tint = colors.muted,
-                            size = dimens.iconTag,
-                        )
+                    if (isCustom) {
                         Text(
-                            text = stringResource(R.string.shared_field_equal_share),
+                            text = stringResource(R.string.shared_field_amount),
                             style = typography.eyebrow,
                             color = colors.onSurfaceVariant,
                         )
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(dimens.space4),
+                        ) {
+                            ProIcon(
+                                glyph = ProIconGlyph.Lock,
+                                contentDescription = null,
+                                tint = colors.muted,
+                                size = dimens.iconTag,
+                            )
+                            Text(
+                                text = stringResource(R.string.shared_field_equal_share),
+                                style = typography.eyebrow,
+                                color = colors.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
-            }
 
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(shape)
-                        .background(if (fieldActive) colors.surface else colors.paper)
-                        .border(
-                            BorderStroke(1.4.dp, if (fieldActive) colors.primary else colors.line),
-                            shape,
-                        ).padding(horizontal = dimens.space14, vertical = dimens.rowPaddingV),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimens.space10),
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(dimens.space32)
-                            .clip(CircleShape)
-                            .background(colors.primarySoft),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = (activeIndex + 1).toString(),
-                        style = typography.bodySemiBold.centeredGlyph(),
-                        color = colors.primary,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-                BasicTextField(
-                    value = activePerson?.name.orEmpty(),
-                    onValueChange = onNameChange,
-                    textStyle = typography.body.copy(color = colors.onSurface),
-                    cursorBrush = SolidColor(colors.primary),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .onFocusChanged { focusState ->
-                                nameHasFocus = focusState.isFocused
-                                if (focusState.isFocused) showAmountKeypad = false
-                            },
-                )
-                Box(
-                    modifier =
-                        Modifier
-                            .width(1.dp)
-                            .height(dimens.space20)
-                            .background(colors.line),
-                )
-                val amountFieldDescription = stringResource(R.string.shared_field_amount)
                 Row(
                     modifier =
                         Modifier
-                            .semantics { contentDescription = amountFieldDescription }
-                            .then(
-                                if (isCustom) {
-                                    Modifier.proRippleClickable(
-                                        onClick = {
-                                            showAmountKeypad = true
-                                            focusManager.clearFocus()
-                                        },
-                                    )
-                                } else {
-                                    Modifier
-                                },
-                            ),
+                            .fillMaxWidth()
+                            .clip(shape)
+                            .background(if (fieldActive) colors.surface else colors.paper)
+                            .border(
+                                BorderStroke(1.4.dp, if (fieldActive) colors.primary else colors.line),
+                                shape,
+                            ).padding(horizontal = dimens.space14, vertical = dimens.rowPaddingV),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space10),
                 ) {
-                    Text(
-                        text = homeCurrencySymbol,
-                        style = typography.listAmount.copy(fontFamily = typography.amountFamily, color = colors.primary),
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(dimens.space32)
+                                .clip(CircleShape)
+                                .background(colors.primarySoft),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = (activeIndex + 1).toString(),
+                            style = typography.bodySemiBold.centeredGlyph(),
+                            color = colors.primary,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                    BasicTextField(
+                        value = activePerson?.name.orEmpty(),
+                        onValueChange = onNameChange,
+                        textStyle = typography.body.copy(color = colors.onSurface),
+                        cursorBrush = SolidColor(colors.primary),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .onFocusChanged { focusState ->
+                                    nameHasFocus = focusState.isFocused
+                                    if (focusState.isFocused) showAmountKeypad = false
+                                },
                     )
+                    Box(
+                        modifier =
+                            Modifier
+                                .width(1.dp)
+                                .height(dimens.space20)
+                                .background(colors.line),
+                    )
+                    val amountFieldDescription = stringResource(R.string.shared_field_amount)
+                    Row(
+                        modifier =
+                            Modifier
+                                .semantics { contentDescription = amountFieldDescription }
+                                .then(
+                                    if (isCustom) {
+                                        Modifier.proRippleClickable(
+                                            onClick = {
+                                                showAmountKeypad = true
+                                                focusManager.clearFocus()
+                                            },
+                                        )
+                                    } else {
+                                        Modifier
+                                    },
+                                ),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = homeCurrencySymbol,
+                            style = typography.listAmount.copy(fontFamily = typography.amountFamily, color = currencySymbolColor),
+                        )
+                        Text(
+                            text = if (isCustom) activeAmountDisplay else equalShareLabel.dropWhile { !it.isDigit() },
+                            style =
+                                typography.listAmount.copy(
+                                    fontFamily = typography.amountFamily,
+                                    color = amountValueColor,
+                                ),
+                        )
+                    }
+                }
+
+                if (isCustom) {
                     Text(
-                        text = if (isCustom) activeAmountDisplay else equalShareLabel.dropWhile { !it.isDigit() },
-                        style =
-                            typography.listAmount.copy(
-                                fontFamily = typography.amountFamily,
-                                color = if (isCustom) colors.onSurface else colors.onSurfaceVariant,
-                            ),
+                        text = stringResource(R.string.shared_equal_share_would_be, equalShareLabel),
+                        style = typography.caption,
+                        color = colors.onSurfaceMuted,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.shared_switch_to_custom_hint),
+                        style = typography.caption,
+                        color = colors.onSurfaceMuted,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
 
-            if (isCustom) {
-                Text(
-                    text = stringResource(R.string.shared_equal_share_would_be, equalShareLabel),
-                    style = typography.caption,
-                    color = colors.onSurfaceMuted,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
-                Text(
-                    text = stringResource(R.string.shared_switch_to_custom_hint),
-                    style = typography.caption,
-                    color = colors.onSurfaceMuted,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
+            if (showAmountKeypad) {
+                DigitKeypadGrid(
+                    onKey = { key ->
+                        onAmountKey(key, amountFreshEntry)
+                        amountFreshEntry = false
+                    },
+                    onBackspace = {
+                        onAmountBackspace(amountFreshEntry)
+                        amountFreshEntry = false
+                    },
                 )
             }
-        }
 
-        if (showAmountKeypad) {
-            DigitKeypadGrid(
-                onKey = { key ->
-                    onAmountKey(key, amountFreshEntry)
-                    amountFreshEntry = false
-                },
-                onBackspace = {
-                    onAmountBackspace(amountFreshEntry)
-                    amountFreshEntry = false
-                },
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-        ) {
-            ProButton(
-                text = stringResource(R.string.shared_done),
-                onClick = onDone,
-                variant = ProButtonVariant.Secondary,
-                size = ProButtonSize.Lg,
-                modifier = Modifier.weight(1f),
-            )
-            ProButton(
-                text = stringResource(R.string.shared_next),
-                onClick = onNext,
-                size = ProButtonSize.Lg,
-                fillMaxWidth = true,
-                modifier = Modifier.weight(1.4f),
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                ProButton(
+                    text = stringResource(R.string.shared_done),
+                    onClick = onDone,
+                    variant = ProButtonVariant.Secondary,
+                    size = ProButtonSize.Lg,
+                    fillMaxWidth = true,
+                    modifier = Modifier.weight(1f),
+                )
+                ProButton(
+                    text = nextLabel,
+                    onClick = onNext,
+                    size = ProButtonSize.Lg,
+                    fillMaxWidth = true,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }
 
-@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
+@Preview(
+    showBackground = true,
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+)
 @Composable
 private fun SharedCostsEditPersonSheetEqualPreview() {
     ProExpenseTheme {
@@ -371,7 +394,11 @@ private fun SharedCostsEditPersonSheetEqualPreview() {
     }
 }
 
-@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
+@Preview(
+    showBackground = true,
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+)
 @Composable
 private fun SharedCostsEditPersonSheetCustomPreview() {
     ProExpenseTheme {
@@ -380,6 +407,31 @@ private fun SharedCostsEditPersonSheetCustomPreview() {
             activeIndex = 2,
             mode = SharedSplitMode.Custom,
             activeAmountRaw = "40",
+            equalShareLabel = "$30.00",
+            onPickPerson = {},
+            onNameChange = {},
+            onAmountKey = { _, _ -> },
+            onAmountBackspace = {},
+            onDone = {},
+            onNext = {},
+        )
+    }
+}
+
+/** Last participant — no next person to advance to, so the button reads "Review". */
+@Preview(
+    showBackground = true,
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+)
+@Composable
+private fun SharedCostsEditPersonSheetLastPersonPreview() {
+    ProExpenseTheme {
+        SharedCostsEditPersonSheetContent(
+            people = previewSharedEditPersonCustom,
+            activeIndex = previewSharedEditPersonCustom.lastIndex,
+            mode = SharedSplitMode.Custom,
+            activeAmountRaw = "25",
             equalShareLabel = "$30.00",
             onPickPerson = {},
             onNameChange = {},

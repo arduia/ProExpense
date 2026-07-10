@@ -1,6 +1,7 @@
 package com.arduia.expense.ui.sharedcost
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -10,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.unit.width
 import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsEditPersonSheetContent
@@ -29,6 +31,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import kotlin.math.absoluteValue
 
 /**
  * US-SHC-1 guard: "optionally naming people (default 'Person 1…')" — participant names must be
@@ -168,6 +171,35 @@ class SharedCostEditPersonSheetContentTest {
 
         assertTrue(nextCalled)
     }
+
+    /** There's no next person to advance to on the last participant — the label must say so. */
+    @Test
+    fun lastPerson_advanceButtonReadsReview_notNext() {
+        var nextCalled = false
+        setSheet(activeIndex = people.lastIndex, onNext = { nextCalled = true })
+
+        rule.onNodeWithText("Next").assertDoesNotExist()
+        rule.onNodeWithText("Review").performClick()
+
+        assertTrue(nextCalled)
+    }
+
+    /**
+     * Regression guard: the advance button once used weight(1.4f) against Done's weight(1f),
+     * rendering visibly narrower/wider siblings in the same row.
+     */
+    @Test
+    fun doneAndNextButtons_areEqualWidth() {
+        setSheet()
+
+        val doneWidth = rule.onNodeWithText("Done").getUnclippedBoundsInRoot().width
+        val nextWidth = rule.onNodeWithText("Next").getUnclippedBoundsInRoot().width
+
+        val diff = (doneWidth.value - nextWidth.value).absoluteValue
+        assert(diff <= 1f) {
+            "Done ($doneWidth) and Next ($nextWidth) buttons must be equal width."
+        }
+    }
 }
 
 /**
@@ -214,7 +246,9 @@ class SharedCostEditPersonSheetFlowTest {
 
         rule.onNodeWithContentDescription("Edit split").performClick()
         rule.onNodeWithText("Next").performClick()
-        rule.onNodeWithText("Next").performClick()
+        // Default new-split draft has 2 people — this second person is the last one, so the
+        // advance button reads "Review" instead of "Next".
+        rule.onNodeWithText("Review").performClick()
 
         rule.onNodeWithText("Split summary").assertExists()
     }

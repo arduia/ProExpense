@@ -44,6 +44,7 @@
     <string name="shared_edit_person_cd">แก้ไข %1$s</string>
     <string name="shared_done">เสร็จสิ้น</string>
     <string name="shared_next">ถัดไป</string>
+    <string name="shared_review">ตรวจทาน</string>
     <string name="shared_split_mode_hint_equal">แตะที่ชื่อคนเพื่อเปลี่ยนชื่อ ยอดเงินจะถูกหารเท่ากันและอัปเดตอัตโนมัติ</string>
     <string name="shared_split_mode_hint_custom">แตะที่คนเพื่อกำหนดส่วนแบ่งของเขา ส่วนแบ่งแบบกำหนดเองไม่จำเป็นต้องรวมเท่ากับยอดรวม</string>
     <string name="shared_custom_shares_label">ส่วนแบ่งกำหนดเอง</string>

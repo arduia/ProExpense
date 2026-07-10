@@ -44,6 +44,7 @@
     <string name="shared_edit_person_cd">%1$s ကို တည်းဖြတ်ရန်</string>
     <string name="shared_done">ပြီးပါပြီ</string>
     <string name="shared_next">နောက်တစ်ခု</string>
+    <string name="shared_review">သုံးသပ်ရန်</string>
     <string name="shared_split_mode_hint_equal">အမည်ပြောင်းရန် လူတစ်ဦးကို တို့ပါ။ ပမာဏများကို တညီတညာ ခွဲပြီး အလိုအလျောက် အပ်ဒိတ်လုပ်ပါမည်။</string>
     <string name="shared_split_mode_hint_custom">ဝေစု သတ်မှတ်ရန် လူတစ်ဦးကို တို့ပါ။ စိတ်ကြိုက်ဝေစုများသည် စုစုပေါင်းနှင့် ညီရန် မလိုပါ။</string>
     <string name="shared_custom_shares_label">စိတ်ကြိုက် ဝေစုများ</string>

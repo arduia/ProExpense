@@ -39,6 +39,7 @@ fun ProBottomSheet(
     title: String?,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
+    fullHeight: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
@@ -73,8 +74,13 @@ fun ProBottomSheet(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(max = dimens.artboardHeight * dimens.sheetMaxHeightFraction)
-                    .padding(bottom = dimens.space24),
+                    .then(
+                        if (fullHeight) {
+                            Modifier.height(dimens.artboardHeight * dimens.sheetFullHeightFraction)
+                        } else {
+                            Modifier.heightIn(max = dimens.artboardHeight * dimens.sheetMaxHeightFraction)
+                        },
+                    ).padding(bottom = dimens.space24),
         ) {
             Box(
                 modifier =
@@ -118,6 +124,7 @@ fun ProBottomSheet(
                 modifier =
                     Modifier
                         .fillMaxWidth()
+                        .then(if (fullHeight) Modifier.weight(1f) else Modifier)
                         .padding(horizontal = dimens.space18, vertical = dimens.space8),
             ) {
                 content()
@@ -132,6 +139,7 @@ fun ProBottomSheetHost(
     title: String?,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
+    fullHeight: Boolean = false,
     sheetContent: @Composable () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
@@ -183,6 +191,7 @@ fun ProBottomSheetHost(
             ProBottomSheet(
                 title = title,
                 onClose = onClose,
+                fullHeight = fullHeight,
             ) {
                 sheetContent()
             }

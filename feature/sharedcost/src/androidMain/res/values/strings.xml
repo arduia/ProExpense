@@ -52,6 +52,7 @@
     <string name="shared_edit_person_cd">Edit %1$s</string>
     <string name="shared_done">Done</string>
     <string name="shared_next">Next</string>
+    <string name="shared_review">Review</string>
     <string name="shared_split_mode_hint_equal">Tap a person to rename them. Amounts split evenly and update automatically.</string>
     <string name="shared_split_mode_hint_custom">Tap a person to set their share. Custom shares don\'t need to add up to the total.</string>
     <string name="shared_custom_shares_label">Custom shares</string>
