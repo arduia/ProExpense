@@ -27,7 +27,7 @@
 
 - Feature links: Debt Tracker, Shared Costs, Reports, Category List.
 - Settings: PIN auth, Biometric (greyed until PIN on), Currency, Monthly budget (drives Budget-Planner header; resets on the 1st), Default category, Language, Theme (Light/Dark/System), Data export, Clear data, App version.
-- Currency: single default applied to all entries; selector for common currencies.
+- Currency: single default applied to all entries; selector for common currencies. Tapping a currency only **stages** the pick (Save button disabled until it differs from the current selection); tapping Save opens a confirm dialog — title “Change home currency?”, body “New entries will use {currency name} ({code}) going forward. Existing records keep their original currency.”, actions Save / Cancel. The change only applies on confirm.
 - Data export: separate CSVs (expenses / events / debts / shared_costs) zipped into one file — nothing uploaded.
 - Clear data: selective — user picks what to wipe; each option requires a confirmation dialog; irreversible.
 - Biometric tap while PIN off → “Please enable PIN first to use biometric authentication.”
@@ -39,9 +39,9 @@
 | Profile header row | Name + “all data local” | `custom Row` |
 | Settings list rows | Links + value/toggle/chevron | `ListItem / custom Row` |
 | Switch | PIN / biometric toggles | `Switch` |
-| Selectable list (Currency) | Single-select w/ check | `custom Surface` |
+| Selectable list (Currency) | Single-select w/ check, staged pick + Save | `custom Surface` |
 | Export / Clear actions | ZIP export, destructive clear | `Button (filled / error)` |
-| Confirm dialog | Clear-data guard | `AlertDialog` |
+| Confirm dialog | Clear-data guard · currency-change guard | `AlertDialog` |
 
 ## Tokens applied
 
