@@ -14,6 +14,12 @@ repeatedly, almost always for the same handful of reasons below.
 
 **Precedence:** `AGENTS.md` > this skill.
 
+**Before diagnosing any ktlint/detekt/Android-lint failure**, check
+[`lint-retrospective.md`](lint-retrospective.md) — an append-only table of every such finding
+past sessions have hit in this repo, keyed by rule ID, with the fix that actually applied.
+**After resolving one**, add a row there if it isn't already covered. This is what stops the
+same lint mistake — or the same wasted re-diagnosis — from recurring session after session.
+
 ---
 
 ## The two gates, and how they differ
