@@ -103,19 +103,32 @@ object SharedCostSplitLogic {
             name.trim().ifEmpty { defaultParticipantName(index + 1, nameTemplate, firstPersonName) }
         }
 
+    private fun equalShareRaw(
+        count: Int,
+        rawTotal: String,
+    ): String =
+        (equalShareCents(rawTotal, count.coerceAtLeast(1)) / 100.0)
+            .let { if (it % 1.0 == 0.0) it.toLong().toString() else it.toString() }
+
     fun syncCustomShares(
         current: List<String>,
         count: Int,
         rawTotal: String,
     ): List<String> {
         if (current.size == count) return current
-        val equalShare =
-            (equalShareCents(rawTotal, count.coerceAtLeast(1)) / 100.0)
-                .let { if (it % 1.0 == 0.0) it.toLong().toString() else it.toString() }
+        val equalShare = equalShareRaw(count, rawTotal)
         return (0 until count).map { index ->
             current.getOrNull(index) ?: equalShare
         }
     }
+
+    /** Always recomputes an even split across [count] people, discarding any previously-set
+     *  custom values — the people-count +/- stepper re-splits evenly on every tap, for both
+     *  Equal (already automatic) and Custom (otherwise frozen at old per-person values) modes. */
+    fun evenShareRaws(
+        count: Int,
+        rawTotal: String,
+    ): List<String> = List(count) { equalShareRaw(count, rawTotal) }
 
     /** Sum of the custom per-person shares, in cents — used to show whether a Custom split
      *  "matches" the total or still diverges from it. Shares are never auto-rebalanced, so this

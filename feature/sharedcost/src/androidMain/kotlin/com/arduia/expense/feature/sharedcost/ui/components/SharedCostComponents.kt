@@ -291,9 +291,13 @@ fun SharedCostEditIconButton(
     modifier: Modifier = Modifier,
     filledBackground: Boolean = false,
     tint: Color = ProExpenseTheme.colors.onSurfaceVariant,
+    // Solid fill (e.g. `colors.primary` behind a white glyph) — when set, replaces the default
+    // bordered/transparent-or-surface look entirely, since a filled circle needs no outline.
+    backgroundColor: Color? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val interactionSource = remember { MutableInteractionSource() }
+    val resolvedBackground = backgroundColor ?: if (filledBackground) colors.surface else Color.Transparent
 
     Box(
         modifier =
@@ -301,9 +305,14 @@ fun SharedCostEditIconButton(
                 .size(size)
                 .proPressScale(interactionSource)
                 .clip(CircleShape)
-                .background(if (filledBackground) colors.surface else Color.Transparent)
-                .border(BorderStroke(1.dp, colors.line), CircleShape)
-                .proCircularRippleClickable(
+                .background(resolvedBackground)
+                .then(
+                    if (backgroundColor == null) {
+                        Modifier.border(BorderStroke(1.dp, colors.line), CircleShape)
+                    } else {
+                        Modifier
+                    },
+                ).proCircularRippleClickable(
                     onClick = onClick,
                     interactionSource = interactionSource,
                     role = Role.Button,
@@ -413,7 +422,9 @@ fun SharedCostNoteField(
                 glyph = ProIconGlyph.Check,
                 contentDescription = stringResource(R.string.shared_note_dismiss_cd),
                 tint = colors.success,
-                size = ProExpenseTheme.dimensions.iconTag,
+                // proIconClickable already floors the touch target at 48dp — the glyph itself
+                // was reading too small next to that generous tap area, so size it up to match.
+                size = ProExpenseTheme.dimensions.iconInline,
                 modifier =
                     Modifier.proIconClickable(
                         onClick = {

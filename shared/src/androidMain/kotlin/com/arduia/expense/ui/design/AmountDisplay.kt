@@ -120,7 +120,15 @@ fun AmountDisplay(
                         ).padding(top = dimens.space8),
             )
             if (trailing != null) {
-                Column(modifier = Modifier.padding(start = dimens.space8, bottom = dimens.space4)) {
+                // Centered on the row's cross-axis rather than inheriting the row's own
+                // Bottom alignment — the amount's baseline sits low relative to its full glyph
+                // height, so bottom-aligning trailing content next to it reads as off-center.
+                Column(
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = dimens.space8),
+                ) {
                     trailing()
                 }
             }

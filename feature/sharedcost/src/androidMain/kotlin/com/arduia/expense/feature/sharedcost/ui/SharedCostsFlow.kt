@@ -142,6 +142,19 @@ private fun SharedCostDraft.withParticipants(
         customShareRaws = SharedCostSplitLogic.syncCustomShares(customShareRaws, peopleCount, rawTotal),
     )
 
+/** Used by the people-count +/- stepper: unlike [withParticipants], this always re-splits every
+ *  share evenly across the new [SharedCostDraft.peopleCount] rather than preserving old custom
+ *  values — Equal mode is already even automatically, so this is what actually changes on a
+ *  Custom split. */
+private fun SharedCostDraft.withEvenParticipants(
+    nameTemplate: String,
+    firstPersonName: String,
+): SharedCostDraft =
+    copy(
+        names = SharedCostSplitLogic.syncNames(names, peopleCount, nameTemplate, firstPersonName),
+        customShareRaws = SharedCostSplitLogic.evenShareRaws(peopleCount, rawTotal),
+    )
+
 private fun SharedCostUiState.toDraft(
     nameTemplate: String,
     firstPersonName: String,
@@ -206,6 +219,10 @@ fun SharedCostsFlow(
     // visibility; onEditPerson sets a fresh editingIndex before the sheet opens again.
     var editingIndex by remember { mutableStateOf<Int?>(null) }
     var editSheetVisible by remember { mutableStateOf(false) }
+    // Tracks which participants the user has actually finished editing (via Next, Done, or
+    // picking someone else) this split — the roster only shows a check mark for these, not for
+    // everyone who simply hasn't been visited yet.
+    var visitedIndices by remember { mutableStateOf(emptySet<Int>()) }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
     val currentStep = SharedCostStep.valueOf(step)
@@ -300,12 +317,14 @@ fun SharedCostsFlow(
                             // declaration above for why an empty-total seed would stick forever.
                             viewingId = null
                             draft = SharedCostDraft()
+                            visitedIndices = emptySet()
                             step = SharedCostStep.Input.name
                         },
                         onItemClick = { item ->
                             sharedCostDetails[item.id]?.let { detail ->
                                 viewingId = item.id
                                 draft = detail.toDraft(nameTemplate, firstPersonName)
+                                visitedIndices = emptySet()
                                 step = SharedCostStep.Summary.name
                             }
                         },
@@ -352,7 +371,7 @@ fun SharedCostsFlow(
                                 draft =
                                     draft
                                         .copy(peopleCount = draft.peopleCount - 1)
-                                        .withParticipants(nameTemplate, firstPersonName)
+                                        .withEvenParticipants(nameTemplate, firstPersonName)
                             }
                         },
                         onIncrementPeople = {
@@ -360,7 +379,7 @@ fun SharedCostsFlow(
                                 draft =
                                     draft
                                         .copy(peopleCount = draft.peopleCount + 1)
-                                        .withParticipants(nameTemplate, firstPersonName)
+                                        .withEvenParticipants(nameTemplate, firstPersonName)
                             }
                         },
                         onModeSelected = { mode ->
@@ -473,7 +492,10 @@ fun SharedCostsFlow(
                 mode = draft.mode,
                 activeAmountRaw = draft.customShareRaws.getOrElse(index) { "" },
                 equalShareLabel = equalShareLabel,
-                onPickPerson = { editingIndex = it },
+                onPickPerson = { picked ->
+                    visitedIndices = visitedIndices + index
+                    editingIndex = picked
+                },
                 onNameChange = { name -> updateParticipantName(index, name) },
                 onAmountKey = { key, freshEntry ->
                     applyCustomShareEdit(index) { current ->
@@ -485,8 +507,12 @@ fun SharedCostsFlow(
                         if (freshEntry) "" else AmountInput.applyBackspace(current)
                     }
                 },
-                onDone = { editSheetVisible = false },
+                onDone = {
+                    visitedIndices = visitedIndices + index
+                    editSheetVisible = false
+                },
                 onNext = {
+                    visitedIndices = visitedIndices + index
                     if (index < draft.peopleCount - 1) {
                         editingIndex = index + 1
                     } else {
@@ -495,6 +521,7 @@ fun SharedCostsFlow(
                     }
                 },
                 homeCurrencySymbol = homeCurrencySymbol,
+                visitedIndices = visitedIndices,
             )
         }
 

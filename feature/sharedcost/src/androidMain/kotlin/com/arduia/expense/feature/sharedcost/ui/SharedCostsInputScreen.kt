@@ -164,7 +164,8 @@ fun SharedCostsInputScreen(
                                 contentDescription = editAmountDescription,
                                 size = dimens.space32,
                                 iconSize = dimens.iconChipLeading,
-                                tint = colors.primary,
+                                tint = colors.onPrimaryWarm,
+                                backgroundColor = colors.primary,
                             )
                         }
                     } else {

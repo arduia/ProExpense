@@ -1,7 +1,8 @@
 package com.arduia.expense.feature.sharedcost.ui
 
-import androidx.compose.animation.Animatable
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -64,9 +66,15 @@ import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.centeredGlyph
 
+/** Starting scale for the name-text bounce-in on person switch — small enough to read as a
+ *  deliberate "pop", not a jarring jump. */
+private const val NAME_BOUNCE_START_SCALE = 0.82f
+
 /**
  * Compact roster of every person in the split, shown at the top of the Edit-person sheet for
- * context and quick jump — the active person is highlighted, others show a check.
+ * context and quick jump — the active person shows an edit glyph, a person who has actually been
+ * visited/finished (via Next, Done, or picking someone else) shows a check, and anyone not yet
+ * reached shows no trailing mark at all.
  */
 @Composable
 fun SharedCostPeopleRoster(
@@ -74,6 +82,7 @@ fun SharedCostPeopleRoster(
     activeIndex: Int,
     onPick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    visitedIndices: Set<Int> = emptySet(),
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -130,12 +139,22 @@ fun SharedCostPeopleRoster(
                     style = typography.captionMedium,
                     color = if (active) colors.onSurface else colors.onSurfaceVariant,
                 )
-                ProIcon(
-                    glyph = if (active) ProIconGlyph.Edit else ProIconGlyph.Check,
-                    contentDescription = null,
-                    tint = if (active) colors.primary else colors.success,
-                    size = dimens.iconTag,
-                )
+                when {
+                    active ->
+                        ProIcon(
+                            glyph = ProIconGlyph.Edit,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            size = dimens.iconTag,
+                        )
+                    index in visitedIndices ->
+                        ProIcon(
+                            glyph = ProIconGlyph.Check,
+                            contentDescription = null,
+                            tint = colors.success,
+                            size = dimens.iconTag,
+                        )
+                }
             }
         }
     }
@@ -166,11 +185,11 @@ fun SharedCostsEditPersonSheetContent(
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
     homeCurrencySymbol: String = "$",
+    visitedIndices: Set<Int> = emptySet(),
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val motion = ProExpenseTheme.motion
     val shape = ProExpenseTheme.shapes.tile
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -193,16 +212,14 @@ fun SharedCostsEditPersonSheetContent(
         nameFocusRequester.requestFocus()
         keyboardController?.show()
     }
-    // A fresh Animatable per activeIndex snaps the field's background to a highlight tint the
-    // instant a different person is picked, then eases it back down to the resting color — a
-    // visible cue that the name shown is a newly selected person's, not the previous one edited
-    // in place.
-    val nameFieldRestingColor = if (fieldActive) colors.surface else colors.paper
-    val nameFieldBackground = remember(activeIndex) { Animatable(colors.primarySoft) }
-    LaunchedEffect(activeIndex, nameFieldRestingColor) {
-        nameFieldBackground.animateTo(
-            targetValue = nameFieldRestingColor,
-            animationSpec = tween(durationMillis = motion.rowPulseDurationMillis, easing = motion.standardEasing),
+    // A fresh Animatable per activeIndex starts under-scale and springs up to 1f with a small
+    // overshoot — a quick bounce on just the name text itself (not the field's background/border)
+    // to cue that a different person's name is now showing.
+    val nameBounce = remember(activeIndex) { Animatable(NAME_BOUNCE_START_SCALE) }
+    LaunchedEffect(activeIndex) {
+        nameBounce.animateTo(
+            targetValue = 1f,
+            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
         )
     }
     val amountValueColor = if (isCustom) colors.onSurface else colors.onSurfaceVariant
@@ -221,7 +238,12 @@ fun SharedCostsEditPersonSheetContent(
         Column(
             modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
         ) {
-            SharedCostPeopleRoster(people = people, activeIndex = activeIndex, onPick = onPickPerson)
+            SharedCostPeopleRoster(
+                people = people,
+                activeIndex = activeIndex,
+                onPick = onPickPerson,
+                visitedIndices = visitedIndices,
+            )
         }
 
         Column(
@@ -269,7 +291,7 @@ fun SharedCostsEditPersonSheetContent(
                         Modifier
                             .fillMaxWidth()
                             .clip(shape)
-                            .background(nameFieldBackground.value)
+                            .background(if (fieldActive) colors.surface else colors.paper)
                             .border(
                                 BorderStroke(1.4.dp, if (fieldActive) colors.primary else colors.line),
                                 shape,
@@ -305,7 +327,10 @@ fun SharedCostsEditPersonSheetContent(
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .focusRequester(nameFocusRequester)
+                                .graphicsLayer {
+                                    scaleX = nameBounce.value
+                                    scaleY = nameBounce.value
+                                }.focusRequester(nameFocusRequester)
                                 .onFocusChanged { focusState ->
                                     nameHasFocus = focusState.isFocused
                                     if (focusState.isFocused) showAmountKeypad = false
