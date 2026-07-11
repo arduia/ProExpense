@@ -144,21 +144,29 @@ fun SharedCostPeopleRoster(
                     style = typography.captionMedium,
                     color = if (active) colors.onSurface else colors.onSurfaceVariant,
                 )
-                when {
-                    active ->
-                        ProIcon(
-                            glyph = ProIconGlyph.Edit,
-                            contentDescription = null,
-                            tint = colors.primary,
-                            size = dimens.iconTag,
-                        )
-                    index in visitedIndices ->
-                        ProIcon(
-                            glyph = ProIconGlyph.Check,
-                            contentDescription = null,
-                            tint = colors.success,
-                            size = dimens.iconTag,
-                        )
+                // Fixed-size slot always reserved (even for a not-yet-visited person with no
+                // mark to show) — otherwise the amount column above shifts left/right row to
+                // row depending on whether that row happens to have a trailing icon.
+                Box(
+                    modifier = Modifier.size(dimens.iconTag),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    when {
+                        active ->
+                            ProIcon(
+                                glyph = ProIconGlyph.Edit,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                size = dimens.iconTag,
+                            )
+                        index in visitedIndices ->
+                            ProIcon(
+                                glyph = ProIconGlyph.Check,
+                                contentDescription = null,
+                                tint = colors.success,
+                                size = dimens.iconTag,
+                            )
+                    }
                 }
             }
         }

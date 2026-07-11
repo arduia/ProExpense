@@ -166,7 +166,7 @@ fun SharedCostsInputScreen(
                                 size = dimens.space32,
                                 iconSize = dimens.iconChipLeading,
                                 tint = Color.White,
-                                borderColor = Color.White,
+                                borderColor = colors.line,
                             )
                         }
                     } else {

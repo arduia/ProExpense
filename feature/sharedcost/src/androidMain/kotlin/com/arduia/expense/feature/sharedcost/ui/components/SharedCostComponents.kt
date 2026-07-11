@@ -494,50 +494,56 @@ fun SharedCostPerPersonCard(
                 .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+            // Eyebrow and Edit share the top row — both are short, fixed-width labels, so
+            // they never fight the (potentially long, large-font) amount for space. The
+            // amount itself renders full-width on its own line below, so a long value never
+            // squeezes the Edit action out.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
                     text = headerEyebrow,
                     style = typography.eyebrow,
                     color = colors.onSurfaceMuted,
                 )
-                Text(
-                    text = headerAmount,
-                    style = typography.displayAmount,
-                    color = colors.primary,
-                )
-                if (headerCaption != null) {
-                    Text(
-                        text = headerCaption,
-                        style = typography.caption,
-                        color = if (headerCaptionEmphasized) colors.success else colors.onSurfaceMuted,
+                if (onHeaderEditClick != null) {
+                    ProTextAction(
+                        text = stringResource(R.string.shared_edit_action_label),
+                        onClick = onHeaderEditClick,
+                        style = typography.bodyMedium,
+                        color = colors.primary,
+                        leading = {
+                            ProIcon(
+                                glyph = ProIconGlyph.Edit,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                size = dimens.iconChipLeading,
+                            )
+                        },
+                        // The visible label reads "Edit"; keep the richer a11y name ("Edit
+                        // split") that existing content-description-based navigation/tests
+                        // rely on.
+                        modifier =
+                            Modifier.semantics(mergeDescendants = true) {
+                                contentDescription = headerEditContentDescription
+                            },
                     )
                 }
             }
-            if (onHeaderEditClick != null) {
-                ProTextAction(
-                    text = stringResource(R.string.shared_edit_action_label),
-                    onClick = onHeaderEditClick,
-                    style = typography.bodyMedium,
-                    color = colors.primary,
-                    leading = {
-                        ProIcon(
-                            glyph = ProIconGlyph.Edit,
-                            contentDescription = null,
-                            tint = colors.primary,
-                            size = dimens.iconChipLeading,
-                        )
-                    },
-                    // The visible label reads "Edit"; keep the richer a11y name ("Edit split")
-                    // that existing content-description-based navigation/tests rely on.
-                    modifier =
-                        Modifier.semantics(mergeDescendants = true) {
-                            contentDescription = headerEditContentDescription
-                        },
+            Text(
+                text = headerAmount,
+                style = typography.displayAmount,
+                color = colors.primary,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (headerCaption != null) {
+                Text(
+                    text = headerCaption,
+                    style = typography.caption,
+                    color = if (headerCaptionEmphasized) colors.success else colors.onSurfaceMuted,
                 )
             }
         }
