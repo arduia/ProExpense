@@ -36,3 +36,14 @@ fun FinanceRecord.linkedRowId(): String? =
         link is RecordLink.ToDebt && link.debtId.value == id.value -> link.debtId.value
         else -> null
     }
+
+/**
+ * Single flip point to bring Split/Debt rows back into Home Recents and Journal — product wants
+ * only plain Expense/Income visible there for now. Flip to `true` to restore them.
+ */
+const val SHOW_SPLIT_AND_DEBT_ROWS = false
+
+fun RecordKind.isVisibleInFeed(): Boolean =
+    SHOW_SPLIT_AND_DEBT_ROWS ||
+        this == RecordKind.EXPENSE ||
+        this == RecordKind.INCOME
