@@ -78,12 +78,14 @@ private fun sampleDebt(
     amountCents: Long = 20_00,
     direction: DebtDirection = DebtDirection.OWED_TO_ME,
     isSettled: Boolean = false,
+    recordAsTransaction: Boolean = false,
 ) = Debt(
     id = DebtId(id),
     personName = personName,
     money = Money(Amount(amountCents), CurrencyCode("USD")),
     direction = direction,
     isSettled = isSettled,
+    recordAsTransaction = recordAsTransaction,
 )
 
 private class FakeDebtRepository(
@@ -175,6 +177,39 @@ class CreateDebtUseCaseTest {
             useCase("Alex", "12.50", DebtDirection.OWED_TO_ME, note = "   ")
             assertEquals(null, repo.lastUpsert?.note)
         }
+
+    @Test
+    fun invoke_defaultsRecordAsTransactionToFalse() =
+        runTest {
+            val repo = FakeDebtRepository()
+            val useCase = CreateDebtUseCase(repo, nowEpochMillis = { 1_000L })
+
+            useCase("Alex", "12.50", DebtDirection.OWED_TO_ME)
+
+            assertFalse(repo.lastUpsert?.recordAsTransaction ?: true)
+        }
+
+    @Test
+    fun invoke_passesRecordAsTransactionThrough() =
+        runTest {
+            val repo = FakeDebtRepository()
+            val useCase = CreateDebtUseCase(repo, nowEpochMillis = { 1_000L })
+
+            useCase("Alex", "12.50", DebtDirection.OWED_TO_ME, recordAsTransaction = true)
+
+            assertTrue(repo.lastUpsert?.recordAsTransaction ?: false)
+        }
+
+    @Test
+    fun invoke_stampsRecordedAtFromNowEpochMillis() =
+        runTest {
+            val repo = FakeDebtRepository()
+            val useCase = CreateDebtUseCase(repo, nowEpochMillis = { 5_000L })
+
+            useCase("Alex", "12.50", DebtDirection.OWED_TO_ME)
+
+            assertEquals(5_000L, repo.lastUpsert?.recordedAtEpochMillis)
+        }
 }
 
 class UpdateDebtUseCaseTest {
@@ -194,6 +229,30 @@ class UpdateDebtUseCaseTest {
             assertEquals(3500L, updated?.money?.amount?.valueInCents)
             assertEquals(DebtDirection.I_OWE, updated?.direction)
             assertEquals(5_000L, updated?.dueEpochMillis)
+        }
+
+    @Test
+    fun invoke_defaultsRecordAsTransactionToTheExistingValue() =
+        runTest {
+            val repo = FakeDebtRepository()
+            val useCase = UpdateDebtUseCase(repo)
+            val existing = sampleDebt("d1", recordAsTransaction = true)
+
+            useCase(existing, "Alex", "35.00", null)
+
+            assertTrue(repo.lastUpsert?.recordAsTransaction ?: false)
+        }
+
+    @Test
+    fun invoke_canToggleRecordAsTransactionOff() =
+        runTest {
+            val repo = FakeDebtRepository()
+            val useCase = UpdateDebtUseCase(repo)
+            val existing = sampleDebt("d1", recordAsTransaction = true)
+
+            useCase(existing, "Alex", "35.00", null, recordAsTransaction = false)
+
+            assertFalse(repo.lastUpsert?.recordAsTransaction ?: true)
         }
 
     @Test

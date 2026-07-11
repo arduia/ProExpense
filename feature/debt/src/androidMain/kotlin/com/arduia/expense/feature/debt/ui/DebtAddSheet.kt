@@ -15,6 +15,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -57,6 +59,7 @@ fun DebtAddSheetContent(
     onPickDate: () -> Unit,
     onPickDue: () -> Unit,
     onNoteChange: (String) -> Unit,
+    onRecordAsTransactionChange: (Boolean) -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -126,6 +129,11 @@ fun DebtAddSheetContent(
                 errorMessage = null,
             )
         }
+
+        DebtRecordAsTransactionRow(
+            checked = form.recordAsTransaction,
+            onCheckedChange = onRecordAsTransactionChange,
+        )
 
         ProButton(
             text = stringResource(R.string.debt_save_record),
@@ -212,6 +220,47 @@ private fun DebtToggleSegment(
             style = if (selected) typography.bodySemiBold else typography.bodyMedium,
             color = if (selected) accent else colors.onSurfaceMuted,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun DebtRecordAsTransactionRow(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
+    ) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+            Text(
+                text = stringResource(R.string.debt_record_as_transaction_label),
+                style = typography.bodyMedium,
+                color = colors.onSurface,
+            )
+            Text(
+                text = stringResource(R.string.debt_record_as_transaction_caption),
+                style = typography.caption,
+                color = colors.onSurfaceMuted,
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = colors.onPrimaryWarm,
+                    checkedTrackColor = colors.primary,
+                    uncheckedThumbColor = colors.surface,
+                    uncheckedTrackColor = colors.lineStrong,
+                    uncheckedBorderColor = colors.lineStrong,
+                ),
         )
     }
 }
@@ -432,6 +481,7 @@ private fun DebtAddSheetPreview() {
                     onPickDate = {},
                     onPickDue = {},
                     onNoteChange = {},
+                    onRecordAsTransactionChange = {},
                     onSave = {},
                 )
             }

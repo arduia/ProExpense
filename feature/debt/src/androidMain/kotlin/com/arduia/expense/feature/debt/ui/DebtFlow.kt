@@ -43,11 +43,28 @@ fun DebtFlow(
     onDismiss: () -> Unit,
     lentState: DebtListUiState = previewDebtLent,
     oweState: DebtListUiState = previewDebtOwe,
-    onSaveRecord: (side: DebtSide, person: String, amountRaw: String, dueEpochMillis: Long?, note: String) -> Unit = { _, _, _, _, _ -> },
-    onUpdateRecord: (id: String, person: String, amountRaw: String, dueEpochMillis: Long?, note: String) -> Unit = { _, _, _, _, _ -> },
+    onSaveRecord: (
+        side: DebtSide,
+        person: String,
+        amountRaw: String,
+        dueEpochMillis: Long?,
+        note: String,
+        recordAsTransaction: Boolean,
+    ) -> Unit = { _, _, _, _, _, _ -> },
+    onUpdateRecord: (
+        id: String,
+        person: String,
+        amountRaw: String,
+        dueEpochMillis: Long?,
+        note: String,
+        recordAsTransaction: Boolean,
+    ) -> Unit = { _, _, _, _, _, _ -> },
     onDeleteRecord: (String) -> Unit = {},
     onSettleRecord: (String) -> Unit = {},
     onCheckConflict: suspend (person: String, side: DebtSide) -> Boolean = { _, _ -> false },
+    // Deep-open a specific record's detail on first composition — set by Recents/Journal when a
+    // Debt-kind row is tapped, mirroring Shared Costs' `initialViewingId`.
+    initialSelectedRecordId: String? = null,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -56,7 +73,7 @@ fun DebtFlow(
     val scope = rememberCoroutineScope()
 
     var side by remember { mutableStateOf(DebtSide.Lent) }
-    var selectedRecordId by remember { mutableStateOf<String?>(null) }
+    var selectedRecordId by remember { mutableStateOf(initialSelectedRecordId) }
     var showAdd by remember { mutableStateOf(false) }
     var addForm by remember { mutableStateOf(DebtAddFormState()) }
     var showDuePicker by remember { mutableStateOf(false) }
@@ -69,9 +86,23 @@ fun DebtFlow(
         val editingId = addForm.editingId
         val note = addForm.note.trim()
         if (editingId != null) {
-            onUpdateRecord(editingId, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis, note)
+            onUpdateRecord(
+                editingId,
+                addForm.person.trim(),
+                addForm.amountRaw,
+                addForm.dueEpochMillis,
+                note,
+                addForm.recordAsTransaction,
+            )
         } else {
-            onSaveRecord(addForm.side, addForm.person.trim(), addForm.amountRaw, addForm.dueEpochMillis, note)
+            onSaveRecord(
+                addForm.side,
+                addForm.person.trim(),
+                addForm.amountRaw,
+                addForm.dueEpochMillis,
+                note,
+                addForm.recordAsTransaction,
+            )
         }
         side = addForm.side
         showAdd = false
@@ -137,6 +168,7 @@ fun DebtFlow(
                                     editingId = record.id,
                                     dueEpochMillis = record.dueEpochMillis,
                                     note = record.subtitle.orEmpty(),
+                                    recordAsTransaction = record.recordAsTransaction,
                                 )
                             showAdd = true
                         }
@@ -165,6 +197,7 @@ fun DebtFlow(
                 onPickDate = {},
                 onPickDue = { showDuePicker = true },
                 onNoteChange = { addForm = addForm.copy(note = it.take(DEBT_NOTE_MAX)) },
+                onRecordAsTransactionChange = { addForm = addForm.copy(recordAsTransaction = it) },
                 onSave = {
                     val person = addForm.person.trim()
                     if (addForm.editingId != null) {
@@ -286,8 +319,13 @@ private fun detailStateFor(
         side = side,
         name = record?.name.orEmpty(),
         amountLabel = record?.amountLabel.orEmpty(),
-        dateRecordedLabel = record?.dateLabel.orEmpty(),
-        dueLabel = record?.dateLabel ?: "No due date",
+        dateRecordedLabel =
+            record
+                ?.recordedAtEpochMillis
+                ?.takeIf { it > 0L }
+                ?.let { PlatformDateFormatter.shortDateLabel(it) }
+                .orEmpty(),
+        dueLabel = record?.dueEpochMillis?.let { PlatformDateFormatter.shortDateLabel(it) } ?: "No due date",
         statusLabel = if (record?.settled == true) "Settled" else "Active",
         settled = record?.settled ?: false,
         note = record?.subtitle,

@@ -506,6 +506,7 @@ fun uiCatalogSections(): List<UiCatalogSection> =
                                     onPickDate = {},
                                     onPickDue = {},
                                     onNoteChange = {},
+                                    onRecordAsTransactionChange = {},
                                     onSave = {},
                                 )
                             }

@@ -2,7 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>LongParameterList:DebtUseCases.kt$CreateDebtUseCase$( personName: String, rawAmount: String, direction: DebtDirection, currencyCode: String = "USD", dueEpochMillis: Long? = null, note: String? = null, )</ID>
+    <ID>LongParameterList:DebtUseCases.kt$CreateDebtUseCase$( personName: String, rawAmount: String, direction: DebtDirection, currencyCode: String = "USD", dueEpochMillis: Long? = null, note: String? = null, recordAsTransaction: Boolean = false, )</ID>
+    <ID>LongParameterList:DebtUseCases.kt$UpdateDebtUseCase$( existing: Debt, personName: String, rawAmount: String, dueEpochMillis: Long?, note: String? = null, recordAsTransaction: Boolean = existing.recordAsTransaction, )</ID>
     <ID>MaxLineLength:DebtModule.kt$factory { CreateDebtUseCase(get&lt;DebtRepository&gt;(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }</ID>
   </CurrentIssues>
 </SmellBaseline>

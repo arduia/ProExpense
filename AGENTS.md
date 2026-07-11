@@ -287,6 +287,13 @@ file, and before treating a ktlint/detekt failure as a real bug, read
 most detekt failures on an agent diff are pre-existing findings de-baselined by a signature
 change, not new problems, and the skill covers the exact regeneration workflow.
 
+**Lint retrospective (mandatory both directions):** before diagnosing any ktlint/detekt/
+Android-lint failure, check
+[`.agents/skills/kotlin-lint-style/lint-retrospective.md`](.agents/skills/kotlin-lint-style/lint-retrospective.md)
+for the rule ID — it's an append-only log of every such finding hit before, with the fix that
+applied, so the same mistake or the same wasted diagnosis doesn't repeat across sessions. After
+resolving a lint failure, add a row there if the rule/situation isn't already covered.
+
 **UI change gate (mandatory before push):** Any change to Compose screens, themes, or
 `ui/design/` components **must** pass screenshot verification in-session before `git push`:
 
@@ -792,6 +799,7 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
 | `.agents/skills/compose-product-auditor/` | Step 3 — Pre-merge Compose product auditor |
 | `.agents/skills/kotlin-lint-style/` | ktlint formatting rules + detekt baseline regeneration workflow |
+| `.agents/skills/kotlin-lint-style/lint-retrospective.md` | Append-only lookup table of ktlint/detekt/Android-lint findings hit before, keyed by rule ID, with the fix that applied — check before diagnosing, append after resolving |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
 | `.cursor/commands/` | Slash commands |
 | `.agents/skills/` | Agent skills — Android (`install-android-skills.sh`) + project Compose workflow (`design-spec-to-compose`, `compose-motion-polish`, `compose-product-auditor`) + `kotlin-lint-style` |

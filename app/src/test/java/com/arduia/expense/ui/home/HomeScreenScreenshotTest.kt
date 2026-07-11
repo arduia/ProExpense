@@ -15,6 +15,7 @@ import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.preview.previewHomeEvent
 import com.arduia.expense.ui.preview.previewHomeLoading
+import com.arduia.expense.ui.preview.previewHomeMixedKinds
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Rule
@@ -120,6 +121,18 @@ class HomeScreenScreenshotTest {
                 onTabSelected = {},
                 onAddClick = {},
                 showPinSetupBanner = true,
+            )
+        }
+    }
+
+    @Test
+    fun home_mixed_kinds() {
+        captureHome {
+            HomeShell(
+                state = previewHomeMixedKinds,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
             )
         }
     }

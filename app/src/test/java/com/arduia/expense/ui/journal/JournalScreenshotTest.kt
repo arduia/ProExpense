@@ -19,6 +19,7 @@ import com.arduia.expense.feature.history.ui.preview.previewJournalDetail
 import com.arduia.expense.feature.history.ui.preview.previewJournalEmpty
 import com.arduia.expense.feature.history.ui.preview.previewJournalList
 import com.arduia.expense.feature.history.ui.preview.previewJournalLoading
+import com.arduia.expense.feature.history.ui.preview.previewJournalMixedKinds
 import com.arduia.expense.feature.history.ui.preview.previewJournalQuickNote
 import com.arduia.expense.feature.history.ui.preview.previewJournalSearchEmpty
 import com.arduia.expense.testing.ScreenshotTests
@@ -97,6 +98,21 @@ class JournalScreenshotTest {
         capture {
             JournalListScreen(
                 state = previewJournalEmpty,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun journal_mixed_kinds() =
+        capture {
+            JournalListScreen(
+                state = previewJournalMixedKinds,
                 onQueryChange = {},
                 onFilterSelected = {},
                 onRowClick = {},
