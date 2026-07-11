@@ -89,6 +89,16 @@ class SqlDelightSharedCostRepository(
             }
         }
 
+    override suspend fun archive(id: SharedCostId): Result<Unit> =
+        withContext(dispatcher) {
+            catchingResult {
+                // Archiving only hides the split from the active history list — unlike delete,
+                // its linked FinanceRecord must keep showing in Journal/Reports.
+                queries.archiveSharedCost(id.value)
+                Unit
+            }
+        }
+
     override fun observeAll(): Flow<List<SharedCost>> =
         queries
             .selectAllSharedCosts()
@@ -101,9 +111,8 @@ class SqlDelightSharedCostRepository(
             catchingResult {
                 val sharedCost =
                     queries
-                        .selectAllSharedCosts()
-                        .executeAsList()
-                        .find { it.id == sharedCostId.value }
+                        .selectSharedCostById(sharedCostId.value)
+                        .executeAsOneOrNull()
                         ?.toDomain()
                         ?: throw IllegalArgumentException("SharedCost not found: ${sharedCostId.value}")
 
@@ -131,6 +140,7 @@ class SqlDelightSharedCostRepository(
             recorded_at = sharedCost.recordedAtEpochMillis,
             participants_json = sharedCost.participants.toParticipantsJson(),
             custom_shares_json = sharedCost.splitStrategy.toStrategyJson(),
+            is_archived = if (sharedCost.isArchived) 1L else 0L,
         )
     }
 

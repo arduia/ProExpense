@@ -190,6 +190,7 @@ fun SharedCostsFlow(
         customShareRaws: List<String>,
     ) -> Unit = { _, _, _, _, _, _ -> },
     onDeleteSplit: (id: String) -> Unit = {},
+    onArchiveSplit: (id: String) -> Unit = {},
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
@@ -213,6 +214,8 @@ fun SharedCostsFlow(
     var viewingId by remember { mutableStateOf<String?>(null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
+    var archiveTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
+    var showActionsSheet by remember { mutableStateOf(false) }
     // editingIndex is deliberately not cleared when the sheet closes (Done / last-person Next) —
     // ProBottomSheetHost's exit fade keeps rendering `sheetContent()` for its duration, and
     // nulling the index immediately would flash person 0 mid-fade. editSheetVisible drives
@@ -442,6 +445,7 @@ fun SharedCostsFlow(
                                     .withParticipants(nameTemplate, firstPersonName)
                             step = SharedCostStep.Input.name
                         },
+                        onMore = if (viewingId != null) ({ showActionsSheet = true }) else null,
                         onSave = {
                             val title = draft.note.trim().ifEmpty { defaultSplitTitle }
                             // Cleared name fields fall back to "Person N" ("You" for participant
@@ -525,6 +529,28 @@ fun SharedCostsFlow(
             )
         }
 
+        ProBottomSheetHost(
+            visible = showActionsSheet,
+            title = null,
+            onClose = { showActionsSheet = false },
+        ) {
+            SharedCostActionsSheetContent(
+                onEdit = {
+                    showActionsSheet = false
+                    step = SharedCostStep.Input.name
+                },
+                onArchive = {
+                    showActionsSheet = false
+                    archiveTarget = history.find { it.id == viewingId }
+                },
+                onDelete = {
+                    showActionsSheet = false
+                    deleteTarget = history.find { it.id == viewingId }
+                },
+                onCancel = { showActionsSheet = false },
+            )
+        }
+
         ProToastHost(
             message = toastMessage,
             onDismiss = { toastMessage = null },
@@ -542,12 +568,44 @@ fun SharedCostsFlow(
                 },
             confirmLabel = stringResource(R.string.shared_delete_confirm),
             onConfirm = {
-                deleteTarget?.let { onDeleteSplit(it.id) }
+                deleteTarget?.let { target ->
+                    onDeleteSplit(target.id)
+                    if (viewingId == target.id) {
+                        viewingId = null
+                        step = SharedCostStep.History.name
+                    }
+                }
                 deleteTarget = null
             },
             dismissLabel = stringResource(R.string.shared_delete_cancel),
             onDismiss = { deleteTarget = null },
             confirmVariant = ProButtonVariant.Danger,
+        )
+
+        ProAlertDialog(
+            visible = archiveTarget != null,
+            icon = ProIconGlyph.EyeOff,
+            iconTint = colors.onSurfaceVariant,
+            iconBackground = colors.paperAlt,
+            title = stringResource(R.string.shared_archive_title),
+            body =
+                buildAnnotatedString {
+                    append(stringResource(R.string.shared_archive_body, archiveTarget?.title.orEmpty()))
+                },
+            confirmLabel = stringResource(R.string.shared_archive_confirm),
+            onConfirm = {
+                archiveTarget?.let { target ->
+                    onArchiveSplit(target.id)
+                    if (viewingId == target.id) {
+                        viewingId = null
+                        step = SharedCostStep.History.name
+                    }
+                }
+                archiveTarget = null
+            },
+            dismissLabel = stringResource(R.string.shared_archive_cancel),
+            onDismiss = { archiveTarget = null },
+            confirmVariant = ProButtonVariant.Warning,
         )
     }
 }

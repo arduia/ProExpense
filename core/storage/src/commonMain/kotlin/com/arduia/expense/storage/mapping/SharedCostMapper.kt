@@ -20,6 +20,7 @@ internal fun Shared_cost.toDomain(): SharedCost {
         participants = participants,
         splitStrategy = splitStrategy,
         recordedAtEpochMillis = recorded_at,
+        isArchived = is_archived == 1L,
     )
 }
 

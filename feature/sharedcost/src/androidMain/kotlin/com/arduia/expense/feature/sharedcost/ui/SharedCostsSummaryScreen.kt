@@ -31,6 +31,7 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -42,11 +43,12 @@ fun SharedCostsSummaryScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
     backLabel: String = stringResource(R.string.shared_back_split),
-    // A previously saved split is immutable except for deletion (US-SHC-5 Scenario 2) — viewing
-    // it from history must not offer Save or the switch-to-custom edit path, only the new-split
-    // flow does.
+    // A previously saved split is immutable except via the actions menu (US-SHC-5 Scenario 2) —
+    // viewing it from history must not offer Save or the switch-to-custom edit path, only the
+    // new-split flow does. Edit/archive/delete for a saved split live behind `onMore` instead.
     readOnly: Boolean = false,
     homeCurrencySymbol: String = "$",
+    onMore: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -83,6 +85,8 @@ fun SharedCostsSummaryScreen(
             title = stringResource(R.string.shared_summary_title),
             onBack = onBack,
             backLabel = backLabel,
+            action = if (onMore != null) ProTopBarAction.More else ProTopBarAction.None,
+            onAction = { onMore?.invoke() },
         )
 
         val noteTitle = state.note.trim()
@@ -214,6 +218,27 @@ private fun SharedCostsSummaryPreview() {
             onBack = {},
             onSwitchToCustom = {},
             onSave = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — summary, saved (More menu)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsSummaryReadOnlyPreview() {
+    ProExpenseTheme {
+        SharedCostsSummaryScreen(
+            state = previewSharedSummary,
+            onBack = {},
+            onSwitchToCustom = {},
+            onSave = {},
+            readOnly = true,
+            backLabel = stringResource(R.string.shared_back_history),
+            onMore = {},
         )
     }
 }

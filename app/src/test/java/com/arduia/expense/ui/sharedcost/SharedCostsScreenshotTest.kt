@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.SharedCostActionsSheetContent
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsEditPersonSheetContent
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsHistoryScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
@@ -102,6 +103,32 @@ class SharedCostsScreenshotTest {
                 onBack = {},
                 onSwitchToCustom = {},
                 onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun shared_summary_saved() {
+        capture {
+            SharedCostsSummaryScreen(
+                state = previewSharedSummary,
+                onBack = {},
+                onSwitchToCustom = {},
+                onSave = {},
+                readOnly = true,
+                onMore = {},
+            )
+        }
+    }
+
+    @Test
+    fun shared_actions_sheet() {
+        capture {
+            SharedCostActionsSheetContent(
+                onEdit = {},
+                onArchive = {},
+                onDelete = {},
+                onCancel = {},
             )
         }
     }

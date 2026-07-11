@@ -69,6 +69,13 @@ private class FakeSharedCostRepository(
         return Result.Success(Unit)
     }
 
+    var archivedId: SharedCostId? = null
+
+    override suspend fun archive(id: SharedCostId): Result<Unit> {
+        archivedId = id
+        return Result.Success(Unit)
+    }
+
     override suspend fun getSettlement(sharedCostId: SharedCostId): Result<SettlementSummary> = Result.Error("not implemented")
 
     override fun observeAll() = MutableStateFlow<List<SharedCost>>(emptyList()).asStateFlow()
@@ -189,5 +196,18 @@ class DeleteSharedCostUseCaseTest {
             useCase("sc1")
 
             assertEquals(SharedCostId("sc1"), repo.deletedId)
+        }
+}
+
+class ArchiveSharedCostUseCaseTest {
+    @Test
+    fun invoke_archivesSharedCostById() =
+        runTest {
+            val repo = FakeSharedCostRepository()
+            val useCase = ArchiveSharedCostUseCase(repo)
+
+            useCase("sc1")
+
+            assertEquals(SharedCostId("sc1"), repo.archivedId)
         }
 }

@@ -52,6 +52,7 @@
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val updated_at: Long</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val currency_code: String</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val custom_shares_json: String?</ID>
+    <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val is_archived: Long</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val participants_json: String</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val recorded_at: Long</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val total_cents: Long</ID>
@@ -101,6 +102,7 @@
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$updated_at: Long</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$currency_code: String</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$custom_shares_json: String?</ID>
+    <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$is_archived: Long</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$participants_json: String</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$recorded_at: Long</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$total_cents: Long</ID>
@@ -115,7 +117,7 @@
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( id: String, amount_cents: Long, currency_code: String, home_amount_cents: Long?, category_id: String, type: Long, note: String?, recorded_at: Long, updated_at: Long, tag_type: String?, tag_id: String?, integrity_algo: String, integrity_hash: String, home_currency_code: String?, )</ID>
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$( public val categoryId: String?, public val fromMillis: Long?, public val toMillis: Long?, public val query: String?, public val beforeRecordedAt: Long?, public val beforeId: String?, public val limit: Long, mapper: (SqlCursor) -&gt; T, )</ID>
     <ID>LongParameterList:ProExpenseStorage.kt$ProExpenseStorage$( val database: ProExpenseDatabase, val appMetaStore: AppMetaLocalStore, private val dispatcher: CoroutineDispatcher, val financeRecordRepository: FinanceRecordRepository, val categoryRepository: CategoryRepository, val eventRepository: EventRepository, val debtRepository: DebtRepository, val budgetRepository: BudgetRepository, val lockoutRepository: LockoutRepository, val securityStateReader: SecurityStateReader, val currencySettingsRepository: CurrencySettingsRepository, val sharedCostRepository: SharedCostRepository, val importExportRepository: ImportExportRepository, val clearDataRepository: ClearDataRepository, val profileRepository: ProfileRepository, val localeRepository: LocaleRepository, val defaultCategoryRepository: DefaultCategoryRepository, val themeRepository: ThemeRepository, )</ID>
-    <ID>LongParameterList:SharedCostQueries.kt$SharedCostQueries$( id: String, title: String, total_cents: Long, currency_code: String, recorded_at: Long, participants_json: String, custom_shares_json: String?, )</ID>
+    <ID>LongParameterList:SharedCostQueries.kt$SharedCostQueries$( id: String, title: String, total_cents: Long, currency_code: String, recorded_at: Long, participants_json: String, custom_shares_json: String?, is_archived: Long, )</ID>
     <ID>LoopWithTooManyJumpStatements:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$for</ID>
     <ID>LoopWithTooManyJumpStatements:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$while</ID>
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$10</ID>
@@ -214,6 +216,7 @@
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$8</ID>
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$9</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$1_521_565_911</ID>
+    <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$1_877_127_064</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$20_030_889</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$217_219_767</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$3</ID>
@@ -222,6 +225,7 @@
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$6</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$629_839_896</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$7</ID>
+    <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$8</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries.SelectSharedCostByIdQuery$1_344_282_580</ID>
     <ID>MagicNumber:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$10</ID>
     <ID>MagicNumber:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$11</ID>
@@ -244,8 +248,8 @@
     <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordByIdQuery$"""SELECT finance_record.id, finance_record.amount_cents, finance_record.currency_code, finance_record.home_amount_cents, finance_record.category_id, finance_record.type, finance_record.note, finance_record.recorded_at, finance_record.updated_at, finance_record.tag_type, finance_record.tag_id, finance_record.integrity_algo, finance_record.integrity_hash, finance_record.home_currency_code FROM finance_record WHERE id = ?"""</ID>
     <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries.SumAmountByEventLinkQuery$"""SELECT COALESCE(SUM(COALESCE(home_amount_cents, amount_cents)), 0) FROM finance_record WHERE tag_type = 'EVENT' AND tag_id ${ if (tag_id == null) "IS" else "=" } ?"""</ID>
     <ID>MaxLineLength:SharedCostMapper.kt$""""${participantId.value}":{"cents":${money.amount.valueInCents},"code":"${money.currency.code}"}"""</ID>
-    <ID>MaxLineLength:SharedCostQueries.kt$SharedCostQueries$"SELECT shared_cost.id, shared_cost.title, shared_cost.total_cents, shared_cost.currency_code, shared_cost.recorded_at, shared_cost.participants_json, shared_cost.custom_shares_json FROM shared_cost ORDER BY recorded_at DESC"</ID>
-    <ID>MaxLineLength:SharedCostQueries.kt$SharedCostQueries.SelectSharedCostByIdQuery$"""SELECT shared_cost.id, shared_cost.title, shared_cost.total_cents, shared_cost.currency_code, shared_cost.recorded_at, shared_cost.participants_json, shared_cost.custom_shares_json FROM shared_cost WHERE id = ?"""</ID>
+    <ID>MaxLineLength:SharedCostQueries.kt$SharedCostQueries$"SELECT shared_cost.id, shared_cost.title, shared_cost.total_cents, shared_cost.currency_code, shared_cost.recorded_at, shared_cost.participants_json, shared_cost.custom_shares_json, shared_cost.is_archived FROM shared_cost WHERE is_archived = 0 ORDER BY recorded_at DESC"</ID>
+    <ID>MaxLineLength:SharedCostQueries.kt$SharedCostQueries.SelectSharedCostByIdQuery$"""SELECT shared_cost.id, shared_cost.title, shared_cost.total_cents, shared_cost.currency_code, shared_cost.recorded_at, shared_cost.participants_json, shared_cost.custom_shares_json, shared_cost.is_archived FROM shared_cost WHERE id = ?"""</ID>
     <ID>MaxLineLength:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$"""{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"homeMoney":{"cents":${record.homeCurrencyMoney.amount.valueInCents},"code":"${record.homeCurrencyMoney.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""</ID>
     <ID>MaxLineLength:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$val header = "id,money_cents,money_code,category_id,type,note,recorded_at,link_type,link_id,home_money_cents,home_money_code"</ID>
     <ID>NestedBlockDepth:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$private fun parseJson(content: String): List&lt;FinanceRecord&gt;</ID>
@@ -257,6 +261,7 @@
     <ID>TooGenericExceptionThrown:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$throw Exception(it.message, it.cause)</ID>
     <ID>TooManyFunctions:FinanceRecordQueries.kt$FinanceRecordQueries : TransacterImpl</ID>
     <ID>TooManyFunctions:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository : ImportExportRepository</ID>
+    <ID>TooManyFunctions:SqlDelightSharedCostRepository.kt$SqlDelightSharedCostRepository : SharedCostRepository</ID>
     <ID>UseCheckOrError:SqlDelightSharedCostRepository.kt$SqlDelightSharedCostRepository$throw IllegalStateException("No share calculated for participant ${participant.id}")</ID>
   </CurrentIssues>
 </SmellBaseline>

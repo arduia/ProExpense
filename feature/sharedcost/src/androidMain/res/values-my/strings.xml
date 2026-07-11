@@ -54,4 +54,13 @@
     <string name="shared_custom_shares_label">စိတ်ကြိုက် ဝေစုများ</string>
     <string name="shared_custom_matches_total">စုစုပေါင်းနှင့် ကိုက်ညီသည်</string>
     <string name="shared_custom_vs_total">စုစုပေါင်း %1$s နှင့် နှိုင်းယှဉ်</string>
+    <string name="shared_actions_edit_subtitle">ပမာဏ၊ လူဦးရေ (သို့) မှတ်စုများကို ပြောင်းလဲရန်</string>
+    <string name="shared_actions_archive">သိမ်းဆည်းရန်</string>
+    <string name="shared_actions_archive_subtitle">ဒီခွဲဝေမှုကို သင့်မှတ်တမ်းမှ ဖျောက်ထားမည်</string>
+    <string name="shared_actions_delete_subtitle">ခွဲဝေမှုနှင့် သိမ်းဆည်းထားသော အသုံးစရိတ်ကို ဖယ်ရှားမည်</string>
+    <string name="shared_actions_cancel">မလုပ်တော့ပါ</string>
+    <string name="shared_archive_title">ဒီခွဲဝေမှုကို သိမ်းဆည်းမလား?</string>
+    <string name="shared_archive_body">"%1$s" ကို သင့်ဝေမျှသောကုန်ကျစရိတ် မှတ်တမ်းမှ ဖျောက်ထားမည်။ မှတ်တမ်းနှင့် အစီရင်ခံစာများတွင် ဆက်လက်ပေါ်နေမည်။</string>
+    <string name="shared_archive_confirm">သိမ်းဆည်းရန်</string>
+    <string name="shared_archive_cancel">မလုပ်တော့ပါ</string>
 </resources>

@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.SplitStrategy
+import com.arduia.expense.feature.sharedcost.ArchiveSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.CreateSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.DeleteSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.R
@@ -49,6 +50,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         val createSharedCost: CreateSharedCostUseCase = koinInject()
         val updateSharedCost: UpdateSharedCostUseCase = koinInject()
         val deleteSharedCost: DeleteSharedCostUseCase = koinInject()
+        val archiveSharedCost: ArchiveSharedCostUseCase = koinInject()
         val variesLabel = stringResource(R.string.shared_per_person_varies)
 
         // null (not emptyList()) until the first Flow emission arrives, so the history list
@@ -88,6 +90,9 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             },
             onDeleteSplit = { id ->
                 scope.launch { deleteSharedCost(id) }
+            },
+            onArchiveSplit = { id ->
+                scope.launch { archiveSharedCost(id) }
             },
             savedToastMessage = stringResource(R.string.shared_split_saved_toast),
             modifier = modifier,

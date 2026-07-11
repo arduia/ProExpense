@@ -5,15 +5,16 @@ CREATE TABLE shared_cost (
     currency_code TEXT NOT NULL,
     recorded_at INTEGER NOT NULL,
     participants_json TEXT NOT NULL,
-    custom_shares_json TEXT
+    custom_shares_json TEXT,
+    is_archived INTEGER NOT NULL DEFAULT 0
 );
 
 insertSharedCost:
-INSERT OR REPLACE INTO shared_cost(id, title, total_cents, currency_code, recorded_at, participants_json, custom_shares_json)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO shared_cost(id, title, total_cents, currency_code, recorded_at, participants_json, custom_shares_json, is_archived)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 selectAllSharedCosts:
-SELECT * FROM shared_cost ORDER BY recorded_at DESC;
+SELECT * FROM shared_cost WHERE is_archived = 0 ORDER BY recorded_at DESC;
 
 selectSharedCostById:
 SELECT * FROM shared_cost WHERE id = ?;
@@ -23,3 +24,6 @@ DELETE FROM shared_cost;
 
 deleteSharedCost:
 DELETE FROM shared_cost WHERE id = ?;
+
+archiveSharedCost:
+UPDATE shared_cost SET is_archived = 1 WHERE id = ?;
