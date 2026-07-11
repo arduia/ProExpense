@@ -31,6 +31,7 @@ import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.expenseCategoryLabel
 import com.arduia.expense.ui.theme.ProArtboard
@@ -61,6 +62,9 @@ fun JournalFlow(
     onUpdateNote: (String, String) -> Unit = { _, _ -> },
     onEditRecord: (String) -> Unit = {},
     onOpenLinkedEvent: (String) -> Unit = {},
+    // Split/Debt-kind rows open their own feature's detail screen instead of the sheet below.
+    onOpenSplit: (String) -> Unit = {},
+    onOpenDebt: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -134,7 +138,9 @@ fun JournalFlow(
                     state = listState,
                     onQueryChange = onQueryChange,
                     onFilterSelected = onFilterSelected,
-                    onRowClick = { selectedRowId = it.id },
+                    onRowClick = { row ->
+                        handleJournalRowClick(row, onOpenSplit, onOpenDebt) { selectedRowId = it }
+                    },
                     onRowLongPress = { row ->
                         quickNoteRow = row
                         // Pre-fill with the existing note (US-HIS-4) — an empty text field would
@@ -240,6 +246,19 @@ fun JournalFlow(
             onClear = { onDateRangeChange(null, null) },
             onDismiss = { showDateRangeSheet = false },
         )
+    }
+}
+
+private fun handleJournalRowClick(
+    row: ProTransactionRowModel,
+    onOpenSplit: (String) -> Unit,
+    onOpenDebt: (String) -> Unit,
+    onSelectRow: (String) -> Unit,
+) {
+    when (row.rowKind) {
+        ProRowKind.SPLIT -> row.linkedId?.let(onOpenSplit) ?: onSelectRow(row.id)
+        ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED -> row.linkedId?.let(onOpenDebt) ?: onSelectRow(row.id)
+        ProRowKind.EXPENSE, ProRowKind.INCOME -> onSelectRow(row.id)
     }
 }
 

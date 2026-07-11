@@ -47,6 +47,8 @@
 <string name="debt_person_placeholder">Name</string>
 <string name="debt_note_label">NOTE · OPTIONAL</string>
 <string name="debt_note_placeholder">Add a note</string>
+<string name="debt_record_as_transaction_label">Also record as expense/income</string>
+<string name="debt_record_as_transaction_caption">Counts this record toward your spend/income totals, same as a regular entry</string>
 <string name="debt_person_counter">%1$d/%2$d</string>
 <string name="debt_currency_usd">USD</string>
 <string name="debt_save_record">Save record</string>

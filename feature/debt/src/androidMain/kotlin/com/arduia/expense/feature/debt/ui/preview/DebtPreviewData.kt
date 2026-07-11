@@ -19,6 +19,11 @@ data class DebtRecordUi(
     val settled: Boolean = false,
     val amountCents: Long = 0,
     val dueEpochMillis: Long? = null,
+    /** When this record was created — distinct from [dueEpochMillis], which is an optional
+     * reference-only due date. Used for Detail's "Date Recorded" label, not [dateLabel] (which is
+     * actually the due-date/"No due date" summary shown in the list row). */
+    val recordedAtEpochMillis: Long = 0L,
+    val recordAsTransaction: Boolean = false,
 ) {
     val initial: String =
         name
@@ -74,6 +79,7 @@ data class DebtAddFormState(
     val editingId: String? = null,
     val dueEpochMillis: Long? = null,
     val note: String = "",
+    val recordAsTransaction: Boolean = false,
 ) {
     val canSave: Boolean
         get() = person.isNotBlank() && (amountRaw.toDoubleOrNull() ?: 0.0) > 0.0

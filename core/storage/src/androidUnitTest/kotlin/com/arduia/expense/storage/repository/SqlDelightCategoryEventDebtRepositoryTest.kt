@@ -13,12 +13,25 @@ import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.toCode
+import com.arduia.expense.storage.db.ProExpenseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+
+private fun debtRepo(database: ProExpenseDatabase): SqlDelightDebtRepository {
+    val financeRecordRepository =
+        SqlDelightFinanceRecordRepository(
+            queries = database.financeRecordQueries,
+            eventQueries = database.eventQueries,
+            dispatcher = Dispatchers.Unconfined,
+        )
+    return SqlDelightDebtRepository(database.debtQueries, financeRecordRepository, Dispatchers.Unconfined)
+}
 
 class SqlDelightCategoryEventDebtRepositoryTest {
     private val home = CurrencyCode("USD")
@@ -173,7 +186,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
     @Test
     fun debt_findByPersonName_returnsMatchingRows() =
         runTest {
-            val repo = SqlDelightDebtRepository(inMemoryDatabase().debtQueries, Dispatchers.Unconfined)
+            val repo = debtRepo(inMemoryDatabase())
             repo.upsert(debt("d1", "Alice"))
             repo.upsert(debt("d2", "Bob"))
 
@@ -185,7 +198,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
     @Test
     fun debt_observeAll_emitsUpsertedRowsOrderedByPerson() =
         runTest {
-            val repo = SqlDelightDebtRepository(inMemoryDatabase().debtQueries, Dispatchers.Unconfined)
+            val repo = debtRepo(inMemoryDatabase())
             repo.upsert(debt("d1", "Bob"))
             repo.upsert(debt("d2", "Alice"))
 
@@ -231,7 +244,7 @@ class SqlDelightCategoryEventDebtRepositoryTest {
     fun debt_observeAll_skipsRowWithUnmappableDirection_insteadOfThrowing() =
         runTest {
             val database = inMemoryDatabase()
-            val repo = SqlDelightDebtRepository(database.debtQueries, Dispatchers.Unconfined)
+            val repo = debtRepo(database)
             repo.upsert(debt("d1", "Alice"))
             database.debtQueries.insertDebt(
                 id = "d-bad",
@@ -242,21 +255,88 @@ class SqlDelightCategoryEventDebtRepositoryTest {
                 due_epoch_millis = null,
                 is_settled = 0L,
                 note = null,
+                recorded_at = 0,
+                record_as_transaction = 0L,
             )
 
             val all = repo.observeAll().first()
             assertEquals(listOf("d1"), all.map { it.id.value })
         }
 
+    @Test
+    fun debt_upsert_withRecordAsTransactionTrue_writesLinkedFinanceRecord() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = debtRepo(database)
+
+            repo.upsert(debt("d1", "Alice", direction = DebtDirection.OWED_TO_ME, recordAsTransaction = true))
+
+            val record = database.financeRecordQueries.selectRecordById("d1").executeAsOneOrNull()
+            assertNotNull(record)
+            assertEquals(1_000L, record.amount_cents)
+            assertEquals(RecordType.EXPENSE.toCode(), record.type)
+        }
+
+    @Test
+    fun debt_upsert_iOweDirection_writesLinkedRecordAsIncome() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = debtRepo(database)
+
+            repo.upsert(debt("d1", "Alice", direction = DebtDirection.I_OWE, recordAsTransaction = true))
+
+            val record = database.financeRecordQueries.selectRecordById("d1").executeAsOneOrNull()
+            assertEquals(RecordType.INCOME.toCode(), record?.type)
+        }
+
+    @Test
+    fun debt_upsert_withRecordAsTransactionFalse_writesNoLinkedFinanceRecord() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = debtRepo(database)
+
+            repo.upsert(debt("d1", "Alice", recordAsTransaction = false))
+
+            assertTrue(database.financeRecordQueries.selectRecordById("d1").executeAsOneOrNull() == null)
+        }
+
+    @Test
+    fun debt_upsert_togglingRecordAsTransactionOff_removesAPreviouslyLinkedRecord() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = debtRepo(database)
+            repo.upsert(debt("d1", "Alice", recordAsTransaction = true))
+            assertTrue(database.financeRecordQueries.selectRecordById("d1").executeAsOneOrNull() != null)
+
+            repo.upsert(debt("d1", "Alice", recordAsTransaction = false))
+
+            assertTrue(database.financeRecordQueries.selectRecordById("d1").executeAsOneOrNull() == null)
+        }
+
+    @Test
+    fun debt_delete_alsoDeletesTheLinkedFinanceRecord() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = debtRepo(database)
+            repo.upsert(debt("d1", "Alice", recordAsTransaction = true))
+
+            repo.delete(DebtId("d1"))
+
+            assertTrue(database.financeRecordQueries.selectRecordById("d1").executeAsOneOrNull() == null)
+        }
+
     private fun debt(
         id: String,
         person: String,
+        direction: DebtDirection = DebtDirection.I_OWE,
+        recordAsTransaction: Boolean = false,
     ) = Debt(
         id = DebtId(id),
         personName = person,
         money = Money(Amount(1_000), home),
-        direction = DebtDirection.I_OWE,
+        direction = direction,
         dueEpochMillis = null,
         isSettled = false,
+        recordAsTransaction = recordAsTransaction,
     )
 }

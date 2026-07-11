@@ -34,6 +34,7 @@ interface SharedCostFeatureEntry {
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
         homeCurrencyCode: String = "USD",
+        initialViewingId: String? = null,
     )
 }
 
@@ -44,6 +45,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         modifier: Modifier,
         homeCurrencySymbol: String,
         homeCurrencyCode: String,
+        initialViewingId: String?,
     ) {
         val scope = rememberCoroutineScope()
         val sharedCostRepository: SharedCostRepository = koinInject()
@@ -97,6 +99,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             savedToastMessage = stringResource(R.string.shared_split_saved_toast),
             modifier = modifier,
             homeCurrencySymbol = homeCurrencySymbol,
+            initialViewingId = initialViewingId,
         )
     }
 }

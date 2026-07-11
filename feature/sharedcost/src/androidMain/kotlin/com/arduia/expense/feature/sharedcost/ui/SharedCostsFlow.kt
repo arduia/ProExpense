@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -199,6 +200,9 @@ fun SharedCostsFlow(
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
     homeCurrencySymbol: String = "$",
+    // Deep-open a specific split's read-only Summary on first composition, once its detail has
+    // loaded — set by Recents/Journal when a Split-kind row is tapped, bypassing History.
+    initialViewingId: String? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -237,6 +241,21 @@ fun SharedCostsFlow(
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
     val currentStep = SharedCostStep.valueOf(step)
+
+    // sharedCostDetails loads asynchronously (Flow-backed) — waits for initialViewingId's detail
+    // to actually arrive rather than seeding off a still-empty map on the first frame. Guarded by
+    // hasAppliedInitialViewing so this fires once, not every time sharedCostDetails refreshes
+    // (the user may navigate back to History afterward without snapping back to Summary).
+    var hasAppliedInitialViewing by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(initialViewingId, sharedCostDetails) {
+        if (hasAppliedInitialViewing || initialViewingId == null) return@LaunchedEffect
+        val detail = sharedCostDetails[initialViewingId] ?: return@LaunchedEffect
+        viewingId = initialViewingId
+        draft = detail.toDraft(nameTemplate, firstPersonName)
+        visitedIndices = emptySet()
+        step = SharedCostStep.Summary.name
+        hasAppliedInitialViewing = true
+    }
 
     fun updateParticipantName(
         index: Int,

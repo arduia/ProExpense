@@ -1,5 +1,9 @@
 -- currency_code: closes gap where Debt.money: Money already carries currency but table didn't store it
 -- direction: debt direction code (OWED_TO_ME=0, I_OWE=1) — explicit codes, never Kotlin .ordinal
+-- recorded_at: creation timestamp (added in 14.sqm) — pre-existing rows default to 0 (no real
+-- creation time to recover), sorting them to the very back of any chronological merge.
+-- record_as_transaction: user opt-in (added in 14.sqm) — when true, this debt also has a linked
+-- FinanceRecord (RecordLink.ToDebt) counting toward spend/income totals, mirroring Shared Costs.
 CREATE TABLE debt_record (
     id TEXT NOT NULL PRIMARY KEY,
     person_name TEXT NOT NULL,
@@ -8,12 +12,16 @@ CREATE TABLE debt_record (
     direction INTEGER NOT NULL,
     due_epoch_millis INTEGER,
     is_settled INTEGER NOT NULL,
-    note TEXT
+    note TEXT,
+    recorded_at INTEGER NOT NULL DEFAULT 0,
+    record_as_transaction INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE INDEX debt_record_recorded_at_idx ON debt_record(recorded_at DESC, id DESC);
+
 insertDebt:
-INSERT OR REPLACE INTO debt_record(id, person_name, amount_cents, currency_code, direction, due_epoch_millis, is_settled, note)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO debt_record(id, person_name, amount_cents, currency_code, direction, due_epoch_millis, is_settled, note, recorded_at, record_as_transaction)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteDebt:
 DELETE FROM debt_record WHERE id = ?;

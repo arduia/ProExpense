@@ -16,12 +16,16 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.Debt
+import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.FinanceRecord
+import com.arduia.expense.domain.RecordKind
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
+import com.arduia.expense.domain.kind
+import com.arduia.expense.domain.linkedRowId
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.history.DeleteRecordUseCase
 import com.arduia.expense.feature.history.HistoryRepository
@@ -32,9 +36,11 @@ import com.arduia.expense.feature.history.UpdateRecordNoteUseCase
 import com.arduia.expense.feature.history.ui.JournalFlow
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
+import com.arduia.expense.feature.history.visibleUnrecordedDebts
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.PlatformDateFormatter
+import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.expenseCategoryLabel
@@ -72,6 +78,10 @@ interface HistoryFeatureEntry {
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
         onOpenLinkedEvent: (String) -> Unit = {},
+        // Split/Debt-kind rows navigate straight to their own feature's detail screen instead of
+        // the generic Journal Detail sheet — see ProRowKind.
+        onOpenSplit: (String) -> Unit = {},
+        onOpenDebt: (String) -> Unit = {},
     )
 }
 
@@ -97,6 +107,8 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         modifier: Modifier,
         homeCurrencySymbol: String,
         onOpenLinkedEvent: (String) -> Unit,
+        onOpenSplit: (String) -> Unit,
+        onOpenDebt: (String) -> Unit,
     ) {
         state as JournalTabStateImpl
         val scope = rememberCoroutineScope()
@@ -203,8 +215,24 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         // Grouped from whatever's been loaded so far (bounded by scroll depth), never the full
         // table — search/category/date-range filtering already happened in SQL via `filter`.
         val days =
-            remember(pager.records, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol) {
-                groupByDay(pager.records, eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles, homeCurrencySymbol)
+            remember(
+                pager.records,
+                pager.endReached,
+                debts,
+                eventNames,
+                debtNames,
+                sharedCostNames,
+                eventSubtitles,
+                debtSubtitles,
+                homeCurrencySymbol,
+            ) {
+                groupByDay(
+                    pager.records,
+                    debts,
+                    pager.endReached,
+                    JournalLinkLabels(eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles),
+                    homeCurrencySymbol,
+                )
             }
 
         JournalFlow(
@@ -236,6 +264,8 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
             },
             onEditRecord = onEditRecord,
             onOpenLinkedEvent = onOpenLinkedEvent,
+            onOpenSplit = onOpenSplit,
+            onOpenDebt = onOpenDebt,
             modifier = modifier,
         )
     }
@@ -319,52 +349,122 @@ private class JournalPager(
     }
 }
 
+private fun RecordKind.toProRowKind(): ProRowKind =
+    when (this) {
+        RecordKind.EXPENSE -> ProRowKind.EXPENSE
+        RecordKind.INCOME -> ProRowKind.INCOME
+        RecordKind.SPLIT -> ProRowKind.SPLIT
+        RecordKind.DEBT_LENT -> ProRowKind.DEBT_LENT
+        RecordKind.DEBT_OWED -> ProRowKind.DEBT_OWED
+    }
+
+/** Shared timestamp so [FinanceRecord] and toggle-off [Debt] rows can be merged and sorted together. */
+private data class JournalEntry(
+    val recordedAtEpochMillis: Long,
+    val row: ProTransactionRowModel,
+)
+
+/** Bundles the tag-label lookup maps so they cost one parameter, not five, in call sites below. */
+private data class JournalLinkLabels(
+    val eventNames: Map<String, String>,
+    val debtNames: Map<String, String>,
+    val sharedCostNames: Map<String, String>,
+    val eventSubtitles: Map<String, String>,
+    val debtSubtitles: Map<String, String>,
+)
+
 private fun groupByDay(
     records: List<FinanceRecord>,
-    eventNames: Map<String, String>,
-    debtNames: Map<String, String>,
-    sharedCostNames: Map<String, String>,
-    eventSubtitles: Map<String, String>,
-    debtSubtitles: Map<String, String>,
+    debts: List<Debt>,
+    recordsFullyLoaded: Boolean,
+    linkLabels: JournalLinkLabels,
     homeCurrencySymbol: String,
 ): List<JournalDayUi> {
-    val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
+    val recordEntries =
+        records.map { record ->
+            JournalEntry(record.recordedAtEpochMillis, record.toRowModel(linkLabels))
+        }
+    // A toggle-on debt already has a linked FinanceRecord (RecordLink.ToDebt, same id as the
+    // debt) inside `records` above — visibleUnrecordedDebts only returns toggle-off ones, so a
+    // debt never renders twice.
+    val oldestLoadedRecordMillis = records.minOfOrNull { it.recordedAtEpochMillis }
+    val debtEntries =
+        visibleUnrecordedDebts(debts, oldestLoadedRecordMillis, recordsFullyLoaded)
+            .map { debt -> JournalEntry(debt.recordedAtEpochMillis, debt.toDebtRowModel()) }
+
+    val recordTotalCentsByDay =
+        records
+            .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
+            .mapValues { (_, dayRecords) -> dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents } }
+
+    val sorted = (recordEntries + debtEntries).sortedByDescending { it.recordedAtEpochMillis }
     return sorted
         .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
         .toSortedMap(compareByDescending { it })
-        .map { (key, dayRecords) ->
-            val totalCents = dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+        .map { (key, dayEntries) ->
             JournalDayUi(
                 id = key,
-                title = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
-                total = AmountInput.formatMoney(totalCents, homeCurrencySymbol),
-                rows =
-                    dayRecords.map { record ->
-                        record.toRowModel(eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles)
-                    },
+                title = PlatformDateFormatter.dayLabel(dayEntries.first().recordedAtEpochMillis),
+                // Only the FinanceRecord subset counts toward the day total — a toggle-off debt is
+                // visible but never moves it.
+                total = AmountInput.formatMoney(recordTotalCentsByDay[key] ?: 0L, homeCurrencySymbol),
+                rows = dayEntries.map { it.row },
             )
         }
 }
 
-private fun FinanceRecord.toRowModel(
-    eventNames: Map<String, String>,
-    debtNames: Map<String, String>,
-    sharedCostNames: Map<String, String>,
-    eventSubtitles: Map<String, String>,
-    debtSubtitles: Map<String, String>,
-): ProTransactionRowModel =
-    ProTransactionRowModel(
+private fun FinanceRecord.toRowModel(linkLabels: JournalLinkLabels): ProTransactionRowModel {
+    val rowKind = kind().toProRowKind()
+    val linkedId = linkedRowId()
+    // The row's own badge/note already convey "this is a split/debt" — an "@ tag" chip repeating
+    // the same title underneath would be redundant (unlike a plain expense manually tagged to an
+    // event/debt, where the tag is genuinely secondary context).
+    val suppressTag = rowKind == ProRowKind.SPLIT || rowKind == ProRowKind.DEBT_LENT || rowKind == ProRowKind.DEBT_OWED
+    val tagLabel =
+        if (suppressTag) {
+            null
+        } else {
+            link.tagLabel(linkLabels.eventNames, linkLabels.debtNames, linkLabels.sharedCostNames)
+        }
+    val tagSubtitleLabel =
+        if (suppressTag) {
+            null
+        } else {
+            link.tagLabel(linkLabels.eventSubtitles, linkLabels.debtSubtitles, emptyMap())
+        }
+    return ProTransactionRowModel(
         id = id.value,
         categoryId = categoryId.value,
         note = note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) },
         meta = "${expenseCategoryLabel(categoryId.value)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
         amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
         isIncome = type == RecordType.INCOME,
-        tag = link.tagLabel(eventNames, debtNames, sharedCostNames),
-        tagSubtitle = link.tagLabel(eventSubtitles, debtSubtitles, emptyMap()),
+        tag = tagLabel,
+        tagSubtitle = tagSubtitleLabel,
         rawNote = note?.trim(),
         detailDateTimeLabel =
             "${PlatformDateFormatter.dayLabel(recordedAtEpochMillis)} · " +
                 PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
         linkedEventId = (link as? RecordLink.ToEvent)?.eventId?.value,
+        rowKind = rowKind,
+        linkedId = linkedId,
     )
+}
+
+private fun Debt.toDebtRowModel(): ProTransactionRowModel {
+    val rowKind = if (direction == DebtDirection.OWED_TO_ME) ProRowKind.DEBT_LENT else ProRowKind.DEBT_OWED
+    val actionLabel = if (direction == DebtDirection.OWED_TO_ME) "Lent" else "Borrowed"
+    return ProTransactionRowModel(
+        id = id.value,
+        categoryId = "",
+        note = personName,
+        meta = "$actionLabel · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
+        amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
+        rawNote = note,
+        detailDateTimeLabel =
+            "${PlatformDateFormatter.dayLabel(recordedAtEpochMillis)} · " +
+                PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
+        rowKind = rowKind,
+        linkedId = id.value,
+    )
+}

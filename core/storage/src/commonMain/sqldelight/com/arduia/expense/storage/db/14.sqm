@@ -1,0 +1,3 @@
+ALTER TABLE debt_record ADD COLUMN recorded_at INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE debt_record ADD COLUMN record_as_transaction INTEGER NOT NULL DEFAULT 0;
+CREATE INDEX debt_record_recorded_at_idx ON debt_record(recorded_at DESC, id DESC);

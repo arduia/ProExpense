@@ -123,6 +123,7 @@ class DebtScreenshotTest {
                         onPickDate = {},
                         onPickDue = {},
                         onNoteChange = {},
+                        onRecordAsTransactionChange = {},
                         onSave = {},
                     )
                 }

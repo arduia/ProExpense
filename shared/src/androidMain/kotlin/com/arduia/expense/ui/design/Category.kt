@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.arduia.expense.ui.theme.CategoryColorPair
+import com.arduia.expense.ui.theme.ProColors
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -31,9 +33,15 @@ fun LogCategoryBadge(
     // (US-CAT-2) is the real lookup key. Blank/null falls back to categoryId (default categories,
     // whose id already is the catalogue key).
     iconId: String? = null,
+    // Split/Debt rows render a fixed glyph+tint identifying their kind instead of a category
+    // lookup — set both together (see [rowKindBadgeOverride]) or leave both null for the default
+    // category-driven badge.
+    overrideGlyph: ProIconGlyph? = null,
+    overrideColors: CategoryColorPair? = null,
 ) {
     val catalogueKey = iconId?.takeIf { it.isNotBlank() } ?: categoryId
-    val colors = ProExpenseTheme.colors.category(catalogueKey)
+    val colors = overrideColors ?: ProExpenseTheme.colors.category(catalogueKey)
+    val glyph = overrideGlyph ?: categoryIcon(catalogueKey)
     val iconSize = size * 0.52f
     Box(
         modifier =
@@ -44,13 +52,26 @@ fun LogCategoryBadge(
         contentAlignment = Alignment.Center,
     ) {
         ProIcon(
-            glyph = categoryIcon(catalogueKey),
+            glyph = glyph,
             contentDescription = null,
             tint = colors.accent,
             size = iconSize,
         )
     }
 }
+
+/** [ProIconGlyph] + [CategoryColorPair] pair for a non-category-driven row kind, or `null` for the
+ * default category badge (plain [ProRowKind.EXPENSE]/[ProRowKind.INCOME]). */
+fun rowKindBadgeOverride(
+    rowKind: ProRowKind,
+    colors: ProColors,
+): Pair<ProIconGlyph, CategoryColorPair>? =
+    when (rowKind) {
+        ProRowKind.SPLIT -> ProIconGlyph.FeatSplit to CategoryColorPair(accent = colors.tagDeep, tint = colors.tagTint)
+        ProRowKind.DEBT_LENT -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)
+        ProRowKind.DEBT_OWED -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)
+        ProRowKind.EXPENSE, ProRowKind.INCOME -> null
+    }
 
 @Composable
 fun CategoryChip(

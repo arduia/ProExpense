@@ -30,6 +30,8 @@
     <ID>ConstructorParameterNaming:Debt_record.kt$Debt_record$public val due_epoch_millis: Long?</ID>
     <ID>ConstructorParameterNaming:Debt_record.kt$Debt_record$public val is_settled: Long</ID>
     <ID>ConstructorParameterNaming:Debt_record.kt$Debt_record$public val person_name: String</ID>
+    <ID>ConstructorParameterNaming:Debt_record.kt$Debt_record$public val record_as_transaction: Long</ID>
+    <ID>ConstructorParameterNaming:Debt_record.kt$Debt_record$public val recorded_at: Long</ID>
     <ID>ConstructorParameterNaming:Event_record.kt$Event_record$public val budget_cents: Long</ID>
     <ID>ConstructorParameterNaming:Event_record.kt$Event_record$public val cache_updated_at: Long</ID>
     <ID>ConstructorParameterNaming:Event_record.kt$Event_record$public val cached_spent_cents: Long</ID>
@@ -81,6 +83,8 @@
     <ID>FunctionParameterNaming:DebtQueries.kt$DebtQueries$due_epoch_millis: Long?</ID>
     <ID>FunctionParameterNaming:DebtQueries.kt$DebtQueries$is_settled: Long</ID>
     <ID>FunctionParameterNaming:DebtQueries.kt$DebtQueries$person_name: String</ID>
+    <ID>FunctionParameterNaming:DebtQueries.kt$DebtQueries$record_as_transaction: Long</ID>
+    <ID>FunctionParameterNaming:DebtQueries.kt$DebtQueries$recorded_at: Long</ID>
     <ID>FunctionParameterNaming:EventQueries.kt$EventQueries$budget_cents: Long</ID>
     <ID>FunctionParameterNaming:EventQueries.kt$EventQueries$cache_updated_at: Long</ID>
     <ID>FunctionParameterNaming:EventQueries.kt$EventQueries$cached_spent_cents: Long</ID>
@@ -110,7 +114,7 @@
     <ID>LongMethod:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$private fun migrateInternal( driver: SqlDriver, oldVersion: Long, newVersion: Long, ): QueryResult.Value&lt;Unit&gt;</ID>
     <ID>LongParameterList:AppMetaQueries.kt$AppMetaQueries$( id: Long?, monthly_budget_cents: Long?, home_currency_code: String, failed_attempt_count: Long, lockout_until: Long?, security_answer_hash: String?, security_question_id: String?, biometric_enrolled: Long, biometric_wrapped_key: ByteArray?, display_name: String, onboarding_completed: Long, pin_hash: String?, language_tag: String, default_category_id: String?, theme_mode: String, )</ID>
     <ID>LongParameterList:CategoryQueries.kt$CategoryQueries$( id: String, name: String, is_custom: Long, sort_order: Long, icon_id: String, type: Long, )</ID>
-    <ID>LongParameterList:DebtQueries.kt$DebtQueries$( id: String, person_name: String, amount_cents: Long, currency_code: String, direction: Long, due_epoch_millis: Long?, is_settled: Long, note: String?, )</ID>
+    <ID>LongParameterList:DebtQueries.kt$DebtQueries$( id: String, person_name: String, amount_cents: Long, currency_code: String, direction: Long, due_epoch_millis: Long?, is_settled: Long, note: String?, recorded_at: Long, record_as_transaction: Long, )</ID>
     <ID>LongParameterList:EventQueries.kt$EventQueries$( id: String, name: String, start_epoch_millis: Long, end_epoch_millis: Long, budget_cents: Long, currency_code: String, status: Long, created_at: Long, cached_spent_cents: Long, cache_updated_at: Long, closed_at_epoch_millis: Long?, )</ID>
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( categoryId: String?, fromMillis: Long?, toMillis: Long?, query: String?, beforeRecordedAt: Long?, beforeId: String?, limit: Long, )</ID>
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( categoryId: String?, fromMillis: Long?, toMillis: Long?, query: String?, beforeRecordedAt: Long?, beforeId: String?, limit: Long, mapper: ( id: String, amount_cents: Long, currency_code: String, home_amount_cents: Long?, category_id: String, type: Long, note: String?, recorded_at: Long, updated_at: Long, tag_type: String?, tag_id: String?, integrity_algo: String, integrity_hash: String, home_currency_code: String?, ) -&gt; T, )</ID>
@@ -144,6 +148,7 @@
     <ID>MagicNumber:CategoryQueries.kt$CategoryQueries$4</ID>
     <ID>MagicNumber:CategoryQueries.kt$CategoryQueries$5</ID>
     <ID>MagicNumber:CategoryQueries.kt$CategoryQueries$6</ID>
+    <ID>MagicNumber:DebtQueries.kt$DebtQueries$10</ID>
     <ID>MagicNumber:DebtQueries.kt$DebtQueries$1_492_958_507</ID>
     <ID>MagicNumber:DebtQueries.kt$DebtQueries$3</ID>
     <ID>MagicNumber:DebtQueries.kt$DebtQueries$4</ID>
@@ -154,6 +159,7 @@
     <ID>MagicNumber:DebtQueries.kt$DebtQueries$7</ID>
     <ID>MagicNumber:DebtQueries.kt$DebtQueries$771_210_679</ID>
     <ID>MagicNumber:DebtQueries.kt$DebtQueries$8</ID>
+    <ID>MagicNumber:DebtQueries.kt$DebtQueries$9</ID>
     <ID>MagicNumber:DebtQueries.kt$DebtQueries.SelectDebtByIdQuery$1_745_564_178</ID>
     <ID>MagicNumber:DebtQueries.kt$DebtQueries.SelectDebtsByPersonQuery$2_035_525_725</ID>
     <ID>MagicNumber:EventQueries.kt$EventQueries$10</ID>
@@ -208,6 +214,7 @@
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$12</ID>
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$13</ID>
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$14</ID>
+    <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$15</ID>
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$3</ID>
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$4</ID>
     <ID>MagicNumber:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$5</ID>
@@ -238,9 +245,9 @@
     <ID>MatchingDeclarationName:FinanceRecordMapper.kt$RecordLinkTag</ID>
     <ID>MaxLineLength:AppMetaQueries.kt$AppMetaQueries$"SELECT app_meta.id, app_meta.monthly_budget_cents, app_meta.home_currency_code, app_meta.failed_attempt_count, app_meta.lockout_until, app_meta.security_answer_hash, app_meta.security_question_id, app_meta.biometric_enrolled, app_meta.biometric_wrapped_key, app_meta.display_name, app_meta.onboarding_completed, app_meta.pin_hash, app_meta.language_tag, app_meta.default_category_id, app_meta.theme_mode FROM app_meta WHERE id = 1"</ID>
     <ID>MaxLineLength:CategoryQueries.kt$CategoryQueries$"SELECT category.id, category.name, category.is_custom, category.sort_order, category.icon_id, category.type FROM category ORDER BY sort_order, name"</ID>
-    <ID>MaxLineLength:DebtQueries.kt$DebtQueries$"SELECT debt_record.id, debt_record.person_name, debt_record.amount_cents, debt_record.currency_code, debt_record.direction, debt_record.due_epoch_millis, debt_record.is_settled, debt_record.note FROM debt_record ORDER BY person_name"</ID>
-    <ID>MaxLineLength:DebtQueries.kt$DebtQueries.SelectDebtByIdQuery$"""SELECT debt_record.id, debt_record.person_name, debt_record.amount_cents, debt_record.currency_code, debt_record.direction, debt_record.due_epoch_millis, debt_record.is_settled, debt_record.note FROM debt_record WHERE id = ?"""</ID>
-    <ID>MaxLineLength:DebtQueries.kt$DebtQueries.SelectDebtsByPersonQuery$"""SELECT debt_record.id, debt_record.person_name, debt_record.amount_cents, debt_record.currency_code, debt_record.direction, debt_record.due_epoch_millis, debt_record.is_settled, debt_record.note FROM debt_record WHERE person_name = ? ORDER BY person_name"""</ID>
+    <ID>MaxLineLength:DebtQueries.kt$DebtQueries$"SELECT debt_record.id, debt_record.person_name, debt_record.amount_cents, debt_record.currency_code, debt_record.direction, debt_record.due_epoch_millis, debt_record.is_settled, debt_record.note, debt_record.recorded_at, debt_record.record_as_transaction FROM debt_record ORDER BY person_name"</ID>
+    <ID>MaxLineLength:DebtQueries.kt$DebtQueries.SelectDebtByIdQuery$"""SELECT debt_record.id, debt_record.person_name, debt_record.amount_cents, debt_record.currency_code, debt_record.direction, debt_record.due_epoch_millis, debt_record.is_settled, debt_record.note, debt_record.recorded_at, debt_record.record_as_transaction FROM debt_record WHERE id = ?"""</ID>
+    <ID>MaxLineLength:DebtQueries.kt$DebtQueries.SelectDebtsByPersonQuery$"""SELECT debt_record.id, debt_record.person_name, debt_record.amount_cents, debt_record.currency_code, debt_record.direction, debt_record.due_epoch_millis, debt_record.is_settled, debt_record.note, debt_record.recorded_at, debt_record.record_as_transaction FROM debt_record WHERE person_name = ? ORDER BY person_name"""</ID>
     <ID>MaxLineLength:EventQueries.kt$EventQueries$"SELECT event_record.id, event_record.name, event_record.start_epoch_millis, event_record.end_epoch_millis, event_record.budget_cents, event_record.currency_code, event_record.status, event_record.created_at, event_record.cached_spent_cents, event_record.cache_updated_at, event_record.closed_at_epoch_millis FROM event_record ORDER BY start_epoch_millis DESC"</ID>
     <ID>MaxLineLength:EventQueries.kt$EventQueries.SelectEventByIdQuery$"""SELECT event_record.id, event_record.name, event_record.start_epoch_millis, event_record.end_epoch_millis, event_record.budget_cents, event_record.currency_code, event_record.status, event_record.created_at, event_record.cached_spent_cents, event_record.cache_updated_at, event_record.closed_at_epoch_millis FROM event_record WHERE id = ?"""</ID>
     <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries$"""UPDATE finance_record SET tag_type = NULL, tag_id = NULL WHERE tag_type ${ if (tag_type == null) "IS" else "=" } ?"""</ID>
