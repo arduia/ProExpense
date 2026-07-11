@@ -40,6 +40,9 @@ fun AmountDisplay(
     // far edge of a full-width row. The auto-shrink-to-fit safety net still holds: the loose
     // incoming max-width constraint from ancestors still bounds/clips very long totals.
     trailing: (@Composable () -> Unit)? = null,
+    // When present, tapping the amount itself acts exactly like tapping [trailing]'s edit
+    // affordance — lets callers make the whole confirmed total re-editable, not just its icon.
+    onAmountClick: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -108,7 +111,13 @@ fun AmountDisplay(
                 modifier =
                     Modifier
                         .then(if (trailing == null) Modifier.fillMaxWidth() else Modifier)
-                        .padding(top = dimens.space8),
+                        .then(
+                            if (onAmountClick != null) {
+                                Modifier.proRippleClickable(onClick = onAmountClick)
+                            } else {
+                                Modifier
+                            },
+                        ).padding(top = dimens.space8),
             )
             if (trailing != null) {
                 Column(modifier = Modifier.padding(start = dimens.space8, bottom = dimens.space4)) {

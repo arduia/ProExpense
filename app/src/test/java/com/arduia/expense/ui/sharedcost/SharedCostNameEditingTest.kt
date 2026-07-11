@@ -274,6 +274,9 @@ class SharedCostEditPersonSheetFlowTest {
     @Test
     fun renamingInEqualMode_persistsAfterSwitchingToCustom() {
         startNewSplitDetails()
+        // Custom is now the default split mode — switch to Equal explicitly so this test still
+        // exercises the Equal-mode-then-Custom transition its name describes.
+        rule.onNodeWithText("Even split").performScrollTo().performClick()
 
         rule.onNodeWithContentDescription("Edit Person 2").performScrollTo().performClick()
         rule.onNode(hasText("Person 2") and hasSetTextAction()).performTextReplacement("Zara")
@@ -312,7 +315,9 @@ class SharedCostNameResolutionTest {
     fun resolveNames_whitespaceOnlyNameFallsBackToDefault() {
         val resolved = SharedCostSplitLogic.resolveNames(listOf("   ", "Ben"), count = 2)
 
-        assertEquals(listOf("Person 1", "Ben"), resolved)
+        // Participant #1 is the splitter — a cleared/blank name falls back to "You", not
+        // "Person 1".
+        assertEquals(listOf("You", "Ben"), resolved)
     }
 
     @Test
@@ -330,16 +335,18 @@ class SharedCostNameResolutionTest {
  * (`R.string.shared_default_person_name` at real call sites) so the default name localizes too.
  */
 class SharedCostDefaultNameTemplateTest {
+    // Participant #1 is always the splitter and defaults to "You" regardless of nameTemplate —
+    // exercise the template substitution on a later index instead.
     @Test
     fun defaultParticipantName_usesProvidedTemplate() {
-        assertEquals("P1", SharedCostSplitLogic.defaultParticipantName(1, "P%1\$d"))
+        assertEquals("P2", SharedCostSplitLogic.defaultParticipantName(2, "P%1\$d"))
     }
 
     @Test
     fun syncNames_generatesMissingNamesUsingProvidedTemplate() {
         val result = SharedCostSplitLogic.syncNames(emptyList(), count = 2, nameTemplate = "P%1\$d")
 
-        assertEquals(listOf("P1", "P2"), result)
+        assertEquals(listOf("You", "P2"), result)
     }
 
     @Test
@@ -347,6 +354,40 @@ class SharedCostDefaultNameTemplateTest {
         val result = SharedCostSplitLogic.resolveNames(listOf("Aiko", ""), count = 2, nameTemplate = "P%1\$d")
 
         assertEquals(listOf("Aiko", "P2"), result)
+    }
+}
+
+/**
+ * Product rule (this change): the split always belongs to the person creating it, so
+ * participant #1 defaults to "You" instead of a "Person 1" template placeholder — everywhere a
+ * default name is generated, not just at save time.
+ */
+class SharedCostFirstPersonDefaultNameTest {
+    @Test
+    fun defaultParticipantName_firstPersonDefaultsToYou() {
+        assertEquals("You", SharedCostSplitLogic.defaultParticipantName(1))
+    }
+
+    @Test
+    fun defaultParticipantName_firstPersonNameOverridable() {
+        assertEquals(
+            "Toi",
+            SharedCostSplitLogic.defaultParticipantName(1, firstPersonName = "Toi"),
+        )
+    }
+
+    @Test
+    fun syncNames_firstMissingNameDefaultsToYou() {
+        val result = SharedCostSplitLogic.syncNames(emptyList(), count = 3)
+
+        assertEquals(listOf("You", "Person 2", "Person 3"), result)
+    }
+
+    @Test
+    fun resolveNames_blankFirstNameFallsBackToYou() {
+        val result = SharedCostSplitLogic.resolveNames(listOf("", "Ben"), count = 2)
+
+        assertEquals(listOf("You", "Ben"), result)
     }
 }
 

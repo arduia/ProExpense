@@ -267,8 +267,8 @@ fun SharedCostParticipantRow(
             SharedCostEditIconButton(
                 onClick = onEditClick,
                 contentDescription = editContentDescription,
-                size = dimens.space26,
-                iconSize = dimens.iconTag,
+                size = dimens.space32,
+                iconSize = dimens.iconChipLeading,
             )
         }
     }
@@ -278,16 +278,19 @@ fun SharedCostParticipantRow(
  * Small circular edit-icon affordance — deliberately sized explicitly (no
  * `minimumInteractiveComponentSize()` floor) since it always sits inside an already-tappable card
  * or dense row; a 48dp floor here would inflate the parent past its siblings (see
- * `.agents/skills/design-spec-to-compose/SKILL.md` guard on nesting `proIconClickable`).
+ * `.agents/skills/design-spec-to-compose/SKILL.md` guard on nesting `proIconClickable`). Exposed
+ * (not `private`) so other Shared Costs surfaces — e.g. the total-amount edit action — can reuse
+ * the exact same circular affordance rather than a bare pencil glyph.
  */
 @Composable
-private fun SharedCostEditIconButton(
+fun SharedCostEditIconButton(
     onClick: () -> Unit,
     contentDescription: String,
     size: Dp,
     iconSize: Dp,
     modifier: Modifier = Modifier,
     filledBackground: Boolean = false,
+    tint: Color = ProExpenseTheme.colors.onSurfaceVariant,
 ) {
     val colors = ProExpenseTheme.colors
     val interactionSource = remember { MutableInteractionSource() }
@@ -310,7 +313,7 @@ private fun SharedCostEditIconButton(
         ProIcon(
             glyph = ProIconGlyph.Edit,
             contentDescription = contentDescription,
-            tint = colors.onSurfaceVariant,
+            tint = tint,
             size = iconSize,
         )
     }
@@ -516,14 +519,14 @@ fun SharedCostPerPersonCard(
                 ProTextAction(
                     text = stringResource(R.string.shared_edit_action_label),
                     onClick = onHeaderEditClick,
-                    style = typography.captionMedium,
+                    style = typography.bodyMedium,
                     color = colors.primary,
                     leading = {
                         ProIcon(
                             glyph = ProIconGlyph.Edit,
                             contentDescription = null,
                             tint = colors.primary,
-                            size = dimens.iconTag,
+                            size = dimens.iconChipLeading,
                         )
                     },
                     // The visible label reads "Edit"; keep the richer a11y name ("Edit split")

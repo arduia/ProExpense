@@ -1,5 +1,7 @@
 package com.arduia.expense.feature.sharedcost.ui
 
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -168,6 +170,7 @@ fun SharedCostsEditPersonSheetContent(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val motion = ProExpenseTheme.motion
     val shape = ProExpenseTheme.shapes.tile
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -189,6 +192,18 @@ fun SharedCostsEditPersonSheetContent(
     LaunchedEffect(activeIndex) {
         nameFocusRequester.requestFocus()
         keyboardController?.show()
+    }
+    // A fresh Animatable per activeIndex snaps the field's background to a highlight tint the
+    // instant a different person is picked, then eases it back down to the resting color — a
+    // visible cue that the name shown is a newly selected person's, not the previous one edited
+    // in place.
+    val nameFieldRestingColor = if (fieldActive) colors.surface else colors.paper
+    val nameFieldBackground = remember(activeIndex) { Animatable(colors.primarySoft) }
+    LaunchedEffect(activeIndex, nameFieldRestingColor) {
+        nameFieldBackground.animateTo(
+            targetValue = nameFieldRestingColor,
+            animationSpec = tween(durationMillis = motion.rowPulseDurationMillis, easing = motion.standardEasing),
+        )
     }
     val amountValueColor = if (isCustom) colors.onSurface else colors.onSurfaceVariant
     val currencySymbolColor = if (isCustom) colors.primary else colors.onSurfaceVariant
@@ -254,7 +269,7 @@ fun SharedCostsEditPersonSheetContent(
                         Modifier
                             .fillMaxWidth()
                             .clip(shape)
-                            .background(if (fieldActive) colors.surface else colors.paper)
+                            .background(nameFieldBackground.value)
                             .border(
                                 BorderStroke(1.4.dp, if (fieldActive) colors.primary else colors.line),
                                 shape,

@@ -34,6 +34,7 @@
     <string name="shared_delete_body">\"%1$s\" နှင့် ၎င်း၏ သိမ်းဆည်းထားသော အသုံးစရိတ်ကို ဖယ်ရှားပါမည်။ ပြန်လည်ရုပ်သိမ်း၍ မရပါ။</string>
     <string name="shared_delete_confirm">ဖျက်ရန်</string>
     <string name="shared_delete_cancel">မလုပ်တော့ပါ</string>
+    <string name="shared_default_person_you">သင်</string>
     <string name="shared_edit_person_title">လူတစ်ဦးကို တည်းဖြတ်ရန်</string>
     <string name="shared_field_name">အမည်</string>
     <string name="shared_field_amount">ပမာဏ</string>
