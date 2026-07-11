@@ -22,10 +22,14 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordKind
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SPLIT_ROW_SUBTITLE_TYPE
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
+import com.arduia.expense.domain.debtRowSubtitleType
+import com.arduia.expense.domain.debtRowTitle
 import com.arduia.expense.domain.kind
 import com.arduia.expense.domain.linkedRowId
+import com.arduia.expense.domain.splitRowTitle
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.history.DeleteRecordUseCase
 import com.arduia.expense.feature.history.HistoryRepository
@@ -430,11 +434,26 @@ private fun FinanceRecord.toRowModel(linkLabels: JournalLinkLabels): ProTransact
         } else {
             link.tagLabel(linkLabels.eventSubtitles, linkLabels.debtSubtitles, emptyMap())
         }
+    val timeLabel = PlatformDateFormatter.timeLabel(recordedAtEpochMillis)
+    val (rowNote, rowMeta) =
+        when (rowKind) {
+            ProRowKind.SPLIT ->
+                splitRowTitle(linkedId?.let { linkLabels.sharedCostNames[it] }) to
+                    "$SPLIT_ROW_SUBTITLE_TYPE · $timeLabel"
+            ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED -> {
+                val isLent = rowKind == ProRowKind.DEBT_LENT
+                val personName = linkedId?.let { linkLabels.debtNames[it] }.orEmpty()
+                debtRowTitle(personName, isLent) to "${debtRowSubtitleType(isLent)} · $timeLabel"
+            }
+            ProRowKind.EXPENSE, ProRowKind.INCOME ->
+                note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) } to
+                    "${expenseCategoryLabel(categoryId.value)} · $timeLabel"
+        }
     return ProTransactionRowModel(
         id = id.value,
         categoryId = categoryId.value,
-        note = note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) },
-        meta = "${expenseCategoryLabel(categoryId.value)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
+        note = rowNote,
+        meta = rowMeta,
         amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
         isIncome = type == RecordType.INCOME,
         tag = tagLabel,
@@ -450,13 +469,13 @@ private fun FinanceRecord.toRowModel(linkLabels: JournalLinkLabels): ProTransact
 }
 
 private fun Debt.toDebtRowModel(): ProTransactionRowModel {
-    val rowKind = if (direction == DebtDirection.OWED_TO_ME) ProRowKind.DEBT_LENT else ProRowKind.DEBT_OWED
-    val actionLabel = if (direction == DebtDirection.OWED_TO_ME) "Lent" else "Borrowed"
+    val isLent = direction == DebtDirection.OWED_TO_ME
+    val rowKind = if (isLent) ProRowKind.DEBT_LENT else ProRowKind.DEBT_OWED
     return ProTransactionRowModel(
         id = id.value,
         categoryId = "",
-        note = personName,
-        meta = "$actionLabel · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
+        note = debtRowTitle(personName, isLent),
+        meta = "${debtRowSubtitleType(isLent)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
         amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
         rawNote = note,
         detailDateTimeLabel =

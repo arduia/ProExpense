@@ -68,8 +68,9 @@ fun rowKindBadgeOverride(
 ): Pair<ProIconGlyph, CategoryColorPair>? =
     when (rowKind) {
         ProRowKind.SPLIT -> ProIconGlyph.FeatSplit to CategoryColorPair(accent = colors.tagDeep, tint = colors.tagTint)
-        ProRowKind.DEBT_LENT -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)
-        ProRowKind.DEBT_OWED -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)
+        // Matches TransactionRow's cash-flow amount color (Lent = outgoing/danger, Owe = incoming/success).
+        ProRowKind.DEBT_LENT -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)
+        ProRowKind.DEBT_OWED -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)
         ProRowKind.EXPENSE, ProRowKind.INCOME -> null
     }
 

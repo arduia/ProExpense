@@ -169,11 +169,12 @@ fun TransactionRow(
         }
         val amountColor =
             when (rowKind) {
-                // Debt rows follow the Debt Tracker's own convention (I Lent = success, I Owe =
-                // danger, design-system-spec/screens/09-debt-tracker.md) rather than the generic
-                // income/expense split — independent of whether the debt counts toward totals.
-                ProRowKind.DEBT_LENT -> colors.success
-                ProRowKind.DEBT_OWED -> colors.danger
+                // Recents/Journal is a cash-flow feed, so debt rows follow money direction here —
+                // Lent sends cash out (danger), Owe/Borrowed brings cash in (success) — unlike the
+                // dedicated Debt Tracker tab, which colors by balance health instead (see
+                // design-system-spec/screens/09-debt-tracker.md; that convention is unchanged).
+                ProRowKind.DEBT_LENT -> colors.danger
+                ProRowKind.DEBT_OWED -> colors.success
                 ProRowKind.INCOME -> colors.success
                 ProRowKind.SPLIT, ProRowKind.EXPENSE -> colors.onSurface
             }
@@ -380,8 +381,8 @@ private fun DayGroupMixedRowKindsPreview() {
                     ProTransactionRowModel(
                         id = "2",
                         categoryId = "shopping",
-                        note = "Dinner split",
-                        meta = "Split · 07:20 PM",
+                        note = "Shared - Dinner",
+                        meta = "Shared split · 07:20 PM",
                         amount = "$49.00",
                         rowKind = ProRowKind.SPLIT,
                         linkedId = "sc1",
@@ -389,7 +390,7 @@ private fun DayGroupMixedRowKindsPreview() {
                     ProTransactionRowModel(
                         id = "3",
                         categoryId = "",
-                        note = "John",
+                        note = "Lent to John",
                         meta = "Lent · 03:10 PM",
                         amount = "$50.00",
                         rowKind = ProRowKind.DEBT_LENT,
@@ -398,8 +399,8 @@ private fun DayGroupMixedRowKindsPreview() {
                     ProTransactionRowModel(
                         id = "4",
                         categoryId = "",
-                        note = "Priya",
-                        meta = "Borrowed · 09:00 AM",
+                        note = "Owe Priya",
+                        meta = "Owe · 09:00 AM",
                         amount = "$25.00",
                         rowKind = ProRowKind.DEBT_OWED,
                         linkedId = "d2",

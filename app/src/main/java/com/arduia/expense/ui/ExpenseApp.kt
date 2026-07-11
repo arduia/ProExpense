@@ -36,9 +36,13 @@ import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordKind
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SPLIT_ROW_SUBTITLE_TYPE
+import com.arduia.expense.domain.debtRowSubtitleType
+import com.arduia.expense.domain.debtRowTitle
 import com.arduia.expense.domain.isVisibleInHomeRecents
 import com.arduia.expense.domain.kind
 import com.arduia.expense.domain.linkedRowId
+import com.arduia.expense.domain.splitRowTitle
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.currency.CurrencyRepository
@@ -721,27 +725,41 @@ private fun FinanceRecord.toHomeTransactionItem(
     // The row's own badge/note already convey "this is a split/debt" — an "@ tag" chip repeating
     // the same title underneath would be redundant.
     val suppressTag = rowKind == ProRowKind.SPLIT || rowKind == ProRowKind.DEBT_LENT || rowKind == ProRowKind.DEBT_OWED
+    val linkedId = linkedRowId()
+    val timeLabel = PlatformDateFormatter.timeLabel(recordedAtEpochMillis)
+    val (rowNote, rowMeta) =
+        when (rowKind) {
+            ProRowKind.SPLIT ->
+                splitRowTitle(linkedId?.let { sharedCostNames[it] }) to "$SPLIT_ROW_SUBTITLE_TYPE · $timeLabel"
+            ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED -> {
+                val isLent = rowKind == ProRowKind.DEBT_LENT
+                val personName = linkedId?.let { debtNames[it] }.orEmpty()
+                debtRowTitle(personName, isLent) to "${debtRowSubtitleType(isLent)} · $timeLabel"
+            }
+            ProRowKind.EXPENSE, ProRowKind.INCOME ->
+                note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) } to timeLabel
+        }
     return HomeTransactionItem(
         id = id.value,
         categoryId = categoryId.value,
-        note = note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) },
-        meta = PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
+        note = rowNote,
+        meta = rowMeta,
         amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
         isIncome = type == RecordType.INCOME,
         tag = if (suppressTag) null else link.tagLabel(eventNames, debtNames, sharedCostNames),
         rowKind = rowKind,
-        linkedId = linkedRowId(),
+        linkedId = linkedId,
     )
 }
 
 private fun Debt.toDebtHomeTransactionItem(): HomeTransactionItem {
-    val rowKind = if (direction == DebtDirection.OWED_TO_ME) ProRowKind.DEBT_LENT else ProRowKind.DEBT_OWED
-    val actionLabel = if (direction == DebtDirection.OWED_TO_ME) "Lent" else "Borrowed"
+    val isLent = direction == DebtDirection.OWED_TO_ME
+    val rowKind = if (isLent) ProRowKind.DEBT_LENT else ProRowKind.DEBT_OWED
     return HomeTransactionItem(
         id = id.value,
         categoryId = "",
-        note = personName,
-        meta = "$actionLabel · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
+        note = debtRowTitle(personName, isLent),
+        meta = "${debtRowSubtitleType(isLent)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
         amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
         rowKind = rowKind,
         linkedId = id.value,

@@ -38,6 +38,26 @@ fun FinanceRecord.linkedRowId(): String? =
     }
 
 /**
+ * Split/Debt rows need their own title so they don't fall back to the linked [FinanceRecord]'s
+ * bookkeeping category label (e.g. "Shopping"/"Gift" — never meant to be user-facing here).
+ */
+fun debtRowTitle(
+    personName: String,
+    isLent: Boolean,
+): String = if (isLent) "Lent to $personName" else "Owe $personName"
+
+/** The type word for a debt row's subtitle — pair with a " · <time>" suffix at the call site. */
+fun debtRowSubtitleType(isLent: Boolean): String = if (isLent) "Lent" else "Owe"
+
+fun splitRowTitle(splitTitle: String?): String {
+    val trimmed = splitTitle?.trim().orEmpty()
+    return if (trimmed.isEmpty()) SPLIT_ROW_SUBTITLE_TYPE else "Shared - $trimmed"
+}
+
+/** The type word for a split row's subtitle — pair with a " · <time>" suffix at the call site. */
+const val SPLIT_ROW_SUBTITLE_TYPE = "Shared split"
+
+/**
  * Single flip point to bring Split/Debt rows back into Home Recents — product wants only plain
  * Expense/Income visible there for now. Journal always shows every kind. Flip to `true` to
  * restore Split/Debt on Home Recents too.
