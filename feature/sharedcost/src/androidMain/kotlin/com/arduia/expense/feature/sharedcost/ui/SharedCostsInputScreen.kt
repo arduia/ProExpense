@@ -19,8 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
@@ -41,9 +39,9 @@ import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -159,24 +157,12 @@ fun SharedCostsInputScreen(
                 trailing =
                     if (showDetails) {
                         {
-                            val editAmountDescription = stringResource(R.string.shared_edit_amount_cd)
-                            ProTextAction(
-                                text = stringResource(R.string.shared_edit_action_label),
-                                onClick = onEditAmount,
-                                style = ProExpenseTheme.typography.captionMedium,
-                                color = colors.primary,
-                                leading = {
-                                    ProIcon(
-                                        glyph = ProIconGlyph.Edit,
-                                        contentDescription = null,
-                                        tint = colors.primary,
-                                        size = dimens.iconTag,
-                                    )
-                                },
-                                modifier =
-                                    Modifier.semantics(mergeDescendants = true) {
-                                        contentDescription = editAmountDescription
-                                    },
+                            ProIcon(
+                                glyph = ProIconGlyph.Edit,
+                                contentDescription = stringResource(R.string.shared_edit_amount_cd),
+                                tint = colors.primary,
+                                size = dimens.iconInline,
+                                modifier = Modifier.proIconClickable(onClick = onEditAmount),
                             )
                         }
                     } else {
