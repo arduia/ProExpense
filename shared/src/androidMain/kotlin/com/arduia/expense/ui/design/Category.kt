@@ -68,9 +68,11 @@ fun rowKindBadgeOverride(
 ): Pair<ProIconGlyph, CategoryColorPair>? =
     when (rowKind) {
         ProRowKind.SPLIT -> ProIconGlyph.FeatSplit to CategoryColorPair(accent = colors.tagDeep, tint = colors.tagTint)
-        // Matches TransactionRow's cash-flow amount color (Lent = outgoing/danger, Owe = incoming/success).
-        ProRowKind.DEBT_LENT -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)
-        ProRowKind.DEBT_OWED -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)
+        // Badge color is independent of the amount's cash-flow color (see TransactionRow) —
+        // Lent = success/green, Owe = danger/red, matching the Debt Tracker's own convention
+        // (design-system-spec/screens/09-debt-tracker.md).
+        ProRowKind.DEBT_LENT -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)
+        ProRowKind.DEBT_OWED -> ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)
         ProRowKind.EXPENSE, ProRowKind.INCOME -> null
     }
 

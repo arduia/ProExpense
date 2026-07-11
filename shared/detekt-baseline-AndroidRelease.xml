@@ -430,8 +430,8 @@
     <ID>MatchingDeclarationName:PinKeypad.kt$PinKeypadState</ID>
     <ID>MatchingDeclarationName:Shape.kt$ProShapes</ID>
     <ID>MaxLineLength:Buttons.kt$ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)</ID>
-    <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_LENT -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)</ID>
-    <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_OWED -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)</ID>
+    <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_LENT -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)</ID>
+    <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_OWED -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)</ID>
     <ID>MaxLineLength:DateTimePickerSheet.kt$Text(":", style = typography.body, color = colors.onSurface, modifier = Modifier.padding(vertical = 8.dp))</ID>
     <ID>MaxLineLength:DateTimePickerSheet.kt$TimeFieldTransformation$override fun filter(text: androidx.compose.ui.text.AnnotatedString): TransformedText</ID>
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — auth", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 640, showBackground = true)</ID>
