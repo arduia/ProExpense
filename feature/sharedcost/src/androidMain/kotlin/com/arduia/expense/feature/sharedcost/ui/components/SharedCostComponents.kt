@@ -14,37 +14,38 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.sharedcost.R
-import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.ui.design.DetailFieldCard
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTextAction
+import com.arduia.expense.ui.design.proCircularRippleClickable
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.design.proPressScale
@@ -147,7 +148,7 @@ private fun SharedCostStepperButton(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
-    val shape = if (filled) ProExpenseTheme.shapes.tile else CircleShape
+    val shape = CircleShape
     val alpha = if (enabled) 1f else motion.keypadDisabledOpacity
     val background =
         when {
@@ -211,13 +212,8 @@ fun SharedCostParticipantRow(
     name: String,
     amount: String,
     modifier: Modifier = Modifier,
-    showNoteIcon: Boolean = false,
-    editableAmount: Boolean = false,
-    onAmountChange: (String) -> Unit = {},
-    editableName: Boolean = false,
-    onNameChange: (String) -> Unit = {},
-    namePlaceholder: String? = null,
-    currencySymbol: String = "$",
+    onEditClick: (() -> Unit)? = null,
+    editContentDescription: String = "",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -227,7 +223,15 @@ fun SharedCostParticipantRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(vertical = dimens.rowPaddingV),
+                .then(
+                    // The whole row navigates to the same Edit-person sheet as the trailing icon —
+                    // a bigger, easier tap target than the small icon alone.
+                    if (onEditClick != null) {
+                        Modifier.proClickable(onClick = onEditClick, shape = RectangleShape)
+                    } else {
+                        Modifier
+                    },
+                ).padding(vertical = dimens.rowPaddingV),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -246,169 +250,74 @@ fun SharedCostParticipantRow(
                 textAlign = TextAlign.Center,
             )
         }
-        Row(
+        Text(
+            text = name,
+            style = typography.captionMedium,
+            color = colors.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimens.space4),
-        ) {
-            if (editableName) {
-                var fieldValue by remember { mutableStateOf(TextFieldValue(text = name)) }
-                if (fieldValue.text != name) {
-                    fieldValue = fieldValue.copy(text = name, selection = TextRange(name.length))
-                }
-                // The tap that focuses this field also positions the cursor at the tap offset,
-                // via its own onValueChange call — overriding selection from onFocusChanged alone
-                // races with (and loses to) that call. Instead, force the *next* onValueChange
-                // after gaining focus (the tap's own cursor placement) to select everything.
-                var selectAllOnNextChange by remember { mutableStateOf(false) }
-                BasicTextField(
-                    value = fieldValue,
-                    onValueChange = { new ->
-                        fieldValue =
-                            if (selectAllOnNextChange) {
-                                selectAllOnNextChange = false
-                                new.copy(selection = TextRange(0, new.text.length))
-                            } else {
-                                new
-                            }
-                        onNameChange(fieldValue.text)
-                    },
-                    textStyle = typography.captionMedium.copy(color = colors.onSurface),
-                    cursorBrush = SolidColor(colors.primary),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                    modifier =
-                        Modifier
-                            .weight(1f, fill = false)
-                            // Tapping in is meant to overwrite the "Person N" default, not append
-                            // to it — select the whole value so typing replaces it outright.
-                            .onFocusChanged { focusState ->
-                                if (focusState.isFocused) {
-                                    selectAllOnNextChange = true
-                                    fieldValue = fieldValue.copy(selection = TextRange(0, fieldValue.text.length))
-                                }
-                            },
-                    decorationBox = { inner ->
-                        if (name.isEmpty() && namePlaceholder != null) {
-                            Text(
-                                text = namePlaceholder,
-                                style = typography.captionMedium,
-                                color = colors.muted,
-                                maxLines = 1,
-                            )
-                        }
-                        inner()
-                    },
-                )
-            } else {
-                Text(
-                    text = name,
-                    style = typography.captionMedium,
-                    color = colors.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            if (showNoteIcon) {
-                ProIcon(
-                    glyph = ProIconGlyph.Note,
-                    contentDescription = null,
-                    tint = colors.muted,
-                    size = dimens.iconTag,
-                )
-            }
-        }
-        if (editableAmount) {
-            val digitsOnly = amount.dropWhile { !it.isDigit() }
-            // The field's layout box is wider than its right-aligned digits (Row padding, the
-            // currency-symbol decoration) — a tap anywhere in that empty space resolves to text
-            // offset 0, not the end, so a plain tap-to-position cursor would insert new digits
-            // before the number instead of after it. Force the cursor on every change (typed or
-            // external) instead of trusting the tap-computed offset.
-            var fieldValue by
-                remember {
-                    mutableStateOf(TextFieldValue(text = digitsOnly, selection = TextRange(digitsOnly.length)))
-                }
-            if (fieldValue.text != digitsOnly) {
-                fieldValue = TextFieldValue(text = digitsOnly, selection = TextRange(digitsOnly.length))
-            }
-            // Tapping in is meant to overwrite the pre-filled default share, not append after it —
-            // select the whole value so typing replaces it outright. The tap that focuses this
-            // field also repositions the cursor via its own onValueChange call (same text, new
-            // selection) — override precisely that event rather than onFocusChanged alone, which
-            // races with (and loses to) it.
-            var selectAllOnNextChange by remember { mutableStateOf(false) }
-            BasicTextField(
-                value = fieldValue,
-                onValueChange = { new ->
-                    val sanitized = sanitizeShareInput(new.text)
-                    fieldValue =
-                        if (selectAllOnNextChange) {
-                            selectAllOnNextChange = false
-                            TextFieldValue(text = sanitized, selection = TextRange(0, sanitized.length))
-                        } else {
-                            TextFieldValue(text = sanitized, selection = TextRange(sanitized.length))
-                        }
-                    onAmountChange(sanitized)
-                },
-                textStyle =
-                    typography.listAmount.copy(
-                        color = colors.onSurface,
-                        fontFamily = typography.amountFamily,
-                        textAlign = TextAlign.End,
-                    ),
-                cursorBrush = SolidColor(colors.primary),
-                singleLine = true,
-                // Shares are decimal money values — a plain-text IME here forces a keyboard
-                // switch for every digit and admits letters the amount parser can't use.
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier =
-                    Modifier
-                        .padding(start = dimens.space8)
-                        .onFocusChanged { focusState ->
-                            if (focusState.isFocused) {
-                                selectAllOnNextChange = true
-                                fieldValue = fieldValue.copy(selection = TextRange(0, fieldValue.text.length))
-                            }
-                        },
-                decorationBox = { inner ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = currencySymbol,
-                            style =
-                                typography.listAmount.copy(
-                                    color = colors.onSurface,
-                                    fontFamily = typography.amountFamily,
-                                ),
-                        )
-                        inner()
-                    }
-                },
-            )
-        } else {
-            Text(
-                text = amount,
-                style = typography.listAmount,
-                color = colors.onSurface,
+        )
+        Text(
+            text = amount,
+            style = typography.listAmount,
+            color = colors.onSurface,
+        )
+        if (onEditClick != null) {
+            SharedCostEditIconButton(
+                onClick = onEditClick,
+                contentDescription = editContentDescription,
+                size = dimens.space32,
+                iconSize = dimens.iconChipLeading,
             )
         }
     }
 }
 
-/** Digits plus a single decimal point — mirrors what [com.arduia.expense.ui.design.AmountInput] raw strings hold. */
-private fun sanitizeShareInput(raw: String): String {
-    val builder = StringBuilder()
-    var hasDot = false
-    for (char in raw) {
-        when {
-            char.isDigit() -> builder.append(char)
-            char == '.' && !hasDot -> {
-                builder.append(char)
-                hasDot = true
-            }
-        }
+/**
+ * Small circular edit-icon affordance — deliberately sized explicitly (no
+ * `minimumInteractiveComponentSize()` floor) since it always sits inside an already-tappable card
+ * or dense row; a 48dp floor here would inflate the parent past its siblings (see
+ * `.agents/skills/design-spec-to-compose/SKILL.md` guard on nesting `proIconClickable`). Exposed
+ * (not `private`) so other Shared Costs surfaces — e.g. the total-amount edit action — can reuse
+ * the exact same circular affordance rather than a bare pencil glyph.
+ */
+@Composable
+fun SharedCostEditIconButton(
+    onClick: () -> Unit,
+    contentDescription: String,
+    size: Dp,
+    iconSize: Dp,
+    modifier: Modifier = Modifier,
+    filledBackground: Boolean = false,
+    tint: Color = ProExpenseTheme.colors.onSurfaceVariant,
+    borderColor: Color = ProExpenseTheme.colors.line,
+) {
+    val colors = ProExpenseTheme.colors
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Box(
+        modifier =
+            modifier
+                .size(size)
+                .proPressScale(interactionSource)
+                .clip(CircleShape)
+                .background(if (filledBackground) colors.surface else Color.Transparent)
+                .border(BorderStroke(1.dp, borderColor), CircleShape)
+                .proCircularRippleClickable(
+                    onClick = onClick,
+                    interactionSource = interactionSource,
+                    role = Role.Button,
+                ),
+        contentAlignment = Alignment.Center,
+    ) {
+        ProIcon(
+            glyph = ProIconGlyph.Edit,
+            contentDescription = contentDescription,
+            tint = tint,
+            size = iconSize,
+        )
     }
-    return builder.toString()
 }
 
 @Composable
@@ -483,9 +392,12 @@ fun SharedCostNoteField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     DetailFieldCard(
         modifier = modifier,
@@ -497,6 +409,23 @@ fun SharedCostNoteField(
                 size = ProExpenseTheme.dimensions.iconNav,
             )
         },
+        trailing = {
+            ProIcon(
+                glyph = ProIconGlyph.Check,
+                contentDescription = stringResource(R.string.shared_note_dismiss_cd),
+                tint = colors.success,
+                // proIconClickable already floors the touch target at 48dp — the glyph itself
+                // was reading too small next to that generous tap area, so size it up to match.
+                size = ProExpenseTheme.dimensions.iconInline,
+                modifier =
+                    Modifier.proIconClickable(
+                        onClick = {
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                        },
+                    ),
+            )
+        },
     ) {
         BasicTextField(
             value = value,
@@ -504,7 +433,16 @@ fun SharedCostNoteField(
             textStyle = typography.body.copy(color = colors.onSurface),
             cursorBrush = SolidColor(colors.primary),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (focusRequester != null) {
+                            Modifier.focusRequester(focusRequester)
+                        } else {
+                            Modifier
+                        },
+                    ),
             decorationBox = { inner ->
                 if (value.isEmpty()) {
                     Text(
@@ -522,20 +460,29 @@ fun SharedCostNoteField(
     }
 }
 
+/**
+ * Unified per-person card for both Equal and Custom split modes — the handoff's `PersonRowV2`
+ * renders identically either way, only the header eyebrow/caption and per-row edit target differ.
+ * Every row is a tap target (via [onPersonEditClick]) that opens the Edit-person sheet, rather
+ * than the old inline-editable name/amount fields.
+ */
 @Composable
 fun SharedCostPerPersonCard(
-    perPersonAmount: String,
+    headerEyebrow: String,
+    headerAmount: String,
     participants: List<Pair<String, String>>,
     modifier: Modifier = Modifier,
-    perPersonEyebrow: String,
-    editableNames: Boolean = false,
-    onNameChange: (Int, String) -> Unit = { _, _ -> },
+    headerCaption: String? = null,
+    headerCaptionEmphasized: Boolean = false,
+    onHeaderEditClick: (() -> Unit)? = null,
+    headerEditContentDescription: String = "",
+    onPersonEditClick: ((Int) -> Unit)? = null,
+    personEditContentDescription: (Int) -> String = { "" },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.card
-    val nameTemplate = stringResource(R.string.shared_default_person_name)
 
     Column(
         modifier =
@@ -548,65 +495,65 @@ fun SharedCostPerPersonCard(
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+            // Eyebrow and Edit share the top row — both are short, fixed-width labels, so
+            // they never fight the (potentially long, large-font) amount for space. The
+            // amount itself renders full-width on its own line below, so a long value never
+            // squeezes the Edit action out.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = headerEyebrow,
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceMuted,
+                )
+                if (onHeaderEditClick != null) {
+                    ProTextAction(
+                        text = stringResource(R.string.shared_edit_action_label),
+                        onClick = onHeaderEditClick,
+                        style = typography.bodyMedium,
+                        color = colors.primary,
+                        leading = {
+                            ProIcon(
+                                glyph = ProIconGlyph.Edit,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                size = dimens.iconChipLeading,
+                            )
+                        },
+                        // The visible label reads "Edit"; keep the richer a11y name ("Edit
+                        // split") that existing content-description-based navigation/tests
+                        // rely on.
+                        modifier =
+                            Modifier.semantics(mergeDescendants = true) {
+                                contentDescription = headerEditContentDescription
+                            },
+                    )
+                }
+            }
             Text(
-                text = perPersonEyebrow,
-                style = typography.eyebrow,
-                color = colors.onSurfaceMuted,
-            )
-            Text(
-                text = perPersonAmount,
+                text = headerAmount,
                 style = typography.displayAmount,
                 color = colors.primary,
+                modifier = Modifier.fillMaxWidth(),
             )
+            if (headerCaption != null) {
+                Text(
+                    text = headerCaption,
+                    style = typography.caption,
+                    color = if (headerCaptionEmphasized) colors.success else colors.onSurfaceMuted,
+                )
+            }
         }
         participants.forEachIndexed { index, (name, amount) ->
             SharedCostParticipantRow(
                 index = index + 1,
                 name = name,
                 amount = amount,
-                showNoteIcon = true,
-                editableName = editableNames,
-                onNameChange = { onNameChange(index, it) },
-                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate),
-            )
-        }
-    }
-}
-
-@Composable
-fun SharedCostCustomSplitCard(
-    participants: List<Pair<String, String>>,
-    onShareChange: (Int, String) -> Unit,
-    modifier: Modifier = Modifier,
-    editableNames: Boolean = false,
-    onNameChange: (Int, String) -> Unit = { _, _ -> },
-    currencySymbol: String = "$",
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val shape = ProExpenseTheme.shapes.card
-    val nameTemplate = stringResource(R.string.shared_default_person_name)
-
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(shape)
-                .border(BorderStroke(1.dp, colors.line), shape)
-                .background(colors.surface)
-                .padding(horizontal = dimens.cardPadding),
-    ) {
-        participants.forEachIndexed { index, (name, amount) ->
-            SharedCostParticipantRow(
-                index = index + 1,
-                name = name,
-                amount = amount.dropWhile { !it.isDigit() },
-                editableAmount = true,
-                onAmountChange = { onShareChange(index, it) },
-                editableName = editableNames,
-                onNameChange = { onNameChange(index, it) },
-                namePlaceholder = SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate),
-                currencySymbol = currencySymbol,
+                onEditClick = onPersonEditClick?.let { callback -> { callback(index) } },
+                editContentDescription = personEditContentDescription(index),
             )
         }
     }
@@ -636,7 +583,8 @@ private fun SharedCostParticipantRowPreview() {
                 index = 1,
                 name = "Aiko",
                 amount = "$30",
-                showNoteIcon = true,
+                onEditClick = {},
+                editContentDescription = "Edit Aiko",
             )
         }
     }

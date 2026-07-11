@@ -34,4 +34,24 @@
     <string name="shared_delete_body">\"%1$s\" နှင့် ၎င်း၏ သိမ်းဆည်းထားသော အသုံးစရိတ်ကို ဖယ်ရှားပါမည်။ ပြန်လည်ရုပ်သိမ်း၍ မရပါ။</string>
     <string name="shared_delete_confirm">ဖျက်ရန်</string>
     <string name="shared_delete_cancel">မလုပ်တော့ပါ</string>
+    <string name="shared_default_person_you">သင်</string>
+    <string name="shared_edit_person_title">လူတစ်ဦးကို တည်းဖြတ်ရန်</string>
+    <string name="shared_field_name">အမည်</string>
+    <string name="shared_field_amount">ပမာဏ</string>
+    <string name="shared_field_equal_share">တညီတညာ ဝေစု</string>
+    <string name="shared_equal_share_would_be">တညီတညာ ဝေစုမှာ %1$s ဖြစ်မည်</string>
+    <string name="shared_switch_to_custom_hint">တစ်ဦးစီ၏ အတိအကျ ပမာဏများ သတ်မှတ်ရန် ခွဲဝေမှုကို စိတ်ကြိုက်သို့ ပြောင်းပါ။</string>
+    <string name="shared_edit_split_cd">ခွဲဝေမှု တည်းဖြတ်ရန်</string>
+    <string name="shared_edit_person_cd">%1$s ကို တည်းဖြတ်ရန်</string>
+    <string name="shared_edit_action_label">တည်းဖြတ်ရန်</string>
+    <string name="shared_edit_amount_cd">စုစုပေါင်းပမာဏကို တည်းဖြတ်ရန်</string>
+    <string name="shared_note_dismiss_cd">ကီးဘုတ်ကို ဖျောက်ရန်</string>
+    <string name="shared_done">ပြီးပါပြီ</string>
+    <string name="shared_next">နောက်တစ်ခု</string>
+    <string name="shared_review">သုံးသပ်ရန်</string>
+    <string name="shared_split_mode_hint_equal">အမည်ပြောင်းရန် လူတစ်ဦးကို တို့ပါ။ ပမာဏများကို တညီတညာ ခွဲပြီး အလိုအလျောက် အပ်ဒိတ်လုပ်ပါမည်။</string>
+    <string name="shared_split_mode_hint_custom">ဝေစု သတ်မှတ်ရန် လူတစ်ဦးကို တို့ပါ။ စိတ်ကြိုက်ဝေစုများသည် စုစုပေါင်းနှင့် ညီရန် မလိုပါ။</string>
+    <string name="shared_custom_shares_label">စိတ်ကြိုက် ဝေစုများ</string>
+    <string name="shared_custom_matches_total">စုစုပေါင်းနှင့် ကိုက်ညီသည်</string>
+    <string name="shared_custom_vs_total">စုစုပေါင်း %1$s နှင့် နှိုင်းယှဉ်</string>
 </resources>

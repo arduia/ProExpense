@@ -11,19 +11,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
 import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
-import com.arduia.expense.feature.sharedcost.ui.components.SharedCostCustomSplitCard
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostEditIconButton
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostNoteField
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPeopleCard
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputConfirmed
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
 import com.arduia.expense.ui.design.AmountDisplay
@@ -46,24 +54,68 @@ fun SharedCostsInputScreen(
     onDecrementPeople: () -> Unit,
     onIncrementPeople: () -> Unit,
     onModeSelected: (SharedSplitMode) -> Unit,
-    onShareChange: (Int, String) -> Unit,
     onContinue: () -> Unit,
     onConfirmAmount: () -> Unit = {},
-    onNameChange: (Int, String) -> Unit = { _, _ -> },
+    onEditAmount: () -> Unit = {},
+    onEditPerson: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     showKeypad: Boolean = true,
     homeCurrencySymbol: String = "$",
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val noteFocusRequester = remember { FocusRequester() }
     val displayAmount = AmountInput.formatDisplay(state.rawTotal.ifEmpty { "0" })
     val canProceed = SharedCostSplitLogic.canSave(state.rawTotal)
     val isZero = !canProceed
     val showDetails = state.amountConfirmed && canProceed
+
+    // Fires once per false->true edge (right after the total is confirmed) — not on every
+    // recomposition while details stay visible, so it never steals focus back while typing.
+    LaunchedEffect(showDetails) {
+        if (showDetails && state.note.isEmpty()) {
+            noteFocusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
     val participants = state.participants.map { it.name to it.shareLabel }
     val perPersonAmount =
         participants.firstOrNull()?.second
             ?: SharedCostSplitLogic.formatCents(0, homeCurrencySymbol)
+    val customSumCents = SharedCostSplitLogic.customShareSumCents(state.shareRaws)
+    val customMatchesTotal = customSumCents == SharedCostSplitLogic.totalCents(state.rawTotal)
+    val headerEyebrow =
+        if (state.mode == SharedSplitMode.Equal) {
+            stringResource(R.string.shared_per_person)
+        } else {
+            stringResource(R.string.shared_custom_shares_label)
+        }
+    val headerAmount =
+        if (state.mode == SharedSplitMode.Equal) {
+            perPersonAmount
+        } else {
+            SharedCostSplitLogic.formatCents(customSumCents, homeCurrencySymbol)
+        }
+    val headerCaption =
+        if (state.mode == SharedSplitMode.Custom) {
+            if (customMatchesTotal) {
+                stringResource(R.string.shared_custom_matches_total)
+            } else {
+                stringResource(
+                    R.string.shared_custom_vs_total,
+                    SharedCostSplitLogic.formatRawTotal(state.rawTotal, homeCurrencySymbol),
+                )
+            }
+        } else {
+            null
+        }
+    val splitModeHint =
+        if (state.mode == SharedSplitMode.Equal) {
+            stringResource(R.string.shared_split_mode_hint_equal)
+        } else {
+            stringResource(R.string.shared_split_mode_hint_custom)
+        }
 
     Column(
         modifier =
@@ -90,6 +142,7 @@ fun SharedCostsInputScreen(
                 backLabel = stringResource(R.string.shared_back_more),
             )
 
+            val editAmountDescription = stringResource(R.string.shared_edit_amount_cd)
             AmountDisplay(
                 amountText = displayAmount,
                 currencySymbol = homeCurrencySymbol,
@@ -101,6 +154,24 @@ fun SharedCostsInputScreen(
                     Modifier
                         .fillMaxWidth()
                         .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
+                // Tapping the amount itself re-opens the keypad exactly like the trailing edit
+                // icon does — a bigger, easier target than the small icon alone.
+                onAmountClick = if (showDetails) onEditAmount else null,
+                trailing =
+                    if (showDetails) {
+                        {
+                            SharedCostEditIconButton(
+                                onClick = onEditAmount,
+                                contentDescription = editAmountDescription,
+                                size = dimens.space32,
+                                iconSize = dimens.iconChipLeading,
+                                tint = Color.White,
+                                borderColor = colors.line,
+                            )
+                        }
+                    } else {
+                        null
+                    },
             )
 
             if (showDetails) {
@@ -109,6 +180,7 @@ fun SharedCostsInputScreen(
                         value = state.note,
                         onValueChange = onNoteChange,
                         placeholder = stringResource(R.string.shared_note_placeholder),
+                        focusRequester = noteFocusRequester,
                     )
 
                     SharedCostPeopleCard(
@@ -118,38 +190,47 @@ fun SharedCostsInputScreen(
                         maxReachedHint = stringResource(R.string.shared_max_people),
                     )
 
-                    SegmentedToggle(
-                        options =
-                            listOf(
-                                stringResource(R.string.shared_split_even),
-                                stringResource(R.string.shared_split_custom),
-                            ),
-                        selectedIndex = if (state.mode == SharedSplitMode.Equal) 0 else 1,
-                        onSelected = { index ->
-                            onModeSelected(
-                                if (index == 0) SharedSplitMode.Equal else SharedSplitMode.Custom,
-                            )
-                        },
-                        usePrimarySelection = true,
-                    )
-
-                    if (state.mode == SharedSplitMode.Equal) {
-                        SharedCostPerPersonCard(
-                            perPersonAmount = perPersonAmount,
-                            participants = participants,
-                            perPersonEyebrow = stringResource(R.string.shared_per_person),
-                            editableNames = true,
-                            onNameChange = onNameChange,
+                    Column(verticalArrangement = Arrangement.spacedBy(dimens.space6)) {
+                        SegmentedToggle(
+                            options =
+                                listOf(
+                                    stringResource(R.string.shared_split_even),
+                                    stringResource(R.string.shared_split_custom),
+                                ),
+                            selectedIndex = if (state.mode == SharedSplitMode.Equal) 0 else 1,
+                            onSelected = { index ->
+                                onModeSelected(
+                                    if (index == 0) SharedSplitMode.Equal else SharedSplitMode.Custom,
+                                )
+                            },
+                            usePrimarySelection = true,
                         )
-                    } else {
-                        SharedCostCustomSplitCard(
-                            participants = participants,
-                            onShareChange = onShareChange,
-                            editableNames = true,
-                            onNameChange = onNameChange,
-                            currencySymbol = homeCurrencySymbol,
+                        Text(
+                            text = splitModeHint,
+                            style = ProExpenseTheme.typography.caption,
+                            color = colors.onSurfaceMuted,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
+
+                    val editPersonTemplate = stringResource(R.string.shared_edit_person_cd)
+                    val personEditDescriptions =
+                        remember(participants, editPersonTemplate) {
+                            participants.map { (name, _) -> editPersonTemplate.replace("%1\$s", name) }
+                        }
+
+                    SharedCostPerPersonCard(
+                        headerEyebrow = headerEyebrow,
+                        headerAmount = headerAmount,
+                        participants = participants,
+                        headerCaption = headerCaption,
+                        headerCaptionEmphasized = customMatchesTotal,
+                        onHeaderEditClick = { onEditPerson(0) },
+                        headerEditContentDescription = stringResource(R.string.shared_edit_split_cd),
+                        onPersonEditClick = onEditPerson,
+                        personEditContentDescription = { index -> personEditDescriptions.getOrElse(index) { "" } },
+                    )
                 }
             }
         }
@@ -161,7 +242,7 @@ fun SharedCostsInputScreen(
                 onBackspace = onBackspace,
                 onSave = onConfirmAmount,
                 onNext = onConfirmAmount,
-                nextLabel = stringResource(R.string.shared_save_split),
+                nextLabel = stringResource(R.string.shared_next),
                 showSaveAction = false,
                 modifier =
                     Modifier
@@ -170,7 +251,7 @@ fun SharedCostsInputScreen(
             )
         } else {
             ProButton(
-                text = stringResource(R.string.shared_save_split),
+                text = stringResource(R.string.shared_review),
                 onClick = onContinue,
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,
@@ -199,7 +280,30 @@ private fun SharedCostsInputEqualPreview() {
             onDecrementPeople = {},
             onIncrementPeople = {},
             onModeSelected = {},
-            onShareChange = { _, _ -> },
+            onContinue = {},
+            showKeypad = false,
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — input confirmed",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsInputConfirmedPreview() {
+    ProExpenseTheme {
+        SharedCostsInputScreen(
+            state = previewSharedInputConfirmed,
+            onBack = {},
+            onKey = {},
+            onBackspace = {},
+            onNoteChange = {},
+            onDecrementPeople = {},
+            onIncrementPeople = {},
+            onModeSelected = {},
             onContinue = {},
             showKeypad = false,
         )
@@ -224,7 +328,6 @@ private fun SharedCostsInputZeroPreview() {
             onDecrementPeople = {},
             onIncrementPeople = {},
             onModeSelected = {},
-            onShareChange = { _, _ -> },
             onContinue = {},
             showKeypad = false,
         )
@@ -249,7 +352,6 @@ private fun SharedCostsInputCustomPreview() {
             onDecrementPeople = {},
             onIncrementPeople = {},
             onModeSelected = {},
-            onShareChange = { _, _ -> },
             onContinue = {},
             showKeypad = false,
         )

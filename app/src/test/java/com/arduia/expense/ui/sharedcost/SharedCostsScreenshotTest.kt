@@ -7,11 +7,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsEditPersonSheetContent
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsHistoryScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonCustom
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputConfirmed
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
@@ -65,7 +70,24 @@ class SharedCostsScreenshotTest {
                 onDecrementPeople = {},
                 onIncrementPeople = {},
                 onModeSelected = {},
-                onShareChange = { _, _ -> },
+                onContinue = {},
+                showKeypad = false,
+            )
+        }
+    }
+
+    @Test
+    fun shared_input_confirmed() {
+        capture {
+            SharedCostsInputScreen(
+                state = previewSharedInputConfirmed,
+                onBack = {},
+                onKey = {},
+                onBackspace = {},
+                onNoteChange = {},
+                onDecrementPeople = {},
+                onIncrementPeople = {},
+                onModeSelected = {},
                 onContinue = {},
                 showKeypad = false,
             )
@@ -108,7 +130,6 @@ class SharedCostsScreenshotTest {
                 onDecrementPeople = {},
                 onIncrementPeople = {},
                 onModeSelected = {},
-                onShareChange = { _, _ -> },
                 onContinue = {},
                 showKeypad = false,
             )
@@ -127,9 +148,65 @@ class SharedCostsScreenshotTest {
                 onDecrementPeople = {},
                 onIncrementPeople = {},
                 onModeSelected = {},
-                onShareChange = { _, _ -> },
                 onContinue = {},
                 showKeypad = false,
+            )
+        }
+    }
+
+    @Test
+    fun shared_edit_person_equal() {
+        capture {
+            SharedCostsEditPersonSheetContent(
+                people = previewSharedEditPersonEqual,
+                activeIndex = 0,
+                mode = SharedSplitMode.Equal,
+                activeAmountRaw = "30",
+                equalShareLabel = "$30.00",
+                onPickPerson = {},
+                onNameChange = {},
+                onAmountKey = { _, _ -> },
+                onAmountBackspace = {},
+                onDone = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    fun shared_edit_person_custom() {
+        capture {
+            SharedCostsEditPersonSheetContent(
+                people = previewSharedEditPersonCustom,
+                activeIndex = 2,
+                mode = SharedSplitMode.Custom,
+                activeAmountRaw = "40",
+                equalShareLabel = "$30.00",
+                onPickPerson = {},
+                onNameChange = {},
+                onAmountKey = { _, _ -> },
+                onAmountBackspace = {},
+                onDone = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    fun shared_edit_person_last() {
+        capture {
+            SharedCostsEditPersonSheetContent(
+                people = previewSharedEditPersonCustom,
+                activeIndex = previewSharedEditPersonCustom.lastIndex,
+                mode = SharedSplitMode.Custom,
+                activeAmountRaw = "25",
+                equalShareLabel = "$30.00",
+                onPickPerson = {},
+                onNameChange = {},
+                onAmountKey = { _, _ -> },
+                onAmountBackspace = {},
+                onDone = {},
+                onNext = {},
             )
         }
     }

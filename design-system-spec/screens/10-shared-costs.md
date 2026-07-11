@@ -19,10 +19,34 @@
 
 ![History](../screenshots/screens/shared-history.png)
 
+### Edit person (sheet)
+
+_No PNG yet — added with the Flow 08 v2 handoff (`design_handoff_shared_costs/`, JSX-only reference,
+`EditPersonSheetV4`). Screen fidelity for this state is verified against the JSX/README description,
+not a pixel-matched capture — flagged as the one state without a screenshot gate._
+
+Bottom sheet reached from either edit-icon button on Input (the per-person-card header button, or
+each row's own button). Shows a compact roster of every person (avatar/name/amount, active person
+highlighted, others checked), a combined name + amount row for the active person, and a
+Done/Next footer.
+
 ## Behavior & interactions
 
-- Enter total (large, prefixed with the home currency symbol, decimal keypad), people count via stepper (min 2, max 20), names are **editable text fields** (default prefill “Person 1…”, not static labels).
-- Split mode Equal (default) or Custom — each share is a decimal-keyboard field with the currency symbol prefix, manually adjustable, updates live. Custom shares are **never auto-rebalanced**: they need not sum to the total, and editing one share never adjusts the others. The total remains the stored source of truth.
+- Enter total (large, prefixed with the home currency symbol, decimal keypad), people count via stepper (min 2, max 20).
+- Per-person rows are **read-only** (avatar, name, amount) with a small edit-icon button — tapping
+  it (row or the per-person-card header) opens the **Edit person** sheet scoped to that participant.
+  Renaming and (in Custom mode) share editing happen there, not inline.
+- In the Edit person sheet: the name field is a real text input (system IME); the amount field is
+  editable only in Custom mode, driven by an on-screen keypad (matching the Add Expense pattern)
+  rather than the system IME. The first keystroke after opening the amount field overwrites the
+  pre-filled value outright rather than appending onto it. Equal-mode amounts show locked with a
+  lock icon (computed, not entered). Roster rows are tap targets to jump between people without
+  closing the sheet. "Done" closes the sheet without navigating; "Next" advances to the next person,
+  or to Split summary after the last one.
+- Split mode Equal (default) or Custom — per-person shares update live. Custom shares are **never
+  auto-rebalanced**: they need not sum to the total, and editing one share never adjusts the others.
+  The total remains the stored source of truth. The per-person-card header shows "Matches total" or
+  "vs $X total" in Custom mode as a live hint.
 - Split summary sub-screen shows per-person amounts; Back persists all values.
 - Save stores the TOTAL as a linked expense record — saved splits **do appear in Journal and Reports** (one `FinanceRecord` per split, upserted alongside the split itself).
 - History: tap to view full split; swipe-left to delete (confirm) — deleting a split also removes its linked Journal record atomically. Editing a split updates its linked record in place.
@@ -34,7 +58,9 @@
 | Total amount input | Large prominent figure | `custom + Inter Text` |
 | People stepper | −/+ count, min 2 / max 20 | `custom Row + IconButtons` |
 | Split-mode toggle | Equal / Custom | `SegmentedButton` |
-| Per-person rows | Live share list | `custom Row` |
+| Per-person rows | Read-only share list + edit-icon button | `custom Row` |
+| Edit person sheet | Name + amount editor for one participant | `ProBottomSheetHost` |
+| People roster (in sheet) | Jump between participants | `custom Column` |
 | History list | Past splits | `LazyColumn + SwipeToDismiss` |
 | Button (primary) | Save split | `Button` |
 

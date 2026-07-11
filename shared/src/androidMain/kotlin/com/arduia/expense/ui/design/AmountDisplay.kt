@@ -3,6 +3,7 @@ package com.arduia.expense.ui.design
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,14 @@ fun AmountDisplay(
     zeroHelperMessage: String = "Amount must be greater than $0",
     eyebrowText: String? = null,
     usePrimaryAmount: Boolean = false,
+    // When present, the amount text no longer force-fills the available width — the row hugs
+    // the digits instead, so this sits immediately after the amount rather than pinned to the
+    // far edge of a full-width row. The auto-shrink-to-fit safety net still holds: the loose
+    // incoming max-width constraint from ancestors still bounds/clips very long totals.
+    trailing: (@Composable () -> Unit)? = null,
+    // When present, tapping the amount itself acts exactly like tapping [trailing]'s edit
+    // affordance — lets callers make the whole confirmed total re-editable, not just its icon.
+    onAmountClick: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -77,32 +86,53 @@ fun AmountDisplay(
             style = typography.eyebrow,
             color = colors.onSurfaceMuted,
         )
-        BasicText(
-            text =
-                buildAmountLine(
-                    currencySymbol = currencySymbol,
-                    amountText = amountText,
-                    isZero = isZero,
-                    primaryColor = colors.primary,
-                    amountColor =
-                        when {
-                            isZero -> colors.muted2
-                            usePrimaryAmount -> colors.primary
-                            else -> colors.onSurface
-                        },
-                    decimalColor = colors.onSurfaceMuted,
-                    amountFamily = typography.amountFamily,
-                ),
-            style = typography.displayAmount,
-            autoSize = amountAutoSize,
-            maxLines = 1,
-            softWrap = false,
-            overflow = TextOverflow.Clip,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimens.space8),
-        )
+        Row(verticalAlignment = Alignment.Bottom) {
+            BasicText(
+                text =
+                    buildAmountLine(
+                        currencySymbol = currencySymbol,
+                        amountText = amountText,
+                        isZero = isZero,
+                        primaryColor = colors.primary,
+                        amountColor =
+                            when {
+                                isZero -> colors.muted2
+                                usePrimaryAmount -> colors.primary
+                                else -> colors.onSurface
+                            },
+                        decimalColor = colors.onSurfaceMuted,
+                        amountFamily = typography.amountFamily,
+                    ),
+                style = typography.displayAmount,
+                autoSize = amountAutoSize,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip,
+                modifier =
+                    Modifier
+                        .then(if (trailing == null) Modifier.fillMaxWidth() else Modifier)
+                        .then(
+                            if (onAmountClick != null) {
+                                Modifier.proRippleClickable(onClick = onAmountClick)
+                            } else {
+                                Modifier
+                            },
+                        ).padding(top = dimens.space8),
+            )
+            if (trailing != null) {
+                // Centered on the row's cross-axis rather than inheriting the row's own
+                // Bottom alignment — the amount's baseline sits low relative to its full glyph
+                // height, so bottom-aligning trailing content next to it reads as off-center.
+                Column(
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = dimens.space8),
+                ) {
+                    trailing()
+                }
+            }
+        }
         if (isZero && showZeroValidation) {
             Text(
                 text = zeroHelperMessage,

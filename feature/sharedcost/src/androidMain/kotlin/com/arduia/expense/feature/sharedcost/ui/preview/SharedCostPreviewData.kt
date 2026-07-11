@@ -71,6 +71,21 @@ val previewSharedSummary =
             ),
     )
 
+val previewSharedInputConfirmed =
+    SharedCostUiState(
+        rawTotal = "120",
+        note = "Dinner at Nobu",
+        peopleCount = 4,
+        mode = SharedSplitMode.Equal,
+        participants =
+            buildParticipants(
+                rawTotal = "120",
+                peopleCount = 4,
+                names = SharedCostSplitLogic.previewNames(4),
+            ),
+        amountConfirmed = true,
+    )
+
 val previewSharedZeroValidation =
     SharedCostUiState(
         rawTotal = "0",
@@ -88,6 +103,23 @@ val previewSharedCustomLimits =
                 SharedCostParticipantUi("Person 2", "$60"),
                 SharedCostParticipantUi("Person 3", "$100"),
             ),
+        shareRaws = listOf("80", "60", "100"),
+    )
+
+val previewSharedEditPersonEqual =
+    listOf(
+        SharedCostParticipantUi("Aiko", "$30.00"),
+        SharedCostParticipantUi("Ben", "$30.00"),
+        SharedCostParticipantUi("Carlos", "$30.00"),
+        SharedCostParticipantUi("Dee", "$30.00"),
+    )
+
+val previewSharedEditPersonCustom =
+    listOf(
+        SharedCostParticipantUi("Aiko", "$30"),
+        SharedCostParticipantUi("Ben", "$25"),
+        SharedCostParticipantUi("Carlos", "$40"),
+        SharedCostParticipantUi("Dee", "$25"),
     )
 
 val previewSharedHistoryItems =

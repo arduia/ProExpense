@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.sharedcost.R
@@ -51,12 +52,15 @@ fun SharedCostsSummaryScreen(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.card
+    // The per-person amount is only meaningful as a single figure when every share is equal —
+    // a Custom split has no one "each person pays" number, so it's dropped from the headline
+    // entirely rather than showing just the first participant's (possibly unrepresentative) share.
     val perPersonDisplay =
-        state.participants
-            .firstOrNull()
-            ?.shareLabel
-            ?.dropWhile { !it.isDigit() }
-            ?: "0"
+        if (state.mode == SharedSplitMode.Equal) {
+            state.participants.firstOrNull()?.shareLabel
+        } else {
+            null
+        }
     val totalDisplay = AmountInput.formatDisplay(state.rawTotal)
     val modeLabel =
         when (state.mode) {
@@ -81,16 +85,47 @@ fun SharedCostsSummaryScreen(
             backLabel = backLabel,
         )
 
+        val noteTitle = state.note.trim()
+        if (noteTitle.isNotEmpty()) {
+            Text(
+                text = noteTitle,
+                style = typography.sectionHead,
+                color = colors.onSurface,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = dimens.space8),
+            )
+        }
+
         AmountDisplay(
-            amountText = perPersonDisplay,
+            amountText = totalDisplay,
             currencySymbol = homeCurrencySymbol,
             isZero = false,
-            eyebrowText = stringResource(R.string.shared_each_person_pays),
+            eyebrowText = stringResource(R.string.shared_total_bill),
             usePrimaryAmount = true,
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(top = dimens.space8, bottom = dimens.space8),
+            trailing =
+                if (perPersonDisplay != null) {
+                    {
+                        Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
+                            Text(
+                                text = stringResource(R.string.shared_per_person),
+                                style = typography.eyebrow,
+                                color = colors.onSurfaceMuted,
+                            )
+                            Text(
+                                text = perPersonDisplay,
+                                style = typography.detailsAmount,
+                                color = colors.onSurface,
+                            )
+                        }
+                    }
+                } else {
+                    null
+                },
         )
 
         Text(
@@ -116,13 +151,16 @@ fun SharedCostsSummaryScreen(
                     .padding(horizontal = dimens.cardPadding),
         ) {
             val nameTemplate = stringResource(R.string.shared_default_person_name)
+            val firstPersonName = stringResource(R.string.shared_default_person_you)
             state.participants.forEachIndexed { index, participant ->
                 SharedCostParticipantRow(
                     index = index + 1,
                     name =
                         participant.name
                             .trim()
-                            .ifEmpty { SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate) },
+                            .ifEmpty {
+                                SharedCostSplitLogic.defaultParticipantName(index + 1, nameTemplate, firstPersonName)
+                            },
                     amount = participant.shareLabel,
                 )
             }

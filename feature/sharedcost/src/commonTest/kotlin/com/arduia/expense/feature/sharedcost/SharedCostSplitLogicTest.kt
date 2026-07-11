@@ -79,6 +79,18 @@ class SharedCostSplitLogicTest {
         )
     }
 
+    // Rule: custom-share sum reports whether the split matches the total (never rebalanced).
+    @Test
+    fun customShareSumCents_sumsRawShares() {
+        assertEquals(9000L, SharedCostSplitLogic.customShareSumCents(listOf("60", "30")))
+    }
+
+    // Rule: sums can legitimately diverge from the total since custom shares are never rebalanced.
+    @Test
+    fun customShareSumCents_reflectsDivergenceFromTotal() {
+        assertEquals(8000L, SharedCostSplitLogic.customShareSumCents(listOf("50", "30")))
+    }
+
     // Rule: custom mode formats each raw share as entered.
     @Test
     fun buildParticipants_customMode_usesRawShares() {

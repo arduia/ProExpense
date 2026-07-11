@@ -34,4 +34,24 @@
     <string name="shared_delete_body">"%1$s" และรายจ่ายที่บันทึกไว้จะถูกลบ ไม่สามารถย้อนกลับได้</string>
     <string name="shared_delete_confirm">ลบ</string>
     <string name="shared_delete_cancel">ยกเลิก</string>
+    <string name="shared_default_person_you">คุณ</string>
+    <string name="shared_edit_person_title">แก้ไขคน</string>
+    <string name="shared_field_name">ชื่อ</string>
+    <string name="shared_field_amount">จำนวนเงิน</string>
+    <string name="shared_field_equal_share">ส่วนแบ่งเท่ากัน</string>
+    <string name="shared_equal_share_would_be">ส่วนแบ่งเท่ากันจะเป็น %1$s</string>
+    <string name="shared_switch_to_custom_hint">เปลี่ยนการหารเป็นแบบกำหนดเองเพื่อกำหนดจำนวนเงินที่แน่นอนของแต่ละคน</string>
+    <string name="shared_edit_split_cd">แก้ไขการหาร</string>
+    <string name="shared_edit_person_cd">แก้ไข %1$s</string>
+    <string name="shared_edit_action_label">แก้ไข</string>
+    <string name="shared_edit_amount_cd">แก้ไขยอดรวม</string>
+    <string name="shared_note_dismiss_cd">ซ่อนแป้นพิมพ์</string>
+    <string name="shared_done">เสร็จสิ้น</string>
+    <string name="shared_next">ถัดไป</string>
+    <string name="shared_review">ตรวจทาน</string>
+    <string name="shared_split_mode_hint_equal">แตะที่ชื่อคนเพื่อเปลี่ยนชื่อ ยอดเงินจะถูกหารเท่ากันและอัปเดตอัตโนมัติ</string>
+    <string name="shared_split_mode_hint_custom">แตะที่คนเพื่อกำหนดส่วนแบ่งของเขา ส่วนแบ่งแบบกำหนดเองไม่จำเป็นต้องรวมเท่ากับยอดรวม</string>
+    <string name="shared_custom_shares_label">ส่วนแบ่งกำหนดเอง</string>
+    <string name="shared_custom_matches_total">ตรงกับยอดรวม</string>
+    <string name="shared_custom_vs_total">เทียบกับยอดรวม %1$s</string>
 </resources>

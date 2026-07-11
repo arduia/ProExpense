@@ -70,11 +70,16 @@ import com.arduia.expense.feature.reports.ui.ReportsScreen
 import com.arduia.expense.feature.reports.ui.preview.previewReports
 import com.arduia.expense.feature.reports.ui.preview.previewReportsEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
+import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.SharedCostsEditPersonSheetContent
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsHistoryScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonCustom
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItems
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputConfirmed
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
@@ -574,7 +579,20 @@ fun uiCatalogSections(): List<UiCatalogSection> =
                             onDecrementPeople = {},
                             onIncrementPeople = {},
                             onModeSelected = {},
-                            onShareChange = { _, _ -> },
+                            onContinue = {},
+                            showKeypad = false,
+                        )
+                    },
+                    UiCatalogEntry("shared_input_confirmed", "Input · confirmed") {
+                        SharedCostsInputScreen(
+                            state = previewSharedInputConfirmed,
+                            onBack = {},
+                            onKey = {},
+                            onBackspace = {},
+                            onNoteChange = {},
+                            onDecrementPeople = {},
+                            onIncrementPeople = {},
+                            onModeSelected = {},
                             onContinue = {},
                             showKeypad = false,
                         )
@@ -605,7 +623,6 @@ fun uiCatalogSections(): List<UiCatalogSection> =
                             onDecrementPeople = {},
                             onIncrementPeople = {},
                             onModeSelected = {},
-                            onShareChange = { _, _ -> },
                             onContinue = {},
                             showKeypad = false,
                         )
@@ -620,9 +637,53 @@ fun uiCatalogSections(): List<UiCatalogSection> =
                             onDecrementPeople = {},
                             onIncrementPeople = {},
                             onModeSelected = {},
-                            onShareChange = { _, _ -> },
                             onContinue = {},
                             showKeypad = false,
+                        )
+                    },
+                    UiCatalogEntry("shared_edit_person_equal", "Edit person · equal") {
+                        SharedCostsEditPersonSheetContent(
+                            people = previewSharedEditPersonEqual,
+                            activeIndex = 0,
+                            mode = SharedSplitMode.Equal,
+                            activeAmountRaw = "30",
+                            equalShareLabel = "$30.00",
+                            onPickPerson = {},
+                            onNameChange = {},
+                            onAmountKey = { _, _ -> },
+                            onAmountBackspace = {},
+                            onDone = {},
+                            onNext = {},
+                        )
+                    },
+                    UiCatalogEntry("shared_edit_person_custom", "Edit person · custom") {
+                        SharedCostsEditPersonSheetContent(
+                            people = previewSharedEditPersonCustom,
+                            activeIndex = 2,
+                            mode = SharedSplitMode.Custom,
+                            activeAmountRaw = "40",
+                            equalShareLabel = "$30.00",
+                            onPickPerson = {},
+                            onNameChange = {},
+                            onAmountKey = { _, _ -> },
+                            onAmountBackspace = {},
+                            onDone = {},
+                            onNext = {},
+                        )
+                    },
+                    UiCatalogEntry("shared_edit_person_last", "Edit person · last (Review)") {
+                        SharedCostsEditPersonSheetContent(
+                            people = previewSharedEditPersonCustom,
+                            activeIndex = previewSharedEditPersonCustom.lastIndex,
+                            mode = SharedSplitMode.Custom,
+                            activeAmountRaw = "25",
+                            equalShareLabel = "$30.00",
+                            onPickPerson = {},
+                            onNameChange = {},
+                            onAmountKey = { _, _ -> },
+                            onAmountBackspace = {},
+                            onDone = {},
+                            onNext = {},
                         )
                     },
                 ),
