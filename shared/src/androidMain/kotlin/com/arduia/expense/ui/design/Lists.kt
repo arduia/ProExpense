@@ -25,6 +25,13 @@ import androidx.compose.ui.unit.dp
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
+/**
+ * What kind of row this is — drives badge icon/tint and tap destination, independent of
+ * [ProTransactionRowModel.categoryId] (a Split/Debt row still carries a category for
+ * filter/report bucketing, but never renders its badge from it).
+ */
+enum class ProRowKind { EXPENSE, INCOME, SPLIT, DEBT_LENT, DEBT_OWED }
+
 data class ProTransactionRowModel(
     val id: String,
     val categoryId: String,
@@ -42,6 +49,9 @@ data class ProTransactionRowModel(
     val detailDateTimeLabel: String? = null,
     /** Set when [tag] links to an event, so Journal Detail can navigate to that event's detail. */
     val linkedEventId: String? = null,
+    val rowKind: ProRowKind = if (isIncome) ProRowKind.INCOME else ProRowKind.EXPENSE,
+    /** Split/debt id to navigate to when [rowKind] isn't a plain [ProRowKind.EXPENSE]/[ProRowKind.INCOME]. */
+    val linkedId: String? = null,
 )
 
 @Composable
@@ -55,6 +65,7 @@ fun TransactionRow(
     tag: String? = null,
     showDivider: Boolean = true,
     fresh: Boolean = false,
+    rowKind: ProRowKind = if (isIncome) ProRowKind.INCOME else ProRowKind.EXPENSE,
     onClick: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
@@ -109,7 +120,12 @@ fun TransactionRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
-        LogCategoryBadge(categoryId = categoryId)
+        val badgeOverride = rowKindBadgeOverride(rowKind, colors)
+        LogCategoryBadge(
+            categoryId = categoryId,
+            overrideGlyph = badgeOverride?.first,
+            overrideColors = badgeOverride?.second,
+        )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = note.ifBlank { meta.substringBefore(" ·") },
@@ -151,10 +167,20 @@ fun TransactionRow(
                 }
             }
         }
+        val amountColor =
+            when (rowKind) {
+                // Debt rows follow the Debt Tracker's own convention (I Lent = success, I Owe =
+                // danger, design-system-spec/screens/09-debt-tracker.md) rather than the generic
+                // income/expense split — independent of whether the debt counts toward totals.
+                ProRowKind.DEBT_LENT -> colors.success
+                ProRowKind.DEBT_OWED -> colors.danger
+                ProRowKind.INCOME -> colors.success
+                ProRowKind.SPLIT, ProRowKind.EXPENSE -> colors.onSurface
+            }
         Text(
             text = amount,
             style = typography.listAmount,
-            color = if (isIncome) colors.success else colors.onSurface,
+            color = amountColor,
         )
     }
 }
@@ -231,6 +257,7 @@ fun DayGroup(
                     tag = item.tag,
                     fresh = item.id == freshRowId,
                     showDivider = index < transactions.lastIndex,
+                    rowKind = item.rowKind,
                     onClick = onRowClick?.let { click -> { click(item) } },
                 )
             }
@@ -327,6 +354,55 @@ private fun DayGroupMixedIncomeExpensePreview() {
                         note = "Lunch with M.",
                         meta = "Food · 12:30 PM",
                         amount = "$12.40",
+                    ),
+                ),
+            modifier = Modifier.padding(16.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
+@Composable
+private fun DayGroupMixedRowKindsPreview() {
+    ProExpenseTheme {
+        DayGroup(
+            title = "Today · May 25",
+            total = "$12.40",
+            transactions =
+                listOf(
+                    ProTransactionRowModel(
+                        id = "1",
+                        categoryId = "food",
+                        note = "Lunch with M.",
+                        meta = "Food · 12:30 PM",
+                        amount = "$12.40",
+                    ),
+                    ProTransactionRowModel(
+                        id = "2",
+                        categoryId = "shopping",
+                        note = "Dinner split",
+                        meta = "Split · 07:20 PM",
+                        amount = "$49.00",
+                        rowKind = ProRowKind.SPLIT,
+                        linkedId = "sc1",
+                    ),
+                    ProTransactionRowModel(
+                        id = "3",
+                        categoryId = "",
+                        note = "John",
+                        meta = "Lent · 03:10 PM",
+                        amount = "$50.00",
+                        rowKind = ProRowKind.DEBT_LENT,
+                        linkedId = "d1",
+                    ),
+                    ProTransactionRowModel(
+                        id = "4",
+                        categoryId = "",
+                        note = "Priya",
+                        meta = "Borrowed · 09:00 AM",
+                        amount = "$25.00",
+                        rowKind = ProRowKind.DEBT_OWED,
+                        linkedId = "d2",
                     ),
                 ),
             modifier = Modifier.padding(16.dp),

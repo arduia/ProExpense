@@ -30,6 +30,7 @@ interface DebtFeatureEntry {
         onDismiss: () -> Unit,
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
+        initialSelectedRecordId: String? = null,
     )
 }
 
@@ -39,6 +40,7 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
         onDismiss: () -> Unit,
         modifier: Modifier,
         homeCurrencySymbol: String,
+        initialSelectedRecordId: String?,
     ) {
         val scope = rememberCoroutineScope()
         val debtRepository: DebtRepository = koinInject()
@@ -62,14 +64,23 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
             onDismiss = onDismiss,
             lentState = lentState,
             oweState = oweState,
-            onSaveRecord = { side, person, amountRaw, dueEpochMillis, note ->
+            onSaveRecord = { side, person, amountRaw, dueEpochMillis, note, recordAsTransaction ->
                 val direction = if (side == DebtSide.Lent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE
-                scope.launch { createDebt(person, amountRaw, direction, dueEpochMillis = dueEpochMillis, note = note) }
+                scope.launch {
+                    createDebt(
+                        person,
+                        amountRaw,
+                        direction,
+                        dueEpochMillis = dueEpochMillis,
+                        note = note,
+                        recordAsTransaction = recordAsTransaction,
+                    )
+                }
             },
-            onUpdateRecord = { id, person, amountRaw, dueEpochMillis, note ->
+            onUpdateRecord = { id, person, amountRaw, dueEpochMillis, note, recordAsTransaction ->
                 val debt = debts.firstOrNull { it.id.value == id }
                 if (debt != null) {
-                    scope.launch { updateDebt(debt, person, amountRaw, dueEpochMillis, note) }
+                    scope.launch { updateDebt(debt, person, amountRaw, dueEpochMillis, note, recordAsTransaction) }
                 }
             },
             onDeleteRecord = { id ->
@@ -85,6 +96,7 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
                 val direction = if (side == DebtSide.Lent) DebtDirection.OWED_TO_ME else DebtDirection.I_OWE
                 checkDebtConflict(person, direction)
             },
+            initialSelectedRecordId = initialSelectedRecordId,
             modifier = modifier,
         )
     }
@@ -119,4 +131,6 @@ private fun Debt.toRecordUi(
         settled = settled,
         amountCents = money.amount.valueInCents,
         dueEpochMillis = dueEpochMillis,
+        recordedAtEpochMillis = recordedAtEpochMillis,
+        recordAsTransaction = recordAsTransaction,
     )

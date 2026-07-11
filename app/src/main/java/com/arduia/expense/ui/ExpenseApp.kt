@@ -28,11 +28,16 @@ import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.SharedCostRepository
 import com.arduia.expense.domain.Amount
+import com.arduia.expense.domain.Debt
+import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordKind
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.kind
+import com.arduia.expense.domain.linkedRowId
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.currency.CurrencyRepository
@@ -46,6 +51,7 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.ProBottomSheetHost
+import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.expenseCategoryLabel
@@ -102,6 +108,10 @@ fun ExpenseApp(
     var showQuickLog by rememberSaveable { mutableStateOf(false) }
     var showSharedCosts by rememberSaveable { mutableStateOf(false) }
     var showDebt by rememberSaveable { mutableStateOf(false) }
+    // Set when a Split/Debt-kind Recents/Journal row is tapped, so the overlay opens straight to
+    // that record's own detail screen instead of its default list/history step.
+    var sharedCostInitialViewingId by rememberSaveable { mutableStateOf<String?>(null) }
+    var debtInitialSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     var showPinSetup by rememberSaveable { mutableStateOf(false) }
     var showReports by rememberSaveable { mutableStateOf(false) }
     var showCategoryManager by rememberSaveable { mutableStateOf(false) }
@@ -242,8 +252,13 @@ fun ExpenseApp(
         }
     }
 
+    // Visible unconditionally (Debt & totals decision), but never counted toward spend/income
+    // totals below — only a toggle-on debt (already a real, linked FinanceRecord in `records`)
+    // does that.
+    val visibleDebts = remember(debts) { debts.filter { !it.recordAsTransaction } }
+
     val homeState =
-        if (records.isEmpty()) {
+        if (records.isEmpty() && visibleDebts.isEmpty()) {
             previewHomeEmpty.copy(
                 greetingName = userName,
                 dateLabel = dateLabel,
@@ -283,44 +298,16 @@ fun ExpenseApp(
                         isOverBudget = totalCents > budgetCents,
                     )
                 }
-            val sorted = records.sortedByDescending { it.recordedAtEpochMillis }
-            // Recent shows the last 5-10 entries (US-HOME-2), not the entire history.
+            // Recent shows the last 5-10 entries (US-HOME-2), not the entire history — toggle-off
+            // debts are merged in before truncating (see buildHomeDayGroups).
             val dayGroups =
-                sorted
-                    .take(RECENT_HOME_LIMIT)
-                    .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
-                    .toSortedMap(compareByDescending { it })
-                    .map { (_, dayRecords) ->
-                        val dayTotalCents =
-                            dayRecords
-                                .filter { it.type == RecordType.EXPENSE }
-                                .sumOf { it.homeCurrencyMoney.amount.valueInCents }
-                        val dayTotalLabel = AmountInput.formatMoney(dayTotalCents, homeSymbol)
-                        HomeDayGroup(
-                            dayTitle = PlatformDateFormatter.dayLabel(dayRecords.first().recordedAtEpochMillis),
-                            dayTotal = dayTotalLabel,
-                            transactions =
-                                dayRecords.map { record ->
-                                    HomeTransactionItem(
-                                        id = record.id.value,
-                                        categoryId = record.categoryId.value,
-                                        note =
-                                            record.note
-                                                ?.trim()
-                                                .orEmpty()
-                                                .ifEmpty { expenseCategoryLabel(record.categoryId.value) },
-                                        meta = PlatformDateFormatter.timeLabel(record.recordedAtEpochMillis),
-                                        amount =
-                                            AmountInput.formatMoney(
-                                                record.money.amount.valueInCents,
-                                                currencySymbol(record.money.currency.code),
-                                            ),
-                                        isIncome = record.type == RecordType.INCOME,
-                                        tag = record.link.tagLabel(eventNames, debtNames, sharedCostNames),
-                                    )
-                                },
-                        )
-                    }
+                buildHomeDayGroups(
+                    records = records,
+                    visibleDebts = visibleDebts,
+                    linkNames = HomeLinkNames(eventNames, debtNames, sharedCostNames),
+                    homeCurrencySymbol = homeSymbol,
+                    limit = RECENT_HOME_LIMIT,
+                )
             previewHomeEmpty.copy(
                 greetingName = userName,
                 dateLabel = dateLabel,
@@ -461,6 +448,14 @@ fun ExpenseApp(
                                     homeSelectedEventId = eventId
                                     selectedTab = HomeNavTab.Budget
                                 },
+                                onOpenSplit = { splitId ->
+                                    sharedCostInitialViewingId = splitId
+                                    showSharedCosts = true
+                                },
+                                onOpenDebt = { debtId ->
+                                    debtInitialSelectedRecordId = debtId
+                                    showDebt = true
+                                },
                             )
                         HomeNavTab.More ->
                             MoreFlow(
@@ -493,8 +488,22 @@ fun ExpenseApp(
                                 onCustomizeQuickAccess = { showQuickAccessPicker = true },
                                 visibleTiles = quickAccessVisible,
                                 onRowClick = { row ->
-                                    homeSelectedRecordId = row.id
-                                    selectedTab = HomeNavTab.Journal
+                                    when (row.rowKind) {
+                                        ProRowKind.SPLIT ->
+                                            row.linkedId?.let {
+                                                sharedCostInitialViewingId = it
+                                                showSharedCosts = true
+                                            }
+                                        ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED ->
+                                            row.linkedId?.let {
+                                                debtInitialSelectedRecordId = it
+                                                showDebt = true
+                                            }
+                                        ProRowKind.EXPENSE, ProRowKind.INCOME -> {
+                                            homeSelectedRecordId = row.id
+                                            selectedTab = HomeNavTab.Journal
+                                        }
+                                    }
                                 },
                                 onActiveEventClick = { eventId ->
                                     homeSelectedEventId = eventId
@@ -569,14 +578,25 @@ fun ExpenseApp(
 
             if (showSharedCosts) {
                 features.sharedCost.SharedCostsOverlay(
-                    onDismiss = { showSharedCosts = false },
+                    onDismiss = {
+                        showSharedCosts = false
+                        sharedCostInitialViewingId = null
+                    },
                     homeCurrencySymbol = homeSymbol,
                     homeCurrencyCode = homeCurrencyCode,
+                    initialViewingId = sharedCostInitialViewingId,
                 )
             }
 
             if (showDebt) {
-                features.debt.DebtOverlay(onDismiss = { showDebt = false }, homeCurrencySymbol = homeSymbol)
+                features.debt.DebtOverlay(
+                    onDismiss = {
+                        showDebt = false
+                        debtInitialSelectedRecordId = null
+                    },
+                    homeCurrencySymbol = homeSymbol,
+                    initialSelectedRecordId = debtInitialSelectedRecordId,
+                )
             }
 
             if (showPinSetup) {
@@ -676,6 +696,104 @@ private fun buildSparklinePoints(records: List<FinanceRecord>): List<Float> {
             .sumOf { it.homeCurrencyMoney.amount.valueInCents }
             .toFloat()
     }
+}
+
+/** Shared timestamp so [FinanceRecord] and toggle-off [Debt] rows can be merged and truncated together. */
+private data class HomeMergedEntry(
+    val recordedAtEpochMillis: Long,
+    val item: HomeTransactionItem,
+)
+
+private fun FinanceRecord.toHomeTransactionItem(
+    eventNames: Map<String, String>,
+    debtNames: Map<String, String>,
+    sharedCostNames: Map<String, String>,
+): HomeTransactionItem {
+    val rowKind =
+        when (kind()) {
+            RecordKind.EXPENSE -> ProRowKind.EXPENSE
+            RecordKind.INCOME -> ProRowKind.INCOME
+            RecordKind.SPLIT -> ProRowKind.SPLIT
+            RecordKind.DEBT_LENT -> ProRowKind.DEBT_LENT
+            RecordKind.DEBT_OWED -> ProRowKind.DEBT_OWED
+        }
+    // The row's own badge/note already convey "this is a split/debt" — an "@ tag" chip repeating
+    // the same title underneath would be redundant.
+    val suppressTag = rowKind == ProRowKind.SPLIT || rowKind == ProRowKind.DEBT_LENT || rowKind == ProRowKind.DEBT_OWED
+    return HomeTransactionItem(
+        id = id.value,
+        categoryId = categoryId.value,
+        note = note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) },
+        meta = PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
+        amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
+        isIncome = type == RecordType.INCOME,
+        tag = if (suppressTag) null else link.tagLabel(eventNames, debtNames, sharedCostNames),
+        rowKind = rowKind,
+        linkedId = linkedRowId(),
+    )
+}
+
+private fun Debt.toDebtHomeTransactionItem(): HomeTransactionItem {
+    val rowKind = if (direction == DebtDirection.OWED_TO_ME) ProRowKind.DEBT_LENT else ProRowKind.DEBT_OWED
+    val actionLabel = if (direction == DebtDirection.OWED_TO_ME) "Lent" else "Borrowed"
+    return HomeTransactionItem(
+        id = id.value,
+        categoryId = "",
+        note = personName,
+        meta = "$actionLabel · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
+        amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
+        rowKind = rowKind,
+        linkedId = id.value,
+    )
+}
+
+/** Bundles the tag-label lookup maps so they cost one parameter, not three, in call sites below. */
+private data class HomeLinkNames(
+    val eventNames: Map<String, String>,
+    val debtNames: Map<String, String>,
+    val sharedCostNames: Map<String, String>,
+)
+
+/**
+ * Merges real records with toggle-off debts (visible everywhere, never counted toward totals —
+ * see [Debt.recordAsTransaction]) before truncating to [limit], so a recent debt doesn't get
+ * evicted by real expenses/income that are actually older than it, then groups by day. Day totals
+ * are computed from the [records] subset only.
+ */
+private fun buildHomeDayGroups(
+    records: List<FinanceRecord>,
+    visibleDebts: List<Debt>,
+    linkNames: HomeLinkNames,
+    homeCurrencySymbol: String,
+    limit: Int,
+): List<HomeDayGroup> {
+    val recordEntries =
+        records.map { record ->
+            val item =
+                record.toHomeTransactionItem(linkNames.eventNames, linkNames.debtNames, linkNames.sharedCostNames)
+            HomeMergedEntry(record.recordedAtEpochMillis, item)
+        }
+    val debtEntries =
+        visibleDebts.map { debt ->
+            HomeMergedEntry(debt.recordedAtEpochMillis, debt.toDebtHomeTransactionItem())
+        }
+    val recent = (recordEntries + debtEntries).sortedByDescending { it.recordedAtEpochMillis }.take(limit)
+
+    return recent
+        .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
+        .toSortedMap(compareByDescending { it })
+        .map { (key, dayEntries) ->
+            val dayTotalCents =
+                records
+                    .filter {
+                        PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) == key && it.type == RecordType.EXPENSE
+                    }.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+            HomeDayGroup(
+                dayTitle = PlatformDateFormatter.dayLabel(dayEntries.first().recordedAtEpochMillis),
+                dayTotal = AmountInput.formatMoney(dayTotalCents, homeCurrencySymbol),
+                transactions = dayEntries.map { it.item },
+            )
+        }
 }
 
 private fun buildDateLabel(): String {

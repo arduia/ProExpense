@@ -29,6 +29,8 @@
 <string name="debt_person_placeholder">အမည်</string>
 <string name="debt_note_label">မှတ်ချက် · မဖြစ်မနေမလို</string>
 <string name="debt_note_placeholder">မှတ်ချက် ထည့်ပါ</string>
+<string name="debt_record_as_transaction_label">အသုံးစရိတ်/ဝင်ငွေအဖြစ်လည်း မှတ်တမ်းတင်ပါ</string>
+<string name="debt_record_as_transaction_caption">ပုံမှန်မှတ်တမ်းတစ်ခုကဲ့သို့ သင့်စုစုပေါင်း အသုံးစရိတ်/ဝင်ငွေတွင် ထည့်တွက်ပါမည်</string>
 <string name="debt_person_counter">%1$d/%2$d</string>
 <string name="debt_currency_usd">USD</string>
 <string name="debt_save_record">မှတ်တမ်း သိမ်းရန်</string>

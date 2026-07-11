@@ -29,6 +29,8 @@
 <string name="debt_person_placeholder">ชื่อ</string>
 <string name="debt_note_label">บันทึก · ไม่บังคับ</string>
 <string name="debt_note_placeholder">เพิ่มบันทึก</string>
+<string name="debt_record_as_transaction_label">บันทึกเป็นรายจ่าย/รายรับด้วย</string>
+<string name="debt_record_as_transaction_caption">นับรวมในยอดรายจ่าย/รายรับของคุณ เหมือนรายการทั่วไป</string>
 <string name="debt_person_counter">%1$d/%2$d</string>
 <string name="debt_currency_usd">USD</string>
 <string name="debt_save_record">บันทึกรายการ</string>

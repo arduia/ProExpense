@@ -29,7 +29,12 @@ private fun importExportRepo(database: ProExpenseDatabase): SqlDelightImportExpo
             dispatcher = Dispatchers.Unconfined,
         )
     val eventRepository = SqlDelightEventRepository(database.eventQueries, Dispatchers.Unconfined)
-    val debtRepository = SqlDelightDebtRepository(database.debtQueries, Dispatchers.Unconfined)
+    val debtRepository =
+        SqlDelightDebtRepository(
+            queries = database.debtQueries,
+            financeRecordRepository = financeRecordRepository,
+            dispatcher = Dispatchers.Unconfined,
+        )
     val sharedCostRepository =
         SqlDelightSharedCostRepository(
             queries = database.sharedCostQueries,
@@ -79,7 +84,12 @@ class SqlDelightImportExportRepositoryTest {
                     budget = Money(Amount(500_00), home),
                 ),
             )
-            val debtRepository = SqlDelightDebtRepository(database.debtQueries, Dispatchers.Unconfined)
+            val debtRepository =
+                SqlDelightDebtRepository(
+                    queries = database.debtQueries,
+                    financeRecordRepository = financeRecordRepository,
+                    dispatcher = Dispatchers.Unconfined,
+                )
             debtRepository.upsert(
                 Debt(
                     id = DebtId("d1"),

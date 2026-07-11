@@ -55,6 +55,7 @@ import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.design.TransactionRow
@@ -268,11 +269,21 @@ fun JournalListScreen(
                             items = day.rows,
                             key = { _, row -> row.id },
                         ) { index, row ->
+                            // Quick-note edits a FinanceRecord's note directly — meaningless for a
+                            // Split/Debt row (its "note" is the split title, or there's no backing
+                            // record at all for a toggle-off debt), so only offer it for plain rows.
+                            val supportsQuickNote =
+                                row.rowKind == ProRowKind.EXPENSE || row.rowKind == ProRowKind.INCOME
                             Box(
                                 modifier =
                                     Modifier.combinedClickable(
                                         onClick = { onRowClick(row) },
-                                        onLongClick = { onRowLongPress(row) },
+                                        onLongClick =
+                                            if (supportsQuickNote) {
+                                                { onRowLongPress(row) }
+                                            } else {
+                                                null
+                                            },
                                     ),
                             ) {
                                 TransactionRow(
@@ -280,8 +291,10 @@ fun JournalListScreen(
                                     note = row.note,
                                     meta = row.meta,
                                     amount = row.amount,
+                                    isIncome = row.isIncome,
                                     tag = row.tag,
                                     showDivider = index < day.rows.lastIndex,
+                                    rowKind = row.rowKind,
                                 )
                             }
                         }

@@ -8,6 +8,9 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.Debt
+import com.arduia.expense.domain.DebtDirection
+import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordId
@@ -198,4 +201,68 @@ class LoadJournalPageUseCaseTest {
 
             assertIs<Result.Error>(result)
         }
+}
+
+private fun sampleDebt(
+    id: String,
+    recordedAtEpochMillis: Long,
+    recordAsTransaction: Boolean = false,
+) = Debt(
+    id = DebtId(id),
+    personName = "Alex",
+    money = Money(Amount(1000), CurrencyCode("USD")),
+    direction = DebtDirection.OWED_TO_ME,
+    recordedAtEpochMillis = recordedAtEpochMillis,
+    recordAsTransaction = recordAsTransaction,
+)
+
+class VisibleUnrecordedDebtsTest {
+    @Test
+    fun invoke_excludesDebtsThatAlreadyHaveALinkedFinanceRecord() {
+        val debts = listOf(sampleDebt("d1", recordedAtEpochMillis = 1_000L, recordAsTransaction = true))
+
+        val visible = visibleUnrecordedDebts(debts, oldestLoadedRecordMillis = null, recordsFullyLoaded = true)
+
+        assertEquals(emptyList(), visible)
+    }
+
+    @Test
+    fun invoke_includesEverythingWhenRecordsAreFullyLoaded_regardlessOfAge() {
+        val debts = listOf(sampleDebt("d1", recordedAtEpochMillis = 1L))
+
+        val visible = visibleUnrecordedDebts(debts, oldestLoadedRecordMillis = 999_999L, recordsFullyLoaded = true)
+
+        assertEquals(listOf(DebtId("d1")), visible.map { it.id })
+    }
+
+    @Test
+    fun invoke_includesEverythingWhenNoRecordsLoadedYet() {
+        val debts = listOf(sampleDebt("d1", recordedAtEpochMillis = 1L))
+
+        val visible = visibleUnrecordedDebts(debts, oldestLoadedRecordMillis = null, recordsFullyLoaded = false)
+
+        assertEquals(listOf(DebtId("d1")), visible.map { it.id })
+    }
+
+    @Test
+    fun invoke_excludesADebtOlderThanTheOldestLoadedRecord_whenMorePagesRemain() {
+        val debts = listOf(sampleDebt("d1", recordedAtEpochMillis = 500L))
+
+        val visible = visibleUnrecordedDebts(debts, oldestLoadedRecordMillis = 1_000L, recordsFullyLoaded = false)
+
+        assertEquals(emptyList(), visible)
+    }
+
+    @Test
+    fun invoke_includesADebtAtOrAfterTheOldestLoadedRecord() {
+        val debts =
+            listOf(
+                sampleDebt("d1", recordedAtEpochMillis = 1_000L),
+                sampleDebt("d2", recordedAtEpochMillis = 2_000L),
+            )
+
+        val visible = visibleUnrecordedDebts(debts, oldestLoadedRecordMillis = 1_000L, recordsFullyLoaded = false)
+
+        assertEquals(listOf(DebtId("d1"), DebtId("d2")), visible.map { it.id })
+    }
 }

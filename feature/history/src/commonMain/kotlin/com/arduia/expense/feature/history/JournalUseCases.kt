@@ -3,6 +3,7 @@ package com.arduia.expense.feature.history
 import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.RecordPageCursor
 import com.arduia.expense.data.Result
+import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
 
@@ -29,6 +30,27 @@ class DeleteRecordUseCase(
         financeRecordRepository.delete(RecordId(recordId))
     }
 }
+
+/**
+ * Which toggle-off debts (never a real [FinanceRecord] — see [Debt.recordAsTransaction]) should
+ * merge into the currently-loaded Journal page. Bounded to [oldestLoadedRecordMillis] so a debt
+ * from long before the user has scrolled that far doesn't appear out of pagination order; as more
+ * pages load ([oldestLoadedRecordMillis] moves back or [recordsFullyLoaded] flips true), older
+ * debts progressively join. A toggle-on debt already has its own linked [FinanceRecord] in the
+ * page and must not be filtered in here too, or it would render twice.
+ */
+fun visibleUnrecordedDebts(
+    debts: List<Debt>,
+    oldestLoadedRecordMillis: Long?,
+    recordsFullyLoaded: Boolean,
+): List<Debt> =
+    debts.filter { debt ->
+        val debtIsWithinLoadedRange =
+            recordsFullyLoaded ||
+                oldestLoadedRecordMillis == null ||
+                debt.recordedAtEpochMillis >= oldestLoadedRecordMillis
+        !debt.recordAsTransaction && debtIsWithinLoadedRange
+    }
 
 /** Updates the note on an existing journal record, leaving everything else untouched. */
 class UpdateRecordNoteUseCase(

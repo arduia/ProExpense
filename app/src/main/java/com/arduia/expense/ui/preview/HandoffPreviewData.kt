@@ -1,5 +1,7 @@
 package com.arduia.expense.ui.preview
 
+import com.arduia.expense.ui.design.ProRowKind
+
 data class HomeTransactionItem(
     val id: String = "",
     val categoryId: String,
@@ -8,6 +10,8 @@ data class HomeTransactionItem(
     val amount: String,
     val isIncome: Boolean = false,
     val tag: String? = null,
+    val rowKind: ProRowKind = if (isIncome) ProRowKind.INCOME else ProRowKind.EXPENSE,
+    val linkedId: String? = null,
 )
 
 data class HomeDayGroup(
@@ -121,6 +125,61 @@ val previewHomeCasual =
                                 note = "Groceries",
                                 meta = "Food · 05:30 PM",
                                 amount = "$42.00",
+                            ),
+                        ),
+                ),
+            ),
+    )
+
+/** Expense + Split + Debt-lent + Debt-owed rows side by side — distinct icon/tint per kind. */
+val previewHomeMixedKinds =
+    HomeUiState(
+        greetingName = "Maya",
+        dateLabel = "WED · MAY 25",
+        monthLabel = "MAY",
+        monthSpend = "$61.40",
+        showEmptyHint = false,
+        sparklinePoints = previewHomeCasual.sparklinePoints,
+        dayGroups =
+            listOf(
+                HomeDayGroup(
+                    dayTitle = "Today · May 25",
+                    dayTotal = "$61.40",
+                    transactions =
+                        listOf(
+                            HomeTransactionItem(
+                                id = "r1",
+                                categoryId = "food",
+                                note = "Lunch with M.",
+                                meta = "Food · 12:30 PM",
+                                amount = "$12.40",
+                            ),
+                            HomeTransactionItem(
+                                id = "sc1",
+                                categoryId = "shopping",
+                                note = "Dinner split",
+                                meta = "Split · 07:20 PM",
+                                amount = "$49.00",
+                                rowKind = ProRowKind.SPLIT,
+                                linkedId = "sc1",
+                            ),
+                            HomeTransactionItem(
+                                id = "d1",
+                                categoryId = "",
+                                note = "John",
+                                meta = "Lent · 03:10 PM",
+                                amount = "$50.00",
+                                rowKind = ProRowKind.DEBT_LENT,
+                                linkedId = "d1",
+                            ),
+                            HomeTransactionItem(
+                                id = "d2",
+                                categoryId = "",
+                                note = "Priya",
+                                meta = "Borrowed · 09:00 AM",
+                                amount = "$25.00",
+                                rowKind = ProRowKind.DEBT_OWED,
+                                linkedId = "d2",
                             ),
                         ),
                 ),

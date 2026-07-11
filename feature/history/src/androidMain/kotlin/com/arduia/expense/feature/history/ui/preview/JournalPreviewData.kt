@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.history.ui.preview
 
+import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProTransactionRowModel
 
 data class JournalDayUi(
@@ -128,6 +129,60 @@ private val journalMonday =
 val previewJournalList =
     JournalListUiState(
         days = listOf(journalToday, journalYesterday, journalMonday),
+    )
+
+/** Expense + Split + Debt-lent + Debt-owed rows side by side — distinct icon/tint per kind. */
+private val journalMixedKinds =
+    JournalDayUi(
+        id = "2026-05-25",
+        title = "Today · May 25",
+        total = "$12.40",
+        rows =
+            listOf(
+                ProTransactionRowModel(
+                    id = "t1",
+                    categoryId = "food",
+                    note = "Lunch with M.",
+                    meta = "Food · 12:30 PM",
+                    amount = "$12.40",
+                    detailDateTimeLabel = "Today · 12:30 PM",
+                ),
+                ProTransactionRowModel(
+                    id = "sc1",
+                    categoryId = "shopping",
+                    note = "Dinner split",
+                    meta = "Split · 07:20 PM",
+                    amount = "$49.00",
+                    detailDateTimeLabel = "Today · 07:20 PM",
+                    rowKind = ProRowKind.SPLIT,
+                    linkedId = "sc1",
+                ),
+                ProTransactionRowModel(
+                    id = "d1",
+                    categoryId = "",
+                    note = "John",
+                    meta = "Lent · 03:10 PM",
+                    amount = "$50.00",
+                    detailDateTimeLabel = "Today · 03:10 PM",
+                    rowKind = ProRowKind.DEBT_LENT,
+                    linkedId = "d1",
+                ),
+                ProTransactionRowModel(
+                    id = "d2",
+                    categoryId = "",
+                    note = "Priya",
+                    meta = "Borrowed · 09:00 AM",
+                    amount = "$25.00",
+                    detailDateTimeLabel = "Today · 09:00 AM",
+                    rowKind = ProRowKind.DEBT_OWED,
+                    linkedId = "d2",
+                ),
+            ),
+    )
+
+val previewJournalMixedKinds =
+    JournalListUiState(
+        days = listOf(journalMixedKinds),
     )
 
 val previewJournalSearchEmpty =

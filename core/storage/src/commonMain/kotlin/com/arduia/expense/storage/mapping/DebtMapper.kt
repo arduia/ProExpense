@@ -17,6 +17,8 @@ internal fun DebtRow.toDomain(): Debt =
         dueEpochMillis = due_epoch_millis,
         isSettled = is_settled != 0L,
         note = note,
+        recordedAtEpochMillis = recorded_at,
+        recordAsTransaction = record_as_transaction != 0L,
     )
 
 /**

@@ -109,7 +109,12 @@ class ProExpenseStorage internal constructor(
                     dispatcher = dispatcher,
                 )
             val eventRepository = SqlDelightEventRepository(database.eventQueries, dispatcher)
-            val debtRepository = SqlDelightDebtRepository(database.debtQueries, dispatcher)
+            val debtRepository =
+                SqlDelightDebtRepository(
+                    queries = database.debtQueries,
+                    financeRecordRepository = financeRecordRepository,
+                    dispatcher = dispatcher,
+                )
             val sharedCostRepository =
                 SqlDelightSharedCostRepository(
                     queries = database.sharedCostQueries,
