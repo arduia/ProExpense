@@ -29,6 +29,15 @@
 - With multiple overlapping active events, the header shows the most recently created one.
 - Active Event card appears only when an event is running.
 - Recent transactions: last 5–10 entries (badge, note, meta, amount). “See all” → Journal. Income entries render their amount in success green instead of ink (see `04-add-expense.md` / `components/category.md`).
+- **Row kinds (new, previously undocumented):** a row can be Expense, Income, a Debt (Lent/Owed), or
+  a Shared Cost split — see `components/transaction-row.md` for the shared badge/color/title rules.
+  On Home Recents specifically: Debt Lent/Owed rows are always shown here (a debt is a real,
+  counted transaction the moment its "record as transaction" toggle is on), but Split rows are
+  currently **hidden** from Home Recents pending final mixed-kind UX sign-off — they still show in
+  Journal (see `05-journal.md`). Home Recents is also the one place an **Owe** row's amount renders
+  in success green instead of the neutral tone Journal uses, matching the persona snapshot's
+  optimistic framing; the badge icon color (Lent=green / Owe=red) is unaffected and always follows
+  Debt Tracker's own convention.
 - Empty state (fresh user): illustrated, “No expenses yet…”, single CTA “Log your first expense”.
 - Quick-access tiles deep-link to Reports / Debt / Split / **Goals** (renamed from “Events” — see `components/quick-access.md`).
 - Bottom nav (Home active) + raised center Add are always present on top-level screens.
