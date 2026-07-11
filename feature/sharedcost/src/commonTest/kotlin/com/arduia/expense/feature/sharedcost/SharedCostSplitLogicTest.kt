@@ -19,11 +19,19 @@ class SharedCostSplitLogicTest {
         assertEquals(0L, SharedCostSplitLogic.equalShareCents("90", 0))
     }
 
-    // Rule: cents render as symbol + whole + 2-digit-padded fraction.
+    // Rule: cents render as symbol + whole + 2-digit-padded fraction, but a zero fraction is
+    // dropped entirely (no forced ".00").
     @Test
-    fun formatCents_padsFraction() {
-        assertEquals("$30.00", SharedCostSplitLogic.formatCents(3000))
+    fun formatCents_padsFractionOrDropsWhenZero() {
+        assertEquals("$30", SharedCostSplitLogic.formatCents(3000))
         assertEquals("€7.05", SharedCostSplitLogic.formatCents(705, "€"))
+    }
+
+    // Rule: a raw share/total with a partial decimal ("2.4") still renders fully padded ("$2.40"),
+    // not echoed as typed — only genuinely live-typing fields echo raw digits.
+    @Test
+    fun formatShareRaw_padsPartialDecimal() {
+        assertEquals("$2.40", SharedCostSplitLogic.formatShareRaw("2.4"))
     }
 
     // Rule: save is gated on a positive total.
@@ -74,7 +82,7 @@ class SharedCostSplitLogicTest {
                 customShareRaws = emptyList(),
             )
         assertEquals(
-            listOf("Aiko" to "$30.00", "Ben" to "$30.00", "Cara" to "$30.00"),
+            listOf("Aiko" to "$30", "Ben" to "$30", "Cara" to "$30"),
             participants,
         )
     }

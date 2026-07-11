@@ -121,41 +121,44 @@ fun SharedCostsSummaryScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(top = dimens.space8, bottom = dimens.space8),
-            trailing = {
-                // Sum (of individual shares) always shows — it's the one figure that stays
-                // meaningful for a Custom split, whose shares aren't rebalanced to the total.
-                // Per person is additionally shown only when it's a single representative
-                // number, i.e. an Equal split.
-                Row(horizontalArrangement = Arrangement.spacedBy(dimens.space16)) {
-                    if (perPersonDisplay != null) {
-                        Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
-                            Text(
-                                text = stringResource(R.string.shared_per_person),
-                                style = typography.eyebrow,
-                                color = colors.onSurfaceMuted,
-                            )
-                            Text(
-                                text = perPersonDisplay,
-                                style = typography.detailsAmount,
-                                color = colors.onSurface,
-                            )
-                        }
-                    }
-                    Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
-                        Text(
-                            text = stringResource(R.string.shared_split_sum),
-                            style = typography.eyebrow,
-                            color = colors.onSurfaceMuted,
-                        )
-                        Text(
-                            text = sumDisplay,
-                            style = typography.detailsAmount,
-                            color = colors.onSurface,
-                        )
-                    }
-                }
-            },
         )
+
+        // Rendered below the total rather than as AmountDisplay's trailing — sharing the total's
+        // row meant a long, shrunk-to-fit total could crowd or run out of width against these
+        // figures. Sum (of individual shares) always shows — it's the one figure that stays
+        // meaningful for a Custom split, whose shares aren't rebalanced to the total. Per person
+        // is additionally shown only when it's a single representative number, i.e. an Equal split.
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimens.space16),
+            modifier = Modifier.padding(bottom = dimens.space8),
+        ) {
+            if (perPersonDisplay != null) {
+                Column {
+                    Text(
+                        text = stringResource(R.string.shared_per_person),
+                        style = typography.eyebrow,
+                        color = colors.onSurfaceMuted,
+                    )
+                    Text(
+                        text = perPersonDisplay,
+                        style = typography.detailsAmount,
+                        color = colors.onSurface,
+                    )
+                }
+            }
+            Column {
+                Text(
+                    text = stringResource(R.string.shared_split_sum),
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceMuted,
+                )
+                Text(
+                    text = sumDisplay,
+                    style = typography.detailsAmount,
+                    color = colors.onSurface,
+                )
+            }
+        }
 
         Text(
             text =
@@ -268,7 +271,7 @@ private fun SharedCostsSummaryReadOnlyPreview() {
     }
 }
 
-/** Custom split: no single "per person" figure applies, so only Sum shows beside the total. */
+/** Custom split: no single "per person" figure applies, so only Sum shows below the total. */
 @Preview(
     name = "Shared costs — summary, custom",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,

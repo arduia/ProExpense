@@ -166,6 +166,10 @@ private fun SharedCostUiState.toDraft(
         mode = mode,
         names = participants.map { it.name },
         customShareRaws = shareRaws,
+        // A split loaded from History already has a finalized amount — its Edit action must land
+        // on the detail screen (people/mode/participants), not the amount keypad. The keypad stays
+        // reachable via the total's own edit icon (onEditAmount flips this back to false).
+        amountConfirmed = true,
     ).withParticipants(nameTemplate, firstPersonName)
 
 @Composable
