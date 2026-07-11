@@ -2,6 +2,7 @@
     <string name="shared_costs_title">Split a bill</string>
     <string name="shared_summary_title">Split summary</string>
     <string name="shared_per_person">Per person</string>
+    <string name="shared_split_sum">Sum</string>
     <string name="shared_save_split">Save split</string>
     <string name="shared_split_saved_toast">Split saved</string>
     <string name="shared_split_even">Even split</string>

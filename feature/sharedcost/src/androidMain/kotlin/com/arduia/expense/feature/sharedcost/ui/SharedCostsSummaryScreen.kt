@@ -3,7 +3,9 @@ package com.arduia.expense.feature.sharedcost.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -25,6 +27,7 @@ import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostParticipantRow
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummaryCustom
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProButton
@@ -63,7 +66,14 @@ fun SharedCostsSummaryScreen(
         } else {
             null
         }
-    val totalDisplay = AmountInput.formatDisplay(state.rawTotal)
+    // formatMoney (not formatDisplay) drops a zero fraction ("$120" not "$120.00") — matters
+    // most for a saved/reloaded split, whose rawTotal always arrives "%.2f"-formatted.
+    // totalDisplay stays symbol-less: AmountDisplay (below) prepends homeCurrencySymbol itself,
+    // and the Save button re-concatenates it manually — sumDisplay has neither, so it needs the
+    // symbol baked in directly.
+    val totalDisplay = AmountInput.formatMoney(SharedCostSplitLogic.totalCents(state.rawTotal))
+    val sumDisplay =
+        AmountInput.formatMoney(SharedCostSplitLogic.customShareSumCents(state.shareRaws), homeCurrencySymbol)
     val modeLabel =
         when (state.mode) {
             SharedSplitMode.Equal -> stringResource(R.string.shared_split_mode_equal)
@@ -111,9 +121,13 @@ fun SharedCostsSummaryScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(top = dimens.space8, bottom = dimens.space8),
-            trailing =
-                if (perPersonDisplay != null) {
-                    {
+            trailing = {
+                // Sum (of individual shares) always shows — it's the one figure that stays
+                // meaningful for a Custom split, whose shares aren't rebalanced to the total.
+                // Per person is additionally shown only when it's a single representative
+                // number, i.e. an Equal split.
+                Row(horizontalArrangement = Arrangement.spacedBy(dimens.space16)) {
+                    if (perPersonDisplay != null) {
                         Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
                             Text(
                                 text = stringResource(R.string.shared_per_person),
@@ -127,9 +141,20 @@ fun SharedCostsSummaryScreen(
                             )
                         }
                     }
-                } else {
-                    null
-                },
+                    Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
+                        Text(
+                            text = stringResource(R.string.shared_split_sum),
+                            style = typography.eyebrow,
+                            color = colors.onSurfaceMuted,
+                        )
+                        Text(
+                            text = sumDisplay,
+                            style = typography.detailsAmount,
+                            color = colors.onSurface,
+                        )
+                    }
+                }
+            },
         )
 
         Text(
@@ -239,6 +264,25 @@ private fun SharedCostsSummaryReadOnlyPreview() {
             readOnly = true,
             backLabel = stringResource(R.string.shared_back_history),
             onMore = {},
+        )
+    }
+}
+
+/** Custom split: no single "per person" figure applies, so only Sum shows beside the total. */
+@Preview(
+    name = "Shared costs — summary, custom",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsSummaryCustomPreview() {
+    ProExpenseTheme {
+        SharedCostsSummaryScreen(
+            state = previewSharedSummaryCustom,
+            onBack = {},
+            onSwitchToCustom = {},
+            onSave = {},
         )
     }
 }

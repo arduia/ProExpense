@@ -2,6 +2,7 @@
     <string name="shared_costs_title">หารบิล</string>
     <string name="shared_summary_title">สรุปการหาร</string>
     <string name="shared_per_person">ต่อคน</string>
+    <string name="shared_split_sum">ผลรวม</string>
     <string name="shared_save_split">บันทึกการหาร</string>
     <string name="shared_split_saved_toast">บันทึกการหารแล้ว</string>
     <string name="shared_split_even">หารเท่ากัน</string>

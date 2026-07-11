@@ -2,6 +2,7 @@
     <string name="shared_costs_title">ဘေလ်ခွဲရန်</string>
     <string name="shared_summary_title">ခွဲဝေမှု အကျဉ်းချုပ်</string>
     <string name="shared_per_person">တစ်ဦးလျှင်</string>
+    <string name="shared_split_sum">စုစုပေါင်း</string>
     <string name="shared_save_split">ခွဲဝေမှု သိမ်းရန်</string>
     <string name="shared_split_saved_toast">ခွဲဝေမှု သိမ်းပြီးပါပြီ</string>
     <string name="shared_split_even">တညီတညာခွဲရန်</string>

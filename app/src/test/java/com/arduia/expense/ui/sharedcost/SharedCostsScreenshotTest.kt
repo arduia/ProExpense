@@ -13,6 +13,7 @@ import com.arduia.expense.feature.sharedcost.ui.SharedCostsEditPersonSheetConten
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsHistoryScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsInputScreen
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsSummaryScreen
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedCustomLimits
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonCustom
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedEditPersonEqual
@@ -20,6 +21,7 @@ import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItem
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputConfirmed
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedInputEqual
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummary
+import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedSummaryCustom
 import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedZeroValidation
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.testing.captureRoboImageWithTolerance
@@ -95,6 +97,27 @@ class SharedCostsScreenshotTest {
         }
     }
 
+    /** Regression guard: a near-max-digit amount (product cap 999,999,999.99) must shrink to fit
+     *  on one line instead of overflowing/wrapping past the card's edge. */
+    @Test
+    fun edge_shared_person_card_large_amount() {
+        capture {
+            SharedCostPerPersonCard(
+                headerEyebrow = "Custom shares",
+                headerAmount = "$999,999,999.99",
+                participants =
+                    listOf(
+                        "Aiko" to "$500,000,000.00",
+                        "Ben" to "$499,999,999.99",
+                    ),
+                onHeaderEditClick = {},
+                headerEditContentDescription = "Edit split",
+                onPersonEditClick = {},
+                personEditContentDescription = { "Edit person" },
+            )
+        }
+    }
+
     @Test
     fun shared_summary() {
         capture {
@@ -117,6 +140,19 @@ class SharedCostsScreenshotTest {
                 onSave = {},
                 readOnly = true,
                 onMore = {},
+            )
+        }
+    }
+
+    /** Custom split: Sum shows beside the total, but Per person does not (no single figure). */
+    @Test
+    fun shared_summary_custom() {
+        capture {
+            SharedCostsSummaryScreen(
+                state = previewSharedSummaryCustom,
+                onBack = {},
+                onSwitchToCustom = {},
+                onSave = {},
             )
         }
     }

@@ -226,6 +226,10 @@ fun SharedCostsFlow(
     // picking someone else) this split — the roster only shows a check mark for these, not for
     // everyone who simply hasn't been visited yet.
     var visitedIndices by remember { mutableStateOf(emptySet<Int>()) }
+    // Snapshot of rawTotal taken when the amount editor re-opens — lets onConfirmAmount tell
+    // whether the total actually changed, so a Custom split's shares only get redistributed
+    // evenly when that's actually warranted, not on every re-open/re-confirm.
+    var preEditTotal by remember { mutableStateOf<String?>(null) }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
     val currentStep = SharedCostStep.valueOf(step)
@@ -394,15 +398,26 @@ fun SharedCostsFlow(
                         },
                         onConfirmAmount = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
+                                // Only re-split evenly when the total actually changed value —
+                                // preserves an intentionally-set Custom split if the user just
+                                // re-opens and re-confirms the amount editor without editing it.
+                                val totalChanged = preEditTotal != null && preEditTotal != draft.rawTotal
+                                val confirmed = draft.copy(amountConfirmed = true)
                                 draft =
-                                    draft
-                                        .copy(amountConfirmed = true)
-                                        .withParticipants(nameTemplate, firstPersonName)
+                                    if (totalChanged) {
+                                        confirmed.withEvenParticipants(nameTemplate, firstPersonName)
+                                    } else {
+                                        confirmed.withParticipants(nameTemplate, firstPersonName)
+                                    }
+                                preEditTotal = null
                             } else {
                                 draft = draft.copy(showZeroValidation = true)
                             }
                         },
-                        onEditAmount = { draft = draft.copy(amountConfirmed = false) },
+                        onEditAmount = {
+                            preEditTotal = draft.rawTotal
+                            draft = draft.copy(amountConfirmed = false)
+                        },
                         onContinue = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
                                 step = SharedCostStep.Summary.name
