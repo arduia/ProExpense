@@ -267,8 +267,8 @@ fun SharedCostParticipantRow(
             SharedCostEditIconButton(
                 onClick = onEditClick,
                 contentDescription = editContentDescription,
-                size = dimens.space26,
-                iconSize = dimens.iconTag,
+                size = dimens.space32,
+                iconSize = dimens.iconChipLeading,
             )
         }
     }
@@ -278,16 +278,20 @@ fun SharedCostParticipantRow(
  * Small circular edit-icon affordance — deliberately sized explicitly (no
  * `minimumInteractiveComponentSize()` floor) since it always sits inside an already-tappable card
  * or dense row; a 48dp floor here would inflate the parent past its siblings (see
- * `.agents/skills/design-spec-to-compose/SKILL.md` guard on nesting `proIconClickable`).
+ * `.agents/skills/design-spec-to-compose/SKILL.md` guard on nesting `proIconClickable`). Exposed
+ * (not `private`) so other Shared Costs surfaces — e.g. the total-amount edit action — can reuse
+ * the exact same circular affordance rather than a bare pencil glyph.
  */
 @Composable
-private fun SharedCostEditIconButton(
+fun SharedCostEditIconButton(
     onClick: () -> Unit,
     contentDescription: String,
     size: Dp,
     iconSize: Dp,
     modifier: Modifier = Modifier,
     filledBackground: Boolean = false,
+    tint: Color = ProExpenseTheme.colors.onSurfaceVariant,
+    borderColor: Color = ProExpenseTheme.colors.line,
 ) {
     val colors = ProExpenseTheme.colors
     val interactionSource = remember { MutableInteractionSource() }
@@ -299,7 +303,7 @@ private fun SharedCostEditIconButton(
                 .proPressScale(interactionSource)
                 .clip(CircleShape)
                 .background(if (filledBackground) colors.surface else Color.Transparent)
-                .border(BorderStroke(1.dp, colors.line), CircleShape)
+                .border(BorderStroke(1.dp, borderColor), CircleShape)
                 .proCircularRippleClickable(
                     onClick = onClick,
                     interactionSource = interactionSource,
@@ -310,7 +314,7 @@ private fun SharedCostEditIconButton(
         ProIcon(
             glyph = ProIconGlyph.Edit,
             contentDescription = contentDescription,
-            tint = colors.onSurfaceVariant,
+            tint = tint,
             size = iconSize,
         )
     }
@@ -410,7 +414,9 @@ fun SharedCostNoteField(
                 glyph = ProIconGlyph.Check,
                 contentDescription = stringResource(R.string.shared_note_dismiss_cd),
                 tint = colors.success,
-                size = ProExpenseTheme.dimensions.iconTag,
+                // proIconClickable already floors the touch target at 48dp — the glyph itself
+                // was reading too small next to that generous tap area, so size it up to match.
+                size = ProExpenseTheme.dimensions.iconInline,
                 modifier =
                     Modifier.proIconClickable(
                         onClick = {
@@ -488,50 +494,56 @@ fun SharedCostPerPersonCard(
                 .padding(dimens.cardPadding),
         verticalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+            // Eyebrow and Edit share the top row — both are short, fixed-width labels, so
+            // they never fight the (potentially long, large-font) amount for space. The
+            // amount itself renders full-width on its own line below, so a long value never
+            // squeezes the Edit action out.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
                     text = headerEyebrow,
                     style = typography.eyebrow,
                     color = colors.onSurfaceMuted,
                 )
-                Text(
-                    text = headerAmount,
-                    style = typography.displayAmount,
-                    color = colors.primary,
-                )
-                if (headerCaption != null) {
-                    Text(
-                        text = headerCaption,
-                        style = typography.caption,
-                        color = if (headerCaptionEmphasized) colors.success else colors.onSurfaceMuted,
+                if (onHeaderEditClick != null) {
+                    ProTextAction(
+                        text = stringResource(R.string.shared_edit_action_label),
+                        onClick = onHeaderEditClick,
+                        style = typography.bodyMedium,
+                        color = colors.primary,
+                        leading = {
+                            ProIcon(
+                                glyph = ProIconGlyph.Edit,
+                                contentDescription = null,
+                                tint = colors.primary,
+                                size = dimens.iconChipLeading,
+                            )
+                        },
+                        // The visible label reads "Edit"; keep the richer a11y name ("Edit
+                        // split") that existing content-description-based navigation/tests
+                        // rely on.
+                        modifier =
+                            Modifier.semantics(mergeDescendants = true) {
+                                contentDescription = headerEditContentDescription
+                            },
                     )
                 }
             }
-            if (onHeaderEditClick != null) {
-                ProTextAction(
-                    text = stringResource(R.string.shared_edit_action_label),
-                    onClick = onHeaderEditClick,
-                    style = typography.captionMedium,
-                    color = colors.primary,
-                    leading = {
-                        ProIcon(
-                            glyph = ProIconGlyph.Edit,
-                            contentDescription = null,
-                            tint = colors.primary,
-                            size = dimens.iconTag,
-                        )
-                    },
-                    // The visible label reads "Edit"; keep the richer a11y name ("Edit split")
-                    // that existing content-description-based navigation/tests rely on.
-                    modifier =
-                        Modifier.semantics(mergeDescendants = true) {
-                            contentDescription = headerEditContentDescription
-                        },
+            Text(
+                text = headerAmount,
+                style = typography.displayAmount,
+                color = colors.primary,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (headerCaption != null) {
+                Text(
+                    text = headerCaption,
+                    style = typography.caption,
+                    color = if (headerCaptionEmphasized) colors.success else colors.onSurfaceMuted,
                 )
             }
         }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.feature.sharedcost.R
 import com.arduia.expense.feature.sharedcost.SharedCostSplitLogic
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
+import com.arduia.expense.feature.sharedcost.ui.components.SharedCostEditIconButton
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostNoteField
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPeopleCard
 import com.arduia.expense.feature.sharedcost.ui.components.SharedCostPerPersonCard
@@ -37,11 +39,8 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
-import com.arduia.expense.ui.design.ProIcon
-import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
-import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -143,6 +142,7 @@ fun SharedCostsInputScreen(
                 backLabel = stringResource(R.string.shared_back_more),
             )
 
+            val editAmountDescription = stringResource(R.string.shared_edit_amount_cd)
             AmountDisplay(
                 amountText = displayAmount,
                 currencySymbol = homeCurrencySymbol,
@@ -154,15 +154,19 @@ fun SharedCostsInputScreen(
                     Modifier
                         .fillMaxWidth()
                         .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
+                // Tapping the amount itself re-opens the keypad exactly like the trailing edit
+                // icon does — a bigger, easier target than the small icon alone.
+                onAmountClick = if (showDetails) onEditAmount else null,
                 trailing =
                     if (showDetails) {
                         {
-                            ProIcon(
-                                glyph = ProIconGlyph.Edit,
-                                contentDescription = stringResource(R.string.shared_edit_amount_cd),
-                                tint = colors.primary,
-                                size = dimens.iconInline,
-                                modifier = Modifier.proIconClickable(onClick = onEditAmount),
+                            SharedCostEditIconButton(
+                                onClick = onEditAmount,
+                                contentDescription = editAmountDescription,
+                                size = dimens.space32,
+                                iconSize = dimens.iconChipLeading,
+                                tint = Color.White,
+                                borderColor = colors.line,
                             )
                         }
                     } else {

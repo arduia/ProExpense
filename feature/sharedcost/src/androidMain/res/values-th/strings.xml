@@ -34,6 +34,7 @@
     <string name="shared_delete_body">"%1$s" และรายจ่ายที่บันทึกไว้จะถูกลบ ไม่สามารถย้อนกลับได้</string>
     <string name="shared_delete_confirm">ลบ</string>
     <string name="shared_delete_cancel">ยกเลิก</string>
+    <string name="shared_default_person_you">คุณ</string>
     <string name="shared_edit_person_title">แก้ไขคน</string>
     <string name="shared_field_name">ชื่อ</string>
     <string name="shared_field_amount">จำนวนเงิน</string>
