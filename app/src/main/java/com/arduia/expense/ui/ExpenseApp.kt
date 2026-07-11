@@ -36,7 +36,7 @@ import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordKind
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
-import com.arduia.expense.domain.isVisibleInFeed
+import com.arduia.expense.domain.isVisibleInHomeRecents
 import com.arduia.expense.domain.kind
 import com.arduia.expense.domain.linkedRowId
 import com.arduia.expense.domain.tagLabel
@@ -770,14 +770,14 @@ private fun buildHomeDayGroups(
 ): List<HomeDayGroup> {
     val recordEntries =
         records
-            .filter { it.kind().isVisibleInFeed() }
+            .filter { it.kind().isVisibleInHomeRecents() }
             .map { record ->
                 val item =
                     record.toHomeTransactionItem(linkNames.eventNames, linkNames.debtNames, linkNames.sharedCostNames)
                 HomeMergedEntry(record.recordedAtEpochMillis, item)
             }
     val debtEntries =
-        if (RecordKind.DEBT_LENT.isVisibleInFeed()) {
+        if (RecordKind.DEBT_LENT.isVisibleInHomeRecents()) {
             visibleDebts.map { debt -> HomeMergedEntry(debt.recordedAtEpochMillis, debt.toDebtHomeTransactionItem()) }
         } else {
             emptyList()

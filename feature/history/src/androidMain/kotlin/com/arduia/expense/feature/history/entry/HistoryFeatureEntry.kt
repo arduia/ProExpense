@@ -24,7 +24,6 @@ import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCost
 import com.arduia.expense.domain.UNCATEGORIZED_CATEGORY_ID
-import com.arduia.expense.domain.isVisibleInFeed
 import com.arduia.expense.domain.kind
 import com.arduia.expense.domain.linkedRowId
 import com.arduia.expense.domain.tagLabel
@@ -382,20 +381,14 @@ private fun groupByDay(
     homeCurrencySymbol: String,
 ): List<JournalDayUi> {
     val recordEntries =
-        records
-            .filter { it.kind().isVisibleInFeed() }
-            .map { record -> JournalEntry(record.recordedAtEpochMillis, record.toRowModel(linkLabels)) }
+        records.map { record -> JournalEntry(record.recordedAtEpochMillis, record.toRowModel(linkLabels)) }
     // A toggle-on debt already has a linked FinanceRecord (RecordLink.ToDebt, same id as the
     // debt) inside `records` above — visibleUnrecordedDebts only returns toggle-off ones, so a
     // debt never renders twice.
     val oldestLoadedRecordMillis = records.minOfOrNull { it.recordedAtEpochMillis }
     val debtEntries =
-        if (RecordKind.DEBT_LENT.isVisibleInFeed()) {
-            visibleUnrecordedDebts(debts, oldestLoadedRecordMillis, recordsFullyLoaded)
-                .map { debt -> JournalEntry(debt.recordedAtEpochMillis, debt.toDebtRowModel()) }
-        } else {
-            emptyList()
-        }
+        visibleUnrecordedDebts(debts, oldestLoadedRecordMillis, recordsFullyLoaded)
+            .map { debt -> JournalEntry(debt.recordedAtEpochMillis, debt.toDebtRowModel()) }
 
     val recordTotalCentsByDay =
         records
