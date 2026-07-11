@@ -58,13 +58,17 @@ fun splitRowTitle(splitTitle: String?): String {
 const val SPLIT_ROW_SUBTITLE_TYPE = "Shared split"
 
 /**
- * Single flip point to bring Split/Debt rows back into Home Recents — product wants only plain
- * Expense/Income visible there for now. Journal always shows every kind. Flip to `true` to
- * restore Split/Debt on Home Recents too.
+ * Single flip point to bring Split rows (and toggle-off debts — see
+ * [com.arduia.expense.domain.Debt.recordAsTransaction]) into Home Recents — product wants those
+ * hidden there for now. Journal always shows every kind. A toggle-on debt's own linked
+ * [FinanceRecord] is a different case: it already counts toward spend/income totals, so it's
+ * always visible regardless of this flag — see [isVisibleInHomeRecents]. Flip to `true` to
+ * restore Split and toggle-off debts on Home Recents too.
  */
 const val SHOW_SPLIT_AND_DEBT_ROWS = false
 
 fun RecordKind.isVisibleInHomeRecents(): Boolean =
-    SHOW_SPLIT_AND_DEBT_ROWS ||
-        this == RecordKind.EXPENSE ||
-        this == RecordKind.INCOME
+    when (this) {
+        RecordKind.EXPENSE, RecordKind.INCOME, RecordKind.DEBT_LENT, RecordKind.DEBT_OWED -> true
+        RecordKind.SPLIT -> SHOW_SPLIT_AND_DEBT_ROWS
+    }

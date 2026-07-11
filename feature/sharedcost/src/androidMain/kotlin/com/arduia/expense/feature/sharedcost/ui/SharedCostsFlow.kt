@@ -220,6 +220,11 @@ fun SharedCostsFlow(
         mutableStateOf(SharedCostDraft())
     }
     var viewingId by remember { mutableStateOf<String?>(null) }
+    // Read-only only while browsing an already-saved split straight from History/a deep link,
+    // without edit intent — `viewingId` alone can't drive this, since editing an existing split
+    // (Actions sheet → Edit → Input → Continue) still needs `viewingId` set for onSave/back
+    // navigation but must land back on an editable Summary (Save button), not the read-only one.
+    var isSummaryReadOnly by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
     var archiveTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
@@ -253,6 +258,7 @@ fun SharedCostsFlow(
         viewingId = initialViewingId
         draft = detail.toDraft(nameTemplate, firstPersonName)
         visitedIndices = emptySet()
+        isSummaryReadOnly = true
         step = SharedCostStep.Summary.name
         hasAppliedInitialViewing = true
     }
@@ -348,6 +354,7 @@ fun SharedCostsFlow(
                             viewingId = null
                             draft = SharedCostDraft()
                             visitedIndices = emptySet()
+                            isSummaryReadOnly = false
                             step = SharedCostStep.Input.name
                         },
                         onItemClick = { item ->
@@ -355,6 +362,7 @@ fun SharedCostsFlow(
                                 viewingId = item.id
                                 draft = detail.toDraft(nameTemplate, firstPersonName)
                                 visitedIndices = emptySet()
+                                isSummaryReadOnly = true
                                 step = SharedCostStep.Summary.name
                             }
                         },
@@ -455,7 +463,7 @@ fun SharedCostsFlow(
                     SharedCostsSummaryScreen(
                         state = draft.toUiState(homeCurrencySymbol, nameTemplate),
                         homeCurrencySymbol = homeCurrencySymbol,
-                        readOnly = viewingId != null,
+                        readOnly = isSummaryReadOnly,
                         backLabel =
                             if (viewingId != null) {
                                 stringResource(R.string.shared_back_history)
@@ -483,7 +491,7 @@ fun SharedCostsFlow(
                                     .withParticipants(nameTemplate, firstPersonName)
                             step = SharedCostStep.Input.name
                         },
-                        onMore = if (viewingId != null) ({ showActionsSheet = true }) else null,
+                        onMore = if (isSummaryReadOnly) ({ showActionsSheet = true }) else null,
                         onSave = {
                             val title = draft.note.trim().ifEmpty { defaultSplitTitle }
                             // Cleared name fields fall back to "Person N" ("You" for participant
@@ -575,6 +583,7 @@ fun SharedCostsFlow(
             SharedCostActionsSheetContent(
                 onEdit = {
                     showActionsSheet = false
+                    isSummaryReadOnly = false
                     step = SharedCostStep.Input.name
                 },
                 onArchive = {

@@ -52,6 +52,10 @@ data class ProTransactionRowModel(
     val rowKind: ProRowKind = if (isIncome) ProRowKind.INCOME else ProRowKind.EXPENSE,
     /** Split/debt id to navigate to when [rowKind] isn't a plain [ProRowKind.EXPENSE]/[ProRowKind.INCOME]. */
     val linkedId: String? = null,
+    /** Renders a [ProRowKind.DEBT_OWED] amount in success/green instead of the default color —
+     *  screen-specific (Home Recents wants this, Journal doesn't), so it's set by the caller
+     *  rather than derived from [rowKind] alone. */
+    val emphasizeOwedAsIncome: Boolean = false,
 )
 
 @Composable
@@ -66,6 +70,7 @@ fun TransactionRow(
     showDivider: Boolean = true,
     fresh: Boolean = false,
     rowKind: ProRowKind = if (isIncome) ProRowKind.INCOME else ProRowKind.EXPENSE,
+    emphasizeOwedAsIncome: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
@@ -170,9 +175,10 @@ fun TransactionRow(
         val amountColor =
             when (rowKind) {
                 ProRowKind.INCOME -> colors.success
-                // Debt rows use the default expense color here, same as Split — the Debt Tracker
-                // tab is where Lent/Owe get their own color treatment, not this feed.
-                ProRowKind.SPLIT, ProRowKind.EXPENSE, ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED -> colors.onSurface
+                ProRowKind.DEBT_OWED -> if (emphasizeOwedAsIncome) colors.success else colors.onSurface
+                // Lent/Split use the default expense color here — the Debt Tracker tab is where
+                // Lent/Owe get their own color treatment, not this feed.
+                ProRowKind.SPLIT, ProRowKind.EXPENSE, ProRowKind.DEBT_LENT -> colors.onSurface
             }
         Text(
             text = amount,
@@ -255,6 +261,7 @@ fun DayGroup(
                     fresh = item.id == freshRowId,
                     showDivider = index < transactions.lastIndex,
                     rowKind = item.rowKind,
+                    emphasizeOwedAsIncome = item.emphasizeOwedAsIncome,
                     onClick = onRowClick?.let { click -> { click(item) } },
                 )
             }

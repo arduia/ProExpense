@@ -36,6 +36,7 @@ import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordKind
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SHOW_SPLIT_AND_DEBT_ROWS
 import com.arduia.expense.domain.SPLIT_ROW_SUBTITLE_TYPE
 import com.arduia.expense.domain.debtRowSubtitleType
 import com.arduia.expense.domain.debtRowTitle
@@ -794,8 +795,10 @@ private fun buildHomeDayGroups(
                     record.toHomeTransactionItem(linkNames.eventNames, linkNames.debtNames, linkNames.sharedCostNames)
                 HomeMergedEntry(record.recordedAtEpochMillis, item)
             }
+    // Unlike the recordEntries filter above, toggle-off debts are never a real FinanceRecord — a
+    // debt-kind entry there always means toggle-on (counted), so it keeps its own gate here.
     val debtEntries =
-        if (RecordKind.DEBT_LENT.isVisibleInHomeRecents()) {
+        if (SHOW_SPLIT_AND_DEBT_ROWS) {
             visibleDebts.map { debt -> HomeMergedEntry(debt.recordedAtEpochMillis, debt.toDebtHomeTransactionItem()) }
         } else {
             emptyList()
