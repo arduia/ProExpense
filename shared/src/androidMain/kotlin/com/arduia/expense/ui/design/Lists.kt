@@ -169,14 +169,10 @@ fun TransactionRow(
         }
         val amountColor =
             when (rowKind) {
-                // Recents/Journal is a cash-flow feed, so debt rows follow money direction here —
-                // Lent sends cash out (danger), Owe/Borrowed brings cash in (success) — unlike the
-                // dedicated Debt Tracker tab, which colors by balance health instead (see
-                // design-system-spec/screens/09-debt-tracker.md; that convention is unchanged).
-                ProRowKind.DEBT_LENT -> colors.danger
-                ProRowKind.DEBT_OWED -> colors.success
                 ProRowKind.INCOME -> colors.success
-                ProRowKind.SPLIT, ProRowKind.EXPENSE -> colors.onSurface
+                // Debt rows use the default expense color here, same as Split — the Debt Tracker
+                // tab is where Lent/Owe get their own color treatment, not this feed.
+                ProRowKind.SPLIT, ProRowKind.EXPENSE, ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED -> colors.onSurface
             }
         Text(
             text = amount,
