@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -69,6 +70,10 @@ import com.arduia.expense.ui.theme.centeredGlyph
 /** Starting scale for the name-text bounce-in on person switch — small enough to read as a
  *  deliberate "pop", not a jarring jump. */
 private const val NAME_BOUNCE_START_SCALE = 0.82f
+
+/** Left-edge, vertically-centered pivot — the bounce grows rightward from the text's fixed
+ *  start instead of expanding symmetrically from the center. */
+private val NAME_BOUNCE_ORIGIN = TransformOrigin(pivotFractionX = 0f, pivotFractionY = 0.5f)
 
 /**
  * Compact roster of every person in the split, shown at the top of the Edit-person sheet for
@@ -328,6 +333,7 @@ fun SharedCostsEditPersonSheetContent(
                             Modifier
                                 .weight(1f)
                                 .graphicsLayer {
+                                    transformOrigin = NAME_BOUNCE_ORIGIN
                                     scaleX = nameBounce.value
                                     scaleY = nameBounce.value
                                 }.focusRequester(nameFocusRequester)
