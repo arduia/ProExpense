@@ -150,8 +150,8 @@ private val journalMixedKinds =
                 ProTransactionRowModel(
                     id = "sc1",
                     categoryId = "shopping",
-                    note = "Dinner split",
-                    meta = "Split · 07:20 PM",
+                    note = "Split · Dinner",
+                    meta = "Shared split · 07:20 PM",
                     amount = "$49.00",
                     detailDateTimeLabel = "Today · 07:20 PM",
                     rowKind = ProRowKind.SPLIT,
@@ -160,7 +160,7 @@ private val journalMixedKinds =
                 ProTransactionRowModel(
                     id = "d1",
                     categoryId = "",
-                    note = "John",
+                    note = "Lent to John",
                     meta = "Lent · 03:10 PM",
                     amount = "$50.00",
                     detailDateTimeLabel = "Today · 03:10 PM",
@@ -170,8 +170,8 @@ private val journalMixedKinds =
                 ProTransactionRowModel(
                     id = "d2",
                     categoryId = "",
-                    note = "Priya",
-                    meta = "Borrowed · 09:00 AM",
+                    note = "Owe Priya",
+                    meta = "Owe · 09:00 AM",
                     amount = "$25.00",
                     detailDateTimeLabel = "Today · 09:00 AM",
                     rowKind = ProRowKind.DEBT_OWED,

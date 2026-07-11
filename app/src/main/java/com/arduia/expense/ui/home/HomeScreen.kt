@@ -160,6 +160,7 @@ fun HomeScreenContent(
                                 tag = item.tag,
                                 rowKind = item.rowKind,
                                 linkedId = item.linkedId,
+                                emphasizeOwedAsIncome = true,
                             )
                         },
                     cardWrapped = false,

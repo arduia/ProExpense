@@ -69,6 +69,23 @@ val previewSharedSummary =
                 SharedCostParticipantUi("Sora", "$60"),
                 SharedCostParticipantUi("You", "$60"),
             ),
+        shareRaws = listOf("60", "60", "60", "60"),
+    )
+
+val previewSharedSummaryCustom =
+    SharedCostUiState(
+        rawTotal = "240",
+        note = "Dinner at Nobu",
+        peopleCount = 4,
+        mode = SharedSplitMode.Custom,
+        participants =
+            listOf(
+                SharedCostParticipantUi("Aiko", "$80"),
+                SharedCostParticipantUi("Kenji", "$60"),
+                SharedCostParticipantUi("Sora", "$50"),
+                SharedCostParticipantUi("You", "$50"),
+            ),
+        shareRaws = listOf("80", "60", "50", "50"),
     )
 
 val previewSharedInputConfirmed =

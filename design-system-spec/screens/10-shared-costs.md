@@ -50,6 +50,12 @@ Done/Next footer.
 - Split summary sub-screen shows per-person amounts; Back persists all values.
 - Save stores the TOTAL as a linked expense record — saved splits **do appear in Journal and Reports** (one `FinanceRecord` per split, upserted alongside the split itself).
 - History: tap to view full split; swipe-left to delete (confirm) — deleting a split also removes its linked Journal record atomically. Editing a split updates its linked record in place.
+- **Viewing a saved split** (History → tap a row) shows the read-only Summary screen with a
+  top-bar **More** action opening an actions sheet: **Edit** (routes back into the input screen
+  in edit mode, saving applies in place), **Archive** (confirm dialog; hides the split from the
+  active History list only — its linked Journal/Reports record is untouched, and there is no
+  unarchive UI yet), **Delete** (same confirm-then-remove-atomically behavior as the History
+  swipe gesture, now also reachable from the detail view).
 
 ## Component composition · M3 mapping
 

@@ -36,6 +36,8 @@ interface SharedCostRepository {
 
     suspend fun delete(id: SharedCostId): Result<Unit>
 
+    suspend fun archive(id: SharedCostId): Result<Unit>
+
     suspend fun getSettlement(sharedCostId: SharedCostId): Result<SettlementSummary>
 
     fun observeAll(): Flow<List<SharedCost>>

@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arduia.expense.feature.sharedcost.R
 import com.arduia.expense.ui.design.DetailFieldCard
 import com.arduia.expense.ui.design.ProIcon
@@ -483,6 +486,16 @@ fun SharedCostPerPersonCard(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val shape = ProExpenseTheme.shapes.card
+    // Matches AmountDisplay's shrink-to-fit behavior — a long custom-split amount (many digits,
+    // still at the large display font) must shrink rather than overflow/wrap.
+    val headerAmountAutoSize =
+        remember(typography.displayAmount.fontSize) {
+            TextAutoSize.StepBased(
+                minFontSize = 28.sp,
+                maxFontSize = typography.displayAmount.fontSize,
+                stepSize = 0.5.sp,
+            )
+        }
 
     Column(
         modifier =
@@ -533,10 +546,13 @@ fun SharedCostPerPersonCard(
                     )
                 }
             }
-            Text(
+            BasicText(
                 text = headerAmount,
-                style = typography.displayAmount,
-                color = colors.primary,
+                style = typography.displayAmount.copy(color = colors.primary),
+                autoSize = headerAmountAutoSize,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip,
                 modifier = Modifier.fillMaxWidth(),
             )
             if (headerCaption != null) {
@@ -587,5 +603,29 @@ private fun SharedCostParticipantRowPreview() {
                 editContentDescription = "Edit Aiko",
             )
         }
+    }
+}
+
+/** Regression guard: a near-max-digit amount (product cap is 999,999,999.99) must shrink to fit
+ *  on one line rather than overflowing/wrapping past the card's edge. */
+@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP)
+@Composable
+private fun SharedCostPerPersonCardLargeAmountPreview() {
+    ProExpenseTheme {
+        val dimens = ProExpenseTheme.dimensions
+        SharedCostPerPersonCard(
+            headerEyebrow = "Custom shares",
+            headerAmount = "$999,999,999.99",
+            participants =
+                listOf(
+                    "Aiko" to "$500,000,000.00",
+                    "Ben" to "$499,999,999.99",
+                ),
+            onHeaderEditClick = {},
+            headerEditContentDescription = "Edit split",
+            onPersonEditClick = {},
+            personEditContentDescription = { "Edit person" },
+            modifier = Modifier.padding(dimens.space16),
+        )
     }
 }

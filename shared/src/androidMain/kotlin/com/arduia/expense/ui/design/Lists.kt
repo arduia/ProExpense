@@ -52,6 +52,10 @@ data class ProTransactionRowModel(
     val rowKind: ProRowKind = if (isIncome) ProRowKind.INCOME else ProRowKind.EXPENSE,
     /** Split/debt id to navigate to when [rowKind] isn't a plain [ProRowKind.EXPENSE]/[ProRowKind.INCOME]. */
     val linkedId: String? = null,
+    /** Renders a [ProRowKind.DEBT_OWED] amount in success/green instead of the default color —
+     *  screen-specific (Home Recents wants this, Journal doesn't), so it's set by the caller
+     *  rather than derived from [rowKind] alone. */
+    val emphasizeOwedAsIncome: Boolean = false,
 )
 
 @Composable
@@ -66,6 +70,7 @@ fun TransactionRow(
     showDivider: Boolean = true,
     fresh: Boolean = false,
     rowKind: ProRowKind = if (isIncome) ProRowKind.INCOME else ProRowKind.EXPENSE,
+    emphasizeOwedAsIncome: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
     val colors = ProExpenseTheme.colors
@@ -169,13 +174,11 @@ fun TransactionRow(
         }
         val amountColor =
             when (rowKind) {
-                // Debt rows follow the Debt Tracker's own convention (I Lent = success, I Owe =
-                // danger, design-system-spec/screens/09-debt-tracker.md) rather than the generic
-                // income/expense split — independent of whether the debt counts toward totals.
-                ProRowKind.DEBT_LENT -> colors.success
-                ProRowKind.DEBT_OWED -> colors.danger
                 ProRowKind.INCOME -> colors.success
-                ProRowKind.SPLIT, ProRowKind.EXPENSE -> colors.onSurface
+                ProRowKind.DEBT_OWED -> if (emphasizeOwedAsIncome) colors.success else colors.onSurface
+                // Lent/Split use the default expense color here — the Debt Tracker tab is where
+                // Lent/Owe get their own color treatment, not this feed.
+                ProRowKind.SPLIT, ProRowKind.EXPENSE, ProRowKind.DEBT_LENT -> colors.onSurface
             }
         Text(
             text = amount,
@@ -258,6 +261,7 @@ fun DayGroup(
                     fresh = item.id == freshRowId,
                     showDivider = index < transactions.lastIndex,
                     rowKind = item.rowKind,
+                    emphasizeOwedAsIncome = item.emphasizeOwedAsIncome,
                     onClick = onRowClick?.let { click -> { click(item) } },
                 )
             }
@@ -380,8 +384,8 @@ private fun DayGroupMixedRowKindsPreview() {
                     ProTransactionRowModel(
                         id = "2",
                         categoryId = "shopping",
-                        note = "Dinner split",
-                        meta = "Split · 07:20 PM",
+                        note = "Split · Dinner",
+                        meta = "Shared split · 07:20 PM",
                         amount = "$49.00",
                         rowKind = ProRowKind.SPLIT,
                         linkedId = "sc1",
@@ -389,7 +393,7 @@ private fun DayGroupMixedRowKindsPreview() {
                     ProTransactionRowModel(
                         id = "3",
                         categoryId = "",
-                        note = "John",
+                        note = "Lent to John",
                         meta = "Lent · 03:10 PM",
                         amount = "$50.00",
                         rowKind = ProRowKind.DEBT_LENT,
@@ -398,8 +402,8 @@ private fun DayGroupMixedRowKindsPreview() {
                     ProTransactionRowModel(
                         id = "4",
                         categoryId = "",
-                        note = "Priya",
-                        meta = "Borrowed · 09:00 AM",
+                        note = "Owe Priya",
+                        meta = "Owe · 09:00 AM",
                         amount = "$25.00",
                         rowKind = ProRowKind.DEBT_OWED,
                         linkedId = "d2",

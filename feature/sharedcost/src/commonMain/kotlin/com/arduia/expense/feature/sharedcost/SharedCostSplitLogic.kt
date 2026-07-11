@@ -30,22 +30,18 @@ object SharedCostSplitLogic {
         return totalCents(rawTotal) / peopleCount
     }
 
+    // Delegates to AmountInput.formatMoney: full 2-digit fraction when there is one, dropped
+    // entirely when zero ("$30" not "$30.00") — the rule for every *settled* amount display in
+    // this feature. Live-typing fields echo raw digits via AmountInput.formatDisplay instead.
     fun formatCents(
         cents: Long,
         currencySymbol: String = "$",
-    ): String {
-        val whole = cents / 100
-        val fraction = cents % 100
-        return "$currencySymbol$whole.${fraction.toString().padStart(2, '0')}"
-    }
+    ): String = AmountInput.formatMoney(cents, currencySymbol)
 
     fun formatRawTotal(
         rawTotal: String,
         currencySymbol: String = "$",
-    ): String {
-        val display = AmountInput.formatDisplay(rawTotal.ifEmpty { "0" })
-        return "$currencySymbol$display"
-    }
+    ): String = formatCents(totalCents(rawTotal), currencySymbol)
 
     /**
      * [nameTemplate] is a `%1$d`-style format string (from `R.string.shared_default_person_name`
@@ -138,10 +134,7 @@ object SharedCostSplitLogic {
     fun formatShareRaw(
         rawShare: String,
         currencySymbol: String = "$",
-    ): String {
-        val display = AmountInput.formatDisplay(rawShare.ifEmpty { "0" })
-        return "$currencySymbol$display"
-    }
+    ): String = formatCents(totalCents(rawShare), currencySymbol)
 
     fun buildParticipants(
         rawTotal: String,

@@ -47,18 +47,21 @@ class CreateEventUseCase(
     private val eventRepository: EventRepository,
     private val nowEpochMillis: () -> Long,
 ) {
+    /** Returns the created event's id, or `null` if validation failed and nothing was saved —
+     *  the caller uses it to navigate straight to the new event's detail (US-EVT "create then
+     *  view" flow) instead of just closing the create sheet. */
     suspend operator fun invoke(
         name: String,
         rawBudget: String,
         currencyCode: String = "USD",
         startEpochMillis: Long? = null,
         endEpochMillis: Long? = null,
-    ): Boolean {
-        val amount = Amount.parseOrNull(rawBudget) ?: return false
+    ): EventId? {
+        val amount = Amount.parseOrNull(rawBudget) ?: return null
         val now = nowEpochMillis()
         val start = startEpochMillis ?: now
         val end = endEpochMillis ?: now
-        if (end < start) return false
+        if (end < start) return null
         val event =
             Event(
                 id = EventId(newEventId(name, now)),
@@ -69,7 +72,7 @@ class CreateEventUseCase(
                 status = EventStatus.ACTIVE,
             )
         eventRepository.upsert(event)
-        return true
+        return event.id
     }
 
     private fun newEventId(

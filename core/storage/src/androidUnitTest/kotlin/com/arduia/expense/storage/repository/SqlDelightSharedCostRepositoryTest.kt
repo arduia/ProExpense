@@ -201,6 +201,7 @@ class SqlDelightSharedCostRepositoryTest {
                 recorded_at = 1000,
                 participants_json = "[]",
                 custom_shares_json = null,
+                is_archived = 0,
             )
 
             val all = repo.observeAll().first()
@@ -284,5 +285,94 @@ class SqlDelightSharedCostRepositoryTest {
             repo.delete(created.id)
 
             assertNull(database.financeRecordQueries.selectRecordById(created.id.value).executeAsOneOrNull())
+        }
+
+    @Test
+    fun archive_hidesFromGetAllAndObserveAll() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = sharedCostRepo(database)
+            val input =
+                SharedCostInput(
+                    title = "Dinner",
+                    total = Money(Amount(100_00), home),
+                    participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+                    splitStrategy = SplitStrategy.EqualSplit,
+                    recordedAtEpochMillis = 1000,
+                )
+            val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
+
+            val archiveResult = repo.archive(created.id)
+
+            assertTrue(archiveResult is Result.Success)
+            assertEquals(emptyList(), (repo.getAll() as Result.Success<List<com.arduia.expense.domain.SharedCost>>).data)
+            assertEquals(0, repo.observeAll().first().size)
+        }
+
+    @Test
+    fun archive_stillResolvableByGetById() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = sharedCostRepo(database)
+            val input =
+                SharedCostInput(
+                    title = "Dinner",
+                    total = Money(Amount(100_00), home),
+                    participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+                    splitStrategy = SplitStrategy.EqualSplit,
+                    recordedAtEpochMillis = 1000,
+                )
+            val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
+
+            repo.archive(created.id)
+
+            val fetched = (repo.getById(created.id) as Result.Success<com.arduia.expense.domain.SharedCost?>).data
+            assertNotNull(fetched)
+            assertTrue(fetched.isArchived)
+        }
+
+    @Test
+    fun archive_doesNotTouchTheLinkedFinanceRecord() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = sharedCostRepo(database)
+            val input =
+                SharedCostInput(
+                    title = "Dinner",
+                    total = Money(Amount(100_00), home),
+                    participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+                    splitStrategy = SplitStrategy.EqualSplit,
+                    recordedAtEpochMillis = 1000,
+                )
+            val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
+
+            repo.archive(created.id)
+
+            assertNotNull(database.financeRecordQueries.selectRecordById(created.id.value).executeAsOneOrNull())
+        }
+
+    @Test
+    fun getSettlement_worksForArchivedSplit() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = sharedCostRepo(database)
+            val input =
+                SharedCostInput(
+                    title = "Dinner",
+                    total = Money(Amount(100_00), home),
+                    participants =
+                        listOf(
+                            Participant(ParticipantId("p1"), "Alice"),
+                            Participant(ParticipantId("p2"), "Bob"),
+                        ),
+                    splitStrategy = SplitStrategy.EqualSplit,
+                    recordedAtEpochMillis = 1000,
+                )
+            val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
+            repo.archive(created.id)
+
+            val settlement = repo.getSettlement(created.id)
+
+            assertTrue(settlement is Result.Success)
         }
 }

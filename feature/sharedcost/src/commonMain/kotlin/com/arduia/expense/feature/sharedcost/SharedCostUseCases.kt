@@ -111,3 +111,11 @@ class DeleteSharedCostUseCase(
         sharedCostRepository.delete(SharedCostId(id))
     }
 }
+
+class ArchiveSharedCostUseCase(
+    private val sharedCostRepository: SharedCostRepository,
+) {
+    suspend operator fun invoke(id: String) {
+        sharedCostRepository.archive(SharedCostId(id))
+    }
+}

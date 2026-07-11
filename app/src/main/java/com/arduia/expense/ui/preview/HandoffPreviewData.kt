@@ -157,8 +157,8 @@ val previewHomeMixedKinds =
                             HomeTransactionItem(
                                 id = "sc1",
                                 categoryId = "shopping",
-                                note = "Dinner split",
-                                meta = "Split · 07:20 PM",
+                                note = "Split · Dinner",
+                                meta = "Shared split · 07:20 PM",
                                 amount = "$49.00",
                                 rowKind = ProRowKind.SPLIT,
                                 linkedId = "sc1",
@@ -166,7 +166,7 @@ val previewHomeMixedKinds =
                             HomeTransactionItem(
                                 id = "d1",
                                 categoryId = "",
-                                note = "John",
+                                note = "Lent to John",
                                 meta = "Lent · 03:10 PM",
                                 amount = "$50.00",
                                 rowKind = ProRowKind.DEBT_LENT,
@@ -175,8 +175,8 @@ val previewHomeMixedKinds =
                             HomeTransactionItem(
                                 id = "d2",
                                 categoryId = "",
-                                note = "Priya",
-                                meta = "Borrowed · 09:00 AM",
+                                note = "Owe Priya",
+                                meta = "Owe · 09:00 AM",
                                 amount = "$25.00",
                                 rowKind = ProRowKind.DEBT_OWED,
                                 linkedId = "d2",

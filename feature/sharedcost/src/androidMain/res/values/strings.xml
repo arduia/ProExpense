@@ -2,6 +2,7 @@
     <string name="shared_costs_title">Split a bill</string>
     <string name="shared_summary_title">Split summary</string>
     <string name="shared_per_person">Per person</string>
+    <string name="shared_split_sum">Sum</string>
     <string name="shared_save_split">Save split</string>
     <string name="shared_split_saved_toast">Split saved</string>
     <string name="shared_split_even">Even split</string>
@@ -62,4 +63,13 @@
     <string name="shared_custom_shares_label">Custom shares</string>
     <string name="shared_custom_matches_total">Matches total</string>
     <string name="shared_custom_vs_total">vs %1$s total</string>
+    <string name="shared_actions_edit_subtitle">Change amount, people, or notes</string>
+    <string name="shared_actions_archive">Archive</string>
+    <string name="shared_actions_archive_subtitle">Hides this split from your history</string>
+    <string name="shared_actions_delete_subtitle">Removes the split and its saved expense</string>
+    <string name="shared_actions_cancel">Cancel</string>
+    <string name="shared_archive_title">Archive this split?</string>
+    <string name="shared_archive_body">"%1$s" will be hidden from your Shared Costs history. It stays in Journal and Reports.</string>
+    <string name="shared_archive_confirm">Archive</string>
+    <string name="shared_archive_cancel">Cancel</string>
 </resources>

@@ -5,10 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -74,6 +76,20 @@ fun DebtFlow(
 
     var side by remember { mutableStateOf(DebtSide.Lent) }
     var selectedRecordId by remember { mutableStateOf(initialSelectedRecordId) }
+    // `side` always started as Lent, so a deep link into an Owe record (Recents/Journal tapping a
+    // Debt-kind row) searched the wrong list in detailStateFor and rendered a blank detail. Once
+    // the target record's real side is known — lentState/oweState load asynchronously — snap
+    // `side` to it, once, without fighting the user's own tab taps afterward.
+    var hasAppliedInitialSide by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(initialSelectedRecordId, lentState, oweState) {
+        if (hasAppliedInitialSide || initialSelectedRecordId == null) return@LaunchedEffect
+        val isOwe = (oweState.active + oweState.settled).any { it.id == initialSelectedRecordId }
+        val isLent = (lentState.active + lentState.settled).any { it.id == initialSelectedRecordId }
+        if (isOwe || isLent) {
+            side = if (isOwe) DebtSide.Owe else DebtSide.Lent
+            hasAppliedInitialSide = true
+        }
+    }
     var showAdd by remember { mutableStateOf(false) }
     var addForm by remember { mutableStateOf(DebtAddFormState()) }
     var showDuePicker by remember { mutableStateOf(false) }

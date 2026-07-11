@@ -94,8 +94,10 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
             events = cards,
             eventDetails = details,
             eventEditForms = editForms,
-            onCreateEvent = { name, budgetRaw, startEpochMillis, endEpochMillis ->
-                scope.launch { createEvent(name, budgetRaw, startEpochMillis = startEpochMillis, endEpochMillis = endEpochMillis) }
+            onCreateEvent = { name, budgetRaw, startEpochMillis, endEpochMillis, onCreated ->
+                scope.launch {
+                    createEvent.createThenNotify(name, budgetRaw, startEpochMillis, endEpochMillis, onCreated)
+                }
             },
             onUpdateEvent = { id, name, budgetRaw, startEpochMillis, endEpochMillis ->
                 val existing = events.firstOrNull { it.id.value == id }
@@ -119,6 +121,17 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
 }
 
 object EventBudgetFeatureUi : EventBudgetFeatureEntry by EventBudgetFeatureEntryImpl()
+
+private suspend fun CreateEventUseCase.createThenNotify(
+    name: String,
+    budgetRaw: String,
+    startEpochMillis: Long,
+    endEpochMillis: Long,
+    onCreated: (eventId: String) -> Unit,
+) {
+    val id = this(name, budgetRaw, startEpochMillis = startEpochMillis, endEpochMillis = endEpochMillis)
+    if (id != null) onCreated(id.value)
+}
 
 private fun Event.dateRangeLabel(): String =
     if (startEpochMillis == endEpochMillis) {

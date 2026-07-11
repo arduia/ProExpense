@@ -7,6 +7,7 @@ data class SharedCost(
     val participants: List<Participant>,
     val splitStrategy: SplitStrategy,
     val recordedAtEpochMillis: Long,
+    val isArchived: Boolean = false,
 ) {
     init {
         require(title.isNotBlank()) { "SharedCost title must not be blank" }

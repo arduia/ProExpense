@@ -2,6 +2,7 @@
     <string name="shared_costs_title">หารบิล</string>
     <string name="shared_summary_title">สรุปการหาร</string>
     <string name="shared_per_person">ต่อคน</string>
+    <string name="shared_split_sum">ผลรวม</string>
     <string name="shared_save_split">บันทึกการหาร</string>
     <string name="shared_split_saved_toast">บันทึกการหารแล้ว</string>
     <string name="shared_split_even">หารเท่ากัน</string>
@@ -54,4 +55,13 @@
     <string name="shared_custom_shares_label">ส่วนแบ่งกำหนดเอง</string>
     <string name="shared_custom_matches_total">ตรงกับยอดรวม</string>
     <string name="shared_custom_vs_total">เทียบกับยอดรวม %1$s</string>
+    <string name="shared_actions_edit_subtitle">เปลี่ยนยอดเงิน จำนวนคน หรือบันทึกย่อ</string>
+    <string name="shared_actions_archive">เก็บเข้าคลัง</string>
+    <string name="shared_actions_archive_subtitle">ซ่อนการหารนี้จากประวัติของคุณ</string>
+    <string name="shared_actions_delete_subtitle">ลบการหารและรายจ่ายที่บันทึกไว้</string>
+    <string name="shared_actions_cancel">ยกเลิก</string>
+    <string name="shared_archive_title">เก็บการหารนี้เข้าคลังหรือไม่?</string>
+    <string name="shared_archive_body">"%1$s" จะถูกซ่อนจากประวัติการหารค่าใช้จ่ายของคุณ แต่ยังคงอยู่ในสมุดบันทึกและรายงาน</string>
+    <string name="shared_archive_confirm">เก็บเข้าคลัง</string>
+    <string name="shared_archive_cancel">ยกเลิก</string>
 </resources>

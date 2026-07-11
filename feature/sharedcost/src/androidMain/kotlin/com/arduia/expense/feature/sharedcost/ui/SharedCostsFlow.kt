@@ -167,6 +167,10 @@ private fun SharedCostUiState.toDraft(
         mode = mode,
         names = participants.map { it.name },
         customShareRaws = shareRaws,
+        // A split loaded from History already has a finalized amount — its Edit action must land
+        // on the detail screen (people/mode/participants), not the amount keypad. The keypad stays
+        // reachable via the total's own edit icon (onEditAmount flips this back to false).
+        amountConfirmed = true,
     ).withParticipants(nameTemplate, firstPersonName)
 
 @Composable
@@ -191,6 +195,7 @@ fun SharedCostsFlow(
         customShareRaws: List<String>,
     ) -> Unit = { _, _, _, _, _, _ -> },
     onDeleteSplit: (id: String) -> Unit = {},
+    onArchiveSplit: (id: String) -> Unit = {},
     modifier: Modifier = Modifier,
     savedToastMessage: String? = null,
     onSaved: () -> Unit = {},
@@ -215,8 +220,15 @@ fun SharedCostsFlow(
         mutableStateOf(SharedCostDraft())
     }
     var viewingId by remember { mutableStateOf<String?>(null) }
+    // Read-only only while browsing an already-saved split straight from History/a deep link,
+    // without edit intent — `viewingId` alone can't drive this, since editing an existing split
+    // (Actions sheet → Edit → Input → Continue) still needs `viewingId` set for onSave/back
+    // navigation but must land back on an editable Summary (Save button), not the read-only one.
+    var isSummaryReadOnly by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
+    var archiveTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
+    var showActionsSheet by remember { mutableStateOf(false) }
     // editingIndex is deliberately not cleared when the sheet closes (Done / last-person Next) —
     // ProBottomSheetHost's exit fade keeps rendering `sheetContent()` for its duration, and
     // nulling the index immediately would flash person 0 mid-fade. editSheetVisible drives
@@ -227,6 +239,10 @@ fun SharedCostsFlow(
     // picking someone else) this split — the roster only shows a check mark for these, not for
     // everyone who simply hasn't been visited yet.
     var visitedIndices by remember { mutableStateOf(emptySet<Int>()) }
+    // Snapshot of rawTotal taken when the amount editor re-opens — lets onConfirmAmount tell
+    // whether the total actually changed, so a Custom split's shares only get redistributed
+    // evenly when that's actually warranted, not on every re-open/re-confirm.
+    var preEditTotal by remember { mutableStateOf<String?>(null) }
     val defaultSplitTitle = stringResource(R.string.shared_split_default_title)
 
     val currentStep = SharedCostStep.valueOf(step)
@@ -242,6 +258,7 @@ fun SharedCostsFlow(
         viewingId = initialViewingId
         draft = detail.toDraft(nameTemplate, firstPersonName)
         visitedIndices = emptySet()
+        isSummaryReadOnly = true
         step = SharedCostStep.Summary.name
         hasAppliedInitialViewing = true
     }
@@ -328,28 +345,40 @@ fun SharedCostsFlow(
         ) { target ->
             when (target) {
                 SharedCostStep.History -> {
-                    SharedCostsHistoryScreen(
-                        items = history,
-                        isLoading = isLoading,
-                        onNewSplit = {
-                            // Not seeding via withParticipants() here — see the initial `draft`
-                            // declaration above for why an empty-total seed would stick forever.
-                            viewingId = null
-                            draft = SharedCostDraft()
-                            visitedIndices = emptySet()
-                            step = SharedCostStep.Input.name
-                        },
-                        onItemClick = { item ->
-                            sharedCostDetails[item.id]?.let { detail ->
-                                viewingId = item.id
-                                draft = detail.toDraft(nameTemplate, firstPersonName)
+                    // A Split-kind row tapped from Recents/Journal deep-links straight past
+                    // History — sharedCostDetails loads asynchronously (collectAsState(initial =
+                    // null) upstream) and is empty for at least the first frame, so this step
+                    // would otherwise flash the History/list screen before the effect above
+                    // resolves and jumps to Summary. A blank frame reads as loading; showing
+                    // History even briefly reads as "wrong screen, why am I here."
+                    if (initialViewingId != null && !hasAppliedInitialViewing) {
+                        Box(modifier = Modifier.fillMaxSize().background(colors.paper))
+                    } else {
+                        SharedCostsHistoryScreen(
+                            items = history,
+                            isLoading = isLoading,
+                            onNewSplit = {
+                                // Not seeding via withParticipants() here — see the initial `draft`
+                                // declaration above for why an empty-total seed would stick forever.
+                                viewingId = null
+                                draft = SharedCostDraft()
                                 visitedIndices = emptySet()
-                                step = SharedCostStep.Summary.name
-                            }
-                        },
-                        onBack = onDismiss,
-                        onDeleteRequested = { deleteTarget = it },
-                    )
+                                isSummaryReadOnly = false
+                                step = SharedCostStep.Input.name
+                            },
+                            onItemClick = { item ->
+                                sharedCostDetails[item.id]?.let { detail ->
+                                    viewingId = item.id
+                                    draft = detail.toDraft(nameTemplate, firstPersonName)
+                                    visitedIndices = emptySet()
+                                    isSummaryReadOnly = true
+                                    step = SharedCostStep.Summary.name
+                                }
+                            },
+                            onBack = onDismiss,
+                            onDeleteRequested = { deleteTarget = it },
+                        )
+                    }
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(
@@ -410,15 +439,26 @@ fun SharedCostsFlow(
                         },
                         onConfirmAmount = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
+                                // Only re-split evenly when the total actually changed value —
+                                // preserves an intentionally-set Custom split if the user just
+                                // re-opens and re-confirms the amount editor without editing it.
+                                val totalChanged = preEditTotal != null && preEditTotal != draft.rawTotal
+                                val confirmed = draft.copy(amountConfirmed = true)
                                 draft =
-                                    draft
-                                        .copy(amountConfirmed = true)
-                                        .withParticipants(nameTemplate, firstPersonName)
+                                    if (totalChanged) {
+                                        confirmed.withEvenParticipants(nameTemplate, firstPersonName)
+                                    } else {
+                                        confirmed.withParticipants(nameTemplate, firstPersonName)
+                                    }
+                                preEditTotal = null
                             } else {
                                 draft = draft.copy(showZeroValidation = true)
                             }
                         },
-                        onEditAmount = { draft = draft.copy(amountConfirmed = false) },
+                        onEditAmount = {
+                            preEditTotal = draft.rawTotal
+                            draft = draft.copy(amountConfirmed = false)
+                        },
                         onContinue = {
                             if (SharedCostSplitLogic.canSave(draft.rawTotal)) {
                                 step = SharedCostStep.Summary.name
@@ -433,7 +473,7 @@ fun SharedCostsFlow(
                     SharedCostsSummaryScreen(
                         state = draft.toUiState(homeCurrencySymbol, nameTemplate),
                         homeCurrencySymbol = homeCurrencySymbol,
-                        readOnly = viewingId != null,
+                        readOnly = isSummaryReadOnly,
                         backLabel =
                             if (viewingId != null) {
                                 stringResource(R.string.shared_back_history)
@@ -461,6 +501,7 @@ fun SharedCostsFlow(
                                     .withParticipants(nameTemplate, firstPersonName)
                             step = SharedCostStep.Input.name
                         },
+                        onMore = if (isSummaryReadOnly) ({ showActionsSheet = true }) else null,
                         onSave = {
                             val title = draft.note.trim().ifEmpty { defaultSplitTitle }
                             // Cleared name fields fall back to "Person N" ("You" for participant
@@ -544,6 +585,29 @@ fun SharedCostsFlow(
             )
         }
 
+        ProBottomSheetHost(
+            visible = showActionsSheet,
+            title = null,
+            onClose = { showActionsSheet = false },
+        ) {
+            SharedCostActionsSheetContent(
+                onEdit = {
+                    showActionsSheet = false
+                    isSummaryReadOnly = false
+                    step = SharedCostStep.Input.name
+                },
+                onArchive = {
+                    showActionsSheet = false
+                    archiveTarget = history.find { it.id == viewingId }
+                },
+                onDelete = {
+                    showActionsSheet = false
+                    deleteTarget = history.find { it.id == viewingId }
+                },
+                onCancel = { showActionsSheet = false },
+            )
+        }
+
         ProToastHost(
             message = toastMessage,
             onDismiss = { toastMessage = null },
@@ -561,12 +625,44 @@ fun SharedCostsFlow(
                 },
             confirmLabel = stringResource(R.string.shared_delete_confirm),
             onConfirm = {
-                deleteTarget?.let { onDeleteSplit(it.id) }
+                deleteTarget?.let { target ->
+                    onDeleteSplit(target.id)
+                    if (viewingId == target.id) {
+                        viewingId = null
+                        step = SharedCostStep.History.name
+                    }
+                }
                 deleteTarget = null
             },
             dismissLabel = stringResource(R.string.shared_delete_cancel),
             onDismiss = { deleteTarget = null },
             confirmVariant = ProButtonVariant.Danger,
+        )
+
+        ProAlertDialog(
+            visible = archiveTarget != null,
+            icon = ProIconGlyph.EyeOff,
+            iconTint = colors.onSurfaceVariant,
+            iconBackground = colors.paperAlt,
+            title = stringResource(R.string.shared_archive_title),
+            body =
+                buildAnnotatedString {
+                    append(stringResource(R.string.shared_archive_body, archiveTarget?.title.orEmpty()))
+                },
+            confirmLabel = stringResource(R.string.shared_archive_confirm),
+            onConfirm = {
+                archiveTarget?.let { target ->
+                    onArchiveSplit(target.id)
+                    if (viewingId == target.id) {
+                        viewingId = null
+                        step = SharedCostStep.History.name
+                    }
+                }
+                archiveTarget = null
+            },
+            dismissLabel = stringResource(R.string.shared_archive_cancel),
+            onDismiss = { archiveTarget = null },
+            confirmVariant = ProButtonVariant.Warning,
         )
     }
 }

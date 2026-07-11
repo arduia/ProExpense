@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.sharedcost.di
 
 import com.arduia.expense.data.SharedCostRepository
+import com.arduia.expense.feature.sharedcost.ArchiveSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.CreateSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.DeleteSharedCostUseCase
 import com.arduia.expense.feature.sharedcost.UpdateSharedCostUseCase
@@ -12,4 +13,5 @@ val sharedCostModule =
         factory { CreateSharedCostUseCase(get<SharedCostRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
         factory { UpdateSharedCostUseCase(get<SharedCostRepository>(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }
         factory { DeleteSharedCostUseCase(get<SharedCostRepository>()) }
+        factory { ArchiveSharedCostUseCase(get<SharedCostRepository>()) }
     }
