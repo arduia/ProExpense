@@ -51,7 +51,7 @@ fun debtRowSubtitleType(isLent: Boolean): String = if (isLent) "Lent" else "Owe"
 
 fun splitRowTitle(splitTitle: String?): String {
     val trimmed = splitTitle?.trim().orEmpty()
-    return if (trimmed.isEmpty()) SPLIT_ROW_SUBTITLE_TYPE else "Shared - $trimmed"
+    return if (trimmed.isEmpty()) SPLIT_ROW_SUBTITLE_TYPE else "Split · $trimmed"
 }
 
 /** The type word for a split row's subtitle — pair with a " · <time>" suffix at the call site. */

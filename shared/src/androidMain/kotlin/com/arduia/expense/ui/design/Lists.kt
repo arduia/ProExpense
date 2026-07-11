@@ -381,7 +381,7 @@ private fun DayGroupMixedRowKindsPreview() {
                     ProTransactionRowModel(
                         id = "2",
                         categoryId = "shopping",
-                        note = "Shared - Dinner",
+                        note = "Split · Dinner",
                         meta = "Shared split · 07:20 PM",
                         amount = "$49.00",
                         rowKind = ProRowKind.SPLIT,

@@ -157,7 +157,7 @@ val previewHomeMixedKinds =
                             HomeTransactionItem(
                                 id = "sc1",
                                 categoryId = "shopping",
-                                note = "Shared - Dinner",
+                                note = "Split · Dinner",
                                 meta = "Shared split · 07:20 PM",
                                 amount = "$49.00",
                                 rowKind = ProRowKind.SPLIT,
