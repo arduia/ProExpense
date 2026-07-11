@@ -3,7 +3,6 @@ package com.arduia.expense.feature.sharedcost.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -16,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -147,46 +145,44 @@ fun SharedCostsInputScreen(
                 backLabel = stringResource(R.string.shared_back_more),
             )
 
-            Row(
+            AmountDisplay(
+                amountText = displayAmount,
+                currencySymbol = homeCurrencySymbol,
+                isZero = isZero,
+                showZeroValidation = state.showZeroValidation,
+                zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
+                eyebrowText = stringResource(R.string.shared_total_bill),
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(top = dimens.space8, bottom = if (showDetails) dimens.space16 else dimens.space24),
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                AmountDisplay(
-                    amountText = displayAmount,
-                    currencySymbol = homeCurrencySymbol,
-                    isZero = isZero,
-                    showZeroValidation = state.showZeroValidation,
-                    zeroHelperMessage = stringResource(R.string.shared_total_zero_error),
-                    eyebrowText = stringResource(R.string.shared_total_bill),
-                    modifier = Modifier.weight(1f),
-                )
-                if (showDetails) {
-                    val editAmountDescription = stringResource(R.string.shared_edit_amount_cd)
-                    ProTextAction(
-                        text = stringResource(R.string.shared_edit_action_label),
-                        onClick = onEditAmount,
-                        style = ProExpenseTheme.typography.captionMedium,
-                        color = colors.primary,
-                        leading = {
-                            ProIcon(
-                                glyph = ProIconGlyph.Edit,
-                                contentDescription = null,
-                                tint = colors.primary,
-                                size = dimens.iconTag,
-                            )
-                        },
-                        modifier =
-                            Modifier
-                                .padding(bottom = dimens.space4)
-                                .semantics(mergeDescendants = true) {
-                                    contentDescription = editAmountDescription
+                trailing =
+                    if (showDetails) {
+                        {
+                            val editAmountDescription = stringResource(R.string.shared_edit_amount_cd)
+                            ProTextAction(
+                                text = stringResource(R.string.shared_edit_action_label),
+                                onClick = onEditAmount,
+                                style = ProExpenseTheme.typography.captionMedium,
+                                color = colors.primary,
+                                leading = {
+                                    ProIcon(
+                                        glyph = ProIconGlyph.Edit,
+                                        contentDescription = null,
+                                        tint = colors.primary,
+                                        size = dimens.iconTag,
+                                    )
                                 },
-                    )
-                }
-            }
+                                modifier =
+                                    Modifier.semantics(mergeDescendants = true) {
+                                        contentDescription = editAmountDescription
+                                    },
+                            )
+                        }
+                    } else {
+                        null
+                    },
+            )
 
             if (showDetails) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
@@ -256,7 +252,7 @@ fun SharedCostsInputScreen(
                 onBackspace = onBackspace,
                 onSave = onConfirmAmount,
                 onNext = onConfirmAmount,
-                nextLabel = stringResource(R.string.shared_save_split),
+                nextLabel = stringResource(R.string.shared_next),
                 showSaveAction = false,
                 modifier =
                     Modifier
@@ -265,7 +261,7 @@ fun SharedCostsInputScreen(
             )
         } else {
             ProButton(
-                text = stringResource(R.string.shared_save_split),
+                text = stringResource(R.string.shared_review),
                 onClick = onContinue,
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,

@@ -26,6 +26,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -146,7 +148,7 @@ private fun SharedCostStepperButton(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val motion = ProExpenseTheme.motion
-    val shape = if (filled) ProExpenseTheme.shapes.tile else CircleShape
+    val shape = CircleShape
     val alpha = if (enabled) 1f else motion.keypadDisabledOpacity
     val background =
         when {
@@ -390,6 +392,8 @@ fun SharedCostNoteField(
 ) {
     val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     DetailFieldCard(
         modifier = modifier,
@@ -399,6 +403,21 @@ fun SharedCostNoteField(
                 contentDescription = null,
                 tint = colors.muted,
                 size = ProExpenseTheme.dimensions.iconNav,
+            )
+        },
+        trailing = {
+            ProIcon(
+                glyph = ProIconGlyph.Check,
+                contentDescription = stringResource(R.string.shared_note_dismiss_cd),
+                tint = colors.success,
+                size = ProExpenseTheme.dimensions.iconTag,
+                modifier =
+                    Modifier.proIconClickable(
+                        onClick = {
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                        },
+                    ),
             )
         },
     ) {

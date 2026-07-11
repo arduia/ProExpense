@@ -52,6 +52,7 @@
     <string name="shared_edit_person_cd">Edit %1$s</string>
     <string name="shared_edit_action_label">Edit</string>
     <string name="shared_edit_amount_cd">Edit total amount</string>
+    <string name="shared_note_dismiss_cd">Hide keyboard</string>
     <string name="shared_done">Done</string>
     <string name="shared_next">Next</string>
     <string name="shared_review">Review</string>

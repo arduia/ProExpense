@@ -44,6 +44,7 @@
     <string name="shared_edit_person_cd">%1$s ကို တည်းဖြတ်ရန်</string>
     <string name="shared_edit_action_label">တည်းဖြတ်ရန်</string>
     <string name="shared_edit_amount_cd">စုစုပေါင်းပမာဏကို တည်းဖြတ်ရန်</string>
+    <string name="shared_note_dismiss_cd">ကီးဘုတ်ကို ဖျောက်ရန်</string>
     <string name="shared_done">ပြီးပါပြီ</string>
     <string name="shared_next">နောက်တစ်ခု</string>
     <string name="shared_review">သုံးသပ်ရန်</string>

@@ -2,6 +2,7 @@ package com.arduia.expense.ui.sharedcost
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -229,7 +230,7 @@ class SharedCostEditPersonSheetFlowTest {
         rule.onNodeWithText("1").performClick()
         rule.onNodeWithText("2").performClick()
         rule.onNodeWithText("0").performClick()
-        rule.onNodeWithText("Save split").performClick()
+        rule.onNodeWithText("Next").performClick()
     }
 
     @Test
@@ -248,8 +249,9 @@ class SharedCostEditPersonSheetFlowTest {
         rule.onNodeWithContentDescription("Edit split").performClick()
         rule.onNodeWithText("Next").performClick()
         // Default new-split draft has 2 people — this second person is the last one, so the
-        // advance button reads "Review" instead of "Next".
-        rule.onNodeWithText("Review").performClick()
+        // advance button reads "Review" instead of "Next". The underlying Input screen also has
+        // its own "Review" CTA (behind the sheet), so disambiguate via the sheet's Done sibling.
+        rule.onNode(hasText("Review") and hasAnySibling(hasText("Done"))).performClick()
 
         rule.onNodeWithText("Split summary").assertExists()
     }
@@ -277,7 +279,7 @@ class SharedCostEditPersonSheetFlowTest {
         rule.onNode(hasText("Person 2") and hasSetTextAction()).performTextReplacement("Zara")
         rule.onNodeWithText("Done").performClick()
 
-        rule.onNodeWithText("Custom split").performClick()
+        rule.onNodeWithText("Custom split").performScrollTo().performClick()
 
         rule.onNodeWithText("Zara").assertExists()
     }
@@ -285,13 +287,13 @@ class SharedCostEditPersonSheetFlowTest {
     @Test
     fun renamingInCustomMode_persistsAfterSwitchingBackToEqual() {
         startNewSplitDetails()
-        rule.onNodeWithText("Custom split").performClick()
+        rule.onNodeWithText("Custom split").performScrollTo().performClick()
 
         rule.onNodeWithContentDescription("Edit Person 2").performScrollTo().performClick()
         rule.onNode(hasText("Person 2") and hasSetTextAction()).performTextReplacement("Zara")
         rule.onNodeWithText("Done").performClick()
 
-        rule.onNodeWithText("Even split").performClick()
+        rule.onNodeWithText("Even split").performScrollTo().performClick()
 
         rule.onNodeWithText("Zara").assertExists()
     }

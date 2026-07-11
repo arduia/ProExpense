@@ -57,9 +57,9 @@ class SharedCostCustomSplitSaveTest {
         rule.onNodeWithText("1").performClick()
         rule.onNodeWithText("2").performClick()
         rule.onNodeWithText("0").performClick()
-        rule.onNodeWithText("Save split").performClick()
+        rule.onNodeWithText("Next").performClick()
 
-        rule.onNodeWithText("Custom split").performClick()
+        rule.onNodeWithText("Custom split").performScrollTo().performClick()
 
         // Open the Edit-person sheet for the first participant and set their share via the
         // on-screen keypad — the first keystroke overwrites the pre-filled equal share ($60)
@@ -74,7 +74,7 @@ class SharedCostCustomSplitSaveTest {
         rule.onNodeWithText("5").performClick()
         rule.onNodeWithText("Done").performClick()
 
-        rule.onNodeWithText("Save split").performClick()
+        rule.onNodeWithText("Review").performClick()
         rule.onNodeWithText("Save split", substring = true).performClick()
 
         assertEquals(SharedSplitMode.Custom, savedMode)
