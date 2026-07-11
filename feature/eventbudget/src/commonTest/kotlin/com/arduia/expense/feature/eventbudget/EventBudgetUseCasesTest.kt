@@ -133,7 +133,7 @@ class CreateEventUseCaseTest {
 
             val result = useCase("Trip", "12.50")
 
-            assertTrue(result)
+            assertEquals(EventId("trip-1000"), result)
             assertEquals(
                 1250L,
                 repo.lastUpsert
@@ -146,14 +146,14 @@ class CreateEventUseCaseTest {
         }
 
     @Test
-    fun invoke_returnsFalseForUnparsableBudget() =
+    fun invoke_returnsNullForUnparsableBudget() =
         runTest {
             val repo = FakeEventRepository()
             val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
 
             val result = useCase("Trip", "not-a-number")
 
-            assertFalse(result)
+            assertEquals(null, result)
             assertEquals(null, repo.lastUpsert)
         }
 
@@ -165,7 +165,7 @@ class CreateEventUseCaseTest {
 
             val result = useCase("Trip", "12.50", startEpochMillis = 500L, endEpochMillis = 900L)
 
-            assertTrue(result)
+            assertEquals(EventId("trip-1000"), result)
             assertEquals(500L, repo.lastUpsert?.startEpochMillis)
             assertEquals(900L, repo.lastUpsert?.endEpochMillis)
         }
@@ -183,14 +183,14 @@ class CreateEventUseCaseTest {
         }
 
     @Test
-    fun invoke_returnsFalseWhenEndBeforeStart() =
+    fun invoke_returnsNullWhenEndBeforeStart() =
         runTest {
             val repo = FakeEventRepository()
             val useCase = CreateEventUseCase(repo, nowEpochMillis = { 1_000L })
 
             val result = useCase("Trip", "12.50", startEpochMillis = 900L, endEpochMillis = 500L)
 
-            assertFalse(result)
+            assertEquals(null, result)
             assertEquals(null, repo.lastUpsert)
         }
 }

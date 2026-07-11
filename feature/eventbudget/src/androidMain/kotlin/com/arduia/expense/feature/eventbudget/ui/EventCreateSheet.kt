@@ -14,10 +14,15 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,6 +60,7 @@ fun EventCreateSheetContent(
     modifier: Modifier = Modifier,
 ) {
     val dimens = ProExpenseTheme.dimensions
+    val nameFocusRequester = rememberAutoFocusRequester()
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -66,6 +72,7 @@ fun EventCreateSheetContent(
                 counter = stringResource(R.string.event_name_counter, form.name.length, EVENT_NAME_MAX),
                 isError = form.isDuplicateName,
                 onValueChange = { onNameChange(it.take(EVENT_NAME_MAX)) },
+                focusRequester = nameFocusRequester,
             )
             if (form.isDuplicateName) {
                 EventFieldError(message = stringResource(R.string.event_name_duplicate))
@@ -111,6 +118,19 @@ fun EventCreateSheetContent(
     }
 }
 
+/** Requests focus and shows the keyboard once, right as this sheet composes — the user's whole
+ *  intent in opening it is to name the event, so jump straight to typing. */
+@Composable
+private fun rememberAutoFocusRequester(): FocusRequester {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+    return focusRequester
+}
+
 @Composable
 private fun EventFieldGroup(
     label: String,
@@ -152,6 +172,7 @@ private fun EventNameField(
     counter: String,
     isError: Boolean,
     onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -168,7 +189,8 @@ private fun EventNameField(
                 .clip(shape)
                 .border(BorderStroke(1.dp, borderColor), shape)
                 .background(colors.surface)
-                .padding(horizontal = dimens.space14, vertical = dimens.space12),
+                .padding(horizontal = dimens.space14, vertical = dimens.space12)
+                .focusRequester(focusRequester),
         textStyle = typography.body.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         maxLines = 2,

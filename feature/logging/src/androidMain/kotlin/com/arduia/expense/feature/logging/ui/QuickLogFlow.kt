@@ -29,6 +29,7 @@ import com.arduia.expense.ui.design.CurrencyPickerContent
 import com.arduia.expense.ui.design.DateTimePickerSheet
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProToastHost
+import com.arduia.expense.ui.design.TagLinkKind
 import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
@@ -126,6 +127,24 @@ fun QuickLogFlow(
         }
     }
 
+    // An expense tagged to an Event is always spend against that event's budget — an income
+    // category makes no sense to offer there, so the picker excludes them while the tag is set
+    // (checked live, not just for a pre-selected initialLinkedTag, so manually tagging an event
+    // via the in-flow "@" picker also narrows the choices).
+    val isLinkedToEvent = state.linkedTagKind == TagLinkKind.Event
+    val visibleDefaultCategories =
+        if (isLinkedToEvent) {
+            defaultCategories.filter { (categoryId, _) -> categoryTypes[categoryId] != RecordType.INCOME }
+        } else {
+            defaultCategories
+        }
+    val visibleCustomCategories =
+        if (isLinkedToEvent) {
+            customCategories.filter { (categoryId, _) -> categoryTypes[categoryId] != RecordType.INCOME }
+        } else {
+            customCategories
+        }
+
     val currentStep = QuickLogStep.valueOf(step)
 
     // Persist the in-progress entry as a resumable draft so it survives process death or an
@@ -216,8 +235,8 @@ fun QuickLogFlow(
                             }
                         },
                         onOpenCurrencySheet = { showCurrencySheet = true },
-                        defaultCategories = defaultCategories,
-                        customCategories = customCategories,
+                        defaultCategories = visibleDefaultCategories,
+                        customCategories = visibleCustomCategories,
                     )
                 }
                 QuickLogStep.Details -> {
@@ -253,8 +272,8 @@ fun QuickLogFlow(
                         tagEvents = tagEvents,
                         tagDebts = tagDebts,
                         showTagField = tagEvents.isNotEmpty() || tagDebts.isNotEmpty(),
-                        defaultCategories = defaultCategories,
-                        customCategories = customCategories,
+                        defaultCategories = visibleDefaultCategories,
+                        customCategories = visibleCustomCategories,
                         onAddCategory = onAddCategory,
                     )
                 }

@@ -39,7 +39,15 @@ fun EventsFlow(
     events: List<EventBudgetCardState> = previewEventList,
     eventDetails: Map<String, EventDetailUiState> = emptyMap(),
     eventEditForms: Map<String, EventCreateFormState> = emptyMap(),
-    onCreateEvent: (name: String, budgetRaw: String, startEpochMillis: Long, endEpochMillis: Long) -> Unit = { _, _, _, _ -> },
+    // `onCreated` fires once the event is actually persisted (id resolved async) — the caller
+    // uses it to navigate straight to the new event's detail instead of just closing the sheet.
+    onCreateEvent: (
+        name: String,
+        budgetRaw: String,
+        startEpochMillis: Long,
+        endEpochMillis: Long,
+        onCreated: (eventId: String) -> Unit,
+    ) -> Unit = { _, _, _, _, _ -> },
     onUpdateEvent: (
         id: String,
         name: String,
@@ -159,17 +167,27 @@ fun EventsFlow(
                         form = form.copy(showBudgetError = true, isDuplicateName = isDuplicate(form.name))
                     } else {
                         val editingId = editingEventId
-                        if (editingId != null) {
-                            onUpdateEvent(editingId, form.name.trim(), form.budgetRaw, form.startEpochMillis, form.endEpochMillis)
-                        } else {
-                            onCreateEvent(form.name.trim(), form.budgetRaw, form.startEpochMillis, form.endEpochMillis)
-                        }
                         // Not resetting `form` here: it's still read by this sheet's content
                         // while ProBottomSheetHost's exit animation plays, so clearing it now
                         // would flash an empty form for the animation's duration. Every entry
                         // point (create/edit) already sets a fresh `form` before showing again.
-                        showCreate = false
-                        editingEventId = null
+                        if (editingId != null) {
+                            onUpdateEvent(editingId, form.name.trim(), form.budgetRaw, form.startEpochMillis, form.endEpochMillis)
+                            showCreate = false
+                            editingEventId = null
+                        } else {
+                            // Keep the sheet open until the new id resolves — closing it first
+                            // would flash the List screen for a frame before Detail takes over.
+                            onCreateEvent(
+                                form.name.trim(),
+                                form.budgetRaw,
+                                form.startEpochMillis,
+                                form.endEpochMillis,
+                            ) { newId ->
+                                selectedEventId = newId
+                                showCreate = false
+                            }
+                        }
                     }
                 },
             )

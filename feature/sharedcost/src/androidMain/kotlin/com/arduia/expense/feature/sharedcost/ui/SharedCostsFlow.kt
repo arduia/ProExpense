@@ -345,30 +345,40 @@ fun SharedCostsFlow(
         ) { target ->
             when (target) {
                 SharedCostStep.History -> {
-                    SharedCostsHistoryScreen(
-                        items = history,
-                        isLoading = isLoading,
-                        onNewSplit = {
-                            // Not seeding via withParticipants() here — see the initial `draft`
-                            // declaration above for why an empty-total seed would stick forever.
-                            viewingId = null
-                            draft = SharedCostDraft()
-                            visitedIndices = emptySet()
-                            isSummaryReadOnly = false
-                            step = SharedCostStep.Input.name
-                        },
-                        onItemClick = { item ->
-                            sharedCostDetails[item.id]?.let { detail ->
-                                viewingId = item.id
-                                draft = detail.toDraft(nameTemplate, firstPersonName)
+                    // A Split-kind row tapped from Recents/Journal deep-links straight past
+                    // History — sharedCostDetails loads asynchronously (collectAsState(initial =
+                    // null) upstream) and is empty for at least the first frame, so this step
+                    // would otherwise flash the History/list screen before the effect above
+                    // resolves and jumps to Summary. A blank frame reads as loading; showing
+                    // History even briefly reads as "wrong screen, why am I here."
+                    if (initialViewingId != null && !hasAppliedInitialViewing) {
+                        Box(modifier = Modifier.fillMaxSize().background(colors.paper))
+                    } else {
+                        SharedCostsHistoryScreen(
+                            items = history,
+                            isLoading = isLoading,
+                            onNewSplit = {
+                                // Not seeding via withParticipants() here — see the initial `draft`
+                                // declaration above for why an empty-total seed would stick forever.
+                                viewingId = null
+                                draft = SharedCostDraft()
                                 visitedIndices = emptySet()
-                                isSummaryReadOnly = true
-                                step = SharedCostStep.Summary.name
-                            }
-                        },
-                        onBack = onDismiss,
-                        onDeleteRequested = { deleteTarget = it },
-                    )
+                                isSummaryReadOnly = false
+                                step = SharedCostStep.Input.name
+                            },
+                            onItemClick = { item ->
+                                sharedCostDetails[item.id]?.let { detail ->
+                                    viewingId = item.id
+                                    draft = detail.toDraft(nameTemplate, firstPersonName)
+                                    visitedIndices = emptySet()
+                                    isSummaryReadOnly = true
+                                    step = SharedCostStep.Summary.name
+                                }
+                            },
+                            onBack = onDismiss,
+                            onDeleteRequested = { deleteTarget = it },
+                        )
+                    }
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(
