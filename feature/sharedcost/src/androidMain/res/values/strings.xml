@@ -27,6 +27,8 @@
     <string name="shared_back_more">More</string>
     <string name="shared_back_split">Split</string>
     <string name="shared_back_history">History</string>
+    <string name="shared_back_journal">Journals</string>
+    <string name="shared_back_home">Home</string>
     <string name="shared_note_placeholder">Dinner at Nobu</string>
     <string name="shared_split_default_title">Shared split</string>
     <string name="shared_split_just_now">Just now</string>

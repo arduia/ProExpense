@@ -203,11 +203,18 @@ fun SharedCostsFlow(
     // Deep-open a specific split's read-only Summary on first composition, once its detail has
     // loaded — set by Recents/Journal when a Split-kind row is tapped, bypassing History.
     initialViewingId: String? = null,
+    // Non-null only when initialViewingId came from a deep link whose origin (Journal, Home
+    // Recents) should be returned to directly on back, instead of SharedCostsHistoryScreen.
+    deepLinkBackLabel: String? = null,
+    onDeepLinkBack: (() -> Unit)? = null,
+    // Set by Home's Split quick-access tile so the flow opens straight on the New Split amount
+    // input instead of History.
+    startAtNewSplit: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
-    val startStep = SharedCostStep.History
+    val startStep = if (startAtNewSplit) SharedCostStep.Input else SharedCostStep.History
     val nameTemplate = stringResource(R.string.shared_default_person_name)
     val firstPersonName = stringResource(R.string.shared_default_person_you)
 
@@ -299,7 +306,9 @@ fun SharedCostsFlow(
         }
         when (currentStep) {
             SharedCostStep.Summary -> {
-                if (viewingId != null) {
+                if (onDeepLinkBack != null && viewingId == initialViewingId) {
+                    onDeepLinkBack()
+                } else if (viewingId != null) {
                     // Not resetting `draft` or `viewingId` here: the outgoing Summary content
                     // still reads them while AnimatedContent's exit transition plays. Clearing
                     // `draft` would flash an empty split; clearing `viewingId` would flip
@@ -475,13 +484,17 @@ fun SharedCostsFlow(
                         homeCurrencySymbol = homeCurrencySymbol,
                         readOnly = isSummaryReadOnly,
                         backLabel =
-                            if (viewingId != null) {
+                            if (deepLinkBackLabel != null && viewingId == initialViewingId) {
+                                deepLinkBackLabel
+                            } else if (viewingId != null) {
                                 stringResource(R.string.shared_back_history)
                             } else {
                                 stringResource(R.string.shared_back_split)
                             },
                         onBack = {
-                            if (viewingId != null) {
+                            if (onDeepLinkBack != null && viewingId == initialViewingId) {
+                                onDeepLinkBack()
+                            } else if (viewingId != null) {
                                 // Not resetting `draft` or `viewingId` here: the outgoing Summary
                                 // content still reads them while AnimatedContent's exit transition
                                 // plays. Clearing `draft` would flash a zero/empty split; clearing

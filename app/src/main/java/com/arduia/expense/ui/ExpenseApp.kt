@@ -118,6 +118,14 @@ fun ExpenseApp(
     // that record's own detail screen instead of its default list/history step.
     var sharedCostInitialViewingId by rememberSaveable { mutableStateOf<String?>(null) }
     var debtInitialSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
+    // Which tab a deep-linked Debt/Split open came from (Journal vs Home Recents) — drives the
+    // one-tap back-to-origin label/action on Debt Detail / Split Summary. Null for non-deep-link
+    // opens (More tab, quick access), which keep their existing list/history back behavior.
+    var debtDeepLinkOrigin by rememberSaveable { mutableStateOf<HomeNavTab?>(null) }
+    var sharedCostDeepLinkOrigin by rememberSaveable { mutableStateOf<HomeNavTab?>(null) }
+    // Set by Home's Split quick-access tile so the Split flow opens straight on the New Split
+    // amount input instead of its History list.
+    var sharedCostStartAtNewSplit by rememberSaveable { mutableStateOf(false) }
     var showPinSetup by rememberSaveable { mutableStateOf(false) }
     var showReports by rememberSaveable { mutableStateOf(false) }
     var showCategoryManager by rememberSaveable { mutableStateOf(false) }
@@ -456,10 +464,12 @@ fun ExpenseApp(
                                 },
                                 onOpenSplit = { splitId ->
                                     sharedCostInitialViewingId = splitId
+                                    sharedCostDeepLinkOrigin = HomeNavTab.Journal
                                     showSharedCosts = true
                                 },
                                 onOpenDebt = { debtId ->
                                     debtInitialSelectedRecordId = debtId
+                                    debtDeepLinkOrigin = HomeNavTab.Journal
                                     showDebt = true
                                 },
                             )
@@ -487,7 +497,10 @@ fun ExpenseApp(
                                 onAddClick = { showQuickLog = true },
                                 onReportsClick = { showReports = true },
                                 onDebtClick = { showDebt = true },
-                                onSplitClick = { showSharedCosts = true },
+                                onSplitClick = {
+                                    sharedCostStartAtNewSplit = true
+                                    showSharedCosts = true
+                                },
                                 onEventsClick = { selectedTab = HomeNavTab.Budget },
                                 onLogFirstExpense = { showQuickLog = true },
                                 onSeeAll = { selectedTab = HomeNavTab.Journal },
@@ -498,11 +511,13 @@ fun ExpenseApp(
                                         ProRowKind.SPLIT ->
                                             row.linkedId?.let {
                                                 sharedCostInitialViewingId = it
+                                                sharedCostDeepLinkOrigin = HomeNavTab.Home
                                                 showSharedCosts = true
                                             }
                                         ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED ->
                                             row.linkedId?.let {
                                                 debtInitialSelectedRecordId = it
+                                                debtDeepLinkOrigin = HomeNavTab.Home
                                                 showDebt = true
                                             }
                                         ProRowKind.EXPENSE, ProRowKind.INCOME -> {
@@ -587,10 +602,29 @@ fun ExpenseApp(
                     onDismiss = {
                         showSharedCosts = false
                         sharedCostInitialViewingId = null
+                        sharedCostDeepLinkOrigin = null
+                        sharedCostStartAtNewSplit = false
                     },
                     homeCurrencySymbol = homeSymbol,
                     homeCurrencyCode = homeCurrencyCode,
                     initialViewingId = sharedCostInitialViewingId,
+                    deepLinkBackLabel =
+                        when (sharedCostDeepLinkOrigin) {
+                            HomeNavTab.Journal ->
+                                stringResource(com.arduia.expense.feature.sharedcost.R.string.shared_back_journal)
+                            HomeNavTab.Home ->
+                                stringResource(com.arduia.expense.feature.sharedcost.R.string.shared_back_home)
+                            else -> null
+                        },
+                    onDeepLinkBack =
+                        sharedCostDeepLinkOrigin?.let {
+                            {
+                                showSharedCosts = false
+                                sharedCostInitialViewingId = null
+                                sharedCostDeepLinkOrigin = null
+                            }
+                        },
+                    startAtNewSplit = sharedCostStartAtNewSplit,
                 )
             }
 
@@ -599,9 +633,26 @@ fun ExpenseApp(
                     onDismiss = {
                         showDebt = false
                         debtInitialSelectedRecordId = null
+                        debtDeepLinkOrigin = null
                     },
                     homeCurrencySymbol = homeSymbol,
                     initialSelectedRecordId = debtInitialSelectedRecordId,
+                    deepLinkBackLabel =
+                        when (debtDeepLinkOrigin) {
+                            HomeNavTab.Journal ->
+                                stringResource(com.arduia.expense.feature.debt.R.string.debt_back_journal)
+                            HomeNavTab.Home ->
+                                stringResource(com.arduia.expense.feature.debt.R.string.debt_back_home)
+                            else -> null
+                        },
+                    onDeepLinkBack =
+                        debtDeepLinkOrigin?.let {
+                            {
+                                showDebt = false
+                                debtInitialSelectedRecordId = null
+                                debtDeepLinkOrigin = null
+                            }
+                        },
                 )
             }
 

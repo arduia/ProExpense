@@ -67,6 +67,10 @@ fun DebtFlow(
     // Deep-open a specific record's detail on first composition — set by Recents/Journal when a
     // Debt-kind row is tapped, mirroring Shared Costs' `initialViewingId`.
     initialSelectedRecordId: String? = null,
+    // Non-null only when initialSelectedRecordId came from a deep link whose origin (Journal, Home
+    // Recents) should be returned to directly on back, instead of DebtListScreen.
+    deepLinkBackLabel: String? = null,
+    onDeepLinkBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -162,7 +166,19 @@ fun DebtFlow(
             } else {
                 DebtDetailScreen(
                     state = detailStateFor(recordId, side, listState),
-                    onBack = { selectedRecordId = null },
+                    backLabel =
+                        if (deepLinkBackLabel != null && recordId == initialSelectedRecordId) {
+                            deepLinkBackLabel
+                        } else {
+                            stringResource(R.string.debt_detail_back)
+                        },
+                    onBack = {
+                        if (onDeepLinkBack != null && recordId == initialSelectedRecordId) {
+                            onDeepLinkBack()
+                        } else {
+                            selectedRecordId = null
+                        }
+                    },
                     onMore = {},
                     onEdit = {
                         val record = (listState.active + listState.settled).firstOrNull { it.id == recordId }
