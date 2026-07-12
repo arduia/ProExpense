@@ -246,6 +246,14 @@ This script:
 - **Small:** list files to add/edit/delete
 - **Large:** list files + dependency order
 - Document version/integration risks before proceeding
+- **Product UX lens (mandatory):** before finalizing scope, ask — does this screen already
+  anticipate what the user is about to do next? Minimize taps, typing, and waiting wherever the
+  intent is obvious (e.g. a screen whose whole purpose is typing a name should already have that
+  field focused with the keyboard up; a screen whose purpose is picking a value should present
+  the most likely choice first). Not limited to creation screens — applies to edit, search, and
+  picker flows too. Rooted in `docs/project_philosophy.md` belief #2 — speed beats completeness
+  at log time. When the answer is auto-focus/keyboard, reuse `rememberAutoFocusRequester()`
+  (`shared/.../ui/design/Focus.kt`) rather than a local copy.
 
 ### Step 4 — Write Tests First (TDD)
 
@@ -531,6 +539,10 @@ preview-fake wiring from real ViewModel/repository integration when reporting fi
   `app/src/test/`; verify (and record when intentional) before push
 - Use `ProExpenseTheme` and components from `ui/design/` — authoritative visual reference:
   `design-system-spec/` (screens, PNGs, tokens)
+- **Product UX lens carries into implementation** — see Step 3's Product UX lens check above; the
+  most common concrete fix is auto-focusing the primary input (reuse
+  `rememberAutoFocusRequester()` from `shared/.../ui/design/Focus.kt`), but the lens isn't limited
+  to that one pattern.
 
 #### Design system alignment
 

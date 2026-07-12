@@ -17,15 +17,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +41,7 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.categoryIcon
 import com.arduia.expense.ui.design.proClickable
+import com.arduia.expense.ui.design.rememberAutoFocusRequester
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -190,19 +187,6 @@ fun CategoryNewSheetContent(
             modifier = Modifier.padding(top = dimens.space4),
         )
     }
-}
-
-/** Requests focus and shows the keyboard once, right as this sheet composes — the user's whole
- *  intent in opening it is to name the category, so jump straight to typing. */
-@Composable
-private fun rememberAutoFocusRequester(): FocusRequester {
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
-    }
-    return focusRequester
 }
 
 @Composable
