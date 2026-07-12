@@ -86,7 +86,7 @@ fun AmountDisplay(
         horizontalAlignment = Alignment.Start,
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            horizontalArrangement = Arrangement.spacedBy(dimens.space4),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
