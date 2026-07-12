@@ -501,7 +501,7 @@ fun ExpenseApp(
                                     sharedCostStartAtNewSplit = true
                                     showSharedCosts = true
                                 },
-                                onEventsClick = { selectedTab = HomeNavTab.Budget },
+                                onEventsClick = { onTabSelected(HomeNavTab.Budget) },
                                 onLogFirstExpense = { showQuickLog = true },
                                 onSeeAll = { selectedTab = HomeNavTab.Journal },
                                 onCustomizeQuickAccess = { showQuickAccessPicker = true },

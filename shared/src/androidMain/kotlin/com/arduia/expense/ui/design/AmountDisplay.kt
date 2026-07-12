@@ -2,6 +2,7 @@ package com.arduia.expense.ui.design
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,9 @@ fun AmountDisplay(
     showZeroValidation: Boolean = false,
     zeroHelperMessage: String = "Amount must be greater than $0",
     eyebrowText: String? = null,
+    // Renders next to the eyebrow label, right-aligned on the same row — e.g. a "USD ▾" currency
+    // selector — instead of a separate row above/below, saving a full row of vertical space.
+    eyebrowTrailing: (@Composable () -> Unit)? = null,
     usePrimaryAmount: Boolean = false,
     // When present, the amount text no longer force-fills the available width — the row hugs
     // the digits instead, so this sits immediately after the amount rather than pinned to the
@@ -81,11 +85,18 @@ fun AmountDisplay(
         modifier = modifier.offset(x = shakeOffset.value.dp),
         horizontalAlignment = Alignment.Start,
     ) {
-        Text(
-            text = eyebrowText ?: "AMOUNT · $currencyCode",
-            style = typography.eyebrow,
-            color = colors.onSurfaceMuted,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = eyebrowText ?: "AMOUNT · $currencyCode",
+                style = typography.eyebrow,
+                color = colors.onSurfaceMuted,
+            )
+            eyebrowTrailing?.invoke()
+        }
         Row(verticalAlignment = Alignment.Bottom) {
             BasicText(
                 text =

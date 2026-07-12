@@ -39,7 +39,7 @@
   optimistic framing; the badge icon color (Lent=green / Owe=red) is unaffected and always follows
   Debt Tracker's own convention.
 - Empty state (fresh user): illustrated, “No expenses yet…”, single CTA “Log your first expense”.
-- Quick-access tiles deep-link to Reports / Debt / Split / **Goals** (renamed from “Events” — see `components/quick-access.md`). Split now opens directly on Shared Costs' amount-input screen rather than its History list (see `10-shared-costs.md`); Debt still opens its list.
+- Quick-access tiles deep-link to Reports / Debt / Split / **Goals** (renamed from “Events” — see `components/quick-access.md`). Split now opens directly on Shared Costs' amount-input screen rather than its History list (see `10-shared-costs.md`); Debt still opens its list. **Goals** always lands on the Budget tab's event list, clearing any event previously opened via the Active Event card or a Journal `@` tag — it never reopens a stale event Detail.
 - Bottom nav (Home active) + raised center Add are always present on top-level screens.
 
 ## Component composition · M3 mapping

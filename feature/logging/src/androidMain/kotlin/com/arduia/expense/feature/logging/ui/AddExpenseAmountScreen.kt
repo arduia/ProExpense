@@ -1,16 +1,12 @@
 package com.arduia.expense.feature.logging.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -74,22 +70,6 @@ fun AddExpenseAmountScreen(
             onAction = onClose,
         )
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            ProTextAction(
-                text = state.currencyCode,
-                onClick = onOpenCurrencySheet,
-                color = colors.primary,
-                trailing = {
-                    ProIcon(
-                        glyph = ProIconGlyph.ChevronDown,
-                        contentDescription = null,
-                        tint = colors.primary,
-                        size = dimens.iconInline,
-                    )
-                },
-            )
-        }
-
         AmountDisplay(
             amountText = displayAmount,
             currencySymbol = currencySymbol(state.currencyCode),
@@ -97,31 +77,43 @@ fun AddExpenseAmountScreen(
             isZero = isZero,
             showZeroValidation = state.showZeroValidation,
             zeroHelperMessage = stringResource(R.string.amount_must_be_greater_than_zero),
+            eyebrowText = stringResource(R.string.amount_step).uppercase(),
+            eyebrowTrailing = {
+                ProTextAction(
+                    text = state.currencyCode,
+                    onClick = onOpenCurrencySheet,
+                    style = ProExpenseTheme.typography.eyebrow,
+                    color = colors.primary,
+                    trailing = {
+                        ProIcon(
+                            glyph = ProIconGlyph.ChevronDown,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            size = dimens.iconInline,
+                        )
+                    },
+                )
+            },
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(top = dimens.space8, bottom = dimens.space16),
         )
 
-        // Weighted + independently scrollable (not the whole screen, see removed
-        // verticalScroll above) so a long custom-category list never pushes NumericKeypad's
-        // Save/Next buttons off-screen — this area fills whatever space remains above the
-        // keypad and the user swipes within it to see more chips.
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
-        ) {
-            CategoryPicker(
-                defaultCategories = defaultCategories,
-                customCategories = customCategories,
-                selectedCategoryId = state.selectedCategoryId,
-                onCategorySelected = onCategorySelected,
-                showCustomSection = true,
-                modifier = Modifier.padding(bottom = dimens.space16),
-            )
-        }
+        // Fixed 2 default-category rows + 1 custom-category row (each independently
+        // horizontally swipeable — see CategoryPicker's defaultSectionRows/customSectionRows)
+        // instead of wrapping onto as many lines as the category count needs, so the picker's
+        // height never grows and NumericKeypad's Save/Next buttons always stay pinned below it.
+        CategoryPicker(
+            defaultCategories = defaultCategories,
+            customCategories = customCategories,
+            selectedCategoryId = state.selectedCategoryId,
+            onCategorySelected = onCategorySelected,
+            showCustomSection = true,
+            defaultSectionRows = 2,
+            customSectionRows = 1,
+            modifier = Modifier.padding(bottom = dimens.space16),
+        )
 
         NumericKeypad(
             actionsEnabled = canProceed,

@@ -2,6 +2,7 @@ package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -34,6 +36,11 @@ fun CategoryPicker(
     onMoreClick: (() -> Unit)? = null,
     showAddChip: Boolean = false,
     onAddClick: () -> Unit = {},
+    // Non-null caps that section to a fixed row count with horizontal swipe-to-see-more instead
+    // of wrapping onto as many lines as needed — used by screens that must keep a fixed-height
+    // control (e.g. a keypad) pinned below the picker. Null preserves the original wrap behavior.
+    defaultSectionRows: Int? = null,
+    customSectionRows: Int? = null,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -59,11 +66,88 @@ fun CategoryPicker(
                     null
                 },
         ) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-                verticalArrangement = Arrangement.spacedBy(dimens.space8),
-            ) {
-                defaultCategories.forEach { (id, label) ->
+            if (defaultSectionRows != null) {
+                CategoryChipCarousel(
+                    categories = defaultCategories,
+                    rows = defaultSectionRows,
+                    selectedCategoryId = selectedCategoryId,
+                    onCategorySelected = onCategorySelected,
+                )
+            } else {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    defaultCategories.forEach { (id, label) ->
+                        CategoryChip(
+                            label = label,
+                            categoryId = id,
+                            selected = id == selectedCategoryId,
+                            onClick = { onCategorySelected(id) },
+                        )
+                    }
+                }
+            }
+        }
+
+        if (showCustomSection && (customCategories.isNotEmpty() || showAddChip)) {
+            CategoryPickerSection(title = stringResource(R.string.category_section_custom)) {
+                if (customSectionRows != null) {
+                    CategoryChipCarousel(
+                        categories = customCategories,
+                        rows = customSectionRows,
+                        selectedCategoryId = selectedCategoryId,
+                        onCategorySelected = onCategorySelected,
+                        trailingChip = if (showAddChip) ({ AddCategoryChip(onClick = onAddClick) }) else null,
+                    )
+                } else {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                    ) {
+                        customCategories.forEach { (id, label) ->
+                            CategoryChip(
+                                label = label,
+                                categoryId = id,
+                                selected = id == selectedCategoryId,
+                                onClick = { onCategorySelected(id) },
+                            )
+                        }
+                        if (showAddChip) {
+                            AddCategoryChip(onClick = onAddClick)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Chunks [categories] into column-major groups of [rows] items so a fixed number of rows is
+ * always visible, with any overflow reachable by swiping the row horizontally — each column's
+ * height is the natural wrap-content height of up to [rows] stacked chips, so no chip-height
+ * guess is needed (unlike a `LazyHorizontalGrid`, which would need an explicit bounded height).
+ */
+@Composable
+private fun CategoryChipCarousel(
+    categories: List<Pair<String, String>>,
+    rows: Int,
+    selectedCategoryId: String,
+    onCategorySelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    trailingChip: (@Composable () -> Unit)? = null,
+) {
+    val dimens = ProExpenseTheme.dimensions
+    val columns = categories.chunked(rows)
+
+    Row(
+        modifier = modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        columns.forEach { column ->
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                column.forEach { (id, label) ->
                     CategoryChip(
                         label = label,
                         categoryId = id,
@@ -73,25 +157,9 @@ fun CategoryPicker(
                 }
             }
         }
-
-        if (showCustomSection && (customCategories.isNotEmpty() || showAddChip)) {
-            CategoryPickerSection(title = stringResource(R.string.category_section_custom)) {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
-                ) {
-                    customCategories.forEach { (id, label) ->
-                        CategoryChip(
-                            label = label,
-                            categoryId = id,
-                            selected = id == selectedCategoryId,
-                            onClick = { onCategorySelected(id) },
-                        )
-                    }
-                    if (showAddChip) {
-                        AddCategoryChip(onClick = onAddClick)
-                    }
-                }
+        if (trailingChip != null) {
+            Column {
+                trailingChip()
             }
         }
     }

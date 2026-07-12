@@ -21,7 +21,13 @@
 
 ## Behavior & interactions
 
-- Sub-screen 1 (Amount): keypad auto-opens; amount is large + centered. Category chips scroll horizontally, “Food” pre-selected.
+- Sub-screen 1 (Amount): keypad auto-opens; amount is large + centered. The eyebrow row reads
+  "AMOUNT" on the left and the currency code + chevron (e.g. "USD ▾") right-aligned on the same
+  row — tapping it opens the currency sheet; this replaces a separate currency-selector row
+  above the amount, saving a full row of vertical space. Category chips are capped at a fixed
+  row count per section (2 rows default categories, 1 row custom categories) and swipe
+  horizontally within each section to reveal more — not an unbounded wrap — so the keypad and
+  Save/Next always stay pinned at the bottom regardless of category count. "Food" pre-selected.
 - Category chips include **Income** categories (Income / Salary / Gift) alongside Expense categories in the same single-select row — there is no separate expense/income toggle. Direction (`RecordType.EXPENSE` vs `INCOME`) is derived purely from the selected category.
 - Income entries render their amount in **success green** wherever they surface (this screen's read-back, Home recent list, Journal) instead of `ink` — see Color tokens below.
 - Input rules: whole part ≤ 7 digits, fraction ≤ 2; single decimal; leading zeros stripped (except “0.”); commas grouped live.
@@ -38,7 +44,7 @@
 | Component | Role | Compose / M3 |
 |---|---|---|
 | Amount entry (keypad + validation) | Numeric input, Inter keys, Save/Next | `custom (no M3 keypad)` |
-| Category chip group | Single-select, horizontal scroll | `FilterChip (shape = CircleShape)` |
+| Category chip group | Single-select, fixed rows (2 default / 1 custom) + per-section horizontal swipe | `FilterChip (shape = CircleShape)` |
 | Bottom sheet — Date & time | Date picker, future notice | `ModalBottomSheet` |
 | Bottom sheet — Tag picker | Events/Debts, mutually exclusive | `ModalBottomSheet` |
 | Toast | “Expense saved” confirmation | `Snackbar` |
