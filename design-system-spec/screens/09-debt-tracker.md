@@ -35,6 +35,10 @@
 - Record actions sheet: Edit & Mark-as-settled for Active; Delete for Settled (with confirm); Cancel always.
 - Active records are NOT deletable; settle first. Settled records are deletable.
 - Detail shows person, amount, dates, status, note, and any linked expense reference.
+- **Deep-link back navigation (new):** opened via a Split/Debt row tap in Journal or Home's
+  Recents list → Detail's back button returns in one tap straight to that origin ("Journals" /
+  "Home" label), skipping the Debt list. Opened via the Debt tab (More, or Home's own Debt
+  quick-access tile) → unchanged, back label reads "Debt" and returns to the list first.
 
 ## Component composition · M3 mapping
 

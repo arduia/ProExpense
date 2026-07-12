@@ -16,7 +16,7 @@ Feature shortcuts on the Home screen — a 4-up grid of labelled icon tiles.
 | Goals *(renamed from "Events")* | `yellow300` | `#F9A825` | `feat-events` |
 
 ## Behavior
-- Each tile **navigates to its feature** (Reports / Debts / Split / Goals) on tap, with the standard `scale 0.97` press feedback.
+- Each tile **navigates to its feature** (Reports / Debts / Split / Goals) on tap, with the standard `scale 0.97` press feedback. **Split** deep-links straight to the New Split amount-input screen (not the Shared Costs History list) — the one tile that skips its feature's own list/history landing screen.
 - The **"Customize"** affordance in the section header is now **live** — it opens a picker sheet where the user can toggle which tiles are visible (at least one must stay enabled) and reorder the remaining tiles via up/down chevrons. Choices persist to `SharedPreferences` (`quick_access_prefs` / `tile_order`), so the grid is no longer a fixed, non-configurable four.
 - Tiles still hold no selected/toggle state during normal navigation — only the Customize sheet has interactive state.
 
