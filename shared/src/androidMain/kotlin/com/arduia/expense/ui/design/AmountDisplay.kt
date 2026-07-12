@@ -94,7 +94,14 @@ fun AmountDisplay(
                 style = typography.eyebrow,
                 color = colors.onSurfaceMuted,
             )
-            eyebrowTrailing?.invoke()
+            if (eyebrowTrailing != null) {
+                Text(
+                    text = "•",
+                    style = typography.eyebrow,
+                    color = colors.onSurfaceMuted,
+                )
+                eyebrowTrailing()
+            }
         }
         Row(verticalAlignment = Alignment.Bottom) {
             BasicText(
