@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arduia.expense.shared.R
@@ -41,6 +44,13 @@ fun CategoryPicker(
     // control (e.g. a keypad) pinned below the picker. Null preserves the original wrap behavior.
     defaultSectionRows: Int? = null,
     customSectionRows: Int? = null,
+    // Horizontal inset applied to section titles and chip rows. Leave 0 (default) when the caller
+    // already wraps this picker in its own horizontal screen padding. Set to the screen's margin
+    // when the caller instead renders this picker full-bleed, so a swipeable carousel row (see
+    // defaultSectionRows/customSectionRows) can scroll all the way to the true screen edge instead
+    // of being clipped at the margin — the inset is reproduced as inner spacing so the at-rest
+    // layout still lines up with the rest of the screen.
+    carouselEdgeInset: Dp = 0.dp,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -52,6 +62,7 @@ fun CategoryPicker(
     ) {
         CategoryPickerSection(
             title = stringResource(R.string.category_section_default),
+            titlePadding = carouselEdgeInset,
             trailing =
                 if (onMoreClick != null && !showCustomSection) {
                     {
@@ -72,9 +83,11 @@ fun CategoryPicker(
                     rows = defaultSectionRows,
                     selectedCategoryId = selectedCategoryId,
                     onCategorySelected = onCategorySelected,
+                    edgeInset = carouselEdgeInset,
                 )
             } else {
                 FlowRow(
+                    modifier = Modifier.padding(horizontal = carouselEdgeInset),
                     horizontalArrangement = Arrangement.spacedBy(dimens.space8),
                     verticalArrangement = Arrangement.spacedBy(dimens.space8),
                 ) {
@@ -91,17 +104,22 @@ fun CategoryPicker(
         }
 
         if (showCustomSection && (customCategories.isNotEmpty() || showAddChip)) {
-            CategoryPickerSection(title = stringResource(R.string.category_section_custom)) {
+            CategoryPickerSection(
+                title = stringResource(R.string.category_section_custom),
+                titlePadding = carouselEdgeInset,
+            ) {
                 if (customSectionRows != null) {
                     CategoryChipCarousel(
                         categories = customCategories,
                         rows = customSectionRows,
                         selectedCategoryId = selectedCategoryId,
                         onCategorySelected = onCategorySelected,
+                        edgeInset = carouselEdgeInset,
                         trailingChip = if (showAddChip) ({ AddCategoryChip(onClick = onAddClick) }) else null,
                     )
                 } else {
                     FlowRow(
+                        modifier = Modifier.padding(horizontal = carouselEdgeInset),
                         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
                         verticalArrangement = Arrangement.spacedBy(dimens.space8),
                     ) {
@@ -136,15 +154,19 @@ private fun CategoryChipCarousel(
     selectedCategoryId: String,
     onCategorySelected: (String) -> Unit,
     modifier: Modifier = Modifier,
+    edgeInset: Dp = 0.dp,
     trailingChip: (@Composable () -> Unit)? = null,
 ) {
     val dimens = ProExpenseTheme.dimensions
     val columns = categories.chunked(rows)
 
     Row(
-        modifier = modifier.horizontalScroll(rememberScrollState()),
+        modifier = modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
+        if (edgeInset > 0.dp) {
+            Spacer(Modifier.width(edgeInset))
+        }
         columns.forEach { column ->
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
                 column.forEach { (id, label) ->
@@ -162,6 +184,9 @@ private fun CategoryChipCarousel(
                 trailingChip()
             }
         }
+        if (edgeInset > 0.dp) {
+            Spacer(Modifier.width(edgeInset))
+        }
     }
 }
 
@@ -169,6 +194,7 @@ private fun CategoryChipCarousel(
 private fun CategoryPickerSection(
     title: String,
     modifier: Modifier = Modifier,
+    titlePadding: Dp = 0.dp,
     trailing: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
@@ -181,7 +207,7 @@ private fun CategoryPickerSection(
         verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = titlePadding),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {

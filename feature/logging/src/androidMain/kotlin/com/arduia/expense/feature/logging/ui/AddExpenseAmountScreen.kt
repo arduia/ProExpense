@@ -60,14 +60,14 @@ fun AddExpenseAmountScreen(
                 .fillMaxSize()
                 .background(colors.paper)
                 .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(horizontal = dimens.screenPadding),
+                .navigationBarsPadding(),
     ) {
         ProTopBar(
             title = stringResource(titleRes),
             onBack = null,
             action = ProTopBarAction.Close,
             onAction = onClose,
+            modifier = Modifier.padding(horizontal = dimens.screenPadding),
         )
 
         AmountDisplay(
@@ -97,6 +97,7 @@ fun AddExpenseAmountScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
                     .padding(top = dimens.space8, bottom = dimens.space16),
         )
 
@@ -104,6 +105,9 @@ fun AddExpenseAmountScreen(
         // horizontally swipeable — see CategoryPicker's defaultSectionRows/customSectionRows)
         // instead of wrapping onto as many lines as the category count needs, so the picker's
         // height never grows and NumericKeypad's Save/Next buttons always stay pinned below it.
+        // Rendered full-bleed (carouselEdgeInset instead of the screen's own horizontal padding)
+        // so a swipeable row can scroll all the way to the true screen edge instead of being
+        // clipped at the margin.
         CategoryPicker(
             defaultCategories = defaultCategories,
             customCategories = customCategories,
@@ -112,6 +116,7 @@ fun AddExpenseAmountScreen(
             showCustomSection = true,
             defaultSectionRows = 2,
             customSectionRows = 1,
+            carouselEdgeInset = dimens.screenPadding,
             modifier = Modifier.padding(bottom = dimens.space16),
         )
 
@@ -126,6 +131,7 @@ fun AddExpenseAmountScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
                     .padding(bottom = dimens.space18),
         )
     }
