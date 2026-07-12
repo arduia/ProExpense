@@ -12,5 +12,6 @@ internal fun CategoryRow.toDomain(): Category =
         isCustom = is_custom != 0L,
         sortOrder = sort_order.toInt(),
         iconId = icon_id,
+        colorId = color_id,
         type = type.toRecordType(),
     )

@@ -244,7 +244,7 @@ fun PinLockFlow(
                         answer = recoveryAnswer,
                         attemptsLabel = attemptsLabel,
                         onAnswerChange = { recoveryAnswer = it },
-                        verifyEnabled = !recoveryExhausted && lockoutUntil == null,
+                        verifyEnabled = recoveryAnswer.isNotBlank() && !recoveryExhausted && lockoutUntil == null,
                         showResetOption = recoveryExhausted,
                         onResetApp = { showResetConfirm = true },
                         onVerify = {

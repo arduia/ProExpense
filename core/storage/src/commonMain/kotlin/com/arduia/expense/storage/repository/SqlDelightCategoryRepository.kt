@@ -35,6 +35,7 @@ class SqlDelightCategoryRepository(
                     sort_order = category.sortOrder.toLong(),
                     icon_id = category.iconId,
                     type = category.type.toCode(),
+                    color_id = category.colorId,
                 )
                 Unit
             }

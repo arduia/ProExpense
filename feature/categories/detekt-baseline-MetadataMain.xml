@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LongParameterList:CategoryUseCases.kt$SaveCategoryUseCase$( categories: List&lt;Category&gt;, editingId: String?, name: String, iconId: String = "", type: RecordType = RecordType.EXPENSE, colorId: String = "", )</ID>
     <ID>MaxLineLength:CategoriesModule.kt$factory { SaveCategoryUseCase(get&lt;CategoryRepository&gt;(), nowEpochMillis = { Clock.System.now().toEpochMilliseconds() }) }</ID>
   </CurrentIssues>
 </SmellBaseline>

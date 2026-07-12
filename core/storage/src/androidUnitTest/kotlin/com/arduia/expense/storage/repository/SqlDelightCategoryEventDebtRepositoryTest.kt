@@ -77,6 +77,17 @@ class SqlDelightCategoryEventDebtRepositoryTest {
         }
 
     @Test
+    fun category_upsert_roundTripsColorId() =
+        runTest {
+            val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)
+            repo.upsert(Category(CategoryId("custom-1"), "Gym", isCustom = true, colorId = "shopping"))
+
+            val all = repo.getAll()
+            assertTrue(all is Result.Success)
+            assertEquals("shopping", all.data.single().colorId)
+        }
+
+    @Test
     fun category_reorder_persistsSortOrder() =
         runTest {
             val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)
@@ -122,6 +133,26 @@ class SqlDelightCategoryEventDebtRepositoryTest {
             assertTrue(fetched is Result.Success)
             assertEquals(event, fetched.data)
             assertEquals(event, repo.observeAll().first().single())
+        }
+
+    @Test
+    fun event_roundTripsArchivedStatus() =
+        runTest {
+            val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, Dispatchers.Unconfined)
+            val event =
+                Event(
+                    id = EventId("evt-1"),
+                    name = "Trip",
+                    startEpochMillis = 1,
+                    endEpochMillis = 100,
+                    budget = Money(Amount(200_00), home),
+                    status = EventStatus.ARCHIVED,
+                )
+            repo.upsert(event)
+
+            val fetched = repo.getById(EventId("evt-1"))
+            assertTrue(fetched is Result.Success)
+            assertEquals(EventStatus.ARCHIVED, fetched.data?.status)
         }
 
     @Test

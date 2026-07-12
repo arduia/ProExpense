@@ -78,6 +78,7 @@ class ProExpenseStorage internal constructor(
                         sort_order = index.toLong(),
                         icon_id = "",
                         type = category.type.toCode(),
+                        color_id = "",
                     )
                 }
             }

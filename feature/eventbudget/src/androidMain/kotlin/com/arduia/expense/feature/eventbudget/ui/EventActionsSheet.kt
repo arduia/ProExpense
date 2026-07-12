@@ -32,6 +32,8 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 fun EventActionsSheetContent(
     onEdit: () -> Unit,
     onClose: () -> Unit,
+    onArchive: () -> Unit,
+    onDelete: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
     showClose: Boolean = true,
@@ -66,6 +68,24 @@ fun EventActionsSheetContent(
                 onClick = onClose,
             )
         }
+        EventActionRow(
+            icon = ProIconGlyph.EyeOff,
+            iconTint = colors.onSurfaceVariant,
+            iconBackground = colors.paperAlt,
+            title = stringResource(R.string.event_archive),
+            titleColor = colors.onSurface,
+            subtitle = stringResource(R.string.event_archive_subtitle),
+            onClick = onArchive,
+        )
+        EventActionRow(
+            icon = ProIconGlyph.Close,
+            iconTint = colors.danger,
+            iconBackground = colors.dangerTint,
+            title = stringResource(R.string.event_delete),
+            titleColor = colors.danger,
+            subtitle = stringResource(R.string.event_delete_subtitle),
+            onClick = onDelete,
+        )
         Box(
             modifier =
                 Modifier
@@ -156,7 +176,35 @@ private fun EventActionsSheetPreview() {
             EventActionsSheetContent(
                 onEdit = {},
                 onClose = {},
+                onArchive = {},
+                onDelete = {},
                 onCancel = {},
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "Event — actions sheet, closed event",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun EventActionsSheetClosedPreview() {
+    ProExpenseTheme {
+        ProBottomSheetHost(
+            visible = true,
+            title = null,
+            onClose = {},
+        ) {
+            EventActionsSheetContent(
+                onEdit = {},
+                onClose = {},
+                onArchive = {},
+                onDelete = {},
+                onCancel = {},
+                showClose = false,
             )
         }
     }

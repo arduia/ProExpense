@@ -3,6 +3,7 @@ package com.arduia.expense.domain
 enum class EventStatus {
     ACTIVE,
     CLOSED,
+    ARCHIVED,
 }
 
 data class Event(

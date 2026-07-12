@@ -50,7 +50,6 @@ fun FirstLaunchFlow(
                 state = profileState,
                 onNameChange = { name = it },
                 onStartTracking = { onComplete(name.trim(), selectedCurrencyCode) },
-                onSkip = { onComplete(name.trim(), selectedCurrencyCode) },
                 onCurrencySelected = { selectedCurrencyCode = it },
                 onOpenCurrencySheet = { showCurrencySheet = true },
                 onCloseCurrencySheet = {
@@ -89,7 +88,6 @@ private fun FirstLaunchProfilePreview() {
             state = ProfileSetupState(name = "Maya"),
             onNameChange = {},
             onStartTracking = {},
-            onSkip = {},
             onCurrencySelected = {},
             onOpenCurrencySheet = {},
             onCloseCurrencySheet = {},

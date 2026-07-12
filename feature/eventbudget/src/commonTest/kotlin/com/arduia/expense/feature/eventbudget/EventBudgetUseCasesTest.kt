@@ -107,6 +107,7 @@ class ComputeEventProgressUseCaseTest {
 private class FakeEventRepository : EventRepository {
     private val flow = MutableStateFlow<List<Event>>(emptyList())
     var lastUpsert: Event? = null
+    var lastDeletedId: EventId? = null
 
     override suspend fun getAll(): Result<List<Event>> = Result.Success(flow.value)
 
@@ -117,7 +118,10 @@ private class FakeEventRepository : EventRepository {
         return Result.Success(Unit)
     }
 
-    override suspend fun delete(id: EventId): Result<Unit> = Result.Success(Unit)
+    override suspend fun delete(id: EventId): Result<Unit> {
+        lastDeletedId = id
+        return Result.Success(Unit)
+    }
 
     override fun observeAll() = flow.asStateFlow()
 
@@ -283,6 +287,47 @@ class CloseEventUseCaseTest {
 
             assertFalse(result)
             assertEquals(null, repo.lastUpsert)
+        }
+}
+
+class ArchiveEventUseCaseTest {
+    @Test
+    fun invoke_archivesActiveEvent() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = ArchiveEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00)
+
+            val result = useCase(existing)
+
+            assertTrue(result)
+            assertEquals(EventStatus.ARCHIVED, repo.lastUpsert?.status)
+        }
+
+    @Test
+    fun invoke_returnsFalseWhenAlreadyArchived() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = ArchiveEventUseCase(repo)
+            val existing = sampleEvent(budgetCents = 10_00).copy(status = EventStatus.ARCHIVED)
+
+            val result = useCase(existing)
+
+            assertFalse(result)
+            assertEquals(null, repo.lastUpsert)
+        }
+}
+
+class DeleteEventUseCaseTest {
+    @Test
+    fun invoke_deletesEventById() =
+        runTest {
+            val repo = FakeEventRepository()
+            val useCase = DeleteEventUseCase(repo)
+
+            useCase(EventId("ev1"))
+
+            assertEquals(EventId("ev1"), repo.lastDeletedId)
         }
 }
 

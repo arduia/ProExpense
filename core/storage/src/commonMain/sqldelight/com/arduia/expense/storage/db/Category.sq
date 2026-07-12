@@ -5,14 +5,15 @@ CREATE TABLE category (
     is_custom INTEGER NOT NULL DEFAULT 0,
     sort_order INTEGER NOT NULL DEFAULT 0,
     icon_id TEXT NOT NULL DEFAULT '',
-    type INTEGER NOT NULL DEFAULT 0
+    type INTEGER NOT NULL DEFAULT 0,
+    color_id TEXT NOT NULL DEFAULT ''
 );
 
 insertCategory:
-INSERT OR REPLACE INTO category(id, name, is_custom, sort_order, icon_id, type) VALUES (?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO category(id, name, is_custom, sort_order, icon_id, type, color_id) VALUES (?, ?, ?, ?, ?, ?, ?);
 
 seedCategory:
-INSERT OR IGNORE INTO category(id, name, is_custom, sort_order, icon_id, type) VALUES (?, ?, ?, ?, ?, ?);
+INSERT OR IGNORE INTO category(id, name, is_custom, sort_order, icon_id, type, color_id) VALUES (?, ?, ?, ?, ?, ?, ?);
 
 deleteCategory:
 DELETE FROM category WHERE id = ?;

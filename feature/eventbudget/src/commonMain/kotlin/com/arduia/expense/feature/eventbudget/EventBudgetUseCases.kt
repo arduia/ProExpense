@@ -118,6 +118,26 @@ class CloseEventUseCase(
     }
 }
 
+/** Hides an event from the active Budget list — unlike delete, its linked records are untouched. */
+class ArchiveEventUseCase(
+    private val eventRepository: EventRepository,
+) {
+    suspend operator fun invoke(existing: Event): Boolean {
+        if (existing.status == EventStatus.ARCHIVED) return false
+        eventRepository.upsert(existing.copy(status = EventStatus.ARCHIVED))
+        return true
+    }
+}
+
+/** Permanently removes an event; its linked expenses stay in Journal/Reports. */
+class DeleteEventUseCase(
+    private val eventRepository: EventRepository,
+) {
+    suspend operator fun invoke(id: EventId) {
+        eventRepository.delete(id)
+    }
+}
+
 private const val CLOSED_EVENT_GRACE_PERIOD_MILLIS = 24L * 60 * 60 * 1000
 
 /**

@@ -20,6 +20,16 @@
 <string name="event_close_confirm_title">Close %1$s?</string>
 <string name="event_close_confirm_body">This event becomes read-only — no more expenses can be linked to it.</string>
 <string name="event_close_confirm">Close</string>
+<string name="event_archive">Archive</string>
+<string name="event_archive_subtitle">Hides this event from your Budget list</string>
+<string name="event_delete">Delete</string>
+<string name="event_delete_subtitle">Removes the event; linked expenses stay in Journal and Reports</string>
+<string name="event_archive_confirm_title">Archive %1$s?</string>
+<string name="event_archive_confirm_body">This event will be hidden from your Budget list. It stays in Journal and Reports.</string>
+<string name="event_archive_confirm">Archive</string>
+<string name="event_delete_confirm_title">Delete %1$s?</string>
+<string name="event_delete_confirm_body">This event will be removed. Expenses already linked to it stay in Journal and Reports.</string>
+<string name="event_delete_confirm">Delete</string>
 <string name="event_edit_title">Edit event</string>
 <string name="event_delete_warning">This event has %1$d linked expenses. Delete anyway?</string>
 <string name="events_eyebrow">BUDGET TRACKER</string>

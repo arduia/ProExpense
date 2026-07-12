@@ -8,7 +8,7 @@
     <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtDatePill( label: String, isPlaceholder: Boolean, onClick: () -&gt; Unit, )</ID>
     <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtFieldGroup( label: String, content: @Composable () -&gt; Unit, )</ID>
     <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtFieldLabel(label: String)</ID>
-    <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtPersonField( value: String, counter: String, onValueChange: (String) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtPersonField( value: String, counter: String, onValueChange: (String) -&gt; Unit, focusRequester: FocusRequester, )</ID>
     <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtRecordAsTransactionRow( checked: Boolean, onCheckedChange: (Boolean) -&gt; Unit, )</ID>
     <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtSideToggle( side: DebtSide, onSideSelected: (DebtSide) -&gt; Unit, )</ID>
     <ID>FunctionNaming:DebtAddSheet.kt$@Composable private fun DebtToggleSegment( label: String, selected: Boolean, accent: androidx.compose.ui.graphics.Color, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
@@ -47,11 +47,6 @@
     <ID>MagicNumber:DebtFlow.kt$100.0</ID>
     <ID>MagicNumber:DebtListScreen.kt$0.5f</ID>
     <ID>MaxLineLength:DebtFeatureEntry.kt$DebtFeatureEntryImpl$val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent, homeCurrencySymbol, isLoading)</ID>
-    <ID>MaxLineLength:DebtFlow.kt$addForm.side</ID>
-    <ID>MaxLineLength:DebtFlow.kt$editingId</ID>
-    <ID>MaxLineLength:DebtFlow.kt$id: String</ID>
-    <ID>MaxLineLength:DebtFlow.kt$record?.recordedAtEpochMillis?.takeIf { it &gt; 0L }?.let { PlatformDateFormatter.shortDateLabel(it) }.orEmpty()</ID>
-    <ID>MaxLineLength:DebtFlow.kt$side: DebtSide</ID>
     <ID>TooManyFunctions:DebtAddSheet.kt$com.arduia.expense.feature.debt.ui.DebtAddSheet.kt</ID>
     <ID>UnusedPrivateMember:DebtAddSheet.kt$@Preview( name = "Debt add — new record", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtAddSheetPreview()</ID>
     <ID>UnusedPrivateMember:DebtDetailScreen.kt$@Preview( name = "Debt detail — lent", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtDetailLentPreview()</ID>

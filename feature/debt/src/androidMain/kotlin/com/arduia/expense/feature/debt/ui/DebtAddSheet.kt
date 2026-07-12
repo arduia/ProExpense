@@ -23,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -47,6 +49,7 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
+import com.arduia.expense.ui.design.rememberAutoFocusRequester
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -65,6 +68,7 @@ fun DebtAddSheetContent(
 ) {
     val dimens = ProExpenseTheme.dimensions
     val atNoteLimit = form.note.length >= DEBT_NOTE_MAX
+    val personFocusRequester = rememberAutoFocusRequester()
 
     Column(
         // Scrollable so the keyboard covering the lower fields never squeezes Save's height —
@@ -84,6 +88,7 @@ fun DebtAddSheetContent(
                         DEBT_PERSON_MAX,
                     ),
                 onValueChange = { onPersonChange(it.take(DEBT_PERSON_MAX)) },
+                focusRequester = personFocusRequester,
             )
         }
 
@@ -289,6 +294,7 @@ private fun DebtPersonField(
     value: String,
     counter: String,
     onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -304,7 +310,8 @@ private fun DebtPersonField(
                 .clip(shape)
                 .border(BorderStroke(1.dp, colors.lineStrong), shape)
                 .background(colors.surface)
-                .padding(horizontal = dimens.space14, vertical = dimens.space12),
+                .padding(horizontal = dimens.space14, vertical = dimens.space12)
+                .focusRequester(focusRequester),
         textStyle = typography.fieldValue.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,
