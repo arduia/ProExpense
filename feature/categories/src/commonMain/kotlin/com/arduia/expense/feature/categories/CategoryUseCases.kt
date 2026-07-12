@@ -19,6 +19,7 @@ class SaveCategoryUseCase(
         name: String,
         iconId: String = "",
         type: RecordType = RecordType.EXPENSE,
+        colorId: String = "",
     ) {
         val existing = editingId?.let { id -> categories.firstOrNull { it.id.value == id } }
         val customCount = categories.count { it.isCustom }
@@ -29,6 +30,7 @@ class SaveCategoryUseCase(
                 isCustom = true,
                 sortOrder = existing?.sortOrder ?: customCount,
                 iconId = iconId,
+                colorId = colorId,
                 type = type,
             ),
         )

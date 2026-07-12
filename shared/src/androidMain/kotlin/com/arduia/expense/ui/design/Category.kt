@@ -33,6 +33,9 @@ fun LogCategoryBadge(
     // (US-CAT-2) is the real lookup key. Blank/null falls back to categoryId (default categories,
     // whose id already is the catalogue key).
     iconId: String? = null,
+    // A custom category's own chosen tint (US-CAT color option), independent of its icon. Blank/
+    // null falls back to the icon-derived tint below.
+    colorId: String? = null,
     // Split/Debt rows render a fixed glyph+tint identifying their kind instead of a category
     // lookup — set both together (see [rowKindBadgeOverride]) or leave both null for the default
     // category-driven badge.
@@ -40,7 +43,13 @@ fun LogCategoryBadge(
     overrideColors: CategoryColorPair? = null,
 ) {
     val catalogueKey = iconId?.takeIf { it.isNotBlank() } ?: categoryId
-    val colors = overrideColors ?: ProExpenseTheme.colors.category(catalogueKey)
+    val resolvedColorId = colorId?.takeIf { it.isNotBlank() }
+    val colors =
+        when {
+            overrideColors != null -> overrideColors
+            resolvedColorId != null -> ProExpenseTheme.colors.category(resolvedColorId)
+            else -> ProExpenseTheme.colors.category(catalogueKey)
+        }
     val glyph = overrideGlyph ?: categoryIcon(catalogueKey)
     val iconSize = size * 0.52f
     Box(

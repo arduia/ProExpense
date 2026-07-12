@@ -8,6 +8,7 @@ data class CategoryRowUi(
     val categoryId: String,
     val label: String,
     val iconId: String = "",
+    val colorId: String = "",
     val type: RecordType = RecordType.EXPENSE,
 )
 
@@ -20,12 +21,16 @@ data class CategoryNewFormState(
     val name: String = "",
     val selectedIconId: String = "food",
     val iconOptions: List<String> = listOf("food", "coffee", "health", "pet"),
+    val selectedColorId: String = "other",
     val duplicate: Boolean = false,
     val type: RecordType = RecordType.EXPENSE,
 ) {
     val canAdd: Boolean
         get() = name.isNotBlank() && !duplicate
 }
+
+val categoryColorOptions =
+    listOf("food", "transport", "shopping", "bills", "health", "entertainment", "coffee", "pet", "other")
 
 val previewCategoryList =
     CategoryListUiState(

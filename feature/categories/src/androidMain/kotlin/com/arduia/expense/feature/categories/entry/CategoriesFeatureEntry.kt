@@ -45,8 +45,8 @@ internal class CategoriesFeatureEntryImpl : CategoriesFeatureEntry {
             onReorderCustom = { reorderedCustomIds ->
                 scope.launch { reorderCategories(defaults.map { it.categoryId }, reorderedCustomIds) }
             },
-            onSaveCategory = { editingId, name, iconId, type ->
-                scope.launch { saveCategory(categories, editingId, name, iconId, type) }
+            onSaveCategory = { editingId, name, iconId, type, colorId ->
+                scope.launch { saveCategory(categories, editingId, name, iconId, type, colorId) }
             },
             onDeleteCategory = { id ->
                 scope.launch { deleteCategory(id) }
@@ -63,5 +63,6 @@ private fun Category.toRowUi(): CategoryRowUi =
         categoryId = id.value,
         label = name,
         iconId = iconId,
+        colorId = colorId,
         type = type,
     )

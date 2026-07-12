@@ -77,6 +77,17 @@ class SqlDelightCategoryEventDebtRepositoryTest {
         }
 
     @Test
+    fun category_upsert_roundTripsColorId() =
+        runTest {
+            val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)
+            repo.upsert(Category(CategoryId("custom-1"), "Gym", isCustom = true, colorId = "shopping"))
+
+            val all = repo.getAll()
+            assertTrue(all is Result.Success)
+            assertEquals("shopping", all.data.single().colorId)
+        }
+
+    @Test
     fun category_reorder_persistsSortOrder() =
         runTest {
             val repo = SqlDelightCategoryRepository(inMemoryDatabase().categoryQueries, Dispatchers.Unconfined)

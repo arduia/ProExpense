@@ -17,6 +17,7 @@
 <string name="categories_name_counter">%1$d/%2$d</string>
 <string name="categories_duplicate_error">A category with this name already exists</string>
 <string name="categories_icon_label">Icon</string>
+<string name="categories_color_label">Color</string>
 <string name="categories_add">Add category</string>
 <string name="categories_edit_title">Edit category</string>
 <string name="categories_type_expense">Expense</string>

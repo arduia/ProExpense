@@ -12,6 +12,7 @@
 <string name="categories_name_counter">%1$d/%2$d</string>
 <string name="categories_duplicate_error">มีหมวดหมู่ชื่อนี้อยู่แล้ว</string>
 <string name="categories_icon_label">ไอคอน</string>
+<string name="categories_color_label">สี</string>
 <string name="categories_add">เพิ่มหมวดหมู่</string>
 <string name="categories_edit_title">แก้ไขหมวดหมู่</string>
 <string name="categories_type_expense">รายจ่าย</string>

@@ -51,7 +51,6 @@ import com.arduia.expense.ui.design.ProButtonVariant
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -82,8 +81,20 @@ fun CategoryListScreen(
                 title = stringResource(R.string.categories_title),
                 onBack = onBack,
                 backLabel = stringResource(R.string.categories_back),
-                action = ProTopBarAction.Add,
-                onAction = onCreate,
+            )
+            ProButton(
+                text = stringResource(R.string.categories_add),
+                onClick = onCreate,
+                size = ProButtonSize.Sm,
+                leading = {
+                    ProIcon(
+                        glyph = ProIconGlyph.Plus,
+                        contentDescription = null,
+                        tint = colors.onPrimaryWarm,
+                        size = dimens.iconInline,
+                    )
+                },
+                modifier = Modifier.align(Alignment.CenterEnd),
             )
         }
 
@@ -205,7 +216,12 @@ private fun CategoryRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
-        LogCategoryBadge(categoryId = row.categoryId, iconId = row.iconId, size = dimens.iconBadge)
+        LogCategoryBadge(
+            categoryId = row.categoryId,
+            iconId = row.iconId,
+            colorId = row.colorId,
+            size = dimens.iconBadge,
+        )
         Text(
             text = row.label,
             style = typography.bodyMedium,
@@ -326,7 +342,12 @@ private fun CustomCategoryRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
-        LogCategoryBadge(categoryId = row.categoryId, iconId = row.iconId, size = dimens.iconBadge)
+        LogCategoryBadge(
+            categoryId = row.categoryId,
+            iconId = row.iconId,
+            colorId = row.colorId,
+            size = dimens.iconBadge,
+        )
         Text(
             text = row.label,
             style = typography.bodyMedium,

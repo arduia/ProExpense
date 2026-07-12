@@ -20,10 +20,15 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -65,6 +70,7 @@ fun DebtAddSheetContent(
 ) {
     val dimens = ProExpenseTheme.dimensions
     val atNoteLimit = form.note.length >= DEBT_NOTE_MAX
+    val personFocusRequester = rememberAutoFocusRequester()
 
     Column(
         // Scrollable so the keyboard covering the lower fields never squeezes Save's height —
@@ -84,6 +90,7 @@ fun DebtAddSheetContent(
                         DEBT_PERSON_MAX,
                     ),
                 onValueChange = { onPersonChange(it.take(DEBT_PERSON_MAX)) },
+                focusRequester = personFocusRequester,
             )
         }
 
@@ -145,6 +152,19 @@ fun DebtAddSheetContent(
             modifier = Modifier.padding(top = dimens.space4),
         )
     }
+}
+
+/** Requests focus and shows the keyboard once, right as this sheet composes — the user's whole
+ *  intent in opening it is to name the debt, so jump straight to typing. */
+@Composable
+private fun rememberAutoFocusRequester(): FocusRequester {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+    return focusRequester
 }
 
 @Composable
@@ -289,6 +309,7 @@ private fun DebtPersonField(
     value: String,
     counter: String,
     onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -304,7 +325,8 @@ private fun DebtPersonField(
                 .clip(shape)
                 .border(BorderStroke(1.dp, colors.lineStrong), shape)
                 .background(colors.surface)
-                .padding(horizontal = dimens.space14, vertical = dimens.space12),
+                .padding(horizontal = dimens.space14, vertical = dimens.space12)
+                .focusRequester(focusRequester),
         textStyle = typography.fieldValue.copy(color = colors.onSurface),
         cursorBrush = SolidColor(colors.primary),
         singleLine = true,

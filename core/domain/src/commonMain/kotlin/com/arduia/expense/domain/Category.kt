@@ -11,6 +11,12 @@ data class Category(
      * is a catalogue key. Blank falls back to the catalogue's generic default.
      */
     val iconId: String = "",
+    /**
+     * Catalogue key (e.g. "shopping", "health") selecting a custom category's tint independently
+     * of [iconId] — lets users differentiate custom categories by color without it implying an
+     * icon change. Unused for default categories. Blank falls back to [iconId]'s own tint.
+     */
+    val colorId: String = "",
     val type: RecordType = RecordType.EXPENSE,
 ) {
     init {

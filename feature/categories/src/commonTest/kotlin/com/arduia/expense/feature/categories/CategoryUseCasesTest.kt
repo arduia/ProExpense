@@ -103,6 +103,17 @@ class SaveCategoryUseCaseTest {
         }
 
     @Test
+    fun invoke_persistsTheSelectedColorIdInsteadOfDiscardingIt() =
+        runTest {
+            val repo = FakeCategoryRepository()
+            val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
+
+            useCase(emptyList(), editingId = null, name = "Coffee Fund", colorId = "shopping")
+
+            assertEquals("shopping", repo.lastUpsert?.colorId)
+        }
+
+    @Test
     fun invoke_defaultsTypeToExpenseWhenNotSpecified() =
         runTest {
             val repo = FakeCategoryRepository()
