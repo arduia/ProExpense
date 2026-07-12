@@ -3651,28 +3651,6 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.drawable.ic_back` appears to be unused"
-        errorLine1="&lt;vector android:autoMirrored=&quot;true&quot; android:height=&quot;24dp&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_back.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.drawable.ic_backspace` appears to be unused"
-        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_backspace.xml"
-            line="2"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
         message="The resource `R.drawable.ic_backup` appears to be unused"
         errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
@@ -3695,44 +3673,11 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.drawable.ic_calendar` appears to be unused"
-        errorLine1="&lt;vector android:autoMirrored=&quot;true&quot; android:height=&quot;24dp&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_calendar.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.drawable.ic_check` appears to be unused"
-        errorLine1="&lt;vector android:autoMirrored=&quot;true&quot; android:height=&quot;24dp&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_check.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
         message="The resource `R.drawable.ic_checked` appears to be unused"
         errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
             file="src/main/res/drawable/ic_checked.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.drawable.ic_close` appears to be unused"
-        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_close.xml"
             line="1"
             column="1"/>
     </issue>
@@ -3821,17 +3766,6 @@
         errorLine2="^">
         <location
             file="src/main/res/drawable/ic_drop_down.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.drawable.ic_edit` appears to be unused"
-        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_edit.xml"
             line="1"
             column="1"/>
     </issue>
@@ -3948,17 +3882,6 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.drawable.ic_home` appears to be unused"
-        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_home.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
         message="The resource `R.drawable.ic_household` appears to be unused"
         errorLine1="&lt;vector android:autoMirrored=&quot;true&quot; android:height=&quot;24dp&quot;"
         errorLine2="^">
@@ -4069,28 +3992,6 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.drawable.ic_minus` appears to be unused"
-        errorLine1="&lt;vector android:height=&quot;50dp&quot; android:viewportHeight=&quot;640&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_minus.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.drawable.ic_more` appears to be unused"
-        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_more.xml"
-            line="2"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
         message="The resource `R.drawable.ic_more_horizontal` appears to be unused"
         errorLine1="&lt;vector android:autoMirrored=&quot;true&quot; android:height=&quot;24dp&quot;"
         errorLine2="^">
@@ -4151,17 +4052,6 @@
         errorLine2="^">
         <location
             file="src/main/res/drawable/ic_save.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.drawable.ic_search` appears to be unused"
-        errorLine1="&lt;vector android:autoMirrored=&quot;true&quot; android:height=&quot;24dp&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_search.xml"
             line="1"
             column="1"/>
     </issue>
