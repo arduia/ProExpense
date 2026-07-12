@@ -56,6 +56,10 @@ data class ProColors(
     val categoryCoffee: CategoryColorPair,
     val categoryPet: CategoryColorPair,
     val categoryOther: CategoryColorPair,
+    val quickAccessReports: CategoryColorPair,
+    val quickAccessDebt: CategoryColorPair,
+    val quickAccessSplit: CategoryColorPair,
+    val quickAccessEvents: CategoryColorPair,
 ) {
     fun category(id: String): CategoryColorPair =
         when (id) {
@@ -119,6 +123,10 @@ val ProLightColors =
         categoryCoffee = CategoryColorPair(Color(0xFF9E9E9E), Color(0xFFE0E0E0)),
         categoryPet = CategoryColorPair(Color(0xFF66BB6A), Color(0xFFDCEDC8)),
         categoryOther = CategoryColorPair(Color(0xFF9E9E9E), Color(0xFFEEEEEE)),
+        quickAccessReports = CategoryColorPair(Color(0xFF0288D1), Color(0xFFB3E5FC)),
+        quickAccessDebt = CategoryColorPair(Color(0xFF00897B), Color(0xFFB2DFDB)),
+        quickAccessSplit = CategoryColorPair(Color(0xFF3F51B5), Color(0xFFC5CAE9)),
+        quickAccessEvents = CategoryColorPair(Color(0xFF00ACC1), Color(0xFFB2EBF2)),
     )
 
 val ProDarkColors =
@@ -167,4 +175,8 @@ val ProDarkColors =
         categoryCoffee = CategoryColorPair(Color(0xFFBDBDBD), Color(0xFF2C2C2C)),
         categoryPet = CategoryColorPair(Color(0xFFA5D6A7), Color(0xFF1B3D1F)),
         categoryOther = CategoryColorPair(Color(0xFFBDBDBD), Color(0xFF2C2C2C)),
+        quickAccessReports = CategoryColorPair(Color(0xFF4FC3F7), Color(0xFF0D3B52)),
+        quickAccessDebt = CategoryColorPair(Color(0xFF4DB6AC), Color(0xFF0F3A35)),
+        quickAccessSplit = CategoryColorPair(Color(0xFF7986CB), Color(0xFF262E5E)),
+        quickAccessEvents = CategoryColorPair(Color(0xFF4DD0E1), Color(0xFF0B4A52)),
     )
