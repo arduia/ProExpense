@@ -8,6 +8,16 @@
 <string name="event_close_confirm_title">%1$s ကို ပိတ်မလား?</string>
 <string name="event_close_confirm_body">ဒီပွဲသည် ဖတ်ရန်သာအခြေအနေသို့ ပြောင်းသွားမည် — နောက်ထပ်အသုံးစရိတ်များကို ချိတ်ဆက်၍ မရတော့ပါ။</string>
 <string name="event_close_confirm">ပိတ်ရန်</string>
+<string name="event_archive">သိမ်းဆည်းရန်</string>
+<string name="event_archive_subtitle">ဒီပွဲကို သင့်ဘတ်ဂျက်စာရင်းမှ ဖျောက်ထားမည်</string>
+<string name="event_delete">ဖျက်ရန်</string>
+<string name="event_delete_subtitle">ဒီပွဲကို ဖျက်ပါမည်။ ချိတ်ဆက်ထားသော အသုံးစရိတ်များသည် မှတ်တမ်းနှင့် အစီရင်ခံစာများတွင် ဆက်လက်ပေါ်နေမည်</string>
+<string name="event_archive_confirm_title">%1$s ကို သိမ်းဆည်းမလား?</string>
+<string name="event_archive_confirm_body">ဒီပွဲကို သင့်ဘတ်ဂျက်စာရင်းမှ ဖျောက်ထားမည်။ မှတ်တမ်းနှင့် အစီရင်ခံစာများတွင် ဆက်လက်ပေါ်နေမည်။</string>
+<string name="event_archive_confirm">သိမ်းဆည်းရန်</string>
+<string name="event_delete_confirm_title">%1$s ကို ဖျက်မလား?</string>
+<string name="event_delete_confirm_body">ဒီပွဲကို ဖျက်ပါမည်။ ချိတ်ဆက်ထားပြီးသား အသုံးစရိတ်များသည် မှတ်တမ်းနှင့် အစီရင်ခံစာများတွင် ဆက်လက်ပေါ်နေမည်။</string>
+<string name="event_delete_confirm">ဖျက်ရန်</string>
 <string name="event_edit_title">ပွဲ ပြင်ဆင်ရန်</string>
 <string name="events_eyebrow">ဘတ်ဂျက်ခြေရာခံခြင်း</string>
 <string name="events_title">ဘတ်ဂျက်</string>

@@ -47,6 +47,7 @@ fun PinSecurityQuestionScreen(
     onEnable: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -119,6 +120,7 @@ fun PinSecurityQuestionScreen(
         ProButton(
             text = stringResource(R.string.pin_security_enable),
             onClick = onEnable,
+            enabled = enabled,
             variant = ProButtonVariant.Primary,
             size = ProButtonSize.Lg,
             fillMaxWidth = true,

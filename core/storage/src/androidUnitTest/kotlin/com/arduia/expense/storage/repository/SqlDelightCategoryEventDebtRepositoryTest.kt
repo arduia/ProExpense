@@ -125,6 +125,26 @@ class SqlDelightCategoryEventDebtRepositoryTest {
         }
 
     @Test
+    fun event_roundTripsArchivedStatus() =
+        runTest {
+            val repo = SqlDelightEventRepository(inMemoryDatabase().eventQueries, Dispatchers.Unconfined)
+            val event =
+                Event(
+                    id = EventId("evt-1"),
+                    name = "Trip",
+                    startEpochMillis = 1,
+                    endEpochMillis = 100,
+                    budget = Money(Amount(200_00), home),
+                    status = EventStatus.ARCHIVED,
+                )
+            repo.upsert(event)
+
+            val fetched = repo.getById(EventId("evt-1"))
+            assertTrue(fetched is Result.Success)
+            assertEquals(EventStatus.ARCHIVED, fetched.data?.status)
+        }
+
+    @Test
     fun event_upsert_preservesCacheAndCreatedAt_acrossEdit() =
         runTest {
             val database = inMemoryDatabase()

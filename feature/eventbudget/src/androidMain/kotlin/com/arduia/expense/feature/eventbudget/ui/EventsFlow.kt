@@ -56,6 +56,8 @@ fun EventsFlow(
         endEpochMillis: Long,
     ) -> Unit = { _, _, _, _, _ -> },
     onCloseEvent: (id: String) -> Unit = {},
+    onArchiveEvent: (id: String) -> Unit = {},
+    onDeleteEvent: (id: String) -> Unit = {},
     initialSelectedEventId: String? = null,
     onAddTaggedExpense: (eventId: String) -> Unit = { onAddClick() },
     onExpenseClick: (recordId: String) -> Unit = {},
@@ -74,6 +76,8 @@ fun EventsFlow(
     var showEndPicker by remember { mutableStateOf(false) }
     var showActionsSheet by remember { mutableStateOf(false) }
     var showCloseConfirm by remember { mutableStateOf(false) }
+    var archiveTargetId by remember { mutableStateOf<String?>(null) }
+    var deleteTargetId by remember { mutableStateOf<String?>(null) }
 
     fun isDuplicate(name: String): Boolean =
         name.isNotBlank() &&
@@ -138,6 +142,14 @@ fun EventsFlow(
                 onClose = {
                     showActionsSheet = false
                     showCloseConfirm = true
+                },
+                onArchive = {
+                    showActionsSheet = false
+                    archiveTargetId = selectedEventId
+                },
+                onDelete = {
+                    showActionsSheet = false
+                    deleteTargetId = selectedEventId
                 },
                 onCancel = { showActionsSheet = false },
                 showClose = selectedEventId?.let { !detailStateFor(it, events, eventDetails).isClosed } ?: true,
@@ -209,6 +221,48 @@ fun EventsFlow(
                 },
                 dismissLabel = stringResource(R.string.event_actions_cancel),
                 onDismiss = { showCloseConfirm = false },
+                confirmVariant = ProButtonVariant.Danger,
+            )
+        }
+
+        archiveTargetId?.let { id ->
+            val eventTitle = detailStateFor(id, events, eventDetails).title
+            ProAlertDialog(
+                visible = true,
+                icon = ProIconGlyph.EyeOff,
+                iconTint = colors.onSurfaceVariant,
+                iconBackground = colors.paperAlt,
+                title = stringResource(R.string.event_archive_confirm_title, eventTitle),
+                body = buildAnnotatedString { append(stringResource(R.string.event_archive_confirm_body)) },
+                confirmLabel = stringResource(R.string.event_archive_confirm),
+                onConfirm = {
+                    onArchiveEvent(id)
+                    if (selectedEventId == id) selectedEventId = null
+                    archiveTargetId = null
+                },
+                dismissLabel = stringResource(R.string.event_actions_cancel),
+                onDismiss = { archiveTargetId = null },
+                confirmVariant = ProButtonVariant.Warning,
+            )
+        }
+
+        deleteTargetId?.let { id ->
+            val eventTitle = detailStateFor(id, events, eventDetails).title
+            ProAlertDialog(
+                visible = true,
+                icon = ProIconGlyph.Close,
+                iconTint = colors.danger,
+                iconBackground = colors.dangerTint,
+                title = stringResource(R.string.event_delete_confirm_title, eventTitle),
+                body = buildAnnotatedString { append(stringResource(R.string.event_delete_confirm_body)) },
+                confirmLabel = stringResource(R.string.event_delete_confirm),
+                onConfirm = {
+                    onDeleteEvent(id)
+                    if (selectedEventId == id) selectedEventId = null
+                    deleteTargetId = null
+                },
+                dismissLabel = stringResource(R.string.event_actions_cancel),
+                onDismiss = { deleteTargetId = null },
                 confirmVariant = ProButtonVariant.Danger,
             )
         }

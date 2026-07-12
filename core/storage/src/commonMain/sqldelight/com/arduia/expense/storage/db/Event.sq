@@ -1,5 +1,5 @@
 -- currency_code: closes gap where Event.budget: Money already carries currency but table didn't store it
--- status: event status code (ACTIVE=0, CLOSED=1) — explicit codes, never Kotlin .ordinal
+-- status: event status code (ACTIVE=0, CLOSED=1, ARCHIVED=2) — explicit codes, never Kotlin .ordinal
 -- created_at: when the Event row itself was created (audit metadata, distinct from business date range)
 -- cached_spent_cents/cache_updated_at: denormalized sum of linked finance_record amounts,
 -- recomputed transactionally on every write to a record linked via RecordLink.ToEvent.

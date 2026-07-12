@@ -8,6 +8,16 @@
 <string name="event_close_confirm_title">ปิด %1$s หรือไม่?</string>
 <string name="event_close_confirm_body">กิจกรรมนี้จะกลายเป็นแบบอ่านอย่างเดียว — ไม่สามารถเชื่อมโยงรายจ่ายใหม่ได้อีก</string>
 <string name="event_close_confirm">ปิด</string>
+<string name="event_archive">เก็บเข้าคลัง</string>
+<string name="event_archive_subtitle">ซ่อนกิจกรรมนี้จากรายการงบประมาณของคุณ</string>
+<string name="event_delete">ลบ</string>
+<string name="event_delete_subtitle">ลบกิจกรรมนี้ รายจ่ายที่เชื่อมโยงจะยังอยู่ในสมุดบันทึกและรายงาน</string>
+<string name="event_archive_confirm_title">เก็บ %1$s เข้าคลังหรือไม่?</string>
+<string name="event_archive_confirm_body">กิจกรรมนี้จะถูกซ่อนจากรายการงบประมาณของคุณ แต่ยังคงอยู่ในสมุดบันทึกและรายงาน</string>
+<string name="event_archive_confirm">เก็บเข้าคลัง</string>
+<string name="event_delete_confirm_title">ลบ %1$s หรือไม่?</string>
+<string name="event_delete_confirm_body">กิจกรรมนี้จะถูกลบ รายจ่ายที่เชื่อมโยงไว้แล้วจะยังอยู่ในสมุดบันทึกและรายงาน</string>
+<string name="event_delete_confirm">ลบ</string>
 <string name="event_edit_title">แก้ไขกิจกรรม</string>
 <string name="events_eyebrow">ติดตามงบประมาณ</string>
 <string name="events_title">งบประมาณ</string>

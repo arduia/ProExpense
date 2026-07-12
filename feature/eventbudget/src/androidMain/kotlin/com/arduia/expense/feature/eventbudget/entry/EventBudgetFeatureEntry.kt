@@ -5,13 +5,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.arduia.expense.domain.Event
+import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordLink
+import com.arduia.expense.feature.eventbudget.ArchiveEventUseCase
 import com.arduia.expense.feature.eventbudget.CloseEventUseCase
 import com.arduia.expense.feature.eventbudget.ComputeEventProgressUseCase
 import com.arduia.expense.feature.eventbudget.CreateEventUseCase
+import com.arduia.expense.feature.eventbudget.DeleteEventUseCase
 import com.arduia.expense.feature.eventbudget.UpdateEventUseCase
 import com.arduia.expense.feature.eventbudget.ui.EventsFlow
 import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
@@ -66,6 +69,8 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
         val createEvent: CreateEventUseCase = koinInject()
         val updateEvent: UpdateEventUseCase = koinInject()
         val closeEvent: CloseEventUseCase = koinInject()
+        val archiveEvent: ArchiveEventUseCase = koinInject()
+        val deleteEvent: DeleteEventUseCase = koinInject()
 
         val linkedByEvent =
             remember(records) {
@@ -110,6 +115,15 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
                 if (existing != null) {
                     scope.launch { closeEvent(existing) }
                 }
+            },
+            onArchiveEvent = { id ->
+                val existing = events.firstOrNull { it.id.value == id }
+                if (existing != null) {
+                    scope.launch { archiveEvent(existing) }
+                }
+            },
+            onDeleteEvent = { id ->
+                scope.launch { deleteEvent(EventId(id)) }
             },
             initialSelectedEventId = initialSelectedEventId,
             onAddTaggedExpense = onAddTaggedExpense,

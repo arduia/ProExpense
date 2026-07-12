@@ -20,7 +20,7 @@
 ## Behavior & interactions
 
 - **Identity card** (top) is a live preview: greeting updates from the name field, the emblem + “Tracking in … · CODE” line updates from the selected currency.
-- **Name** personalizes the Home greeting (“Hi, Maya”) and CSV exports. Optional; the field is pre-focused and the primary action is always enabled.
+- **Name** personalizes the Home greeting (“Hi, Maya”) and CSV exports. Required — the field is pre-focused and there is no skip affordance; “Start tracking” stays disabled until a non-blank name is entered.
 - **Home currency** applies to every entry (single-currency MVP). Shown as a 2×2 quick grid of the four most common currencies (USD default, selected).
 - **“More currencies”** opens the searchable picker bottom sheet; selecting a row applies and closes in one tap, updating the grid + identity card.
 - **“Start tracking”** completes setup and lands on Home.

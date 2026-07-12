@@ -53,14 +53,15 @@ data class ProfileSetupState(
     val selectedCurrencyCode: String = "USD",
     val showCurrencySheet: Boolean = false,
     val currencySearchQuery: String = "",
-)
+) {
+    val canStartTracking: Boolean get() = name.trim().isNotEmpty()
+}
 
 @Composable
 fun ProfileSetupScreenContent(
     state: ProfileSetupState,
     onNameChange: (String) -> Unit,
     onStartTracking: () -> Unit,
-    onSkip: () -> Unit,
     onCurrencySelected: (String) -> Unit,
     onOpenCurrencySheet: () -> Unit,
     onCloseCurrencySheet: () -> Unit,
@@ -151,8 +152,6 @@ fun ProfileSetupScreenContent(
                     eyebrow = stringResource(R.string.profile_setup_eyebrow),
                     title = stringResource(R.string.profile_setup_title),
                     subtitle = stringResource(R.string.profile_setup_description),
-                    onSkip = onSkip,
-                    skipLabel = stringResource(R.string.skip),
                     modifier = Modifier.padding(top = dimens.space8),
                 )
 
@@ -214,6 +213,7 @@ fun ProfileSetupScreenContent(
                 text = stringResource(R.string.start_tracking),
                 onClick = onStartTracking,
                 size = ProButtonSize.Lg,
+                enabled = state.canStartTracking,
                 fillMaxWidth = true,
                 modifier = Modifier.padding(top = dimens.space16),
             )
@@ -339,7 +339,6 @@ private fun ProfileSetupMergedPreview() {
             state = ProfileSetupState(name = "Maya"),
             onNameChange = {},
             onStartTracking = {},
-            onSkip = {},
             onCurrencySelected = {},
             onOpenCurrencySheet = {},
             onCloseCurrencySheet = {},
@@ -361,7 +360,6 @@ private fun ProfileSetupEmptyPreview() {
             state = ProfileSetupState(selectedCurrencyCode = "EUR"),
             onNameChange = {},
             onStartTracking = {},
-            onSkip = {},
             onCurrencySelected = {},
             onOpenCurrencySheet = {},
             onCloseCurrencySheet = {},
@@ -383,7 +381,6 @@ private fun ProfileSetupCurrencySheetPreview() {
             state = ProfileSetupState(showCurrencySheet = true),
             onNameChange = {},
             onStartTracking = {},
-            onSkip = {},
             onCurrencySelected = {},
             onOpenCurrencySheet = {},
             onCloseCurrencySheet = {},

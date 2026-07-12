@@ -191,6 +191,7 @@ fun PinSetupFlow(
                         onAnswerChange = { answer = it },
                         onEnable = { step = PinSetupStep.Setup },
                         onBack = { step = PinSetupStep.Setup },
+                        enabled = answer.isNotBlank(),
                     )
             }
         }
