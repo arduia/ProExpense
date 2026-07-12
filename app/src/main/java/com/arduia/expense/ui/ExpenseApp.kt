@@ -60,7 +60,7 @@ import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.currencySymbol
-import com.arduia.expense.ui.design.expenseCategoryLabel
+import com.arduia.expense.ui.design.resolveCategoryLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
 import com.arduia.expense.ui.home.QuickAccessPrefs
@@ -318,7 +318,7 @@ fun ExpenseApp(
                 buildHomeDayGroups(
                     records = records,
                     visibleDebts = visibleDebts,
-                    linkNames = HomeLinkNames(eventNames, debtNames, sharedCostNames),
+                    linkNames = HomeLinkNames(eventNames, debtNames, sharedCostNames, categoryNames),
                     homeCurrencySymbol = homeSymbol,
                     limit = RECENT_HOME_LIMIT,
                 )
@@ -765,6 +765,7 @@ private fun FinanceRecord.toHomeTransactionItem(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
+    categoryNames: Map<String, String>,
 ): HomeTransactionItem {
     val rowKind =
         when (kind()) {
@@ -789,7 +790,7 @@ private fun FinanceRecord.toHomeTransactionItem(
                 debtRowTitle(personName, isLent) to "${debtRowSubtitleType(isLent)} · $timeLabel"
             }
             ProRowKind.EXPENSE, ProRowKind.INCOME ->
-                note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) } to timeLabel
+                note?.trim().orEmpty().ifEmpty { resolveCategoryLabel(categoryId.value, categoryNames) } to timeLabel
         }
     return HomeTransactionItem(
         id = id.value,
@@ -818,11 +819,12 @@ private fun Debt.toDebtHomeTransactionItem(): HomeTransactionItem {
     )
 }
 
-/** Bundles the tag-label lookup maps so they cost one parameter, not three, in call sites below. */
+/** Bundles the tag-label lookup maps so they cost one parameter, not four, in call sites below. */
 private data class HomeLinkNames(
     val eventNames: Map<String, String>,
     val debtNames: Map<String, String>,
     val sharedCostNames: Map<String, String>,
+    val categoryNames: Map<String, String>,
 )
 
 /**
@@ -843,7 +845,12 @@ private fun buildHomeDayGroups(
             .filter { it.kind().isVisibleInHomeRecents() }
             .map { record ->
                 val item =
-                    record.toHomeTransactionItem(linkNames.eventNames, linkNames.debtNames, linkNames.sharedCostNames)
+                    record.toHomeTransactionItem(
+                        linkNames.eventNames,
+                        linkNames.debtNames,
+                        linkNames.sharedCostNames,
+                        linkNames.categoryNames,
+                    )
                 HomeMergedEntry(record.recordedAtEpochMillis, item)
             }
     // Unlike the recordEntries filter above, toggle-off debts are never a real FinanceRecord — a

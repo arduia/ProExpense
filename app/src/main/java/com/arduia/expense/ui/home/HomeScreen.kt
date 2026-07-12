@@ -50,9 +50,7 @@ import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.preview.previewHomeEvent
 import com.arduia.expense.ui.preview.previewHomeLoading
-import com.arduia.expense.ui.theme.CategoryColorPair
 import com.arduia.expense.ui.theme.ProArtboard
-import com.arduia.expense.ui.theme.ProColors
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
 @Composable
@@ -532,30 +530,16 @@ private fun HomeQuickAccessSection(
                         QuickAccessTileType.Events ->
                             Triple(ProIconGlyph.FeatEvents, R.string.quick_access_events, onEventsClick)
                     }
-                val tint = quickAccessTileTint(colors, tile)
                 QuickAccessTile(
                     label = stringResource(labelRes),
                     icon = icon,
                     onClick = onClick,
                     modifier = Modifier.weight(1f),
-                    iconTint = tint.accent,
-                    iconBackground = tint.tint,
                 )
             }
         }
     }
 }
-
-private fun quickAccessTileTint(
-    colors: ProColors,
-    tile: QuickAccessTileType,
-): CategoryColorPair =
-    when (tile) {
-        QuickAccessTileType.Reports -> colors.quickAccessReports
-        QuickAccessTileType.Debt -> colors.quickAccessDebt
-        QuickAccessTileType.Split -> colors.quickAccessSplit
-        QuickAccessTileType.Events -> colors.quickAccessEvents
-    }
 
 @Composable
 private fun HomeEmptyContent(

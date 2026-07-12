@@ -65,7 +65,6 @@ fun AddExpenseAmountScreen(
                 .background(colors.paper)
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = dimens.screenPadding),
     ) {
         ProTopBar(
@@ -104,14 +103,25 @@ fun AddExpenseAmountScreen(
                     .padding(top = dimens.space8, bottom = dimens.space16),
         )
 
-        CategoryPicker(
-            defaultCategories = defaultCategories,
-            customCategories = customCategories,
-            selectedCategoryId = state.selectedCategoryId,
-            onCategorySelected = onCategorySelected,
-            showCustomSection = true,
-            modifier = Modifier.padding(bottom = dimens.space16),
-        )
+        // Weighted + independently scrollable (not the whole screen, see removed
+        // verticalScroll above) so a long custom-category list never pushes NumericKeypad's
+        // Save/Next buttons off-screen — this area fills whatever space remains above the
+        // keypad and the user swipes within it to see more chips.
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+        ) {
+            CategoryPicker(
+                defaultCategories = defaultCategories,
+                customCategories = customCategories,
+                selectedCategoryId = state.selectedCategoryId,
+                onCategorySelected = onCategorySelected,
+                showCustomSection = true,
+                modifier = Modifier.padding(bottom = dimens.space16),
+            )
+        }
 
         NumericKeypad(
             actionsEnabled = canProceed,

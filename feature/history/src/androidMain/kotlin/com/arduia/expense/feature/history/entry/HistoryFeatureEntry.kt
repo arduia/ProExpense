@@ -48,6 +48,7 @@ import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.expenseCategoryLabel
+import com.arduia.expense.ui.design.resolveCategoryLabel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -228,13 +229,21 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                 sharedCostNames,
                 eventSubtitles,
                 debtSubtitles,
+                categoryNames,
                 homeCurrencySymbol,
             ) {
                 groupByDay(
                     pager.records,
                     debts,
                     pager.endReached,
-                    JournalLinkLabels(eventNames, debtNames, sharedCostNames, eventSubtitles, debtSubtitles),
+                    JournalLinkLabels(
+                        eventNames,
+                        debtNames,
+                        sharedCostNames,
+                        eventSubtitles,
+                        debtSubtitles,
+                        categoryNames,
+                    ),
                     homeCurrencySymbol,
                 )
             }
@@ -368,13 +377,14 @@ private data class JournalEntry(
     val row: ProTransactionRowModel,
 )
 
-/** Bundles the tag-label lookup maps so they cost one parameter, not five, in call sites below. */
+/** Bundles the tag-label lookup maps so they cost one parameter, not six, in call sites below. */
 private data class JournalLinkLabels(
     val eventNames: Map<String, String>,
     val debtNames: Map<String, String>,
     val sharedCostNames: Map<String, String>,
     val eventSubtitles: Map<String, String>,
     val debtSubtitles: Map<String, String>,
+    val categoryNames: Map<String, String>,
 )
 
 private fun groupByDay(
@@ -445,9 +455,10 @@ private fun FinanceRecord.toRowModel(linkLabels: JournalLinkLabels): ProTransact
                 val personName = linkedId?.let { linkLabels.debtNames[it] }.orEmpty()
                 debtRowTitle(personName, isLent) to "${debtRowSubtitleType(isLent)} · $timeLabel"
             }
-            ProRowKind.EXPENSE, ProRowKind.INCOME ->
-                note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) } to
-                    "${expenseCategoryLabel(categoryId.value)} · $timeLabel"
+            ProRowKind.EXPENSE, ProRowKind.INCOME -> {
+                val categoryLabel = resolveCategoryLabel(categoryId.value, linkLabels.categoryNames)
+                note?.trim().orEmpty().ifEmpty { categoryLabel } to "$categoryLabel · $timeLabel"
+            }
         }
     return ProTransactionRowModel(
         id = id.value,

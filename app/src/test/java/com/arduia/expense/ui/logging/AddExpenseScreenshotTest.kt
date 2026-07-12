@@ -11,6 +11,7 @@ import com.arduia.expense.feature.logging.ui.AddExpenseAmountScreen
 import com.arduia.expense.feature.logging.ui.AddExpenseDetailsScreen
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountForeignCurrency
+import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountManyCategories
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountTyped
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountZeroValidation
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetails
@@ -97,6 +98,22 @@ class AddExpenseScreenshotTest {
                 onCategorySelected = {},
                 onSave = {},
                 onNext = {},
+            )
+        }
+    }
+
+    @Test
+    fun edge_add_many_custom_categories() {
+        capture {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountManyCategories,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+                customCategories = (1..20).map { "custom-$it" to "Custom category $it" },
             )
         }
     }
