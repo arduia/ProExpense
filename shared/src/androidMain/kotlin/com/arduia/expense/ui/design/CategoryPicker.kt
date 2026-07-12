@@ -142,10 +142,13 @@ fun CategoryPicker(
 }
 
 /**
- * Chunks [categories] into column-major groups of [rows] items so a fixed number of rows is
- * always visible, with any overflow reachable by swiping the row horizontally — each column's
- * height is the natural wrap-content height of up to [rows] stacked chips, so no chip-height
- * guess is needed (unlike a `LazyHorizontalGrid`, which would need an explicit bounded height).
+ * Distributes [categories] round-robin across [rows] independent horizontal rows (row-major —
+ * matches natural left-to-right, top-to-bottom reading order, same as a wrapping [FlowRow] would),
+ * each packed tightly at its own natural width and sharing one [ScrollState] so swiping moves
+ * every row together. Column-major chunking (grouping consecutive items into a shared-width
+ * column) was tried first, but a column's width is set by its widest chip, so a shorter chip
+ * sharing a column with a longer one left a stray gap before the next column — packing each row
+ * independently avoids that entirely.
  */
 @Composable
 private fun CategoryChipCarousel(
@@ -158,18 +161,22 @@ private fun CategoryChipCarousel(
     trailingChip: (@Composable () -> Unit)? = null,
 ) {
     val dimens = ProExpenseTheme.dimensions
-    val columns = categories.chunked(rows)
-
-    Row(
-        modifier = modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-    ) {
-        if (edgeInset > 0.dp) {
-            Spacer(Modifier.width(edgeInset))
+    val scrollState = rememberScrollState()
+    val rowItems =
+        List(rows) { rowIndex ->
+            categories.filterIndexed { index, _ -> index % rows == rowIndex }
         }
-        columns.forEach { column ->
-            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-                column.forEach { (id, label) ->
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+        rowItems.forEachIndexed { rowIndex, items ->
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            ) {
+                if (edgeInset > 0.dp) {
+                    Spacer(Modifier.width(edgeInset))
+                }
+                items.forEach { (id, label) ->
                     CategoryChip(
                         label = label,
                         categoryId = id,
@@ -177,15 +184,13 @@ private fun CategoryChipCarousel(
                         onClick = { onCategorySelected(id) },
                     )
                 }
+                if (rowIndex == rows - 1) {
+                    trailingChip?.invoke()
+                }
+                if (edgeInset > 0.dp) {
+                    Spacer(Modifier.width(edgeInset))
+                }
             }
-        }
-        if (trailingChip != null) {
-            Column {
-                trailingChip()
-            }
-        }
-        if (edgeInset > 0.dp) {
-            Spacer(Modifier.width(edgeInset))
         }
     }
 }
