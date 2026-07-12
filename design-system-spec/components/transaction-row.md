@@ -24,10 +24,35 @@ The core list unit. Transactions are grouped under a day header carrying a Inter
 
 - Money uses **Inter**. The event tag is the only warm accent in the row.
 
+## Row kinds (new, previously undocumented)
+
+A row is one of five kinds — Expense, Income, Shared Cost **Split**, Debt **Lent**, Debt **Owed** —
+carried independently of the underlying category (a Split/Debt row still has a category for
+filter/report bucketing, it just never drives the badge). Split and Debt rows appear in Journal;
+Home Recents currently hides Split rows (see `../screens/03-home.md`).
+
+| Kind | Badge glyph | Badge tint | Title | Subtitle type word | Amount color |
+|---|---|---|---|---|---|
+| Expense | category icon | category color | note (or category fallback) | category | `ink` (neutral) |
+| Income | category icon | category color | note (or category fallback) | category | `success` green |
+| Split | fixed "split" glyph | `tag`/`tagTint` (orange) | "Split · \<name\>" or "Shared split" | "Shared split" | `ink` (neutral) |
+| Debt — Lent | fixed "debt" glyph | `success`/`successTint` (green) | "Lent to \<person\>" | "Lent" | `ink` (neutral) |
+| Debt — Owed | fixed "debt" glyph | `danger`/`dangerTint` (red) | "Owe \<person\>" | "Owe" | `ink` neutral by default; `success` green **only** on Home Recents |
+
+- The badge color and the amount color are independent signals — a Debt row's badge always follows
+  the Debt Tracker's own Lent=green/Owe=red convention (`../screens/09-debt-tracker.md`)
+  regardless of screen, while the amount follows each screen's cash-flow convention (see the
+  `emphasizeOwedAsIncome` caller override, Home-only).
+- Tapping a Split or Debt row navigates to that feature's own detail screen (Shared Costs Summary /
+  Debt Detail) instead of the generic edit sheet that Expense/Income rows open.
+
 ## Behavior
-- **Tap a row** to open its edit bottom sheet.
-- **Note fallback:** when `note` is empty the row shows the category label instead; long notes truncate with ellipsis on one line.
-- **Meta line** reads `category · time`, appending the orange event tag only when the txn is linked to an event.
+- **Tap a row** to open its edit bottom sheet (Expense/Income) or the linked feature's detail
+  screen (Split/Debt — see Row kinds above).
+- **Note fallback:** when `note` is empty the row shows the category label instead (or the kind's
+  own type word for Split/Debt — see Row kinds); long notes truncate with ellipsis on one line.
+- **Meta line** reads `category · time` for Expense/Income, or `<type word> · time` for Split/Debt,
+  appending the orange event tag only when the txn is linked to an event.
 - **New row:** a freshly committed expense is inserted at the top and animates with a `clayTint → transparent` highlight pulse over **1800ms** (then clears).
 - The day header is a plain group label (not sticky); the running total reflects only that day's rows.
 

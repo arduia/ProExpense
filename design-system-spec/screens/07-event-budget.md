@@ -30,6 +30,12 @@
 - Each card: name, date range, live remaining balance, mini progress bar (budget color system).
 - Over-budget cards show the bar in red + “Over budget” chip.
 - Tap a card → Event Detail. Expenses link via @ tag in Add Expense; balances update in real time.
+- **Category picker is expense-only when tagged to an event (new, previously undocumented):** an
+  event budget only makes sense as spend, so the Add Expense category chip row hides Income
+  categories the moment an expense carries an @ tag to an event — checked live, so switching the
+  tag on/off via the in-flow "@" picker narrows/restores the choices too, not just the "Add
+  tagged" deep-link entry point that starts pre-tagged. See `04-add-expense.md` for the base
+  category chip layout.
 
 ## Component composition · M3 mapping
 

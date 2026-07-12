@@ -19,6 +19,17 @@
 - When search is active the list flattens (no day grouping); rows show amount, category, date, note.
 - Tap an entry → Journal Detail. Long-press an entry → Quick-note bottom sheet (type + save without leaving the list).
 - Category filter mirrors the category catalogue; “All” default.
+- **Mixed row kinds (new, previously undocumented):** Journal is the full history browse, so —
+  unlike Home Recents — every kind renders here: Expense, Income, Shared Cost splits, and Debt
+  Lent/Owed. A Split or Debt row swaps its badge for a fixed kind icon (not the linked record's
+  bookkeeping category) and its title for a type-specific label instead of the category fallback:
+  a split reads **"Split · \<name\>"** (or "Shared split" when unnamed), a debt reads **"Lent to
+  \<person\>"** / **"Owe \<person\>"**, with the subtitle's leading word matching ("Shared split",
+  "Lent", "Owe"). Amount color follows the same cash-flow convention as Expense/Income for both —
+  Split and Debt-Lent render in the neutral ink tone, Debt-Owed also renders neutral here (Home
+  Recents is the one screen that emphasizes Owe in success green — see `03-home.md`). Tapping a
+  Split or Debt row navigates to that feature's own detail (Shared Costs Summary / Debt Detail)
+  instead of the generic edit sheet. Full rules: `components/transaction-row.md`.
 
 ## Component composition · M3 mapping
 
