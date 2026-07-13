@@ -48,7 +48,8 @@
     <ID>FunctionNaming:QuickAccessPickerSheet.kt$@Composable private fun QuickAccessPickerRow( tile: QuickAccessTileType, checked: Boolean, onClick: () -&gt; Unit, showMoveControls: Boolean, canMoveUp: Boolean, canMoveDown: Boolean, onMoveUp: () -&gt; Unit, onMoveDown: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:QuickAccessPickerSheet.kt$@Preview( name = "Quick access — customize sheet", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun QuickAccessPickerSheetPreview()</ID>
     <ID>FunctionNaming:SplashScreen.kt$@Composable fun SplashScreen(modifier: Modifier = Modifier)</ID>
-    <ID>FunctionNaming:SplashScreen.kt$@Composable private fun SplashLoadingDots(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:SplashScreen.kt$@Composable private fun SplashLoadingDots( reduceMotion: Boolean, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:SplashScreen.kt$@Composable private fun SplashLogoMark( scale: Float, alpha: Float, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:SplashScreen.kt$@Preview( name = "Splash", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun SplashScreenPreview()</ID>
     <ID>FunctionNaming:UiCatalogScreen.kt$@Composable fun UiCatalogScreen(modifier: Modifier = Modifier)</ID>
     <ID>FunctionNaming:UiCatalogScreen.kt$@Composable private fun CatalogEntryRow( entry: UiCatalogEntry, onOpen: (String) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
