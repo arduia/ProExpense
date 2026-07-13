@@ -93,6 +93,12 @@ event/debt shows no tag in Detail (AC 1 requires it), and a custom category rend
 instead of the live name (`HistoryFeatureEntry.kt:143`), so custom categories are wrong in the
 list too.
 
+**Update:** the row-meta half (Journal list rows and Home Recents rows both used the static
+`expenseCategoryLabel` fallback instead of the live `categoryNames` map) is now fixed —
+`FinanceRecord.toRowModel` (`HistoryFeatureEntry.kt`) and `FinanceRecord.toHomeTransactionItem`
+(`ExpenseApp.kt`) both consult `categoryNames` first now, matching what Detail already did. The
+Detail screen's own `@` tag (`linkedTag = null`) is still unaddressed.
+
 ### 10. Change-PIN flow does not exist (US-AUTH-7 Scenario 1)
 More → "PIN authentication" only branches to *enable* (`PinSetupFlow`) or *disable*
 (`MoreFlow.kt:206`: `if (pinEnabled) showDisablePinConfirm else onPinClick()`). There is no

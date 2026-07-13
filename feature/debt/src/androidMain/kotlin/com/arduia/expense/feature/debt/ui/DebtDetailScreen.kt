@@ -49,6 +49,7 @@ fun DebtDetailScreen(
     onEdit: () -> Unit,
     onMarkSettled: () -> Unit,
     modifier: Modifier = Modifier,
+    backLabel: String = stringResource(R.string.debt_detail_back),
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -65,7 +66,7 @@ fun DebtDetailScreen(
             ProTopBar(
                 title = "",
                 onBack = onBack,
-                backLabel = stringResource(R.string.debt_detail_back),
+                backLabel = backLabel,
                 action = ProTopBarAction.More,
                 onAction = onMore,
             )

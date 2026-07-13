@@ -75,6 +75,10 @@ val previewExpenseDetailsNoteLimit =
 
 val previewExpenseDraft = ExpenseEntryState(rawAmount = "12.50")
 
+// Guards against the category chip area growing unbounded and pushing NumericKeypad's Save/Next
+// buttons off-screen — pairs with a long customCategories list at the call site, not a field here.
+val previewExpenseAmountManyCategories = ExpenseEntryState(rawAmount = "12.50")
+
 val previewExpenseAmountForeignCurrency =
     ExpenseEntryState(
         rawAmount = "45.00",

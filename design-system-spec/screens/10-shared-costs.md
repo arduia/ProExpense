@@ -48,6 +48,13 @@ Done/Next footer.
   The total remains the stored source of truth. The per-person-card header shows "Matches total" or
   "vs $X total" in Custom mode as a live hint.
 - Split summary sub-screen shows per-person amounts; Back persists all values.
+- **Deep-link back navigation (new):** opened via a Split row tap in Journal or Home's Recents
+  list → Summary's back button returns in one tap straight to that origin ("Journals" / "Home"
+  label), skipping the History list. Opened via History (tap a row) → unchanged, back label reads
+  "History" and returns there. Opened from a fresh Input flow (Save not yet tapped) → unchanged,
+  back label reads "Split" and returns to Input.
+- **Home quick-access "Split" tile (new):** opens directly on the Input (amount-entry) screen
+  instead of History — back from there returns straight to Home, skipping History entirely.
 - Save stores the TOTAL as a linked expense record — saved splits **do appear in Journal and Reports** (one `FinanceRecord` per split, upserted alongside the split itself).
 - History: tap to view full split; swipe-left to delete (confirm) — deleting a split also removes its linked Journal record atomically. Editing a split updates its linked record in place.
 - **Viewing a saved split** (History → tap a row) shows the read-only Summary screen with a

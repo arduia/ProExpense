@@ -337,8 +337,8 @@ val ProDefaultTypography =
             ),
         keypadKey =
             amountTextStyle(
-                fontSizeSp = 22f,
-                lineHeightSp = 22f,
+                fontSizeSp = 24f,
+                lineHeightSp = 24f,
                 letterSpacingEm = 0f,
             ),
         navLabel =

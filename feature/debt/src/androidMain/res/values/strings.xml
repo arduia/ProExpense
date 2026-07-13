@@ -19,6 +19,8 @@
 <string name="debt_title">Debt</string>
 <string name="debt_back_more">More</string>
 <string name="debt_detail_back">Debt</string>
+<string name="debt_back_journal">Journals</string>
+<string name="debt_back_home">Home</string>
 <string name="debt_tab_lent">I Lent</string>
 <string name="debt_tab_owe">I Owe</string>
 <string name="debt_youre_owed">YOU\'RE OWED</string>

@@ -31,6 +31,8 @@ interface DebtFeatureEntry {
         modifier: Modifier = Modifier,
         homeCurrencySymbol: String = "$",
         initialSelectedRecordId: String? = null,
+        deepLinkBackLabel: String? = null,
+        onDeepLinkBack: (() -> Unit)? = null,
     )
 }
 
@@ -41,6 +43,8 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
         modifier: Modifier,
         homeCurrencySymbol: String,
         initialSelectedRecordId: String?,
+        deepLinkBackLabel: String?,
+        onDeepLinkBack: (() -> Unit)?,
     ) {
         val scope = rememberCoroutineScope()
         val debtRepository: DebtRepository = koinInject()
@@ -97,6 +101,8 @@ internal class DebtFeatureEntryImpl : DebtFeatureEntry {
                 checkDebtConflict(person, direction)
             },
             initialSelectedRecordId = initialSelectedRecordId,
+            deepLinkBackLabel = deepLinkBackLabel,
+            onDeepLinkBack = onDeepLinkBack,
             modifier = modifier,
         )
     }

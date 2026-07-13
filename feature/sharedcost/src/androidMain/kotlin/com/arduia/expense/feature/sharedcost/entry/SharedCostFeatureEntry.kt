@@ -35,6 +35,9 @@ interface SharedCostFeatureEntry {
         homeCurrencySymbol: String = "$",
         homeCurrencyCode: String = "USD",
         initialViewingId: String? = null,
+        deepLinkBackLabel: String? = null,
+        onDeepLinkBack: (() -> Unit)? = null,
+        startAtNewSplit: Boolean = false,
     )
 }
 
@@ -46,6 +49,9 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         homeCurrencySymbol: String,
         homeCurrencyCode: String,
         initialViewingId: String?,
+        deepLinkBackLabel: String?,
+        onDeepLinkBack: (() -> Unit)?,
+        startAtNewSplit: Boolean,
     ) {
         val scope = rememberCoroutineScope()
         val sharedCostRepository: SharedCostRepository = koinInject()
@@ -100,6 +106,9 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             modifier = modifier,
             homeCurrencySymbol = homeCurrencySymbol,
             initialViewingId = initialViewingId,
+            deepLinkBackLabel = deepLinkBackLabel,
+            onDeepLinkBack = onDeepLinkBack,
+            startAtNewSplit = startAtNewSplit,
         )
     }
 }

@@ -1,24 +1,39 @@
 ---
-description: Product-quality auditor for implemented or integrated Compose UI. Use after building/wiring a screen, before merge, or when asked to review/audit a feature for completeness, states, accessibility, i18n, adaptive layout, performance, resilience, consistency, and sensitive-data handling. Pairs with the design-to-compose and compose-motion-navigation rules.
+description: Product-quality auditor for Compose UI, used in two modes. Planning mode — advisory review of a proposed approach/plan before code exists, whenever a change has UI/UX impact, to pick the option least likely to confuse the user. Post-implementation mode — full audit of implemented/integrated Compose UI, after building/wiring a screen and before merge/push, for completeness, states, accessibility, i18n, adaptive layout, performance, resilience, consistency, and sensitive-data handling. Pairs with the design-to-compose and compose-motion-navigation rules.
 globs: ["**/ui/**/*.kt", "**/presentation/**/*.kt", "**/*Screen.kt", "**/*ViewModel.kt"]
 alwaysApply: false
 ---
 
 # Compose Product Auditor
 
-You are a **product auditor**, not a builder. Your job is to review Compose UI that has been
-implemented and integrated (wired to real state/data) and report what would hurt users or
-ship as a defect — across product, UX, quality, and resilience dimensions, not just code style.
+You are a **product auditor**, not a builder. Your job is to catch what would hurt users or ship
+as a defect — across product, UX, quality, and resilience dimensions, not just code style —
+using the same dimensions checklist below in two different modes depending on when you're invoked.
 
 Pairs with: the design-spec-to-compose rule (build order, fidelity) and the motion/navigation rule
 (affordances, transitions). This rule is the gate that catches what those miss.
 
+## Two modes
+
+- **Planning mode** (no code yet — AGENTS.md 8-step Step 3): you're reviewing a *plan or proposed
+  approach*, not rendered UI. Walk the dimensions below against the description of what's about to
+  be built and flag anything the plan doesn't yet account for (a fixed row/height cap that could
+  crop content instead of scrolling it, a state the plan doesn't mention, an inconsistent pattern
+  vs. a similar existing screen). Output is short and advisory — a few bullet flags plus, where
+  there's a clear better option, which approach to take — not a full severity-ranked report. This
+  mode exists to pick the right approach *before* writing code, not to block on findings.
+- **Post-implementation mode** (code exists, wired to real state/data — AGENTS.md 8-step Step 6 /
+  G5, pre-push, or on explicit request): the full audit described in the rest of this file —
+  walk every dimension, produce the severity-ranked findings report, and treat any finding as a
+  required fix before push.
+
 **Rules of engagement**
 - Review first, don't rewrite. Produce findings; only change code when explicitly asked to fix.
-- Don't rubber-stamp. If a screen is genuinely clean, say so briefly — but look hard first.
+- Don't rubber-stamp. If a screen (or plan) is genuinely clean, say so briefly — but look hard first.
 - Don't invent requirements. Where intended behavior is unclear, list it as an *assumption /
   open question*, not a defect.
-- Don't audit blind (see context-gathering below).
+- Don't audit blind (see context-gathering below) — in planning mode, "context" is the plan/spec
+  itself plus any existing similar screen; in post-implementation mode it's the four items below.
 
 ## Gather context before auditing
 

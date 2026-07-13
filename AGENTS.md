@@ -254,6 +254,16 @@ This script:
   picker flows too. Rooted in `docs/project_philosophy.md` belief #2 — speed beats completeness
   at log time. When the answer is auto-focus/keyboard, reuse `rememberAutoFocusRequester()`
   (`shared/.../ui/design/Focus.kt`) rather than a local copy.
+- **UI/UX audit gate (mandatory whenever the change has UI/UX impact):** if the requested change
+  touches a Compose screen, layout, navigation flow, or design-system component — not only
+  spec-driven builds (Step 2.1) — consult
+  [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md)
+  **before finalizing scope**, as an advisory pass over the planned approach. The goal is to
+  catch, at design time, anything that would leave the user confused or the layout incomplete —
+  e.g. a fixed horizontal padding/row cap that could crop or truncate content instead of
+  scrolling it, an affordance that's inconsistent with the rest of the screen, a flow that
+  leaves stale state visible. Pick the approach the audit lens supports and note the choice in
+  the plan; this is a general UI/UX check, not limited to any one kind of defect.
 
 ### Step 4 — Write Tests First (TDD)
 
@@ -309,6 +319,14 @@ resolving a lint failure, add a row there if the rule/situation isn't already co
 2. If visuals changed intentionally, run `./gradlew :app:recordRoborazziDevDebug` and commit
    updated baselines under `app/src/test/screenshots/` in the same branch
 3. Every touched content-composable file has `@Preview` (see Compose UI standards)
+4. **Product/UI-UX audit pass (mandatory whenever the change has UI/UX impact):** once Roborazzi
+   is green, look at the actual rendered screenshots (or a device/emulator view when Roborazzi
+   can't cover the change) through
+   [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md).
+   A green pixel-diff only proves the screen matches its own baseline — it says nothing about
+   whether that baseline itself looks right (cropped/incomplete content from a fixed padding or
+   row cap, crowded or misaligned elements, an inconsistent affordance). Treat any finding this
+   pass surfaces as a required fix before push, not a follow-up task.
 
 **Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
 
@@ -503,12 +521,15 @@ For every new or materially changed Compose screen, follow this order. Full skil
 |------|------|-------|------|
 | **1 — Build** | New or materially changed Compose screen | Design spec → Compose | [`.agents/skills/design-spec-to-compose/SKILL.md`](.agents/skills/design-spec-to-compose/SKILL.md) |
 | **2 — Polish** | Affordances, animations, navigation transitions feel abrupt or static | Motion, navigation & interaction polish | [`.agents/skills/compose-motion-polish/SKILL.md`](.agents/skills/compose-motion-polish/SKILL.md) |
-| **3 — Audit** | Screen wired and before merge / push; or when asked to review quality | Compose product auditor | [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md) |
+| **3 — Audit** | Twice: (a) planning (8-step Step 3), advisory, whenever the change has UI/UX impact; (b) visual verification (8-step Step 6 / G5), after Roborazzi is green and before push. Also on request. | Compose product auditor | [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md) |
 
 **Step 1 is mandatory** for spec-backed UI. Open every state PNG listed in
 `design-system-spec/screens/<id>-<name>.md` before writing composables. Step 2 applies during
-polish passes or when touch targets, ripple, or transitions are in scope. Step 3 is the pre-merge
-gate — produce a findings report; do not rewrite unless asked to fix.
+polish passes or when touch targets, ripple, or transitions are in scope. **Step 3 runs twice**
+for any UI/UX-impacting change, general beyond spec-driven builds: an advisory pass during
+planning (pick the approach that avoids confusing/incomplete layouts before writing code), and a
+blocking pre-push audit against the actual rendered screens (produce a findings report; fix
+before push, don't defer to a follow-up) — see 8-step Step 3 and Step 6 for the exact gates.
 
 **Quick references (step 1):** `design-system-spec/screens/*.md`,
 `design-system-spec/screenshots/screens/*.png`, `design-system-spec/components/`,
@@ -714,6 +735,11 @@ declare verification impossible. Treat all code as **unverified**. Compensate pe
   `proSelectable`) inside compact components** (chips, pills, dense rows) — the 48dp floor
   inflates the parent's layout. For a secondary micro-target inside an already-tappable
   surface use `clip(CircleShape)` + `proCircularRippleClickable` instead.
+- **Product/UX audit pass, not just pixel-diff:** re-check the rendered screenshots against the
+  `compose-product-auditor` lens (`.agents/skills/compose-product-auditor/SKILL.md`) for
+  user-confusing layout defects — incomplete/cropped content from a fixed padding or row cap,
+  crowded or misaligned elements, inconsistent affordances. A wrong baseline is self-consistent,
+  so `verifyRoborazzi` alone will never flag it; this pass is what catches it.
 
 ### Recording
 
@@ -770,7 +796,7 @@ docs take precedence** when they conflict with a skill.
 |---|---|
 | **`design-spec-to-compose`** | **Step 1 — Implementing UI from `design-system-spec/` screen + component specs and PNGs** |
 | **`compose-motion-polish`** | **Step 2 — Touch targets, ripple/press feedback, motion tokens, navigation transitions** |
-| **`compose-product-auditor`** | **Step 3 — Pre-merge product audit (states, wiring, a11y, i18n, resilience)** |
+| **`compose-product-auditor`** | **Step 3, twice — planning advisory pass (UI/UX-impacting changes) and pre-push visual-verification audit (states, wiring, a11y, i18n, resilience)** |
 | **`kotlin-lint-style`** | **Writing/editing any `.kt` file — ktlint formatting + detekt baseline workflow, avoids Step 6 verify failures** |
 | `android-cli` | SDK, emulator, docs, layout inspection |
 | `testing-setup` | Unit / instrumented / screenshot tests |
@@ -809,7 +835,7 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | Claude Design project **"Pro Expense - Finance Tracker"** | Hi-Fi mockup canvas mirroring `design-system-spec/` — find it via the design-sync tool's project listing (matched by name, scoped to the maintainer's account); no link is committed here since this repo is public |
 | `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
-| `.agents/skills/compose-product-auditor/` | Step 3 — Pre-merge Compose product auditor |
+| `.agents/skills/compose-product-auditor/` | Step 3, twice — planning advisory pass + pre-push visual-verification Compose product/UX auditor |
 | `.agents/skills/kotlin-lint-style/` | ktlint formatting rules + detekt baseline regeneration workflow |
 | `.agents/skills/kotlin-lint-style/lint-retrospective.md` | Append-only lookup table of ktlint/detekt/Android-lint findings hit before, keyed by rule ID, with the fix that applied — check before diagnosing, append after resolving |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |

@@ -23,3 +23,10 @@ fun expenseCategoryLabel(id: String): String =
         id == UNCATEGORIZED_ID -> "Uncategorized"
         else -> (defaultExpenseCategories + customExpenseCategories).firstOrNull { it.first == id }?.second ?: id
     }
+
+/** Live category name first (covers every real seeded/custom category), falling back to
+ *  [expenseCategoryLabel]'s static table only for the pre-load race / a genuinely unknown id. */
+fun resolveCategoryLabel(
+    id: String,
+    categoryNames: Map<String, String>,
+): String = categoryNames[id] ?: expenseCategoryLabel(id)

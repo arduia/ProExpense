@@ -76,27 +76,12 @@ fun CategoryListScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.categories_title),
-                onBack = onBack,
-                backLabel = stringResource(R.string.categories_back),
-            )
-            ProButton(
-                text = stringResource(R.string.categories_add),
-                onClick = onCreate,
-                size = ProButtonSize.Sm,
-                leading = {
-                    ProIcon(
-                        glyph = ProIconGlyph.Plus,
-                        contentDescription = null,
-                        tint = colors.onPrimaryWarm,
-                        size = dimens.iconInline,
-                    )
-                },
-                modifier = Modifier.align(Alignment.CenterEnd),
-            )
-        }
+        ProTopBar(
+            title = stringResource(R.string.categories_title),
+            onBack = onBack,
+            backLabel = stringResource(R.string.categories_back),
+            modifier = Modifier.padding(horizontal = dimens.screenPadding),
+        )
 
         Column(
             modifier =

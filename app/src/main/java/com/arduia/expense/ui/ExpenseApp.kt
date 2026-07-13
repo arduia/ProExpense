@@ -60,7 +60,7 @@ import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.currencySymbol
-import com.arduia.expense.ui.design.expenseCategoryLabel
+import com.arduia.expense.ui.design.resolveCategoryLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
 import com.arduia.expense.ui.home.QuickAccessPrefs
@@ -118,6 +118,14 @@ fun ExpenseApp(
     // that record's own detail screen instead of its default list/history step.
     var sharedCostInitialViewingId by rememberSaveable { mutableStateOf<String?>(null) }
     var debtInitialSelectedRecordId by rememberSaveable { mutableStateOf<String?>(null) }
+    // Which tab a deep-linked Debt/Split open came from (Journal vs Home Recents) — drives the
+    // one-tap back-to-origin label/action on Debt Detail / Split Summary. Null for non-deep-link
+    // opens (More tab, quick access), which keep their existing list/history back behavior.
+    var debtDeepLinkOrigin by rememberSaveable { mutableStateOf<HomeNavTab?>(null) }
+    var sharedCostDeepLinkOrigin by rememberSaveable { mutableStateOf<HomeNavTab?>(null) }
+    // Set by Home's Split quick-access tile so the Split flow opens straight on the New Split
+    // amount input instead of its History list.
+    var sharedCostStartAtNewSplit by rememberSaveable { mutableStateOf(false) }
     var showPinSetup by rememberSaveable { mutableStateOf(false) }
     var showReports by rememberSaveable { mutableStateOf(false) }
     var showCategoryManager by rememberSaveable { mutableStateOf(false) }
@@ -310,7 +318,7 @@ fun ExpenseApp(
                 buildHomeDayGroups(
                     records = records,
                     visibleDebts = visibleDebts,
-                    linkNames = HomeLinkNames(eventNames, debtNames, sharedCostNames),
+                    linkNames = HomeLinkNames(eventNames, debtNames, sharedCostNames, categoryNames),
                     homeCurrencySymbol = homeSymbol,
                     limit = RECENT_HOME_LIMIT,
                 )
@@ -456,10 +464,12 @@ fun ExpenseApp(
                                 },
                                 onOpenSplit = { splitId ->
                                     sharedCostInitialViewingId = splitId
+                                    sharedCostDeepLinkOrigin = HomeNavTab.Journal
                                     showSharedCosts = true
                                 },
                                 onOpenDebt = { debtId ->
                                     debtInitialSelectedRecordId = debtId
+                                    debtDeepLinkOrigin = HomeNavTab.Journal
                                     showDebt = true
                                 },
                             )
@@ -487,8 +497,11 @@ fun ExpenseApp(
                                 onAddClick = { showQuickLog = true },
                                 onReportsClick = { showReports = true },
                                 onDebtClick = { showDebt = true },
-                                onSplitClick = { showSharedCosts = true },
-                                onEventsClick = { selectedTab = HomeNavTab.Budget },
+                                onSplitClick = {
+                                    sharedCostStartAtNewSplit = true
+                                    showSharedCosts = true
+                                },
+                                onEventsClick = { onTabSelected(HomeNavTab.Budget) },
                                 onLogFirstExpense = { showQuickLog = true },
                                 onSeeAll = { selectedTab = HomeNavTab.Journal },
                                 onCustomizeQuickAccess = { showQuickAccessPicker = true },
@@ -498,11 +511,13 @@ fun ExpenseApp(
                                         ProRowKind.SPLIT ->
                                             row.linkedId?.let {
                                                 sharedCostInitialViewingId = it
+                                                sharedCostDeepLinkOrigin = HomeNavTab.Home
                                                 showSharedCosts = true
                                             }
                                         ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED ->
                                             row.linkedId?.let {
                                                 debtInitialSelectedRecordId = it
+                                                debtDeepLinkOrigin = HomeNavTab.Home
                                                 showDebt = true
                                             }
                                         ProRowKind.EXPENSE, ProRowKind.INCOME -> {
@@ -587,10 +602,29 @@ fun ExpenseApp(
                     onDismiss = {
                         showSharedCosts = false
                         sharedCostInitialViewingId = null
+                        sharedCostDeepLinkOrigin = null
+                        sharedCostStartAtNewSplit = false
                     },
                     homeCurrencySymbol = homeSymbol,
                     homeCurrencyCode = homeCurrencyCode,
                     initialViewingId = sharedCostInitialViewingId,
+                    deepLinkBackLabel =
+                        when (sharedCostDeepLinkOrigin) {
+                            HomeNavTab.Journal ->
+                                stringResource(com.arduia.expense.feature.sharedcost.R.string.shared_back_journal)
+                            HomeNavTab.Home ->
+                                stringResource(com.arduia.expense.feature.sharedcost.R.string.shared_back_home)
+                            else -> null
+                        },
+                    onDeepLinkBack =
+                        sharedCostDeepLinkOrigin?.let {
+                            {
+                                showSharedCosts = false
+                                sharedCostInitialViewingId = null
+                                sharedCostDeepLinkOrigin = null
+                            }
+                        },
+                    startAtNewSplit = sharedCostStartAtNewSplit,
                 )
             }
 
@@ -599,9 +633,26 @@ fun ExpenseApp(
                     onDismiss = {
                         showDebt = false
                         debtInitialSelectedRecordId = null
+                        debtDeepLinkOrigin = null
                     },
                     homeCurrencySymbol = homeSymbol,
                     initialSelectedRecordId = debtInitialSelectedRecordId,
+                    deepLinkBackLabel =
+                        when (debtDeepLinkOrigin) {
+                            HomeNavTab.Journal ->
+                                stringResource(com.arduia.expense.feature.debt.R.string.debt_back_journal)
+                            HomeNavTab.Home ->
+                                stringResource(com.arduia.expense.feature.debt.R.string.debt_back_home)
+                            else -> null
+                        },
+                    onDeepLinkBack =
+                        debtDeepLinkOrigin?.let {
+                            {
+                                showDebt = false
+                                debtInitialSelectedRecordId = null
+                                debtDeepLinkOrigin = null
+                            }
+                        },
                 )
             }
 
@@ -714,6 +765,7 @@ private fun FinanceRecord.toHomeTransactionItem(
     eventNames: Map<String, String>,
     debtNames: Map<String, String>,
     sharedCostNames: Map<String, String>,
+    categoryNames: Map<String, String>,
 ): HomeTransactionItem {
     val rowKind =
         when (kind()) {
@@ -738,7 +790,7 @@ private fun FinanceRecord.toHomeTransactionItem(
                 debtRowTitle(personName, isLent) to "${debtRowSubtitleType(isLent)} · $timeLabel"
             }
             ProRowKind.EXPENSE, ProRowKind.INCOME ->
-                note?.trim().orEmpty().ifEmpty { expenseCategoryLabel(categoryId.value) } to timeLabel
+                note?.trim().orEmpty().ifEmpty { resolveCategoryLabel(categoryId.value, categoryNames) } to timeLabel
         }
     return HomeTransactionItem(
         id = id.value,
@@ -767,11 +819,12 @@ private fun Debt.toDebtHomeTransactionItem(): HomeTransactionItem {
     )
 }
 
-/** Bundles the tag-label lookup maps so they cost one parameter, not three, in call sites below. */
+/** Bundles the tag-label lookup maps so they cost one parameter, not four, in call sites below. */
 private data class HomeLinkNames(
     val eventNames: Map<String, String>,
     val debtNames: Map<String, String>,
     val sharedCostNames: Map<String, String>,
+    val categoryNames: Map<String, String>,
 )
 
 /**
@@ -792,7 +845,12 @@ private fun buildHomeDayGroups(
             .filter { it.kind().isVisibleInHomeRecents() }
             .map { record ->
                 val item =
-                    record.toHomeTransactionItem(linkNames.eventNames, linkNames.debtNames, linkNames.sharedCostNames)
+                    record.toHomeTransactionItem(
+                        linkNames.eventNames,
+                        linkNames.debtNames,
+                        linkNames.sharedCostNames,
+                        linkNames.categoryNames,
+                    )
                 HomeMergedEntry(record.recordedAtEpochMillis, item)
             }
     // Unlike the recordEntries filter above, toggle-off debts are never a real FinanceRecord — a

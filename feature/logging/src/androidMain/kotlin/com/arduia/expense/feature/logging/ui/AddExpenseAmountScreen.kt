@@ -1,16 +1,12 @@
 package com.arduia.expense.feature.logging.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -64,32 +60,15 @@ fun AddExpenseAmountScreen(
                 .fillMaxSize()
                 .background(colors.paper)
                 .statusBarsPadding()
-                .navigationBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.screenPadding),
+                .navigationBarsPadding(),
     ) {
         ProTopBar(
             title = stringResource(titleRes),
             onBack = null,
             action = ProTopBarAction.Close,
             onAction = onClose,
+            modifier = Modifier.padding(horizontal = dimens.screenPadding),
         )
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            ProTextAction(
-                text = state.currencyCode,
-                onClick = onOpenCurrencySheet,
-                color = colors.primary,
-                trailing = {
-                    ProIcon(
-                        glyph = ProIconGlyph.ChevronDown,
-                        contentDescription = null,
-                        tint = colors.primary,
-                        size = dimens.iconInline,
-                    )
-                },
-            )
-        }
 
         AmountDisplay(
             amountText = displayAmount,
@@ -98,18 +77,46 @@ fun AddExpenseAmountScreen(
             isZero = isZero,
             showZeroValidation = state.showZeroValidation,
             zeroHelperMessage = stringResource(R.string.amount_must_be_greater_than_zero),
+            eyebrowText = stringResource(R.string.amount_step).uppercase(),
+            eyebrowTrailing = {
+                ProTextAction(
+                    text = state.currencyCode,
+                    onClick = onOpenCurrencySheet,
+                    style = ProExpenseTheme.typography.eyebrow,
+                    color = colors.primary,
+                    trailing = {
+                        ProIcon(
+                            glyph = ProIconGlyph.ChevronDown,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            size = dimens.iconInline,
+                        )
+                    },
+                )
+            },
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
                     .padding(top = dimens.space8, bottom = dimens.space16),
         )
 
+        // Fixed 2 default-category rows + 1 custom-category row (each independently
+        // horizontally swipeable — see CategoryPicker's defaultSectionRows/customSectionRows)
+        // instead of wrapping onto as many lines as the category count needs, so the picker's
+        // height never grows and NumericKeypad's Save/Next buttons always stay pinned below it.
+        // Rendered full-bleed (carouselEdgeInset instead of the screen's own horizontal padding)
+        // so a swipeable row can scroll all the way to the true screen edge instead of being
+        // clipped at the margin.
         CategoryPicker(
             defaultCategories = defaultCategories,
             customCategories = customCategories,
             selectedCategoryId = state.selectedCategoryId,
             onCategorySelected = onCategorySelected,
             showCustomSection = true,
+            defaultSectionRows = 2,
+            customSectionRows = 1,
+            carouselEdgeInset = dimens.screenPadding,
             modifier = Modifier.padding(bottom = dimens.space16),
         )
 
@@ -124,6 +131,7 @@ fun AddExpenseAmountScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
                     .padding(bottom = dimens.space18),
         )
     }
