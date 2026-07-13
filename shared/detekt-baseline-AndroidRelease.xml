@@ -328,79 +328,137 @@
     <ID>MagicNumber:Motion.kt$0.36f</ID>
     <ID>MagicNumber:Motion.kt$0.61f</ID>
     <ID>MagicNumber:NumericKeypad.kt$1.45f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$0.88f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$0.92f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$100f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$104f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$108f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$10f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$110f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$114f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$116f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$118f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$11f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$120f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$124f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$129f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$130f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$132f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$134f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$137f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$138f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$13f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$140f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$143f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$144f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$146f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$147f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$148f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$14f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$150f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$156f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$157f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$160f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$161f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$166f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$16f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$176f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$184f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$185f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$28f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$30f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$32f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$40f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$44f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$46f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$48f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$4f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$50f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$53f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$55f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$58f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$5f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$60f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$61f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$62f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$63f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$66f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$6f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$70f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$72f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$74f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$7f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$80f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$84f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$86f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$87f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$88f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$8f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$92f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$93f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$94f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$96f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$97f</ID>
+    <ID>MagicNumber:OnboardingIllustrationDrawing.kt$98f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$100f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$102f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$104f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$108f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$110f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$112f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$116f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$118f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$124f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$120f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$122f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$126f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$128f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$12f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$132f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$134f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$136f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$138f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$140f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$142f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$143f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$145f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$146f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$148f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$14f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$150f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$154f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$156f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$155f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$158f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$160f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$164f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$162f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$166f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$168f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$16f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$170f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$172f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$176f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$178f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$174f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$179f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$180f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$182f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$184f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$186f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$188f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$18f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$192f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$193f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$196f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$198f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$202f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$206f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$208f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$214f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$220f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$22f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$280f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$3</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$24f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$30f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$32f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$34f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$36f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$3f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$40f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$42f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$44f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$48f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$4f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$52f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$54f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$56f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$57f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$58f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$60f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$62f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$63f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$64f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$68f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$69f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$6f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$70f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$72f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$82f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$84f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$74f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$77f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$78f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$83f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$88f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$8f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$90f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$92f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$94f</ID>
-    <ID>MagicNumber:OnboardingIllustrations.kt$96f</ID>
     <ID>MagicNumber:OnboardingIllustrations.kt$98f</ID>
+    <ID>MagicNumber:OnboardingIllustrations.kt$9f</ID>
     <ID>MagicNumber:PillButton.kt$1.4f</ID>
     <ID>MagicNumber:PinKeypad.kt$0.25f</ID>
     <ID>MagicNumber:PinKeypad.kt$0.5f</ID>
