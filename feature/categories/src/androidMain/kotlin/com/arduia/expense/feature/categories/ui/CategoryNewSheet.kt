@@ -155,6 +155,7 @@ fun CategoryNewSheetContent(
                     CategoryIconTile(
                         iconId = iconId,
                         selected = iconId == form.selectedIconId,
+                        selectedColorId = form.selectedColorId,
                         onClick = { onIconSelected(iconId) },
                     )
                 }
@@ -198,20 +199,27 @@ fun CategoryNewSheetContent(
 private fun CategoryIconTile(
     iconId: String,
     selected: Boolean,
+    selectedColorId: String,
     onClick: () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val shape = ProExpenseTheme.shapes.tile
-    val background = if (selected) colors.primaryTint else colors.paperAlt
-    val border = if (selected) colors.primary else colors.lineStrong
+    val category = colors.category(selectedColorId)
+    val background = if (selected) category.tint else colors.paperAlt
+    val iconTint = if (selected) category.accent else colors.onSurfaceMuted
+    // A muted swatch (e.g. the default "other" gray) can share its tint with the tile's own
+    // unselected background — the selection ring must stay a fixed high-contrast color
+    // regardless of which live category color is previewed (same rule as CategoryColorSwatch).
+    val border = if (selected) colors.onSurface else colors.lineStrong
+    val borderWidth = if (selected) 2.dp else 1.dp
 
     Box(
         modifier =
             Modifier
                 .size(dimens.space44)
                 .clip(shape)
-                .border(BorderStroke(1.dp, border), shape)
+                .border(BorderStroke(borderWidth, border), shape)
                 .background(background)
                 .proClickable(onClick = onClick, shape = shape),
         contentAlignment = Alignment.Center,
@@ -219,7 +227,7 @@ private fun CategoryIconTile(
         ProIcon(
             glyph = categoryIcon(iconId),
             contentDescription = null,
-            tint = if (selected) colors.primary else colors.onSurfaceMuted,
+            tint = iconTint,
             size = dimens.iconNav,
         )
     }
