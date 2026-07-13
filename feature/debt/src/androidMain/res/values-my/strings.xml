@@ -2,6 +2,8 @@
 <string name="debt_title">အကြွေး</string>
 <string name="debt_back_more">နောက်ထပ်</string>
 <string name="debt_detail_back">အကြွေး</string>
+<string name="debt_back_journal">မှတ်တမ်း</string>
+<string name="debt_back_home">မူလစာမျက်နှာ</string>
 <string name="debt_tab_lent">ငါချေးထား</string>
 <string name="debt_tab_owe">ငါတင်ကျန်</string>
 <string name="debt_youre_owed">ရရန်ရှိသည်</string>

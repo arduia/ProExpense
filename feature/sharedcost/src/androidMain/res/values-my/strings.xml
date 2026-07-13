@@ -24,6 +24,8 @@
     <string name="shared_back_more">နောက်ထပ်</string>
     <string name="shared_back_split">ခွဲဝေရန်</string>
     <string name="shared_back_history">မှတ်တမ်း</string>
+    <string name="shared_back_journal">မှတ်တမ်း</string>
+    <string name="shared_back_home">မူလစာမျက်နှာ</string>
     <string name="shared_note_placeholder">Nobu တွင် ညစာစား</string>
     <string name="shared_split_default_title">ဝေမျှသောခွဲဝေမှု</string>
     <string name="shared_people_word">လူများ</string>
