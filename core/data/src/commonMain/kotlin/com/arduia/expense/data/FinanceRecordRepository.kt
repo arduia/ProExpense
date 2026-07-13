@@ -3,11 +3,20 @@ package com.arduia.expense.data
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordKindFilter
 import kotlinx.coroutines.flow.Flow
 
-/** SQL-pushdown filter for [FinanceRecordRepository.getRecordsPage] — every field is a predicate that's skipped when null. */
+/**
+ * SQL-pushdown filter for [FinanceRecordRepository.getRecordsPage] — every field is a predicate
+ * that's skipped when null. [kind], when set, takes over from [categoryId] (Split/Debt aren't real
+ * categories) and also suppresses the reciprocal category exclusion described on [categoryId].
+ */
 data class RecordPageFilter(
+    // Ignored when [kind] is set. When set without [kind], also excludes Split/Debt records even
+    // though they're bookkeeped under a sentinel category id (see RecordKind) — a "Shopping"
+    // filter should only ever return genuine Shopping expenses.
     val categoryId: CategoryId? = null,
+    val kind: RecordKindFilter? = null,
     val fromEpochMillis: Long? = null,
     val toEpochMillis: Long? = null,
     val query: String? = null,

@@ -7,10 +7,13 @@ import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordKindFilter
 import kotlinx.coroutines.flow.Flow
 
+/** [kind], when set, takes over from [categoryId] — see [RecordKindFilter]. */
 data class RecordHistoryFilter(
     val categoryId: CategoryId? = null,
+    val kind: RecordKindFilter? = null,
     val currency: CurrencyCode? = null,
     val fromEpochMillis: Long? = null,
     val toEpochMillis: Long? = null,

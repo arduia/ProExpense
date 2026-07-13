@@ -67,6 +67,7 @@ fun MoreFlow(
     modifier: Modifier = Modifier,
     onPinClick: () -> Unit = {},
     pinConfigured: Boolean? = null,
+    initialDisplayName: String? = null,
     onCurrencyChanged: (CurrencyCode) -> Unit = {},
     onBudgetChanged: (Money?) -> Unit = {},
     onDefaultCategoryChanged: (String) -> Unit = {},
@@ -113,6 +114,12 @@ fun MoreFlow(
 
     LaunchedEffect(pinConfigured) {
         if (pinConfigured != null) pinEnabled = pinConfigured
+    }
+
+    // Resolve from the app-level name (already loaded before More is reachable) so the profile
+    // card never flashes the "Your profile" fallback before its own async load completes.
+    LaunchedEffect(initialDisplayName) {
+        if (!initialDisplayName.isNullOrBlank()) displayName = initialDisplayName
     }
 
     LaunchedEffect(Unit) {

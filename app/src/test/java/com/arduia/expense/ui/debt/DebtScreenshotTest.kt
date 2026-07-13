@@ -139,6 +139,7 @@ class DebtScreenshotTest {
                 onMore = {},
                 onEdit = {},
                 onMarkSettled = {},
+                onClose = {},
             )
         }
 
@@ -151,6 +152,20 @@ class DebtScreenshotTest {
                 onMore = {},
                 onEdit = {},
                 onMarkSettled = {},
+                onClose = {},
+            )
+        }
+
+    @Test
+    fun edge_debt_settled_detail() =
+        capture {
+            DebtDetailScreen(
+                state = previewDebtLentDetail.copy(settled = true, statusLabel = "Settled"),
+                onBack = {},
+                onMore = {},
+                onEdit = {},
+                onMarkSettled = {},
+                onClose = {},
             )
         }
 

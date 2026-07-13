@@ -21,6 +21,7 @@
 <string name="debt_reference_only">ကိုးကားရန်သာ</string>
 <string name="debt_edit">ပြင်ဆင်ရန်</string>
 <string name="debt_mark_as_settled">ရှင်းလင်းပြီးဟု သတ်မှတ်ရန်</string>
+<string name="debt_close">ပိတ်ရန်</string>
 <string name="debt_new_record">မှတ်တမ်းအသစ်</string>
 <string name="debt_edit_record">မှတ်တမ်း ပြင်ဆင်ရန်</string>
 <string name="debt_person_label">လူ</string>

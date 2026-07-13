@@ -3,6 +3,8 @@
     <string name="journal_title">บันทึก</string>
     <string name="journal_search_placeholder">ค้นหาบันทึก จำนวนเงิน หมวดหมู่…</string>
     <string name="journal_filter_all">ทั้งหมด</string>
+    <string name="journal_filter_split">แยกจ่าย</string>
+    <string name="journal_filter_debt">หนี้</string>
     <string name="journal_no_matches_title">ไม่พบรายการ</string>
     <string name="journal_no_matches_body">ไม่พบผลลัพธ์สำหรับ \"%1$s\" ลองใช้คำค้นหา จำนวนเงิน หรือบันทึกอื่น</string>
     <string name="journal_detail_back">บันทึก</string>

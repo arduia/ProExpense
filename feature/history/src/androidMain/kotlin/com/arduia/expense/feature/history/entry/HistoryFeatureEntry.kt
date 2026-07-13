@@ -20,6 +20,7 @@ import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordKind
+import com.arduia.expense.domain.RecordKindFilter
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SPLIT_ROW_SUBTITLE_TYPE
@@ -55,6 +56,19 @@ import org.koin.compose.koinInject
 
 /** Debounce between the user's last keystroke and the search query reaching the DB (US-HIS §Journal search). */
 private const val SEARCH_DEBOUNCE_MILLIS = 250L
+
+/** Filter chip ids for the Split/Debt kind filters — not real category ids, see [RecordKindFilter]. */
+private const val SPLIT_FILTER_ID = "split"
+private const val DEBT_FILTER_ID = "debt"
+
+/**
+ * Reciprocal to the SQL-side rule in FinanceRecord.sq: a toggle-off debt (no FinanceRecord of its
+ * own) only belongs in "All" or the "Debt" filter, never under "Split" or a specific category it
+ * was never assigned to.
+ */
+private fun RecordHistoryFilter.includesUnrecordedDebts(): Boolean =
+    kind == RecordKindFilter.DEBT ||
+        (kind == null && categoryId == null)
 
 /**
  * Journal's loaded pages, filter selections, and change-signal bookkeeping. Opaque to callers —
@@ -121,6 +135,8 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
         val updateRecordNote: UpdateRecordNoteUseCase = koinInject()
         val historyRepository: HistoryRepository = koinInject()
         val allFilterLabel = stringResource(R.string.journal_filter_all)
+        val splitFilterLabel = stringResource(R.string.journal_filter_split)
+        val debtFilterLabel = stringResource(R.string.journal_filter_debt)
         val pager = state.pager
 
         // Search-as-you-type now triggers a DB query per change instead of a free in-memory
@@ -204,7 +220,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                 }
             }
         val filters =
-            remember(categories, allFilterLabel, state.hasUncategorized) {
+            remember(categories, allFilterLabel, splitFilterLabel, debtFilterLabel, state.hasUncategorized) {
                 val categoryChips = categories.sortedBy { it.sortOrder }.map { JournalFilterUi(it.id.value, it.name) }
                 // Uncategorized is never seeded as a real Category row (US-CAT-3), so it needs its
                 // own chip here whenever a reassigned record actually exists under it — otherwise
@@ -215,8 +231,17 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                     } else {
                         emptyList()
                     }
-                listOf(JournalFilterUi("all", allFilterLabel)) + categoryChips + uncategorizedChip
+                // Split/Debt are filterable the same as any category chip, even though they're not
+                // real user categories — see JournalTabStateImpl.filter for the reciprocal rule
+                // that keeps a category selection (e.g. "Shopping") from also matching these.
+                val kindChips =
+                    listOf(
+                        JournalFilterUi(SPLIT_FILTER_ID, splitFilterLabel),
+                        JournalFilterUi(DEBT_FILTER_ID, debtFilterLabel),
+                    )
+                listOf(JournalFilterUi("all", allFilterLabel)) + categoryChips + uncategorizedChip + kindChips
             }
+        val includeUnrecordedDebts = state.filter.includesUnrecordedDebts()
         // Grouped from whatever's been loaded so far (bounded by scroll depth), never the full
         // table — search/category/date-range filtering already happened in SQL via `filter`.
         val days =
@@ -231,10 +256,11 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                 debtSubtitles,
                 categoryNames,
                 homeCurrencySymbol,
+                includeUnrecordedDebts,
             ) {
                 groupByDay(
                     pager.records,
-                    debts,
+                    if (includeUnrecordedDebts) debts else emptyList(),
                     pager.endReached,
                     JournalLinkLabels(
                         eventNames,
@@ -309,7 +335,16 @@ private class JournalTabStateImpl(
     val filter: RecordHistoryFilter
         get() =
             RecordHistoryFilter(
-                categoryId = selectedFilterId.takeIf { it != "all" }?.let(::CategoryId),
+                categoryId =
+                    selectedFilterId
+                        .takeIf { it != "all" && it != SPLIT_FILTER_ID && it != DEBT_FILTER_ID }
+                        ?.let(::CategoryId),
+                kind =
+                    when (selectedFilterId) {
+                        SPLIT_FILTER_ID -> RecordKindFilter.SPLIT
+                        DEBT_FILTER_ID -> RecordKindFilter.DEBT
+                        else -> null
+                    },
                 fromEpochMillis = dateRangeStart,
                 toEpochMillis = dateRangeEnd,
                 query = debouncedQuery.takeIf { it.isNotBlank() },
@@ -389,6 +424,8 @@ private data class JournalLinkLabels(
 
 private fun groupByDay(
     records: List<FinanceRecord>,
+    // Caller pre-filters to emptyList() when unrecorded debts shouldn't merge in (e.g. a "Split"
+    // or specific-category filter is active) — keeps this function's own signature unchanged.
     debts: List<Debt>,
     recordsFullyLoaded: Boolean,
     linkLabels: JournalLinkLabels,

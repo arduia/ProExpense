@@ -8,10 +8,14 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordKindFilter
+import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SharedCostId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -92,6 +96,7 @@ class DefaultHistoryRepositoryTest {
         category: String = "food",
         note: String? = null,
         currency: CurrencyCode = usd,
+        link: RecordLink = RecordLink.None,
     ) = FinanceRecord(
         id = RecordId(id),
         money = Money(Amount(homeCents), currency),
@@ -100,6 +105,7 @@ class DefaultHistoryRepositoryTest {
         type = type,
         note = note,
         recordedAtEpochMillis = epochMillis,
+        link = link,
     )
 
     private fun repository(records: List<FinanceRecord>) =
@@ -132,6 +138,44 @@ class DefaultHistoryRepositoryTest {
             val byQuery = repo.getRecords(RecordHistoryFilter(query = "coffee"))
             assertTrue(byQuery is Result.Success)
             assertEquals(listOf("a"), byQuery.data.map { it.id.value })
+        }
+
+    @Test
+    fun getRecords_kindFilter_isMutuallyExclusiveWithCategoryAndReciprocal() =
+        runTest {
+            val records =
+                listOf(
+                    record("food", atUtc(2026, 6, 10), 100, category = "food"),
+                    record(
+                        "split",
+                        atUtc(2026, 6, 11),
+                        200,
+                        category = "shopping",
+                        link = RecordLink.ToSharedCost(SharedCostId("split-1")),
+                    ),
+                    record(
+                        "debt",
+                        atUtc(2026, 6, 12),
+                        300,
+                        category = "shopping",
+                        link = RecordLink.ToDebt(DebtId("debt")),
+                    ),
+                )
+            val repo = repository(records)
+
+            val splitOnly = repo.getRecords(RecordHistoryFilter(kind = RecordKindFilter.SPLIT))
+            assertTrue(splitOnly is Result.Success)
+            assertEquals(listOf("split"), splitOnly.data.map { it.id.value })
+
+            val debtOnly = repo.getRecords(RecordHistoryFilter(kind = RecordKindFilter.DEBT))
+            assertTrue(debtOnly is Result.Success)
+            assertEquals(listOf("debt"), debtOnly.data.map { it.id.value })
+
+            // Picking the real "Shopping" category must not also pull in the Split/Debt records
+            // bookkeeped under that same sentinel category id.
+            val byShoppingCategory = repo.getRecords(RecordHistoryFilter(categoryId = CategoryId("shopping")))
+            assertTrue(byShoppingCategory is Result.Success)
+            assertEquals(emptyList(), byShoppingCategory.data.map { it.id.value })
         }
 
     @Test

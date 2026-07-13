@@ -3,6 +3,8 @@
     <string name="journal_title">Journal</string>
     <string name="journal_search_placeholder">Search notes, amount, category…</string>
     <string name="journal_filter_all">All</string>
+    <string name="journal_filter_split">Split</string>
+    <string name="journal_filter_debt">Debt</string>
     <string name="journal_no_matches_title">No matches</string>
     <string name="journal_no_matches_body">Nothing found for \"%1$s.\" Try a different keyword, amount, or note.</string>
     <string name="journal_detail_back">Journal</string>
