@@ -256,14 +256,18 @@ This script:
   (`shared/.../ui/design/Focus.kt`) rather than a local copy.
 - **UI/UX audit gate (mandatory whenever the change has UI/UX impact):** if the requested change
   touches a Compose screen, layout, navigation flow, or design-system component — not only
-  spec-driven builds (Step 2.1) — consult
-  [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md)
-  **before finalizing scope**, as an advisory pass over the planned approach. The goal is to
-  catch, at design time, anything that would leave the user confused or the layout incomplete —
-  e.g. a fixed horizontal padding/row cap that could crop or truncate content instead of
-  scrolling it, an affordance that's inconsistent with the rest of the screen, a flow that
-  leaves stale state visible. Pick the approach the audit lens supports and note the choice in
-  the plan; this is a general UI/UX check, not limited to any one kind of defect.
+  spec-driven builds (Step 2.1) — **invoke the `Skill` tool for `compose-product-auditor`**
+  (planning mode) **before finalizing scope**. Informally reasoning about UI/UX quality, or
+  summarizing the skill file from memory, does not satisfy this gate — the skill must actually
+  run, and its advisory output (even a one-line "clean" verdict) must be stated in the plan. The
+  goal is to catch, at design time, anything that would leave the user confused or the layout
+  incomplete — e.g. a fixed horizontal padding/row cap that could crop or truncate content
+  instead of scrolling it, **a scrollable row that overflows but has no edge affordance (fade,
+  peek, or indicator) signaling there's more — a hard clip at the scroll boundary reads as
+  broken content, not "swipe for more"**, an affordance that's inconsistent with the rest of the
+  screen, a flow that leaves stale state visible. Pick the approach the audit lens supports and
+  note the choice in the plan; this is a general UI/UX check, not limited to any one kind of
+  defect.
 
 ### Step 4 — Write Tests First (TDD)
 
@@ -320,13 +324,17 @@ resolving a lint failure, add a row there if the rule/situation isn't already co
    updated baselines under `app/src/test/screenshots/` in the same branch
 3. Every touched content-composable file has `@Preview` (see Compose UI standards)
 4. **Product/UI-UX audit pass (mandatory whenever the change has UI/UX impact):** once Roborazzi
-   is green, look at the actual rendered screenshots (or a device/emulator view when Roborazzi
-   can't cover the change) through
-   [`.agents/skills/compose-product-auditor/SKILL.md`](.agents/skills/compose-product-auditor/SKILL.md).
-   A green pixel-diff only proves the screen matches its own baseline — it says nothing about
-   whether that baseline itself looks right (cropped/incomplete content from a fixed padding or
-   row cap, crowded or misaligned elements, an inconsistent affordance). Treat any finding this
-   pass surfaces as a required fix before push, not a follow-up task.
+   is green, **invoke the `Skill` tool for `compose-product-auditor`** (post-implementation mode)
+   against the actual rendered screenshots (or a device/emulator view when Roborazzi can't cover
+   the change). This is a distinct check from confirming your own diff rendered — verifying "my
+   code change took effect" is not the same as auditing "would this confuse a user," and doing
+   the former does not satisfy this gate. A green pixel-diff only proves the screen matches its
+   own baseline — it says nothing about whether that baseline itself looks right (cropped/
+   incomplete content from a fixed padding or row cap, a scrollable row whose overflow edge is a
+   hard clip instead of a fade/peek affordance, crowded or misaligned elements, an inconsistent
+   affordance). State the audit's finding in-session (clean, or defects found + fixed) before
+   moving to Step 7 — don't silently skip the pass. Treat any finding this pass surfaces as a
+   required fix before push, not a follow-up task.
 
 **Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
 
@@ -735,11 +743,24 @@ declare verification impossible. Treat all code as **unverified**. Compensate pe
   `proSelectable`) inside compact components** (chips, pills, dense rows) — the 48dp floor
   inflates the parent's layout. For a secondary micro-target inside an already-tappable
   surface use `clip(CircleShape)` + `proCircularRippleClickable` instead.
-- **Product/UX audit pass, not just pixel-diff:** re-check the rendered screenshots against the
-  `compose-product-auditor` lens (`.agents/skills/compose-product-auditor/SKILL.md`) for
-  user-confusing layout defects — incomplete/cropped content from a fixed padding or row cap,
-  crowded or misaligned elements, inconsistent affordances. A wrong baseline is self-consistent,
-  so `verifyRoborazzi` alone will never flag it; this pass is what catches it.
+- **Scrollable-row edge affordance (mandatory on any new/changed `horizontalScroll`/`LazyRow`):**
+  when content overflows the viewport, the clipped edge must fade, peek, or otherwise signal
+  "more content" — never a flat hard cut through a tile/chip with no visual cue, which reads as
+  broken content rather than scrollable overflow. Pixel-check the recorded baseline at the clip
+  boundary (sample colors near the edge — a hard cut shows an abrupt color jump; a correct fade
+  ramps gradually to the surrounding background) rather than eyeballing a shrunk screenshot.
+  Reference implementation: `horizontalFadingEdge` in
+  `feature/categories/.../ui/CategoryNewSheet.kt` (`drawWithContent` + `BlendMode.DstIn` gradient
+  keyed off `ScrollState.value`/`maxValue`) — **the fade/edge-affordance modifier must wrap the
+  scroll modifier (apply outside it in the chain), not nest inside it**, or it measures the full
+  unclipped content width and draws off-screen instead of at the visible viewport edge.
+- **Product/UX audit pass, not just pixel-diff (invoke the skill, don't self-reason):** run the
+  `compose-product-auditor` skill (post-implementation mode) against the rendered screenshots for
+  user-confusing layout defects — incomplete/cropped content from a fixed padding or row cap, a
+  scrollable row's hard-cut edge (see bullet above), crowded or misaligned elements, inconsistent
+  affordances. Confirming that your own code change rendered as intended is not the same check as
+  this audit — running the former is not a substitute for running the latter. A wrong baseline is
+  self-consistent, so `verifyRoborazzi` alone will never flag it; this pass is what catches it.
 
 ### Recording
 

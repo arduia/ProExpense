@@ -101,3 +101,40 @@ class of defect: a wrong baseline is self-consistent, and verify only detects ch
   `JournalChipRowConsistencyTest`) — pixels lie once a defect is recorded as the baseline.
 - Product audits must **measure** sibling sizes in reviewed screenshots (pixel-measure the
   bounding boxes), not eyeball them — promoted into `compose-product-auditor` skill and G5.
+
+## 2026-07-13 — Category icon picker's scrollable row shipped with a hard-cut trailing edge
+
+**What slipped:** Expanding the category icon picker from 4 to 20 icons required making its row
+scrollable (`horizontalScroll`) instead of a fixed inline row. The fix was applied and screenshots
+were recorded/verified green, but the row's overflow edge was a flat, abrupt clip through the
+last tile with no fade/peek/indicator — reading as broken/cut-off content, not "swipe for more."
+The user caught it by eye from a shared screenshot; neither the planning-phase nor the pre-push
+visual-verification pass caught it, because `compose-product-auditor` was never actually invoked
+in either phase — the agent reasoned informally ("add `horizontalScroll`, done") instead of
+running the skill, and at pre-push only confirmed the code change rendered as intended (right
+icons, right order, scrollable), which is a different check from auditing whether the result
+would confuse a user. A first attempted fix (a `drawWithContent` + `BlendMode.DstIn` fade
+modifier) also silently failed to appear on-screen because the fade modifier was nested *inside*
+`horizontalScroll` in the chain, so it measured the full unclipped content width (~1070dp for 20
+tiles) and drew its gradient off-screen near the last tile instead of at the visible viewport
+edge — confirmed by pixel-sampling the recorded PNG before and after reordering the modifiers.
+
+**Root cause:** (1) The `compose-product-auditor` skill was never invoked as a tool call in
+either mandated phase — "consult the skill" was satisfied by informal reasoning, not by running
+it, so its own documented dimension ("audit transient states... check drag, fling, and overscroll
+edges too") never actually got applied. (2) Pre-push, "the screenshot looks right" was checked
+only against "did my change take effect," not against "would this confuse a user" — two
+different questions that were conflated. (3) The `drawWithContent`/`graphicsLayer` fade fix has a
+non-obvious modifier-ordering requirement (must wrap `horizontalScroll`, not nest inside it) with
+no compiler error when done wrong — it just silently draws off-screen.
+
+**Guards:**
+- `AGENTS.md` Step 3 and Step 6/G5 UI/UX audit gates now require literally invoking the `Skill`
+  tool for `compose-product-auditor` in both phases (planning and post-implementation) and
+  stating its verdict in-session — informal reasoning or summarizing the skill from memory no
+  longer satisfies the gate.
+- New G5 bullet: any scrollable row's clipped edge must fade/peek, never a hard cut; verify by
+  pixel-sampling the recorded baseline near the clip boundary (abrupt color jump = defect, gradual
+  ramp = correct), not by eyeballing a shrunk screenshot.
+- New G5 bullet: an edge-fade/affordance modifier must wrap the scroll modifier (apply outside it
+  in the chain) — nested inside, it measures the unclipped content size and renders off-screen.
