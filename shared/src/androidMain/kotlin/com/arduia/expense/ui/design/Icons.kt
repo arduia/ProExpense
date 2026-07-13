@@ -90,8 +90,7 @@ private val categoryIconByCatalogueId: Map<String, ProIconGlyph> =
         "beauty" to ProIconGlyph.CatBeauty,
     )
 
-fun categoryIcon(categoryId: String): ProIconGlyph =
-    categoryIconByCatalogueId[categoryId] ?: ProIconGlyph.CatDefault
+fun categoryIcon(categoryId: String): ProIconGlyph = categoryIconByCatalogueId[categoryId] ?: ProIconGlyph.CatDefault
 
 @Composable
 fun ProIcon(
