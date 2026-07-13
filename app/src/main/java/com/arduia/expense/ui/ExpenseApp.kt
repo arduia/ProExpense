@@ -483,6 +483,7 @@ fun ExpenseApp(
                                 onSharedClick = { showSharedCosts = true },
                                 onPinClick = { showPinSetup = true },
                                 pinConfigured = pinConfigured,
+                                initialDisplayName = userName.ifBlank { null },
                                 onCurrencyChanged = { homeCurrencyCode = it.code },
                                 onBudgetChanged = { monthlyBudget = it },
                                 onDefaultCategoryChanged = { defaultCategoryId = it },
@@ -503,7 +504,7 @@ fun ExpenseApp(
                                 },
                                 onEventsClick = { onTabSelected(HomeNavTab.Budget) },
                                 onLogFirstExpense = { showQuickLog = true },
-                                onSeeAll = { selectedTab = HomeNavTab.Journal },
+                                onSeeAll = { onTabSelected(HomeNavTab.Journal) },
                                 onCustomizeQuickAccess = { showQuickAccessPicker = true },
                                 visibleTiles = quickAccessVisible,
                                 onRowClick = { row ->

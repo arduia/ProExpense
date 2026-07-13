@@ -48,6 +48,7 @@ fun DebtDetailScreen(
     onMore: () -> Unit,
     onEdit: () -> Unit,
     onMarkSettled: () -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier,
     backLabel: String = stringResource(R.string.debt_detail_back),
 ) {
@@ -111,28 +112,38 @@ fun DebtDetailScreen(
                 fillMaxWidth = true,
                 modifier = Modifier.weight(1f),
             )
-            ProButton(
-                text = stringResource(R.string.debt_mark_as_settled),
-                onClick = onMarkSettled,
-                variant =
-                    if (state.side == DebtSide.Lent) {
-                        ProButtonVariant.Success
-                    } else {
-                        ProButtonVariant.Danger
+            if (state.settled) {
+                ProButton(
+                    text = stringResource(R.string.debt_close),
+                    onClick = onClose,
+                    variant = ProButtonVariant.Secondary,
+                    size = ProButtonSize.Lg,
+                    fillMaxWidth = true,
+                    modifier = Modifier.weight(1f),
+                )
+            } else {
+                ProButton(
+                    text = stringResource(R.string.debt_mark_as_settled),
+                    onClick = onMarkSettled,
+                    variant =
+                        if (state.side == DebtSide.Lent) {
+                            ProButtonVariant.Success
+                        } else {
+                            ProButtonVariant.Danger
+                        },
+                    size = ProButtonSize.Lg,
+                    fillMaxWidth = true,
+                    leading = {
+                        ProIcon(
+                            glyph = ProIconGlyph.Check,
+                            contentDescription = null,
+                            tint = colors.onPrimaryWarm,
+                            size = dimens.iconInline,
+                        )
                     },
-                size = ProButtonSize.Lg,
-                fillMaxWidth = true,
-                enabled = !state.settled,
-                leading = {
-                    ProIcon(
-                        glyph = ProIconGlyph.Check,
-                        contentDescription = null,
-                        tint = colors.onPrimaryWarm,
-                        size = dimens.iconInline,
-                    )
-                },
-                modifier = Modifier.weight(1f),
-            )
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }
@@ -349,6 +360,7 @@ private fun DebtDetailLentPreview() {
             onMore = {},
             onEdit = {},
             onMarkSettled = {},
+            onClose = {},
         )
     }
 }
@@ -368,6 +380,27 @@ private fun DebtDetailOwePreview() {
             onMore = {},
             onEdit = {},
             onMarkSettled = {},
+            onClose = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Debt detail — settled",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun DebtDetailSettledPreview() {
+    ProExpenseTheme {
+        DebtDetailScreen(
+            state = previewDebtLentDetail.copy(settled = true, statusLabel = "Settled"),
+            onBack = {},
+            onMore = {},
+            onEdit = {},
+            onMarkSettled = {},
+            onClose = {},
         )
     }
 }

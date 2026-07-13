@@ -73,7 +73,10 @@ fun JournalFlow(
 
     // days/query/filter/date-range are hoisted to the caller (which owns the DB-backed pager) —
     // only transient sheet/dialog/detail-selection state stays local here.
-    var selectedRowId by rememberSaveable { mutableStateOf(initialSelectedRowId) }
+    // Keyed on initialSelectedRowId so a fresh navigation intent from the caller (e.g. "See all"
+    // clearing it to null) always wins over whatever this saveable slot restored from a prior
+    // mount of this same call site.
+    var selectedRowId by rememberSaveable(initialSelectedRowId) { mutableStateOf(initialSelectedRowId) }
     var quickNoteRow by remember { mutableStateOf<ProTransactionRowModel?>(null) }
     var quickNoteText by remember { mutableStateOf("") }
     var showActions by remember { mutableStateOf(false) }

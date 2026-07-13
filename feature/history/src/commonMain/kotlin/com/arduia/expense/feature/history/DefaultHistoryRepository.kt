@@ -10,7 +10,10 @@ import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.RecordKind
+import com.arduia.expense.domain.RecordKindFilter
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.kind
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -31,7 +34,7 @@ class DefaultHistoryRepository(
             is Result.Success -> {
                 val filtered =
                     result.data.filter { record ->
-                        (filter.categoryId == null || record.categoryId == filter.categoryId) &&
+                        matchesKindOrCategory(record, filter) &&
                             (filter.currency == null || record.money.currency == filter.currency) &&
                             (filter.fromEpochMillis == null || record.recordedAtEpochMillis >= filter.fromEpochMillis) &&
                             (filter.toEpochMillis == null || record.recordedAtEpochMillis <= filter.toEpochMillis) &&
@@ -77,6 +80,7 @@ class DefaultHistoryRepository(
             filter =
                 RecordPageFilter(
                     categoryId = filter.categoryId,
+                    kind = filter.kind,
                     fromEpochMillis = filter.fromEpochMillis,
                     toEpochMillis = filter.toEpochMillis,
                     query = filter.query,
@@ -115,5 +119,23 @@ class DefaultHistoryRepository(
                 start.toEpochMilliseconds() to end.toEpochMilliseconds()
             }
         }
+    }
+}
+
+/** Mirrors FinanceRecord.sq's `selectRecordsPage` reciprocal rule, for the in-memory getRecords path. */
+private fun matchesKindOrCategory(
+    record: FinanceRecord,
+    filter: RecordHistoryFilter,
+): Boolean {
+    val recordKind = record.kind()
+    return when (filter.kind) {
+        RecordKindFilter.SPLIT -> recordKind == RecordKind.SPLIT
+        RecordKindFilter.DEBT -> recordKind == RecordKind.DEBT_LENT || recordKind == RecordKind.DEBT_OWED
+        null ->
+            (filter.categoryId == null || record.categoryId == filter.categoryId) &&
+                (
+                    filter.categoryId == null ||
+                        recordKind !in setOf(RecordKind.SPLIT, RecordKind.DEBT_LENT, RecordKind.DEBT_OWED)
+                )
     }
 }

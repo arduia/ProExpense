@@ -3,6 +3,8 @@
     <string name="journal_title">မှတ်တမ်း</string>
     <string name="journal_search_placeholder">မှတ်ချက်၊ ပမာဏ၊ အမျိုးအစား ရှာဖွေရန်…</string>
     <string name="journal_filter_all">အားလုံး</string>
+    <string name="journal_filter_split">ခွဲဝေမှု</string>
+    <string name="journal_filter_debt">အကြွေး</string>
     <string name="journal_no_matches_title">တွေ့ရှိမှု မရှိပါ</string>
     <string name="journal_no_matches_body">\"%1$s\" အတွက် ရှာမတွေ့ပါ။ အခြားစကားလုံး၊ ပမာဏ သို့မဟုတ် မှတ်ချက်ဖြင့် စမ်းကြည့်ပါ။</string>
     <string name="journal_detail_back">မှတ်တမ်း</string>

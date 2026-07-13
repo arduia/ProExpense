@@ -21,6 +21,7 @@
 <string name="debt_reference_only">ใช้อ้างอิงเท่านั้น</string>
 <string name="debt_edit">แก้ไข</string>
 <string name="debt_mark_as_settled">ทำเครื่องหมายว่าชำระแล้ว</string>
+<string name="debt_close">ปิด</string>
 <string name="debt_new_record">รายการใหม่</string>
 <string name="debt_edit_record">แก้ไขรายการ</string>
 <string name="debt_person_label">บุคคล</string>

@@ -6,12 +6,15 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
+import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.RecordKindFilter
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SharedCostId
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -368,6 +371,76 @@ class SqlDelightFinanceRecordRepositoryTest {
 
             assertTrue(page is Result.Success)
             assertEquals(listOf("rec-food"), page.data.map { it.id.value })
+        }
+
+    @Test
+    fun getRecordsPage_kindSplit_returnsOnlySharedCostLinkedRecords() =
+        runTest {
+            val repo = repository()
+            repo.upsert(record("rec-food", categoryId = "shopping", recordedAtEpochMillis = 1_000))
+            repo.upsert(
+                record(
+                    "rec-split",
+                    link = RecordLink.ToSharedCost(SharedCostId("split-1")),
+                    categoryId = "shopping",
+                    recordedAtEpochMillis = 2_000,
+                ),
+            )
+
+            val page = repo.getRecordsPage(filter = RecordPageFilter(kind = RecordKindFilter.SPLIT), limit = 10)
+
+            assertTrue(page is Result.Success)
+            assertEquals(listOf("rec-split"), page.data.map { it.id.value })
+        }
+
+    @Test
+    fun getRecordsPage_kindDebt_excludesRegularExpenseManuallyTaggedToADebt() =
+        runTest {
+            val repo = repository()
+            // The debt's own bookkeeping record: tag_id equals the record's own id.
+            repo.upsert(
+                record(
+                    "debt-1",
+                    link = RecordLink.ToDebt(DebtId("debt-1")),
+                    categoryId = "shopping",
+                    recordedAtEpochMillis = 1_000,
+                ),
+            )
+            // An unrelated expense the user manually tagged to that debt via the @ picker — same
+            // tag_type/tag_id shape, but NOT the debt's own record (RecordKind.kind() rule).
+            repo.upsert(
+                record(
+                    "rec-tagged",
+                    link = RecordLink.ToDebt(DebtId("debt-1")),
+                    categoryId = "food",
+                    recordedAtEpochMillis = 2_000,
+                ),
+            )
+
+            val page = repo.getRecordsPage(filter = RecordPageFilter(kind = RecordKindFilter.DEBT), limit = 10)
+
+            assertTrue(page is Result.Success)
+            assertEquals(listOf("debt-1"), page.data.map { it.id.value })
+        }
+
+    @Test
+    fun getRecordsPage_categoryFilter_excludesSplitAndDebtSentinelCategoryRecords() =
+        runTest {
+            val repo = repository()
+            repo.upsert(record("rec-shopping", categoryId = "shopping", recordedAtEpochMillis = 1_000))
+            repo.upsert(
+                record(
+                    "rec-split",
+                    link = RecordLink.ToSharedCost(SharedCostId("split-1")),
+                    categoryId = "shopping",
+                    recordedAtEpochMillis = 2_000,
+                ),
+            )
+
+            val page = repo.getRecordsPage(filter = RecordPageFilter(categoryId = CategoryId("shopping")), limit = 10)
+
+            assertTrue(page is Result.Success)
+            assertEquals(listOf("rec-shopping"), page.data.map { it.id.value })
         }
 
     @Test

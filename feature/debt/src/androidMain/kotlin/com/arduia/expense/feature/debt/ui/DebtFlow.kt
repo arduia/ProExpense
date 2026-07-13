@@ -164,6 +164,15 @@ fun DebtFlow(
                     onBack = onDismiss,
                 )
             } else {
+                // "Close" (shown once the debt is settled) navigates back exactly like the top
+                // bar's back action — there's nothing left to settle, so it's the same exit.
+                val navigateBack = {
+                    if (onDeepLinkBack != null && recordId == initialSelectedRecordId) {
+                        onDeepLinkBack()
+                    } else {
+                        selectedRecordId = null
+                    }
+                }
                 DebtDetailScreen(
                     state = detailStateFor(recordId, side, listState),
                     backLabel =
@@ -172,13 +181,8 @@ fun DebtFlow(
                         } else {
                             stringResource(R.string.debt_detail_back)
                         },
-                    onBack = {
-                        if (onDeepLinkBack != null && recordId == initialSelectedRecordId) {
-                            onDeepLinkBack()
-                        } else {
-                            selectedRecordId = null
-                        }
-                    },
+                    onBack = navigateBack,
+                    onClose = navigateBack,
                     onMore = {},
                     onEdit = {
                         val record = (listState.active + listState.settled).firstOrNull { it.id == recordId }

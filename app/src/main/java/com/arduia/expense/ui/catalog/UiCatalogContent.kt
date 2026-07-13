@@ -511,10 +511,10 @@ fun uiCatalogSections(): List<UiCatalogSection> =
                         }
                     },
                     UiCatalogEntry("debt_lent_detail", "Detail · lent") {
-                        DebtDetailScreen(previewDebtLentDetail, {}, {}, {}, {})
+                        DebtDetailScreen(previewDebtLentDetail, {}, {}, {}, {}, {})
                     },
                     UiCatalogEntry("debt_owe_detail", "Detail · owe") {
-                        DebtDetailScreen(previewDebtOweDetail, {}, {}, {}, {})
+                        DebtDetailScreen(previewDebtOweDetail, {}, {}, {}, {}, {})
                     },
                     UiCatalogEntry("debt_conflict", "Opposite-side warning", edge = true) {
                         Box(Modifier.fillMaxSize()) {

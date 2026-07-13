@@ -131,6 +131,7 @@ class SqlDelightFinanceRecordRepository(
                 queries
                     .selectRecordsPage(
                         categoryId = filter.categoryId?.value,
+                        kind = filter.kind?.name,
                         fromMillis = filter.fromEpochMillis,
                         toMillis = filter.toEpochMillis,
                         query = filter.query?.takeIf { it.isNotBlank() },

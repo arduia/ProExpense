@@ -49,9 +49,21 @@ UPDATE finance_record SET tag_type = NULL, tag_id = NULL WHERE tag_type = ?;
 -- Keyset ("cursor") pagination: beforeRecordedAt/beforeId NULL selects the first page. Filters are
 -- pushed down to SQL (each `:x IS NULL OR ...` clause turns off the corresponding predicate) so
 -- Journal never has to load or scan the full table client-side.
+-- `kind` ('SPLIT'/'DEBT') takes over from `categoryId` entirely — Split/Debt records are
+-- bookkeeped under a sentinel category id, not a real user category. When `kind` is NULL and
+-- `categoryId` is set, Split/Debt records are excluded even though they share that sentinel
+-- category id, so picking a real category (e.g. "Shopping") never pulls in Splits/Debts too.
 selectRecordsPage:
 SELECT * FROM finance_record
-WHERE (:categoryId IS NULL OR category_id = :categoryId)
+WHERE (
+    (
+      :kind IS NULL
+      AND (:categoryId IS NULL OR category_id = :categoryId)
+      AND (:categoryId IS NULL OR (tag_type IS NOT 'SHARED_COST' AND (tag_type IS NOT 'DEBT' OR tag_id IS NOT id)))
+    )
+    OR (:kind = 'SPLIT' AND tag_type = 'SHARED_COST')
+    OR (:kind = 'DEBT' AND tag_type = 'DEBT' AND tag_id = id)
+  )
   AND (:fromMillis IS NULL OR recorded_at >= :fromMillis)
   AND (:toMillis IS NULL OR recorded_at <= :toMillis)
   AND (:query IS NULL OR note LIKE '%' || :query || '%')
