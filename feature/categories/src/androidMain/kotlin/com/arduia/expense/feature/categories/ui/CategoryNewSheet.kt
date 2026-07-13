@@ -1,13 +1,14 @@
 package com.arduia.expense.feature.categories.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,17 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.categories.R
@@ -55,6 +49,7 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 
 private val categoryTypeOptions = listOf(RecordType.EXPENSE, RecordType.INCOME)
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CategoryNewSheetContent(
     form: CategoryNewFormState,
@@ -152,14 +147,9 @@ fun CategoryNewSheetContent(
                 style = typography.bodyMedium,
                 color = colors.onSurfaceMuted,
             )
-            val iconScrollState = rememberScrollState()
-            Row(
-                modifier =
-                    Modifier
-                        .horizontalFadingEdge(iconScrollState, dimens.space24)
-                        .horizontalScroll(iconScrollState),
-                verticalAlignment = Alignment.CenterVertically,
+            FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(dimens.space10),
+                verticalArrangement = Arrangement.spacedBy(dimens.space10),
             ) {
                 form.iconOptions.forEach { iconId ->
                     CategoryIconTile(
@@ -203,43 +193,6 @@ fun CategoryNewSheetContent(
         )
     }
 }
-
-/**
- * A hard clip at a scrollable row's edge reads as broken/cut-off content rather than "swipe for
- * more" — fade the edge's alpha instead so overflow reads as an intentional affordance.
- */
-private fun Modifier.horizontalFadingEdge(
-    scrollState: ScrollState,
-    edgeWidth: Dp,
-): Modifier =
-    this
-        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-        .drawWithContent {
-            drawContent()
-            val edgeWidthPx = edgeWidth.toPx()
-            if (scrollState.value > 0) {
-                drawRect(
-                    brush =
-                        Brush.horizontalGradient(
-                            listOf(Color.Transparent, Color.Black),
-                            startX = 0f,
-                            endX = edgeWidthPx,
-                        ),
-                    blendMode = BlendMode.DstIn,
-                )
-            }
-            if (scrollState.value < scrollState.maxValue) {
-                drawRect(
-                    brush =
-                        Brush.horizontalGradient(
-                            listOf(Color.Black, Color.Transparent),
-                            startX = size.width - edgeWidthPx,
-                            endX = size.width,
-                        ),
-                    blendMode = BlendMode.DstIn,
-                )
-            }
-        }
 
 @Composable
 private fun CategoryIconTile(
