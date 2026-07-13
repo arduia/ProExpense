@@ -105,6 +105,31 @@ class SharedCostsDeepLinkAndNewSplitTest {
     }
 
     @Test
+    fun deepLinkedSummary_neverRendersHistoryListDuringTransition() {
+        rule.mainClock.autoAdvance = false
+        rule.setContent {
+            ProExpenseTheme {
+                SharedCostsFlow(
+                    onDismiss = {},
+                    history = listOf(historyItem),
+                    sharedCostDetails = mapOf(historyItem.id to historyDetail),
+                    initialViewingId = historyItem.id,
+                )
+            }
+        }
+
+        // AnimatedContent's exiting placeholder frame is composed multiple times while it fades
+        // out (Compose re-runs the content lambda for the outgoing step on every recomposition,
+        // not just once) — step frame-by-frame through the whole History→Summary crossfade
+        // (280ms screen + 200ms fade) and confirm the real split-history list (title "Shared
+        // Costs", row title "Airbnb weekend") never renders, even mid-transition.
+        repeat(30) {
+            rule.mainClock.advanceTimeByFrame()
+            rule.onNodeWithText("Shared Costs").assertDoesNotExist()
+        }
+    }
+
+    @Test
     fun startAtNewSplit_rendersInputScreenDirectly() {
         rule.setContent {
             ProExpenseTheme {

@@ -38,6 +38,12 @@ import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
 
 private enum class SharedCostStep {
+    // Deep-link placeholder while initialViewingId's detail is still loading — a distinct step
+    // (not a boolean read inside History's branch) so AnimatedContent's exiting content can never
+    // flip to the real list mid-transition: Compose recomposes an exiting AnimatedContent slot
+    // using its live captured `target`, so a boolean gate read from *ambient* state inside a
+    // History branch would still see the gate flip and render the real list while fading out.
+    Loading,
     History,
     Input,
     Summary,
@@ -214,7 +220,12 @@ fun SharedCostsFlow(
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
-    val startStep = if (startAtNewSplit) SharedCostStep.Input else SharedCostStep.History
+    val startStep =
+        when {
+            startAtNewSplit -> SharedCostStep.Input
+            initialViewingId != null -> SharedCostStep.Loading
+            else -> SharedCostStep.History
+        }
     val nameTemplate = stringResource(R.string.shared_default_person_name)
     val firstPersonName = stringResource(R.string.shared_default_person_you)
 
@@ -332,6 +343,9 @@ fun SharedCostsFlow(
             SharedCostStep.History -> {
                 onDismiss()
             }
+            SharedCostStep.Loading -> {
+                onDeepLinkBack?.invoke() ?: onDismiss()
+            }
         }
     }
 
@@ -353,41 +367,43 @@ fun SharedCostsFlow(
             label = "sharedCostStep",
         ) { target ->
             when (target) {
-                SharedCostStep.History -> {
+                SharedCostStep.Loading -> {
                     // A Split-kind row tapped from Recents/Journal deep-links straight past
                     // History — sharedCostDetails loads asynchronously (collectAsState(initial =
                     // null) upstream) and is empty for at least the first frame, so this step
-                    // would otherwise flash the History/list screen before the effect above
-                    // resolves and jumps to Summary. A blank frame reads as loading; showing
-                    // History even briefly reads as "wrong screen, why am I here."
-                    if (initialViewingId != null && !hasAppliedInitialViewing) {
-                        Box(modifier = Modifier.fillMaxSize().background(colors.paper))
-                    } else {
-                        SharedCostsHistoryScreen(
-                            items = history,
-                            isLoading = isLoading,
-                            onNewSplit = {
-                                // Not seeding via withParticipants() here — see the initial `draft`
-                                // declaration above for why an empty-total seed would stick forever.
-                                viewingId = null
-                                draft = SharedCostDraft()
+                    // exists purely as a placeholder until the effect above resolves and jumps to
+                    // Summary. A blank frame reads as loading; showing History even briefly reads
+                    // as "wrong screen, why am I here." This must be its own step (not a boolean
+                    // branch inside History) — AnimatedContent keeps recomposing the exiting
+                    // slot's content against live state while it fades out, so a boolean gate
+                    // would flip and reveal the real list mid-transition instead of staying blank.
+                    Box(modifier = Modifier.fillMaxSize().background(colors.paper))
+                }
+                SharedCostStep.History -> {
+                    SharedCostsHistoryScreen(
+                        items = history,
+                        isLoading = isLoading,
+                        onNewSplit = {
+                            // Not seeding via withParticipants() here — see the initial `draft`
+                            // declaration above for why an empty-total seed would stick forever.
+                            viewingId = null
+                            draft = SharedCostDraft()
+                            visitedIndices = emptySet()
+                            isSummaryReadOnly = false
+                            step = SharedCostStep.Input.name
+                        },
+                        onItemClick = { item ->
+                            sharedCostDetails[item.id]?.let { detail ->
+                                viewingId = item.id
+                                draft = detail.toDraft(nameTemplate, firstPersonName)
                                 visitedIndices = emptySet()
-                                isSummaryReadOnly = false
-                                step = SharedCostStep.Input.name
-                            },
-                            onItemClick = { item ->
-                                sharedCostDetails[item.id]?.let { detail ->
-                                    viewingId = item.id
-                                    draft = detail.toDraft(nameTemplate, firstPersonName)
-                                    visitedIndices = emptySet()
-                                    isSummaryReadOnly = true
-                                    step = SharedCostStep.Summary.name
-                                }
-                            },
-                            onBack = onDismiss,
-                            onDeleteRequested = { deleteTarget = it },
-                        )
-                    }
+                                isSummaryReadOnly = true
+                                step = SharedCostStep.Summary.name
+                            }
+                        },
+                        onBack = onDismiss,
+                        onDeleteRequested = { deleteTarget = it },
+                    )
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(
