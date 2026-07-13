@@ -133,7 +133,7 @@ fun CategoryListFlow(
                                     (
                                         listOf(currentIconId) +
                                             CategoryNewFormState().iconOptions
-                                    ).distinct().take(4),
+                                    ).distinct(),
                                 selectedColorId = row.colorId.ifBlank { "other" },
                                 type = row.type,
                             )

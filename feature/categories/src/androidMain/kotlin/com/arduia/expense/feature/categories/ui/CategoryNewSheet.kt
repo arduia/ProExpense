@@ -138,21 +138,24 @@ fun CategoryNewSheetContent(
             }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimens.space12),
-        ) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
             Text(
                 text = stringResource(R.string.categories_icon_label),
                 style = typography.bodyMedium,
                 color = colors.onSurfaceMuted,
             )
-            form.iconOptions.forEach { iconId ->
-                CategoryIconTile(
-                    iconId = iconId,
-                    selected = iconId == form.selectedIconId,
-                    onClick = { onIconSelected(iconId) },
-                )
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimens.space10),
+            ) {
+                form.iconOptions.forEach { iconId ->
+                    CategoryIconTile(
+                        iconId = iconId,
+                        selected = iconId == form.selectedIconId,
+                        onClick = { onIconSelected(iconId) },
+                    )
+                }
             }
         }
 

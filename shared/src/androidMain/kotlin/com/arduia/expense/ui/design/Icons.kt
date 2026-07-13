@@ -51,21 +51,47 @@ enum class ProIconGlyph(
     CatEntertainment(R.drawable.ic_cat_entertainment),
     CatCoffee(R.drawable.ic_cat_coffee),
     CatPet(R.drawable.ic_cat_pet),
+    CatHome(R.drawable.ic_cat_home),
+    CatEducation(R.drawable.ic_cat_education),
+    CatTravel(R.drawable.ic_cat_travel),
+    CatFitness(R.drawable.ic_cat_fitness),
+    CatSubscription(R.drawable.ic_cat_subscription),
+    CatGift(R.drawable.ic_cat_gift),
+    CatInsurance(R.drawable.ic_cat_insurance),
+    CatUtilities(R.drawable.ic_cat_utilities),
+    CatFamily(R.drawable.ic_cat_family),
+    CatSalary(R.drawable.ic_cat_salary),
+    CatSavings(R.drawable.ic_cat_savings),
+    CatBeauty(R.drawable.ic_cat_beauty),
     CatDefault(R.drawable.ic_cat_default),
 }
 
+private val categoryIconByCatalogueId: Map<String, ProIconGlyph> =
+    mapOf(
+        "food" to ProIconGlyph.CatFood,
+        "transport" to ProIconGlyph.CatTransport,
+        "shopping" to ProIconGlyph.CatShopping,
+        "bills" to ProIconGlyph.CatBills,
+        "health" to ProIconGlyph.CatHealth,
+        "entertainment" to ProIconGlyph.CatEntertainment,
+        "coffee" to ProIconGlyph.CatCoffee,
+        "pet" to ProIconGlyph.CatPet,
+        "home" to ProIconGlyph.CatHome,
+        "education" to ProIconGlyph.CatEducation,
+        "travel" to ProIconGlyph.CatTravel,
+        "fitness" to ProIconGlyph.CatFitness,
+        "subscription" to ProIconGlyph.CatSubscription,
+        "gift" to ProIconGlyph.CatGift,
+        "insurance" to ProIconGlyph.CatInsurance,
+        "utilities" to ProIconGlyph.CatUtilities,
+        "family" to ProIconGlyph.CatFamily,
+        "salary" to ProIconGlyph.CatSalary,
+        "savings" to ProIconGlyph.CatSavings,
+        "beauty" to ProIconGlyph.CatBeauty,
+    )
+
 fun categoryIcon(categoryId: String): ProIconGlyph =
-    when (categoryId) {
-        "food" -> ProIconGlyph.CatFood
-        "transport" -> ProIconGlyph.CatTransport
-        "shopping" -> ProIconGlyph.CatShopping
-        "bills" -> ProIconGlyph.CatBills
-        "health" -> ProIconGlyph.CatHealth
-        "entertainment" -> ProIconGlyph.CatEntertainment
-        "coffee" -> ProIconGlyph.CatCoffee
-        "pet" -> ProIconGlyph.CatPet
-        else -> ProIconGlyph.CatDefault
-    }
+    categoryIconByCatalogueId[categoryId] ?: ProIconGlyph.CatDefault
 
 @Composable
 fun ProIcon(

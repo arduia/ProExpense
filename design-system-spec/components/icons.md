@@ -7,7 +7,9 @@ One stroke-based set on a **24×24 grid**, **1.6dp** stroke (2.0–2.4 when acti
 ## Groups
 - **Navigation & chrome:** `home` `budget` `journal` `more` `plus` `minus` `back` `close` `chevron-down` `chevron-right` `search` `bell` `check`
 - **Detail & meta:** `sparkle` `at` `calendar` `clock` `note` `user` `eye` `fingerprint`
-- **Categories:** `cat-food` `cat-transport` `cat-shopping` `cat-bills` `cat-health` `cat-entertainment` `cat-coffee` `cat-pet` `cat-default`
+- **Categories:** `cat-food` `cat-transport` `cat-shopping` `cat-bills` `cat-health` `cat-entertainment` `cat-coffee` `cat-pet`
+  `cat-home` `cat-education` `cat-travel` `cat-fitness` `cat-subscription` `cat-gift` `cat-insurance` `cat-utilities`
+  `cat-family` `cat-salary` `cat-savings` `cat-beauty` `cat-default`
 - **Feature shortcuts:** `feat-reports` `feat-debt` `feat-split` `feat-events`
 
 ## Rules
