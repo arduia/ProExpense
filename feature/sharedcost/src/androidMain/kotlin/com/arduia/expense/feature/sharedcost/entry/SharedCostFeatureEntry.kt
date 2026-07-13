@@ -38,6 +38,11 @@ interface SharedCostFeatureEntry {
         deepLinkBackLabel: String? = null,
         onDeepLinkBack: (() -> Unit)? = null,
         startAtNewSplit: Boolean = false,
+        // Caller (ExpenseApp) already has this from its own long-lived observeAll() collection —
+        // seeds this composable's own collector so a Journal/Home deep link into a split that's
+        // already loaded skips the Loading placeholder entirely instead of re-waiting on a fresh
+        // Flow emission it already has the answer to.
+        preloadedSharedCosts: List<SharedCost> = emptyList(),
     )
 }
 
@@ -52,6 +57,7 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         deepLinkBackLabel: String?,
         onDeepLinkBack: (() -> Unit)?,
         startAtNewSplit: Boolean,
+        preloadedSharedCosts: List<SharedCost>,
     ) {
         val scope = rememberCoroutineScope()
         val sharedCostRepository: SharedCostRepository = koinInject()
@@ -62,8 +68,11 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
         val variesLabel = stringResource(R.string.shared_per_person_varies)
 
         // null (not emptyList()) until the first Flow emission arrives, so the history list
-        // doesn't flash "No splits yet" before real data has had a chance to load.
-        val sharedCostsOrNull by sharedCostRepository.observeAll().collectAsState(initial = null)
+        // doesn't flash "No splits yet" before real data has had a chance to load. Seeded from
+        // preloadedSharedCosts when the caller already has it — this composable's own
+        // observeAll() still takes over on the very next emission, so it stays live either way.
+        val sharedCostsOrNull by
+            sharedCostRepository.observeAll().collectAsState(initial = preloadedSharedCosts.ifEmpty { null })
         val isLoading = sharedCostsOrNull == null
         val sharedCosts = sharedCostsOrNull.orEmpty()
 
