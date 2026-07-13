@@ -220,14 +220,23 @@ fun SharedCostsFlow(
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
+    val nameTemplate = stringResource(R.string.shared_default_person_name)
+    val firstPersonName = stringResource(R.string.shared_default_person_you)
+
+    // When the caller already has this split's detail on the very first composition (the
+    // common case now that ExpenseApp preloads sharedCostDetails), skip the Loading step
+    // entirely and land directly on Summary — otherwise even an instantly resolved deep link
+    // still plays the Loading→Summary crossfade animation (slide + fade, ~½s) before showing
+    // real content, which itself reads as a blank-screen glitch. Loading stays reachable for a
+    // genuine async wait (detail not loaded yet).
+    val initialDetail = initialViewingId?.let { sharedCostDetails[it] }
     val startStep =
         when {
             startAtNewSplit -> SharedCostStep.Input
+            initialDetail != null -> SharedCostStep.Summary
             initialViewingId != null -> SharedCostStep.Loading
             else -> SharedCostStep.History
         }
-    val nameTemplate = stringResource(R.string.shared_default_person_name)
-    val firstPersonName = stringResource(R.string.shared_default_person_you)
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     // Not seeding via withParticipants() here: rawTotal is empty at this point, and
@@ -235,14 +244,14 @@ fun SharedCostsFlow(
     // early seed off an empty/zero total would freeze custom shares at "0" forever, never
     // reflecting the total once it's actually entered. onConfirmAmount seeds for real.
     var draft by rememberSaveable(stateSaver = SharedCostDraftSaver) {
-        mutableStateOf(SharedCostDraft())
+        mutableStateOf(initialDetail?.toDraft(nameTemplate, firstPersonName) ?: SharedCostDraft())
     }
-    var viewingId by remember { mutableStateOf<String?>(null) }
+    var viewingId by remember { mutableStateOf(if (initialDetail != null) initialViewingId else null) }
     // Read-only only while browsing an already-saved split straight from History/a deep link,
     // without edit intent — `viewingId` alone can't drive this, since editing an existing split
     // (Actions sheet → Edit → Input → Continue) still needs `viewingId` set for onSave/back
     // navigation but must land back on an editable Summary (Save button), not the read-only one.
-    var isSummaryReadOnly by remember { mutableStateOf(false) }
+    var isSummaryReadOnly by remember { mutableStateOf(initialDetail != null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
     var archiveTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
@@ -268,8 +277,10 @@ fun SharedCostsFlow(
     // sharedCostDetails loads asynchronously (Flow-backed) — waits for initialViewingId's detail
     // to actually arrive rather than seeding off a still-empty map on the first frame. Guarded by
     // hasAppliedInitialViewing so this fires once, not every time sharedCostDetails refreshes
-    // (the user may navigate back to History afterward without snapping back to Summary).
-    var hasAppliedInitialViewing by rememberSaveable { mutableStateOf(false) }
+    // (the user may navigate back to History afterward without snapping back to Summary). Seeded
+    // to true when initialDetail already resolved the deep link at mount, so this effect is a
+    // no-op rather than redoing (and re-flagging as "just visited") work already done above.
+    var hasAppliedInitialViewing by rememberSaveable { mutableStateOf(initialDetail != null) }
     LaunchedEffect(initialViewingId, sharedCostDetails) {
         if (hasAppliedInitialViewing || initialViewingId == null) return@LaunchedEffect
         val detail = sharedCostDetails[initialViewingId] ?: return@LaunchedEffect

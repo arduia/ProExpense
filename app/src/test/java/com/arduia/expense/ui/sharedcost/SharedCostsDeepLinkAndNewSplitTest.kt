@@ -130,6 +130,28 @@ class SharedCostsDeepLinkAndNewSplitTest {
     }
 
     @Test
+    fun deepLinkedSummary_alreadyLoaded_rendersAtRestWithoutAnyCrossfadeAnimation() {
+        rule.mainClock.autoAdvance = false
+        rule.setContent {
+            ProExpenseTheme {
+                SharedCostsFlow(
+                    onDismiss = {},
+                    history = listOf(historyItem),
+                    sharedCostDetails = mapOf(historyItem.id to historyDetail),
+                    initialViewingId = historyItem.id,
+                )
+            }
+        }
+
+        // sharedCostDetails already has this split's detail at mount, so the flow must start
+        // directly on Summary (no Loading step, no History→Summary transition to animate). If it
+        // instead started on Loading and animated over to Summary, Summary's content would still
+        // be mid-slide (translated off the visible viewport by the forward-transition's
+        // slideInHorizontally) at this frozen first frame, and this assertion would fail.
+        rule.onNodeWithText("Airbnb weekend").assertIsDisplayed()
+    }
+
+    @Test
     fun startAtNewSplit_rendersInputScreenDirectly() {
         rule.setContent {
             ProExpenseTheme {
