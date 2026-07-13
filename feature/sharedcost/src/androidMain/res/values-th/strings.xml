@@ -24,6 +24,8 @@
     <string name="shared_back_more">เพิ่มเติม</string>
     <string name="shared_back_split">หาร</string>
     <string name="shared_back_history">ประวัติ</string>
+    <string name="shared_back_journal">บันทึก</string>
+    <string name="shared_back_home">หน้าหลัก</string>
     <string name="shared_note_placeholder">มื้อเย็นที่ Nobu</string>
     <string name="shared_split_default_title">การหารค่าใช้จ่าย</string>
     <string name="shared_people_word">คน</string>

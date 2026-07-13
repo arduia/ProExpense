@@ -625,6 +625,7 @@ fun ExpenseApp(
                             }
                         },
                     startAtNewSplit = sharedCostStartAtNewSplit,
+                    preloadedSharedCosts = sharedCosts,
                 )
             }
 

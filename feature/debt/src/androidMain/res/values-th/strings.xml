@@ -2,6 +2,8 @@
 <string name="debt_title">หนี้สิน</string>
 <string name="debt_back_more">เพิ่มเติม</string>
 <string name="debt_detail_back">หนี้สิน</string>
+<string name="debt_back_journal">บันทึก</string>
+<string name="debt_back_home">หน้าหลัก</string>
 <string name="debt_tab_lent">ฉันให้ยืม</string>
 <string name="debt_tab_owe">ฉันเป็นหนี้</string>
 <string name="debt_youre_owed">ที่ต้องได้รับคืน</string>

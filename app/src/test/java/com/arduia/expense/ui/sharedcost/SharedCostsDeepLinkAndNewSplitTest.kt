@@ -105,6 +105,53 @@ class SharedCostsDeepLinkAndNewSplitTest {
     }
 
     @Test
+    fun deepLinkedSummary_neverRendersHistoryListDuringTransition() {
+        rule.mainClock.autoAdvance = false
+        rule.setContent {
+            ProExpenseTheme {
+                SharedCostsFlow(
+                    onDismiss = {},
+                    history = listOf(historyItem),
+                    sharedCostDetails = mapOf(historyItem.id to historyDetail),
+                    initialViewingId = historyItem.id,
+                )
+            }
+        }
+
+        // AnimatedContent's exiting placeholder frame is composed multiple times while it fades
+        // out (Compose re-runs the content lambda for the outgoing step on every recomposition,
+        // not just once) — step frame-by-frame through the whole History→Summary crossfade
+        // (280ms screen + 200ms fade) and confirm the real split-history list (title "Shared
+        // Costs", row title "Airbnb weekend") never renders, even mid-transition.
+        repeat(30) {
+            rule.mainClock.advanceTimeByFrame()
+            rule.onNodeWithText("Shared Costs").assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun deepLinkedSummary_alreadyLoaded_rendersAtRestWithoutAnyCrossfadeAnimation() {
+        rule.mainClock.autoAdvance = false
+        rule.setContent {
+            ProExpenseTheme {
+                SharedCostsFlow(
+                    onDismiss = {},
+                    history = listOf(historyItem),
+                    sharedCostDetails = mapOf(historyItem.id to historyDetail),
+                    initialViewingId = historyItem.id,
+                )
+            }
+        }
+
+        // sharedCostDetails already has this split's detail at mount, so the flow must start
+        // directly on Summary (no Loading step, no History→Summary transition to animate). If it
+        // instead started on Loading and animated over to Summary, Summary's content would still
+        // be mid-slide (translated off the visible viewport by the forward-transition's
+        // slideInHorizontally) at this frozen first frame, and this assertion would fail.
+        rule.onNodeWithText("Airbnb weekend").assertIsDisplayed()
+    }
+
+    @Test
     fun startAtNewSplit_rendersInputScreenDirectly() {
         rule.setContent {
             ProExpenseTheme {

@@ -38,6 +38,12 @@ import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.stepTransition
 
 private enum class SharedCostStep {
+    // Deep-link placeholder while initialViewingId's detail is still loading — a distinct step
+    // (not a boolean read inside History's branch) so AnimatedContent's exiting content can never
+    // flip to the real list mid-transition: Compose recomposes an exiting AnimatedContent slot
+    // using its live captured `target`, so a boolean gate read from *ambient* state inside a
+    // History branch would still see the gate flip and render the real list while fading out.
+    Loading,
     History,
     Input,
     Summary,
@@ -214,9 +220,23 @@ fun SharedCostsFlow(
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
-    val startStep = if (startAtNewSplit) SharedCostStep.Input else SharedCostStep.History
     val nameTemplate = stringResource(R.string.shared_default_person_name)
     val firstPersonName = stringResource(R.string.shared_default_person_you)
+
+    // When the caller already has this split's detail on the very first composition (the
+    // common case now that ExpenseApp preloads sharedCostDetails), skip the Loading step
+    // entirely and land directly on Summary — otherwise even an instantly resolved deep link
+    // still plays the Loading→Summary crossfade animation (slide + fade, ~½s) before showing
+    // real content, which itself reads as a blank-screen glitch. Loading stays reachable for a
+    // genuine async wait (detail not loaded yet).
+    val initialDetail = initialViewingId?.let { sharedCostDetails[it] }
+    val startStep =
+        when {
+            startAtNewSplit -> SharedCostStep.Input
+            initialDetail != null -> SharedCostStep.Summary
+            initialViewingId != null -> SharedCostStep.Loading
+            else -> SharedCostStep.History
+        }
 
     var step by rememberSaveable { mutableStateOf(startStep.name) }
     // Not seeding via withParticipants() here: rawTotal is empty at this point, and
@@ -224,14 +244,14 @@ fun SharedCostsFlow(
     // early seed off an empty/zero total would freeze custom shares at "0" forever, never
     // reflecting the total once it's actually entered. onConfirmAmount seeds for real.
     var draft by rememberSaveable(stateSaver = SharedCostDraftSaver) {
-        mutableStateOf(SharedCostDraft())
+        mutableStateOf(initialDetail?.toDraft(nameTemplate, firstPersonName) ?: SharedCostDraft())
     }
-    var viewingId by remember { mutableStateOf<String?>(null) }
+    var viewingId by remember { mutableStateOf(if (initialDetail != null) initialViewingId else null) }
     // Read-only only while browsing an already-saved split straight from History/a deep link,
     // without edit intent — `viewingId` alone can't drive this, since editing an existing split
     // (Actions sheet → Edit → Input → Continue) still needs `viewingId` set for onSave/back
     // navigation but must land back on an editable Summary (Save button), not the read-only one.
-    var isSummaryReadOnly by remember { mutableStateOf(false) }
+    var isSummaryReadOnly by remember { mutableStateOf(initialDetail != null) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var deleteTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
     var archiveTarget by remember { mutableStateOf<SharedCostHistoryItemUi?>(null) }
@@ -257,8 +277,10 @@ fun SharedCostsFlow(
     // sharedCostDetails loads asynchronously (Flow-backed) — waits for initialViewingId's detail
     // to actually arrive rather than seeding off a still-empty map on the first frame. Guarded by
     // hasAppliedInitialViewing so this fires once, not every time sharedCostDetails refreshes
-    // (the user may navigate back to History afterward without snapping back to Summary).
-    var hasAppliedInitialViewing by rememberSaveable { mutableStateOf(false) }
+    // (the user may navigate back to History afterward without snapping back to Summary). Seeded
+    // to true when initialDetail already resolved the deep link at mount, so this effect is a
+    // no-op rather than redoing (and re-flagging as "just visited") work already done above.
+    var hasAppliedInitialViewing by rememberSaveable { mutableStateOf(initialDetail != null) }
     LaunchedEffect(initialViewingId, sharedCostDetails) {
         if (hasAppliedInitialViewing || initialViewingId == null) return@LaunchedEffect
         val detail = sharedCostDetails[initialViewingId] ?: return@LaunchedEffect
@@ -332,6 +354,9 @@ fun SharedCostsFlow(
             SharedCostStep.History -> {
                 onDismiss()
             }
+            SharedCostStep.Loading -> {
+                onDeepLinkBack?.invoke() ?: onDismiss()
+            }
         }
     }
 
@@ -353,41 +378,43 @@ fun SharedCostsFlow(
             label = "sharedCostStep",
         ) { target ->
             when (target) {
-                SharedCostStep.History -> {
+                SharedCostStep.Loading -> {
                     // A Split-kind row tapped from Recents/Journal deep-links straight past
                     // History — sharedCostDetails loads asynchronously (collectAsState(initial =
                     // null) upstream) and is empty for at least the first frame, so this step
-                    // would otherwise flash the History/list screen before the effect above
-                    // resolves and jumps to Summary. A blank frame reads as loading; showing
-                    // History even briefly reads as "wrong screen, why am I here."
-                    if (initialViewingId != null && !hasAppliedInitialViewing) {
-                        Box(modifier = Modifier.fillMaxSize().background(colors.paper))
-                    } else {
-                        SharedCostsHistoryScreen(
-                            items = history,
-                            isLoading = isLoading,
-                            onNewSplit = {
-                                // Not seeding via withParticipants() here — see the initial `draft`
-                                // declaration above for why an empty-total seed would stick forever.
-                                viewingId = null
-                                draft = SharedCostDraft()
+                    // exists purely as a placeholder until the effect above resolves and jumps to
+                    // Summary. A blank frame reads as loading; showing History even briefly reads
+                    // as "wrong screen, why am I here." This must be its own step (not a boolean
+                    // branch inside History) — AnimatedContent keeps recomposing the exiting
+                    // slot's content against live state while it fades out, so a boolean gate
+                    // would flip and reveal the real list mid-transition instead of staying blank.
+                    Box(modifier = Modifier.fillMaxSize().background(colors.paper))
+                }
+                SharedCostStep.History -> {
+                    SharedCostsHistoryScreen(
+                        items = history,
+                        isLoading = isLoading,
+                        onNewSplit = {
+                            // Not seeding via withParticipants() here — see the initial `draft`
+                            // declaration above for why an empty-total seed would stick forever.
+                            viewingId = null
+                            draft = SharedCostDraft()
+                            visitedIndices = emptySet()
+                            isSummaryReadOnly = false
+                            step = SharedCostStep.Input.name
+                        },
+                        onItemClick = { item ->
+                            sharedCostDetails[item.id]?.let { detail ->
+                                viewingId = item.id
+                                draft = detail.toDraft(nameTemplate, firstPersonName)
                                 visitedIndices = emptySet()
-                                isSummaryReadOnly = false
-                                step = SharedCostStep.Input.name
-                            },
-                            onItemClick = { item ->
-                                sharedCostDetails[item.id]?.let { detail ->
-                                    viewingId = item.id
-                                    draft = detail.toDraft(nameTemplate, firstPersonName)
-                                    visitedIndices = emptySet()
-                                    isSummaryReadOnly = true
-                                    step = SharedCostStep.Summary.name
-                                }
-                            },
-                            onBack = onDismiss,
-                            onDeleteRequested = { deleteTarget = it },
-                        )
-                    }
+                                isSummaryReadOnly = true
+                                step = SharedCostStep.Summary.name
+                            }
+                        },
+                        onBack = onDismiss,
+                        onDeleteRequested = { deleteTarget = it },
+                    )
                 }
                 SharedCostStep.Input -> {
                     SharedCostsInputScreen(

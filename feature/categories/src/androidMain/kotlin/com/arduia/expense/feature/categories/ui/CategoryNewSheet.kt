@@ -1,6 +1,7 @@
 package com.arduia.expense.feature.categories.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -17,13 +18,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -141,7 +149,20 @@ fun CategoryNewSheetContent(
             }
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+        // The only flexible section — type/name (above) and colors/Add (below) stay fixed in
+        // place. weight(fill = false) caps this at whatever room the sheet's max-height budget
+        // leaves after those fixed sections, but never forces it taller than the icon grid's own
+        // content; verticalScroll lets the remaining icons scroll into view instead of the fixed
+        // sections getting pushed off-screen when the keyboard is up and room is short.
+        val iconScrollState = rememberScrollState()
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f, fill = false)
+                    .verticalFadingEdge(iconScrollState)
+                    .verticalScroll(iconScrollState),
+            verticalArrangement = Arrangement.spacedBy(dimens.space8),
+        ) {
             Text(
                 text = stringResource(R.string.categories_icon_label),
                 style = typography.bodyMedium,
@@ -194,6 +215,39 @@ fun CategoryNewSheetContent(
         )
     }
 }
+
+/**
+ * Fades the top/bottom 24dp of a vertically-scrolling container while (and only while) it's
+ * actually scrollable, so a clipped icon row reads as "scroll for more" instead of "that's all
+ * the icons" — same principle as the horizontal chip-row edge affordance, applied vertically.
+ * Must wrap the `verticalScroll` modifier (apply before it in the chain), not nest inside it, or
+ * it measures the full unclipped content height instead of the visible viewport.
+ */
+private fun Modifier.verticalFadingEdge(scrollState: ScrollState): Modifier =
+    this
+        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+        .drawWithContent {
+            drawContent()
+            if (scrollState.maxValue <= 0) return@drawWithContent
+            val fadeHeight = 24.dp.toPx()
+            if (scrollState.value > 0) {
+                drawRect(
+                    brush = Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Black), endY = fadeHeight),
+                    blendMode = BlendMode.DstIn,
+                )
+            }
+            if (scrollState.value < scrollState.maxValue) {
+                drawRect(
+                    brush =
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Black, Color.Transparent),
+                            startY = size.height - fadeHeight,
+                            endY = size.height,
+                        ),
+                    blendMode = BlendMode.DstIn,
+                )
+            }
+        }
 
 @Composable
 private fun CategoryIconTile(
@@ -310,6 +364,29 @@ private fun CategoryNewIncomePreview() {
                     onTypeSelected = {},
                 )
             }
+        }
+    }
+}
+
+// Simulates the sheet's max-height budget having shrunk (e.g. keyboard up) below the full
+// 20-icon grid's natural height — the type/name header and colors/Add footer must stay fully
+// visible and only the icon grid should shrink, with a fading edge cueing the scroll.
+@Preview(
+    name = "Categories — new (constrained height, scrollable icons)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = 420,
+    showBackground = true,
+)
+@Composable
+private fun CategoryNewConstrainedHeightPreview() {
+    ProExpenseTheme {
+        Box(Modifier.fillMaxSize().background(ProExpenseTheme.colors.paper)) {
+            CategoryNewSheetContent(
+                form = previewCategoryNewDuplicate,
+                onNameChange = {},
+                onIconSelected = {},
+                onAdd = {},
+            )
         }
     }
 }
