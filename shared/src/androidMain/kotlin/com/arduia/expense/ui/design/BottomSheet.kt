@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -46,6 +49,20 @@ fun ProBottomSheet(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val sheetElevation = ProExpenseTheme.elevation.sheet.firstOrNull()
+    // sheetMaxHeightFraction/sheetFullHeightFraction are tuned to look right with no keyboard —
+    // imePadding() below only shifts the sheet up above the keyboard, it doesn't shrink this cap,
+    // so tall content plus an open keyboard can push the sheet's top edge off-screen with nothing
+    // to scroll to reach it. Subtract only the keyboard's own height from the existing cap (never
+    // re-derive it from the device's raw screen size, which varies far more than this needs to
+    // account for and would shrink the sheet on plenty of ordinary phones even with no keyboard
+    // up) — zero on any screen without an open keyboard, so this is a no-op until one is showing.
+    val imeHeight = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    val sheetHeightCap =
+        if (fullHeight) {
+            (dimens.artboardHeight * dimens.sheetFullHeightFraction - imeHeight).coerceAtLeast(0.dp)
+        } else {
+            (dimens.artboardHeight * dimens.sheetMaxHeightFraction - imeHeight).coerceAtLeast(0.dp)
+        }
 
     Surface(
         modifier =
@@ -76,9 +93,9 @@ fun ProBottomSheet(
                     .fillMaxWidth()
                     .then(
                         if (fullHeight) {
-                            Modifier.height(dimens.artboardHeight * dimens.sheetFullHeightFraction)
+                            Modifier.height(sheetHeightCap)
                         } else {
-                            Modifier.heightIn(max = dimens.artboardHeight * dimens.sheetMaxHeightFraction)
+                            Modifier.heightIn(max = sheetHeightCap)
                         },
                     ).padding(bottom = dimens.space24),
         ) {
@@ -124,7 +141,16 @@ fun ProBottomSheet(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .then(if (fullHeight) Modifier.weight(1f) else Modifier)
+                        // weight(fill = fullHeight) always gives content a real height budget
+                        // bounded by this Column's height/heightIn above, instead of an unbounded
+                        // one. fullHeight sheets force-fill that budget (unchanged from before).
+                        // Non-fullHeight sheets still wrap compact content naturally, but content
+                        // that opts into its own internal weight()+verticalScroll() — a sticky
+                        // header/footer around a scrollable middle, e.g. Category's icon grid —
+                        // can now actually respect the sheet's max-height cap instead of silently
+                        // overflowing past it (a Box/Column doesn't clip by default, so an
+                        // unbounded budget let tall content render off-screen under the keyboard).
+                        .weight(1f, fill = fullHeight)
                         .padding(horizontal = dimens.space18, vertical = dimens.space8),
             ) {
                 content()
