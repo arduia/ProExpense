@@ -1,10 +1,8 @@
 <resources>
 <string name="categories_title">หมวดหมู่</string>
 <string name="categories_back">เพิ่มเติม</string>
-<string name="categories_default_label">ค่าเริ่มต้น · แสดงก่อนเสมอ</string>
-<string name="categories_custom_label">กำหนดเอง · ลากเพื่อจัดเรียง</string>
-<string name="categories_locked_word">ล็อก</string>
-<string name="categories_locked_pill">ล็อก</string>
+<string name="categories_label">หมวดหมู่ · ลากเพื่อจัดเรียง</string>
+<string name="categories_default_pill">ค่าเริ่มต้น</string>
 <string name="categories_create">สร้างหมวดหมู่ใหม่</string>
 <string name="categories_footer">ลำดับที่นี่จะสะท้อนลำดับชิปในหน้าเพิ่มรายจ่าย</string>
 <string name="categories_new_title">หมวดหมู่ใหม่</string>

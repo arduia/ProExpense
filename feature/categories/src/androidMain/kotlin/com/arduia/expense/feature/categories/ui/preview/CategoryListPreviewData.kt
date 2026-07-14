@@ -10,11 +10,11 @@ data class CategoryRowUi(
     val iconId: String = "",
     val colorId: String = "",
     val type: RecordType = RecordType.EXPENSE,
+    val isCustom: Boolean = false,
 )
 
 data class CategoryListUiState(
-    val defaults: List<CategoryRowUi>,
-    val custom: List<CategoryRowUi>,
+    val categories: List<CategoryRowUi>,
 )
 
 data class CategoryNewFormState(
@@ -58,22 +58,19 @@ val categoryIconOptions =
 
 val previewCategoryList =
     CategoryListUiState(
-        defaults =
+        categories =
             listOf(
                 CategoryRowUi("food", "Food"),
                 CategoryRowUi("transport", "Transport"),
+                CategoryRowUi("coffee", "Coffee runs", isCustom = true),
                 CategoryRowUi("shopping", "Shopping"),
                 CategoryRowUi("bills", "Bills"),
+                CategoryRowUi("pet", "Pet care", isCustom = true),
                 CategoryRowUi("health", "Health"),
                 CategoryRowUi("entertainment", "Entertainment"),
                 CategoryRowUi("income", "Income", type = RecordType.INCOME),
                 CategoryRowUi("salary", "Salary", type = RecordType.INCOME),
                 CategoryRowUi("gift", "Gift", type = RecordType.INCOME),
-            ),
-        custom =
-            listOf(
-                CategoryRowUi("coffee", "Coffee runs"),
-                CategoryRowUi("pet", "Pet care"),
             ),
     )
 

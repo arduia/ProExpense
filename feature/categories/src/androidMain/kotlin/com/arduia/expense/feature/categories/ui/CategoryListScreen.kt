@@ -93,24 +93,16 @@ fun CategoryListScreen(
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
             CategorySectionHeader(
-                label = stringResource(R.string.categories_default_label),
-                trailing = stringResource(R.string.categories_locked_word),
-            )
-            CategoryGroupCard(rows = state.defaults) { row ->
-                CategoryRow(row = row, locked = true)
-            }
-
-            CategorySectionHeader(
-                label = stringResource(R.string.categories_custom_label),
+                label = stringResource(R.string.categories_label),
                 trailing =
                     pluralStringResource(
                         R.plurals.categories_count,
-                        state.custom.size,
-                        state.custom.size,
+                        state.categories.size,
+                        state.categories.size,
                     ),
             )
-            ReorderableCustomGroup(
-                rows = state.custom,
+            ReorderableCategoryGroup(
+                rows = state.categories,
                 onRowClick = onCustomRowClick,
                 onReorder = onReorder,
             )
@@ -161,76 +153,7 @@ private fun CategorySectionHeader(
 }
 
 @Composable
-private fun CategoryGroupCard(
-    rows: List<CategoryRowUi>,
-    row: @Composable (CategoryRowUi) -> Unit,
-) {
-    val colors = ProExpenseTheme.colors
-
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clip(ProExpenseTheme.shapes.card)
-                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                .background(colors.surface),
-    ) {
-        rows.forEachIndexed { index, item ->
-            if (index > 0) {
-                Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
-            }
-            row(item)
-        }
-    }
-}
-
-@Composable
-private fun CategoryRow(
-    row: CategoryRowUi,
-    locked: Boolean,
-) {
-    val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
-    val typography = ProExpenseTheme.typography
-
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.space14, vertical = dimens.space12),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
-    ) {
-        LogCategoryBadge(
-            categoryId = row.categoryId,
-            iconId = row.iconId,
-            colorId = row.colorId,
-            size = dimens.iconBadge,
-        )
-        Text(
-            text = row.label,
-            style = typography.bodyMedium,
-            color = colors.onSurface,
-            modifier = Modifier.weight(1f),
-        )
-        if (locked) {
-            Text(
-                text = stringResource(R.string.categories_locked_pill),
-                style = typography.eyebrow,
-                color = colors.onSurfaceMuted,
-                modifier =
-                    Modifier
-                        .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
-                        .padding(horizontal = dimens.space10, vertical = dimens.space4),
-            )
-        } else {
-            DragHandle()
-        }
-    }
-}
-
-@Composable
-private fun ReorderableCustomGroup(
+private fun ReorderableCategoryGroup(
     rows: List<CategoryRowUi>,
     onRowClick: (CategoryRowUi) -> Unit,
     onReorder: (Int, Int) -> Unit,
@@ -250,7 +173,7 @@ private fun ReorderableCustomGroup(
                 .background(colors.surface),
     ) {
         rows.forEachIndexed { index, item ->
-            key(item.label) {
+            key(item.categoryId) {
                 val dragging = index == draggingIndex
                 Column(
                     modifier =
@@ -262,9 +185,9 @@ private fun ReorderableCustomGroup(
                     if (index > 0) {
                         Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
                     }
-                    CustomCategoryRow(
+                    CategoryRow(
                         row = item,
-                        onClick = { onRowClick(item) },
+                        onClick = if (item.isCustom) ({ onRowClick(item) }) else null,
                         dragHandleModifier =
                             Modifier.pointerInput(rows.size) {
                                 detectDragGesturesAfterLongPress(
@@ -309,9 +232,9 @@ private fun ReorderableCustomGroup(
 }
 
 @Composable
-private fun CustomCategoryRow(
+private fun CategoryRow(
     row: CategoryRowUi,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     dragHandleModifier: Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -322,8 +245,13 @@ private fun CustomCategoryRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .proClickable(onClick = onClick, shape = RectangleShape, scaleOnPress = false)
-                .padding(horizontal = dimens.space14, vertical = dimens.space12),
+                .then(
+                    if (onClick != null) {
+                        Modifier.proClickable(onClick = onClick, shape = RectangleShape, scaleOnPress = false)
+                    } else {
+                        Modifier
+                    },
+                ).padding(horizontal = dimens.space14, vertical = dimens.space12),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
     ) {
@@ -339,6 +267,17 @@ private fun CustomCategoryRow(
             color = colors.onSurface,
             modifier = Modifier.weight(1f),
         )
+        if (!row.isCustom) {
+            Text(
+                text = stringResource(R.string.categories_default_pill),
+                style = typography.eyebrow,
+                color = colors.onSurfaceMuted,
+                modifier =
+                    Modifier
+                        .border(BorderStroke(1.dp, colors.lineStrong), ProExpenseTheme.shapes.chip)
+                        .padding(horizontal = dimens.space10, vertical = dimens.space4),
+            )
+        }
         Box(
             modifier = dragHandleModifier.padding(start = dimens.space8, top = dimens.space4, bottom = dimens.space4),
             contentAlignment = Alignment.Center,

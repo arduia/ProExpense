@@ -36,14 +36,13 @@ internal class CategoriesFeatureEntryImpl : CategoriesFeatureEntry {
         val reorderCategories: ReorderCategoriesUseCase = koinInject()
 
         val categories by categoryRepository.observeAll().collectAsState(emptyList())
-        val defaults = categories.filter { !it.isCustom }.map { it.toRowUi() }
-        val custom = categories.filter { it.isCustom }.map { it.toRowUi() }
+        val rows = categories.map { it.toRowUi() }
 
         com.arduia.expense.feature.categories.ui.CategoryListFlow(
             onBack = onBack,
-            state = CategoryListUiState(defaults = defaults, custom = custom),
-            onReorderCustom = { reorderedCustomIds ->
-                scope.launch { reorderCategories(defaults.map { it.categoryId }, reorderedCustomIds) }
+            state = CategoryListUiState(categories = rows),
+            onReorder = { orderedIds ->
+                scope.launch { reorderCategories(orderedIds) }
             },
             onSaveCategory = { editingId, name, iconId, type, colorId ->
                 scope.launch { saveCategory(categories, editingId, name, iconId, type, colorId) }
@@ -65,4 +64,5 @@ private fun Category.toRowUi(): CategoryRowUi =
         iconId = iconId,
         colorId = colorId,
         type = type,
+        isCustom = isCustom,
     )

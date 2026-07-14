@@ -29,8 +29,10 @@ everyone and guarantees the category picker is never empty.
 
 **In Scope**
 
-* Locked default category set (Food, Transport, Shopping, Bills, Health, Entertainment).
-* Defaults always rendered first, ahead of any custom categories.
+* Default category set (Food, Transport, Shopping, Bills, Health, Entertainment, Income, Salary, Gift),
+  present from first launch.
+* Defaults can be freely reordered — including interleaved with custom categories — via the same
+  drag-to-reorder list; only their name/icon/color/existence are fixed.
 * Defaults remain visible even with zero custom categories.
 
 **Out of Scope**
@@ -53,8 +55,8 @@ everyone and guarantees the category picker is never empty.
 
 **Then**
 
-* The defaults (Food, Transport, Shopping, Bills, Health, Entertainment) are present, locked, and
-  always listed first.
+* The defaults (Food, Transport, Shopping, Bills, Health, Entertainment, Income, Salary, Gift) are
+  present and draggable, in their seeded order.
 
 ### Scenario 2 — Defaults survive deleting all custom categories
 
@@ -74,9 +76,11 @@ everyone and guarantees the category picker is never empty.
 
 ## Functional Requirements
 
-* [ ] App seeds the six default categories on first launch.
-* [ ] Default categories cannot be edited, renamed, recolored, or deleted.
-* [ ] Default categories always sort ahead of custom categories in every category list/picker.
+* [ ] App seeds the default categories on first launch.
+* [ ] Default categories cannot be edited, renamed, recolored, or deleted — tapping a default row is a
+  no-op.
+* [ ] Default categories can be reordered via drag-to-reorder, freely interleaved with custom
+  categories in one merged list.
 
 ---
 
@@ -89,8 +93,8 @@ everyone and guarantees the category picker is never empty.
 
 ## Business Rules
 
-* Default categories are fixed and not user-editable.
-* Default categories always rank first; custom categories follow in user-defined order.
+* Default categories are fixed and not user-editable (name, icon, color, existence).
+* Category order (default and custom, freely interleaved) is entirely user-defined via drag-to-reorder.
 
 ---
 

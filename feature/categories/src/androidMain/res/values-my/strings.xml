@@ -1,10 +1,8 @@
 <resources>
 <string name="categories_title">အမျိုးအစားများ</string>
 <string name="categories_back">နောက်ထပ်</string>
-<string name="categories_default_label">မူလ · အမြဲပထမဆုံး</string>
-<string name="categories_custom_label">စိတ်ကြိုက် · ဆွဲယူ၍ အစီအစဉ်ပြန်စီပါ</string>
-<string name="categories_locked_word">လော့ခ်ချထား</string>
-<string name="categories_locked_pill">လော့ခ်ချထား</string>
+<string name="categories_label">အမျိုးအစားများ · ဆွဲယူ၍ အစီအစဉ်ပြန်စီပါ</string>
+<string name="categories_default_pill">မူလ</string>
 <string name="categories_create">အမျိုးအစားအသစ် ဖန်တီးရန်</string>
 <string name="categories_footer">ဤနေရာရှိ အစီအစဉ်သည် အသုံးစရိတ်ထည့်ရန်တွင် ချစ်ပ်များစီထားသည့်အတိုင်း ဖြစ်သည်</string>
 <string name="categories_new_title">အမျိုးအစားအသစ်</string>

@@ -64,17 +64,17 @@ private class FakeCategoryRepository(
 
 class SaveCategoryUseCaseTest {
     @Test
-    fun invoke_createsNewCustomCategoryWithSortOrderAfterExistingCustomOnes() =
+    fun invoke_createsNewCustomCategoryWithSortOrderAfterAllExistingCategories() =
         runTest {
             val repo = FakeCategoryRepository()
             val useCase = SaveCategoryUseCase(repo, nowEpochMillis = { 1_000L })
-            val existing = listOf(sampleCategory("a", isCustom = true, sortOrder = 0), sampleCategory("b", isCustom = false, sortOrder = 1))
+            val existing = listOf(sampleCategory("a", isCustom = true, sortOrder = 0), sampleCategory("b", isCustom = false, sortOrder = 3))
 
             useCase(existing, editingId = null, name = "Travel")
 
             assertEquals("travel-1000", repo.lastUpsert?.id?.value)
             assertEquals(true, repo.lastUpsert?.isCustom)
-            assertEquals(1, repo.lastUpsert?.sortOrder)
+            assertEquals(4, repo.lastUpsert?.sortOrder)
         }
 
     @Test
@@ -219,15 +219,15 @@ class DeleteCategoryUseCaseTest {
 
 class ReorderCategoriesUseCaseTest {
     @Test
-    fun invoke_pinsDefaultIdsFirstThenCustomIds() =
+    fun invoke_persistsTheGivenOrderAsIsRegardlessOfDefaultOrCustom() =
         runTest {
             val repo = FakeCategoryRepository()
             val useCase = ReorderCategoriesUseCase(repo)
 
-            useCase(defaultIds = listOf("food", "transport"), reorderedCustomIds = listOf("travel", "gifts"))
+            useCase(orderedIds = listOf("travel", "food", "gifts", "transport"))
 
             assertEquals(
-                listOf(CategoryId("food"), CategoryId("transport"), CategoryId("travel"), CategoryId("gifts")),
+                listOf(CategoryId("travel"), CategoryId("food"), CategoryId("gifts"), CategoryId("transport")),
                 repo.lastReorder,
             )
         }

@@ -22,13 +22,13 @@ class SaveCategoryUseCase(
         colorId: String = "",
     ) {
         val existing = editingId?.let { id -> categories.firstOrNull { it.id.value == id } }
-        val customCount = categories.count { it.isCustom }
+        val nextSortOrder = (categories.maxOfOrNull { it.sortOrder } ?: -1) + 1
         categoryRepository.upsert(
             Category(
                 id = CategoryId(existing?.id?.value ?: newCategoryId(name)),
                 name = name,
                 isCustom = true,
-                sortOrder = existing?.sortOrder ?: customCount,
+                sortOrder = existing?.sortOrder ?: nextSortOrder,
                 iconId = iconId,
                 colorId = colorId,
                 type = type,
@@ -53,15 +53,11 @@ class DeleteCategoryUseCase(
     }
 }
 
-/** Reorders custom categories while keeping default categories pinned first. */
+/** Persists a user-chosen order across all categories — default and custom can be freely interleaved. */
 class ReorderCategoriesUseCase(
     private val categoryRepository: CategoryRepository,
 ) {
-    suspend operator fun invoke(
-        defaultIds: List<String>,
-        reorderedCustomIds: List<String>,
-    ) {
-        val orderedIds = (defaultIds + reorderedCustomIds).map(::CategoryId)
-        categoryRepository.reorder(orderedIds)
+    suspend operator fun invoke(orderedIds: List<String>) {
+        categoryRepository.reorder(orderedIds.map(::CategoryId))
     }
 }
