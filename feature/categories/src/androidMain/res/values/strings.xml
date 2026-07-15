@@ -2,10 +2,8 @@
 <resources>
 <string name="categories_title">Categories</string>
 <string name="categories_back">More</string>
-<string name="categories_default_label">DEFAULT · ALWAYS FIRST</string>
-<string name="categories_custom_label">CUSTOM · DRAG TO REORDER</string>
-<string name="categories_locked_word">locked</string>
-<string name="categories_locked_pill">LOCKED</string>
+<string name="categories_label">CATEGORIES · DRAG TO REORDER</string>
+<string name="categories_default_pill">DEFAULT</string>
 <plurals name="categories_count">
         <item quantity="one">%1$d category</item>
         <item quantity="other">%1$d categories</item>

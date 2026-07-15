@@ -1,7 +1,8 @@
 # 11 · Category List
 
 **Flow:** More · management  
-**Purpose:** Manage categories. Defaults are locked & first; custom ones are editable, deletable, reorderable.
+**Purpose:** Manage categories. Default and custom categories share one drag-to-reorder list; defaults
+stay non-editable/non-deletable but can be freely reordered anywhere among custom categories.
 
 ---
 
@@ -11,10 +12,19 @@
 
 ![Default + custom](../screenshots/screens/categories.png)
 
+_Note: this reference mockup predates the merged-list behavior below (single-list Roborazzi baselines
+in `app/src/test/screenshots/` are current)._
+
 ## Behavior & interactions
 
-- Default categories (Food, Transport, Shopping, Bills, Health, Entertainment) are locked and always first.
-- Custom categories follow, drag-to-reorder; their order mirrors the chip order in Add Expense.
+- All categories — default (Food, Transport, Shopping, Bills, Health, Entertainment, Income, Salary,
+  Gift) and custom — live in a single drag-to-reorder list; either kind can be dragged anywhere,
+  including interleaved with the other kind.
+- Default rows show a muted "Default" pill and are not tappable (no edit/delete) — only their position
+  in the list is changeable. Custom rows are tappable to open the edit/delete actions sheet and carry
+  no pill.
+- Each row's chip order in Add Expense still shows Default and Custom as separate chip sections; within
+  each section, chip order reflects that item's position among same-type items in this merged list.
 - Add/edit a custom category via icon picker + color picker; name ≤ 20 chars (counter), duplicates blocked.
 - Edit / Delete via a bottom sheet (custom only). Deleting a category moves its expenses to Uncategorized.
 - Uncategorized is a system category: not selectable when logging, but shown in Journal & Reports for reference.
@@ -25,7 +35,7 @@
 | Component | Role | Compose / M3 |
 |---|---|---|
 | Category badge | Icon + tint per row | `custom Box` |
-| Locked / draggable row | Default vs. custom | `custom Row + ReorderableLazyColumn` |
+| Draggable row | Default (pill, no tap) vs. custom (tappable) | `custom Row + ReorderableLazyColumn` |
 | Icon & color picker | Custom category styling | `Grid in sheet` |
 | Bottom sheet — Edit/Delete | Custom row actions | `ModalBottomSheet` |
 
@@ -33,13 +43,13 @@
 
 **Type**
 
-- Section eyebrow — Geist Mono 11sp upper (“DEFAULT · ALWAYS FIRST”)
+- Section eyebrow — Geist Mono 11sp upper (“CATEGORIES · DRAG TO REORDER”)
 - row label — Manrope 14sp
 
 **Color**
 
 - category accents per catalogue
-- “LOCKED” pill in muted
+- “DEFAULT” pill in muted
 - drag handle muted
 
 **Shape · spacing**

@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -22,10 +23,16 @@ import org.robolectric.annotation.GraphicsMode
  * called `withParticipants()`, whose `syncCustomShares` is a no-op once the share list already
  * matches the people count. Shares must now redistribute evenly whenever the total actually
  * changes, while an unmodified re-confirm must still preserve an intentionally-set split.
+ *
+ * Explicit device qualifiers matter here: the split-editor sheet is `fullHeight = true`, so its
+ * forced height is a fraction of the real window height (see ProBottomSheet.kt) — Robolectric's
+ * unqualified default window is only ~470dp tall (shorter than any real device this app targets),
+ * which forces the numeric keypad into a much shorter sheet than production ever sees and breaks
+ * the digit-click sequence below in ways unrelated to the behavior this test actually guards.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [33])
+@Config(sdk = [33], qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp")
 class SharedCostAmountEditSyncTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()

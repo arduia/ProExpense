@@ -30,15 +30,15 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 fun CategoryListFlow(
     onBack: () -> Unit,
     state: CategoryListUiState = previewCategoryList,
-    onReorderCustom: (List<String>) -> Unit = {},
+    onReorder: (List<String>) -> Unit = {},
     onSaveCategory: (editingId: String?, name: String, iconId: String, type: RecordType, colorId: String) -> Unit =
         { _, _, _, _, _ -> },
     onDeleteCategory: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
-    var custom by remember { mutableStateOf(state.custom) }
-    LaunchedEffect(state.custom) { custom = state.custom }
+    var categories by remember { mutableStateOf(state.categories) }
+    LaunchedEffect(state.categories) { categories = state.categories }
 
     var showSheet by remember { mutableStateOf(false) }
     var editingRow by remember { mutableStateOf<CategoryRowUi?>(null) }
@@ -47,7 +47,7 @@ fun CategoryListFlow(
     var form by remember { mutableStateOf(CategoryNewFormState()) }
 
     fun takenNames(excluding: CategoryRowUi?): Set<String> =
-        (state.defaults + custom)
+        categories
             .filter { it.label != excluding?.label }
             .map { it.label.lowercase() }
             .toSet()
@@ -59,7 +59,7 @@ fun CategoryListFlow(
                 .background(colors.paper),
     ) {
         CategoryListScreen(
-            state = state.copy(custom = custom),
+            state = state.copy(categories = categories),
             onBack = onBack,
             onCreate = {
                 editingRow = null
@@ -68,8 +68,8 @@ fun CategoryListFlow(
             },
             onCustomRowClick = { actionsRow = it },
             onReorder = { from, to ->
-                custom = custom.toMutableList().apply { add(to, removeAt(from)) }
-                onReorderCustom(custom.map { it.categoryId })
+                categories = categories.toMutableList().apply { add(to, removeAt(from)) }
+                onReorder(categories.map { it.categoryId })
             },
         )
 

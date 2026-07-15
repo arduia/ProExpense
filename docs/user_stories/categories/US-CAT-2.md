@@ -31,7 +31,7 @@ defaults: same picker, same styling, same place in Add Expense.
 
 * Add/edit form: icon picker, color picker, name field (≤ 20 chars, with counter).
 * Duplicate-name validation.
-* Drag-to-reorder for custom categories (after the locked defaults).
+* Drag-to-reorder for custom categories, freely interleaved with default categories in one merged list.
 
 **Out of Scope**
 
@@ -84,8 +84,8 @@ defaults: same picker, same styling, same place in Add Expense.
 
 **Then**
 
-* They always follow the locked defaults and support drag-to-reorder; the resulting order mirrors
-  the chip order shown in Add Expense.
+* They support drag-to-reorder and can be placed anywhere in the list, including ahead of or between
+  default categories; the resulting order is mirrored per-type in the Add Expense chip sections.
 
 ---
 
@@ -95,8 +95,8 @@ defaults: same picker, same styling, same place in Add Expense.
 * [ ] Name uniqueness is validated against all existing categories (default + custom); duplicates
   show "A category with this name already exists." and block save.
 * [ ] `Add` is disabled while the form is invalid.
-* [ ] Custom categories support drag-to-reorder, always ranked after default categories.
-* [ ] Category order is shared with (mirrored by) the Add Expense category chip order.
+* [ ] Custom categories support drag-to-reorder, freely interleaved with default categories.
+* [ ] Category order (per type) is shared with (mirrored by) the Add Expense category chip order.
 
 ---
 
@@ -109,7 +109,7 @@ defaults: same picker, same styling, same place in Add Expense.
 ## Business Rules
 
 * Category names ≤ 20 characters, unique across default + custom categories.
-* Custom category order always follows the locked default order.
+* Category order (default and custom) is fully user-configurable via one shared drag-to-reorder list.
 
 ---
 

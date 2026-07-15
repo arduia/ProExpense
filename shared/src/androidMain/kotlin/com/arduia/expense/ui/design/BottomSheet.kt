@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.shared.R
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -43,6 +45,14 @@ fun ProBottomSheet(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     fullHeight: Boolean = false,
+    // Real available height of the window this sheet is hosted in. Defaults to the design-artboard
+    // constant only for standalone/preview usage (ProDesignSystemSheetContent) — ProBottomSheetHost
+    // always overrides this with a BoxWithConstraints-measured value, since the artboard constant
+    // is a fixed reference size (Pixel 9 Pro) that doesn't match real device screens: on a shorter
+    // device the fraction-of-artboard cap can exceed what's actually on screen, and combined with
+    // an open keyboard's imePadding() shift, the sheet's top edge (and its header/content) can end
+    // up pushed above the visible screen instead of shrinking to fit.
+    maxHeight: Dp = ProExpenseTheme.dimensions.artboardHeight,
     content: @Composable () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
@@ -52,16 +62,14 @@ fun ProBottomSheet(
     // sheetMaxHeightFraction/sheetFullHeightFraction are tuned to look right with no keyboard —
     // imePadding() below only shifts the sheet up above the keyboard, it doesn't shrink this cap,
     // so tall content plus an open keyboard can push the sheet's top edge off-screen with nothing
-    // to scroll to reach it. Subtract only the keyboard's own height from the existing cap (never
-    // re-derive it from the device's raw screen size, which varies far more than this needs to
-    // account for and would shrink the sheet on plenty of ordinary phones even with no keyboard
-    // up) — zero on any screen without an open keyboard, so this is a no-op until one is showing.
+    // to scroll to reach it. Subtract only the keyboard's own height from the existing cap so this
+    // is a no-op until one is showing.
     val imeHeight = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
     val sheetHeightCap =
         if (fullHeight) {
-            (dimens.artboardHeight * dimens.sheetFullHeightFraction - imeHeight).coerceAtLeast(0.dp)
+            (maxHeight * dimens.sheetFullHeightFraction - imeHeight).coerceAtLeast(0.dp)
         } else {
-            (dimens.artboardHeight * dimens.sheetMaxHeightFraction - imeHeight).coerceAtLeast(0.dp)
+            (maxHeight * dimens.sheetMaxHeightFraction - imeHeight).coerceAtLeast(0.dp)
         }
 
     Surface(
@@ -172,7 +180,12 @@ fun ProBottomSheetHost(
     val motion = ProExpenseTheme.motion
     val reduceMotion = rememberProReduceMotion()
 
-    Box(modifier = modifier.fillMaxSize()) {
+    // Measure the real window height this host occupies rather than assuming the fixed design
+    // artboard size — ProBottomSheet uses this to cap sheet height as a fraction of what's
+    // actually on screen, so it fits real devices (which vary far more than the artboard) instead
+    // of being sized off a Pixel 9 Pro reference constant.
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val containerHeight = maxHeight
         AnimatedVisibility(
             visible = visible,
             modifier = Modifier.fillMaxSize(),
@@ -218,6 +231,7 @@ fun ProBottomSheetHost(
                 title = title,
                 onClose = onClose,
                 fullHeight = fullHeight,
+                maxHeight = containerHeight,
             ) {
                 sheetContent()
             }

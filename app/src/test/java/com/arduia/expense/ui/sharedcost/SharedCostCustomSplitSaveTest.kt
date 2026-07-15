@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.arduia.expense.feature.sharedcost.SharedSplitMode
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
+import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -28,10 +29,16 @@ import org.robolectric.annotation.GraphicsMode
  * `syncCustomShares` only reseeds while the share list size differs from the participant count, so
  * that first premature seed (an equal share of $0) froze forever and never reflected the finished
  * total. Custom shares are now only seeded once, off the finished value, at `onConfirmAmount`.
+ *
+ * Explicit device qualifiers matter here: the split-editor sheet is `fullHeight = true`, so its
+ * forced height is a fraction of the real window height (see ProBottomSheet.kt) — Robolectric's
+ * unqualified default window is only ~470dp tall (shorter than any real device this app targets),
+ * which forces the numeric keypad into a much shorter sheet than production ever sees and breaks
+ * the digit-click sequence below in ways unrelated to the behavior this test actually guards.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [33])
+@Config(sdk = [33], qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp")
 class SharedCostCustomSplitSaveTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
