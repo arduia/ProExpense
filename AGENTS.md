@@ -277,6 +277,39 @@ This script:
 - **Logic:** document rules per method/class, write tests 1-to-1
 - **Backbone-first (mandatory):** success path + key invariant + primary failure mode
 - **G3:** confirm edge input reaches asserted code path before writing test
+- **PRD/user-story traceability (mandatory for logic changes — see Step 4.5):** the "rules" tests
+  are written against must trace to a documented user story's Acceptance Criteria or Functional
+  Requirements, not just the agent's own informal read of the task. Don't defer this to Step 6 —
+  identify the relevant story file(s) while writing tests, since it changes which scenarios get
+  a test.
+
+### Step 4.5 — PRD / User Story Test Audit (mandatory for logic + unit test changes)
+
+**Gate:** Every new/changed unit test for this change traces to a specific Acceptance Criteria
+scenario or Functional Requirement in a `docs/user_stories/<service>/US-*.md` file (or the PRD,
+`docs/finance_tracker_product.md`, for cross-cutting rules no single story owns) — and every
+Acceptance Criteria scenario the change touches has a corresponding test. Skip this gate entirely
+for changes with no logic/unit-test surface (pure UI, docs, config, build files).
+
+**Else:**
+1. **Identify the story.** Find the `docs/user_stories/<service>/` file(s) covering the feature
+   being changed (see `docs/user_stories/README.md`'s service index).
+2. **New requirement, not yet in any story?** If the change implements something that came from
+   this session's chat/user input and isn't described in an existing story's Acceptance Criteria
+   or Functional Requirements — **update the story first.** Add a new Scenario (Given/When/Then)
+   or Functional Requirement to the existing story file, or create a new `US-<SERVICE>-<n>.md`
+   from `docs/user_stories/TEMPLATE.md` if it's a genuinely new use case, and add it to that
+   service's `user-stories.md` index. **Do not audit test cases against a requirement that only
+   exists in chat history** — the story is the durable source of truth; chat is not.
+3. **Then audit.** With the story current, check each new/changed test case against it:
+   - Does the test's assertion match a specific Scenario's Given/When/Then, or a specific
+     Functional Requirement checkbox? If a test can't be traced to either, it's untethered from
+     the story — flag it (matches the existing "every test traces to a rule" principle in the
+     Testing Contract, now traced to a documented story specifically, not just an informal rule).
+   - Does every Acceptance Criteria scenario the change touches have a test? An untested scenario
+     is a coverage gap — flag it, and add the missing test before Step 6.
+4. Report the verdict in the Step 7.5 close-out's **PRD/Story audit** line — cite the story
+   ID(s), and whether the story needed updating first.
 
 ### Step 5 — Implement
 
@@ -372,7 +405,8 @@ Every task completion **must** include a **Workflow status** block in the final 
 ## Workflow status
 - Step 2.25 — Toolchain: ✅ already configured | ✅ `scripts/setup-android-toolchain.sh` | ⚠️ skipped (reason)
 - Step 6 — Verify: ✅ `<command run>` | ⚠️ G1 flagged (reason) | ❌ not run
-- UI audit — compose-product-auditor: ✅ clean | ⚠️ `<n>` finding(s) — fixed | ⚠️ `<n>` finding(s) — deferred (reason) | ❌ not run (reason) | — n/a, no UI change
+- PRD/Story audit: ✅ traced — `<story ID(s)>` | ✅ traced — `<story ID>` updated first (new/extended scenario) | ⚠️ gap found — `<what, and fix>` | ❌ not run (reason)
+- UI audit — compose-product-auditor: ✅ clean | ⚠️ `<n>` finding(s) — fixed | ⚠️ `<n>` finding(s) — deferred (reason) | ❌ not run (reason)
 - Feedback fix: ✅ `<design/fidelity mismatch the user flagged → what changed>` | — none this session
 - Step 7 — Push: ✅ `origin/<branch>` @ `<short-sha>` | ❌ not pushed
 - PR: manual (not opened by agent)
@@ -381,8 +415,9 @@ Every task completion **must** include a **Workflow status** block in the final 
 Rules:
 - **Step 2.25 ✅** when SDK is configured and Gradle resolves dependencies, or after `setup-android-toolchain.sh` succeeds.
 - **Step 6 ✅** only after the matching command exits 0 in this session (preferred: `./gradlew verifyAll`), or **G1** is declared with reason and compensation.
-- **UI audit** line is required whenever the change touches Compose UI (Step 6's UI change gate / G5) — report the `compose-product-auditor` pass's actual verdict, not a self-assessment of "does my diff render." Use `— n/a, no UI change` only for changes with zero UI surface (pure logic, tests, docs, config). A finding logged as "fixed" must have been re-verified (re-screenshot/re-audit), not just edited and assumed fixed.
-- **Feedback fix** line is required whenever the user pointed out a design/fidelity/behavior mismatch after something was already delivered — name the specific thing that was wrong and what changed, so drift between "shipped" and "actually matches" stays visible in the close-out instead of buried in chat history. Use `— none this session` when nothing was corrected on user feedback.
+- **PRD/Story audit** line is required whenever the change touches business logic and its unit tests (Step 4.5) — cite the specific `US-<SERVICE>-<n>` story ID(s) the tests were checked against. If a requirement came from chat and wasn't in any story, the story must have been updated *first* (say so explicitly — "story updated first") before the audit counts as done; auditing against a requirement that only exists in chat is not a valid pass. **Omit this line entirely** (don't report n/a) for changes with zero logic/unit-test surface (pure UI, docs, config).
+- **UI audit** line is required whenever the change touches Compose UI (Step 6's UI change gate / G5) — report the `compose-product-auditor` pass's actual verdict, not a self-assessment of "does my diff render." **Omit this line entirely** (don't report n/a) for changes with zero UI surface (pure logic, tests, docs, config). A finding logged as "fixed" must have been re-verified (re-screenshot/re-audit), not just edited and assumed fixed.
+- **Feedback fix** line is required whenever the user pointed out a design/fidelity/behavior mismatch after something was already delivered — name the specific thing that was wrong and what changed, so drift between "shipped" and "actually matches" stays visible in the close-out instead of buried in chat history. Use `— none this session` when nothing was corrected on user feedback (this line always stays, unlike the two audit lines above).
 - **Step 7 ✅** only after `git push` succeeds and local `HEAD` matches `origin/<branch>`.
 - **PR:** always report `manual (not opened by agent)` unless the user explicitly requested PR creation in that turn.
 - If Step 6 is ✅ and commits exist, **push before close-out** — do not leave verified work only on disk.
@@ -463,7 +498,9 @@ bash scripts/setup-android-toolchain.sh
 
 2. **Fakes at repository boundary** — prefer fakes over mocking Room/storage internals.
 
-3. **Every test traces to a rule.** If it can't, delete it.
+3. **Every test traces to a rule** — and for logic changes, that rule traces to a documented
+   user story's Acceptance Criteria or Functional Requirement (`docs/user_stories/`), audited per
+   **Step 4.5**. If a test can't be traced to either, delete it.
 
 4. **Exhaustive edge-case matrices are optional** — only on explicit request.
 
@@ -855,6 +892,7 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `AGENTS.md` | Master agent instructions (this file) |
 | `docs/project_philosophy.md` | Project goal, beliefs, decision framework (derived from PRD) |
 | `docs/finance_tracker_product.md` | Authoritative product vision, MVP scope, roadmap |
+| `docs/user_stories/` | Per-service user stories (`US-<SERVICE>-<n>.md`, Given/When/Then Acceptance Criteria + Functional Requirements) — audited against for every logic/unit-test change, see Step 4.5 |
 | `docs/module_structure.md` | KMP module map and dependency rules |
 | `design-system-spec/` | **Authoritative screen specs** (markdown + PNGs + component specs + tokens) |
 | Claude Design project **"Pro Expense - Finance Tracker"** | Hi-Fi mockup canvas mirroring `design-system-spec/` — find it via the design-sync tool's project listing (matched by name, scoped to the maintainer's account); no link is committed here since this repo is public |
