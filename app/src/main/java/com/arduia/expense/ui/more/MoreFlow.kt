@@ -101,7 +101,11 @@ fun MoreFlow(
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
     var displayName by remember { mutableStateOf(initialDisplayName.orEmpty()) }
-    var pinEnabled by remember { mutableStateOf(false) }
+    // Seeded from pinConfigured (never null on a real composition — ExpenseApp only renders
+    // MoreFlow once it has resolved) so the PIN-gated rows below (biometric, "Stay unlocked",
+    // "Lock now") are correct on the very first frame instead of popping in a frame later once
+    // the LaunchedEffect below catches up.
+    var pinEnabled by remember { mutableStateOf(pinConfigured ?: false) }
     var showPinManageSheet by remember { mutableStateOf(false) }
     var showDisablePinConfirm by remember { mutableStateOf(false) }
     var showDisablePinVerify by remember { mutableStateOf(false) }
