@@ -4,10 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -234,14 +237,17 @@ private fun CurrencyQuickGrid(
         verticalArrangement = Arrangement.spacedBy(dimens.space10),
     ) {
         options.chunked(2).forEach { rowItems ->
-            Row(horizontalArrangement = Arrangement.spacedBy(dimens.space10)) {
+            Row(
+                modifier = Modifier.height(IntrinsicSize.Max),
+                horizontalArrangement = Arrangement.spacedBy(dimens.space10),
+            ) {
                 rowItems.forEach { option ->
                     ProfileCurrencyRow(
                         code = option.code,
                         label = option.label,
                         selected = option.code == selectedCode,
                         onClick = { onSelected(option.code) },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
                     )
                 }
                 if (rowItems.size == 1) {
