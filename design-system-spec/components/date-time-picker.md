@@ -32,14 +32,14 @@ scrim, since there's no "outside" to dim on a full page.
   path back to "unset" once a date was picked — Clear closes that gap.
 - **`DateRangePickerScreen`** (event start/end) — a Start/End stub row above an M3
   `DateRangePicker` in range mode, with the same bottom fading-edge trick `JournalDateRangeSheet`
-  uses for the next-month preview row. Each stub is independently highlighted (tinted background +
-  colored border) whenever *that* stub's own value is unset — both show highlighted "Select" by
-  default, and each drops its highlight the moment its own date is picked, independent of the
-  other stub. Tapping the **Start** stub itself (not just the calendar) resets the whole range via
-  `DateRangePickerState.setSelection(null, null)`, clearing both start and end so the user can
-  restart selection from scratch. Footer: one full-width primary button, disabled until both ends
-  are set, labeled `Pick a start/end date` while incomplete or `Use {start} — {end}` once complete.
-  Replaces two independent single-date pickers (no start≤end enforcement) with one true range
+  uses for the next-month preview row. Exactly one stub is highlighted (tinted background +
+  colored border) at a time: **Start** by default; once Start is picked, the highlight moves to
+  **End**; once both are picked, neither is highlighted. Tapping the **Start** stub itself (not
+  just the calendar) resets the whole range via `DateRangePickerState.setSelection(null, null)`,
+  clearing both start and end so the user can restart selection from scratch. Footer: one
+  full-width primary button, disabled until both ends are set, labeled `Pick a start/end date`
+  while incomplete or `Use {start} — {end}` once complete. Replaces two independent single-date
+  pickers (no start≤end enforcement) with one true range
   picker.
 
 ## Deliberate deviations from the design source

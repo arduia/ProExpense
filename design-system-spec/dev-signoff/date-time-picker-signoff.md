@@ -57,11 +57,14 @@ from the earlier sign-off carries forward.
    what the actual dev handoff spec calls for on all three of these screens specifically.
 3. **Range-picker Start/End highlight and reset revised on product review** — the source JSX's
    `active={!rangeEnd}` on the Start stub double-highlights both stubs while a range is
-   half-picked, an apparent quirk of the prototype's own state logic. After review, each stub now
-   highlights independently based on its own unset state (`active = value == null`) — both
-   highlighted by default, each drops its highlight the instant its own date is picked. The Start
-   stub is also now tappable, resetting the whole range (`setSelection(null, null)`) — an
-   interaction the mockup's static, non-interactive `DateStub` div has no equivalent for.
+   half-picked, an apparent quirk of the prototype's own state logic. After two rounds of product
+   review, the final behavior is: exactly one stub highlighted at a time — Start by default
+   (`active = start == null`), moving to End once Start is picked (`active = start != null &&
+   end == null`), neither once both are set. (An intermediate iteration briefly highlighted both
+   stubs whenever each was individually unset; corrected back to single-active per explicit
+   feedback.) The Start stub is also now tappable, resetting the whole range
+   (`setSelection(null, null)`) — an interaction the mockup's static, non-interactive `DateStub`
+   div has no equivalent for.
 4. **Event date range is now a true range picker**, replacing two independent single-date pickers
    that had no start≤end enforcement — a functional fix the static mockup never had to represent,
    not a fidelity question.

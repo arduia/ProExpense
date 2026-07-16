@@ -114,7 +114,7 @@ fun DateRangePickerScreen(
                 DateRangeStub(
                     label = stringResource(R.string.date_range_picker_end_label),
                     value = end?.let { PlatformDateFormatter.shortDateLabel(it) } ?: selectPrompt,
-                    active = end == null,
+                    active = start != null && end == null,
                     onClick = null,
                     modifier = Modifier.weight(1f),
                 )
