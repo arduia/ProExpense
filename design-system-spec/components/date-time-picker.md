@@ -43,6 +43,10 @@ scrim, since there's no "outside" to dim on a full page.
   the header's X) — a change from the old bottom sheet, which had both Cancel and Apply.
 - **Debt due date's fallback/Clear affordance** and **event date range's true range mode** are both
   functional improvements the static design mockup never had to represent, not fidelity gaps.
+- **Hour/minute chevron tap targets are ~24dp** (small icon + small padding via
+  `proCircularRippleClickable`, not the usual `proIconClickable`'s 48dp floor) — matching the
+  design's compact chevron size on explicit user request, below this repo's usual 48dp touch-target
+  guidance. A deliberate, flagged trade-off, not an oversight.
 - The range picker's Start/End stub highlighting is simplified from the source JSX, which
   double-highlights both stubs while a range is half-picked (`active={!rangeEnd}` on Start) — an
   apparent quirk in the mockup's own logic. This implementation highlights exactly one stub at a

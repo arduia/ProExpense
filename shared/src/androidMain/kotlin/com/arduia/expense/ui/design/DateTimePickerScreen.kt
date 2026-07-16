@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -286,7 +286,7 @@ private fun TimeMeridiemButton(
                 .background(background)
                 .border(1.dp, borderColor, shape)
                 .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
-                .padding(horizontal = dimens.space8, vertical = dimens.space2),
+                .padding(horizontal = dimens.space10, vertical = dimens.space6),
     )
 }
 
@@ -330,6 +330,12 @@ internal fun FutureDateNotice(visible: Boolean) {
     }
 }
 
+/**
+ * Compact secondary micro-target (per this repo's own guard against nesting
+ * `minimumInteractiveComponentSize`-floor modifiers inside dense components): a small circular
+ * ripple around a small icon, not the 48dp `proIconClickable` floor, matching the design's small
+ * up/down chevrons rather than a full standard touch target.
+ */
 @Composable
 private fun SpinnerChevron(
     rotation: Float,
@@ -337,17 +343,19 @@ private fun SpinnerChevron(
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val interactionSource = remember { MutableInteractionSource() }
 
     ProIcon(
         glyph = ProIconGlyph.ChevronDown,
         contentDescription = step.contentDescription,
         tint = colors.onSurfaceVariant,
+        size = dimens.iconInline,
         modifier =
             Modifier
                 .rotate(rotation)
-                .size(dimens.touchTargetMin)
-                .clip(ProExpenseTheme.shapes.tile)
-                .proIconClickable(onClick = step.onClick),
+                .clip(CircleShape)
+                .proCircularRippleClickable(onClick = step.onClick, interactionSource = interactionSource)
+                .padding(dimens.space4),
     )
 }
 
