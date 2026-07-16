@@ -21,6 +21,7 @@ Implementation reference for the **Pro Expense** finance tracker, extracted from
 | Quick-access tiles | [quick-access.md](components/quick-access.md) | custom `Surface` |
 | Bottom navigation | [bottom-nav.md](components/bottom-nav.md) | `NavigationBar` + custom FAB |
 | Bottom sheet | [bottom-sheet.md](components/bottom-sheet.md) | `ModalBottomSheet` |
+| Date & time picker | [date-time-picker.md](components/date-time-picker.md) | custom (`FilterChip` row + spinner steppers) |
 | Toast | [toast.md](components/toast.md) | `Snackbar` |
 | Iconography | [icons.md](components/icons.md) | `ImageVector` |
 

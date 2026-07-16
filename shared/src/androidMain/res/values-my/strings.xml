@@ -23,4 +23,19 @@
     <string name="link_events_section">ပွဲများ</string>
     <string name="link_debts_section">အကြွေးများ</string>
     <string name="link_debts_unavailable">· ပွဲတစ်ခုရွေးထားစဉ် မရနိုင်ပါ</string>
+    <string name="shared_people_word">လူများ</string>
+    <string name="date_time_sheet_title">ရက်စွဲနှင့်အချိန်</string>
+    <string name="date_time_pick_another">အခြားရက်စွဲရွေးရန်</string>
+    <string name="date_time_selected_date">ရွေးထားသည်: %1$s</string>
+    <string name="date_time_future_notice">အနာဂတ်ရက်စွဲ — မှတ်တမ်းများကို ဖန်တီးသည့်ရက်အလိုက် စီစဉ်ပါမည်၊ အသုံးစရိတ်ရက်အလိုက် မဟုတ်ပါ။</string>
+    <string name="date_time_cancel">မလုပ်တော့ပါ</string>
+    <string name="date_time_apply">သုံးမည်</string>
+    <string name="date_time_am">နံနက်</string>
+    <string name="date_time_pm">ညနေ</string>
+    <string name="date_time_hour_increment">နာရီတိုးရန်</string>
+    <string name="date_time_hour_decrement">နာရီလျှော့ရန်</string>
+    <string name="date_time_minute_increment">မိနစ်တိုးရန်</string>
+    <string name="date_time_minute_decrement">မိနစ်လျှော့ရန်</string>
+    <string name="date_time_hour_state">နာရီ %1$d</string>
+    <string name="date_time_minute_state">မိနစ် %1$d</string>
 </resources>

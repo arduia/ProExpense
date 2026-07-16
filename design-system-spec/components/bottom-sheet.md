@@ -19,7 +19,7 @@ Slides up over a scrim for create / edit flows.
 - Selecting an item generally **applies and closes** in one tap (no separate confirm), except multi-field sheets (date & time) which close on an explicit **Apply**.
 - Sheet-specific rules:
   - **Tag picker** — event *or* debt are **mutually exclusive**: choosing from one group greys out (and disables) the other until cleared.
-  - **Date & time** — picking a future date reveals an inline notice ("entries ordered by created date, not expense date").
+  - **Date & time** — see [date-time-picker.md](date-time-picker.md); picking a future date reveals an inline notice ("entries ordered by created date, not expense date"), and this sheet closes only on Apply, not on chip/spinner selection.
   - **Category picker** — grid single-select; selecting closes and updates the draft category.
 
 ## Compose notes

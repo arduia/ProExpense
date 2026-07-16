@@ -24,4 +24,18 @@
     <string name="link_debts_section">DEBTS</string>
     <string name="link_debts_unavailable">· unavailable while an event is selected</string>
     <string name="shared_people_word">PEOPLE</string>
+    <string name="date_time_sheet_title">Date &amp; time</string>
+    <string name="date_time_pick_another">Pick another date</string>
+    <string name="date_time_selected_date">Selected: %1$s</string>
+    <string name="date_time_future_notice">Future date — entries are ordered by created date, not expense date.</string>
+    <string name="date_time_cancel">Cancel</string>
+    <string name="date_time_apply">Apply</string>
+    <string name="date_time_am">AM</string>
+    <string name="date_time_pm">PM</string>
+    <string name="date_time_hour_increment">Increase hour</string>
+    <string name="date_time_hour_decrement">Decrease hour</string>
+    <string name="date_time_minute_increment">Increase minute</string>
+    <string name="date_time_minute_decrement">Decrease minute</string>
+    <string name="date_time_hour_state">Hour %1$d</string>
+    <string name="date_time_minute_state">Minute %1$d</string>
 </resources>

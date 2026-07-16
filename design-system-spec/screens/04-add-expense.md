@@ -45,7 +45,7 @@
 |---|---|---|
 | Amount entry (keypad + validation) | Numeric input, Inter keys, Save/Next | `custom (no M3 keypad)` |
 | Category chip group | Single-select, fixed rows (2 default / 1 custom) + per-section horizontal swipe | `FilterChip (shape = CircleShape)` |
-| Bottom sheet — Date & time | Date picker, future notice | `ModalBottomSheet` |
+| Bottom sheet — Date & time | Quick-pick date chips + time spinner, future notice | see [date-time-picker.md](../components/date-time-picker.md) |
 | Bottom sheet — Tag picker | Events/Debts, mutually exclusive | `ModalBottomSheet` |
 | Toast | “Expense saved” confirmation | `Snackbar` |
 | Button (primary, lg) | Save on Details | `Button` |
