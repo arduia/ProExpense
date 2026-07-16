@@ -286,7 +286,7 @@ private fun TimeMeridiemButton(
                 .background(background)
                 .border(1.dp, borderColor, shape)
                 .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
-                .padding(horizontal = dimens.space10, vertical = dimens.space6),
+                .padding(horizontal = dimens.space8, vertical = dimens.space2),
     )
 }
 
