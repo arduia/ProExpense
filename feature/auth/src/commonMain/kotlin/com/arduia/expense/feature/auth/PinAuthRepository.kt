@@ -33,6 +33,12 @@ interface PinAuthRepository {
 
     suspend fun clearBiometric(): Result<Unit>
 
+    // Session-scoped unlock (opt-in, default off — US-AUTH-4 background re-lock stays the
+    // default): when enabled, backgrounding the app no longer re-prompts for PIN/biometric.
+    suspend fun isStayUnlockedInBackgroundEnabled(): Result<Boolean>
+
+    suspend fun setStayUnlockedInBackgroundEnabled(enabled: Boolean): Result<Unit>
+
     // Lockout management
     suspend fun getFailedAttemptCount(): Result<Long>
 

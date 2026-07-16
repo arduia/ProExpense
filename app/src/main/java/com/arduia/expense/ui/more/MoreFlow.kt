@@ -75,6 +75,8 @@ fun MoreFlow(
     onDefaultCategoryChanged: (String) -> Unit = {},
     onThemeModeChanged: (ThemeMode) -> Unit = {},
     onLanguageChanged: () -> Unit = {},
+    onLockNowClick: () -> Unit = {},
+    onStayUnlockedInBackgroundChanged: (Boolean) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -108,6 +110,7 @@ fun MoreFlow(
     var appVersion by remember { mutableStateOf("1.0.0") }
     var homeCurrencyCode by remember { mutableStateOf(CurrencyCode("USD")) }
     var biometricEnrolled by remember { mutableStateOf(false) }
+    var stayUnlockedInBackground by remember { mutableStateOf(false) }
     val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
     var defaultCategoryId by remember { mutableStateOf("food") }
     var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
@@ -147,6 +150,11 @@ fun MoreFlow(
         // Load biometric enrollment
         when (val result = pinAuthRepository.isBiometricEnrolled()) {
             is Result.Success -> biometricEnrolled = result.data
+            is Result.Error -> Unit
+        }
+        // Load per-session unlock setting
+        when (val result = pinAuthRepository.isStayUnlockedInBackgroundEnabled()) {
+            is Result.Success -> stayUnlockedInBackground = result.data
             is Result.Error -> Unit
         }
         // Load monthly budget
@@ -193,6 +201,7 @@ fun MoreFlow(
             appVersion,
             biometricEnrolled,
             biometricCapable,
+            stayUnlockedInBackground,
             defaultCategoryId,
             themeMode,
             languageTag,
@@ -246,6 +255,23 @@ fun MoreFlow(
                                         toggleOn = biometricEnrolled,
                                         enabled = biometricCapable,
                                     ),
+                                    // Opt-in (default off, US-AUTH-4's "always re-lock" stays the
+                                    // default) — on, an app-switch (background/foreground) no
+                                    // longer re-prompts; only a real process restart or the
+                                    // explicit "Lock now" below does.
+                                    MoreSettingRowUi(
+                                        id = "stayUnlocked",
+                                        icon = ProIconGlyph.Clock,
+                                        label = "Stay unlocked while switching apps",
+                                        kind = MoreSettingKind.Toggle,
+                                        toggleOn = stayUnlockedInBackground,
+                                    ),
+                                    MoreSettingRowUi(
+                                        id = "lockNow",
+                                        icon = ProIconGlyph.Lock,
+                                        label = "Lock now",
+                                        kind = MoreSettingKind.Nav,
+                                    ),
                                 )
                             } else {
                                 listOf(setting)
@@ -294,6 +320,7 @@ fun MoreFlow(
                                 "category" -> step = MoreStep.DefaultCategory
                                 "theme" -> step = MoreStep.Theme
                                 "language" -> step = MoreStep.Language
+                                "lockNow" -> onLockNowClick()
                             }
                         },
                         onSettingToggle = { id, on ->
@@ -301,6 +328,12 @@ fun MoreFlow(
                                 scope.launch {
                                     if (on) pinAuthRepository.enrollBiometric() else pinAuthRepository.clearBiometric()
                                     biometricEnrolled = on
+                                }
+                            } else if (id == "stayUnlocked") {
+                                scope.launch {
+                                    pinAuthRepository.setStayUnlockedInBackgroundEnabled(on)
+                                    stayUnlockedInBackground = on
+                                    onStayUnlockedInBackgroundChanged(on)
                                 }
                             }
                         },

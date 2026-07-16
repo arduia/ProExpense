@@ -46,6 +46,7 @@ import com.arduia.expense.domain.linkedRowId
 import com.arduia.expense.domain.splitRowTitle
 import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
+import com.arduia.expense.feature.auth.shouldRelockOnBackground
 import com.arduia.expense.feature.currency.CurrencyRepository
 import com.arduia.expense.feature.eventbudget.ComputeEventProgressUseCase
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
@@ -111,6 +112,9 @@ fun ExpenseApp(
     // could restore `unlocked = true` after process death and skip the PIN gate entirely. Losing
     // this across process death is the correct behavior anyway (US-AUTH-4: always re-prompt).
     var unlocked by remember { mutableStateOf(false) }
+    // Opt-in (Settings > "Stay unlocked while switching apps", default off) — loaded alongside
+    // pinConfigured below and kept live by MoreFlow's onStayUnlockedInBackgroundChanged callback.
+    var stayUnlockedInBackground by remember { mutableStateOf(false) }
     var showQuickLog by rememberSaveable { mutableStateOf(false) }
     var showSharedCosts by rememberSaveable { mutableStateOf(false) }
     var showDebt by rememberSaveable { mutableStateOf(false) }
@@ -381,6 +385,10 @@ fun ExpenseApp(
                 is Result.Success -> pinConfigured = result.data
                 is Result.Error -> pinConfigured = false
             }
+            when (val result = pinAuthRepository.isStayUnlockedInBackgroundEnabled()) {
+                is Result.Success -> stayUnlockedInBackground = result.data
+                is Result.Error -> Unit
+            }
         }
     }
 
@@ -388,7 +396,7 @@ fun ExpenseApp(
     DisposableEffect(lifecycleOwner) {
         val observer =
             LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_STOP) {
+                if (event == Lifecycle.Event.ON_STOP && shouldRelockOnBackground(stayUnlockedInBackground)) {
                     unlocked = false
                 }
             }
@@ -489,6 +497,8 @@ fun ExpenseApp(
                                 onDefaultCategoryChanged = { defaultCategoryId = it },
                                 onThemeModeChanged = onThemeModeChanged,
                                 onLanguageChanged = onLanguageChanged,
+                                onLockNowClick = { unlocked = false },
+                                onStayUnlockedInBackgroundChanged = { stayUnlockedInBackground = it },
                             )
                         else ->
                             HomeShell(

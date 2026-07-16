@@ -97,6 +97,19 @@ class MoreScreenshotTest {
                                                 toggleOn = true,
                                                 enabled = true,
                                             ),
+                                            MoreSettingRowUi(
+                                                id = "stayUnlocked",
+                                                icon = ProIconGlyph.Clock,
+                                                label = "Stay unlocked while switching apps",
+                                                kind = MoreSettingKind.Toggle,
+                                                toggleOn = false,
+                                            ),
+                                            MoreSettingRowUi(
+                                                id = "lockNow",
+                                                icon = ProIconGlyph.Lock,
+                                                label = "Lock now",
+                                                kind = MoreSettingKind.Nav,
+                                            ),
                                         )
                                     else -> listOf(setting)
                                 }

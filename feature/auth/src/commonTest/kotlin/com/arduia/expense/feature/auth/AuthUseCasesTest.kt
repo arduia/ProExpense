@@ -17,6 +17,7 @@ private class FakePinAuthRepository(
     var setPinError: String? = null,
     var verifyAnswerError: String? = null,
     var clearPinError: String? = null,
+    var stayUnlockedInBackground: Boolean = false,
 ) : PinAuthRepository {
     override suspend fun isPinConfigured(): Result<Boolean> = Result.Success(pin != null)
 
@@ -59,6 +60,13 @@ private class FakePinAuthRepository(
 
     override suspend fun clearBiometric(): Result<Unit> {
         biometricEnrolled = false
+        return Result.Success(Unit)
+    }
+
+    override suspend fun isStayUnlockedInBackgroundEnabled(): Result<Boolean> = Result.Success(stayUnlockedInBackground)
+
+    override suspend fun setStayUnlockedInBackgroundEnabled(enabled: Boolean): Result<Unit> {
+        stayUnlockedInBackground = enabled
         return Result.Success(Unit)
     }
 
