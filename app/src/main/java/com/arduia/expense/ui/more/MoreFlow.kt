@@ -433,7 +433,11 @@ fun MoreFlow(
                                         "Off"
                                     }
                                 onBudgetChanged(money)
-                                step = MoreStep.Hub
+                                // A null money is the switch-off action, not an explicit amount
+                                // save (MoreBudgetScreen's switch toggle calls onSave(null)
+                                // directly) — only an explicit Save should navigate back to Hub,
+                                // switching off should leave the user on this screen.
+                                if (money != null) step = MoreStep.Hub
                             }
                         },
                         onBack = { step = MoreStep.Hub },
