@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.ui.design.GlitchText
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
@@ -69,7 +70,12 @@ fun MoreProfileCard(
             )
         }
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = profile.name, style = typography.bodySemiBold, color = colors.onSurface)
+            GlitchText(
+                text = profile.name,
+                style = typography.bodySemiBold,
+                color = colors.onSurface,
+                playbackKey = profile.name,
+            )
             Text(
                 text = profile.subtitle,
                 style = typography.caption,
