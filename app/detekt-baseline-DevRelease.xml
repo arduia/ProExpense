@@ -24,6 +24,7 @@
     <ID>FunctionNaming:HomeShell.kt$@Preview( name = "Home shell — casual", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun HomeShellCasualPreview()</ID>
     <ID>FunctionNaming:MainActivity.kt$@Composable private fun ThemedExpenseApp(onLanguageChanged: () -&gt; Unit)</ID>
     <ID>FunctionNaming:MoreBudgetScreen.kt$@Composable fun MoreBudgetScreen( currentAmount: String?, homeCurrency: CurrencyCode, onSave: (Money?) -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MoreBudgetScreen.kt$@Composable private fun MoreBudgetToggleRow( checked: Boolean, onCheckedChange: (Boolean) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:MoreBudgetScreen.kt$@Preview( name = "More budget — empty", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreBudgetEmptyPreview()</ID>
     <ID>FunctionNaming:MoreBudgetScreen.kt$@Preview( name = "More budget — set", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreBudgetSetPreview()</ID>
     <ID>FunctionNaming:MoreComponents.kt$@Composable fun &lt;T&gt; MoreGroupCard( items: List&lt;T&gt;, modifier: Modifier = Modifier, row: @Composable (T) -&gt; Unit, )</ID>
@@ -93,7 +94,6 @@
     <ID>MaxLineLength:MoreFlow.kt$AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(homeCurrencyCode.code))</ID>
     <ID>MaxLineLength:MoreFlow.kt$MoreStep</ID>
     <ID>MaxLineLength:MoreFlow.kt$monthlyBudgetLabel = AmountInput.formatMoney(budget.amount.valueInCents, currencySymbol(homeCurrencyCode.code))</ID>
-    <ID>MaxLineLength:MoreFlow.kt$value = themeModeLabel(themeMode, themeLightLabel, themeDarkLabel, themeSystemLabel)</ID>
     <ID>MaxLineLength:MorePreviewData.kt$MoreSettingRowUi("budget", ProIconGlyph.Note, "Monthly budget", value = "Off", kind = MoreSettingKind.Nav)</ID>
     <ID>MaxLineLength:MorePreviewData.kt$MoreSettingRowUi("category", ProIconGlyph.CatDefault, "Default category", value = "Food", kind = MoreSettingKind.Nav)</ID>
     <ID>MaxLineLength:MorePreviewData.kt$MoreSettingRowUi("currency", ProIconGlyph.Budget, "Currency", value = "USD", kind = MoreSettingKind.Nav)</ID>
