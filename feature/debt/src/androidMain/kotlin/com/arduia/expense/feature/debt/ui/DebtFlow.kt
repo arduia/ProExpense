@@ -163,6 +163,13 @@ fun DebtFlow(
                     },
                     onBack = onDismiss,
                 )
+            } else if ((listState.active + listState.settled).none { it.id == recordId }) {
+                // A deep link (Journal/Recents tapping a Debt-kind row) can compose before the
+                // real side is resolved above, or before aggregateDebts emits — detailStateFor's
+                // defaults would otherwise flash the guessed `side`'s button color (e.g. the
+                // Lent-only green "Mark as settled") before the record's real side arrives one
+                // frame later. Mirrors JournalFlow's same-class fix for its own detail screen.
+                Box(modifier = Modifier.fillMaxSize().background(colors.paper))
             } else {
                 // "Close" (shown once the debt is settled) navigates back exactly like the top
                 // bar's back action — there's nothing left to settle, so it's the same exit.
