@@ -26,6 +26,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +56,8 @@ import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+
+fun dragHandleTestTag(categoryId: String): String = "categoryDragHandle_$categoryId"
 
 @Composable
 fun CategoryListScreen(
@@ -175,6 +179,7 @@ private fun ReorderableCategoryGroup(
         rows.forEachIndexed { index, item ->
             key(item.categoryId) {
                 val dragging = index == draggingIndex
+                val latestIndex by rememberUpdatedState(index)
                 Column(
                     modifier =
                         Modifier
@@ -192,7 +197,7 @@ private fun ReorderableCategoryGroup(
                             Modifier.pointerInput(rows.size) {
                                 detectDragGesturesAfterLongPress(
                                     onDragStart = {
-                                        draggingIndex = index
+                                        draggingIndex = latestIndex
                                         dragOffsetY = 0f
                                     },
                                     onDragEnd = {
@@ -279,7 +284,10 @@ private fun CategoryRow(
             )
         }
         Box(
-            modifier = dragHandleModifier.padding(start = dimens.space8, top = dimens.space4, bottom = dimens.space4),
+            modifier =
+                dragHandleModifier
+                    .testTag(dragHandleTestTag(row.categoryId))
+                    .padding(start = dimens.space8, top = dimens.space4, bottom = dimens.space4),
             contentAlignment = Alignment.Center,
         ) {
             DragHandle()

@@ -96,7 +96,7 @@ fun MoreFlow(
 
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
-    var displayName by remember { mutableStateOf("") }
+    var displayName by remember { mutableStateOf(initialDisplayName.orEmpty()) }
     var pinEnabled by remember { mutableStateOf(false) }
     var showPinManageSheet by remember { mutableStateOf(false) }
     var showDisablePinConfirm by remember { mutableStateOf(false) }
@@ -116,8 +116,9 @@ fun MoreFlow(
         if (pinConfigured != null) pinEnabled = pinConfigured
     }
 
-    // Resolve from the app-level name (already loaded before More is reachable) so the profile
-    // card never flashes the "Your profile" fallback before its own async load completes.
+    // displayName is seeded from initialDisplayName above so the profile card never flashes the
+    // "Your profile" fallback on entry; this only catches the rare case where the app-level name
+    // resolves after MoreFlow has already composed.
     LaunchedEffect(initialDisplayName) {
         if (!initialDisplayName.isNullOrBlank()) displayName = initialDisplayName
     }
