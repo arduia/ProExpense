@@ -20,11 +20,11 @@ scrim, since there's no "outside" to dim on a full page.
 ## Three screens, one calendar
 
 - **`DateTimePickerScreen`** (transaction date + time) — a "DATE" eyebrow label, an M3
-  `DatePicker` in single-select mode, a "TIME" eyebrow label, then the hour/minute spinner box
-  (unchanged from the prior chip-based version: chevron-up / big number / chevron-down per field,
-  centered colon separator, all inside one bordered card), an AM/PM `SegmentedToggle`, and a
-  conditional future-date notice. Footer: one full-width primary Apply button — no Cancel, matching
-  the design source (dismissal is the header's X).
+  `DatePicker` in single-select mode, a "TIME" eyebrow label, then one bordered card containing
+  the hour/minute spinner (chevron-up / big number / chevron-down per field, centered colon
+  separator) **and** a compact AM/PM stack (`TimeMeridiemToggle`) side by side, plus a conditional
+  future-date notice. Footer: one full-width primary Apply button — no Cancel, matching the design
+  source (dismissal is the header's X).
 - **`DatePickerScreen`** (debt due date, optional) — an M3 `DatePicker` filling the screen. Footer:
   secondary Clear (only rendered when `allowClear = true`) + primary button whose label mirrors
   state (`Select a date` while nothing's picked, `Use {date}` once one is). This is the one place
@@ -39,8 +39,6 @@ scrim, since there's no "outside" to dim on a full page.
 
 ## Deliberate deviations from the design source
 
-- **AM/PM** is a full-width `SegmentedToggle` below the time box, not the mock's small stacked
-  buttons beside it — larger touch target, reuses an existing design-system component.
 - **No Cancel button** on any of the three screens (matches the source, which only has Apply/Use +
   the header's X) — a change from the old bottom sheet, which had both Cancel and Apply.
 - **Debt due date's fallback/Clear affordance** and **event date range's true range mode** are both

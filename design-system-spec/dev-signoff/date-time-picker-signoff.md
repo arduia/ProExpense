@@ -32,7 +32,7 @@ from the earlier sign-off carries forward.
 | Body: "Date" label → month calendar → "Time" label → spinner card (transaction screen) | `DateTimePickerScreen` | ✅ Match |
 | Selected day: solid `--blue-500` circle, white numeral | M3 `DatePicker` + `proDatePickerColors()` (`selectedDayContainerColor`/`selectedDayContentColor`) | ✅ Match |
 | Today marker: dot under today's numeral when not selected | M3 `DatePicker`'s own today indicator (`todayContentColor`/`todayDateBorderColor`), not a hand-drawn 4px dot | ⚠️ Close, not pixel-identical (see below) |
-| Time control: hour/minute vertical spinners + AM/PM | `TimeSpinner` × 2 + `SegmentedToggle` | ⚠️ AM/PM deviation (see below) |
+| Time control: hour/minute vertical spinners + AM/PM, all in one bordered box | `TimeSpinner` × 2 + `TimeMeridiemToggle`, one `Row` | ✅ Match — corrected after initial review; AM/PM was first built as a separate full-width toggle below the box, flagged as wrong, and fixed to match the compact in-box stack the spec actually shows |
 | Future-date banner below time card | `FutureDateNotice` | ✅ Match |
 | Footer: full-width primary Apply, always enabled | `ProButton` primary, `fillMaxWidth` | ✅ Match |
 | Event range: Start/End stub row, highlighted field awaiting input | `DateRangeStub` × 2 | ⚠️ Simplified highlight logic (see below) |
@@ -51,20 +51,17 @@ from the earlier sign-off carries forward.
    for a component that already exists, is accessible out of the box, and only needs recoloring.
    The trade-off is not pixel-identical cell art for a few details (today's dot position, exact
    corner radii) — judged an acceptable trade against the risk/size of a hand-rolled grid.
-2. **AM/PM as a full-width `SegmentedToggle`** below the time box, not the mock's small stacked
-   buttons beside it — larger touch target, reuses an existing design-system component instead of
-   a bespoke one sized for a static demo.
-3. **No Cancel button** on any of the three screens — matches the design source exactly (none of
+2. **No Cancel button** on any of the three screens — matches the design source exactly (none of
    the three reference screenshots has one; dismissal is the header's × only). This *is* a change
    from the prior bottom-sheet pattern elsewhere in the app (which pairs Cancel + Apply), but it's
    what the actual dev handoff spec calls for on all three of these screens specifically.
-4. **Range-picker Start/End highlight simplified** — the source JSX's `active={!rangeEnd}` on the
+3. **Range-picker Start/End highlight simplified** — the source JSX's `active={!rangeEnd}` on the
    Start stub means *both* stubs render highlighted simultaneously while a range is half-picked
    (Start set, End not yet), which reads as an unintended quirk of the prototype's own state logic
    rather than an intentional two-stub-active design. This implementation highlights exactly one
    stub at a time instead. Worth a design opinion if double-highlighting during that state was
    actually deliberate.
-5. **Event date range is now a true range picker**, replacing two independent single-date pickers
+4. **Event date range is now a true range picker**, replacing two independent single-date pickers
    that had no start≤end enforcement — a functional fix the static mockup never had to represent,
    not a fidelity question.
 
@@ -94,8 +91,9 @@ from the earlier sign-off carries forward.
 
 ## Sign-off
 
-Implementation matches the authoritative dev handoff on every element except the five deviations
-above, each with a stated engineering or product reason, raised during this session's own review
-rather than discovered after the fact. No open blockers. Items worth a design opinion if strict
-pixel-parity matters more than the stated trade-offs: the today-marker rendering (deviation 1) and
-the range-picker double-highlight quirk (deviation 4).
+Implementation matches the authoritative dev handoff on every element except the four deviations
+above, each with a stated engineering or product reason. The AM/PM placement was initially built
+wrong (a separate full-width toggle instead of the spec's compact in-box stack) — caught on user
+review and corrected before this sign-off, not left as an accepted deviation. No open blockers.
+Items worth a design opinion if strict pixel-parity matters more than the stated trade-offs: the
+today-marker rendering (deviation 1) and the range-picker double-highlight quirk (deviation 3).

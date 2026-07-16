@@ -2,6 +2,7 @@ package com.arduia.expense.ui.design
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -149,7 +151,7 @@ fun DateTimePickerScreen(
                             .clip(ProExpenseTheme.shapes.card)
                             .border(1.dp, colors.lineStrong, ProExpenseTheme.shapes.card)
                             .background(colors.surface)
-                            .padding(vertical = dimens.space16),
+                            .padding(vertical = dimens.space16, horizontal = dimens.space16),
                     horizontalArrangement = Arrangement.spacedBy(dimens.space16, Alignment.CenterHorizontally),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -183,14 +185,12 @@ fun DateTimePickerScreen(
                                 minute = (minute + MINUTES_IN_HOUR - 1) % MINUTES_IN_HOUR
                             },
                     )
+                    TimeMeridiemToggle(
+                        isPm = isPm,
+                        onSelected = { isPm = it },
+                    )
                 }
             }
-
-            SegmentedToggle(
-                options = listOf(stringResource(R.string.date_time_am), stringResource(R.string.date_time_pm)),
-                selectedIndex = if (isPm) 1 else 0,
-                onSelected = { isPm = it == 1 },
-            )
 
             FutureDateNotice(visible = isFuture)
         }
@@ -232,6 +232,62 @@ internal fun TimeSpinner(
         )
         SpinnerChevron(rotation = 0f, step = decrement)
     }
+}
+
+/**
+ * Compact AM/PM stack, matching the design's two small buttons beside the hour/minute spinner
+ * inside the same bordered time box — not a full-width control, so it stays this small
+ * intentionally (same compact-tappable-surface precedent as `FilterChip`).
+ */
+@Composable
+internal fun TimeMeridiemToggle(
+    isPm: Boolean,
+    onSelected: (Boolean) -> Unit,
+) {
+    val dimens = ProExpenseTheme.dimensions
+    Column(verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+        TimeMeridiemButton(
+            label = stringResource(R.string.date_time_am),
+            selected = !isPm,
+            onClick = { onSelected(false) },
+        )
+        TimeMeridiemButton(
+            label = stringResource(R.string.date_time_pm),
+            selected = isPm,
+            onClick = { onSelected(true) },
+        )
+    }
+}
+
+@Composable
+private fun TimeMeridiemButton(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val interactionSource = remember { MutableInteractionSource() }
+    val shape = ProExpenseTheme.shapes.buttonSm
+    val background = if (selected) colors.primary else Color.Transparent
+    val contentColor = if (selected) colors.onPrimaryWarm else colors.onSurfaceVariant
+    val borderColor = if (selected) colors.primary else colors.lineStrong
+    val textStyle = if (selected) typography.chipLabelSelected else typography.chipLabel
+
+    Text(
+        text = label,
+        style = textStyle,
+        color = contentColor,
+        modifier =
+            Modifier
+                .proPressScale(interactionSource)
+                .clip(shape)
+                .background(background)
+                .border(1.dp, borderColor, shape)
+                .proSelectableClickable(selected = selected, onClick = onClick, interactionSource = interactionSource)
+                .padding(horizontal = dimens.space10, vertical = dimens.space6),
+    )
 }
 
 @Composable

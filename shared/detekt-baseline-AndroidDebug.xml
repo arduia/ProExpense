@@ -35,8 +35,10 @@
     <ID>FunctionNaming:DateRangePickerScreen.kt$@Preview( name = "Date range picker — range set", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DateRangePickerScreenSetPreview()</ID>
     <ID>FunctionNaming:DateTimePickerScreen.kt$@Composable internal fun FutureDateNotice(visible: Boolean)</ID>
     <ID>FunctionNaming:DateTimePickerScreen.kt$@Composable internal fun SectionEyebrow(text: String)</ID>
+    <ID>FunctionNaming:DateTimePickerScreen.kt$@Composable internal fun TimeMeridiemToggle( isPm: Boolean, onSelected: (Boolean) -&gt; Unit, )</ID>
     <ID>FunctionNaming:DateTimePickerScreen.kt$@Composable internal fun TimeSpinner( valueLabel: String, stateDescription: String, increment: SpinnerStep, decrement: SpinnerStep, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:DateTimePickerScreen.kt$@Composable private fun SpinnerChevron( rotation: Float, step: SpinnerStep, )</ID>
+    <ID>FunctionNaming:DateTimePickerScreen.kt$@Composable private fun TimeMeridiemButton( label: String, selected: Boolean, onClick: () -&gt; Unit, )</ID>
     <ID>FunctionNaming:DateTimePickerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun DateTimePickerScreen( visible: Boolean, initialEpochMillis: Long, onConfirm: (Long) -&gt; Unit, onDismiss: () -&gt; Unit, )</ID>
     <ID>FunctionNaming:DateTimePickerScreen.kt$@Preview( name = "Date/time picker — open", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DateTimePickerScreenPreview()</ID>
     <ID>FunctionNaming:DateTimePickerScreen.kt$@Preview( name = "Date/time picker — today, future notice", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DateTimePickerScreenTodayPreview()</ID>
@@ -528,6 +530,7 @@
     <ID>MaxLineLength:NavMotion.kt$fun ProMotion.reducedExit(): ExitTransition</ID>
     <ID>MaxLineLength:ProfileStepHeader.kt$subtitle = "Your name personalizes the app — greeting you on the home screen and identifying your records and exports."</ID>
     <ID>ReturnCount:PlatformDateFormatter.android.kt$PlatformDateFormatter$override fun dayLabel( epochMillis: Long, nowEpochMillis: Long, ): String</ID>
+    <ID>TooManyFunctions:DateTimePickerScreen.kt$com.arduia.expense.ui.design.DateTimePickerScreen.kt</ID>
     <ID>TooManyFunctions:DesignSystemPreview.kt$com.arduia.expense.ui.design.DesignSystemPreview.kt</ID>
     <ID>TooManyFunctions:DesignSystemSpecCaptures.kt$com.arduia.expense.ui.design.DesignSystemSpecCaptures.kt</ID>
     <ID>TooManyFunctions:Interaction.kt$com.arduia.expense.ui.design.Interaction.kt</ID>
