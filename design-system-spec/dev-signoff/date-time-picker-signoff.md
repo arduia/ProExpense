@@ -35,7 +35,7 @@ from the earlier sign-off carries forward.
 | Time control: hour/minute vertical spinners + AM/PM, all in one bordered box | `TimeSpinner` × 2 + `TimeMeridiemToggle`, one `Row` | ✅ Match — corrected after initial review; AM/PM was first built as a separate full-width toggle below the box, flagged as wrong, and fixed to match the compact in-box stack the spec actually shows |
 | Future-date banner below time card | `FutureDateNotice` | ✅ Match |
 | Footer: full-width primary Apply, always enabled | `ProButton` primary, `fillMaxWidth` | ✅ Match |
-| Event range: Start/End stub row, highlighted field awaiting input | `DateRangeStub` × 2 | ⚠️ Simplified highlight logic (see below) |
+| Event range: Start/End stub row, highlighted field awaiting input | `DateRangeStub` × 2 | ✅ Match — revised per product review, see below |
 | Event range: band fill between start/end, rounded only at range ends | M3 `DateRangePicker` + `proDatePickerColors()` (`dayInSelectionRangeContainerColor`) | ✅ Match — M3's native range rendering already does exactly this |
 | Event range: footer button label mirrors picked range / prompts for start-end | `DateRangePickerScreen` footer `when` | ✅ Match |
 | Debt due date: empty state, no day pre-selected | `DatePickerScreen(initialEpochMillis = null)` | ✅ Match |
@@ -55,12 +55,13 @@ from the earlier sign-off carries forward.
    the three reference screenshots has one; dismissal is the header's × only). This *is* a change
    from the prior bottom-sheet pattern elsewhere in the app (which pairs Cancel + Apply), but it's
    what the actual dev handoff spec calls for on all three of these screens specifically.
-3. **Range-picker Start/End highlight simplified** — the source JSX's `active={!rangeEnd}` on the
-   Start stub means *both* stubs render highlighted simultaneously while a range is half-picked
-   (Start set, End not yet), which reads as an unintended quirk of the prototype's own state logic
-   rather than an intentional two-stub-active design. This implementation highlights exactly one
-   stub at a time instead. Worth a design opinion if double-highlighting during that state was
-   actually deliberate.
+3. **Range-picker Start/End highlight and reset revised on product review** — the source JSX's
+   `active={!rangeEnd}` on the Start stub double-highlights both stubs while a range is
+   half-picked, an apparent quirk of the prototype's own state logic. After review, each stub now
+   highlights independently based on its own unset state (`active = value == null`) — both
+   highlighted by default, each drops its highlight the instant its own date is picked. The Start
+   stub is also now tappable, resetting the whole range (`setSelection(null, null)`) — an
+   interaction the mockup's static, non-interactive `DateStub` div has no equivalent for.
 4. **Event date range is now a true range picker**, replacing two independent single-date pickers
    that had no start≤end enforcement — a functional fix the static mockup never had to represent,
    not a fidelity question.

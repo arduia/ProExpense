@@ -30,12 +30,17 @@ scrim, since there's no "outside" to dim on a full page.
   state (`Select a date` while nothing's picked, `Use {date}` once one is). This is the one place
   the rebuild fixes a real, pre-existing gap: due date was optional in the data model but had no UI
   path back to "unset" once a date was picked — Clear closes that gap.
-- **`DateRangePickerScreen`** (event start/end) — a Start/End stub row (whichever is awaiting input
-  is highlighted) above an M3 `DateRangePicker` in range mode, with the same bottom fading-edge
-  trick `JournalDateRangeSheet` uses for the next-month preview row. Footer: one full-width primary
-  button, disabled until both ends are set, labeled `Pick a start/end date` while incomplete or
-  `Use {start} — {end}` once complete. Replaces two independent single-date pickers (no start≤end
-  enforcement) with one true range picker.
+- **`DateRangePickerScreen`** (event start/end) — a Start/End stub row above an M3
+  `DateRangePicker` in range mode, with the same bottom fading-edge trick `JournalDateRangeSheet`
+  uses for the next-month preview row. Each stub is independently highlighted (tinted background +
+  colored border) whenever *that* stub's own value is unset — both show highlighted "Select" by
+  default, and each drops its highlight the moment its own date is picked, independent of the
+  other stub. Tapping the **Start** stub itself (not just the calendar) resets the whole range via
+  `DateRangePickerState.setSelection(null, null)`, clearing both start and end so the user can
+  restart selection from scratch. Footer: one full-width primary button, disabled until both ends
+  are set, labeled `Pick a start/end date` while incomplete or `Use {start} — {end}` once complete.
+  Replaces two independent single-date pickers (no start≤end enforcement) with one true range
+  picker.
 
 ## Deliberate deviations from the design source
 
@@ -47,10 +52,12 @@ scrim, since there's no "outside" to dim on a full page.
   `proCircularRippleClickable`, not the usual `proIconClickable`'s 48dp floor) — matching the
   design's compact chevron size on explicit user request, below this repo's usual 48dp touch-target
   guidance. A deliberate, flagged trade-off, not an oversight.
-- The range picker's Start/End stub highlighting is simplified from the source JSX, which
-  double-highlights both stubs while a range is half-picked (`active={!rangeEnd}` on Start) — an
-  apparent quirk in the mockup's own logic. This implementation highlights exactly one stub at a
-  time: Start when nothing's picked, End once Start is set and End isn't.
+- **Range picker Start/End stub highlighting and reset** were revised after product review: each
+  stub highlights independently based on its *own* unset state (not the source JSX's
+  `active={!rangeEnd}`-on-Start logic, which double-highlights both stubs while a range is
+  half-picked — an apparent quirk in the mockup), and the Start stub is now tappable to reset the
+  whole range, which the mockup's static `DateStub` (a plain non-interactive `<div>`) has no
+  equivalent for.
 
 ## Behavior
 

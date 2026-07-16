@@ -103,6 +103,7 @@ fun DateRangePickerScreen(
                     label = stringResource(R.string.date_range_picker_start_label),
                     value = start?.let { PlatformDateFormatter.shortDateLabel(it) } ?: selectPrompt,
                     active = start == null,
+                    onClick = { rangeState.setSelection(null, null) },
                     modifier = Modifier.weight(1f),
                 )
                 ProIcon(
@@ -113,7 +114,8 @@ fun DateRangePickerScreen(
                 DateRangeStub(
                     label = stringResource(R.string.date_range_picker_end_label),
                     value = end?.let { PlatformDateFormatter.shortDateLabel(it) } ?: selectPrompt,
-                    active = start != null && end == null,
+                    active = end == null,
+                    onClick = null,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -151,6 +153,7 @@ private fun DateRangeStub(
     label: String,
     value: String,
     active: Boolean,
+    onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val colors = ProExpenseTheme.colors
@@ -164,6 +167,7 @@ private fun DateRangeStub(
                 .clip(shape)
                 .background(if (active) colors.primaryTint else colors.surface)
                 .border(1.4.dp, if (active) colors.primary else colors.lineStrong, shape)
+                .then(if (onClick != null) Modifier.proClickable(onClick = onClick, shape = shape) else Modifier)
                 .padding(horizontal = dimens.space12, vertical = dimens.space10),
     ) {
         Text(text = label.uppercase(), style = typography.eyebrow, color = colors.onSurfaceMuted)
