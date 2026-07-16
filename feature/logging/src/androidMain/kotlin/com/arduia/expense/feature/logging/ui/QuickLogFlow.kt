@@ -26,7 +26,7 @@ import com.arduia.expense.feature.logging.ui.preview.previewExpenseDraft
 import com.arduia.expense.shared.CurrencyCatalog
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CurrencyPickerContent
-import com.arduia.expense.ui.design.DateTimePickerSheet
+import com.arduia.expense.ui.design.DateTimePickerScreen
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.TagLinkKind
@@ -285,7 +285,7 @@ fun QuickLogFlow(
             onDismiss = { toastMessage = null },
         )
 
-        DateTimePickerSheet(
+        DateTimePickerScreen(
             visible = showDateTimePicker,
             initialEpochMillis = state.recordedAtEpochMillis,
             onConfirm = { epochMillis ->

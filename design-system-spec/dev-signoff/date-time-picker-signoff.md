@@ -1,68 +1,101 @@
 # Dev Sign-off — Date & Time Picker
 
 **Component spec:** [`components/date-time-picker.md`](../components/date-time-picker.md)
-**Design source:** Claude Design project *"Pro Expense - Finance Tracker"* → `flow-01-screens.jsx`
-→ `DateTimeSheet` (live mockup, no static PNG export existed for this component prior to this
-pass — the reference screenshot at `../screenshots/date-time-picker.png` was captured from the
-implementation, not the mockup; the mockup itself was verified by rendering its actual JSX source
-in a browser, not by re-describing it from memory).
-**Implementation:** `shared/src/androidMain/kotlin/com/arduia/expense/ui/design/DateTimePickerSheet.kt`
+**Design source:** Claude Design project *"Pro Expense - Finance Tracker"*
+(`79eccec0-6ad2-477a-95ec-18df4a5dc017`) → **`Date & Time Picker - Dev Handoff.html`** (the
+authoritative dev handoff doc for this component — a full page of anatomy specs, sizing tables,
+color tokens, and interaction rules) → `date-picker.jsx` (`CalendarMonth`, `PickerScreenShell`,
+`DatePickerSheet`, `DateRangeSheet`) + `flow-01-screens.jsx` (`DateTimeSheet`). Reference
+screenshots: `handoff/picker-txn.png`, `handoff/picker-event-range.png`, `handoff/picker-debt-due.png`.
+**Implementation:** `shared/src/androidMain/kotlin/com/arduia/expense/ui/design/PickerScreenShell.kt`,
+`DateTimePickerScreen.kt`, `DatePickerScreen.kt`, `DateRangePickerScreen.kt`, `PickerDateMath.kt`.
 **Branch:** `claude/datetime-picker-enhancements-aib11q`
 **Date:** 2026-07-16
 
+## Revision note
+
+This sign-off **replaces** an earlier version written against a different, superseded design —
+a bottom-sheet with quick-pick date chips (`flow-01-screens.jsx`'s `DateTimeSheet` **as it existed
+in a different, older Claude Design project**, `e86b9ef3-c210-4df2-94f9-208d9d9308b9`). That
+project did not have the dev handoff doc, the shared `date-picker.jsx` calendar component, or the
+event-range/debt-due-date screens — none of which were discoverable until the correct project
+(`79eccec0-...`) was found and its `Date & Time Picker - Dev Handoff.html` file was read directly.
+The chip-based implementation and its screenshots were fully replaced by this rebuild; nothing
+from the earlier sign-off carries forward.
+
 ## Fidelity checklist
 
-| Design element (`DateTimeSheet`, `flow-01-screens.jsx`) | Implementation | Status |
+| Design element (Dev Handoff spec) | Implementation | Status |
 |---|---|---|
-| "DATE" / "TIME" uppercase mono eyebrow labels above each section | `SectionEyebrow` using `typography.eyebrow` | ✅ Match |
-| Date chips wrap to multiple lines (`flexWrap`), not a scrolling row | `FlowRow` | ✅ Match |
-| Selected chip filled dark, unselected outlined | `FilterChip` selected/unselected styling | ✅ Match |
-| Future-dated chip shows a small dot marker | Not carried over — future-ness is instead surfaced via the sheet-level future-date notice banner | ⚠️ Deviation (see below) |
-| Hour + colon + minute + AM/PM inside one bordered box | Hour/colon/minute unified in one bordered `card`-shaped `Row`; AM/PM broken out below it | ⚠️ Partial — see below |
-| Hour/minute steppers: chevron-up / big number / chevron-down | `TimeSpinner` composable | ✅ Match |
-| AM/PM as small stacked buttons inside the time box | Full-width `SegmentedToggle` below the time box | ⚠️ Deviation (see below) |
-| Full-width primary "Apply" button | `ProButton` primary, `weight(1f)` | ✅ Match (paired with a Cancel button the mockup doesn't have — see below) |
-| No calendar fallback for out-of-range dates | Trailing "Pick another date" chip + M3 `DatePicker` fallback dialog | ⚠️ Addition (see below) |
+| Full-screen page (not overlay/sheet), `--paper` background | `PickerScreenShell` | ✅ Match |
+| Header: close (×) left, title centered, no right action | `PickerScreenHeader` | ✅ Match |
+| Body: "Date" label → month calendar → "Time" label → spinner card (transaction screen) | `DateTimePickerScreen` | ✅ Match |
+| Selected day: solid `--blue-500` circle, white numeral | M3 `DatePicker` + `proDatePickerColors()` (`selectedDayContainerColor`/`selectedDayContentColor`) | ✅ Match |
+| Today marker: dot under today's numeral when not selected | M3 `DatePicker`'s own today indicator (`todayContentColor`/`todayDateBorderColor`), not a hand-drawn 4px dot | ⚠️ Close, not pixel-identical (see below) |
+| Time control: hour/minute vertical spinners + AM/PM | `TimeSpinner` × 2 + `SegmentedToggle` | ⚠️ AM/PM deviation (see below) |
+| Future-date banner below time card | `FutureDateNotice` | ✅ Match |
+| Footer: full-width primary Apply, always enabled | `ProButton` primary, `fillMaxWidth` | ✅ Match |
+| Event range: Start/End stub row, highlighted field awaiting input | `DateRangeStub` × 2 | ⚠️ Simplified highlight logic (see below) |
+| Event range: band fill between start/end, rounded only at range ends | M3 `DateRangePicker` + `proDatePickerColors()` (`dayInSelectionRangeContainerColor`) | ✅ Match — M3's native range rendering already does exactly this |
+| Event range: footer button label mirrors picked range / prompts for start-end | `DateRangePickerScreen` footer `when` | ✅ Match |
+| Debt due date: empty state, no day pre-selected | `DatePickerScreen(initialEpochMillis = null)` | ✅ Match |
+| Debt due date: footer = secondary Clear (when clearable) + primary "Use {date}" | `DatePickerScreen` footer | ✅ Match — **and fixes a real gap**: due date was optional in the data model but had no UI path back to "unset" before this rebuild |
+| Color tokens (`--blue-500`, `--blue-100`, `--card`, `--line`, `--ink`, `--muted`) | `proDatePickerColors()` maps all of these to `ProColors` roles already | ✅ Match — same theming file used by `JournalDateRangeSheet` prior to this work |
 
-## Deliberate deviations (all covered by the planning-stage `compose-product-auditor` pass)
+## Deliberate deviations (reasoned, not oversights)
 
-1. **Fallback calendar / "Pick another date" chip** — the mockup's date row is a fixed 6-date demo
-   range with no fallback, because its static prototype never needs to represent a date outside
-   that window. This sheet is reused in production to edit real records (a debt due date, a past
-   expense) that routinely fall outside a ±3-day quick-pick window, so a fallback is required for
-   the feature to function at all, not optional polish.
-2. **AM/PM as a full-width `SegmentedToggle` instead of small stacked buttons inside the time box**
-   — chosen for a larger, design-system-consistent touch target; the mockup's stacked buttons are
-   sized for a static demo, not validated against this repo's touch-target standard.
-3. **Cancel button** — the mockup only has "Apply"; the sheet keeps an explicit Cancel alongside it
-   to match every other bottom sheet in this codebase (`bottom-sheet.md`'s established
-   Cancel/primary-action footer pattern) rather than relying on the sheet's own close (X) affordance
-   alone.
-4. **Future-date dot marker on chips** — the mockup marks future-dated chips with a small trailing
-   dot; the implementation instead surfaces "future date" once, at the sheet level, via the info
-   banner already required by product copy ("entries are ordered by created date, not expense
-   date"). Carrying the per-chip dot as well would duplicate the same signal — flagged here as an
-   intentional simplification, not an oversight, but open to revisiting if design wants the
-   per-chip marker kept regardless.
+1. **Today marker rendered via M3's native today-indicator, not a hand-drawn 4×4px dot** — using
+   the stock M3 `DatePicker`/`DateRangePicker` (already themed and precedented twice elsewhere in
+   this codebase — `DatePickerTheming.kt`, `JournalDateRangeSheet.kt`) avoids writing and testing a
+   fully custom month-grid (leap years, locale weekday ordering, custom accessibility semantics)
+   for a component that already exists, is accessible out of the box, and only needs recoloring.
+   The trade-off is not pixel-identical cell art for a few details (today's dot position, exact
+   corner radii) — judged an acceptable trade against the risk/size of a hand-rolled grid.
+2. **AM/PM as a full-width `SegmentedToggle`** below the time box, not the mock's small stacked
+   buttons beside it — larger touch target, reuses an existing design-system component instead of
+   a bespoke one sized for a static demo.
+3. **No Cancel button** on any of the three screens — matches the design source exactly (none of
+   the three reference screenshots has one; dismissal is the header's × only). This *is* a change
+   from the prior bottom-sheet pattern elsewhere in the app (which pairs Cancel + Apply), but it's
+   what the actual dev handoff spec calls for on all three of these screens specifically.
+4. **Range-picker Start/End highlight simplified** — the source JSX's `active={!rangeEnd}` on the
+   Start stub means *both* stubs render highlighted simultaneously while a range is half-picked
+   (Start set, End not yet), which reads as an unintended quirk of the prototype's own state logic
+   rather than an intentional two-stub-active design. This implementation highlights exactly one
+   stub at a time instead. Worth a design opinion if double-highlighting during that state was
+   actually deliberate.
+5. **Event date range is now a true range picker**, replacing two independent single-date pickers
+   that had no start≤end enforcement — a functional fix the static mockup never had to represent,
+   not a fidelity question.
 
 ## Verification (Step 6 gate, this repo's `AGENTS.md`)
 
-- ✅ `gradle :shared:compileDebugKotlinAndroid` / `:app:compileDevDebugKotlin`
-- ✅ `gradle :shared:ktlintFormat` (no changes needed)
-- ✅ `gradle :shared:detektAndroidDebug :shared:detektAndroidRelease` (baseline regenerated for
-  signature-key drift only — see `.agents/skills/kotlin-lint-style/lint-retrospective.md`)
-- ✅ `gradle :app:verifyRoborazziDevDebug` — full suite, including the re-recorded
-  `add_date_time_sheet` baseline
+- ✅ `gradle :shared:compileDebugKotlinAndroid`, `:app:compileDevDebugKotlin`,
+  `:app:compileDevDebugUnitTestKotlin` — all modules touched (`shared`, `feature:debt`,
+  `feature:eventbudget`, `feature:logging`, `app`) compile clean.
+- ✅ `gradle :shared:ktlintFormat` — no outstanding issues after formatting.
+- ✅ `gradle :shared:detektAndroidDebug :shared:detektAndroidRelease` and the same for
+  `feature:debt`/`feature:eventbudget`/`feature:logging` — baseline regenerated only for the
+  expected, already-documented pattern (new `@Composable`s need `FunctionNaming`/`LongMethod`/
+  `LongParameterList`/`UnusedPrivateMember`-on-`@Preview` baseline entries; two genuine
+  `MaxLineLength` findings were fixed as real code changes, not baselined).
+- ✅ `gradle :app:testDevDebugUnitTest` — full unit suite green.
+- ✅ `gradle :app:verifyRoborazziDevDebug` — full screenshot suite green, including the
+  re-recorded `add_date_time_sheet` baseline and four new `PickerScreenshotTest` baselines
+  (`date_picker_empty_clearable`, `date_picker_selected`, `date_range_picker_empty`,
+  `date_range_picker_set`).
 - ✅ `gradle verifyAll -x :app:detekt` (`:app:detekt` excluded for a pre-existing, unrelated
-  `MoreFlow.kt` failure confirmed present on the base branch before this work)
-- Live design comparison: `DateTimeSheet` rendered directly from its JSX source via a local
-  Playwright/Chromium harness and compared side-by-side against the Roborazzi capture (not a
-  re-description from memory).
+  `MoreFlow.kt` failure confirmed present on the base branch before any of this session's work).
+- Post-implementation `compose-product-auditor` pass: one Low finding (no `BackHandler` for the
+  Android system back button on any of the three full-screen picker screens) — confirmed
+  consistent with this app's existing convention (`ProBottomSheetHost` and the prior bottom-sheet
+  picker also lack one), not a regression introduced by this rebuild. Left as a non-blocking,
+  possible app-wide follow-up rather than fixed in this pass.
 
 ## Sign-off
 
-Implementation matches the design source on every element except the four deviations above, each
-of which has a stated product/engineering reason and was raised during the planning-stage audit
-rather than discovered after the fact. No open blockers. The future-date dot marker (deviation 4)
-is the one item worth a design opinion if pixel-parity on that specific detail matters more than
-avoiding the duplicate signal.
+Implementation matches the authoritative dev handoff on every element except the five deviations
+above, each with a stated engineering or product reason, raised during this session's own review
+rather than discovered after the fact. No open blockers. Items worth a design opinion if strict
+pixel-parity matters more than the stated trade-offs: the today-marker rendering (deviation 1) and
+the range-picker double-highlight quirk (deviation 4).
