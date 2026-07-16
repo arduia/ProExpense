@@ -25,6 +25,8 @@
     <string name="link_debts_unavailable">· ไม่พร้อมใช้งานขณะเลือกกิจกรรม</string>
     <string name="shared_people_word">คน</string>
     <string name="date_time_sheet_title">วันที่และเวลา</string>
+    <string name="date_time_date_label">วันที่</string>
+    <string name="date_time_time_label">เวลา</string>
     <string name="date_time_pick_another">เลือกวันที่อื่น</string>
     <string name="date_time_selected_date">เลือกแล้ว: %1$s</string>
     <string name="date_time_future_notice">วันที่ในอนาคต — รายการจะเรียงตามวันที่สร้าง ไม่ใช่วันที่ของรายจ่าย</string>
@@ -38,4 +40,5 @@
     <string name="date_time_minute_decrement">ลดนาที</string>
     <string name="date_time_hour_state">ชั่วโมง %1$d</string>
     <string name="date_time_minute_state">นาที %1$d</string>
+    <string name="date_time_separator">:</string>
 </resources>

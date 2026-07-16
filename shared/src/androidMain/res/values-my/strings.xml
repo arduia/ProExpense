@@ -25,6 +25,8 @@
     <string name="link_debts_unavailable">· ပွဲတစ်ခုရွေးထားစဉ် မရနိုင်ပါ</string>
     <string name="shared_people_word">လူများ</string>
     <string name="date_time_sheet_title">ရက်စွဲနှင့်အချိန်</string>
+    <string name="date_time_date_label">ရက်စွဲ</string>
+    <string name="date_time_time_label">အချိန်</string>
     <string name="date_time_pick_another">အခြားရက်စွဲရွေးရန်</string>
     <string name="date_time_selected_date">ရွေးထားသည်: %1$s</string>
     <string name="date_time_future_notice">အနာဂတ်ရက်စွဲ — မှတ်တမ်းများကို ဖန်တီးသည့်ရက်အလိုက် စီစဉ်ပါမည်၊ အသုံးစရိတ်ရက်အလိုက် မဟုတ်ပါ။</string>
@@ -38,4 +40,5 @@
     <string name="date_time_minute_decrement">မိနစ်လျှော့ရန်</string>
     <string name="date_time_hour_state">နာရီ %1$d</string>
     <string name="date_time_minute_state">မိနစ် %1$d</string>
+    <string name="date_time_separator">:</string>
 </resources>

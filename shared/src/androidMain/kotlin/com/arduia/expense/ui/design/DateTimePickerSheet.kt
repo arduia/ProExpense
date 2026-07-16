@@ -1,12 +1,12 @@
 package com.arduia.expense.ui.design
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,13 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -51,7 +45,6 @@ import java.util.Calendar
 
 private const val QUICK_DAYS_BEFORE = 3
 private const val QUICK_DAYS_AFTER = 3
-private const val FADE_EDGE_DP = 24
 private const val HOURS_IN_HALF_DAY = 12
 private const val MINUTES_IN_HOUR = 60
 private const val NOON_HOUR_OF_DAY = 12
@@ -100,7 +93,7 @@ private fun to24Hour(
         else -> hour12
     }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DateTimePickerSheet(
     visible: Boolean,
@@ -110,7 +103,9 @@ fun DateTimePickerSheet(
 ) {
     if (!visible) return
 
+    val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
 
     val initialCalendar = remember(initialEpochMillis) { calendarAt(initialEpochMillis) }
     val todayStart = remember { startOfDay(System.currentTimeMillis()) }
@@ -147,60 +142,72 @@ fun DateTimePickerSheet(
         ) {
             ResolvedDateHeader(visible = !isInQuickWindow, selectedDayMillis = selectedDayMillis)
 
-            val chipScrollState = rememberScrollState()
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .horizontalFadingEdge(chipScrollState)
-                        .horizontalScroll(chipScrollState),
-                horizontalArrangement = Arrangement.spacedBy(dimens.space8),
-            ) {
-                quickDays.forEach { dayMillis ->
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                SectionEyebrow(stringResource(R.string.date_time_date_label))
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                ) {
+                    quickDays.forEach { dayMillis ->
+                        FilterChip(
+                            label = PlatformDateFormatter.dayLabel(dayMillis),
+                            selected = dayMillis == selectedDayMillis,
+                            onClick = { selectedDayMillis = dayMillis },
+                        )
+                    }
                     FilterChip(
-                        label = PlatformDateFormatter.dayLabel(dayMillis),
-                        selected = dayMillis == selectedDayMillis,
-                        onClick = { selectedDayMillis = dayMillis },
+                        label = stringResource(R.string.date_time_pick_another),
+                        selected = !isInQuickWindow,
+                        onClick = { showFallbackCalendar = true },
                     )
                 }
-                FilterChip(
-                    label = stringResource(R.string.date_time_pick_another),
-                    selected = !isInQuickWindow,
-                    onClick = { showFallbackCalendar = true },
-                )
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimens.space16),
-            ) {
-                val hourIncrementDescription = stringResource(R.string.date_time_hour_increment)
-                val hourDecrementDescription = stringResource(R.string.date_time_hour_decrement)
-                TimeSpinner(
-                    valueLabel = hour12.toString(),
-                    stateDescription = stringResource(R.string.date_time_hour_state, hour12),
-                    increment =
-                        SpinnerStep(hourIncrementDescription) {
-                            hour12 = if (hour12 == HOURS_IN_HALF_DAY) 1 else hour12 + 1
-                        },
-                    decrement =
-                        SpinnerStep(hourDecrementDescription) {
-                            hour12 = if (hour12 == 1) HOURS_IN_HALF_DAY else hour12 - 1
-                        },
-                    modifier = Modifier.weight(1f),
-                )
-                val minuteIncrementDescription = stringResource(R.string.date_time_minute_increment)
-                val minuteDecrementDescription = stringResource(R.string.date_time_minute_decrement)
-                TimeSpinner(
-                    valueLabel = minute.toString().padStart(2, '0'),
-                    stateDescription = stringResource(R.string.date_time_minute_state, minute),
-                    increment = SpinnerStep(minuteIncrementDescription) { minute = (minute + 1) % MINUTES_IN_HOUR },
-                    decrement =
-                        SpinnerStep(minuteDecrementDescription) {
-                            minute = (minute + MINUTES_IN_HOUR - 1) % MINUTES_IN_HOUR
-                        },
-                    modifier = Modifier.weight(1f),
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                SectionEyebrow(stringResource(R.string.date_time_time_label))
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(ProExpenseTheme.shapes.card)
+                            .border(1.dp, colors.lineStrong, ProExpenseTheme.shapes.card)
+                            .background(colors.surface)
+                            .padding(vertical = dimens.space16),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space16, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val hourIncrementDescription = stringResource(R.string.date_time_hour_increment)
+                    val hourDecrementDescription = stringResource(R.string.date_time_hour_decrement)
+                    TimeSpinner(
+                        valueLabel = hour12.toString(),
+                        stateDescription = stringResource(R.string.date_time_hour_state, hour12),
+                        increment =
+                            SpinnerStep(hourIncrementDescription) {
+                                hour12 = if (hour12 == HOURS_IN_HALF_DAY) 1 else hour12 + 1
+                            },
+                        decrement =
+                            SpinnerStep(hourDecrementDescription) {
+                                hour12 = if (hour12 == 1) HOURS_IN_HALF_DAY else hour12 - 1
+                            },
+                    )
+                    Text(
+                        text = stringResource(R.string.date_time_separator),
+                        style = typography.detailsAmount,
+                        color = colors.onSurfaceMuted,
+                    )
+                    val minuteIncrementDescription = stringResource(R.string.date_time_minute_increment)
+                    val minuteDecrementDescription = stringResource(R.string.date_time_minute_decrement)
+                    TimeSpinner(
+                        valueLabel = minute.toString().padStart(2, '0'),
+                        stateDescription = stringResource(R.string.date_time_minute_state, minute),
+                        increment = SpinnerStep(minuteIncrementDescription) { minute = (minute + 1) % MINUTES_IN_HOUR },
+                        decrement =
+                            SpinnerStep(minuteDecrementDescription) {
+                                minute = (minute + MINUTES_IN_HOUR - 1) % MINUTES_IN_HOUR
+                            },
+                    )
+                }
             }
 
             SegmentedToggle(
@@ -339,15 +346,9 @@ private fun TimeSpinner(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val shape = ProExpenseTheme.shapes.chip
 
     Column(
-        modifier =
-            modifier
-                .clip(shape)
-                .border(1.dp, colors.lineStrong, shape)
-                .background(colors.surface)
-                .padding(vertical = dimens.space8),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(dimens.space4),
     ) {
@@ -383,6 +384,15 @@ private fun ResolvedDateHeader(
             ),
         style = typography.captionMedium,
         color = colors.onSurfaceMuted,
+    )
+}
+
+@Composable
+private fun SectionEyebrow(text: String) {
+    Text(
+        text = text.uppercase(),
+        style = ProExpenseTheme.typography.eyebrow,
+        color = ProExpenseTheme.colors.onSurfaceMuted,
     )
 }
 
@@ -437,39 +447,6 @@ private fun SpinnerChevron(
                 .proIconClickable(onClick = step.onClick),
     )
 }
-
-/**
- * Fades the leading/trailing edge of a horizontally-scrolling row while (and only while) it's
- * actually scrollable, so a clipped chip row reads as "scroll for more" instead of "that's every
- * date" — horizontal counterpart to `CategoryNewSheet.kt`'s `verticalFadingEdge`. Must wrap the
- * `horizontalScroll` modifier (apply before it in the chain), not nest inside it, or it measures
- * the full unclipped content width instead of the visible viewport.
- */
-private fun Modifier.horizontalFadingEdge(scrollState: ScrollState): Modifier =
-    this
-        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-        .drawWithContent {
-            drawContent()
-            if (scrollState.maxValue <= 0) return@drawWithContent
-            val fadeWidth = FADE_EDGE_DP.dp.toPx()
-            if (scrollState.value > 0) {
-                drawRect(
-                    brush = Brush.horizontalGradient(colors = listOf(Color.Transparent, Color.Black), endX = fadeWidth),
-                    blendMode = BlendMode.DstIn,
-                )
-            }
-            if (scrollState.value < scrollState.maxValue) {
-                drawRect(
-                    brush =
-                        Brush.horizontalGradient(
-                            colors = listOf(Color.Black, Color.Transparent),
-                            startX = size.width - fadeWidth,
-                            endX = size.width,
-                        ),
-                    blendMode = BlendMode.DstIn,
-                )
-            }
-        }
 
 @Preview(
     name = "Date/time picker — open",
