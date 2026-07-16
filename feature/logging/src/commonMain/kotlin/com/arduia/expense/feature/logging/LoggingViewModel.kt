@@ -6,6 +6,9 @@ import kotlinx.coroutines.launch
 
 data class LoggingUiState(
     val tagOptions: List<TagOption> = emptyList(),
+    /** True once the tag catalog's first emission has arrived — distinguishes "no tags exist"
+     *  from "still loading", since [tagOptions] defaults to an empty list either way. */
+    val tagOptionsLoaded: Boolean = false,
     val existingRecord: FinanceRecord? = null,
 )
 
@@ -18,7 +21,9 @@ class LoggingViewModel(
 ) : StatefulViewModel<LoggingUiState>(LoggingUiState()) {
     init {
         viewModelScope.launch {
-            observeTagOptions().collect { options -> setState { it.copy(tagOptions = options) } }
+            observeTagOptions().collect { options ->
+                setState { it.copy(tagOptions = options, tagOptionsLoaded = true) }
+            }
         }
     }
 
