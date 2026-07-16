@@ -7,6 +7,7 @@ Implementation reference for the **Pro Expense** finance tracker, extracted from
 ## Foundations
 - [**Design Tokens**](tokens.md) — colour, typography, shape, spacing, elevation, motion + M3 `ColorScheme` / `Typography` mapping.
 - [**Requirements Sync — 2026-07-10**](REQUIREMENTS-SYNC-2026-07-10.md) — drift between this spec and the shipped app since the spec was captured; the punch list for the next design pass.
+- [**Dev sign-offs**](dev-signoff/) — per-component fidelity verification against the Claude Design source (matched elements, deliberate deviations with rationale, verification gate status). Currently: [Date & time picker](dev-signoff/date-time-picker-signoff.md).
 
 ## Components
 | Component | Spec | M3 mapping |
@@ -21,6 +22,7 @@ Implementation reference for the **Pro Expense** finance tracker, extracted from
 | Quick-access tiles | [quick-access.md](components/quick-access.md) | custom `Surface` |
 | Bottom navigation | [bottom-nav.md](components/bottom-nav.md) | `NavigationBar` + custom FAB |
 | Bottom sheet | [bottom-sheet.md](components/bottom-sheet.md) | `ModalBottomSheet` |
+| Date & time picker | [date-time-picker.md](components/date-time-picker.md) | full-screen `DatePicker`/`DateRangePicker` + custom time spinner |
 | Toast | [toast.md](components/toast.md) | `Snackbar` |
 | Iconography | [icons.md](components/icons.md) | `ImageVector` |
 

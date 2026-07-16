@@ -42,6 +42,7 @@
 <string name="event_name_label">EVENT NAME</string>
 <string name="event_name_placeholder">e.g. Bali Trip</string>
 <string name="event_dates_label">DATES</string>
+<string name="event_date_range_picker_title">Event dates</string>
 <string name="event_total_budget_label">TOTAL BUDGET</string>
 <string name="event_name_counter">%1$d/%2$d</string>
 <string name="event_name_duplicate">An event with this name already exists</string>

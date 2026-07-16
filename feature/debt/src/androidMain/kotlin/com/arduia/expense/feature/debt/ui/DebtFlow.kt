@@ -28,7 +28,7 @@ import com.arduia.expense.feature.debt.ui.preview.DebtRecordUi
 import com.arduia.expense.feature.debt.ui.preview.DebtSide
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
-import com.arduia.expense.ui.design.DateTimePickerSheet
+import com.arduia.expense.ui.design.DatePickerScreen
 import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.ProAlertDialog
 import com.arduia.expense.ui.design.ProBottomSheetHost
@@ -252,12 +252,17 @@ fun DebtFlow(
             )
         }
 
-        DateTimePickerSheet(
+        DatePickerScreen(
             visible = showDuePicker,
-            initialEpochMillis = addForm.dueEpochMillis ?: System.currentTimeMillis(),
-            onConfirm = { millis ->
+            title = stringResource(R.string.debt_due_date),
+            initialEpochMillis = addForm.dueEpochMillis,
+            allowClear = true,
+            onApply = { millis ->
                 addForm = addForm.copy(dueEpochMillis = millis, dueLabel = PlatformDateFormatter.shortDateLabel(millis))
                 showDuePicker = false
+            },
+            onClear = {
+                addForm = addForm.copy(dueEpochMillis = null, dueLabel = null)
             },
             onDismiss = { showDuePicker = false },
         )

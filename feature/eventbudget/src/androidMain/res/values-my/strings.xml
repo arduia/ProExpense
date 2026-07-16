@@ -29,6 +29,7 @@
 <string name="event_name_label">ပွဲအမည်</string>
 <string name="event_name_placeholder">ဥပမာ Bali ခရီးစဉ်</string>
 <string name="event_dates_label">ရက်စွဲများ</string>
+<string name="event_date_range_picker_title">ပွဲရက်စွဲများ</string>
 <string name="event_total_budget_label">စုစုပေါင်းဘတ်ဂျက်</string>
 <string name="event_name_counter">%1$d/%2$d</string>
 <string name="event_name_duplicate">ဒီအမည်ရှိသော ပွဲ ရှိပြီးသားဖြစ်သည်</string>

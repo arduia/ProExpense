@@ -17,7 +17,7 @@ import com.arduia.expense.feature.eventbudget.R
 import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
-import com.arduia.expense.ui.design.DateTimePickerSheet
+import com.arduia.expense.ui.design.DateRangePickerScreen
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.EventBudgetSummaryState
 import com.arduia.expense.ui.design.EventBudgetTone
@@ -72,8 +72,7 @@ fun EventsFlow(
     var showCreate by remember { mutableStateOf(false) }
     var editingEventId by remember { mutableStateOf<String?>(null) }
     var form by remember { mutableStateOf(EventCreateFormState()) }
-    var showStartPicker by remember { mutableStateOf(false) }
-    var showEndPicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
     var showActionsSheet by remember { mutableStateOf(false) }
     var showCloseConfirm by remember { mutableStateOf(false) }
     var archiveTargetId by remember { mutableStateOf<String?>(null) }
@@ -172,8 +171,8 @@ fun EventsFlow(
                 onBudgetChange = { raw ->
                     form = form.copy(budgetRaw = raw, showBudgetError = false)
                 },
-                onPickStart = { showStartPicker = true },
-                onPickEnd = { showEndPicker = true },
+                onPickStart = { showDatePicker = true },
+                onPickEnd = { showDatePicker = true },
                 onSave = {
                     if (!form.canSave) {
                         form = form.copy(showBudgetError = true, isDuplicateName = isDuplicate(form.name))
@@ -267,24 +266,22 @@ fun EventsFlow(
             )
         }
 
-        DateTimePickerSheet(
-            visible = showStartPicker,
-            initialEpochMillis = form.startEpochMillis,
-            onConfirm = { millis ->
-                form = form.copy(startEpochMillis = millis, startLabel = PlatformDateFormatter.shortDateLabel(millis))
-                showStartPicker = false
+        DateRangePickerScreen(
+            visible = showDatePicker,
+            title = stringResource(R.string.event_date_range_picker_title),
+            initialStartEpochMillis = form.startEpochMillis,
+            initialEndEpochMillis = form.endEpochMillis,
+            onApply = { start, end ->
+                form =
+                    form.copy(
+                        startEpochMillis = start,
+                        startLabel = PlatformDateFormatter.shortDateLabel(start),
+                        endEpochMillis = end,
+                        endLabel = PlatformDateFormatter.shortDateLabel(end),
+                    )
+                showDatePicker = false
             },
-            onDismiss = { showStartPicker = false },
-        )
-
-        DateTimePickerSheet(
-            visible = showEndPicker,
-            initialEpochMillis = form.endEpochMillis,
-            onConfirm = { millis ->
-                form = form.copy(endEpochMillis = millis, endLabel = PlatformDateFormatter.shortDateLabel(millis))
-                showEndPicker = false
-            },
-            onDismiss = { showEndPicker = false },
+            onDismiss = { showDatePicker = false },
         )
     }
 }

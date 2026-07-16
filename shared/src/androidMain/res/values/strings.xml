@@ -24,4 +24,27 @@
     <string name="link_debts_section">DEBTS</string>
     <string name="link_debts_unavailable">· unavailable while an event is selected</string>
     <string name="shared_people_word">PEOPLE</string>
+    <string name="date_time_sheet_title">Date &amp; time</string>
+    <string name="date_time_date_label">Date</string>
+    <string name="date_time_time_label">Time</string>
+    <string name="date_time_future_notice">Future date — entries are ordered by created date, not expense date.</string>
+    <string name="date_time_apply">Apply</string>
+    <string name="date_time_am">AM</string>
+    <string name="date_time_pm">PM</string>
+    <string name="date_time_hour_increment">Increase hour</string>
+    <string name="date_time_hour_decrement">Decrease hour</string>
+    <string name="date_time_minute_increment">Increase minute</string>
+    <string name="date_time_minute_decrement">Decrease minute</string>
+    <string name="date_time_hour_state">Hour %1$d</string>
+    <string name="date_time_minute_state">Minute %1$d</string>
+    <string name="date_time_separator">:</string>
+    <string name="date_picker_clear">Clear</string>
+    <string name="date_picker_use">Use %1$s</string>
+    <string name="date_picker_select">Select a date</string>
+    <string name="date_range_picker_start_label">Start</string>
+    <string name="date_range_picker_end_label">End</string>
+    <string name="date_range_picker_select">Select</string>
+    <string name="date_range_picker_pick_start">Pick a start date</string>
+    <string name="date_range_picker_pick_end">Pick an end date</string>
+    <string name="date_range_picker_use">Use %1$s — %2$s</string>
 </resources>

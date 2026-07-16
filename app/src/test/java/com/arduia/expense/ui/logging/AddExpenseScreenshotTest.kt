@@ -20,7 +20,7 @@ import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsForeig
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseDetailsNoteLimit
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.testing.captureRoboImageWithTolerance
-import com.arduia.expense.ui.design.DateTimePickerSheet
+import com.arduia.expense.ui.design.DateTimePickerScreen
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Rule
@@ -223,7 +223,7 @@ class AddExpenseScreenshotTest {
     fun add_date_time_sheet() {
         capture {
             // Fixed instant keeps the baseline deterministic across runs.
-            DateTimePickerSheet(
+            DateTimePickerScreen(
                 visible = true,
                 initialEpochMillis = 1_716_600_000_000L,
                 onConfirm = {},
