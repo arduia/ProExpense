@@ -13,14 +13,15 @@ CREATE TABLE app_meta (
     pin_hash TEXT,
     language_tag TEXT NOT NULL DEFAULT 'en',
     default_category_id TEXT,
-    theme_mode TEXT NOT NULL DEFAULT 'dark'
+    theme_mode TEXT NOT NULL DEFAULT 'dark',
+    stay_unlocked_in_background INTEGER NOT NULL DEFAULT 0
 );
 
 insertMeta:
 INSERT OR REPLACE INTO app_meta(
     id, monthly_budget_cents, home_currency_code, failed_attempt_count, lockout_until,
-    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key, display_name, onboarding_completed, pin_hash, language_tag, default_category_id, theme_mode
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    security_answer_hash, security_question_id, biometric_enrolled, biometric_wrapped_key, display_name, onboarding_completed, pin_hash, language_tag, default_category_id, theme_mode, stay_unlocked_in_background
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectMeta:
 SELECT * FROM app_meta WHERE id = 1;

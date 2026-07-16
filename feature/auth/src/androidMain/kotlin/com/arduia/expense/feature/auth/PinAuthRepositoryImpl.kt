@@ -163,6 +163,26 @@ class PinAuthRepositoryImpl(
             }
         }
 
+    override suspend fun isStayUnlockedInBackgroundEnabled(): Result<Boolean> =
+        withContext(dispatcher) {
+            try {
+                val snapshot = appMetaStore.read()
+                Result.Success(snapshot.stayUnlockedInBackground)
+            } catch (e: Exception) {
+                Result.Error("Failed to check stay-unlocked setting", cause = e)
+            }
+        }
+
+    override suspend fun setStayUnlockedInBackgroundEnabled(enabled: Boolean): Result<Unit> =
+        withContext(dispatcher) {
+            try {
+                appMetaStore.update { snapshot -> snapshot.copy(stayUnlockedInBackground = enabled) }
+                Result.Success(Unit)
+            } catch (e: Exception) {
+                Result.Error("Failed to set stay-unlocked setting", cause = e)
+            }
+        }
+
     override suspend fun getFailedAttemptCount(): Result<Long> =
         withContext(dispatcher) {
             try {

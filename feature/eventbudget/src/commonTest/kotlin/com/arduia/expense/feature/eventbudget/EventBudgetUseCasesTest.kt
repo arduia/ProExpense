@@ -8,6 +8,8 @@ import com.arduia.expense.domain.Event
 import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.EventStatus
 import com.arduia.expense.domain.Money
+import com.arduia.expense.ui.design.EventBudgetTone
+import com.arduia.expense.ui.design.eventBudgetTone
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
@@ -56,6 +58,17 @@ class ComputeEventProgressUseCaseTest {
     }
 
     @Test
+    fun invoke_spentRatioStaysUncappedWhereProgressClamps() {
+        val event = sampleEvent(budgetCents = 10_00)
+        val spent = Money(Amount(15_00), CurrencyCode("USD"))
+
+        val progress = useCase(event, spent)
+
+        assertEquals(1f, progress.progress)
+        assertEquals(1.5f, progress.spentRatio)
+    }
+
+    @Test
     fun invoke_treatsNullSpentAsZero() {
         val event = sampleEvent(budgetCents = 10_00)
 
@@ -101,6 +114,28 @@ class ComputeEventProgressUseCaseTest {
         val progress = useCase(event, Money(Amount(13_00), CurrencyCode("USD")))
 
         assertEquals(30, progress.overBudgetPercent)
+    }
+
+    // US-EVT-3 Scenario 1 covers both the event list card and the event detail screen — both
+    // must land on the same eventBudgetTone tier for identical spend, since they're two views of
+    // the same EventProgress.spentRatio (list derives its color from overBudgetPercent, detail
+    // from eventBudgetTone(spentRatio); this pins spentRatio itself to the tier boundaries).
+    @Test
+    fun invoke_warningTierSpentRatioCrossesEventBudgetToneBoundary() {
+        val event = sampleEvent(budgetCents = 10_00)
+
+        val progress = useCase(event, Money(Amount(10_50), CurrencyCode("USD")))
+
+        assertEquals(EventBudgetTone.OverBudget, eventBudgetTone(progress.spentRatio))
+    }
+
+    @Test
+    fun invoke_dangerTierSpentRatioCrossesEventBudgetToneBoundary() {
+        val event = sampleEvent(budgetCents = 10_00)
+
+        val progress = useCase(event, Money(Amount(13_00), CurrencyCode("USD")))
+
+        assertEquals(EventBudgetTone.SignificantlyOver, eventBudgetTone(progress.spentRatio))
     }
 }
 

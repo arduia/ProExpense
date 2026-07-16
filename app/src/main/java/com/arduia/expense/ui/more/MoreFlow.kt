@@ -45,6 +45,8 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.expenseCategoryLabel
+import com.arduia.expense.ui.preview.MoreSettingKind
+import com.arduia.expense.ui.preview.MoreSettingRowUi
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -73,6 +75,8 @@ fun MoreFlow(
     onDefaultCategoryChanged: (String) -> Unit = {},
     onThemeModeChanged: (ThemeMode) -> Unit = {},
     onLanguageChanged: () -> Unit = {},
+    onLockNowClick: () -> Unit = {},
+    onStayUnlockedInBackgroundChanged: (Boolean) -> Unit = {},
 ) {
     val colors = ProExpenseTheme.colors
     val motion = ProExpenseTheme.motion
@@ -97,7 +101,11 @@ fun MoreFlow(
     var step by remember { mutableStateOf(MoreStep.Hub) }
     var selectedCurrency by remember { mutableStateOf("USD") }
     var displayName by remember { mutableStateOf(initialDisplayName.orEmpty()) }
-    var pinEnabled by remember { mutableStateOf(false) }
+    // Seeded from pinConfigured (never null on a real composition — ExpenseApp only renders
+    // MoreFlow once it has resolved) so the PIN-gated rows below (biometric, "Stay unlocked",
+    // "Lock now") are correct on the very first frame instead of popping in a frame later once
+    // the LaunchedEffect below catches up.
+    var pinEnabled by remember { mutableStateOf(pinConfigured ?: false) }
     var showPinManageSheet by remember { mutableStateOf(false) }
     var showDisablePinConfirm by remember { mutableStateOf(false) }
     var showDisablePinVerify by remember { mutableStateOf(false) }
@@ -106,6 +114,7 @@ fun MoreFlow(
     var appVersion by remember { mutableStateOf("1.0.0") }
     var homeCurrencyCode by remember { mutableStateOf(CurrencyCode("USD")) }
     var biometricEnrolled by remember { mutableStateOf(false) }
+    var stayUnlockedInBackground by remember { mutableStateOf(false) }
     val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
     var defaultCategoryId by remember { mutableStateOf("food") }
     var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
@@ -145,6 +154,11 @@ fun MoreFlow(
         // Load biometric enrollment
         when (val result = pinAuthRepository.isBiometricEnrolled()) {
             is Result.Success -> biometricEnrolled = result.data
+            is Result.Error -> Unit
+        }
+        // Load per-session unlock setting
+        when (val result = pinAuthRepository.isStayUnlockedInBackgroundEnabled()) {
+            is Result.Success -> stayUnlockedInBackground = result.data
             is Result.Error -> Unit
         }
         // Load monthly budget
@@ -191,6 +205,7 @@ fun MoreFlow(
             appVersion,
             biometricEnrolled,
             biometricCapable,
+            stayUnlockedInBackground,
             defaultCategoryId,
             themeMode,
             languageTag,
@@ -208,26 +223,64 @@ fun MoreFlow(
                         name = displayName.ifBlank { profileNameFallback },
                     ),
                 settings =
-                    previewMoreHub.settings.map { setting ->
-                        when (setting.id) {
-                            "currency" -> setting.copy(value = selectedCurrency)
-                            "pin" -> setting.copy(value = if (pinEnabled) "On" else "Off")
-                            "biometric" ->
-                                setting.copy(
-                                    toggleOn = biometricEnrolled,
-                                    enabled = pinEnabled && biometricCapable,
-                                )
-                            "budget" -> setting.copy(value = monthlyBudgetLabel)
-                            "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
-                            "theme" ->
-                                setting.copy(
-                                    value = themeModeLabel(themeMode, themeLightLabel, themeDarkLabel, themeSystemLabel),
-                                )
-                            "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
-                            "version" -> setting.copy(value = appVersion)
-                            else -> setting
+                    previewMoreHub.settings
+                        .map { setting ->
+                            when (setting.id) {
+                                "currency" -> setting.copy(value = selectedCurrency)
+                                "pin" -> setting.copy(value = if (pinEnabled) "On" else "Off")
+                                "budget" -> setting.copy(value = monthlyBudgetLabel)
+                                "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
+                                "theme" ->
+                                    setting.copy(
+                                        value =
+                                            themeModeLabel(
+                                                themeMode,
+                                                themeLightLabel,
+                                                themeDarkLabel,
+                                                themeSystemLabel,
+                                            ),
+                                    )
+                                "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
+                                "version" -> setting.copy(value = appVersion)
+                                else -> setting
+                            }
                         }
-                    },
+                        // Biometric unlock is meaningless without PIN auth — insert it right after
+                        // the PIN row only once PIN is on, instead of showing it always-but-disabled.
+                        .flatMap { setting ->
+                            if (setting.id == "pin" && pinEnabled) {
+                                listOf(
+                                    setting,
+                                    MoreSettingRowUi(
+                                        id = "biometric",
+                                        icon = ProIconGlyph.Fingerprint,
+                                        label = "Biometric unlock",
+                                        kind = MoreSettingKind.Toggle,
+                                        toggleOn = biometricEnrolled,
+                                        enabled = biometricCapable,
+                                    ),
+                                    // Opt-in (default off, US-AUTH-4's "always re-lock" stays the
+                                    // default) — on, an app-switch (background/foreground) no
+                                    // longer re-prompts; only a real process restart or the
+                                    // explicit "Lock now" below does.
+                                    MoreSettingRowUi(
+                                        id = "stayUnlocked",
+                                        icon = ProIconGlyph.Clock,
+                                        label = "Stay unlocked while switching apps",
+                                        kind = MoreSettingKind.Toggle,
+                                        toggleOn = stayUnlockedInBackground,
+                                    ),
+                                    MoreSettingRowUi(
+                                        id = "lockNow",
+                                        icon = ProIconGlyph.Lock,
+                                        label = "Lock now",
+                                        kind = MoreSettingKind.Nav,
+                                    ),
+                                )
+                            } else {
+                                listOf(setting)
+                            }
+                        },
             )
         }
 
@@ -271,17 +324,20 @@ fun MoreFlow(
                                 "category" -> step = MoreStep.DefaultCategory
                                 "theme" -> step = MoreStep.Theme
                                 "language" -> step = MoreStep.Language
-                                "biometric" ->
-                                    if (!pinEnabled) {
-                                        toastMessage = context.getString(R.string.more_biometric_requires_pin)
-                                    }
+                                "lockNow" -> onLockNowClick()
                             }
                         },
                         onSettingToggle = { id, on ->
-                            if (id == "biometric" && pinEnabled && biometricCapable) {
+                            if (id == "biometric" && biometricCapable) {
                                 scope.launch {
                                     if (on) pinAuthRepository.enrollBiometric() else pinAuthRepository.clearBiometric()
                                     biometricEnrolled = on
+                                }
+                            } else if (id == "stayUnlocked") {
+                                scope.launch {
+                                    pinAuthRepository.setStayUnlockedInBackgroundEnabled(on)
+                                    stayUnlockedInBackground = on
+                                    onStayUnlockedInBackgroundChanged(on)
                                 }
                             }
                         },
@@ -377,7 +433,11 @@ fun MoreFlow(
                                         "Off"
                                     }
                                 onBudgetChanged(money)
-                                step = MoreStep.Hub
+                                // A null money is the switch-off action, not an explicit amount
+                                // save (MoreBudgetScreen's switch toggle calls onSave(null)
+                                // directly) — only an explicit Save should navigate back to Hub,
+                                // switching off should leave the user on this screen.
+                                if (money != null) step = MoreStep.Hub
                             }
                         },
                         onBack = { step = MoreStep.Hub },

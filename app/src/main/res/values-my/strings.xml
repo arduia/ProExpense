@@ -38,6 +38,6 @@
     <string name="more_title">နောက်ထပ်</string>
     <string name="more_features">အင်္ဂါရပ်များ</string>
     <string name="more_settings">ဆက်တင်များ</string>
-    <string name="more_biometric_requires_pin">ဇီဝအမှတ်အသားအထောက်အထား အသုံးပြုရန် PIN ကို အရင်ဖွင့်ပါ။</string>
+    <string name="more_budget_toggle_caption">လစဉ် ၁ ရက်နေ့တွင် အလိုအလျောက် ပြန်လည်သတ်မှတ်ပါမည်</string>
     <string name="home_today_section">ယနေ့</string>
 </resources>

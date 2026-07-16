@@ -23,6 +23,9 @@ import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicke
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.HomeNavTab
+import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.preview.MoreSettingKind
+import com.arduia.expense.ui.preview.MoreSettingRowUi
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -81,11 +84,34 @@ class MoreScreenshotTest {
                 state =
                     previewMoreHub.copy(
                         settings =
-                            previewMoreHub.settings.map { setting ->
+                            previewMoreHub.settings.flatMap { setting ->
                                 when (setting.id) {
-                                    "pin" -> setting.copy(value = "On")
-                                    "biometric" -> setting.copy(enabled = true, toggleOn = true)
-                                    else -> setting
+                                    "pin" ->
+                                        listOf(
+                                            setting.copy(value = "On"),
+                                            MoreSettingRowUi(
+                                                id = "biometric",
+                                                icon = ProIconGlyph.Fingerprint,
+                                                label = "Biometric unlock",
+                                                kind = MoreSettingKind.Toggle,
+                                                toggleOn = true,
+                                                enabled = true,
+                                            ),
+                                            MoreSettingRowUi(
+                                                id = "stayUnlocked",
+                                                icon = ProIconGlyph.Clock,
+                                                label = "Stay unlocked while switching apps",
+                                                kind = MoreSettingKind.Toggle,
+                                                toggleOn = false,
+                                            ),
+                                            MoreSettingRowUi(
+                                                id = "lockNow",
+                                                icon = ProIconGlyph.Lock,
+                                                label = "Lock now",
+                                                kind = MoreSettingKind.Nav,
+                                            ),
+                                        )
+                                    else -> listOf(setting)
                                 }
                             },
                     ),

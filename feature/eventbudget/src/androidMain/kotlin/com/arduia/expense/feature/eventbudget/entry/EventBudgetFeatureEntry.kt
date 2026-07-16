@@ -233,7 +233,7 @@ private fun Event.toDetailState(
                 spentCaption = "Spent",
                 budgetCaption = "Budget",
                 progress = progress.progress,
-                tone = eventBudgetTone(progress.progress),
+                tone = eventBudgetTone(progress.spentRatio),
                 isFinal = isClosed,
             ),
         linkedCount = linkedExpenses.size,

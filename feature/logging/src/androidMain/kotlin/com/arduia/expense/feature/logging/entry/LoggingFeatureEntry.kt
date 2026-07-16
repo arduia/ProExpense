@@ -1,5 +1,8 @@
 package com.arduia.expense.feature.logging.entry
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +28,7 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.TagLinkKind
 import com.arduia.expense.ui.design.TagLinkOption
+import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.launch
 import org.koin.compose.currentKoinScope
 import java.text.SimpleDateFormat
@@ -105,6 +109,10 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             }
         val linkedEvent = initialLinkedEventId?.let { id -> tagEvents.firstOrNull { it.id == id } }
         var saveErrorMessage by remember { mutableStateOf<String?>(null) }
+
+        // A pre-tagged "Add tagged expense" (US-EVT-4) needs the tag catalog resolved before the
+        // category picker ever composes — see PendingEventLinkPlaceholder for why.
+        if (showPendingEventLinkPlaceholder(initialLinkedEventId, uiState.tagOptionsLoaded, modifier)) return
 
         com.arduia.expense.feature.logging.ui.QuickLogFlow(
             onDismiss = onDismiss,
@@ -221,6 +229,21 @@ internal class LoggingFeatureEntryImpl : LoggingFeatureEntry {
             )
         }
     }
+}
+
+// Renders a neutral placeholder and returns true while a pre-tagged "Add tagged expense"
+// (US-EVT-4) link is still resolving — otherwise the category picker briefly renders unfiltered
+// (income categories visible) since ExpenseEntryState.linkedTagKind starts null until the async
+// tagOptions load lands, then a late effect hides them a frame or more afterward.
+@Composable
+private fun showPendingEventLinkPlaceholder(
+    initialLinkedEventId: String?,
+    tagOptionsLoaded: Boolean,
+    modifier: Modifier,
+): Boolean {
+    val pending = initialLinkedEventId != null && !tagOptionsLoaded
+    if (pending) Box(modifier = modifier.fillMaxSize().background(ProExpenseTheme.colors.paper))
+    return pending
 }
 
 @Composable

@@ -183,8 +183,8 @@ fun MoreSettingRow(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val isNav = setting.kind == MoreSettingKind.Nav
-    // A disabled Toggle row (e.g. Biometric while PIN is off) still needs to catch a tap so it
-    // can explain why it's blocked — Switch(enabled = false) swallows touches entirely.
+    // A disabled Toggle row (e.g. Biometric on a device without biometric hardware) still needs
+    // to catch a tap so it can explain why it's blocked — Switch(enabled = false) swallows touches.
     val isRowClickable = isNav || !setting.enabled
 
     Row(
