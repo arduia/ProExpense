@@ -372,6 +372,8 @@ Every task completion **must** include a **Workflow status** block in the final 
 ## Workflow status
 - Step 2.25 — Toolchain: ✅ already configured | ✅ `scripts/setup-android-toolchain.sh` | ⚠️ skipped (reason)
 - Step 6 — Verify: ✅ `<command run>` | ⚠️ G1 flagged (reason) | ❌ not run
+- UI audit — compose-product-auditor: ✅ clean | ⚠️ `<n>` finding(s) — fixed | ⚠️ `<n>` finding(s) — deferred (reason) | ❌ not run (reason) | — n/a, no UI change
+- Feedback fix: ✅ `<design/fidelity mismatch the user flagged → what changed>` | — none this session
 - Step 7 — Push: ✅ `origin/<branch>` @ `<short-sha>` | ❌ not pushed
 - PR: manual (not opened by agent)
 ```
@@ -379,6 +381,8 @@ Every task completion **must** include a **Workflow status** block in the final 
 Rules:
 - **Step 2.25 ✅** when SDK is configured and Gradle resolves dependencies, or after `setup-android-toolchain.sh` succeeds.
 - **Step 6 ✅** only after the matching command exits 0 in this session (preferred: `./gradlew verifyAll`), or **G1** is declared with reason and compensation.
+- **UI audit** line is required whenever the change touches Compose UI (Step 6's UI change gate / G5) — report the `compose-product-auditor` pass's actual verdict, not a self-assessment of "does my diff render." Use `— n/a, no UI change` only for changes with zero UI surface (pure logic, tests, docs, config). A finding logged as "fixed" must have been re-verified (re-screenshot/re-audit), not just edited and assumed fixed.
+- **Feedback fix** line is required whenever the user pointed out a design/fidelity/behavior mismatch after something was already delivered — name the specific thing that was wrong and what changed, so drift between "shipped" and "actually matches" stays visible in the close-out instead of buried in chat history. Use `— none this session` when nothing was corrected on user feedback.
 - **Step 7 ✅** only after `git push` succeeds and local `HEAD` matches `origin/<branch>`.
 - **PR:** always report `manual (not opened by agent)` unless the user explicitly requested PR creation in that turn.
 - If Step 6 is ✅ and commits exist, **push before close-out** — do not leave verified work only on disk.
