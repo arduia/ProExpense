@@ -20,6 +20,9 @@ import kotlin.random.Random
 private const val GLITCH_STEP_COUNT = 7
 private const val GLITCH_STEP_DURATION_MS = 40L
 private const val GLITCH_MAX_OFFSET_DP = 3
+private const val GLITCH_GHOST_ALPHA = 0.65f
+private val GlitchRed = Color(0xFFFF3B5C)
+private val GlitchCyan = Color(0xFF00E5FF)
 
 /**
  * Plays a brief RGB-split glitch flicker on [text] once per [playbackKey], then settles into a
@@ -57,13 +60,13 @@ fun GlitchText(
             Text(
                 text = text,
                 style = style,
-                color = Color(0xFFFF3B5C).copy(alpha = 0.65f),
+                color = GlitchRed.copy(alpha = GLITCH_GHOST_ALPHA),
                 modifier = Modifier.offset(x = redOffsetDp.dp),
             )
             Text(
                 text = text,
                 style = style,
-                color = Color(0xFF00E5FF).copy(alpha = 0.65f),
+                color = GlitchCyan.copy(alpha = GLITCH_GHOST_ALPHA),
                 modifier = Modifier.offset(x = cyanOffsetDp.dp),
             )
         }

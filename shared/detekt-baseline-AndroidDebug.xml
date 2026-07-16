@@ -97,6 +97,7 @@
     <ID>FunctionNaming:Fields.kt$@Composable fun ProfileNameField( value: String, onValueChange: (String) -&gt; Unit, placeholder: String, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:Fields.kt$@Composable fun SearchField( value: String, onValueChange: (String) -&gt; Unit, placeholder: String, modifier: Modifier = Modifier, active: Boolean = false, )</ID>
     <ID>FunctionNaming:Fields.kt$@Composable fun SearchFieldShell( query: String, onClear: () -&gt; Unit, modifier: Modifier = Modifier, placeholder: String = "Search notes, amount, category…", onClick: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:GlitchText.kt$@Composable fun GlitchText( text: String, style: TextStyle, color: Color, modifier: Modifier = Modifier, playbackKey: Any? = Unit, )</ID>
     <ID>FunctionNaming:HeroGreeting.kt$@Composable fun HeroGreeting( name: String, modifier: Modifier = Modifier, prefix: String = "Hi, ", )</ID>
     <ID>FunctionNaming:HeroGreeting.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun HeroGreetingPreview()</ID>
     <ID>FunctionNaming:HomeBottomNav.kt$@Composable fun HomeBottomNav( selectedTab: HomeNavTab, onTabSelected: (HomeNavTab) -&gt; Unit, onAddClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
@@ -292,8 +293,6 @@
     <ID>MagicNumber:Color.kt$0xFFFFF176</ID>
     <ID>MagicNumber:Color.kt$0xFFFFFDF6</ID>
     <ID>MagicNumber:Color.kt$0xFFFFFFFF</ID>
-    <ID>MagicNumber:DateTimePickerSheet.kt$23</ID>
-    <ID>MagicNumber:DateTimePickerSheet.kt$59</ID>
     <ID>MagicNumber:Elevation.kt$0x08212121</ID>
     <ID>MagicNumber:Elevation.kt$0x0A212121</ID>
     <ID>MagicNumber:Elevation.kt$0x1A000000</ID>
@@ -324,6 +323,8 @@
     <ID>MagicNumber:EmptyState.kt$96f</ID>
     <ID>MagicNumber:EmptyState.kt$98f</ID>
     <ID>MagicNumber:EventBudgetCard.kt$10</ID>
+    <ID>MagicNumber:GlitchText.kt$0xFF00E5FF</ID>
+    <ID>MagicNumber:GlitchText.kt$0xFFFF3B5C</ID>
     <ID>MagicNumber:ListRows.kt$0.05f</ID>
     <ID>MagicNumber:Motion.kt$0.22f</ID>
     <ID>MagicNumber:Motion.kt$0.36f</ID>
@@ -493,8 +494,6 @@
     <ID>MaxLineLength:Buttons.kt$ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)</ID>
     <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_LENT -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)</ID>
     <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_OWED -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)</ID>
-    <ID>MaxLineLength:DateTimePickerSheet.kt$Text(":", style = typography.body, color = colors.onSurface, modifier = Modifier.padding(vertical = 8.dp))</ID>
-    <ID>MaxLineLength:DateTimePickerSheet.kt$TimeFieldTransformation$override fun filter(text: androidx.compose.ui.text.AnnotatedString): TransformedText</ID>
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — auth", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 640, showBackground = true)</ID>
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — buttons", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true)</ID>
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — categories", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)</ID>
