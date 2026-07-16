@@ -17,6 +17,9 @@ data class EventProgress(
     val isOverBudget: Boolean,
     /** Rounded percent over 100 (e.g. 105% spent -> 5); 0 when at or under budget. */
     val overBudgetPercent: Int = 0,
+    /** Uncapped spend ÷ budget ratio — feed this (not [progress]) to `eventBudgetTone` so the
+     *  list card and detail screen agree on the same US-EVT-3 tier past 100%. */
+    val spentRatio: Float = progress,
 )
 
 class ComputeEventProgressUseCase {
@@ -26,7 +29,7 @@ class ComputeEventProgressUseCase {
     ): EventProgress {
         val spentCents = spent?.amount?.valueInCents ?: 0L
         val budgetCents = event.budget.amount.valueInCents
-        val progress = if (budgetCents > 0) spentCents.toFloat() / budgetCents.toFloat() else 0f
+        val spentRatio = if (budgetCents > 0) spentCents.toFloat() / budgetCents.toFloat() else 0f
         // US-EVT-3's tiers (0-100 normal, 101-110 warning, >110 danger) need the *uncapped*
         // percent over budget — the bar-fill progress below is intentionally capped to 1f.
         val percentOfBudget = if (budgetCents > 0) (spentCents * 100f / budgetCents) else 0f
@@ -35,9 +38,10 @@ class ComputeEventProgressUseCase {
             spentCents = spentCents,
             budgetCents = budgetCents,
             remainingCents = budgetCents - spentCents,
-            progress = progress.coerceIn(0f, 1f),
+            progress = spentRatio.coerceIn(0f, 1f),
             isOverBudget = spentCents > budgetCents,
             overBudgetPercent = overBudgetPercent,
+            spentRatio = spentRatio,
         )
     }
 }
