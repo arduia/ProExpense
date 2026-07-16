@@ -52,14 +52,9 @@ val previewMoreHub =
                 MoreSettingRowUi("currency", ProIconGlyph.Budget, "Currency", value = "USD", kind = MoreSettingKind.Nav),
                 MoreSettingRowUi("budget", ProIconGlyph.Note, "Monthly budget", value = "Off", kind = MoreSettingKind.Nav),
                 MoreSettingRowUi("pin", ProIconGlyph.Eye, "PIN authentication", value = "Off", kind = MoreSettingKind.Nav),
-                MoreSettingRowUi(
-                    "biometric",
-                    ProIconGlyph.Fingerprint,
-                    "Biometric unlock",
-                    kind = MoreSettingKind.Toggle,
-                    toggleOn = false,
-                    enabled = false,
-                ),
+                // Biometric unlock is only meaningful once PIN auth is on. This default fixture
+                // represents the "PIN off" state, so it deliberately omits the biometric row —
+                // see MoreFlow's settings mapping and MoreScreenshotTest.edge_more_hub_pin_on.
                 MoreSettingRowUi("category", ProIconGlyph.CatDefault, "Default category", value = "Food", kind = MoreSettingKind.Nav),
                 MoreSettingRowUi("language", ProIconGlyph.Note, "Language", value = "English", kind = MoreSettingKind.Nav),
                 MoreSettingRowUi("theme", ProIconGlyph.Sparkle, "Theme", value = "System", kind = MoreSettingKind.Nav),

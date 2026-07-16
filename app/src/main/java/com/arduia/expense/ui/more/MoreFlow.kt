@@ -45,6 +45,8 @@ import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProToastHost
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.expenseCategoryLabel
+import com.arduia.expense.ui.preview.MoreSettingKind
+import com.arduia.expense.ui.preview.MoreSettingRowUi
 import com.arduia.expense.ui.preview.previewMoreHub
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -208,26 +210,47 @@ fun MoreFlow(
                         name = displayName.ifBlank { profileNameFallback },
                     ),
                 settings =
-                    previewMoreHub.settings.map { setting ->
-                        when (setting.id) {
-                            "currency" -> setting.copy(value = selectedCurrency)
-                            "pin" -> setting.copy(value = if (pinEnabled) "On" else "Off")
-                            "biometric" ->
-                                setting.copy(
-                                    toggleOn = biometricEnrolled,
-                                    enabled = pinEnabled && biometricCapable,
-                                )
-                            "budget" -> setting.copy(value = monthlyBudgetLabel)
-                            "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
-                            "theme" ->
-                                setting.copy(
-                                    value = themeModeLabel(themeMode, themeLightLabel, themeDarkLabel, themeSystemLabel),
-                                )
-                            "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
-                            "version" -> setting.copy(value = appVersion)
-                            else -> setting
+                    previewMoreHub.settings
+                        .map { setting ->
+                            when (setting.id) {
+                                "currency" -> setting.copy(value = selectedCurrency)
+                                "pin" -> setting.copy(value = if (pinEnabled) "On" else "Off")
+                                "budget" -> setting.copy(value = monthlyBudgetLabel)
+                                "category" -> setting.copy(value = expenseCategoryLabel(defaultCategoryId))
+                                "theme" ->
+                                    setting.copy(
+                                        value =
+                                            themeModeLabel(
+                                                themeMode,
+                                                themeLightLabel,
+                                                themeDarkLabel,
+                                                themeSystemLabel,
+                                            ),
+                                    )
+                                "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
+                                "version" -> setting.copy(value = appVersion)
+                                else -> setting
+                            }
                         }
-                    },
+                        // Biometric unlock is meaningless without PIN auth — insert it right after
+                        // the PIN row only once PIN is on, instead of showing it always-but-disabled.
+                        .flatMap { setting ->
+                            if (setting.id == "pin" && pinEnabled) {
+                                listOf(
+                                    setting,
+                                    MoreSettingRowUi(
+                                        id = "biometric",
+                                        icon = ProIconGlyph.Fingerprint,
+                                        label = "Biometric unlock",
+                                        kind = MoreSettingKind.Toggle,
+                                        toggleOn = biometricEnrolled,
+                                        enabled = biometricCapable,
+                                    ),
+                                )
+                            } else {
+                                listOf(setting)
+                            }
+                        },
             )
         }
 
@@ -271,14 +294,10 @@ fun MoreFlow(
                                 "category" -> step = MoreStep.DefaultCategory
                                 "theme" -> step = MoreStep.Theme
                                 "language" -> step = MoreStep.Language
-                                "biometric" ->
-                                    if (!pinEnabled) {
-                                        toastMessage = context.getString(R.string.more_biometric_requires_pin)
-                                    }
                             }
                         },
                         onSettingToggle = { id, on ->
-                            if (id == "biometric" && pinEnabled && biometricCapable) {
+                            if (id == "biometric" && biometricCapable) {
                                 scope.launch {
                                     if (on) pinAuthRepository.enrollBiometric() else pinAuthRepository.clearBiometric()
                                     biometricEnrolled = on

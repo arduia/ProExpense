@@ -2368,6 +2368,17 @@
 
     <issue
         id="MissingTranslation"
+        message="&quot;more_budget_toggle_caption&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;cn&quot;"
+        errorLine1="    &lt;string name=&quot;more_budget_toggle_caption&quot;>Resets automatically on the 1st of each month&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="197"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
         message="&quot;more_language&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;cn&quot;"
         errorLine1="    &lt;string name=&quot;more_language&quot;>Language&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
@@ -5890,17 +5901,6 @@
         <location
             file="src/main/res/values/strings.xml"
             line="195"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.string.more_monthly_budget` appears to be unused"
-        errorLine1="    &lt;string name=&quot;more_monthly_budget&quot;>Monthly budget&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="196"
             column="13"/>
     </issue>
 

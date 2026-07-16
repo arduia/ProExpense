@@ -194,6 +194,7 @@
     <string name="more_debt">Debt Tracker</string>
     <string name="more_shared_costs">Shared Costs</string>
     <string name="more_monthly_budget">Monthly budget</string>
+    <string name="more_budget_toggle_caption">Resets automatically on the 1st of each month</string>
     <string name="more_language">Language</string>
     <string name="more_theme_title">Theme</string>
     <string name="theme_light">Light</string>
@@ -278,7 +279,6 @@
     <string name="more_title">More</string>
     <string name="more_features">FEATURES</string>
     <string name="more_settings">SETTINGS</string>
-    <string name="more_biometric_requires_pin">Please enable PIN first to use biometric authentication.</string>
 
     <!-- Category list -->
     <string name="home_today_section">Today</string>
