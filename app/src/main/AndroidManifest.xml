@@ -12,6 +12,7 @@
         <activity
             android:name="com.arduia.expense.ui.MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Splash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
