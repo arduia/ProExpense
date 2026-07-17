@@ -48,7 +48,7 @@ data class AppMetaSnapshot(
                 pinHash = null,
                 languageTag = "en",
                 defaultCategoryId = null,
-                themeMode = "dark",
+                themeMode = "system",
                 stayUnlockedInBackground = false,
             )
     }

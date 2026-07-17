@@ -13,7 +13,7 @@ CREATE TABLE app_meta (
     pin_hash TEXT,
     language_tag TEXT NOT NULL DEFAULT 'en',
     default_category_id TEXT,
-    theme_mode TEXT NOT NULL DEFAULT 'dark',
+    theme_mode TEXT NOT NULL DEFAULT 'system',
     stay_unlocked_in_background INTEGER NOT NULL DEFAULT 0
 );
 
