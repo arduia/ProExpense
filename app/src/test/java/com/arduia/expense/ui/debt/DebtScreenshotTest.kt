@@ -114,6 +114,7 @@ class DebtScreenshotTest {
                     visible = true,
                     title = stringResource(R.string.debt_new_record),
                     onClose = {},
+                    fullHeight = true,
                 ) {
                     DebtAddSheetContent(
                         form = previewDebtAddLent,
