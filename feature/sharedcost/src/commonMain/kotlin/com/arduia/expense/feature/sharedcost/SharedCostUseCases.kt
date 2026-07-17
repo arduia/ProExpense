@@ -20,6 +20,7 @@ data class SaveSharedCostInput(
     val mode: SplitMode,
     val participantNames: List<String>,
     val customShareRaws: List<String>,
+    val recordAsTransaction: Boolean = false,
 )
 
 private fun buildSplitStrategy(
@@ -72,6 +73,7 @@ class CreateSharedCostUseCase(
                 participants = participants,
                 splitStrategy = splitStrategy,
                 recordedAtEpochMillis = now,
+                recordAsTransaction = input.recordAsTransaction,
             ),
         )
         return true
@@ -98,6 +100,7 @@ class UpdateSharedCostUseCase(
                 total = total,
                 participants = participants,
                 splitStrategy = splitStrategy,
+                recordAsTransaction = input.recordAsTransaction,
             ),
         )
         return true

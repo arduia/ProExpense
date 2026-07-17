@@ -86,12 +86,14 @@ private fun sampleInput(
     mode: SplitMode = SplitMode.EQUAL,
     participantNames: List<String> = listOf("Alex", "Bo"),
     customShareRaws: List<String> = emptyList(),
+    recordAsTransaction: Boolean = false,
 ) = SaveSharedCostInput(
     title = "Dinner",
     rawTotal = rawTotal,
     mode = mode,
     participantNames = participantNames,
     customShareRaws = customShareRaws,
+    recordAsTransaction = recordAsTransaction,
 )
 
 class CreateSharedCostUseCaseTest {
@@ -150,6 +152,28 @@ class CreateSharedCostUseCaseTest {
             assertFalse(result)
             assertEquals(null, repo.lastCreateInput)
         }
+
+    @Test
+    fun invoke_defaultsRecordAsTransactionToFalse() =
+        runTest {
+            val repo = FakeSharedCostRepository()
+            val useCase = CreateSharedCostUseCase(repo, nowEpochMillis = { 1_000L })
+
+            useCase(sampleInput())
+
+            assertFalse(repo.lastCreateInput?.recordAsTransaction ?: true)
+        }
+
+    @Test
+    fun invoke_passesThroughAnExplicitRecordAsTransactionOptIn() =
+        runTest {
+            val repo = FakeSharedCostRepository()
+            val useCase = CreateSharedCostUseCase(repo, nowEpochMillis = { 1_000L })
+
+            useCase(sampleInput(recordAsTransaction = true))
+
+            assertTrue(repo.lastCreateInput?.recordAsTransaction ?: false)
+        }
 }
 
 class UpdateSharedCostUseCaseTest {
@@ -183,6 +207,17 @@ class UpdateSharedCostUseCaseTest {
 
             assertFalse(result)
             assertEquals(null, repo.lastUpdate)
+        }
+
+    @Test
+    fun invoke_passesThroughAnExplicitRecordAsTransactionOptIn() =
+        runTest {
+            val repo = FakeSharedCostRepository()
+            val useCase = UpdateSharedCostUseCase(repo, nowEpochMillis = { 2_000L })
+
+            useCase(sampleSharedCost(), sampleInput(recordAsTransaction = true))
+
+            assertTrue(repo.lastUpdate?.recordAsTransaction ?: false)
         }
 }
 

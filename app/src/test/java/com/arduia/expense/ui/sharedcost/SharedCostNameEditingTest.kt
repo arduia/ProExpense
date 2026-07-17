@@ -470,6 +470,7 @@ class SharedCostCurrencySymbolWiringTest {
                     onBack = {},
                     onSwitchToCustom = {},
                     onSave = {},
+                    onRecordAsTransactionChange = {},
                     homeCurrencySymbol = "€",
                 )
             }

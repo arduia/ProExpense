@@ -66,4 +66,6 @@
     <string name="shared_archive_body">"%1$s" จะถูกซ่อนจากประวัติการหารค่าใช้จ่ายของคุณ แต่ยังคงอยู่ในสมุดบันทึกและรายงาน</string>
     <string name="shared_archive_confirm">เก็บเข้าคลัง</string>
     <string name="shared_archive_cancel">ยกเลิก</string>
+    <string name="shared_record_as_transaction_label">บันทึกเป็นรายจ่ายด้วย</string>
+    <string name="shared_record_as_transaction_caption">นับยอดรวมของการหารนี้ในรายจ่ายของคุณ เหมือนรายการทั่วไป</string>
 </resources>

@@ -13,6 +13,7 @@ data class SharedCostInput(
     val participants: List<Participant>,
     val splitStrategy: SplitStrategy = SplitStrategy.EqualSplit,
     val recordedAtEpochMillis: Long,
+    val recordAsTransaction: Boolean = false,
 )
 
 data class SettlementLine(

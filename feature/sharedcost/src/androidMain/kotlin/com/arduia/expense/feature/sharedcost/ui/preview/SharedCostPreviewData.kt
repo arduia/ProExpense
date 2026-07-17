@@ -17,6 +17,7 @@ data class SharedCostUiState(
     val showZeroValidation: Boolean = false,
     val shareRaws: List<String> = emptyList(),
     val amountConfirmed: Boolean = false,
+    val recordAsTransaction: Boolean = false,
 )
 
 data class SharedCostHistoryItemUi(

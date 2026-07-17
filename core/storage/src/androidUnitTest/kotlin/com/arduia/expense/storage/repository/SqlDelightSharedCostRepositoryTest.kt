@@ -202,6 +202,7 @@ class SqlDelightSharedCostRepositoryTest {
                 participants_json = "[]",
                 custom_shares_json = null,
                 is_archived = 0,
+                record_as_transaction = 0,
             )
 
             val all = repo.observeAll().first()
@@ -209,7 +210,7 @@ class SqlDelightSharedCostRepositoryTest {
         }
 
     @Test
-    fun create_writesLinkedFinanceRecordForTheTotal() =
+    fun create_withRecordAsTransactionTrue_writesLinkedFinanceRecordForTheTotal() =
         runTest {
             val database = inMemoryDatabase()
             val repo = sharedCostRepo(database)
@@ -224,6 +225,7 @@ class SqlDelightSharedCostRepositoryTest {
                         ),
                     splitStrategy = SplitStrategy.EqualSplit,
                     recordedAtEpochMillis = 1000,
+                    recordAsTransaction = true,
                 )
 
             val created = repo.create(input)
@@ -239,6 +241,27 @@ class SqlDelightSharedCostRepositoryTest {
             )
         }
 
+    /** Core of the "not included as an expense by default" fix (US-SHC-4). */
+    @Test
+    fun create_withRecordAsTransactionFalse_writesNoLinkedFinanceRecord() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = sharedCostRepo(database)
+            val input =
+                SharedCostInput(
+                    title = "Dinner",
+                    total = Money(Amount(100_00), home),
+                    participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+                    splitStrategy = SplitStrategy.EqualSplit,
+                    recordedAtEpochMillis = 1000,
+                )
+
+            val created = repo.create(input)
+            val id = (created as Result.Success<com.arduia.expense.domain.SharedCost>).data.id
+
+            assertNull(database.financeRecordQueries.selectRecordById(id.value).executeAsOneOrNull())
+        }
+
     @Test
     fun update_updatesTheSameLinkedRecordRatherThanCreatingASecondOne() =
         runTest {
@@ -251,6 +274,7 @@ class SqlDelightSharedCostRepositoryTest {
                     participants = listOf(Participant(ParticipantId("p1"), "Alice")),
                     splitStrategy = SplitStrategy.EqualSplit,
                     recordedAtEpochMillis = 1000,
+                    recordAsTransaction = true,
                 )
             val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
 
@@ -268,6 +292,28 @@ class SqlDelightSharedCostRepositoryTest {
         }
 
     @Test
+    fun update_togglingRecordAsTransactionOff_removesAPreviouslyLinkedRecord() =
+        runTest {
+            val database = inMemoryDatabase()
+            val repo = sharedCostRepo(database)
+            val input =
+                SharedCostInput(
+                    title = "Dinner",
+                    total = Money(Amount(100_00), home),
+                    participants = listOf(Participant(ParticipantId("p1"), "Alice")),
+                    splitStrategy = SplitStrategy.EqualSplit,
+                    recordedAtEpochMillis = 1000,
+                    recordAsTransaction = true,
+                )
+            val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
+            assertNotNull(database.financeRecordQueries.selectRecordById(created.id.value).executeAsOneOrNull())
+
+            repo.update(created.copy(recordAsTransaction = false))
+
+            assertNull(database.financeRecordQueries.selectRecordById(created.id.value).executeAsOneOrNull())
+        }
+
+    @Test
     fun delete_alsoDeletesTheLinkedFinanceRecord() =
         runTest {
             val database = inMemoryDatabase()
@@ -279,6 +325,7 @@ class SqlDelightSharedCostRepositoryTest {
                     participants = listOf(Participant(ParticipantId("p1"), "Alice")),
                     splitStrategy = SplitStrategy.EqualSplit,
                     recordedAtEpochMillis = 1000,
+                    recordAsTransaction = true,
                 )
             val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
 
@@ -343,6 +390,7 @@ class SqlDelightSharedCostRepositoryTest {
                     participants = listOf(Participant(ParticipantId("p1"), "Alice")),
                     splitStrategy = SplitStrategy.EqualSplit,
                     recordedAtEpochMillis = 1000,
+                    recordAsTransaction = true,
                 )
             val created = (repo.create(input) as Result.Success<com.arduia.expense.domain.SharedCost>).data
 

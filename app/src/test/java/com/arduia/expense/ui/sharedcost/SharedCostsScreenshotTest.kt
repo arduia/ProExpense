@@ -126,6 +126,7 @@ class SharedCostsScreenshotTest {
                 onBack = {},
                 onSwitchToCustom = {},
                 onSave = {},
+                onRecordAsTransactionChange = {},
             )
         }
     }
@@ -138,6 +139,7 @@ class SharedCostsScreenshotTest {
                 onBack = {},
                 onSwitchToCustom = {},
                 onSave = {},
+                onRecordAsTransactionChange = {},
                 readOnly = true,
                 onMore = {},
             )
@@ -153,6 +155,7 @@ class SharedCostsScreenshotTest {
                 onBack = {},
                 onSwitchToCustom = {},
                 onSave = {},
+                onRecordAsTransactionChange = {},
             )
         }
     }
