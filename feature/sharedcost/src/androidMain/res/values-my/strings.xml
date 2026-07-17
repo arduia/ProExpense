@@ -66,4 +66,6 @@
     <string name="shared_archive_body">"%1$s" ကို သင့်ဝေမျှသောကုန်ကျစရိတ် မှတ်တမ်းမှ ဖျောက်ထားမည်။ မှတ်တမ်းနှင့် အစီရင်ခံစာများတွင် ဆက်လက်ပေါ်နေမည်။</string>
     <string name="shared_archive_confirm">သိမ်းဆည်းရန်</string>
     <string name="shared_archive_cancel">မလုပ်တော့ပါ</string>
+    <string name="shared_record_as_transaction_label">အသုံးစရိတ်အဖြစ်လည်း မှတ်တမ်းတင်ပါ</string>
+    <string name="shared_record_as_transaction_caption">ပုံမှန်အသုံးစရိတ်တစ်ခုကဲ့သို့ ဒီခွဲဝေမှု၏ စုစုပေါင်းကို သင့်အသုံးစရိတ်တွင် ထည့်တွက်ပါမည်</string>
 </resources>

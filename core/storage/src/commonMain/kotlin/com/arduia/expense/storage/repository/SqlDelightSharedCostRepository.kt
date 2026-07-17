@@ -46,10 +46,13 @@ class SqlDelightSharedCostRepository(
                         participants = input.participants,
                         splitStrategy = input.splitStrategy,
                         recordedAtEpochMillis = input.recordedAtEpochMillis,
+                        recordAsTransaction = input.recordAsTransaction,
                     )
 
                 persist(sharedCost)
-                financeRecordRepository.upsert(sharedCost.toFinanceRecord())
+                if (sharedCost.recordAsTransaction) {
+                    financeRecordRepository.upsert(sharedCost.toFinanceRecord())
+                }
                 sharedCost
             }
         }
@@ -72,9 +75,15 @@ class SqlDelightSharedCostRepository(
         withContext(dispatcher) {
             catchingResult {
                 persist(sharedCost)
-                // Same RecordId as create() — this updates the existing linked record in place
-                // rather than creating a second one.
-                financeRecordRepository.upsert(sharedCost.toFinanceRecord())
+                if (sharedCost.recordAsTransaction) {
+                    // Same RecordId as create() — this updates the existing linked record in
+                    // place rather than creating a second one.
+                    financeRecordRepository.upsert(sharedCost.toFinanceRecord())
+                } else {
+                    // No-op if none exists yet — also handles a toggle-on -> toggle-off edit by
+                    // removing a previously-created linked record.
+                    financeRecordRepository.delete(RecordId(sharedCost.id.value))
+                }
                 Unit
             }
         }
@@ -141,6 +150,7 @@ class SqlDelightSharedCostRepository(
             participants_json = sharedCost.participants.toParticipantsJson(),
             custom_shares_json = sharedCost.splitStrategy.toStrategyJson(),
             is_archived = if (sharedCost.isArchived) 1L else 0L,
+            record_as_transaction = if (sharedCost.recordAsTransaction) 1L else 0L,
         )
     }
 

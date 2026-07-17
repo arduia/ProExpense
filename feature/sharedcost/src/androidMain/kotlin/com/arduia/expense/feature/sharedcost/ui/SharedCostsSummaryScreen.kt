@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -44,6 +47,7 @@ fun SharedCostsSummaryScreen(
     onBack: () -> Unit,
     onSwitchToCustom: () -> Unit,
     onSave: () -> Unit,
+    onRecordAsTransactionChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     backLabel: String = stringResource(R.string.shared_back_split),
     // A previously saved split is immutable except via the actions menu (US-SHC-5 Scenario 2) —
@@ -204,7 +208,7 @@ fun SharedCostsSummaryScreen(
                     Modifier
                         .fillMaxWidth()
                         .padding(top = dimens.space16),
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = stringResource(R.string.shared_uneven_split_prompt),
@@ -221,14 +225,61 @@ fun SharedCostsSummaryScreen(
         }
 
         if (!readOnly) {
+            SharedCostRecordAsTransactionRow(
+                checked = state.recordAsTransaction,
+                onCheckedChange = onRecordAsTransactionChange,
+                modifier = Modifier.padding(top = dimens.space16),
+            )
             ProButton(
                 text = stringResource(R.string.shared_save_split_amount, "$homeCurrencySymbol$totalDisplay"),
                 onClick = onSave,
                 size = ProButtonSize.Lg,
                 fillMaxWidth = true,
-                modifier = Modifier.padding(top = dimens.space24),
+                modifier = Modifier.padding(top = dimens.space20),
             )
         }
+    }
+}
+
+@Composable
+private fun SharedCostRecordAsTransactionRow(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
+    ) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(dimens.space4)) {
+            Text(
+                text = stringResource(R.string.shared_record_as_transaction_label),
+                style = typography.bodyMedium,
+                color = colors.onSurface,
+            )
+            Text(
+                text = stringResource(R.string.shared_record_as_transaction_caption),
+                style = typography.caption,
+                color = colors.onSurfaceMuted,
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = colors.onPrimaryWarm,
+                    checkedTrackColor = colors.primary,
+                    uncheckedThumbColor = colors.surface,
+                    uncheckedTrackColor = colors.lineStrong,
+                    uncheckedBorderColor = colors.lineStrong,
+                ),
+        )
     }
 }
 
@@ -246,6 +297,7 @@ private fun SharedCostsSummaryPreview() {
             onBack = {},
             onSwitchToCustom = {},
             onSave = {},
+            onRecordAsTransactionChange = {},
         )
     }
 }
@@ -264,6 +316,7 @@ private fun SharedCostsSummaryReadOnlyPreview() {
             onBack = {},
             onSwitchToCustom = {},
             onSave = {},
+            onRecordAsTransactionChange = {},
             readOnly = true,
             backLabel = stringResource(R.string.shared_back_history),
             onMore = {},
@@ -286,6 +339,26 @@ private fun SharedCostsSummaryCustomPreview() {
             onBack = {},
             onSwitchToCustom = {},
             onSave = {},
+            onRecordAsTransactionChange = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — summary, record as expense on",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsSummaryRecordAsTransactionOnPreview() {
+    ProExpenseTheme {
+        SharedCostsSummaryScreen(
+            state = previewSharedSummary.copy(recordAsTransaction = true),
+            onBack = {},
+            onSwitchToCustom = {},
+            onSave = {},
+            onRecordAsTransactionChange = {},
         )
     }
 }

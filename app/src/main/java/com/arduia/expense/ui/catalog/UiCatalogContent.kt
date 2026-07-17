@@ -602,6 +602,7 @@ fun uiCatalogSections(): List<UiCatalogSection> =
                             onBack = {},
                             onSwitchToCustom = {},
                             onSave = {},
+                            onRecordAsTransactionChange = {},
                         )
                     },
                     UiCatalogEntry("shared_history", "History") {

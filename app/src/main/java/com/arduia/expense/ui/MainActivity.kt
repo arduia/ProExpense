@@ -68,9 +68,9 @@ private fun Context.withLocale(languageTag: String): Context {
 @Composable
 private fun ThemedExpenseApp(onLanguageChanged: () -> Unit) {
     val themeRepository: ThemeRepository = koinInject()
-    // Dark is the product default (US-MORE-3) — seed the pre-load placeholder with it too, so a
-    // fresh install's first frame doesn't flash light before the persisted value resolves below.
-    var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
+    // System is the product default (US-MORE-3) — seed the pre-load placeholder with it too, so
+    // a fresh install's first frame already follows the OS before the persisted value resolves.
+    var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
 
     LaunchedEffect(Unit) {
         when (val result = themeRepository.getThemeMode()) {

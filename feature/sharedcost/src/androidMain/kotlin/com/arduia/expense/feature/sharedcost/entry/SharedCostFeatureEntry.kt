@@ -87,20 +87,34 @@ internal class SharedCostFeatureEntryImpl : SharedCostFeatureEntry {
             history = history,
             isLoading = isLoading,
             sharedCostDetails = sharedCostDetails,
-            onSaveSplit = { title, rawTotal, mode, names, customShareRaws ->
+            onSaveSplit = { title, rawTotal, mode, names, customShareRaws, recordAsTransaction ->
                 scope.launch {
                     createSharedCost(
-                        SaveSharedCostInput(title, rawTotal, mode.toSplitMode(), names, customShareRaws),
+                        SaveSharedCostInput(
+                            title,
+                            rawTotal,
+                            mode.toSplitMode(),
+                            names,
+                            customShareRaws,
+                            recordAsTransaction,
+                        ),
                         currencyCode = homeCurrencyCode,
                     )
                 }
             },
-            onUpdateSplit = onUpdateSplit@{ id, title, rawTotal, mode, names, customShareRaws ->
+            onUpdateSplit = onUpdateSplit@{ id, title, rawTotal, mode, names, customShareRaws, recordAsTransaction ->
                 val existing = sharedCosts.find { it.id.value == id } ?: return@onUpdateSplit
                 scope.launch {
                     updateSharedCost(
                         existing,
-                        SaveSharedCostInput(title, rawTotal, mode.toSplitMode(), names, customShareRaws),
+                        SaveSharedCostInput(
+                            title,
+                            rawTotal,
+                            mode.toSplitMode(),
+                            names,
+                            customShareRaws,
+                            recordAsTransaction,
+                        ),
                         currencyCode = homeCurrencyCode,
                     )
                 }
@@ -174,5 +188,6 @@ private fun SharedCost.toUiState(currencySymbol: String): SharedCostUiState {
             participants.map { participant ->
                 String.format(Locale.US, "%.2f", (shares[participant.id]?.amount?.valueInCents ?: 0L) / 100.0)
             },
+        recordAsTransaction = recordAsTransaction,
     )
 }

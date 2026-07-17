@@ -8,6 +8,10 @@ data class SharedCost(
     val splitStrategy: SplitStrategy,
     val recordedAtEpochMillis: Long,
     val isArchived: Boolean = false,
+    // Off by default (US-SHC-4) — a split is reference data for the group, not automatically the
+    // user's own spending; opting in links it to a FinanceRecord the same way Debt's
+    // "record as transaction" toggle does.
+    val recordAsTransaction: Boolean = false,
 ) {
     init {
         require(title.isNotBlank()) { "SharedCost title must not be blank" }

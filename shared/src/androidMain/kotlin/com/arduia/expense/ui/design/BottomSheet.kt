@@ -39,6 +39,24 @@ import com.arduia.expense.ui.theme.rememberProReduceMotion
 import com.arduia.expense.ui.theme.sheetEnter
 import com.arduia.expense.ui.theme.sheetExit
 
+/**
+ * `fraction` must apply to the room actually left above the keyboard, not to the full screen.
+ * Subtracting `imeHeight` from a flat `maxHeight * fraction` cap (the previous approach) shrinks
+ * the sheet by the keyboard's entire height on top of its designed margin already excluding that
+ * space, so once a keyboard opens the sheet visibly collapses to roughly half the screen instead
+ * of filling the space it still has. Computing the fraction against `(maxHeight - imeHeight)`
+ * keeps the sheet filling its intended proportion of whatever room remains, while still never
+ * overflowing above the screen — `fraction <= 1` guarantees `contentHeight + imeHeight <= maxHeight`.
+ */
+internal fun sheetHeightCap(
+    maxHeight: Dp,
+    imeHeight: Dp,
+    fraction: Float,
+): Dp {
+    val availableHeight = (maxHeight - imeHeight).coerceAtLeast(0.dp)
+    return availableHeight * fraction
+}
+
 @Composable
 fun ProBottomSheet(
     title: String?,
@@ -59,18 +77,13 @@ fun ProBottomSheet(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val sheetElevation = ProExpenseTheme.elevation.sheet.firstOrNull()
-    // sheetMaxHeightFraction/sheetFullHeightFraction are tuned to look right with no keyboard —
-    // imePadding() below only shifts the sheet up above the keyboard, it doesn't shrink this cap,
-    // so tall content plus an open keyboard can push the sheet's top edge off-screen with nothing
-    // to scroll to reach it. Subtract only the keyboard's own height from the existing cap so this
-    // is a no-op until one is showing.
     val imeHeight = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
     val sheetHeightCap =
-        if (fullHeight) {
-            (maxHeight * dimens.sheetFullHeightFraction - imeHeight).coerceAtLeast(0.dp)
-        } else {
-            (maxHeight * dimens.sheetMaxHeightFraction - imeHeight).coerceAtLeast(0.dp)
-        }
+        sheetHeightCap(
+            maxHeight = maxHeight,
+            imeHeight = imeHeight,
+            fraction = if (fullHeight) dimens.sheetFullHeightFraction else dimens.sheetMaxHeightFraction,
+        )
 
     Surface(
         modifier =

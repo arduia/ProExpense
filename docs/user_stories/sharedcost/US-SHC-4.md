@@ -68,13 +68,34 @@ appear as separate Journal rows, or the journal would massively over-count actua
 
 * It appears in Shared Costs history only — never as additional rows in Journal.
 
+### Scenario 3 — Opt in to counting the total toward personal spend
+
+**Given**
+
+* I am on Split Summary, about to save.
+
+**When**
+
+* I look at the "Also record as an expense" toggle, off by default, then optionally turn it on.
+
+**Then**
+
+* Off (default): the split saves with no linked `FinanceRecord` — it appears in Shared Costs
+  history only, and never counts toward Journal/Reports/budget totals.
+* On: the split saves with a linked `FinanceRecord` for the total, same as Scenario 1.
+* Editing a saved split and flipping the toggle updates that linkage immediately — turning it off
+  removes the previously-linked record; turning it on creates one.
+
 ---
 
 ## Functional Requirements
 
-* [ ] Saving a split writes exactly one `FinanceRecord` for the total amount.
+* [ ] Saving a split writes exactly one `FinanceRecord` for the total amount, only when the
+  "record as transaction" toggle is on.
+* [ ] The toggle defaults to off — a split is reference data only until the user explicitly opts
+  in, mirroring Debt's "Also record as expense/income" toggle.
 * [ ] Per-person shares are stored as split metadata, not as separate expense records.
-* [ ] Journal never shows per-person split rows — only the single total expense (if it would otherwise appear there at all).
+* [ ] Journal never shows per-person split rows — only the single total expense when opted in.
 
 ---
 
@@ -86,7 +107,8 @@ appear as separate Journal rows, or the journal would massively over-count actua
 
 ## Business Rules
 
-* A shared cost is exactly one expense record; the split is presentation/reference data layered on top.
+* A shared cost is at most one expense record; the split is presentation/reference data layered on
+  top. Whether that one record exists is the user's explicit choice (default off), not automatic.
 
 ---
 
@@ -129,6 +151,22 @@ appear as separate Journal rows, or the journal would massively over-count actua
   duplicates, and `delete()` removes both rows atomically (satisfying
   [US-SHC-5](US-SHC-5.md)'s atomicity requirement). The read side (mapping, tag columns, import/export,
   `tagLabel()`) already existed and needed no changes. Covered by
-  `SqlDelightSharedCostRepositoryTest.create_writesLinkedFinanceRecordForTheTotal` /
+  `SqlDelightSharedCostRepositoryTest.create_withRecordAsTransactionTrue_writesLinkedFinanceRecordForTheTotal` /
   `update_updatesTheSameLinkedRecordRatherThanCreatingASecondOne` /
   `delete_alsoDeletesTheLinkedFinanceRecord`.
+
+* **Gap fix (2026-07 v2):** the `FinanceRecord` link from the fix above was unconditional — every
+  split counted toward personal spend with no way to opt out, which is wrong for a bill that's
+  purely reference/reconciliation data (e.g. tracking who owes what on a trip without wanting it to
+  also show up as the user's own expense). Added a `recordAsTransaction` field to `SharedCost`
+  (domain), `SharedCostInput` (data), and the `shared_cost.record_as_transaction` column (storage,
+  migration `17.sqm` — existing rows backfill to `1`/true so upgrading doesn't silently delete
+  their already-linked record and change historical totals; only new installs default to `0`),
+  mirroring Debt's own `recordAsTransaction` toggle exactly. `SqlDelightSharedCostRepository`
+  now only upserts the linked `FinanceRecord` when the flag is true, and deletes any existing one
+  when it's false (toggle-off case). Split Summary gained a "Also record as an expense" switch
+  (off by default) next to Save, wired through `SaveSharedCostInput.recordAsTransaction`. Covered
+  by `SqlDelightSharedCostRepositoryTest.create_withRecordAsTransactionFalse_writesNoLinkedFinanceRecord`
+  / `update_togglingRecordAsTransactionOff_removesAPreviouslyLinkedRecord` and
+  `SharedCostUseCasesTest`'s `invoke_defaultsRecordAsTransactionToFalse` /
+  `invoke_passesThroughAnExplicitRecordAsTransactionOptIn` (both use cases).

@@ -231,6 +231,11 @@ fun DebtFlow(
                     if (addForm.editingId != null) R.string.debt_edit_record else R.string.debt_new_record,
                 ),
             onClose = { showAdd = false },
+            // Person, amount, date, due date, note, and the record-as-transaction toggle already
+            // fill almost the whole default cap (see DebtScreenshotTest.debt_add) — fullHeight
+            // gives it the same room as Shared Cost's custom split sheet instead of leaving no
+            // slack before the keyboard forces the whole form into a scroll.
+            fullHeight = true,
         ) {
             DebtAddSheetContent(
                 form = addForm,

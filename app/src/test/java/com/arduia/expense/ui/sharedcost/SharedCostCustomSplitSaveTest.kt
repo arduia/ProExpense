@@ -52,7 +52,7 @@ class SharedCostCustomSplitSaveTest {
             ProExpenseTheme {
                 SharedCostsFlow(
                     onDismiss = {},
-                    onSaveSplit = { _, _, mode, _, customShareRaws ->
+                    onSaveSplit = { _, _, mode, _, customShareRaws, _ ->
                         savedMode = mode
                         savedShares = customShareRaws
                     },

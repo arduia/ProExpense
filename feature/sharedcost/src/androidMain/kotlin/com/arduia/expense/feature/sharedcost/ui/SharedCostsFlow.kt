@@ -65,6 +65,9 @@ private data class SharedCostDraft(
     val customShareRaws: List<String> = emptyList(),
     val showZeroValidation: Boolean = false,
     val amountConfirmed: Boolean = false,
+    // Off by default (US-SHC-4) — a split only counts toward the user's own spend totals once
+    // they explicitly opt in, mirroring Debt's "record as transaction" toggle.
+    val recordAsTransaction: Boolean = false,
 ) {
     fun toUiState(
         currencySymbol: String,
@@ -93,6 +96,7 @@ private data class SharedCostDraft(
             showZeroValidation = showZeroValidation,
             shareRaws = customShareRaws,
             amountConfirmed = amountConfirmed,
+            recordAsTransaction = recordAsTransaction,
         )
     }
 }
@@ -113,7 +117,7 @@ private val SharedCostDraftSaver: Saver<SharedCostDraft, Any> =
                 draft.mode.name,
                 draft.names.size,
             ) + draft.names + listOf(draft.customShareRaws.size) + draft.customShareRaws +
-                listOf(draft.showZeroValidation, draft.amountConfirmed)
+                listOf(draft.showZeroValidation, draft.amountConfirmed, draft.recordAsTransaction)
         },
         restore = { saved ->
             var i = 0
@@ -127,6 +131,7 @@ private val SharedCostDraftSaver: Saver<SharedCostDraft, Any> =
             val customShareRaws = (0 until sharesSize).map { saved[i++] as String }
             val showZeroValidation = saved[i++] as Boolean
             val amountConfirmed = saved[i++] as Boolean
+            val recordAsTransaction = saved[i++] as Boolean
             SharedCostDraft(
                 rawTotal = rawTotal,
                 note = note,
@@ -136,6 +141,7 @@ private val SharedCostDraftSaver: Saver<SharedCostDraft, Any> =
                 customShareRaws = customShareRaws,
                 showZeroValidation = showZeroValidation,
                 amountConfirmed = amountConfirmed,
+                recordAsTransaction = recordAsTransaction,
             )
         },
     )
@@ -177,6 +183,7 @@ private fun SharedCostUiState.toDraft(
         // on the detail screen (people/mode/participants), not the amount keypad. The keypad stays
         // reachable via the total's own edit icon (onEditAmount flips this back to false).
         amountConfirmed = true,
+        recordAsTransaction = recordAsTransaction,
     ).withParticipants(nameTemplate, firstPersonName)
 
 @Composable
@@ -191,7 +198,8 @@ fun SharedCostsFlow(
         mode: SharedSplitMode,
         names: List<String>,
         customShareRaws: List<String>,
-    ) -> Unit = { _, _, _, _, _ -> },
+        recordAsTransaction: Boolean,
+    ) -> Unit = { _, _, _, _, _, _ -> },
     onUpdateSplit: (
         id: String,
         title: String,
@@ -199,7 +207,8 @@ fun SharedCostsFlow(
         mode: SharedSplitMode,
         names: List<String>,
         customShareRaws: List<String>,
-    ) -> Unit = { _, _, _, _, _, _ -> },
+        recordAsTransaction: Boolean,
+    ) -> Unit = { _, _, _, _, _, _, _ -> },
     onDeleteSplit: (id: String) -> Unit = {},
     onArchiveSplit: (id: String) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -542,6 +551,7 @@ fun SharedCostsFlow(
                             step = SharedCostStep.Input.name
                         },
                         onMore = if (isSummaryReadOnly) ({ showActionsSheet = true }) else null,
+                        onRecordAsTransactionChange = { draft = draft.copy(recordAsTransaction = it) },
                         onSave = {
                             val title = draft.note.trim().ifEmpty { defaultSplitTitle }
                             // Cleared name fields fall back to "Person N" ("You" for participant
@@ -556,9 +566,24 @@ fun SharedCostsFlow(
                                 )
                             val id = viewingId
                             if (id != null) {
-                                onUpdateSplit(id, title, draft.rawTotal, draft.mode, names, draft.customShareRaws)
+                                onUpdateSplit(
+                                    id,
+                                    title,
+                                    draft.rawTotal,
+                                    draft.mode,
+                                    names,
+                                    draft.customShareRaws,
+                                    draft.recordAsTransaction,
+                                )
                             } else {
-                                onSaveSplit(title, draft.rawTotal, draft.mode, names, draft.customShareRaws)
+                                onSaveSplit(
+                                    title,
+                                    draft.rawTotal,
+                                    draft.mode,
+                                    names,
+                                    draft.customShareRaws,
+                                    draft.recordAsTransaction,
+                                )
                             }
                             toastMessage = savedToastMessage
                             onSaved()

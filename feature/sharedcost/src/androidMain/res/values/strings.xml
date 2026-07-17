@@ -74,4 +74,6 @@
     <string name="shared_archive_body">"%1$s" will be hidden from your Shared Costs history. It stays in Journal and Reports.</string>
     <string name="shared_archive_confirm">Archive</string>
     <string name="shared_archive_cancel">Cancel</string>
+    <string name="shared_record_as_transaction_label">Also record as an expense</string>
+    <string name="shared_record_as_transaction_caption">Counts this split\'s total toward your spend, same as a regular expense</string>
 </resources>

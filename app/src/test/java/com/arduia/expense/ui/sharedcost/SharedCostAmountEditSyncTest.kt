@@ -45,7 +45,7 @@ class SharedCostAmountEditSyncTest {
             ProExpenseTheme {
                 SharedCostsFlow(
                     onDismiss = {},
-                    onSaveSplit = { _, rawTotal, _, _, customShareRaws ->
+                    onSaveSplit = { _, rawTotal, _, _, customShareRaws, _ ->
                         savedTotal(rawTotal)
                         savedShares(customShareRaws)
                     },

@@ -117,7 +117,7 @@ fun MoreFlow(
     var stayUnlockedInBackground by remember { mutableStateOf(false) }
     val biometricCapable = activity != null && BiometricAuthenticator.isAvailable(activity)
     var defaultCategoryId by remember { mutableStateOf("food") }
-    var themeMode by remember { mutableStateOf(ThemeMode.DARK) }
+    var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
     var languageTag by remember { mutableStateOf(AppLanguage.DEFAULT.tag) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
 
