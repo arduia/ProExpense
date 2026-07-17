@@ -22,8 +22,12 @@ class RecordKindTest {
     }
 
     @Test
-    fun isVisibleInHomeRecents_splitFollowsTheFlag() {
-        assertEquals(SHOW_SPLIT_AND_DEBT_ROWS, RecordKind.SPLIT.isVisibleInHomeRecents())
+    fun isVisibleInHomeRecents_toggleOnSplitIsAlwaysVisible() {
+        // A SPLIT RecordKind only ever arises from a real, linked FinanceRecord (see
+        // FinanceRecord.kind()) — that only exists when SharedCost.recordAsTransaction is true, so
+        // it's already counted toward spend totals and belongs in the feed like any other
+        // transaction, independent of SHOW_SPLIT_AND_DEBT_ROWS (which only gates toggle-off debts).
+        assertTrue(RecordKind.SPLIT.isVisibleInHomeRecents())
     }
 
     @Test

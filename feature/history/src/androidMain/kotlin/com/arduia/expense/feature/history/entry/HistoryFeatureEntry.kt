@@ -42,6 +42,7 @@ import com.arduia.expense.feature.history.ui.JournalFlow
 import com.arduia.expense.feature.history.ui.preview.JournalDayUi
 import com.arduia.expense.feature.history.ui.preview.JournalFilterUi
 import com.arduia.expense.feature.history.visibleUnrecordedDebts
+import com.arduia.expense.feature.history.visibleUnrecordedSplits
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.PlatformDateFormatter
@@ -68,6 +69,11 @@ private const val DEBT_FILTER_ID = "debt"
  */
 private fun RecordHistoryFilter.includesUnrecordedDebts(): Boolean =
     kind == RecordKindFilter.DEBT ||
+        (kind == null && categoryId == null)
+
+/** Reciprocal rule for toggle-off splits — see [includesUnrecordedDebts]. */
+private fun RecordHistoryFilter.includesUnrecordedSplits(): Boolean =
+    kind == RecordKindFilter.SPLIT ||
         (kind == null && categoryId == null)
 
 /**
@@ -242,6 +248,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                 listOf(JournalFilterUi("all", allFilterLabel)) + categoryChips + uncategorizedChip + kindChips
             }
         val includeUnrecordedDebts = state.filter.includesUnrecordedDebts()
+        val includeUnrecordedSplits = state.filter.includesUnrecordedSplits()
         // Grouped from whatever's been loaded so far (bounded by scroll depth), never the full
         // table — search/category/date-range filtering already happened in SQL via `filter`.
         val days =
@@ -249,6 +256,7 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                 pager.records,
                 pager.endReached,
                 debts,
+                sharedCosts,
                 eventNames,
                 debtNames,
                 sharedCostNames,
@@ -257,10 +265,14 @@ internal class HistoryFeatureEntryImpl : HistoryFeatureEntry {
                 categoryNames,
                 homeCurrencySymbol,
                 includeUnrecordedDebts,
+                includeUnrecordedSplits,
             ) {
                 groupByDay(
                     pager.records,
-                    if (includeUnrecordedDebts) debts else emptyList(),
+                    UnrecordedMergeSources(
+                        debts = if (includeUnrecordedDebts) debts else emptyList(),
+                        sharedCosts = if (includeUnrecordedSplits) sharedCosts else emptyList(),
+                    ),
                     pager.endReached,
                     JournalLinkLabels(
                         eventNames,
@@ -422,31 +434,43 @@ private data class JournalLinkLabels(
     val categoryNames: Map<String, String>,
 )
 
+/**
+ * Bundles the two toggle-off entity lists Journal can merge in alongside real [FinanceRecord]
+ * rows, so they cost one parameter, not two, in [groupByDay] below.
+ */
+private data class UnrecordedMergeSources(
+    val debts: List<Debt>,
+    val sharedCosts: List<SharedCost>,
+)
+
 private fun groupByDay(
     records: List<FinanceRecord>,
-    // Caller pre-filters to emptyList() when unrecorded debts shouldn't merge in (e.g. a "Split"
-    // or specific-category filter is active) — keeps this function's own signature unchanged.
-    debts: List<Debt>,
+    // Caller pre-filters each list to emptyList() when that kind shouldn't merge in (e.g. a
+    // specific-category filter is active) — keeps this function's own signature unchanged.
+    unrecordedSources: UnrecordedMergeSources,
     recordsFullyLoaded: Boolean,
     linkLabels: JournalLinkLabels,
     homeCurrencySymbol: String,
 ): List<JournalDayUi> {
     val recordEntries =
         records.map { record -> JournalEntry(record.recordedAtEpochMillis, record.toRowModel(linkLabels)) }
-    // A toggle-on debt already has a linked FinanceRecord (RecordLink.ToDebt, same id as the
-    // debt) inside `records` above — visibleUnrecordedDebts only returns toggle-off ones, so a
-    // debt never renders twice.
+    // A toggle-on debt/split already has a linked FinanceRecord (RecordLink.ToDebt/ToSharedCost,
+    // same id as the debt/split) inside `records` above — visibleUnrecordedDebts/Splits only
+    // return toggle-off ones, so nothing ever renders twice.
     val oldestLoadedRecordMillis = records.minOfOrNull { it.recordedAtEpochMillis }
     val debtEntries =
-        visibleUnrecordedDebts(debts, oldestLoadedRecordMillis, recordsFullyLoaded)
+        visibleUnrecordedDebts(unrecordedSources.debts, oldestLoadedRecordMillis, recordsFullyLoaded)
             .map { debt -> JournalEntry(debt.recordedAtEpochMillis, debt.toDebtRowModel()) }
+    val splitEntries =
+        visibleUnrecordedSplits(unrecordedSources.sharedCosts, oldestLoadedRecordMillis, recordsFullyLoaded)
+            .map { sharedCost -> JournalEntry(sharedCost.recordedAtEpochMillis, sharedCost.toSplitRowModel()) }
 
     val recordTotalCentsByDay =
         records
             .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
             .mapValues { (_, dayRecords) -> dayRecords.sumOf { it.homeCurrencyMoney.amount.valueInCents } }
 
-    val sorted = (recordEntries + debtEntries).sortedByDescending { it.recordedAtEpochMillis }
+    val sorted = (recordEntries + debtEntries + splitEntries).sortedByDescending { it.recordedAtEpochMillis }
     return sorted
         .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
         .toSortedMap(compareByDescending { it })
@@ -454,8 +478,8 @@ private fun groupByDay(
             JournalDayUi(
                 id = key,
                 title = PlatformDateFormatter.dayLabel(dayEntries.first().recordedAtEpochMillis),
-                // Only the FinanceRecord subset counts toward the day total — a toggle-off debt is
-                // visible but never moves it.
+                // Only the FinanceRecord subset counts toward the day total — a toggle-off
+                // debt/split is visible but never moves it.
                 total = AmountInput.formatMoney(recordTotalCentsByDay[key] ?: 0L, homeCurrencySymbol),
                 rows = dayEntries.map { it.row },
             )
@@ -533,3 +557,18 @@ private fun Debt.toDebtRowModel(): ProTransactionRowModel {
         linkedId = id.value,
     )
 }
+
+private fun SharedCost.toSplitRowModel(): ProTransactionRowModel =
+    ProTransactionRowModel(
+        id = id.value,
+        categoryId = "",
+        note = splitRowTitle(title),
+        meta = "$SPLIT_ROW_SUBTITLE_TYPE · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
+        amount = AmountInput.formatMoney(total.amount.valueInCents, currencySymbol(total.currency.code)),
+        rawNote = title,
+        detailDateTimeLabel =
+            "${PlatformDateFormatter.dayLabel(recordedAtEpochMillis)} · " +
+                PlatformDateFormatter.timeLabel(recordedAtEpochMillis),
+        rowKind = ProRowKind.SPLIT,
+        linkedId = id.value,
+    )

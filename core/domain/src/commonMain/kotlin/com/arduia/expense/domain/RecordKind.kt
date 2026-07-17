@@ -58,17 +58,23 @@ fun splitRowTitle(splitTitle: String?): String {
 const val SPLIT_ROW_SUBTITLE_TYPE = "Shared split"
 
 /**
- * Single flip point to bring Split rows (and toggle-off debts — see
+ * Single flip point to bring toggle-off debts (see
  * [com.arduia.expense.domain.Debt.recordAsTransaction]) into Home Recents — product wants those
- * hidden there for now. Journal always shows every kind. A toggle-on debt's own linked
- * [FinanceRecord] is a different case: it already counts toward spend/income totals, so it's
- * always visible regardless of this flag — see [isVisibleInHomeRecents]. Flip to `true` to
- * restore Split and toggle-off debts on Home Recents too.
+ * hidden there for now (see the toggle-off merge in `ExpenseApp.kt`'s `buildHomeDayGroups`).
+ * Journal always shows every kind regardless of this flag. A toggle-on debt or split already has
+ * its own linked [FinanceRecord] — that already counts toward spend/income totals, so it's always
+ * visible in Home Recents too, independent of this flag — see [isVisibleInHomeRecents]. Flip to
+ * `true` to also restore toggle-off debts on Home Recents.
  */
 const val SHOW_SPLIT_AND_DEBT_ROWS = false
 
 fun RecordKind.isVisibleInHomeRecents(): Boolean =
     when (this) {
-        RecordKind.EXPENSE, RecordKind.INCOME, RecordKind.DEBT_LENT, RecordKind.DEBT_OWED -> true
-        RecordKind.SPLIT -> SHOW_SPLIT_AND_DEBT_ROWS
+        // A SPLIT/DEBT_LENT/DEBT_OWED RecordKind only ever arises from a real, linked
+        // FinanceRecord (see FinanceRecord.kind()) — that only exists once the underlying
+        // SharedCost/Debt's recordAsTransaction is true, so it's already counted toward
+        // spend/income totals and belongs in the feed like any other transaction. A toggle-off
+        // split/debt never gets a FinanceRecord at all, so it never reaches this function in the
+        // first place — SHOW_SPLIT_AND_DEBT_ROWS instead gates the separate toggle-off-debt merge.
+        RecordKind.EXPENSE, RecordKind.INCOME, RecordKind.SPLIT, RecordKind.DEBT_LENT, RecordKind.DEBT_OWED -> true
     }

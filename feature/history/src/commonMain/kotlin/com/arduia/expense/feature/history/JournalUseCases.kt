@@ -6,6 +6,7 @@ import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Debt
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.RecordId
+import com.arduia.expense.domain.SharedCost
 
 /** Loads one keyset-paginated, filter-pushed-down Journal page (design plan §JournalViewModel). */
 class LoadJournalPageUseCase(
@@ -50,6 +51,26 @@ fun visibleUnrecordedDebts(
                 oldestLoadedRecordMillis == null ||
                 debt.recordedAtEpochMillis >= oldestLoadedRecordMillis
         !debt.recordAsTransaction && debtIsWithinLoadedRange
+    }
+
+/**
+ * Which toggle-off splits (never a real [FinanceRecord] — see [SharedCost.recordAsTransaction])
+ * should merge into the currently-loaded Journal page. Mirrors [visibleUnrecordedDebts] exactly:
+ * bounded to [oldestLoadedRecordMillis] so a split from before the user has scrolled that far
+ * doesn't appear out of pagination order. A toggle-on split already has its own linked
+ * [FinanceRecord] in the page and must not be filtered in here too, or it would render twice.
+ */
+fun visibleUnrecordedSplits(
+    sharedCosts: List<SharedCost>,
+    oldestLoadedRecordMillis: Long?,
+    recordsFullyLoaded: Boolean,
+): List<SharedCost> =
+    sharedCosts.filter { sharedCost ->
+        val splitIsWithinLoadedRange =
+            recordsFullyLoaded ||
+                oldestLoadedRecordMillis == null ||
+                sharedCost.recordedAtEpochMillis >= oldestLoadedRecordMillis
+        !sharedCost.recordAsTransaction && splitIsWithinLoadedRange
     }
 
 /** Updates the note on an existing journal record, leaving everything else untouched. */

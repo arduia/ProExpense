@@ -13,8 +13,13 @@ import com.arduia.expense.domain.DebtDirection
 import com.arduia.expense.domain.DebtId
 import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
+import com.arduia.expense.domain.Participant
+import com.arduia.expense.domain.ParticipantId
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordType
+import com.arduia.expense.domain.SharedCost
+import com.arduia.expense.domain.SharedCostId
+import com.arduia.expense.domain.SplitStrategy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
@@ -264,5 +269,73 @@ class VisibleUnrecordedDebtsTest {
         val visible = visibleUnrecordedDebts(debts, oldestLoadedRecordMillis = 1_000L, recordsFullyLoaded = false)
 
         assertEquals(listOf(DebtId("d1"), DebtId("d2")), visible.map { it.id })
+    }
+}
+
+private fun sampleSharedCost(
+    id: String,
+    recordedAtEpochMillis: Long,
+    recordAsTransaction: Boolean = false,
+) = SharedCost(
+    id = SharedCostId(id),
+    title = "Dinner",
+    total = Money(Amount(1000), CurrencyCode("USD")),
+    participants = listOf(Participant(ParticipantId("p1"), "Alex"), Participant(ParticipantId("p2"), "Bo")),
+    splitStrategy = SplitStrategy.EqualSplit,
+    recordedAtEpochMillis = recordedAtEpochMillis,
+    recordAsTransaction = recordAsTransaction,
+)
+
+class VisibleUnrecordedSplitsTest {
+    @Test
+    fun invoke_excludesSplitsThatAlreadyHaveALinkedFinanceRecord() {
+        val sharedCosts = listOf(sampleSharedCost("sc1", recordedAtEpochMillis = 1_000L, recordAsTransaction = true))
+
+        val visible = visibleUnrecordedSplits(sharedCosts, oldestLoadedRecordMillis = null, recordsFullyLoaded = true)
+
+        assertEquals(emptyList(), visible)
+    }
+
+    @Test
+    fun invoke_includesEverythingWhenRecordsAreFullyLoaded_regardlessOfAge() {
+        val sharedCosts = listOf(sampleSharedCost("sc1", recordedAtEpochMillis = 1L))
+
+        val visible =
+            visibleUnrecordedSplits(sharedCosts, oldestLoadedRecordMillis = 999_999L, recordsFullyLoaded = true)
+
+        assertEquals(listOf(SharedCostId("sc1")), visible.map { it.id })
+    }
+
+    @Test
+    fun invoke_includesEverythingWhenNoRecordsLoadedYet() {
+        val sharedCosts = listOf(sampleSharedCost("sc1", recordedAtEpochMillis = 1L))
+
+        val visible = visibleUnrecordedSplits(sharedCosts, oldestLoadedRecordMillis = null, recordsFullyLoaded = false)
+
+        assertEquals(listOf(SharedCostId("sc1")), visible.map { it.id })
+    }
+
+    @Test
+    fun invoke_excludesASplitOlderThanTheOldestLoadedRecord_whenMorePagesRemain() {
+        val sharedCosts = listOf(sampleSharedCost("sc1", recordedAtEpochMillis = 500L))
+
+        val visible =
+            visibleUnrecordedSplits(sharedCosts, oldestLoadedRecordMillis = 1_000L, recordsFullyLoaded = false)
+
+        assertEquals(emptyList(), visible)
+    }
+
+    @Test
+    fun invoke_includesASplitAtOrAfterTheOldestLoadedRecord() {
+        val sharedCosts =
+            listOf(
+                sampleSharedCost("sc1", recordedAtEpochMillis = 1_000L),
+                sampleSharedCost("sc2", recordedAtEpochMillis = 2_000L),
+            )
+
+        val visible =
+            visibleUnrecordedSplits(sharedCosts, oldestLoadedRecordMillis = 1_000L, recordsFullyLoaded = false)
+
+        assertEquals(listOf(SharedCostId("sc1"), SharedCostId("sc2")), visible.map { it.id })
     }
 }

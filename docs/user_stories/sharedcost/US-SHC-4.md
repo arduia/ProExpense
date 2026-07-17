@@ -66,7 +66,8 @@ appear as separate Journal rows, or the journal would massively over-count actua
 
 **Then**
 
-* It appears in Shared Costs history only — never as additional rows in Journal.
+* Its per-person breakdown appears in Shared Costs history only — never as additional rows in
+  Journal (only the split's own single summary row can ever appear there — see Scenario 4).
 
 ### Scenario 3 — Opt in to counting the total toward personal spend
 
@@ -80,11 +81,29 @@ appear as separate Journal rows, or the journal would massively over-count actua
 
 **Then**
 
-* Off (default): the split saves with no linked `FinanceRecord` — it appears in Shared Costs
-  history only, and never counts toward Journal/Reports/budget totals.
+* Off (default): the split saves with no linked `FinanceRecord` — it never counts toward
+  Reports/budget totals, and it's excluded from Home Recents (see Scenario 4).
 * On: the split saves with a linked `FinanceRecord` for the total, same as Scenario 1.
 * Editing a saved split and flipping the toggle updates that linkage immediately — turning it off
   removes the previously-linked record; turning it on creates one.
+
+### Scenario 4 — Journal always shows the split; Home Recents only when it counts
+
+**Given**
+
+* A saved split, either toggle state.
+
+**When**
+
+* I browse Journal vs. Home's Recents section.
+
+**Then**
+
+* Journal always shows the split's own summary row, regardless of the toggle — Journal is the full
+  history browse, same as it already does for a toggle-off Debt (US-DEBT). Toggling off doesn't
+  hide the split, it only stops it from counting toward totals.
+* Home Recents shows the split only when the toggle is on (it has a real linked `FinanceRecord`) —
+  mirroring how a toggle-on Debt is visible there and a toggle-off Debt is not.
 
 ---
 
@@ -92,10 +111,12 @@ appear as separate Journal rows, or the journal would massively over-count actua
 
 * [ ] Saving a split writes exactly one `FinanceRecord` for the total amount, only when the
   "record as transaction" toggle is on.
-* [ ] The toggle defaults to off — a split is reference data only until the user explicitly opts
-  in, mirroring Debt's "Also record as expense/income" toggle.
-* [ ] Per-person shares are stored as split metadata, not as separate expense records.
-* [ ] Journal never shows per-person split rows — only the single total expense when opted in.
+* [ ] The toggle defaults to off — a split doesn't count toward personal spend totals until the
+  user explicitly opts in, mirroring Debt's "Also record as expense/income" toggle.
+* [ ] Per-person shares are stored as split metadata, not as separate expense records — they never
+  appear as their own Journal rows, regardless of the toggle.
+* [ ] Journal shows the split's own summary row unconditionally, independent of the toggle.
+* [ ] Home Recents shows the split only when the toggle is on.
 
 ---
 
@@ -108,7 +129,8 @@ appear as separate Journal rows, or the journal would massively over-count actua
 ## Business Rules
 
 * A shared cost is at most one expense record; the split is presentation/reference data layered on
-  top. Whether that one record exists is the user's explicit choice (default off), not automatic.
+  top. Whether that one record counts toward spend totals is the user's explicit choice (default
+  off), not automatic — but the split itself is always visible in Journal, toggle state aside.
 
 ---
 
@@ -170,3 +192,22 @@ appear as separate Journal rows, or the journal would massively over-count actua
   / `update_togglingRecordAsTransactionOff_removesAPreviouslyLinkedRecord` and
   `SharedCostUseCasesTest`'s `invoke_defaultsRecordAsTransactionToFalse` /
   `invoke_passesThroughAnExplicitRecordAsTransactionOptIn` (both use cases).
+
+* **Gap fix (2026-07 v3):** v2 above made a toggle-off split invisible everywhere outside Shared
+  Costs history — including Journal — since Journal's row list was purely `FinanceRecord`-sourced
+  and a toggle-off split has none. That's inconsistent with Debt's own precedent: a toggle-off Debt
+  already merges into Journal directly from `DebtRepository` (bypassing `FinanceRecord`/`RecordKind`
+  entirely — see `visibleUnrecordedDebts`/`Debt.toDebtRowModel()` in
+  `feature/history/entry/HistoryFeatureEntry.kt`) precisely so Journal keeps showing every entry
+  regardless of the toggle, per `de50568f`'s original "Journal is the full history browse" rule
+  (predates the split toggle). Added the mirroring `visibleUnrecordedSplits`
+  (`feature/history/JournalUseCases.kt`) and `SharedCost.toSplitRowModel()`
+  (`HistoryFeatureEntry.kt`), merged into `groupByDay()` alongside the existing debt merge, plus a
+  reciprocal `includesUnrecordedSplits()` so the Split filter chip still surfaces these. Separately,
+  `RecordKind.isVisibleInHomeRecents()` previously hid `SPLIT` behind `SHOW_SPLIT_AND_DEBT_ROWS`
+  even when toggle-on (unlike `DEBT_LENT`/`DEBT_OWED`, already unconditionally visible once
+  toggle-on) — now `SPLIT` is unconditionally visible too, so a toggle-on split reaches Home
+  Recents like any other counted transaction; a toggle-off split still never reaches Home Recents
+  at all, since it has no `FinanceRecord` and Home Recents (unlike Journal) never merges in
+  toggle-off splits directly. Covered by `VisibleUnrecordedSplitsTest`
+  (`JournalUseCasesTest.kt`) and `RecordKindTest.isVisibleInHomeRecents_toggleOnSplitIsAlwaysVisible`.
