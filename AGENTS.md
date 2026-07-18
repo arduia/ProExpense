@@ -522,12 +522,25 @@ bash scripts/setup-android-toolchain.sh
    verify must pass in-session before `git push`. Intentional visual changes require
    `recordRoborazziDevDebug` and committed baselines in the same branch.
 
+9. **`@Category` every Robolectric Compose test that launches a real activity** — any `app` module
+   test using `createAndroidComposeRule`/`createComposeRule`/`ActivityScenarioRule` needs
+   `compose-ui-test-manifest`, which is `debugImplementation`-only, so it fails to resolve an
+   activity under a release unit-test variant ("Unable to resolve activity for
+   ComponentActivity"). Tag the class `@Category(ScreenshotTests::class)` (Roborazzi) or
+   `@Category(ComposeUiTests::class)` (plain Compose interaction test) — both markers live in
+   `app/src/test/java/com/arduia/expense/testing/` and are excluded from `*ReleaseUnitTest` in
+   `app/build.gradle.kts`. A file with multiple test classes only tags the ones that actually use
+   the rule — pure-logic classes in the same file don't need it. `verifyAll` runs
+   `:app:testDevReleaseUnitTest` specifically so an untagged test surfaces immediately instead of
+   silently rotting until someone runs the bare `./gradlew test`.
+
 ### Tools
 
 - **KMP unit:** `kotlin-test`, coroutines-test
 - **Android JVM unit:** JUnit 4, MockK, Robolectric, coroutines-test
-- **Screenshot:** Roborazzi + Robolectric (`captureRoboImage`, `@Category(ScreenshotTests)`)
-- **UI:** Espresso, Compose UI Test (`createComposeRule`)
+- **Screenshot:** Roborazzi + Robolectric (`captureRoboImage`, `@Category(ScreenshotTests::class)`)
+- **UI:** Espresso, Compose UI Test (`createComposeRule`, `@Category(ComposeUiTests::class)` — see
+  Core Rule 9)
 
 ### TDD Checklist (per method/class)
 

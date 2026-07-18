@@ -19,6 +19,7 @@ val verifyAll = tasks.register("verifyAll") {
         "verifyIosCompat",
         ":app:assembleDevDebug",
         ":app:testDevDebugUnitTest",
+        ":app:testDevReleaseUnitTest",
         ":shared:testDebugUnitTest",
         ":core:domain:testDebugUnitTest",
         ":core:storage:testDebugUnitTest",

@@ -2,6 +2,13 @@
 
 > Append-only. Written automatically when Step 8 triggers (large change + unexpected gate failure).
 > Promote durable guards into `AGENTS.md` so lessons are enforced, not just logged.
+>
+> **Every entry's guard needs a `Verified:` line** — the command actually run after applying the
+> fix, its result, and the date. A guard written as a prescription ("tag them and exclude...")
+> without evidence it was carried out is not closed; it's a TODO wearing a "Guards:" label, and it
+> can silently rot exactly like the 2026-06-20 entry below did (see the 2026-07-18 follow-up).
+> When re-verifying an older entry, append a dated `Verified:` line rather than editing the
+> original text — this file is append-only.
 
 ---
 
@@ -41,6 +48,22 @@ contradicted the 2-decimal rule; `./gradlew test` reported success anyway becaus
 - For lockout/ticker assertions use `runCurrent()`, not `advanceUntilIdle()`.
 - Robolectric Compose UI tests are debug-only; tag them `@Category(ComposeUiTests/ScreenshotTests)`
   and exclude those categories from the release unit-test variant.
+
+**Verified: 2026-07-18 — was incomplete, now fixed.** Only the `ScreenshotTests` half of this guard
+had actually landed — `app/build.gradle.kts` excluded it, but the `ComposeUiTests` marker named
+above was never created, and no plain Compose-interaction test (as opposed to a Roborazzi
+screenshot test) carried any category tag. 28 test classes across `app` (SharedCost, Journal,
+Category, Debt, Reports, ...) were silently failing under `:app:testDevReleaseUnitTest` with the
+exact "Unable to resolve activity for ComponentActivity" error this entry describes — invisible to
+every documented gate because `verifyAll` never ran that variant either (only
+`:app:testDevDebugUnitTest`). It surfaced by accident when an unrelated task ran the bare
+`./gradlew test`. Root cause of *why it rotted*: this entry recorded the guard as a prescription
+with no completion evidence, and no gate ever exercised the release variant to force that evidence
+— see the 2026-07-18 entry below for the process fix (not just the code fix). Fixed by: creating
+`ComposeUiTests` (`app/src/test/java/.../testing/ComposeUiTests.kt`), tagging all 28 classes,
+adding it to `excludeCategories` in `app/build.gradle.kts`, and confirming
+`:app:testDevReleaseUnitTest` — `BUILD SUCCESSFUL`, 25 tests run (pure-logic classes only), the 28
+UI classes correctly absent from the results.
 
 ## 2026-07 — App-module string duplicates silently shadowed feature-module string updates
 
@@ -138,3 +161,36 @@ no compiler error when done wrong — it just silently draws off-screen.
   ramp = correct), not by eyeballing a shrunk screenshot.
 - New G5 bullet: an edge-fade/affordance modifier must wrap the scroll modifier (apply outside it
   in the chain) — nested inside, it measures the unclipped content size and renders off-screen.
+
+## 2026-07-18 — A logged guard regressed silently because nothing re-verified it
+
+**What slipped:** The 2026-06-20 entry above ("PIN lockout bypass + release-variant screenshot
+tests") prescribed tagging Robolectric Compose UI tests with a `ComposeUiTests`/`ScreenshotTests`
+category and excluding both from the release unit-test variant. Only the `ScreenshotTests` half
+was ever implemented. `ComposeUiTests` was never created, and 28 plain Compose-interaction test
+classes (not Roborazzi screenshot tests) were left completely untagged. This was invisible for an
+unknown length of time and was found by accident — an agent session ran the bare `./gradlew test`
+(not a documented command) while double-checking an unrelated schema change, and 54 of 79 tests
+failed with the exact "Unable to resolve activity for ComponentActivity" error the 2026-06-20 entry
+already diagnosed.
+
+**Root cause:** (1) This log's own header says "Promote durable guards into `AGENTS.md` so lessons
+are enforced, not just logged" — that promotion never happened for this guard. `AGENTS.md`'s
+Testing Contract said nothing about a `ComposeUiTests` category or the debug-only
+`compose-ui-test-manifest` constraint, so no future session had any reason to apply it to a new
+test file. (2) No gate in the documented 8-step workflow ever runs `testDevReleaseUnitTest` —
+`verifyAll`'s `dependsOn` only lists `:app:testDevDebugUnitTest`. A guard about release-variant
+behavior has no way to be re-confirmed if no gate ever exercises the release variant. (3) The
+retrospective entry itself recorded the guard as a prescription ("tag them... and exclude...")
+with no `Verified:` line proving it was carried out — so a half-applied fix and a fully-applied fix
+were indistinguishable just by reading the log.
+
+**Guards:**
+- Every retrospective entry's "Guards:" section now needs a dated `Verified:` line (command run +
+  result) before it counts as closed — see the file header. A guard without evidence is a TODO,
+  not a completed fix.
+- `AGENTS.md` Testing Contract Core Rule 9 now states the `ComposeUiTests`/`ScreenshotTests`
+  tagging requirement directly, so it's discoverable without reading this log.
+- `verifyAll` now depends on `:app:testDevReleaseUnitTest` (root `build.gradle.kts`), so an
+  untagged Compose UI test breaks the standard gate immediately instead of only surfacing when
+  someone happens to run the undocumented bare `./gradlew test`.

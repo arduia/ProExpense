@@ -144,7 +144,10 @@ roborazzi {
 tasks.withType<Test>().configureEach {
     if (name.endsWith("ReleaseUnitTest")) {
         useJUnit {
-            excludeCategories("com.arduia.expense.testing.ScreenshotTests")
+            excludeCategories(
+                "com.arduia.expense.testing.ScreenshotTests",
+                "com.arduia.expense.testing.ComposeUiTests",
+            )
         }
     }
 }

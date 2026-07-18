@@ -6,10 +6,12 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.arduia.expense.feature.logging.ui.AddExpenseAmountScreen
 import com.arduia.expense.feature.logging.ui.preview.previewExpenseAmountManyCategories
+import com.arduia.expense.testing.ComposeUiTests
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -27,6 +29,7 @@ import org.robolectric.annotation.GraphicsMode
     sdk = [33],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
+@Category(ComposeUiTests::class)
 class AddExpenseCategoryOverflowTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()

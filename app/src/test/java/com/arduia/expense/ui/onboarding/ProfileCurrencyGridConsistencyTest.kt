@@ -7,10 +7,12 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.height
 import com.arduia.expense.feature.onboarding.ui.ProfileSetupScreenContent
 import com.arduia.expense.feature.onboarding.ui.ProfileSetupState
+import com.arduia.expense.testing.ComposeUiTests
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -29,6 +31,7 @@ import kotlin.math.absoluteValue
     sdk = [33],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
+@Category(ComposeUiTests::class)
 class ProfileCurrencyGridConsistencyTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
