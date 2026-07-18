@@ -30,4 +30,16 @@ class IdsTest {
         assertFailsWith<IllegalArgumentException> { EventId("") }
         assertFailsWith<IllegalArgumentException> { SharedCostId("") }
     }
+
+    @Test
+    fun `WalletId constructs with positive value and is structurally equal`() {
+        assertEquals(1, WalletId(1).value)
+        assertEquals(WalletId(1), WalletId(1))
+    }
+
+    @Test
+    fun `WalletId rejects non-positive value`() {
+        assertFailsWith<IllegalArgumentException> { WalletId(0) }
+        assertFailsWith<IllegalArgumentException> { WalletId(-1) }
+    }
 }

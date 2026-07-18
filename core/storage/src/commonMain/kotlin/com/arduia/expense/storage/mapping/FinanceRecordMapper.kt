@@ -12,6 +12,7 @@ import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCostId
+import com.arduia.expense.domain.WalletId
 import com.arduia.expense.storage.db.Finance_record as FinanceRecordRow
 
 /**
@@ -39,6 +40,7 @@ internal fun FinanceRecordRow.toDomain(): FinanceRecord =
         recordedAtEpochMillis = recorded_at,
         link = toRecordLink(tag_type, tag_id),
         integrity = toChecksum(integrity_algo, integrity_hash),
+        walletId = wallet_id?.let { WalletId(it.toInt()) },
     )
 
 internal fun toChecksum(

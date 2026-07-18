@@ -1,1 +1,0 @@
-CREATE INDEX finance_record_recorded_at_idx ON finance_record(recorded_at DESC, id DESC);

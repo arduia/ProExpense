@@ -1,1 +1,0 @@
-ALTER TABLE category ADD COLUMN icon_id TEXT NOT NULL DEFAULT '';

@@ -24,6 +24,7 @@ import com.arduia.expense.feature.history.RecordSummary
 import com.arduia.expense.feature.history.SummaryPeriod
 import com.arduia.expense.feature.history.UpdateRecordNoteUseCase
 import com.arduia.expense.feature.history.entry.HistoryFeatureUi
+import com.arduia.expense.testing.ComposeUiTests
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.koin.compose.KoinApplication
 import org.koin.dsl.module
@@ -50,6 +52,7 @@ import org.robolectric.annotation.GraphicsMode
     sdk = [33],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
+@Category(ComposeUiTests::class)
 class JournalTabRevisitTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()

@@ -12,11 +12,13 @@ import androidx.compose.ui.test.performTouchInput
 import com.arduia.expense.feature.categories.ui.CategoryListScreen
 import com.arduia.expense.feature.categories.ui.dragHandleTestTag
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
+import com.arduia.expense.testing.ComposeUiTests
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -37,6 +39,7 @@ import org.robolectric.annotation.GraphicsMode
     sdk = [33],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
+@Category(ComposeUiTests::class)
 class CategoryReorderDragTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()

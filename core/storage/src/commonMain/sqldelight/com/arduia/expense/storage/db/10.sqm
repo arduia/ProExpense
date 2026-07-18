@@ -1,1 +1,0 @@
-ALTER TABLE debt_record ADD COLUMN note TEXT;

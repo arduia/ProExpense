@@ -55,3 +55,16 @@ value class SharedCostId(
         require(value.isNotBlank()) { "SharedCostId must not be blank" }
     }
 }
+
+/**
+ * Integer (not UUID) by design — wallets are a small, locally-numbered set unlike every other
+ * entity's string ID, chosen up front for the future multi-wallet linkage column.
+ */
+@JvmInline
+value class WalletId(
+    val value: Int,
+) {
+    init {
+        require(value > 0) { "WalletId must be positive" }
+    }
+}

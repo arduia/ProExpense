@@ -1,1 +1,0 @@
-ALTER TABLE app_meta ADD COLUMN pin_hash TEXT;

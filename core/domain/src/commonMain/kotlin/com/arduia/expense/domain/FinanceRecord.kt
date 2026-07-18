@@ -14,6 +14,8 @@ data class FinanceRecord(
      * write and re-derived on read; `null` for records that predate integrity stamping.
      */
     val integrity: RecordChecksum? = null,
+    /** Reserved for future multi-wallet support; `null` until wallets exist. No wallet feature yet. */
+    val walletId: WalletId? = null,
 ) {
     init {
         note?.let {

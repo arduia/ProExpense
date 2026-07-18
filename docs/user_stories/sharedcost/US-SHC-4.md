@@ -160,9 +160,8 @@ appear as separate Journal rows, or the journal would massively over-count actua
   purely reference/reconciliation data (e.g. tracking who owes what on a trip without wanting it to
   also show up as the user's own expense). Added a `recordAsTransaction` field to `SharedCost`
   (domain), `SharedCostInput` (data), and the `shared_cost.record_as_transaction` column (storage,
-  migration `17.sqm` — existing rows backfill to `1`/true so upgrading doesn't silently delete
-  their already-linked record and change historical totals; only new installs default to `0`),
-  mirroring Debt's own `recordAsTransaction` toggle exactly. `SqlDelightSharedCostRepository`
+  defaults to `0`/false for all installs), mirroring Debt's own `recordAsTransaction` toggle
+  exactly. `SqlDelightSharedCostRepository`
   now only upserts the linked `FinanceRecord` when the flag is true, and deletes any existing one
   when it's false (toggle-off case). Split Summary gained a "Also record as an expense" switch
   (off by default) next to Save, wired through `SaveSharedCostInput.recordAsTransaction`. Covered

@@ -1,4 +1,0 @@
--- Existing rows already have a linked FinanceRecord from before this toggle existed (Shared Costs
--- always recorded one) — backfill to 1 so upgrading doesn't silently delete it and change a user's
--- historical totals. Only NEW installs (SharedCost.sq's own CREATE TABLE) default to 0.
-ALTER TABLE shared_cost ADD COLUMN record_as_transaction INTEGER NOT NULL DEFAULT 1;

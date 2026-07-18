@@ -15,3 +15,4 @@
 | [US-LOG-5](US-LOG-5.md) | Link an expense to an event or debt | 🔵 Phase 2 |
 | [US-LOG-6](US-LOG-6.md) | Avoid runaway notes | 🟡 Should |
 | [US-LOG-7](US-LOG-7.md) | Never lose a half-typed entry | 🟡 Should |
+| [US-LOG-8](US-LOG-8.md) | Reserve a wallet identifier on each expense for future multi-wallet support | 🔵 Phase 2 |

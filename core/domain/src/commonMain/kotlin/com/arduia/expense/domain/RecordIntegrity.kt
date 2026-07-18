@@ -23,15 +23,16 @@ object IntegrityAlgorithms {
 
 /**
  * Deterministic, versioned serialization of a record's content used as the integrity digest input.
- * The `v1` prefix lets the canonical form evolve without silently invalidating older checksums; the
- * free-text note is length-prefixed so it cannot collide with the field delimiter.
+ * The leading version prefix (currently `v2`, bumped when a field is added/removed) lets the
+ * canonical form evolve without silently invalidating older checksums; the free-text note is
+ * length-prefixed so it cannot collide with the field delimiter.
  *
  * Stable enough to double as the payload a future sync/backup service hashes or signs.
  */
 fun FinanceRecord.canonicalPayload(): String {
     val sep = '\u001F'
     return buildString {
-        append("v1")
+        append("v2")
         append(sep)
         append(id.value)
         append(sep)
@@ -54,5 +55,7 @@ fun FinanceRecord.canonicalPayload(): String {
         append(note?.length ?: -1)
         append(sep)
         append(note ?: "")
+        append(sep)
+        append(walletId?.value ?: -1)
     }
 }

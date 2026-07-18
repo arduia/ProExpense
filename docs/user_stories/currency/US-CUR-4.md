@@ -138,8 +138,8 @@ amount faithfully — the conversion only feeds the separate home-currency total
 ## Technical Notes
 
 * `Money.convertedTo(currency, rate)` (`core:domain`) does the conversion math.
-* Storage: `finance_record.home_currency_code` (new column, migration `7.sqm`) pairs with the
-  existing `home_amount_cents` — both null when currency == home currency.
+* Storage: `finance_record.home_currency_code` pairs with the existing `home_amount_cents` — both
+  null when currency == home currency.
 * `feature:logging`'s `SaveExpenseInput.homeCurrencyCode` / `exchangeRateRaw` thread the rate from
   UI state to `Money.convertedTo`; `SaveExpenseOutcome.InvalidExchangeRate` is the failure case
   (unreachable in production since the UI gates Save first).

@@ -71,6 +71,7 @@ class SqlDelightFinanceRecordRepository(
                         integrity_algo = checksum.algorithm,
                         integrity_hash = checksum.value,
                         home_currency_code = if (sameCurrency) null else record.homeCurrencyMoney.currency.code,
+                        wallet_id = record.walletId?.value?.toLong(),
                     )
                     // The link may have moved from one event to another — recompute both caches from
                     // the source of truth rather than incrementing/decrementing, so a partial failure

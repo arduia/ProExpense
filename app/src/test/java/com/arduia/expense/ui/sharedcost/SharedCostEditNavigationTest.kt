@@ -9,9 +9,11 @@ import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostHistoryItemUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostParticipantUi
 import com.arduia.expense.feature.sharedcost.ui.preview.SharedCostUiState
+import com.arduia.expense.testing.ComposeUiTests
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -27,6 +29,7 @@ import org.robolectric.annotation.GraphicsMode
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [33])
+@Category(ComposeUiTests::class)
 class SharedCostEditNavigationTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()

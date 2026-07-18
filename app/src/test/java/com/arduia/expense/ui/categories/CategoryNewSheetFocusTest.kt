@@ -13,10 +13,12 @@ import com.arduia.expense.feature.categories.ui.CategoryListScreen
 import com.arduia.expense.feature.categories.ui.CategoryNewSheetContent
 import com.arduia.expense.feature.categories.ui.preview.CategoryNewFormState
 import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
+import com.arduia.expense.testing.ComposeUiTests
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
@@ -28,6 +30,7 @@ import org.robolectric.RobolectricTestRunner
  * assertion is the only way to verify it.
  */
 @RunWith(RobolectricTestRunner::class)
+@Category(ComposeUiTests::class)
 class CategoryNewSheetFocusTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
