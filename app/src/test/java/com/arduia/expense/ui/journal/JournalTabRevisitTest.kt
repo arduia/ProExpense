@@ -49,7 +49,9 @@ import org.robolectric.annotation.GraphicsMode
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(
-    sdk = [33],
+    // State-retention across tab switches touches lifecycle/state-saving, which has genuinely
+    // shifted across Android versions — check min SDK (24), a milestone (30), and target (36).
+    sdk = [24, 30, 36],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 @Category(ComposeUiTests::class)

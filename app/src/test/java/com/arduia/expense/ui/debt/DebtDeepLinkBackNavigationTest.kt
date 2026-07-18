@@ -28,7 +28,10 @@ import org.robolectric.annotation.GraphicsMode
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(
-    sdk = [33],
+    // Min SDK (24), a scoped-storage/back-navigation milestone (30), and target SDK (36) — this
+    // navigation-affordance logic has no Android-version-specific code path, so it's a reasonable
+    // representative sample for cross-SDK coverage rather than every screen needing this treatment.
+    sdk = [24, 30, 36],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 @Category(ComposeUiTests::class)
