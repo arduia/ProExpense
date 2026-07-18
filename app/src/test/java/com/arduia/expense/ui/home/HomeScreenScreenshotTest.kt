@@ -4,9 +4,12 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.LayoutDirection
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.HomeNavTab
@@ -37,15 +40,20 @@ class HomeScreenScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun captureHome(content: @androidx.compose.runtime.Composable () -> Unit) {
+    private fun captureHome(
+        layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+        content: @androidx.compose.runtime.Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(ProExpenseTheme.colors.paper),
-                ) {
-                    content()
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                ProExpenseTheme {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(ProExpenseTheme.colors.paper),
+                    ) {
+                        content()
+                    }
                 }
             }
         }
@@ -146,6 +154,44 @@ class HomeScreenScreenshotTest {
                 onDebtClick = {},
                 onSplitClick = {},
                 onEventsClick = {},
+            )
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w${ProArtboard.COMPACT_PHONE_WIDTH_DP}dp-h${ProArtboard.COMPACT_PHONE_HEIGHT_DP}dp")
+    fun home_casual_compactPhone() {
+        captureHome {
+            HomeShell(
+                state = previewHomeCasual,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w${ProArtboard.TABLET_WIDTH_DP}dp-h${ProArtboard.TABLET_HEIGHT_DP}dp")
+    fun home_casual_tablet() {
+        captureHome {
+            HomeShell(
+                state = previewHomeCasual,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    fun home_casual_rtl() {
+        captureHome(layoutDirection = LayoutDirection.Rtl) {
+            HomeShell(
+                state = previewHomeCasual,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
             )
         }
     }

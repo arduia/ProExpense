@@ -4,9 +4,12 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.LayoutDirection
 import com.arduia.expense.feature.logging.ui.AddExpenseAmountScreen
 import com.arduia.expense.feature.logging.ui.AddExpenseDetailsScreen
 import com.arduia.expense.feature.logging.ui.QuickLogFlow
@@ -42,15 +45,20 @@ class AddExpenseScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @androidx.compose.runtime.Composable () -> Unit) {
+    private fun capture(
+        layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+        content: @androidx.compose.runtime.Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(ProExpenseTheme.colors.paper),
-                ) {
-                    content()
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                ProExpenseTheme {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(ProExpenseTheme.colors.paper),
+                    ) {
+                        content()
+                    }
                 }
             }
         }
@@ -228,6 +236,109 @@ class AddExpenseScreenshotTest {
                 initialEpochMillis = 1_716_600_000_000L,
                 onConfirm = {},
                 onDismiss = {},
+            )
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w${ProArtboard.COMPACT_PHONE_WIDTH_DP}dp-h${ProArtboard.COMPACT_PHONE_HEIGHT_DP}dp")
+    fun add_amount_compactPhone() {
+        capture {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountTyped,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w${ProArtboard.TABLET_WIDTH_DP}dp-h${ProArtboard.TABLET_HEIGHT_DP}dp")
+    fun add_amount_tablet() {
+        capture {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountTyped,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_amount_rtl() {
+        capture(layoutDirection = LayoutDirection.Rtl) {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountTyped,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w${ProArtboard.COMPACT_PHONE_WIDTH_DP}dp-h${ProArtboard.COMPACT_PHONE_HEIGHT_DP}dp")
+    fun add_details_compactPhone() {
+        capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetails,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w${ProArtboard.TABLET_WIDTH_DP}dp-h${ProArtboard.TABLET_HEIGHT_DP}dp")
+    fun add_details_tablet() {
+        capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetails,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_details_rtl() {
+        capture(layoutDirection = LayoutDirection.Rtl) {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetails,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
             )
         }
     }

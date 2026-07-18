@@ -10,6 +10,14 @@ object ProArtboard {
     const val PIXEL_9_PRO_HEIGHT_DP = 952
     const val SPEC_CAPTURE_WIDTH_DP = 1100
     const val SPEC_CAPTURE_HEIGHT_DP = 800
+
+    /** Small-phone baseline (e.g. Pixel 4a-class width) — narrower than every existing baseline. */
+    const val COMPACT_PHONE_WIDTH_DP = 360
+    const val COMPACT_PHONE_HEIGHT_DP = 800
+
+    /** 10" tablet portrait baseline — wider than every existing baseline. */
+    const val TABLET_WIDTH_DP = 800
+    const val TABLET_HEIGHT_DP = 1280
 }
 
 @Immutable

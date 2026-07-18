@@ -32,6 +32,7 @@ android {
                 .toInt()
         versionCode = 15
         versionName = "2.0.0-beta01"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     flavorDimensions += "environment"
@@ -135,6 +136,15 @@ dependencies {
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
     testImplementation(libs.roborazzi.junit.rule)
+
+    // Real-device/emulator instrumented tests — distinct from the Robolectric JVM tests above.
+    // Exercised by Firebase Test Lab in CI (scripts/run-firebase-test-lab.sh); no adb/emulator is
+    // available to run these locally in every environment.
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(composeBom)
+    androidTestImplementation(libs.compose.ui.test.junit4)
 }
 
 roborazzi {

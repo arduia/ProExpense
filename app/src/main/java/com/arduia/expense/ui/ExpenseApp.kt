@@ -305,17 +305,7 @@ fun ExpenseApp(
                     .filter { it.type == RecordType.EXPENSE }
                     .sumOf { it.homeCurrencyMoney.amount.valueInCents }
             val totalLabel = AmountInput.formatMoney(totalCents, homeSymbol)
-            val budgetSummary =
-                monthlyBudget?.let { budget ->
-                    val budgetCents = budget.amount.valueInCents
-                    HomeBudgetSummaryState(
-                        spentLabel = AmountInput.formatMoney(totalCents, homeSymbol),
-                        budgetLabel = "of " + AmountInput.formatMoney(budgetCents, homeSymbol),
-                        progress = if (budgetCents > 0) totalCents.toFloat() / budgetCents else 0f,
-                        statusLabel = if (totalCents > budgetCents) "Over budget" else "On track",
-                        isOverBudget = totalCents > budgetCents,
-                    )
-                }
+            val budgetSummary = computeBudgetSummary(records, monthlyBudget, homeSymbol)
             // Recent shows the last 5-10 entries (US-HOME-2), not the entire history — toggle-off
             // debts are merged in before truncating (see buildHomeDayGroups).
             val dayGroups =
@@ -749,6 +739,45 @@ fun ExpenseApp(
             )
         }
     }
+}
+
+/**
+ * US-MORE-2: "spend vs. budget" always recalculates from the current calendar month, so the
+ * reset on the 1st is a byproduct of the month filter rather than a separate reset mechanism —
+ * a new month naturally has zero matching records. [now] defaults to real wall-clock time in
+ * production; tests pass a fixed [Calendar] to control which "current month" is in effect.
+ */
+internal fun computeBudgetSummary(
+    records: List<FinanceRecord>,
+    monthlyBudget: Money?,
+    homeSymbol: String,
+    now: Calendar = Calendar.getInstance(),
+): HomeBudgetSummaryState? {
+    val budget = monthlyBudget ?: return null
+    val monthStart =
+        (now.clone() as Calendar).apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+    val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
+    val totalCents =
+        records
+            .filter {
+                it.recordedAtEpochMillis >= monthStart.timeInMillis &&
+                    it.recordedAtEpochMillis < monthEnd.timeInMillis &&
+                    it.type == RecordType.EXPENSE
+            }.sumOf { it.homeCurrencyMoney.amount.valueInCents }
+    val budgetCents = budget.amount.valueInCents
+    return HomeBudgetSummaryState(
+        spentLabel = AmountInput.formatMoney(totalCents, homeSymbol),
+        budgetLabel = "of " + AmountInput.formatMoney(budgetCents, homeSymbol),
+        progress = if (budgetCents > 0) totalCents.toFloat() / budgetCents else 0f,
+        statusLabel = if (totalCents > budgetCents) "Over budget" else "On track",
+        isOverBudget = totalCents > budgetCents,
+    )
 }
 
 private const val SPARKLINE_DAYS = 7

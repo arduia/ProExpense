@@ -37,7 +37,9 @@ import org.robolectric.annotation.GraphicsMode
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(
-    sdk = [33],
+    // Security-critical click-through guard — worth checking across the supported SDK range
+    // (min 24, scoped-storage/back-nav milestone 30, target 36) rather than one pinned version.
+    sdk = [24, 30, 36],
     qualifiers = "w${ProArtboard.PIXEL_9_PRO_WIDTH_DP}dp-h${ProArtboard.PIXEL_9_PRO_HEIGHT_DP}dp",
 )
 @Category(ComposeUiTests::class)

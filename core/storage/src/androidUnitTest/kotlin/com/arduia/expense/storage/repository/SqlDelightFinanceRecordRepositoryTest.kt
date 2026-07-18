@@ -316,6 +316,22 @@ class SqlDelightFinanceRecordRepositoryTest {
         }
 
     @Test
+    fun upsert_editingAmountOfLinkedRecord_recomputesCachedSpent() =
+        // US-HIS-7/US-EVT-4: editing a linked record's amount (not just moving its link) must
+        // recompute from source of truth, not increment — otherwise the cache would double-count.
+        runTest {
+            val database = inMemoryDatabase()
+            seedEvent(database, "evt-1")
+            val repo = repository(database)
+            repo.upsert(record("rec-1", RecordLink.ToEvent(EventId("evt-1")), amountCents = 1_000))
+
+            repo.upsert(record("rec-1", RecordLink.ToEvent(EventId("evt-1")), amountCents = 5_000))
+
+            val event = database.eventQueries.selectEventById("evt-1").executeAsOne()
+            assertEquals(5_000, event.cached_spent_cents)
+        }
+
+    @Test
     fun delete_linkedToEvent_recomputesCachedSpent() =
         runTest {
             val database = inMemoryDatabase()
