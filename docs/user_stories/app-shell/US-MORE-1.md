@@ -129,7 +129,7 @@ since a disabled `Switch` swallows touches — the row itself is now clickable w
 catch that tap. Covered by `MoreScreenshotTest.edge_more_hub_pin_on`.
 
 Also fixed: the "Default category" row had no tap handler at all (silent no-op) and no backing
-preference. Added `DefaultCategoryRepository` (new `app_meta.default_category_id` column via
-migration `6.sqm`), a `MoreDefaultCategoryScreen` reusing the shared `CategoryPicker`, and wired
-the selection into `QuickLogFlow`'s initial category. Covered by
-`MoreScreenshotTest.more_default_category` and `AppMetaRepositoriesTest`.
+preference. Added `DefaultCategoryRepository` (backed by `app_meta.default_category_id`), a
+`MoreDefaultCategoryScreen` reusing the shared `CategoryPicker`, and wired the selection into
+`QuickLogFlow`'s initial category. Covered by `MoreScreenshotTest.more_default_category` and
+`AppMetaRepositoriesTest`.
