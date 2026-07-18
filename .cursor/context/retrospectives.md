@@ -194,3 +194,40 @@ were indistinguishable just by reading the log.
 - `verifyAll` now depends on `:app:testDevReleaseUnitTest` (root `build.gradle.kts`), so an
   untagged Compose UI test breaks the standard gate immediately instead of only surfacing when
   someone happens to run the undocumented bare `./gradlew test`.
+
+## 2026-07-18 — Home's bottom-nav overlay hides the last transaction row on shorter screens (found by new device-size tests, not yet fixed)
+
+**What was found:** Added compact-phone (`w360dp-h800dp`) and tablet (`w800dp-h1280dp`) Roborazzi
+baselines alongside RTL variants for `HomeScreenScreenshotTest`/`AddExpenseScreenshotTest`, per an
+explicit request to add device-config coverage beyond the single Pixel-9-Pro-sized baseline every
+existing test used. The `home_casual_compactPhone` baseline shows the last "Recent" row
+("Groceries · $42.00") rendered partially underneath `HomeBottomNav`'s overlay — confirmed by
+cropping and comparing pixel-for-pixel against the same state at the standard height, where the
+row sits with clear space above the nav bar. Not a rendering artifact: `HomeShell.kt` overlays
+`HomeBottomNav` via `Box` + `Modifier.align(Alignment.BottomCenter)` on top of `HomeScreenContent`,
+and `HomeScreen.kt`'s `LazyColumn` only reserves clearance via a **fixed**
+`contentPadding(bottom = dimens.navShellBottomInset)` where `navShellBottomInset = 140.dp`
+(`Dimensions.kt:182`) is a hardcoded constant, not derived from the nav bar's actual measured
+height or the available screen height. On a screen ~150dp shorter than the baseline artboard, that
+fixed reservation isn't enough and real transaction data ends up occluded.
+
+**Root cause:** No test at any screen height shorter than the single Pixel 9 Pro baseline existed
+before this session, so a fixed-dp inset assumption had no way to be caught. This is the same
+class of gap the 2026-07-13 entry below describes for scrollable-row edge affordances — a
+single fixed artboard structurally cannot catch a layout assumption that only breaks at a
+different size.
+
+**Not yet fixed** — flagged to the user with the cropped-pixel evidence rather than silently
+committing the baseline as "correct" truth (see this file's own header re: guards without
+verification). Awaiting a decision on the fix approach (derive the inset from actual measured nav
+bar height / `WindowInsets` vs. a different reserved-space strategy) before the baseline can be
+considered to represent intended behavior rather than a documented known defect.
+
+**Guards:**
+- Any Roborazzi test class that only exercises the single Pixel-9-Pro-sized artboard is
+  structurally blind to shorter/narrower/wider device classes — new screen-level screenshot test
+  classes should include at least one compact-phone (`ProArtboard.COMPACT_PHONE_*`) and one tablet
+  (`ProArtboard.TABLET_*`) variant of their most representative state, not just the default size.
+- Fixed dp constants reserving space for an overlaid system-chrome element (nav bars, bottom
+  sheets) are a recurring risk category — prefer deriving reserved space from the actual
+  element's measured size/insets where the API allows it.
