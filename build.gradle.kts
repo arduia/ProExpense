@@ -15,7 +15,7 @@ val verifyAll = tasks.register("verifyAll") {
     group = "verification"
     description = "Build devDebug APK and verify design system screenshots."
     dependsOn(
-        "checkIosTargets",
+        // checkIosTargets isn't listed here directly — verifyIosCompat already depends on it.
         "verifyIosCompat",
         ":app:assembleDevDebug",
         ":app:testDevDebugUnitTest",
