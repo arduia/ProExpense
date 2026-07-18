@@ -48,13 +48,18 @@ Read **`docs/project_philosophy.md`** for beliefs, decision framework, and non-n
 
 - Quick manual logging · Multi-currency (basic, manual rates) · Record history
 - Shared costs · Secure import/export (CSV/JSON) · Auth setup (PIN)
-- Local storage only — no cloud sync in MVP
+- Local storage is the default and source of truth — Google Drive cloud sync (`feature:sync`) is
+  an opt-in addition, off until the user connects an account; see `docs/user_stories/sync/`
 
 **Product constraints (never violate for MVP):**
 
 - No bank or third-party integrations
-- No user accounts or server-side auth (PIN is local only)
-- No cloud sync or online backup in MVP
+- No server-side auth for the app itself (PIN is local only) — Google Sign-In is scoped narrowly
+  to Drive access for the opt-in sync feature below, not an app identity/login mechanism
+- Cloud sync (Google Drive, opt-in) is in scope as a manually-connected, off-by-default feature —
+  see `docs/user_stories/sync/`; nothing syncs until the user explicitly connects, so the app still
+  ships fully offline-capable and MVP's "no cloud sync" default experience is unchanged for anyone
+  who doesn't opt in
 - Data ownership — export/import supported; user owns their data
 - Max expense amount: 999,999,999.99
 
@@ -94,7 +99,8 @@ ProExpense/
 │   ├── history/                 Record History (MVP)
 │   ├── sharedcost/              Shared Costs (MVP)
 │   ├── auth/                    PIN Auth (MVP)
-│   └── importexport/            Import & Export (MVP)
+│   ├── importexport/            Import & Export (MVP)
+│   └── sync/                    Google Drive Cloud Sync (opt-in)
 └── iosApp/                      SwiftUI shell (future)
 ```
 

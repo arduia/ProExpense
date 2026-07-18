@@ -186,12 +186,20 @@ Ship the leanest possible version that delivers real value to core users — no 
 
 ### Out of Scope for MVP
 - Bank or third-party integrations
-- Cloud sync or online backup
 - Social or sharing features
 - Advanced analytics or dashboards
 - Push notifications
 - Auto exchange rate fetching
 - Biometric auth, social login, or email/password (post-MVP)
+
+### Opt-in Post-Connect Features (MVP)
+
+Off by default, and not required to use any core MVP flow — only activates if the user explicitly
+connects:
+
+- **Google Drive Cloud Sync** — full two-way sync of records via a private, app-only Drive folder
+  (`drive.appdata` scope). The user's Google Sign-In consent here only grants Drive-file access,
+  not an app account/identity — see `docs/user_stories/sync/` and `feature:sync`.
 
 ### Target Personas for MVP
 | Persona | Served by MVP |
@@ -302,10 +310,14 @@ Since the product targets a global audience, multi-currency support is a core re
 - **Categories** → extensible for budgets and journals
 - **Multi-currency** → ready for auto rate fetching post-MVP
 - **Participant management** → extensible for group and social features
-- **Local storage** → ready for optional cloud sync layer
+- **Local storage** → optional cloud sync layer implemented (Google Drive, opt-in) — local storage
+  remains the source of truth; sync is additive
 - **Export/Import** → foundation for migration, backup and cross-device support
 - **FinanceRecord** → reserves a nullable `walletId` for future multi-wallet support (see
   [US-LOG-8](user_stories/logging/US-LOG-8.md)); no wallet entity or UI yet
+- **FinanceRecord** → gains `dirty`/`last_synced_at` columns and a companion
+  `finance_record_tombstone` / `finance_record_month_sync` table for Drive sync bookkeeping (see
+  [US-SYNC-3](user_stories/sync/US-SYNC-3.md)); none of this is exposed on the shared domain model
 
 ---
 
@@ -346,8 +358,8 @@ Since the product targets a global audience, multi-currency support is a core re
 ### Backend / Cloud
 | Layer | Technology |
 |---|---|
-| MVP | None — fully local |
-| Post-MVP | TBD — optional cloud sync layer |
+| Core (MVP) | None — fully local |
+| Cloud Sync (opt-in, MVP) | Google Drive REST API v3, `appDataFolder` scope, one SQLite file per calendar month; transport via Ktor Multiplatform client; OAuth via Android Credential Manager / Google Identity Services |
 
 ---
 
@@ -482,7 +494,8 @@ Since the product targets a global audience, multi-currency support is a core re
 
 ### Phase 3 — Scale (Month 7–12)
 - Full Localization (10+ languages)
-- Cloud Sync (optional)
+- ~~Cloud Sync (optional)~~ — shipped ahead of schedule as an opt-in MVP feature (Google Drive,
+  see `docs/user_stories/sync/`); iOS-side sync remains a Phase 3 item
 - Advanced Analytics & Reports
 - Premium subscription launch
 - Wider currency support
