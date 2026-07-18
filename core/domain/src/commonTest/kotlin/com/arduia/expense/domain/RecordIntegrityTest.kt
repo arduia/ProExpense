@@ -41,6 +41,13 @@ class RecordIntegrityTest {
     }
 
     @Test
+    fun canonicalPayload_changesWhenWalletIdChanges() {
+        val withWallet = record().copy(walletId = WalletId(1))
+        assertNotEquals(record().canonicalPayload(), withWallet.canonicalPayload())
+        assertNotEquals(withWallet.canonicalPayload(), record().copy(walletId = WalletId(2)).canonicalPayload())
+    }
+
+    @Test
     fun stampThenVerify_isIntact_andDefaultsToSha256() {
         val verifier = RecordIntegrityVerifier()
         val stamped = verifier.stamp(record())

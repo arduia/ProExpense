@@ -5,6 +5,7 @@ import com.arduia.expense.domain.EventId
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCostId
+import com.arduia.expense.domain.WalletId
 import com.arduia.expense.storage.db.Finance_record
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,6 +32,7 @@ class FinanceRecordMapperTest {
                 integrity_algo = "SHA-256",
                 integrity_hash = "abc123",
                 home_currency_code = "USD",
+                wallet_id = null,
             )
 
         val record = row.toDomain()
@@ -67,12 +69,37 @@ class FinanceRecordMapperTest {
                 integrity_algo = "SHA-256",
                 integrity_hash = "abc123",
                 home_currency_code = null,
+                wallet_id = null,
             )
 
         val record = row.toDomain()
 
         assertEquals(5_000, record.homeCurrencyMoney.amount.valueInCents)
         assertEquals("USD", record.homeCurrencyMoney.currency.code)
+    }
+
+    @Test
+    fun toDomain_walletIdColumn_mapsToWalletId() {
+        val row =
+            Finance_record(
+                id = "rec-3",
+                amount_cents = 5_000,
+                currency_code = "USD",
+                home_amount_cents = null,
+                category_id = "food",
+                type = 0L,
+                note = null,
+                recorded_at = 1_700_000_000_000,
+                updated_at = 1_700_000_000_001,
+                tag_type = null,
+                tag_id = null,
+                integrity_algo = "SHA-256",
+                integrity_hash = "abc123",
+                home_currency_code = null,
+                wallet_id = 3L,
+            )
+
+        assertEquals(WalletId(3), row.toDomain().walletId)
     }
 
     @Test

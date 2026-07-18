@@ -4,6 +4,9 @@
 -- the redundant pair). Set together for a converted foreign-currency entry (US-LOG multi-currency).
 -- updated_at: system "last modified" timestamp, distinct from recorded_at (user-chosen, possibly-backdated)
 -- integrity_hash: hex HMAC-SHA256 over canonical fields, keyed by dedicated Android Keystore HMAC key
+-- wallet_id: reserved for future multi-wallet support; no wallet table/feature yet, so always null
+-- today. Integer (not TEXT/UUID like every other id here) — wallets are a small, locally-numbered
+-- set, chosen up front for this future linkage column.
 CREATE TABLE finance_record (
     id TEXT NOT NULL PRIMARY KEY,
     amount_cents INTEGER NOT NULL,
@@ -18,15 +21,16 @@ CREATE TABLE finance_record (
     tag_id TEXT,
     integrity_algo TEXT NOT NULL,
     integrity_hash TEXT NOT NULL,
-    home_currency_code TEXT
+    home_currency_code TEXT,
+    wallet_id INTEGER
 );
 
 CREATE INDEX finance_record_recorded_at_idx ON finance_record(recorded_at DESC, id DESC);
 
 insertRecord:
 INSERT OR REPLACE INTO finance_record(
-    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, updated_at, tag_type, tag_id, integrity_algo, integrity_hash, home_currency_code
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, updated_at, tag_type, tag_id, integrity_algo, integrity_hash, home_currency_code, wallet_id
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteRecord:
 DELETE FROM finance_record WHERE id = ?;

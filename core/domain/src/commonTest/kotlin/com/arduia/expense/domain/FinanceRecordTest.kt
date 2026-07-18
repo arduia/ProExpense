@@ -1,7 +1,9 @@
 package com.arduia.expense.domain
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 class FinanceRecordTest {
     private val usd = CurrencyCode("USD")
@@ -21,6 +23,12 @@ class FinanceRecordTest {
     fun `constructs with no link by default`() {
         val record = record(note = null)
         require(record.link == RecordLink.None)
+    }
+
+    @Test
+    fun `walletId defaults to null and can be set`() {
+        assertNull(record(note = null).walletId)
+        assertEquals(WalletId(1), record(note = null).copy(walletId = WalletId(1)).walletId)
     }
 
     @Test

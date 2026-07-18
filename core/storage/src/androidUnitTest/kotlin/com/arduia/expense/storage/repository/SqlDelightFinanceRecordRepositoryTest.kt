@@ -15,6 +15,7 @@ import com.arduia.expense.domain.RecordKindFilter
 import com.arduia.expense.domain.RecordLink
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.domain.SharedCostId
+import com.arduia.expense.domain.WalletId
 import com.arduia.expense.storage.db.ProExpenseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -86,6 +87,30 @@ class SqlDelightFinanceRecordRepositoryTest {
         }
 
     @Test
+    fun upsert_thenGetById_roundTripsNullWalletIdByDefault() =
+        runTest {
+            val repo = repository()
+            repo.upsert(record("rec-1"))
+
+            val fetched = repo.getById(RecordId("rec-1"))
+            assertTrue(fetched is Result.Success)
+            assertNull(fetched.data!!.walletId)
+        }
+
+    @Test
+    fun upsert_thenGetById_roundTripsWalletIdWhenSet() =
+        runTest {
+            val repo = repository()
+            val record = record("rec-1").copy(walletId = WalletId(7))
+
+            assertTrue(repo.upsert(record) is Result.Success)
+
+            val fetched = repo.getById(RecordId("rec-1"))
+            assertTrue(fetched is Result.Success)
+            assertEquals(WalletId(7), fetched.data!!.walletId)
+        }
+
+    @Test
     fun verifyIntegrity_trueForStoredRecord() =
         runTest {
             val repo = repository()
@@ -121,6 +146,7 @@ class SqlDelightFinanceRecordRepositoryTest {
                 integrity_algo = stored.integrity_algo,
                 integrity_hash = stored.integrity_hash,
                 home_currency_code = stored.home_currency_code,
+                wallet_id = stored.wallet_id,
             )
 
             val verified = repo.verifyIntegrity(RecordId("rec-1"))
@@ -195,6 +221,7 @@ class SqlDelightFinanceRecordRepositoryTest {
                 integrity_algo = "SHA-256",
                 integrity_hash = "dummy",
                 home_currency_code = null,
+                wallet_id = null,
             )
 
             val observed = repo.observeAll().first()

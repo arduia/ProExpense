@@ -29,6 +29,7 @@ class SqlDelightClearDataRepositoryTest {
             integrity_algo = "SHA-256",
             integrity_hash = "dummy",
             home_currency_code = null,
+            wallet_id = null,
         )
     }
 

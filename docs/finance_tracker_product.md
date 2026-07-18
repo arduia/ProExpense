@@ -304,6 +304,8 @@ Since the product targets a global audience, multi-currency support is a core re
 - **Participant management** → extensible for group and social features
 - **Local storage** → ready for optional cloud sync layer
 - **Export/Import** → foundation for migration, backup and cross-device support
+- **FinanceRecord** → reserves a nullable `walletId` for future multi-wallet support (see
+  [US-LOG-8](user_stories/logging/US-LOG-8.md)); no wallet entity or UI yet
 
 ---
 
