@@ -31,6 +31,8 @@ class SqlDelightFinanceRecordRepositoryTest {
         SqlDelightFinanceRecordRepository(
             queries = database.financeRecordQueries,
             eventQueries = database.eventQueries,
+            tombstoneQueries = database.financeRecordTombstoneQueries,
+            monthSyncQueries = database.financeRecordMonthSyncQueries,
             dispatcher = Dispatchers.Unconfined,
         )
 

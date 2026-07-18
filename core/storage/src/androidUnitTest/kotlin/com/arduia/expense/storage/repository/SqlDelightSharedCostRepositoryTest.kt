@@ -24,6 +24,8 @@ private fun sharedCostRepo(database: ProExpenseDatabase): SqlDelightSharedCostRe
         SqlDelightFinanceRecordRepository(
             queries = database.financeRecordQueries,
             eventQueries = database.eventQueries,
+            tombstoneQueries = database.financeRecordTombstoneQueries,
+            monthSyncQueries = database.financeRecordMonthSyncQueries,
             dispatcher = Dispatchers.Unconfined,
         )
     return SqlDelightSharedCostRepository(database.sharedCostQueries, financeRecordRepository, Dispatchers.Unconfined)

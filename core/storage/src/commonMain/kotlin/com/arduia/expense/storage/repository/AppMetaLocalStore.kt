@@ -31,6 +31,11 @@ data class AppMetaSnapshot(
     // US-AUTH-4 default is "always re-lock on background" — this stays false unless the user
     // opts in via Settings, so existing installs keep today's behavior after the migration.
     val stayUnlockedInBackground: Boolean,
+    // Google Drive sync (opt-in, off by default — see docs/user_stories/sync/). OAuth tokens are
+    // never stored here; see EncryptedSyncTokenStore (feature:sync androidMain).
+    val syncConnected: Boolean,
+    val syncAccountEmail: String?,
+    val syncLastSyncedAt: Long?,
 ) {
     companion object {
         val DEFAULT =
@@ -50,6 +55,9 @@ data class AppMetaSnapshot(
                 defaultCategoryId = null,
                 themeMode = "system",
                 stayUnlockedInBackground = false,
+                syncConnected = false,
+                syncAccountEmail = null,
+                syncLastSyncedAt = null,
             )
     }
 }
@@ -98,6 +106,9 @@ class AppMetaLocalStore(
             defaultCategoryId = row.default_category_id,
             themeMode = row.theme_mode,
             stayUnlockedInBackground = row.stay_unlocked_in_background != 0L,
+            syncConnected = row.sync_connected != 0L,
+            syncAccountEmail = row.sync_account_email,
+            syncLastSyncedAt = row.sync_last_synced_at,
         )
     }
 
@@ -119,6 +130,9 @@ class AppMetaLocalStore(
             default_category_id = snapshot.defaultCategoryId,
             theme_mode = snapshot.themeMode,
             stay_unlocked_in_background = if (snapshot.stayUnlockedInBackground) 1L else 0L,
+            sync_connected = if (snapshot.syncConnected) 1L else 0L,
+            sync_account_email = snapshot.syncAccountEmail,
+            sync_last_synced_at = snapshot.syncLastSyncedAt,
         )
     }
 

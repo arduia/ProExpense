@@ -11,6 +11,14 @@ sqldelight {
         create("ProExpenseDatabase") {
             packageName.set("com.arduia.expense.storage.db")
         }
+        // Standalone schema for the monthly Drive sync file format (US-SYNC-3) — independent of
+        // ProExpenseDatabase; this is purely the on-the-wire file layout, not a second copy of
+        // local storage. Lives in its own source directory so SQLDelight doesn't merge the two
+        // schemas' tables.
+        create("SyncPayloadDatabase") {
+            packageName.set("com.arduia.expense.storage.syncpayload.db")
+            srcDirs.setFrom("src/commonMain/sqldelight-syncpayload")
+        }
     }
 }
 
@@ -31,6 +39,7 @@ kotlin {
             implementation(project(":shared"))
             implementation(libs.coroutines.core)
             implementation(libs.sqldelight.coroutines)
+            implementation(libs.kotlinx.datetime)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
         }

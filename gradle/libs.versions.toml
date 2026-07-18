@@ -27,6 +27,10 @@ koin = "4.1.1"
 ktlint = "14.2.0"
 detekt = "1.23.8"
 konsist = "0.17.3"
+ktor = "3.5.0"
+androidx-credentials = "1.6.0"
+googleid = "1.1.1"
+play-services-auth = "21.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -75,6 +79,13 @@ koin-core = { group = "io.insert-koin", name = "koin-core" }
 koin-android = { group = "io.insert-koin", name = "koin-android" }
 
 konsist = { group = "com.lemonappdev", name = "konsist", version.ref = "konsist" }
+
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "androidx-credentials" }
+androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "androidx-credentials" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.12.0" }

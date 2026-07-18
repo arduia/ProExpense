@@ -20,6 +20,7 @@ import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportEmpty
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportError
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportLocked
 import com.arduia.expense.feature.importexport.ui.preview.previewMoreImportPicked
+import com.arduia.expense.feature.sync.ui.MoreSyncScreen
 import com.arduia.expense.testing.ScreenshotTests
 import com.arduia.expense.testing.captureRoboImageWithTolerance
 import com.arduia.expense.ui.design.HomeNavTab
@@ -239,6 +240,34 @@ class MoreScreenshotTest {
                 checkedIds = setOf("expenses"),
                 onToggle = {},
                 onClear = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_sync_not_connected() =
+        capture {
+            MoreSyncScreen(
+                isConnected = false,
+                connectedEmail = null,
+                lastSyncedLabel = "",
+                onConnect = {},
+                onSyncNow = {},
+                onDisconnect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_sync_connected() =
+        capture {
+            MoreSyncScreen(
+                isConnected = true,
+                connectedEmail = "maya@example.com",
+                lastSyncedLabel = "Never synced yet",
+                onConnect = {},
+                onSyncNow = {},
+                onDisconnect = {},
                 onBack = {},
             )
         }

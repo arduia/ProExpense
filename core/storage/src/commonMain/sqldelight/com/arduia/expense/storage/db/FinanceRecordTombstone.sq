@@ -1,0 +1,29 @@
+-- Records a hard-deleted finance_record so a later Drive pull never resurrects it (US-SYNC-3).
+-- year_month is captured from the record's recorded_at at delete time (in UTC), since the row
+-- itself is gone from finance_record and can no longer be re-derived.
+CREATE TABLE finance_record_tombstone (
+    id TEXT NOT NULL PRIMARY KEY,
+    year_month TEXT NOT NULL,
+    deleted_at INTEGER NOT NULL,
+    dirty INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE INDEX finance_record_tombstone_year_month_idx ON finance_record_tombstone(year_month);
+
+insertTombstone:
+INSERT OR REPLACE INTO finance_record_tombstone(id, year_month, deleted_at, dirty)
+VALUES (?, ?, ?, 1);
+
+selectTombstonesByMonth:
+SELECT * FROM finance_record_tombstone WHERE year_month = :yearMonth;
+
+selectDirtyTombstoneMonths:
+SELECT DISTINCT year_month FROM finance_record_tombstone WHERE dirty = 1;
+
+markTombstonesSyncedForMonth:
+UPDATE finance_record_tombstone SET dirty = 0 WHERE year_month = :yearMonth;
+
+-- Applying a remote tombstone (pull) — same shape, dirty = 0 since it came from the remote copy.
+applyRemoteTombstone:
+INSERT OR REPLACE INTO finance_record_tombstone(id, year_month, deleted_at, dirty)
+VALUES (?, ?, ?, 0);

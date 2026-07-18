@@ -19,6 +19,7 @@ class ArchitectureTest {
             "sharedcost",
             "auth",
             "importexport",
+            "sync",
             "debt",
             "eventbudget",
             "reports",

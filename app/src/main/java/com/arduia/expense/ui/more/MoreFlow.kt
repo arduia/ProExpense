@@ -23,6 +23,7 @@ import com.arduia.expense.data.DefaultCategoryRepository
 import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.SyncAccountRepository
 import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.data.ThemeRepository
 import com.arduia.expense.domain.CurrencyCode
@@ -56,7 +57,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import com.arduia.expense.feature.auth.R as AuthR
 
-private enum class MoreStep { Hub, Currency, Export, Import, Clear, Reports, Categories, Budget, DefaultCategory, Theme, Language }
+private enum class MoreStep { Hub, Currency, Export, Import, Clear, Sync, Reports, Categories, Budget, DefaultCategory, Theme, Language }
 
 @Composable
 fun MoreFlow(
@@ -93,6 +94,7 @@ fun MoreFlow(
     val disablePin: DisablePinUseCase = koinInject()
     val budgetRepository: BudgetRepository = koinInject()
     val defaultCategoryRepository: DefaultCategoryRepository = koinInject()
+    val syncAccountRepository: SyncAccountRepository = koinInject()
     val profileNameFallback = stringResource(R.string.more_profile_name_fallback)
     val themeLightLabel = stringResource(R.string.theme_light)
     val themeDarkLabel = stringResource(R.string.theme_dark)
@@ -120,6 +122,7 @@ fun MoreFlow(
     var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
     var languageTag by remember { mutableStateOf(AppLanguage.DEFAULT.tag) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
+    var syncRowValue by remember { mutableStateOf("Not connected") }
 
     LaunchedEffect(pinConfigured) {
         if (pinConfigured != null) pinEnabled = pinConfigured
@@ -187,6 +190,17 @@ fun MoreFlow(
             is Result.Success -> if (result.data.isNotBlank()) languageTag = result.data
             is Result.Error -> Unit
         }
+        // Load Google Drive sync connection state (opt-in, off by default)
+        when (val result = syncAccountRepository.getState()) {
+            is Result.Success ->
+                syncRowValue =
+                    if (result.data.isConnected) {
+                        "Connected as ${result.data.connectedAccountEmail}"
+                    } else {
+                        "Not connected"
+                    }
+            is Result.Error -> Unit
+        }
         // Load app version
         try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -209,6 +223,7 @@ fun MoreFlow(
             defaultCategoryId,
             themeMode,
             languageTag,
+            syncRowValue,
             profileNameFallback,
             themeLightLabel,
             themeDarkLabel,
@@ -241,6 +256,7 @@ fun MoreFlow(
                                             ),
                                     )
                                 "language" -> setting.copy(value = AppLanguage.fromTag(languageTag).displayName)
+                                "sync" -> setting.copy(value = syncRowValue)
                                 "version" -> setting.copy(value = appVersion)
                                 else -> setting
                             }
@@ -319,6 +335,7 @@ fun MoreFlow(
                                 "export" -> step = MoreStep.Export
                                 "import" -> step = MoreStep.Import
                                 "clear" -> step = MoreStep.Clear
+                                "sync" -> step = MoreStep.Sync
                                 "pin" -> if (pinEnabled) showPinManageSheet = true else onPinClick()
                                 "budget" -> step = MoreStep.Budget
                                 "category" -> step = MoreStep.DefaultCategory
@@ -370,6 +387,24 @@ fun MoreFlow(
                 MoreStep.Clear ->
                     features.importExport.ClearDataFlow(
                         onBack = { step = MoreStep.Hub },
+                    )
+                MoreStep.Sync ->
+                    features.sync.ConnectFlow(
+                        onBack = {
+                            step = MoreStep.Hub
+                            scope.launch {
+                                when (val result = syncAccountRepository.getState()) {
+                                    is Result.Success ->
+                                        syncRowValue =
+                                            if (result.data.isConnected) {
+                                                "Connected as ${result.data.connectedAccountEmail}"
+                                            } else {
+                                                "Not connected"
+                                            }
+                                    is Result.Error -> Unit
+                                }
+                            }
+                        },
                     )
                 MoreStep.Reports ->
                     features.reports.ReportsFlow(

@@ -35,6 +35,7 @@ class HomeScreenNavigationWiringTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
+    @Suppress("LongParameterList")
     private fun render(
         onRowClick: (ProTransactionRowModel) -> Unit = {},
         onSeeAll: () -> Unit = {},

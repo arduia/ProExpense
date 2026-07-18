@@ -28,6 +28,8 @@ private fun debtRepo(database: ProExpenseDatabase): SqlDelightDebtRepository {
         SqlDelightFinanceRecordRepository(
             queries = database.financeRecordQueries,
             eventQueries = database.eventQueries,
+            tombstoneQueries = database.financeRecordTombstoneQueries,
+            monthSyncQueries = database.financeRecordMonthSyncQueries,
             dispatcher = Dispatchers.Unconfined,
         )
     return SqlDelightDebtRepository(database.debtQueries, financeRecordRepository, Dispatchers.Unconfined)

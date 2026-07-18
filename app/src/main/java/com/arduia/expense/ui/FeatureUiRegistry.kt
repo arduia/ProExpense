@@ -22,6 +22,8 @@ import com.arduia.expense.feature.reports.entry.ReportsFeatureEntry
 import com.arduia.expense.feature.reports.entry.ReportsFeatureUi
 import com.arduia.expense.feature.sharedcost.entry.SharedCostFeatureEntry
 import com.arduia.expense.feature.sharedcost.entry.SharedCostFeatureUi
+import com.arduia.expense.feature.sync.entry.SyncFeatureEntry
+import com.arduia.expense.feature.sync.entry.SyncFeatureUi
 
 data class FeatureUiRegistry(
     val logging: LoggingFeatureEntry = LoggingFeatureUi,
@@ -30,6 +32,7 @@ data class FeatureUiRegistry(
     val sharedCost: SharedCostFeatureEntry = SharedCostFeatureUi,
     val currency: CurrencyFeatureEntry = CurrencyFeatureUi,
     val importExport: ImportExportFeatureEntry = ImportExportFeatureUi,
+    val sync: SyncFeatureEntry = SyncFeatureUi,
     val debt: DebtFeatureEntry = DebtFeatureUi,
     val eventBudget: EventBudgetFeatureEntry = EventBudgetFeatureUi,
     val reports: ReportsFeatureEntry = ReportsFeatureUi,
