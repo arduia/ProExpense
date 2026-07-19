@@ -1,6 +1,7 @@
 package com.arduia.expense.storage.syncpayload
 
 import android.content.Context
+import android.util.Log
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.arduia.expense.data.SyncRecordSnapshot
 import com.arduia.expense.data.TombstoneRef
@@ -37,6 +38,10 @@ class SyncPayloadDatabaseIO(
         records: List<SyncRecordSnapshot>,
         tombstones: List<TombstoneRef>,
     ): File {
+        Log.d(
+            TAG,
+            "writeMonthFile: building temp file for ${records.size} record(s), ${tombstones.size} tombstone(s)",
+        )
         val file = newTempFile()
         val driver = AndroidSqliteDriver(SyncPayloadDatabase.Schema, context, file.absolutePath)
         try {
@@ -50,11 +55,13 @@ class SyncPayloadDatabaseIO(
         } finally {
             driver.close()
         }
+        Log.d(TAG, "writeMonthFile: wrote ${file.name} (${file.length()} bytes)")
         return file
     }
 
     /** Reads a downloaded month file's bytes; the temp file is deleted before returning. */
     fun readMonthFile(bytes: ByteArray): SyncMonthFileContents {
+        Log.d(TAG, "readMonthFile: reading ${bytes.size} downloaded bytes")
         val file = newTempFile()
         file.writeBytes(bytes)
         val driver = AndroidSqliteDriver(SyncPayloadDatabase.Schema, context, file.absolutePath)
@@ -72,6 +79,7 @@ class SyncPayloadDatabaseIO(
                     records += row.toSyncRecordSnapshot()
                 }
             }
+            Log.d(TAG, "readMonthFile: parsed ${records.size} record(s), ${tombstones.size} tombstone(s)")
             return SyncMonthFileContents(records, tombstones)
         } finally {
             driver.close()
@@ -125,6 +133,7 @@ class SyncPayloadDatabaseIO(
     }
 
     private companion object {
+        const val TAG = "SyncPayloadDatabaseIO"
         val placeholderYearMonth = YearMonth("1970-01")
     }
 }

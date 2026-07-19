@@ -4,6 +4,7 @@ import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -21,20 +22,27 @@ class EncryptedSyncTokenStore(
 ) {
     private val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+    // Never log the token itself (even at debug level) — only presence/outcome.
     fun readAccessToken(): String? {
         val ivB64 = prefs.getString(PREF_IV, null)
         val payloadB64 = prefs.getString(PREF_PAYLOAD, null)
-        if (ivB64 == null || payloadB64 == null) return null
+        if (ivB64 == null || payloadB64 == null) {
+            Log.d(TAG, "readAccessToken: no token stored")
+            return null
+        }
         val iv = Base64.decode(ivB64, Base64.NO_WRAP)
         val payload = Base64.decode(payloadB64, Base64.NO_WRAP)
         val cipher =
             Cipher.getInstance(TRANSFORMATION).apply {
                 init(Cipher.DECRYPT_MODE, wrappingKey(), GCMParameterSpec(GCM_TAG_BITS, iv))
             }
-        return cipher.doFinal(payload).decodeToString()
+        val token = cipher.doFinal(payload).decodeToString()
+        Log.d(TAG, "readAccessToken: decrypted stored token")
+        return token
     }
 
     fun writeAccessToken(token: String) {
+        Log.d(TAG, "writeAccessToken: encrypting and storing new token")
         val cipher = Cipher.getInstance(TRANSFORMATION).apply { init(Cipher.ENCRYPT_MODE, wrappingKey()) }
         val payload = cipher.doFinal(token.encodeToByteArray())
         prefs
@@ -42,10 +50,12 @@ class EncryptedSyncTokenStore(
             .putString(PREF_IV, Base64.encodeToString(cipher.iv, Base64.NO_WRAP))
             .putString(PREF_PAYLOAD, Base64.encodeToString(payload, Base64.NO_WRAP))
             .apply()
+        Log.d(TAG, "writeAccessToken: stored")
     }
 
     /** US-SYNC-6: local-only — never calls Drive, never touches record data. */
     fun clear() {
+        Log.d(TAG, "clear: removing stored token (local-only)")
         prefs
             .edit()
             .remove(PREF_IV)
@@ -70,6 +80,7 @@ class EncryptedSyncTokenStore(
     }
 
     private companion object {
+        const val TAG = "EncryptedSyncTokenStore"
         const val ANDROID_KEYSTORE = "AndroidKeyStore"
         const val WRAP_KEY_ALIAS = "proexpense_sync_token_wrap"
         const val PREFS_NAME = "proexpense_sync_secure_store"

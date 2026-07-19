@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.sync.ui
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val TAG = "SyncConnectFlow"
+
 /**
  * Stateful entry for "More → Google Drive Sync" (US-SYNC-1/US-SYNC-6). Phase 1 only — "Sync now"
  * shows a not-yet-available message since push/pull (Phase 2/3) isn't implemented yet.
@@ -59,13 +62,15 @@ fun SyncConnectFlow(
     val connectErrorMessage = stringResource(R.string.sync_connect_error)
 
     LaunchedEffect(Unit) {
+        Log.d(TAG, "loading initial sync account state")
         when (val result = syncAccountRepository.getState()) {
             is Result.Success -> {
                 isConnected = result.data.isConnected
                 connectedEmail = result.data.connectedAccountEmail
                 lastSyncedAtMillis = result.data.lastSyncAtEpochMillis
+                Log.d(TAG, "initial state loaded: isConnected=${result.data.isConnected}")
             }
-            is Result.Error -> Unit
+            is Result.Error -> Log.w(TAG, "failed to load initial sync account state: ${result.message}")
         }
     }
 
@@ -75,6 +80,7 @@ fun SyncConnectFlow(
             connectedEmail = connectedEmail,
             lastSyncedLabel = lastSyncedAtMillis.toLastSyncedLabel(),
             onConnect = {
+                Log.d(TAG, "onConnect tapped (isConnecting=$isConnecting)")
                 if (!isConnecting) {
                     // Credential Manager / the Authorization API need a foreground Activity, which
                     // a Koin singleton has no way to obtain on its own — the Connect screen is the
@@ -85,15 +91,20 @@ fun SyncConnectFlow(
                         try {
                             when (val result = connectDriveAccount()) {
                                 is Result.Success -> {
+                                    Log.i(TAG, "connect succeeded")
                                     when (val state = syncAccountRepository.getState()) {
                                         is Result.Success -> {
                                             isConnected = state.data.isConnected
                                             connectedEmail = state.data.connectedAccountEmail
                                         }
-                                        is Result.Error -> Unit
+                                        is Result.Error ->
+                                            Log.w(TAG, "failed to reload state after connect: ${state.message}")
                                     }
                                 }
-                                is Result.Error -> errorMessage = connectErrorMessage
+                                is Result.Error -> {
+                                    Log.w(TAG, "connect failed: ${result.message}")
+                                    errorMessage = connectErrorMessage
+                                }
                             }
                         } finally {
                             isConnecting = false
@@ -101,8 +112,14 @@ fun SyncConnectFlow(
                     }
                 }
             },
-            onSyncNow = { errorMessage = syncNotAvailableMessage },
-            onDisconnect = { if (!isDisconnecting) showDisconnectConfirm = true },
+            onSyncNow = {
+                Log.d(TAG, "onSyncNow tapped — push/pull not implemented yet (Phase 2/3)")
+                errorMessage = syncNotAvailableMessage
+            },
+            onDisconnect = {
+                Log.d(TAG, "onDisconnect tapped (isDisconnecting=$isDisconnecting)")
+                if (!isDisconnecting) showDisconnectConfirm = true
+            },
             onBack = onBack,
             isConnecting = isConnecting,
             isDisconnecting = isDisconnecting,
@@ -117,6 +134,7 @@ fun SyncConnectFlow(
             body = AnnotatedString(stringResource(R.string.sync_disconnect_confirm_body)),
             confirmLabel = stringResource(R.string.sync_disconnect_confirm_action),
             onConfirm = {
+                Log.d(TAG, "disconnect confirmed")
                 showDisconnectConfirm = false
                 isDisconnecting = true
                 scope.launch {
@@ -125,6 +143,7 @@ fun SyncConnectFlow(
                         isConnected = false
                         connectedEmail = null
                         lastSyncedAtMillis = null
+                        Log.i(TAG, "disconnect complete")
                     } finally {
                         isDisconnecting = false
                     }

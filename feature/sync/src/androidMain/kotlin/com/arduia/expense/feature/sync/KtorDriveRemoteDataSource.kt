@@ -1,5 +1,6 @@
 package com.arduia.expense.feature.sync
 
+import android.util.Log
 import com.arduia.expense.data.Result
 import com.arduia.expense.data.YearMonth
 import com.arduia.expense.shared.currentEpochMillis
@@ -35,7 +36,8 @@ class KtorDriveRemoteDataSource(
     private val client: HttpClient = HttpClient(OkHttp),
 ) : DriveRemoteDataSource {
     override suspend fun listRemoteMonthFiles(pageToken: String?): Result<RemoteMonthFilePage> =
-        runCatchingResult {
+        runCatchingResult(TAG, "listRemoteMonthFiles") {
+            Log.d(TAG, "listRemoteMonthFiles: GET $DRIVE_FILES_BASE (pageToken=${pageToken != null})")
             val json =
                 client
                     .get(DRIVE_FILES_BASE) {
@@ -61,7 +63,12 @@ class KtorDriveRemoteDataSource(
                             modifiedAtEpochMillis = parseRfc3339ToEpochMillis(modifiedTime),
                         )
                     }.toList()
-            RemoteMonthFilePage(files = files, nextPageToken = extractJsonString(json, "nextPageToken"))
+            val page = RemoteMonthFilePage(files = files, nextPageToken = extractJsonString(json, "nextPageToken"))
+            Log.d(
+                TAG,
+                "listRemoteMonthFiles: got ${page.files.size} file(s), nextPageToken=${page.nextPageToken != null}",
+            )
+            page
         }
 
     override suspend fun uploadMonthFile(
@@ -69,10 +76,11 @@ class KtorDriveRemoteDataSource(
         existingRemoteFileId: String?,
         dbFileBytes: ByteArray,
     ): Result<RemoteMonthFileMeta> =
-        runCatchingResult {
+        runCatchingResult(TAG, "uploadMonthFile(${yearMonth.value})") {
             val fileName = fileNameFor(yearMonth)
             val json =
                 if (existingRemoteFileId == null) {
+                    Log.d(TAG, "uploadMonthFile: creating new file $fileName (${dbFileBytes.size} bytes)")
                     client
                         .post("$DRIVE_UPLOAD_BASE") {
                             bearerAuth()
@@ -100,6 +108,11 @@ class KtorDriveRemoteDataSource(
                         }.bodyAsBytes()
                         .decodeToString()
                 } else {
+                    Log.d(
+                        TAG,
+                        "uploadMonthFile: updating file $existingRemoteFileId " +
+                            "($fileName, ${dbFileBytes.size} bytes)",
+                    )
                     client
                         .patch("$DRIVE_UPLOAD_BASE/$existingRemoteFileId") {
                             bearerAuth()
@@ -110,24 +123,34 @@ class KtorDriveRemoteDataSource(
                         .decodeToString()
                 }
             val id = extractJsonString(json, "id") ?: error("Drive did not return a file id")
+            Log.i(TAG, "uploadMonthFile: ${yearMonth.value} -> remoteFileId=$id")
             RemoteMonthFileMeta(yearMonth, id, currentEpochMillis())
         }
 
     override suspend fun downloadMonthFile(remoteFileId: String): Result<ByteArray> =
-        runCatchingResult {
-            client
-                .get("$DRIVE_FILES_BASE/$remoteFileId") {
-                    bearerAuth()
-                    parameter("alt", "media")
-                }.bodyAsBytes()
+        runCatchingResult(TAG, "downloadMonthFile($remoteFileId)") {
+            Log.d(TAG, "downloadMonthFile: GET $DRIVE_FILES_BASE/$remoteFileId?alt=media")
+            val bytes =
+                client
+                    .get("$DRIVE_FILES_BASE/$remoteFileId") {
+                        bearerAuth()
+                        parameter("alt", "media")
+                    }.bodyAsBytes()
+            Log.d(TAG, "downloadMonthFile: received ${bytes.size} bytes for $remoteFileId")
+            bytes
         }
 
     private fun HttpRequestBuilder.bearerAuth() {
-        val token = tokenStore.readAccessToken() ?: error("Not connected — no Drive access token")
+        val token =
+            tokenStore.readAccessToken() ?: run {
+                Log.e(TAG, "bearerAuth: no stored access token — not connected")
+                error("Not connected — no Drive access token")
+            }
         header(HttpHeaders.Authorization, "Bearer $token")
     }
 
     private companion object {
+        const val TAG = "KtorDriveRemoteDataSource"
         const val DRIVE_FILES_BASE = "https://www.googleapis.com/drive/v3/files"
         const val DRIVE_UPLOAD_BASE = "https://www.googleapis.com/upload/drive/v3/files"
 
@@ -152,9 +175,14 @@ class KtorDriveRemoteDataSource(
     }
 }
 
-private inline fun <T> runCatchingResult(block: () -> T): Result<T> =
+private inline fun <T> runCatchingResult(
+    tag: String,
+    operation: String,
+    block: () -> T,
+): Result<T> =
     try {
         Result.Success(block())
     } catch (e: Exception) {
+        Log.e(tag, "$operation: failed", e)
         Result.Error(e.message ?: "Drive request failed", e)
     }
