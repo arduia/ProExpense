@@ -65,7 +65,8 @@ class SyncUseCasesTest {
     @Test
     fun connect_authFailure_leavesNoConnectionState() =
         runTest {
-            val authManager = FakeDriveAuthManager(signInResult = Result.Error("Sign-in cancelled"))
+            val authManager =
+                FakeDriveAuthManager(signInResult = Result.Error(DriveAuthManager.SIGN_IN_CANCELLED_MESSAGE))
             val accountRepository = FakeSyncAccountRepository()
             val useCase = ConnectDriveAccountUseCase(authManager, accountRepository)
 

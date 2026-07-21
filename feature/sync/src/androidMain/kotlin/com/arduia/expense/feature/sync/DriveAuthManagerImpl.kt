@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.arduia.expense.data.Result
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.AuthorizationResult
@@ -59,7 +60,13 @@ class DriveAuthManagerImpl(
         } catch (e: DriveSignInCancelledException) {
             // Cancelling leaves no partial state — nothing was persisted (US-SYNC-1 Scenario 2).
             Log.w(TAG, "signIn: cancelled by user, no state persisted")
-            Result.Error("Sign-in cancelled", e)
+            Result.Error(DriveAuthManager.SIGN_IN_CANCELLED_MESSAGE, e)
+        } catch (e: GetCredentialCancellationException) {
+            // Credential Manager surfaces user cancellation and reauth-cancel/failure (e.g. "[16]
+            // Account reauth failed") through this same exception type — both are benign, not a
+            // real sign-in error, so they're treated identically to DriveSignInCancelledException.
+            Log.w(TAG, "signIn: Credential Manager cancelled (${e.type}), no state persisted")
+            Result.Error(DriveAuthManager.SIGN_IN_CANCELLED_MESSAGE, e)
         } catch (e: Exception) {
             Log.e(TAG, "signIn: failed", e)
             Result.Error(e.message ?: "Google Drive sign-in failed", e)

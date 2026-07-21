@@ -102,8 +102,12 @@ fun SyncConnectFlow(
                                     }
                                 }
                                 is Result.Error -> {
-                                    Log.w(TAG, "connect failed: ${result.message}")
-                                    errorMessage = connectErrorMessage
+                                    if (result.message == DriveAuthManager.SIGN_IN_CANCELLED_MESSAGE) {
+                                        Log.d(TAG, "connect cancelled by user")
+                                    } else {
+                                        Log.w(TAG, "connect failed: ${result.message}")
+                                        errorMessage = connectErrorMessage
+                                    }
                                 }
                             }
                         } finally {

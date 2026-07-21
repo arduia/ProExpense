@@ -19,4 +19,9 @@ interface DriveAuthManager {
 
     /** Clears locally-stored tokens only — never calls Drive or deletes any data (US-SYNC-6). */
     suspend fun signOut(): Result<Unit>
+
+    companion object {
+        /** [Result.Error.message] used by every [signIn] cancellation path (US-SYNC-1 Scenario 2). */
+        const val SIGN_IN_CANCELLED_MESSAGE = "Sign-in cancelled"
+    }
 }
