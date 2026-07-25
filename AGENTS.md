@@ -909,6 +909,7 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `docs/module_structure.md` | KMP module map and dependency rules |
 | `design-system-spec/` | **Authoritative screen specs** (markdown + PNGs + component specs + tokens) |
 | Claude Design project **"Pro Expense - Finance Tracker"** | Hi-Fi mockup canvas mirroring `design-system-spec/` — find it via the design-sync tool's project listing (matched by name, scoped to the maintainer's account); no link is committed here since this repo is public |
+| Claude Design project **"Pro Expense - Finance Tracker"** (canvas variant) | A second, same-named Claude Design project — regular canvas type, not the design-system project above, so it does **not** appear in the design-sync tool's project listing; only reachable via a maintainer-shared link. Holds `Hi-Fi Variant - Blue Banking.html` (`variant-blue-*.jsx` sources) — **the adopted visual system**: `design-system-spec/tokens.md` is derived from it, and where a screen spec's visuals conflict with this canvas, the canvas wins (see `design-system-spec/screens/README.md`); no link is committed here since this repo is public |
 | `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
 | `.agents/skills/compose-product-auditor/` | Step 3, twice — planning advisory pass + pre-push visual-verification Compose product/UX auditor |
