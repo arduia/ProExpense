@@ -3,6 +3,7 @@ package com.arduia.expense.ui.debt
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.arduia.expense.feature.debt.ui.DebtFlow
@@ -55,8 +56,8 @@ class DebtDeepLinkBackNavigationTest {
             }
         }
 
-        rule.onNodeWithText("Journals").assertIsDisplayed()
-        rule.onNodeWithText("Journals").performClick()
+        rule.onNodeWithContentDescription("Journals").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Journals").performClick()
 
         assert(deepLinkBackCalls == 1) { "Expected onDeepLinkBack to fire once, got $deepLinkBackCalls" }
         // Still on Detail (or dismissed) — never fell through to DebtListScreen's own rows.
@@ -77,8 +78,8 @@ class DebtDeepLinkBackNavigationTest {
         }
 
         // Default label unchanged when no deep-link back is wired (e.g. More-tab open).
-        rule.onNodeWithText("Debt").assertIsDisplayed()
-        rule.onNodeWithText("Debt").performClick()
+        rule.onNodeWithContentDescription("Debt").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Debt").performClick()
 
         // Back landed on DebtListScreen — Maya (another active record) is now visible.
         rule.onNodeWithText("Maya").assertIsDisplayed()
@@ -108,8 +109,8 @@ class DebtDeepLinkBackNavigationTest {
 
         // Now viewing "maya", not the original deep-linked "john" — deepLinkBackLabel/
         // onDeepLinkBack must not apply here even though both are still non-null on this DebtFlow.
-        rule.onNodeWithText("Debt").assertIsDisplayed()
-        rule.onNodeWithText("Debt").performClick()
+        rule.onNodeWithContentDescription("Debt").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Debt").performClick()
         assert(deepLinkBackCalls == 0) { "onDeepLinkBack must not fire for a different record" }
         rule.onNodeWithText("John").assertIsDisplayed()
     }

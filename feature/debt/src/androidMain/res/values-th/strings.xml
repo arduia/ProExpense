@@ -20,6 +20,7 @@
 <string name="debt_status">สถานะ</string>
 <string name="debt_linked_expense">รายจ่ายที่เชื่อมโยง</string>
 <string name="debt_reference_only">ใช้อ้างอิงเท่านั้น</string>
+<string name="debt_more_action">เพิ่มเติม</string>
 <string name="debt_edit">แก้ไข</string>
 <string name="debt_mark_as_settled">ทำเครื่องหมายว่าชำระแล้ว</string>
 <string name="debt_close">ปิด</string>

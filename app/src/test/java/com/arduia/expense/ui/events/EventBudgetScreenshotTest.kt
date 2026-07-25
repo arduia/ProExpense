@@ -187,6 +187,18 @@ class EventBudgetScreenshotTest {
         }
 
     @Test
+    fun event_detail_dark() =
+        capture(darkTheme = true) {
+            EventDetailScreen(
+                state = previewEventDetail,
+                onBack = {},
+                onMore = {},
+                onAddTagged = {},
+                onExpenseClick = {},
+            )
+        }
+
+    @Test
     fun edge_event_warn() =
         capture {
             EventDetailScreen(

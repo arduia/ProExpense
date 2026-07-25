@@ -38,6 +38,7 @@
 <string name="debt_no_due">No due date</string>
 <string name="debt_linked_expense">LINKED EXPENSE</string>
 <string name="debt_reference_only">Reference only</string>
+<string name="debt_more_action">More</string>
 <string name="debt_edit">Edit</string>
 <string name="debt_mark_as_settled">Mark as settled</string>
 <string name="debt_close">Close</string>
