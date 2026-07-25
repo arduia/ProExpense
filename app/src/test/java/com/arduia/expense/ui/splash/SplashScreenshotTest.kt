@@ -31,9 +31,12 @@ class SplashScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -49,6 +52,12 @@ class SplashScreenshotTest {
     @Test
     fun splash() =
         capture {
+            SplashScreen()
+        }
+
+    @Test
+    fun splashDark() =
+        capture(darkTheme = true) {
             SplashScreen()
         }
 }

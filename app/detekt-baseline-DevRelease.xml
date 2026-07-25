@@ -51,6 +51,7 @@
     <ID>FunctionNaming:SplashScreen.kt$@Composable fun SplashScreen(modifier: Modifier = Modifier)</ID>
     <ID>FunctionNaming:SplashScreen.kt$@Composable private fun SplashLoadingDots( reduceMotion: Boolean, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:SplashScreen.kt$@Composable private fun SplashLogoMark( scale: Float, alpha: Float, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:SplashScreen.kt$@Preview( name = "Splash — dark", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun SplashScreenDarkPreview()</ID>
     <ID>FunctionNaming:SplashScreen.kt$@Preview( name = "Splash", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun SplashScreenPreview()</ID>
     <ID>FunctionNaming:UiCatalogScreen.kt$@Composable fun UiCatalogScreen(modifier: Modifier = Modifier)</ID>
     <ID>FunctionNaming:UiCatalogScreen.kt$@Composable private fun CatalogEntryRow( entry: UiCatalogEntry, onOpen: (String) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
@@ -119,6 +120,7 @@
     <ID>UnusedPrivateMember:MoreLanguageScreen.kt$@Preview( name = "More — language", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreLanguageScreenPreview()</ID>
     <ID>UnusedPrivateMember:MoreThemeScreen.kt$@Preview( name = "More — theme", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreThemeScreenPreview()</ID>
     <ID>UnusedPrivateMember:QuickAccessPickerSheet.kt$@Preview( name = "Quick access — customize sheet", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun QuickAccessPickerSheetPreview()</ID>
+    <ID>UnusedPrivateMember:SplashScreen.kt$@Preview( name = "Splash — dark", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun SplashScreenDarkPreview()</ID>
     <ID>UnusedPrivateMember:SplashScreen.kt$@Preview( name = "Splash", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun SplashScreenPreview()</ID>
     <ID>UnusedPrivateMember:UiCatalogScreen.kt$@Preview( name = "UI catalog — index", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun UiCatalogIndexPreview()</ID>
     <ID>UnusedPrivateMember:UiCatalogScreen.kt$@Preview( name = "UI catalog — return bar", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun CatalogReturnBarPreview()</ID>
