@@ -42,11 +42,12 @@ class HomeScreenScreenshotTest {
 
     private fun captureHome(
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+        darkTheme: Boolean = false,
         content: @androidx.compose.runtime.Composable () -> Unit,
     ) {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-                ProExpenseTheme {
+                ProExpenseTheme(darkTheme = darkTheme) {
                     Box(
                         Modifier
                             .fillMaxSize()
@@ -63,6 +64,18 @@ class HomeScreenScreenshotTest {
     @Test
     fun home_casual() {
         captureHome {
+            HomeShell(
+                state = previewHomeCasual,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
+    fun home_casual_dark() {
+        captureHome(darkTheme = true) {
             HomeShell(
                 state = previewHomeCasual,
                 selectedTab = HomeNavTab.Home,

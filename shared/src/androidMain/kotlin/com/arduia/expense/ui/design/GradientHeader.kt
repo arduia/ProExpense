@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
@@ -102,11 +103,15 @@ fun ProSheetSurface(
     val shapes = ProExpenseTheme.shapes
     val dimens = ProExpenseTheme.dimensions
 
+    // Modifier.padding rejects negative values, so the overlap is a paint-time offset instead —
+    // it shifts the sheet up over the header without shrinking the space this Column reports to
+    // its own parent, leaving a few dp of same-colored (paper-on-paper) slack below. Acceptable
+    // for a linear-flow layout; a pixel-exact overlap would need a custom Layout/Box overlay.
     Column(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(top = -overlap)
+                .offset(y = -overlap)
                 .clip(shapes.sheet)
                 .background(colors.paper)
                 .padding(horizontal = dimens.screenPadding, vertical = dimens.space16),
