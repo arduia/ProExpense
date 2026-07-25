@@ -30,7 +30,7 @@
     <ID>FunctionNaming:MoreBudgetScreen.kt$@Preview( name = "More budget — set", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreBudgetSetPreview()</ID>
     <ID>FunctionNaming:MoreComponents.kt$@Composable fun &lt;T&gt; MoreGroupCard( items: List&lt;T&gt;, modifier: Modifier = Modifier, row: @Composable (T) -&gt; Unit, )</ID>
     <ID>FunctionNaming:MoreComponents.kt$@Composable fun MoreFeatureRow( feature: MoreFeatureRowUi, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
-    <ID>FunctionNaming:MoreComponents.kt$@Composable fun MoreProfileCard( profile: MoreProfileUi, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MoreComponents.kt$@Composable fun MoreProfileCard( profile: MoreProfileUi, modifier: Modifier = Modifier, glass: Boolean = false, )</ID>
     <ID>FunctionNaming:MoreComponents.kt$@Composable fun MoreSettingRow( setting: MoreSettingRowUi, onClick: () -&gt; Unit, onToggle: (Boolean) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:MoreComponents.kt$@Composable private fun MoreRowDivider()</ID>
     <ID>FunctionNaming:MoreDefaultCategoryScreen.kt$@Composable fun MoreDefaultCategoryScreen( selectedCategoryId: String, onSelect: (String) -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
@@ -39,7 +39,9 @@
     <ID>FunctionNaming:MoreFlow.kt$@Composable private fun PinManageSheetContent( onChange: () -&gt; Unit, onDisable: () -&gt; Unit, onCancel: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:MoreFlow.kt$@Preview( name = "More flow — hub", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreFlowPreview()</ID>
     <ID>FunctionNaming:MoreHubScreen.kt$@Composable fun MoreHubScreen( state: MoreHubUiState, onFeatureClick: (String) -&gt; Unit, onSettingClick: (String) -&gt; Unit, onSettingToggle: (String, Boolean) -&gt; Unit, selectedTab: HomeNavTab, onTabSelected: (HomeNavTab) -&gt; Unit, onAddClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MoreHubScreen.kt$@Composable private fun MoreHeaderContent( profile: MoreProfileUi, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:MoreHubScreen.kt$@Composable private fun MoreSection( label: String, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MoreHubScreen.kt$@Preview( name = "More — hub (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreHubDarkPreview()</ID>
     <ID>FunctionNaming:MoreHubScreen.kt$@Preview( name = "More — hub", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreHubPreview()</ID>
     <ID>FunctionNaming:MoreLanguageScreen.kt$@Composable fun MoreLanguageScreen( selectedLanguage: AppLanguage, onSelect: (AppLanguage) -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:MoreLanguageScreen.kt$@Preview( name = "More — language", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreLanguageScreenPreview()</ID>
@@ -118,6 +120,7 @@
     <ID>UnusedPrivateMember:MoreBudgetScreen.kt$@Preview( name = "More budget — set", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreBudgetSetPreview()</ID>
     <ID>UnusedPrivateMember:MoreDefaultCategoryScreen.kt$@Preview( name = "More default category", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreDefaultCategoryPreview()</ID>
     <ID>UnusedPrivateMember:MoreFlow.kt$@Preview( name = "More flow — hub", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreFlowPreview()</ID>
+    <ID>UnusedPrivateMember:MoreHubScreen.kt$@Preview( name = "More — hub (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreHubDarkPreview()</ID>
     <ID>UnusedPrivateMember:MoreHubScreen.kt$@Preview( name = "More — hub", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreHubPreview()</ID>
     <ID>UnusedPrivateMember:MoreLanguageScreen.kt$@Preview( name = "More — language", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreLanguageScreenPreview()</ID>
     <ID>UnusedPrivateMember:MoreThemeScreen.kt$@Preview( name = "More — theme", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreThemeScreenPreview()</ID>

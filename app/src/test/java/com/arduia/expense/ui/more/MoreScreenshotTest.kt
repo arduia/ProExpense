@@ -48,9 +48,12 @@ class MoreScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -66,6 +69,20 @@ class MoreScreenshotTest {
     @Test
     fun more_hub() =
         capture {
+            MoreHubScreen(
+                state = previewMoreHub,
+                onFeatureClick = {},
+                onSettingClick = {},
+                onSettingToggle = { _, _ -> },
+                selectedTab = HomeNavTab.More,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun more_hub_dark() =
+        capture(darkTheme = true) {
             MoreHubScreen(
                 state = previewMoreHub,
                 onFeatureClick = {},

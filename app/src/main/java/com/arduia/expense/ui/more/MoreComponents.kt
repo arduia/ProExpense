@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -34,22 +35,33 @@ import com.arduia.expense.ui.preview.MoreSettingRowUi
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.centeredGlyph
 
+/**
+ * [glass] renders the canvas's on-gradient treatment (translucent white surface, white text) for
+ * placement inside [com.arduia.expense.ui.design.ProGradientHeader] — the only current call site
+ * (More hub). Default (card) styling is kept for any future non-gradient placement.
+ */
 @Composable
 fun MoreProfileCard(
     profile: MoreProfileUi,
     modifier: Modifier = Modifier,
+    glass: Boolean = false,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val surfaceColor = if (glass) Color.White.copy(alpha = 0.12f) else colors.surface
+    val borderColor = if (glass) Color.White.copy(alpha = 0.18f) else colors.line
+    val avatarBg = if (glass) Color.White else colors.primaryTint
+    val nameColor = if (glass) Color.White else colors.onSurface
+    val subtitleColor = if (glass) Color.White.copy(alpha = 0.75f) else colors.onSurfaceMuted
 
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
                 .clip(ProExpenseTheme.shapes.card)
-                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
-                .background(colors.surface)
+                .border(BorderStroke(1.dp, borderColor), ProExpenseTheme.shapes.card)
+                .background(surfaceColor)
                 .padding(dimens.space14),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(dimens.space12),
@@ -59,7 +71,7 @@ fun MoreProfileCard(
                 Modifier
                     .size(dimens.iconBadge)
                     .clip(CircleShape)
-                    .background(colors.primaryTint),
+                    .background(avatarBg),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -73,13 +85,13 @@ fun MoreProfileCard(
             GlitchText(
                 text = profile.name,
                 style = typography.bodySemiBold,
-                color = colors.onSurface,
+                color = nameColor,
                 playbackKey = profile.name,
             )
             Text(
                 text = profile.subtitle,
                 style = typography.caption,
-                color = colors.onSurfaceMuted,
+                color = subtitleColor,
                 modifier = Modifier.padding(top = dimens.space2),
             )
         }
