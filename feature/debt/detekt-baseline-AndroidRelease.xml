@@ -32,6 +32,7 @@
     <ID>FunctionNaming:DebtListScreen.kt$@Composable private fun DebtRecordRow( record: DebtRecordUi, side: DebtSide, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:DebtListScreen.kt$@Composable private fun DebtSection( label: String, modifier: Modifier = Modifier, content: @Composable () -&gt; Unit, )</ID>
     <ID>FunctionNaming:DebtListScreen.kt$@Composable private fun DebtSummaryCard( state: DebtListUiState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:DebtListScreen.kt$@Preview( name = "Debt — I Lent (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListLentDarkPreview()</ID>
     <ID>FunctionNaming:DebtListScreen.kt$@Preview( name = "Debt — I Lent", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListLentPreview()</ID>
     <ID>FunctionNaming:DebtListScreen.kt$@Preview( name = "Debt — I Owe", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListOwePreview()</ID>
     <ID>FunctionNaming:DebtListScreen.kt$@Preview( name = "Debt — loading", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListLoadingPreview()</ID>
@@ -50,11 +51,13 @@
     <ID>MagicNumber:DebtListScreen.kt$0.5f</ID>
     <ID>MaxLineLength:DebtFeatureEntry.kt$DebtFeatureEntryImpl$val lentState = aggregateDebts(debts, DebtDirection.OWED_TO_ME).toUiState(DebtSide.Lent, homeCurrencySymbol, isLoading)</ID>
     <ID>TooManyFunctions:DebtAddSheet.kt$com.arduia.expense.feature.debt.ui.DebtAddSheet.kt</ID>
+    <ID>TooManyFunctions:DebtListScreen.kt$com.arduia.expense.feature.debt.ui.DebtListScreen.kt</ID>
     <ID>UnusedPrivateMember:DebtAddSheet.kt$@Preview( name = "Debt add — new record", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtAddSheetPreview()</ID>
     <ID>UnusedPrivateMember:DebtDetailScreen.kt$@Preview( name = "Debt detail — lent", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtDetailLentPreview()</ID>
     <ID>UnusedPrivateMember:DebtDetailScreen.kt$@Preview( name = "Debt detail — owe", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtDetailOwePreview()</ID>
     <ID>UnusedPrivateMember:DebtDetailScreen.kt$@Preview( name = "Debt detail — settled", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtDetailSettledPreview()</ID>
     <ID>UnusedPrivateMember:DebtFlow.kt$@Preview( name = "Debt flow — list", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtFlowPreview()</ID>
+    <ID>UnusedPrivateMember:DebtListScreen.kt$@Preview( name = "Debt — I Lent (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListLentDarkPreview()</ID>
     <ID>UnusedPrivateMember:DebtListScreen.kt$@Preview( name = "Debt — I Lent", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListLentPreview()</ID>
     <ID>UnusedPrivateMember:DebtListScreen.kt$@Preview( name = "Debt — I Owe", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListOwePreview()</ID>
     <ID>UnusedPrivateMember:DebtListScreen.kt$@Preview( name = "Debt — loading", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun DebtListLoadingPreview()</ID>

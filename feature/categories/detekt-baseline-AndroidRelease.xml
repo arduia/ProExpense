@@ -13,6 +13,7 @@
     <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CategorySectionHeader( label: String, trailing: String, )</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun DragHandle()</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun ReorderableCategoryGroup( rows: List&lt;CategoryRowUi&gt;, onRowClick: (CategoryRowUi) -&gt; Unit, onReorder: (Int, Int) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Preview( name = "Categories — default + custom (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListDarkPreview()</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Preview( name = "Categories — default + custom", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListPreview()</ID>
     <ID>FunctionNaming:CategoryNewSheet.kt$@Composable private fun CategoryColorSwatch( colorId: String, selected: Boolean, onClick: () -&gt; Unit, )</ID>
     <ID>FunctionNaming:CategoryNewSheet.kt$@Composable private fun CategoryIconTile( iconId: String, selected: Boolean, selectedColorId: String, onClick: () -&gt; Unit, )</ID>
@@ -32,6 +33,7 @@
     <ID>MagicNumber:CategoryListScreen.kt$3</ID>
     <ID>UnusedPrivateMember:CategoryActionsSheet.kt$@Preview( name = "Categories — row actions", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryActionsSheetPreview()</ID>
     <ID>UnusedPrivateMember:CategoryListFlow.kt$@Preview( name = "Category list flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListFlowPreview()</ID>
+    <ID>UnusedPrivateMember:CategoryListScreen.kt$@Preview( name = "Categories — default + custom (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListDarkPreview()</ID>
     <ID>UnusedPrivateMember:CategoryListScreen.kt$@Preview( name = "Categories — default + custom", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListPreview()</ID>
     <ID>UnusedPrivateMember:CategoryNewSheet.kt$@Preview( name = "Categories — new (constrained height, scrollable icons)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 420, showBackground = true, ) @Composable private fun CategoryNewConstrainedHeightPreview()</ID>
     <ID>UnusedPrivateMember:CategoryNewSheet.kt$@Preview( name = "Categories — new (duplicate)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryNewDuplicatePreview()</ID>
