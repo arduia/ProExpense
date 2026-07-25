@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +54,7 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProGradientHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProRowKind
@@ -102,220 +104,224 @@ fun JournalListScreen(
             modifier
                 .fillMaxSize()
                 .background(colors.paper)
-                .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimens.screenPadding)
-                        .padding(top = dimens.space14),
-                verticalArrangement = Arrangement.spacedBy(dimens.space16),
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
-                    if (!state.searchActive) {
-                        Text(
-                            text = stringResource(R.string.journal_eyebrow),
-                            style = typography.eyebrow,
-                            color = colors.onSurfaceMuted,
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.journal_title),
-                            style = typography.profileScreenTitle,
-                            color = colors.onSurface,
-                        )
-                        // No proIconClickable here — its 48dp minimum-size box reads as
-                        // oversized/misaligned next to a compact icon in a tight header row (same
-                        // class of defect as the date-range chip's clear icon). iconInline (not
-                        // iconNav) matches the icons.md spec's "list 16-18dp" category — this is
-                        // an inline header affordance, not a full-size bottom-nav icon.
-                        Box(
-                            // Clip + ripple sit on this outer box, not on the icon itself — the
-                            // calendar glyph's frame corners sit almost exactly at its own bounding
-                            // box edge (bottom corners measure ~12.04 units from center in a 24-unit
-                            // viewBox whose inscribed-circle radius is 12), so clipping the icon
-                            // directly to a same-size CircleShape shaves the corners off. Padding
-                            // before the clip gives the icon room inside the circle instead.
-                            modifier =
-                                Modifier
-                                    .clip(CircleShape)
-                                    .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button)
-                                    .padding(dimens.space4),
-                            contentAlignment = Alignment.Center,
+            ProGradientHeader {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                        if (!state.searchActive) {
+                            Text(
+                                text = stringResource(R.string.journal_eyebrow),
+                                style = typography.eyebrow,
+                                color = Color.White.copy(alpha = 0.7f),
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            ProIcon(
-                                glyph = ProIconGlyph.Calendar,
-                                contentDescription = stringResource(R.string.journal_date_range_cd),
-                                tint = colors.onSurfaceVariant,
-                                size = dimens.iconInline,
+                            Text(
+                                text = stringResource(R.string.journal_title),
+                                style = typography.profileScreenTitle,
+                                color = Color.White,
                             )
-                        }
-                    }
-                }
-
-                SearchField(
-                    value = state.query,
-                    onValueChange = onQueryChange,
-                    placeholder = stringResource(R.string.journal_search_placeholder),
-                    active = state.searchActive,
-                )
-            }
-
-            // Outside the screen's padded Column so the scrollable viewport spans the full
-            // width — chips scroll flush to both screen edges instead of stopping at an
-            // invisible wall inset by screenPadding on either side. Leading/trailing spacers
-            // reproduce that same inset only for the resting (unscrolled) position.
-            // The date-range chip stays visible during search — an active range still
-            // constrains results, and hiding it would make "no matches" misleading. Category
-            // chips still hide, since they'd otherwise crowd out the query results list.
-            if (dateRangeLabel != null || !state.searchActive) {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                            .padding(top = dimens.space16),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.space6),
-                ) {
-                    // spacedBy also gaps the leading/trailing Spacer from its neighboring chip,
-                    // so each Spacer is shortened by that gap to land the resting inset exactly
-                    // on screenPadding — matching the title/search field above.
-                    Spacer(Modifier.width(dimens.screenPadding - dimens.space6))
-                    if (dateRangeLabel != null) {
-                        DateRangeChip(
-                            label = dateRangeLabel,
-                            onClick = onDateRangeClick,
-                            onClear = onClearDateRange,
-                        )
-                    }
-                    if (!state.searchActive) {
-                        state.filters.forEach { filter ->
-                            FilterChip(
-                                label = filter.label,
-                                selected = filter.id == state.selectedFilterId,
-                                onClick = { onFilterSelected(filter.id) },
-                            )
-                        }
-                    }
-                    Spacer(Modifier.width(dimens.screenPadding - dimens.space6))
-                }
-            }
-
-            val hasActiveFilter = dateRangeLabel != null || state.selectedFilterId != "all"
-            if (state.isLoading && state.days.isEmpty()) {
-                // Records load asynchronously after first composition — without this, "no data
-                // yet" and "genuinely no records" render identically and the empty-state
-                // illustration flashes on every visit for a user who actually has records.
-                // Only for the initial load though: a reload with rows already on screen keeps
-                // showing them (blanking mid-reload is the Journal "blink" glitch).
-                Box(modifier = Modifier.weight(1f).fillMaxWidth())
-            } else if (state.searchActive && state.days.isEmpty()) {
-                JournalNoResults(
-                    query = state.query,
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                )
-            } else if (!state.searchActive && state.days.isEmpty() && hasActiveFilter) {
-                JournalFilteredEmpty(
-                    onClearFilter = {
-                        onClearDateRange()
-                        onFilterSelected("all")
-                    },
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                )
-            } else if (!state.searchActive && state.days.isEmpty()) {
-                EmptyStateContent(
-                    title = stringResource(R.string.journal_empty_title),
-                    subtitle = stringResource(R.string.journal_empty_body),
-                    actionLabel = stringResource(R.string.journal_empty_action),
-                    onActionClick = onAddClick,
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                )
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(horizontal = dimens.screenPadding),
-                    contentPadding =
-                        PaddingValues(
-                            top = dimens.space12,
-                            bottom = dimens.navShellBottomInset,
-                        ),
-                ) {
-                    state.days.forEach { day ->
-                        item(key = "header-${day.id}") {
-                            DayHeader(title = day.title, total = day.total)
-                        }
-                        itemsIndexed(
-                            items = day.rows,
-                            key = { _, row -> row.id },
-                        ) { index, row ->
-                            // Quick-note edits a FinanceRecord's note directly — meaningless for a
-                            // Split/Debt row (its "note" is the split title, or there's no backing
-                            // record at all for a toggle-off debt), so only offer it for plain rows.
-                            val supportsQuickNote =
-                                row.rowKind == ProRowKind.EXPENSE || row.rowKind == ProRowKind.INCOME
+                            // No proIconClickable here — its 48dp minimum-size box reads as
+                            // oversized/misaligned next to a compact icon in a tight header row (same
+                            // class of defect as the date-range chip's clear icon). iconInline (not
+                            // iconNav) matches the icons.md spec's "list 16-18dp" category — this is
+                            // an inline header affordance, not a full-size bottom-nav icon.
                             Box(
+                                // Clip + ripple sit on this outer box, not on the icon itself — the
+                                // calendar glyph's frame corners sit almost exactly at its own bounding
+                                // box edge (bottom corners measure ~12.04 units from center in a 24-unit
+                                // viewBox whose inscribed-circle radius is 12), so clipping the icon
+                                // directly to a same-size CircleShape shaves the corners off. Padding
+                                // before the clip gives the icon room inside the circle instead.
                                 modifier =
-                                    Modifier.combinedClickable(
-                                        onClick = { onRowClick(row) },
-                                        onLongClick =
-                                            if (supportsQuickNote) {
-                                                { onRowLongPress(row) }
-                                            } else {
-                                                null
-                                            },
-                                    ),
+                                    Modifier
+                                        .clip(CircleShape)
+                                        .proCircularRippleClickable(onClick = onDateRangeClick, role = Role.Button)
+                                        .padding(dimens.space4),
+                                contentAlignment = Alignment.Center,
                             ) {
-                                TransactionRow(
-                                    categoryId = row.categoryId,
-                                    note = row.note,
-                                    meta = row.meta,
-                                    amount = row.amount,
-                                    isIncome = row.isIncome,
-                                    tag = row.tag,
-                                    showDivider = index < day.rows.lastIndex,
-                                    rowKind = row.rowKind,
+                                ProIcon(
+                                    glyph = ProIconGlyph.Calendar,
+                                    contentDescription = stringResource(R.string.journal_date_range_cd),
+                                    tint = Color.White,
+                                    size = dimens.iconInline,
                                 )
                             }
                         }
                     }
-                    if (isLoadingMore) {
-                        item(key = "journal-loading-more") {
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = dimens.space16),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                CircularProgressIndicator(
+
+                    SearchField(
+                        value = state.query,
+                        onValueChange = onQueryChange,
+                        placeholder = stringResource(R.string.journal_search_placeholder),
+                        active = state.searchActive,
+                    )
+                }
+            }
+
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .offset(y = -JournalSheetOverlap)
+                        .clip(ProExpenseTheme.shapes.sheet)
+                        .background(colors.paper),
+            ) {
+                // Outside the sheet's padded content so the scrollable viewport spans the full
+                // width — chips scroll flush to both screen edges instead of stopping at an
+                // invisible wall inset by screenPadding on either side. Leading/trailing spacers
+                // reproduce that same inset only for the resting (unscrolled) position.
+                // The date-range chip stays visible during search — an active range still
+                // constrains results, and hiding it would make "no matches" misleading. Category
+                // chips still hide, since they'd otherwise crowd out the query results list.
+                if (dateRangeLabel != null || !state.searchActive) {
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                                .padding(top = dimens.space16),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.space6),
+                    ) {
+                        // spacedBy also gaps the leading/trailing Spacer from its neighboring chip,
+                        // so each Spacer is shortened by that gap to land the resting inset exactly
+                        // on screenPadding — matching the title/search field above.
+                        Spacer(Modifier.width(dimens.screenPadding - dimens.space6))
+                        if (dateRangeLabel != null) {
+                            DateRangeChip(
+                                label = dateRangeLabel,
+                                onClick = onDateRangeClick,
+                                onClear = onClearDateRange,
+                            )
+                        }
+                        if (!state.searchActive) {
+                            state.filters.forEach { filter ->
+                                FilterChip(
+                                    label = filter.label,
+                                    selected = filter.id == state.selectedFilterId,
+                                    onClick = { onFilterSelected(filter.id) },
+                                )
+                            }
+                        }
+                        Spacer(Modifier.width(dimens.screenPadding - dimens.space6))
+                    }
+                }
+
+                val hasActiveFilter = dateRangeLabel != null || state.selectedFilterId != "all"
+                if (state.isLoading && state.days.isEmpty()) {
+                    // Records load asynchronously after first composition — without this, "no data
+                    // yet" and "genuinely no records" render identically and the empty-state
+                    // illustration flashes on every visit for a user who actually has records.
+                    // Only for the initial load though: a reload with rows already on screen keeps
+                    // showing them (blanking mid-reload is the Journal "blink" glitch).
+                    Box(modifier = Modifier.weight(1f).fillMaxWidth())
+                } else if (state.searchActive && state.days.isEmpty()) {
+                    JournalNoResults(
+                        query = state.query,
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                    )
+                } else if (!state.searchActive && state.days.isEmpty() && hasActiveFilter) {
+                    JournalFilteredEmpty(
+                        onClearFilter = {
+                            onClearDateRange()
+                            onFilterSelected("all")
+                        },
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                    )
+                } else if (!state.searchActive && state.days.isEmpty()) {
+                    EmptyStateContent(
+                        title = stringResource(R.string.journal_empty_title),
+                        subtitle = stringResource(R.string.journal_empty_body),
+                        actionLabel = stringResource(R.string.journal_empty_action),
+                        onActionClick = onAddClick,
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                    )
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .padding(horizontal = dimens.screenPadding),
+                        contentPadding =
+                            PaddingValues(
+                                top = dimens.space12,
+                                bottom = dimens.navShellBottomInset,
+                            ),
+                    ) {
+                        state.days.forEach { day ->
+                            item(key = "header-${day.id}") {
+                                DayHeader(title = day.title, total = day.total)
+                            }
+                            itemsIndexed(
+                                items = day.rows,
+                                key = { _, row -> row.id },
+                            ) { index, row ->
+                                // Quick-note edits a FinanceRecord's note directly — meaningless for a
+                                // Split/Debt row (its "note" is the split title, or there's no backing
+                                // record at all for a toggle-off debt), so only offer it for plain rows.
+                                val supportsQuickNote =
+                                    row.rowKind == ProRowKind.EXPENSE || row.rowKind == ProRowKind.INCOME
+                                Box(
+                                    modifier =
+                                        Modifier.combinedClickable(
+                                            onClick = { onRowClick(row) },
+                                            onLongClick =
+                                                if (supportsQuickNote) {
+                                                    { onRowLongPress(row) }
+                                                } else {
+                                                    null
+                                                },
+                                        ),
+                                ) {
+                                    TransactionRow(
+                                        categoryId = row.categoryId,
+                                        note = row.note,
+                                        meta = row.meta,
+                                        amount = row.amount,
+                                        isIncome = row.isIncome,
+                                        tag = row.tag,
+                                        showDivider = index < day.rows.lastIndex,
+                                        rowKind = row.rowKind,
+                                    )
+                                }
+                            }
+                        }
+                        if (isLoadingMore) {
+                            item(key = "journal-loading-more") {
+                                Box(
                                     modifier =
                                         Modifier
-                                            .height(dimens.iconInline)
-                                            .width(dimens.iconInline),
-                                    color = colors.onSurfaceMuted,
-                                    strokeWidth = 2.dp,
-                                )
+                                            .fillMaxWidth()
+                                            .padding(vertical = dimens.space16),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier =
+                                            Modifier
+                                                .height(dimens.iconInline)
+                                                .width(dimens.iconInline),
+                                        color = colors.onSurfaceMuted,
+                                        strokeWidth = 2.dp,
+                                    )
+                                }
                             }
                         }
                     }
@@ -333,6 +339,8 @@ fun JournalListScreen(
         }
     }
 }
+
+private val JournalSheetOverlap = 14.dp
 
 @Composable
 private fun DateRangeChip(
@@ -476,6 +484,28 @@ private fun JournalNoResults(
 @Composable
 private fun JournalListPreview() {
     ProExpenseTheme {
+        JournalListScreen(
+            state = previewJournalList,
+            onQueryChange = {},
+            onFilterSelected = {},
+            onRowClick = {},
+            onRowLongPress = {},
+            selectedTab = HomeNavTab.Journal,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Journal — dark",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalListDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         JournalListScreen(
             state = previewJournalList,
             onQueryChange = {},
