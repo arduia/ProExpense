@@ -33,6 +33,7 @@
     <string name="shared_remove_person_cd">ลบคน</string>
     <string name="shared_people_count_state">%1$d คน</string>
     <string name="shared_delete_action">ลบ</string>
+    <string name="shared_more_action">เพิ่มเติม</string>
     <string name="shared_delete_title">ลบการหารนี้หรือไม่?</string>
     <string name="shared_delete_body">"%1$s" และรายจ่ายที่บันทึกไว้จะถูกลบ ไม่สามารถย้อนกลับได้</string>
     <string name="shared_delete_confirm">ลบ</string>

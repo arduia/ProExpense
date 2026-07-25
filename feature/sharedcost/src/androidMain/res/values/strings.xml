@@ -37,6 +37,7 @@
     <string name="shared_remove_person_cd">Remove person</string>
     <string name="shared_people_count_state">%1$d people</string>
     <string name="shared_delete_action">Delete</string>
+    <string name="shared_more_action">More</string>
     <string name="shared_delete_title">Delete this split?</string>
     <string name="shared_delete_body">"%1$s" and its saved expense will be removed. This can\'t be undone.</string>
     <string name="shared_delete_confirm">Delete</string>

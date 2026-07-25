@@ -33,6 +33,10 @@ fun ProFlatHeader(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     eyebrow: String? = null,
+    // Screen-reader-only by default (icon-only per the canvas). Callers that route "back" to a
+    // context-specific destination (a deep-linked Journal/Home entry point) can override this to
+    // announce that destination — see SharedCostsSummaryScreen — since the icon alone can't.
+    backContentDescription: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     content: (@Composable () -> Unit)? = null,
 ) {
@@ -65,7 +69,7 @@ fun ProFlatHeader(
                     ) {
                         ProIcon(
                             glyph = ProIconGlyph.Back,
-                            contentDescription = stringResource(R.string.back),
+                            contentDescription = backContentDescription ?: stringResource(R.string.back),
                             tint = colors.onSurfaceVariant,
                             size = dimens.iconInline,
                         )

@@ -46,9 +46,12 @@ class SharedCostsScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @androidx.compose.runtime.Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @androidx.compose.runtime.Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -132,6 +135,19 @@ class SharedCostsScreenshotTest {
     }
 
     @Test
+    fun shared_summary_dark() {
+        capture(darkTheme = true) {
+            SharedCostsSummaryScreen(
+                state = previewSharedSummary,
+                onBack = {},
+                onSwitchToCustom = {},
+                onSave = {},
+                onRecordAsTransactionChange = {},
+            )
+        }
+    }
+
+    @Test
     fun shared_summary_saved() {
         capture {
             SharedCostsSummaryScreen(
@@ -175,6 +191,18 @@ class SharedCostsScreenshotTest {
     @Test
     fun shared_history() {
         capture {
+            SharedCostsHistoryScreen(
+                items = previewSharedHistoryItems,
+                onNewSplit = {},
+                onItemClick = {},
+                onBack = {},
+            )
+        }
+    }
+
+    @Test
+    fun shared_history_dark() {
+        capture(darkTheme = true) {
             SharedCostsHistoryScreen(
                 items = previewSharedHistoryItems,
                 onNewSplit = {},
