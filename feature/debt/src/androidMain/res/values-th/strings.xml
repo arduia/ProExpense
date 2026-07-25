@@ -1,5 +1,6 @@
 <resources>
 <string name="debt_title">หนี้สิน</string>
+<string name="debt_eyebrow">เงินกู้ยืม</string>
 <string name="debt_back_more">เพิ่มเติม</string>
 <string name="debt_detail_back">หนี้สิน</string>
 <string name="debt_back_journal">บันทึก</string>

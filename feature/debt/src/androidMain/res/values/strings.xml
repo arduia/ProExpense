@@ -17,6 +17,7 @@
 <string name="debt_due_preview">Due in 30 days</string>
 <string name="debt_save_anyway">Save anyway</string>
 <string name="debt_title">Debt</string>
+<string name="debt_eyebrow">Loans &amp; IOUs</string>
 <string name="debt_back_more">More</string>
 <string name="debt_detail_back">Debt</string>
 <string name="debt_back_journal">Journals</string>
