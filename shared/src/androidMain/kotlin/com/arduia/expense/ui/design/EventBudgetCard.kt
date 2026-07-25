@@ -86,7 +86,10 @@ fun EventBudgetCard(
                     ProIcon(
                         glyph = ProIconGlyph.FeatEvents,
                         contentDescription = null,
-                        tint = colors.primaryDeep,
+                        // primary (not primaryDeep) — primaryDeep is tuned for on-light-surface
+                        // contexts (pressed buttons) and reads near-invisible against the dark
+                        // theme's own low-alpha primaryTint wash.
+                        tint = colors.primary,
                         size = dimens.iconInline + 4.dp,
                     )
                 }
