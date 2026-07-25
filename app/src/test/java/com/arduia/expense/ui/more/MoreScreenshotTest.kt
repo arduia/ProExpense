@@ -163,6 +163,17 @@ class MoreScreenshotTest {
         }
 
     @Test
+    fun more_currency_dark() =
+        capture(darkTheme = true) {
+            MoreCurrencyScreen(
+                items = previewMoreCurrencies,
+                selectedCode = "USD",
+                onSave = {},
+                onBack = {},
+            )
+        }
+
+    @Test
     fun more_language() =
         capture {
             MoreLanguageScreen(
@@ -175,6 +186,16 @@ class MoreScreenshotTest {
     @Test
     fun more_export() =
         capture {
+            MoreExportScreen(
+                files = previewMoreExportFiles,
+                onExport = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_export_dark() =
+        capture(darkTheme = true) {
             MoreExportScreen(
                 files = previewMoreExportFiles,
                 onExport = {},
@@ -207,6 +228,17 @@ class MoreScreenshotTest {
     @Test
     fun more_import_empty() =
         capture {
+            MoreImportScreen(
+                state = previewMoreImportEmpty,
+                onChooseFile = {},
+                onImport = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_import_empty_dark() =
+        capture(darkTheme = true) {
             MoreImportScreen(
                 state = previewMoreImportEmpty,
                 onChooseFile = {},
@@ -251,6 +283,18 @@ class MoreScreenshotTest {
     @Test
     fun more_clear() =
         capture {
+            MoreClearScreen(
+                options = previewMoreClearOptions,
+                checkedIds = setOf("expenses"),
+                onToggle = {},
+                onClear = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_clear_dark() =
+        capture(darkTheme = true) {
             MoreClearScreen(
                 options = previewMoreClearOptions,
                 checkedIds = setOf("expenses"),

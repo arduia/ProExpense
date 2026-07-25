@@ -1,5 +1,6 @@
 <resources>
 <string name="categories_title">หมวดหมู่</string>
+<string name="categories_eyebrow">จัดระเบียบการใช้จ่าย</string>
 <string name="categories_back">เพิ่มเติม</string>
 <string name="categories_label">หมวดหมู่ · ลากเพื่อจัดเรียง</string>
 <string name="categories_default_pill">ค่าเริ่มต้น</string>

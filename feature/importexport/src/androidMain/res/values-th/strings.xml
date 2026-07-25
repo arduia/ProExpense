@@ -1,6 +1,7 @@
 <resources>
     <string name="more_back">เพิ่มเติม</string>
     <string name="more_export_title">ส่งออกข้อมูล</string>
+    <string name="more_export_eyebrow">สำรองและแชร์ข้อมูล</string>
     <string name="more_export_heading">ส่งออกข้อมูลของคุณ</string>
     <string name="more_export_subtitle">ไฟล์ zip เดียวที่มี CSV สำหรับแต่ละฟีเจอร์ ทุกอย่างอยู่ในอุปกรณ์ของคุณ — ไม่มีการอัปโหลด</string>
     <string name="more_export_subtitle_json">ไฟล์ JSON เดียวที่มีรายจ่ายทั้งหมดของคุณ ทุกอย่างอยู่ในอุปกรณ์ของคุณ — ไม่มีการอัปโหลด</string>
@@ -14,6 +15,7 @@
     <string name="more_export_password_placeholder">รหัสผ่าน (ไม่บังคับ)</string>
     <string name="more_export_password_hint">เพิ่มรหัสผ่านเพื่อเข้ารหัส zip คุณจะต้องใช้รหัสนี้เพื่อนำเข้าข้อมูลสำรองนี้ในภายหลัง</string>
     <string name="more_import_title">นำเข้าข้อมูล</string>
+    <string name="more_import_eyebrow">กู้คืนข้อมูลของคุณ</string>
     <string name="more_import_heading">นำเข้าจากข้อมูลสำรอง</string>
     <string name="more_import_subtitle">เลือกไฟล์ CSV, JSON หรือ ZIP ที่ส่งออกจาก Pro Expense ระบบจะอ่านข้อมูลจากอุปกรณ์นี้เท่านั้น — ไม่มีการอัปโหลด</string>
     <string name="more_import_choose_file">เลือกไฟล์…</string>
@@ -26,6 +28,7 @@
     <string name="more_import_password_wrong">รหัสผ่านไม่ถูกต้อง ลองอีกครั้ง</string>
     <string name="more_import_unlock">ปลดล็อก</string>
     <string name="more_clear_title">ล้างข้อมูล</string>
+    <string name="more_clear_eyebrow">โซนอันตราย</string>
     <string name="more_clear_subtitle">เลือกสิ่งที่จะล้าง การล้างแต่ละครั้งจะขอการยืนยันและไม่สามารถย้อนกลับได้</string>
     <string name="more_clear_action">ล้างที่เลือก…</string>
     <string name="more_clear_confirm_title">ล้างข้อมูลที่เลือกหรือไม่?</string>

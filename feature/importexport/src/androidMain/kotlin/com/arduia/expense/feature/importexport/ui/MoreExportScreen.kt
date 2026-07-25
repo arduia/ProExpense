@@ -28,9 +28,9 @@ import com.arduia.expense.ui.design.PasswordField
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -58,13 +58,16 @@ fun MoreExportScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.more_export_title),
-                onBack = onBack,
-                backLabel = stringResource(R.string.more_back),
-            )
-        }
+        ProFlatHeader(
+            title = stringResource(R.string.more_export_title),
+            eyebrow = stringResource(R.string.more_export_eyebrow),
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.more_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+        )
 
         Column(
             modifier =
@@ -175,6 +178,23 @@ fun MoreExportScreen(
 @Composable
 private fun MoreExportPreview() {
     ProExpenseTheme {
+        MoreExportScreen(
+            files = previewMoreExportFiles,
+            onExport = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — data export (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreExportDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         MoreExportScreen(
             files = previewMoreExportFiles,
             onExport = {},

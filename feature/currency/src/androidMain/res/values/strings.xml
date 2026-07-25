@@ -1,6 +1,7 @@
 <resources>
     <string name="more_back">More</string>
     <string name="more_currency_title">Currency</string>
+    <string name="more_currency_eyebrow">Exchange Rates</string>
     <string name="more_currency_subtitle">Your home currency. Applied to all entries — multi-currency per entry comes later.</string>
     <string name="search_currency_placeholder">Search currency...</string>
     <string name="more_currency_save_action">Save</string>

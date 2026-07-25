@@ -50,9 +50,9 @@ import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -80,11 +80,15 @@ fun CategoryListScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        ProTopBar(
+        ProFlatHeader(
             title = stringResource(R.string.categories_title),
+            eyebrow = stringResource(R.string.categories_eyebrow),
             onBack = onBack,
-            backLabel = stringResource(R.string.categories_back),
-            modifier = Modifier.padding(horizontal = dimens.screenPadding),
+            backContentDescription = stringResource(R.string.categories_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
         )
 
         Column(
@@ -327,6 +331,19 @@ private fun DragHandle() {
 @Composable
 private fun CategoryListPreview() {
     ProExpenseTheme {
+        CategoryListScreen(previewCategoryList, {}, {})
+    }
+}
+
+@Preview(
+    name = "Categories — default + custom (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun CategoryListDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         CategoryListScreen(previewCategoryList, {}, {})
     }
 }

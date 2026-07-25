@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <string name="categories_title">Categories</string>
+<string name="categories_eyebrow">Organize Spending</string>
 <string name="categories_back">More</string>
 <string name="categories_label">CATEGORIES · DRAG TO REORDER</string>
 <string name="categories_default_pill">DEFAULT</string>
