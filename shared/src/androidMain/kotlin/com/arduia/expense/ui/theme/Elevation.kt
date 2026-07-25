@@ -25,23 +25,22 @@ data class ProElevation(
     val fab: List<ProShadowLayer>,
 )
 
-val LocalProElevation = staticCompositionLocalOf { ProDefaultElevation }
+val LocalProElevation = staticCompositionLocalOf { proElevation(ProLightColors) }
 
-// Soft primary-tinted glow shared by the profile identity card and the home Add FAB
-// so the two lifted primary surfaces read identically.
-private val primaryHeroShadow =
-    listOf(
-        ProShadowLayer(0.dp, 8.dp, 20.dp, 0.dp, Color(0x47039BE5)),
-    )
-
-val ProDefaultElevation =
-    ProElevation(
+/**
+ * Card shadows are blue-tinted in light (via [ProColors.cardShadowTint]) but neutral in dark —
+ * a navy-tinted shadow is invisible against a navy surface, so dark relies on the
+ * paper/card surface contrast instead (Blue Banking canvas).
+ */
+fun proElevation(colors: ProColors): ProElevation {
+    val heroShadow = listOf(ProShadowLayer(0.dp, 8.dp, 20.dp, 0.dp, colors.primary.copy(alpha = 0.28f)))
+    return ProElevation(
         card =
             listOf(
-                ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, Color(0x08212121)),
-                ProShadowLayer(0.dp, 6.dp, 16.dp, 0.dp, Color(0x0A212121)),
+                ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, colors.cardShadowTint.copy(alpha = 0.03f)),
+                ProShadowLayer(0.dp, 6.dp, 16.dp, 0.dp, colors.cardShadowTint.copy(alpha = 0.06f)),
             ),
-        identityCard = primaryHeroShadow,
+        identityCard = heroShadow,
         sheet =
             listOf(
                 ProShadowLayer(0.dp, (-8).dp, 24.dp, 0.dp, Color(0x26000000)),
@@ -54,5 +53,6 @@ val ProDefaultElevation =
             listOf(
                 ProShadowLayer(0.dp, (-6).dp, 24.dp, 0.dp, Color(0x1A000000)),
             ),
-        fab = primaryHeroShadow,
+        fab = heroShadow,
     )
+}
