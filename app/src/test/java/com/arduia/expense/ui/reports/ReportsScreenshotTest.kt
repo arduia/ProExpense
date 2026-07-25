@@ -39,9 +39,12 @@ class ReportsScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -57,6 +60,12 @@ class ReportsScreenshotTest {
     @Test
     fun reports() =
         capture {
+            ReportsScreen(previewReports, {}, {}, {})
+        }
+
+    @Test
+    fun reports_dark() =
+        capture(darkTheme = true) {
             ReportsScreen(previewReports, {}, {}, {})
         }
 
@@ -93,6 +102,12 @@ class ReportsScreenshotTest {
     @Test
     fun reports_flow_monthly() =
         capture {
+            ReportsFlow(onBack = {})
+        }
+
+    @Test
+    fun reports_flow_monthly_dark() =
+        capture(darkTheme = true) {
             ReportsFlow(onBack = {})
         }
 
