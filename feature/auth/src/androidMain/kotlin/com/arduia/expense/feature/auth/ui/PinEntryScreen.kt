@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -39,10 +38,10 @@ import com.arduia.expense.feature.auth.ui.preview.previewPinWrong
 import com.arduia.expense.ui.design.PinDots
 import com.arduia.expense.ui.design.PinKeypadGrid
 import com.arduia.expense.ui.design.PinKeypadState
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -107,9 +106,12 @@ fun PinEntryScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (onBack != null) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                ProTopBar(title = "", onBack = onBack, backLabel = backLabel)
-            }
+            ProFlatHeader(
+                title = "",
+                onBack = onBack,
+                backContentDescription = backLabel,
+                modifier = Modifier.padding(vertical = dimens.space14),
+            )
         }
         Spacer(Modifier.height(dimens.space44 + dimens.space44))
         PinBrandTile()
@@ -257,6 +259,30 @@ private fun PinLockPreview() {
 @Composable
 private fun PinVerifyDisablePreview() {
     ProExpenseTheme {
+        PinEntryScreen(
+            state = PinEntryUiState(filledDots = 4, showBiometric = false),
+            onDigit = {},
+            onBackspace = {},
+            onBiometric = {},
+            onForgot = {},
+            headingRes = R.string.pin_disable_verify_heading,
+            helperRes = R.string.pin_disable_verify_helper,
+            showForgot = false,
+            onBack = {},
+            backLabel = "Cancel",
+        )
+    }
+}
+
+@Preview(
+    name = "PIN entry — verify to disable (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun PinVerifyDisableDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         PinEntryScreen(
             state = PinEntryUiState(filledDots = 4, showBiometric = false),
             onDigit = {},

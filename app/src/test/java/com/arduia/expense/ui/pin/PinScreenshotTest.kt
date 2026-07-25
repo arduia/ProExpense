@@ -49,9 +49,12 @@ class PinScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -85,6 +88,23 @@ class PinScreenshotTest {
     @Test
     fun edge_pin_verify_disable() =
         capture {
+            PinEntryScreen(
+                state = PinEntryUiState(filledDots = 4, showBiometric = false),
+                onDigit = {},
+                onBackspace = {},
+                onBiometric = {},
+                onForgot = {},
+                headingRes = R.string.pin_disable_verify_heading,
+                helperRes = R.string.pin_disable_verify_helper,
+                showForgot = false,
+                onBack = {},
+                backLabel = "Cancel",
+            )
+        }
+
+    @Test
+    fun edge_pin_verify_disable_dark() =
+        capture(darkTheme = true) {
             PinEntryScreen(
                 state = PinEntryUiState(filledDots = 4, showBiometric = false),
                 onDigit = {},
