@@ -8,6 +8,7 @@
     <string name="journal_no_matches_title">တွေ့ရှိမှု မရှိပါ</string>
     <string name="journal_no_matches_body">\"%1$s\" အတွက် ရှာမတွေ့ပါ။ အခြားစကားလုံး၊ ပမာဏ သို့မဟုတ် မှတ်ချက်ဖြင့် စမ်းကြည့်ပါ။</string>
     <string name="journal_detail_back">မှတ်တမ်း</string>
+    <string name="journal_more_action">နောက်ထပ်</string>
     <string name="journal_note_label">မှတ်ချက်</string>
     <string name="journal_linked_to_label">ချိတ်ဆက်ထားသည်</string>
     <string name="journal_edit_action">ပြင်ဆင်ရန်</string>

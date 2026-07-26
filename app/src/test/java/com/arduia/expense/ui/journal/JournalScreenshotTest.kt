@@ -221,6 +221,19 @@ class JournalScreenshotTest {
         }
 
     @Test
+    fun journal_detail_dark() =
+        capture(darkTheme = true) {
+            JournalDetailScreen(
+                state = previewJournalDetail,
+                onBack = {},
+                onActions = {},
+                onLinkedTagClick = {},
+                onEdit = {},
+                onDelete = {},
+            )
+        }
+
+    @Test
     fun edge_quicknote() =
         capture {
             Box(Modifier.fillMaxSize()) {

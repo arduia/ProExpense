@@ -33,11 +33,11 @@ import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.proClickable
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -63,15 +63,38 @@ fun JournalDetailScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = "",
-                onBack = onBack,
-                backLabel = stringResource(R.string.journal_detail_back),
-                action = ProTopBarAction.More,
-                onAction = onActions,
-            )
-        }
+        ProFlatHeader(
+            title = "",
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.journal_detail_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+            trailing = {
+                Box(
+                    modifier = Modifier.proIconClickable(onClick = onActions),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(dimens.buttonSmallHeight)
+                                .clip(ProExpenseTheme.shapes.tile)
+                                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.tile)
+                                .background(colors.surface),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ProIcon(
+                            glyph = ProIconGlyph.More,
+                            contentDescription = stringResource(R.string.journal_more_action),
+                            tint = colors.onSurfaceVariant,
+                            size = dimens.iconInline,
+                        )
+                    }
+                }
+            },
+        )
 
         Column(
             modifier =
@@ -242,6 +265,26 @@ private fun JournalLinkedTagCard(
 @Composable
 private fun JournalDetailPreview() {
     ProExpenseTheme {
+        JournalDetailScreen(
+            state = previewJournalDetail,
+            onBack = {},
+            onActions = {},
+            onLinkedTagClick = {},
+            onEdit = {},
+            onDelete = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Journal detail — linked (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun JournalDetailDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         JournalDetailScreen(
             state = previewJournalDetail,
             onBack = {},
