@@ -6,6 +6,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -205,6 +207,7 @@ private fun EventNewOnGradientButton(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun EventStatusChipRow(
     activeCount: Int,
@@ -214,9 +217,12 @@ private fun EventStatusChipRow(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
 
-    Row(
+    // FlowRow, not Row — high counts combined with longer non-English chip text (or 200% font
+    // scale) can exceed the header's width; wrapping to a second line beats clipping/overflow.
+    FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
         EventStatusChip(
             text = stringResource(R.string.events_active_count, activeCount),

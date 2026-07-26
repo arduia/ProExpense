@@ -12,7 +12,7 @@
     <ID>FunctionNaming:EventBudgetListScreen.kt$@Composable private fun EventEmptyContent( onCreateEvent: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:EventBudgetListScreen.kt$@Composable private fun EventNewOnGradientButton( onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:EventBudgetListScreen.kt$@Composable private fun EventStatusChip( text: String, containerColor: Color, contentColor: Color, borderColor: Color?, modifier: Modifier = Modifier, fontWeight: FontWeight = FontWeight.Medium, )</ID>
-    <ID>FunctionNaming:EventBudgetListScreen.kt$@Composable private fun EventStatusChipRow( activeCount: Int, overBudgetCount: Int, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:EventBudgetListScreen.kt$@OptIn(ExperimentalLayoutApi::class) @Composable private fun EventStatusChipRow( activeCount: Int, overBudgetCount: Int, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:EventBudgetListScreen.kt$@Preview( name = "Event budget — empty", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun EventBudgetListEmptyPreview()</ID>
     <ID>FunctionNaming:EventBudgetListScreen.kt$@Preview( name = "Event budget — list (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun EventBudgetListDarkPreview()</ID>
     <ID>FunctionNaming:EventBudgetListScreen.kt$@Preview( name = "Event budget — list", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun EventBudgetListPreview()</ID>
