@@ -44,9 +44,9 @@ import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.ui.design.TagPickerContent
 import com.arduia.expense.ui.design.currencySymbol
@@ -108,10 +108,11 @@ fun AddExpenseDetailsScreen(
                     .padding(bottom = dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            ProTopBar(
+            ProFlatHeader(
                 title = stringResource(R.string.details),
                 onBack = onBackToAmount,
-                backLabel = stringResource(R.string.amount_step),
+                backContentDescription = stringResource(R.string.amount_step),
+                modifier = Modifier.padding(vertical = dimens.space14),
             )
 
             DetailAmountSummaryCard(
@@ -270,6 +271,30 @@ private fun ExchangeRateField(
 @Composable
 private fun AddExpenseDetailsPreview() {
     ProExpenseTheme {
+        AddExpenseDetailsScreen(
+            state = previewExpenseDetails,
+            onBackToAmount = {},
+            onCategorySelected = {},
+            onNoteChange = {},
+            onDateClick = {},
+            onOpenTagSheet = {},
+            onCloseTagSheet = {},
+            onTagSelected = {},
+            onClearTag = {},
+            onSave = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add expense — details with tag (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddExpenseDetailsDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         AddExpenseDetailsScreen(
             state = previewExpenseDetails,
             onBackToAmount = {},

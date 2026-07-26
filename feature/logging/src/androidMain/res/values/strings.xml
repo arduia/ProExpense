@@ -4,6 +4,7 @@
     <string name="new_expense">New expense</string>
     <string name="new_income">New income</string>
     <string name="details">Details</string>
+    <string name="close_action">Close</string>
     <string name="amount_step">Amount</string>
     <string name="save_expense">Save expense · %1$s</string>
     <string name="next_with_chevron">Next ></string>

@@ -22,11 +22,10 @@ import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CategoryPicker
 import com.arduia.expense.ui.design.NumericKeypad
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
@@ -62,12 +61,15 @@ fun AddExpenseAmountScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        ProTopBar(
+        ProFlatHeader(
             title = stringResource(titleRes),
-            onBack = null,
-            action = ProTopBarAction.Close,
-            onAction = onClose,
-            modifier = Modifier.padding(horizontal = dimens.screenPadding),
+            onBack = onClose,
+            backContentDescription = stringResource(R.string.close_action),
+            leadingGlyph = ProIconGlyph.Close,
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
         )
 
         AmountDisplay(
@@ -146,6 +148,27 @@ fun AddExpenseAmountScreen(
 @Composable
 private fun AddExpenseAmountTypedPreview() {
     ProExpenseTheme {
+        AddExpenseAmountScreen(
+            state = previewExpenseAmountTyped,
+            onClose = {},
+            onKey = {},
+            onBackspace = {},
+            onCategorySelected = {},
+            onSave = {},
+            onNext = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Add expense — amount typed (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddExpenseAmountTypedDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         AddExpenseAmountScreen(
             state = previewExpenseAmountTyped,
             onClose = {},

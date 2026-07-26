@@ -47,11 +47,12 @@ class AddExpenseScreenshotTest {
 
     private fun capture(
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+        darkTheme: Boolean = false,
         content: @androidx.compose.runtime.Composable () -> Unit,
     ) {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-                ProExpenseTheme {
+                ProExpenseTheme(darkTheme = darkTheme) {
                     Box(
                         Modifier
                             .fillMaxSize()
@@ -68,6 +69,21 @@ class AddExpenseScreenshotTest {
     @Test
     fun add_amount() {
         capture {
+            AddExpenseAmountScreen(
+                state = previewExpenseAmountTyped,
+                onClose = {},
+                onKey = {},
+                onBackspace = {},
+                onCategorySelected = {},
+                onSave = {},
+                onNext = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_amount_dark() {
+        capture(darkTheme = true) {
             AddExpenseAmountScreen(
                 state = previewExpenseAmountTyped,
                 onClose = {},
@@ -129,6 +145,24 @@ class AddExpenseScreenshotTest {
     @Test
     fun add_details() {
         capture {
+            AddExpenseDetailsScreen(
+                state = previewExpenseDetails,
+                onBackToAmount = {},
+                onCategorySelected = {},
+                onNoteChange = {},
+                onDateClick = {},
+                onOpenTagSheet = {},
+                onCloseTagSheet = {},
+                onTagSelected = {},
+                onClearTag = {},
+                onSave = {},
+            )
+        }
+    }
+
+    @Test
+    fun add_details_dark() {
+        capture(darkTheme = true) {
             AddExpenseDetailsScreen(
                 state = previewExpenseDetails,
                 onBackToAmount = {},
