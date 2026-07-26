@@ -3,8 +3,9 @@
 <string name="categories_title">Categories</string>
 <string name="categories_eyebrow">More</string>
 <string name="categories_back">More</string>
-<string name="categories_label">CATEGORIES · DRAG TO REORDER</string>
-<string name="categories_default_pill">DEFAULT</string>
+<string name="categories_default_section">DEFAULT · ALWAYS FIRST</string>
+<string name="categories_custom_section">CUSTOM · DRAG TO REORDER</string>
+<string name="categories_default_pill">LOCKED</string>
 <plurals name="categories_count">
         <item quantity="one">%1$d category</item>
         <item quantity="other">%1$d categories</item>

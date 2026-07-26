@@ -24,16 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.reports.R
 import com.arduia.expense.feature.reports.ui.preview.ReportsCategoryUi
@@ -44,7 +43,6 @@ import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 import com.arduia.expense.feature.reports.ui.preview.previewReportsWithOtherRollup
 import com.arduia.expense.ui.design.EmptyStateContent
-import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
@@ -173,34 +171,7 @@ internal fun ReportsPeriodContent(
             return@Column
         }
 
-        if (!state.uncategorized) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = stringResource(R.string.reports_total_spent),
-                    style = typography.eyebrow,
-                    color = colors.onSurfaceMuted,
-                )
-                Text(
-                    text = state.totalLabel,
-                    style = typography.displayAmount,
-                    color = colors.onSurface,
-                    modifier = Modifier.padding(top = dimens.space8),
-                )
-                Text(
-                    text =
-                        buildAnnotatedString {
-                            append(stringResource(R.string.reports_daily_avg_prefix) + " ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = colors.onSurface)) {
-                                append(state.dailyAvgLabel)
-                            }
-                            append(" · ${state.daysLabel}")
-                        },
-                    style = typography.caption,
-                    color = colors.onSurfaceMuted,
-                    modifier = Modifier.padding(top = dimens.space6),
-                )
-            }
-        } else {
+        if (state.uncategorized) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = stringResource(R.string.reports_period_total, state.periodLabel),
@@ -215,17 +186,17 @@ internal fun ReportsPeriodContent(
                     modifier = Modifier.padding(top = dimens.space8),
                 )
             }
-        }
-
-        ReportsDonut(
-            categories = state.categories,
-            uncategorized = state.uncategorized,
-            modifier = Modifier.padding(vertical = dimens.space8),
-        )
-
-        if (state.uncategorized) {
+            ReportsDonut(
+                categories = state.categories,
+                uncategorized = true,
+                modifier = Modifier.padding(vertical = dimens.space8),
+            )
             ReportsTipBanner()
         } else {
+            ReportsDonutLegendCard(
+                categories = state.categories,
+                totalLabel = state.totalLabel,
+            )
             Column(verticalArrangement = Arrangement.spacedBy(dimens.space10)) {
                 Text(
                     text = stringResource(R.string.reports_top_categories),
@@ -308,14 +279,103 @@ internal fun ReportsPeriodPill(
     }
 }
 
+/**
+ * Combined donut + per-category legend card — replaces a separate "total spent" hero and a
+ * standalone donut, matching the canvas's single card with the total inside the ring and the
+ * legend beside it.
+ */
+@Composable
+private fun ReportsDonutLegendCard(
+    categories: List<ReportsCategoryUi>,
+    totalLabel: String,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val cardShape = ProExpenseTheme.shapes.card
+    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
+
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (cardElevation != null) {
+                        Modifier.shadow(
+                            elevation = cardElevation.blur,
+                            shape = cardShape,
+                            spotColor = cardElevation.color,
+                            ambientColor = cardElevation.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).clip(cardShape)
+                .border(BorderStroke(1.dp, colors.line), cardShape)
+                .background(colors.surface)
+                .padding(dimens.space18),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space20),
+    ) {
+        ReportsDonut(
+            categories = categories,
+            uncategorized = false,
+            centerLabel = totalLabel,
+            size = ReportsDonutLegendSize,
+            strokeWidth = ReportsDonutLegendStroke,
+        )
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(dimens.space8),
+        ) {
+            categories.forEach { category ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(dimens.space7),
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(dimens.space8)
+                                .clip(CircleShape)
+                                .background(colors.category(category.categoryId).accent),
+                    )
+                    Text(
+                        text = category.label,
+                        style = typography.captionMedium,
+                        color = colors.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        text = category.percentLabel,
+                        style = typography.monoFigure,
+                        color = colors.onSurfaceMuted,
+                    )
+                }
+            }
+        }
+    }
+}
+
+private val ReportsDonutLegendSize = 128.dp
+private val ReportsDonutLegendStroke = 14.dp
+
 @Composable
 private fun ReportsDonut(
     categories: List<ReportsCategoryUi>,
     uncategorized: Boolean,
     modifier: Modifier = Modifier,
+    // Non-null for the categorized donut+legend card, which shows the period total inside the
+    // ring instead of the category count — the uncategorized caller leaves this null and keeps
+    // its own "100% Uncategorized" center content.
+    centerLabel: String? = null,
+    size: Dp = 160.dp,
+    strokeWidth: Dp = 22.dp,
 ) {
     val colors = ProExpenseTheme.colors
-    val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val segments =
         if (uncategorized) {
@@ -326,13 +386,13 @@ private fun ReportsDonut(
     val gapDegrees = if (uncategorized) 0f else 4f
 
     Box(
-        modifier = modifier.size(160.dp),
+        modifier = modifier.size(size),
         contentAlignment = Alignment.Center,
     ) {
-        Canvas(modifier = Modifier.size(160.dp)) {
-            val stroke = 22.dp.toPx()
+        Canvas(modifier = Modifier.size(size)) {
+            val stroke = strokeWidth.toPx()
             val inset = stroke / 2f
-            val arcSize = Size(size.width - stroke, size.height - stroke)
+            val arcSize = Size(this.size.width - stroke, this.size.height - stroke)
             var startAngle = -90f + gapDegrees / 2f
             segments.forEach { (fraction, color) ->
                 val sweep = fraction * 360f - gapDegrees
@@ -358,6 +418,13 @@ private fun ReportsDonut(
                     style = typography.caption,
                     color = colors.onSurfaceMuted,
                 )
+            } else if (centerLabel != null) {
+                Text(text = centerLabel, style = typography.sectionHead, color = colors.onSurface)
+                Text(
+                    text = stringResource(R.string.reports_total_spent),
+                    style = typography.caption,
+                    color = colors.onSurfaceMuted,
+                )
             } else {
                 Text(
                     text = stringResource(R.string.reports_by_category),
@@ -379,6 +446,7 @@ private fun ReportsRankRow(category: ReportsCategoryUi) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
+    val categoryColor = colors.category(category.categoryId)
 
     Row(
         modifier =
@@ -391,22 +459,23 @@ private fun ReportsRankRow(category: ReportsCategoryUi) {
         Box(
             modifier =
                 Modifier
-                    .size(dimens.space8)
-                    .clip(CircleShape)
-                    .background(colors.category(category.categoryId).accent),
-        )
-        LogCategoryBadge(categoryId = category.categoryId, size = dimens.space32)
+                    .size(dimens.space32)
+                    .clip(ProExpenseTheme.shapes.tile)
+                    .background(categoryColor.tint),
+            contentAlignment = Alignment.Center,
+        ) {
+            ProIcon(
+                glyph = ProIconGlyph.FeatReports,
+                contentDescription = null,
+                tint = categoryColor.accent,
+                size = dimens.iconInline,
+            )
+        }
         Text(
             text = category.label,
-            style = typography.bodyMedium,
+            style = typography.bodySemiBold,
             color = colors.onSurface,
             modifier = Modifier.weight(1f),
-        )
-        Text(
-            text = category.percentLabel,
-            style = typography.monoFigure,
-            color = colors.onSurfaceMuted,
-            modifier = Modifier.padding(end = dimens.space8),
         )
         Text(
             text = category.amountLabel,

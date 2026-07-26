@@ -9,10 +9,11 @@
     <ID>FunctionNaming:CategoryListFlow.kt$@Composable fun CategoryListFlow( onBack: () -&gt; Unit, state: CategoryListUiState = previewCategoryList, onReorder: (List&lt;String&gt;) -&gt; Unit = {}, onSaveCategory: (editingId: String?, name: String, iconId: String, type: RecordType, colorId: String) -&gt; Unit = { _, _, _, _, _ -&gt; }, onDeleteCategory: (String) -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:CategoryListFlow.kt$@Preview( name = "Category list flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListFlowPreview()</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Composable fun CategoryListScreen( state: CategoryListUiState, onBack: () -&gt; Unit, onCreate: () -&gt; Unit, modifier: Modifier = Modifier, onCustomRowClick: (CategoryRowUi) -&gt; Unit = {}, onReorder: (Int, Int) -&gt; Unit = { _, _ -&gt; }, )</ID>
-    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CategoryRow( row: CategoryRowUi, onClick: (() -&gt; Unit)?, dragHandleModifier: Modifier, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CategoryRow( row: CategoryRowUi, onClick: (() -&gt; Unit)?, dragHandleModifier: Modifier?, )</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun CategorySectionHeader( label: String, trailing: String, )</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun DragHandle()</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun ReorderableCategoryGroup( rows: List&lt;CategoryRowUi&gt;, onRowClick: (CategoryRowUi) -&gt; Unit, onReorder: (Int, Int) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CategoryListScreen.kt$@Composable private fun StaticCategoryGroup(rows: List&lt;CategoryRowUi&gt;)</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Preview( name = "Categories — default + custom (dark)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListDarkPreview()</ID>
     <ID>FunctionNaming:CategoryListScreen.kt$@Preview( name = "Categories — default + custom", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun CategoryListPreview()</ID>
     <ID>FunctionNaming:CategoryNewSheet.kt$@Composable private fun CategoryColorSwatch( colorId: String, selected: Boolean, onClick: () -&gt; Unit, )</ID>

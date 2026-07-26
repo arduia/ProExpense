@@ -181,12 +181,21 @@ fun TransactionRow(
                 ProRowKind.SPLIT, ProRowKind.EXPENSE, ProRowKind.DEBT_LENT -> colors.onSurface
             }
         Text(
-            text = amount,
+            text = amountSignForRowKind(rowKind) + amount,
             style = typography.listAmount,
             color = amountColor,
         )
     }
 }
+
+// Debt/Split rows stay unsigned — they're not a +/- expense/income distinction, and the
+// Debt Tracker tab (where Lent/Owe get their own color treatment) already shows them plain.
+private fun amountSignForRowKind(rowKind: ProRowKind): String =
+    when (rowKind) {
+        ProRowKind.INCOME -> "+"
+        ProRowKind.EXPENSE -> "-"
+        ProRowKind.SPLIT, ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED -> ""
+    }
 
 @Composable
 fun DayHeader(

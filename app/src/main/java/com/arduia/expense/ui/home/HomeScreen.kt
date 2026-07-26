@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -55,6 +56,8 @@ import com.arduia.expense.ui.preview.previewHomeEvent
 import com.arduia.expense.ui.preview.previewHomeLoading
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+
+private val HomeSpendCardFloat = 30.dp
 
 @Composable
 fun HomeScreenContent(
@@ -207,7 +210,13 @@ private fun HomeHeaderContent(
         }
 
         ProSheetSurface {
-            Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
+            // Canvas floats the spend card up into the gradient header (VBHomeClassicShell's
+            // `marginTop: -30` card wrapper, on top of the sheet's own -14dp overlap) rather than
+            // sitting it flush below the sheet's rounded edge — this offset reproduces that.
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimens.space16),
+                modifier = Modifier.offset(y = -HomeSpendCardFloat),
+            ) {
                 if (showPinSetupBanner) {
                     NoticeBanner(
                         title = stringResource(R.string.home_pin_banner_title),
@@ -537,11 +546,16 @@ private fun HomeQuickAccessSection(
                         QuickAccessTileType.Events ->
                             Triple(ProIconGlyph.FeatEvents, R.string.quick_access_events, onEventsClick)
                     }
+                // Goals (Events) is the one tile canvas gives a gold accent — the other three
+                // share the default blue tint.
+                val isGoalsTile = tile == QuickAccessTileType.Events
                 QuickAccessTile(
                     label = stringResource(labelRes),
                     icon = icon,
                     onClick = onClick,
                     modifier = Modifier.weight(1f),
+                    iconTint = if (isGoalsTile) colors.highlightDeep else null,
+                    iconBackground = if (isGoalsTile) colors.highlightTint else null,
                 )
             }
         }

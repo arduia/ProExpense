@@ -124,6 +124,7 @@ fun ReportsFlow(
                     stringResource(R.string.reports_granularity_week),
                 ),
             selectedIndex = granularityIndex,
+            usePrimarySelection = true,
             onSelected = { newIndex ->
                 // Anchor the switch to whatever period is currently on screen, so the caller can
                 // land the new granularity on the period that overlaps it.
