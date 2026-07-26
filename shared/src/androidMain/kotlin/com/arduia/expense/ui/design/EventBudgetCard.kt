@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,12 +64,14 @@ fun EventBudgetCard(
                 .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
                 .background(colors.surface)
                 .padding(dimens.cardPadding),
-        verticalArrangement = Arrangement.spacedBy(dimens.space12),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
     ) {
+        // Canvas mirrors amount/budget onto the title/date rows (two rows total, not four) — the
+        // second row is indented by icon-width + gap so the date lines up under the title text.
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(dimens.space12),
@@ -93,71 +96,30 @@ fun EventBudgetCard(
                         size = dimens.iconInline + 4.dp,
                     )
                 }
-                Column(verticalArrangement = Arrangement.spacedBy(dimens.space2)) {
-                    Text(
-                        text = state.title,
-                        style = typography.bodySemiBold,
-                        color = colors.onSurface,
-                    )
-                    Text(
-                        text = state.dateRange,
-                        style = typography.caption,
-                        color = colors.onSurfaceMuted,
-                    )
-                }
-            }
-            if (isWarning || isDanger) {
-                val chipColor = if (isDanger) colors.danger else colors.warning
-                val chipText =
-                    if (state.overAmountLabel != null) {
-                        stringResource(R.string.event_over_budget_by, state.overAmountLabel, state.overBudgetPercent)
-                    } else {
-                        stringResource(R.string.event_over_budget)
-                    }
                 Text(
-                    text = chipText,
-                    style = if (isDanger) typography.bodySemiBold.copy(fontSize = typography.caption.fontSize) else typography.caption,
-                    color = chipColor,
-                    modifier =
-                        Modifier
-                            .border(BorderStroke(1.dp, chipColor), ProExpenseTheme.shapes.chip)
-                            .padding(horizontal = dimens.space8, vertical = dimens.space4),
+                    text = state.title,
+                    style = typography.bodySemiBold,
+                    color = colors.onSurface,
                 )
             }
+            EventBudgetHeaderTrailing(state = state, isWarning = isWarning, isDanger = isDanger, spentColor = spentColor)
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = dimens.quickAccessIconSize + dimens.space12),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.Top,
         ) {
             Text(
-                text = state.spentLabel,
-                style = typography.sectionHead,
-                color = spentColor,
-                textDecoration = if (state.isOverBudget) TextDecoration.LineThrough else null,
+                text = state.dateRange,
+                style = typography.caption,
+                color = colors.onSurfaceMuted,
+                modifier = Modifier.weight(1f),
             )
-            Column(horizontalAlignment = Alignment.End) {
-                if (state.isOverBudget && state.overAmountLabel != null) {
-                    Text(
-                        text = state.overAmountLabel,
-                        style = typography.caption,
-                        color = colors.onSurfaceMuted,
-                    )
-                }
-                Text(
-                    text = state.budgetLabel,
-                    style = typography.caption,
-                    color = colors.onSurfaceMuted,
-                )
-                if (!state.dailyAverageLabel.isNullOrBlank()) {
-                    Text(
-                        text = state.dailyAverageLabel,
-                        style = typography.caption,
-                        color = colors.onSurfaceMuted,
-                    )
-                }
-            }
+            EventBudgetMetaTrailing(state = state, isWarning = isWarning, isDanger = isDanger, spentColor = spentColor)
         }
 
         Box(
@@ -176,6 +138,87 @@ fun EventBudgetCard(
                         .clip(ProExpenseTheme.shapes.chip)
                         .background(progressColor)
                         .align(Alignment.CenterStart),
+            )
+        }
+    }
+}
+
+@Composable
+private fun EventBudgetHeaderTrailing(
+    state: EventBudgetCardState,
+    isWarning: Boolean,
+    isDanger: Boolean,
+    spentColor: Color,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    if (isWarning || isDanger) {
+        val chipColor = if (isDanger) colors.danger else colors.warning
+        val chipText =
+            if (state.overAmountLabel != null) {
+                stringResource(R.string.event_over_budget_by, state.overAmountLabel, state.overBudgetPercent)
+            } else {
+                stringResource(R.string.event_over_budget)
+            }
+        Text(
+            text = chipText,
+            style = if (isDanger) typography.bodySemiBold.copy(fontSize = typography.caption.fontSize) else typography.caption,
+            color = chipColor,
+            modifier =
+                Modifier
+                    .border(BorderStroke(1.dp, chipColor), ProExpenseTheme.shapes.chip)
+                    .padding(horizontal = dimens.space8, vertical = dimens.space4),
+        )
+    } else {
+        Text(
+            text = state.spentLabel,
+            style = typography.sectionHead,
+            color = spentColor,
+            textDecoration = if (state.isOverBudget) TextDecoration.LineThrough else null,
+        )
+    }
+}
+
+@Composable
+private fun EventBudgetMetaTrailing(
+    state: EventBudgetCardState,
+    isWarning: Boolean,
+    isDanger: Boolean,
+    spentColor: Color,
+) {
+    val colors = ProExpenseTheme.colors
+    val typography = ProExpenseTheme.typography
+
+    Column(horizontalAlignment = Alignment.End) {
+        // The chip already took the amount's usual slot above, so the amount still needs to show
+        // somewhere — this is the fallback spot for the warning/danger state.
+        if (isWarning || isDanger) {
+            Text(
+                text = state.spentLabel,
+                style = typography.bodySemiBold,
+                color = spentColor,
+                textDecoration = if (state.isOverBudget) TextDecoration.LineThrough else null,
+            )
+        }
+        if (state.isOverBudget && state.overAmountLabel != null) {
+            Text(
+                text = state.overAmountLabel,
+                style = typography.caption,
+                color = colors.onSurfaceMuted,
+            )
+        }
+        Text(
+            text = state.budgetLabel,
+            style = typography.caption,
+            color = colors.onSurfaceMuted,
+        )
+        if (!state.dailyAverageLabel.isNullOrBlank()) {
+            Text(
+                text = state.dailyAverageLabel,
+                style = typography.caption,
+                color = colors.onSurfaceMuted,
             )
         }
     }

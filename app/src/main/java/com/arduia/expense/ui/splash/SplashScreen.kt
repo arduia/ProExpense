@@ -43,7 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arduia.expense.BuildConfig
 import com.arduia.expense.R
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.ProMotion
@@ -116,15 +119,52 @@ fun SplashScreen(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier.alpha(entrance),
             )
+            SplashLoadingDots(
+                reduceMotion = reduceMotion,
+                modifier = Modifier.padding(top = dimens.space32).alpha(entrance),
+            )
         }
 
-        SplashLoadingDots(
-            reduceMotion = reduceMotion,
+        SplashFooter(
             modifier =
                 Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = dimens.space44 + dimens.space32)
+                    .padding(bottom = dimens.space24 + dimens.space16)
                     .alpha(entrance),
+        )
+    }
+}
+
+@Composable
+private fun SplashFooter(modifier: Modifier = Modifier) {
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(dimens.space10),
+        modifier = modifier,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimens.space7),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ProIcon(
+                glyph = ProIconGlyph.Check,
+                contentDescription = null,
+                tint = Color.White.copy(alpha = 0.85f),
+                size = dimens.iconTag,
+            )
+            Text(
+                text = stringResource(R.string.splash_footer_badge),
+                style = typography.eyebrow,
+                color = Color.White.copy(alpha = 0.85f),
+            )
+        }
+        Text(
+            text = stringResource(R.string.splash_version, BuildConfig.VERSION_NAME),
+            style = typography.eyebrow,
+            color = Color.White.copy(alpha = 0.45f),
         )
     }
 }

@@ -102,6 +102,8 @@
     <ID>FunctionNaming:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateContentPreview()</ID>
     <ID>FunctionNaming:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateIllustrationPreview()</ID>
     <ID>FunctionNaming:EventBudgetCard.kt$@Composable fun EventBudgetCard( state: EventBudgetCardState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:EventBudgetCard.kt$@Composable private fun EventBudgetHeaderTrailing( state: EventBudgetCardState, isWarning: Boolean, isDanger: Boolean, spentColor: Color, )</ID>
+    <ID>FunctionNaming:EventBudgetCard.kt$@Composable private fun EventBudgetMetaTrailing( state: EventBudgetCardState, isWarning: Boolean, isDanger: Boolean, spentColor: Color, )</ID>
     <ID>FunctionNaming:EventBudgetCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetCardPreview()</ID>
     <ID>FunctionNaming:EventBudgetSummaryCard.kt$@Composable fun EventBudgetSummaryCard( state: EventBudgetSummaryState, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:EventBudgetSummaryCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetSummaryCardPreview()</ID>
@@ -550,6 +552,7 @@
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — sheets", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)</ID>
     <ID>MaxLineLength:DesignSystemSpecCaptures.kt$QuickAccessTile(label = "Events", icon = ProIconGlyph.FeatEvents, onClick = {}, modifier = Modifier.width(78.dp))</ID>
     <ID>MaxLineLength:DesignSystemSpecCaptures.kt$QuickAccessTile(label = "Reports", icon = ProIconGlyph.FeatReports, onClick = {}, modifier = Modifier.width(78.dp))</ID>
+    <ID>MaxLineLength:EventBudgetCard.kt$EventBudgetHeaderTrailing(state = state, isWarning = isWarning, isDanger = isDanger, spentColor = spentColor)</ID>
     <ID>MaxLineLength:EventBudgetCard.kt$style = if (isDanger) typography.bodySemiBold.copy(fontSize = typography.caption.fontSize) else typography.caption</ID>
     <ID>MaxLineLength:NavMotion.kt$fun ProMotion.reducedEnter(): EnterTransition</ID>
     <ID>MaxLineLength:NavMotion.kt$fun ProMotion.reducedExit(): ExitTransition</ID>

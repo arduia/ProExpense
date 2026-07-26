@@ -132,6 +132,8 @@
 
     <!-- First launch / onboarding -->
     <string name="splash_tagline">Your finance notebook</string>
+    <string name="splash_footer_badge">OFFLINE · PRIVATE · NO ACCOUNT</string>
+    <string name="splash_version">v%1$s</string>
     <string name="journal_empty">No records yet — tap + to log your first expense</string>
     <string name="pin_change_title">Change your PIN</string>
     <string name="shared_history">History</string>
