@@ -1,6 +1,8 @@
 package com.arduia.expense.feature.eventbudget.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,28 +66,36 @@ fun EventBudgetListScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             ProGradientHeader {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top,
                     ) {
-                        Text(
-                            text = stringResource(R.string.events_eyebrow),
-                            style = typography.eyebrow,
-                            color = Color.White.copy(alpha = 0.7f),
-                        )
-                        Text(
-                            text = stringResource(R.string.events_title),
-                            style = typography.profileScreenTitle,
-                            color = Color.White,
-                        )
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.events_eyebrow),
+                                style = typography.eyebrow,
+                                color = Color.White.copy(alpha = 0.7f),
+                            )
+                            Text(
+                                text = stringResource(R.string.events_title),
+                                style = typography.profileScreenTitle,
+                                color = Color.White,
+                            )
+                        }
+                        if (events.isNotEmpty()) {
+                            EventNewOnGradientButton(onClick = onCreateEvent)
+                        }
                     }
-                    if (events.isNotEmpty()) {
-                        EventNewOnGradientButton(onClick = onCreateEvent)
+                    if (!isLoading) {
+                        EventStatusChipRow(
+                            activeCount = events.size,
+                            overBudgetCount = events.count { it.isOverBudget },
+                        )
                     }
                 }
             }
@@ -185,6 +196,71 @@ private fun EventNewOnGradientButton(
             text = stringResource(R.string.event_new),
             style = typography.bodySemiBold,
             color = colors.primary,
+        )
+    }
+}
+
+@Composable
+private fun EventStatusChipRow(
+    activeCount: Int,
+    overBudgetCount: Int,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        EventStatusChip(
+            text = stringResource(R.string.events_active_count, activeCount),
+            containerColor = Color.White.copy(alpha = 0.14f),
+            contentColor = Color.White.copy(alpha = 0.85f),
+            borderColor = Color.White.copy(alpha = 0.18f),
+        )
+        if (overBudgetCount > 0) {
+            EventStatusChip(
+                text = stringResource(R.string.events_over_budget_count, overBudgetCount),
+                containerColor = colors.highlight,
+                contentColor = colors.navy,
+                borderColor = null,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+    }
+}
+
+@Composable
+private fun EventStatusChip(
+    text: String,
+    containerColor: Color,
+    contentColor: Color,
+    borderColor: Color?,
+    modifier: Modifier = Modifier,
+    fontWeight: FontWeight = FontWeight.Medium,
+) {
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val shape = ProExpenseTheme.shapes.chip
+
+    Box(
+        modifier =
+            modifier
+                .clip(shape)
+                .then(
+                    if (borderColor != null) {
+                        Modifier.border(BorderStroke(1.dp, borderColor), shape)
+                    } else {
+                        Modifier
+                    },
+                ).background(containerColor)
+                .padding(horizontal = dimens.space12, vertical = dimens.space4),
+    ) {
+        Text(
+            text = text,
+            style = typography.captionMedium.copy(fontWeight = fontWeight),
+            color = contentColor,
         )
     }
 }

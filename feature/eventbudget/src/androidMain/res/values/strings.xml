@@ -33,9 +33,11 @@
 <string name="event_edit_title">Edit event</string>
 <string name="event_delete_warning">This event has %1$d linked expenses. Delete anyway?</string>
 <string name="events_eyebrow">BUDGET TRACKER</string>
-<string name="events_title">Budget</string>
-<string name="event_new">New goal</string>
+<string name="events_title">Events</string>
+<string name="event_new">New</string>
 <string name="events_back">Events</string>
+<string name="events_active_count">%1$d active</string>
+<string name="events_over_budget_count">%1$d over budget</string>
 <string name="event_empty_heading">No active events</string>
 <string name="event_empty_body">Set a budget for a trip, wedding or party — then tag expenses to track it in real time.</string>
 <string name="event_create_cta">Create event</string>

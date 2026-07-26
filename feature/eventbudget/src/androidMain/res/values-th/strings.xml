@@ -20,9 +20,11 @@
 <string name="event_delete_confirm">ลบ</string>
 <string name="event_edit_title">แก้ไขกิจกรรม</string>
 <string name="events_eyebrow">ติดตามงบประมาณ</string>
-<string name="events_title">งบประมาณ</string>
-<string name="event_new">กิจกรรมใหม่</string>
+<string name="events_title">กิจกรรม</string>
+<string name="event_new">ใหม่</string>
 <string name="events_back">กิจกรรม</string>
+<string name="events_active_count">%1$d ที่ใช้งานอยู่</string>
+<string name="events_over_budget_count">%1$d เกินงบ</string>
 <string name="event_empty_heading">ไม่มีกิจกรรมที่ใช้งานอยู่</string>
 <string name="event_empty_body">ตั้งงบประมาณสำหรับทริป งานแต่งงาน หรืองานปาร์ตี้ — แล้วแท็กรายจ่ายเพื่อติดตามแบบเรียลไทม์</string>
 <string name="event_create_cta">สร้างกิจกรรม</string>

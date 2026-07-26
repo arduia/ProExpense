@@ -20,9 +20,11 @@
 <string name="event_delete_confirm">ဖျက်ရန်</string>
 <string name="event_edit_title">ပွဲ ပြင်ဆင်ရန်</string>
 <string name="events_eyebrow">ဘတ်ဂျက်ခြေရာခံခြင်း</string>
-<string name="events_title">ဘတ်ဂျက်</string>
-<string name="event_new">ပွဲအသစ်</string>
+<string name="events_title">ပွဲများ</string>
+<string name="event_new">အသစ်</string>
 <string name="events_back">ပွဲများ</string>
+<string name="events_active_count">%1$d ဆောင်ရွက်ဆဲ</string>
+<string name="events_over_budget_count">%1$d ဘတ်ဂျက်ကျော်</string>
 <string name="event_empty_heading">ဆောင်ရွက်ဆဲပွဲ မရှိပါ</string>
 <string name="event_empty_body">ခရီးစဉ်၊ မင်္ဂလာဆောင် သို့မဟုတ် ပါတီအတွက် ဘတ်ဂျက်သတ်မှတ်ပြီး — ချက်ချင်းခြေရာခံရန် အသုံးစရိတ်များကို တဂ်တပ်ပါ။</string>
 <string name="event_create_cta">ပွဲဖန်တီးရန်</string>

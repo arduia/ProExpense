@@ -48,7 +48,7 @@ class EventDuplicateNameTest {
             }
         }
 
-        rule.onNodeWithText("New goal").performClick()
+        rule.onNodeWithText("New").performClick()
         rule.onAllNodes(hasSetTextAction())[0].performTextInput("  bali trip  ")
 
         rule.onNodeWithText("An event with this name already exists").assertIsDisplayed()
