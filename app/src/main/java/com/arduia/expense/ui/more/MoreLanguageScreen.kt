@@ -19,9 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.AppLanguage
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -52,7 +52,11 @@ fun MoreLanguageScreen(
                     .padding(horizontal = dimens.screenPadding)
                     .padding(bottom = dimens.space24),
         ) {
-            ProTopBar(title = stringResource(R.string.more_language), onBack = onBack)
+            ProFlatHeader(
+                title = stringResource(R.string.more_language),
+                onBack = onBack,
+                modifier = Modifier.padding(vertical = dimens.space14),
+            )
 
             Column(
                 modifier =
@@ -62,31 +66,45 @@ fun MoreLanguageScreen(
                 verticalArrangement = Arrangement.spacedBy(dimens.space8),
             ) {
                 AppLanguage.entries.forEach { language ->
-                    val selected = language == selectedLanguage
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clip(ProExpenseTheme.shapes.searchField)
-                                .background(if (selected) colors.primarySoft else colors.surface)
-                                .proClickable(
-                                    onClick = { onSelect(language) },
-                                    shape = ProExpenseTheme.shapes.searchField,
-                                ).padding(horizontal = dimens.space14, vertical = dimens.space14),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Text(text = language.displayName, style = typography.bodySemiBold, color = colors.onSurface)
-                        if (selected) {
-                            ProIcon(
-                                glyph = ProIconGlyph.Check,
-                                contentDescription = null,
-                                tint = colors.primary,
-                            )
-                        }
-                    }
+                    MoreLanguageRow(
+                        language = language,
+                        selected = language == selectedLanguage,
+                        onClick = { onSelect(language) },
+                    )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun MoreLanguageRow(
+    language: AppLanguage,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.searchField)
+                .background(if (selected) colors.primarySoft else colors.surface)
+                .proClickable(onClick = onClick, shape = ProExpenseTheme.shapes.searchField)
+                .padding(horizontal = dimens.space14, vertical = dimens.space14),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(text = language.displayName, style = typography.bodySemiBold, color = colors.onSurface)
+        if (selected) {
+            ProIcon(
+                glyph = ProIconGlyph.Check,
+                contentDescription = null,
+                tint = colors.primary,
+            )
         }
     }
 }
@@ -100,6 +118,23 @@ fun MoreLanguageScreen(
 @Composable
 private fun MoreLanguageScreenPreview() {
     ProExpenseTheme {
+        MoreLanguageScreen(
+            selectedLanguage = AppLanguage.ENGLISH,
+            onSelect = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — language (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreLanguageScreenDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         MoreLanguageScreen(
             selectedLanguage = AppLanguage.ENGLISH,
             onSelect = {},

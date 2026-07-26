@@ -152,6 +152,16 @@ class MoreScreenshotTest {
         }
 
     @Test
+    fun more_default_category_dark() =
+        capture(darkTheme = true) {
+            MoreDefaultCategoryScreen(
+                selectedCategoryId = "food",
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
     fun more_currency() =
         capture {
             MoreCurrencyScreen(
@@ -178,6 +188,36 @@ class MoreScreenshotTest {
         capture {
             MoreLanguageScreen(
                 selectedLanguage = com.arduia.expense.ui.design.AppLanguage.ENGLISH,
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_language_dark() =
+        capture(darkTheme = true) {
+            MoreLanguageScreen(
+                selectedLanguage = com.arduia.expense.ui.design.AppLanguage.ENGLISH,
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_theme() =
+        capture {
+            MoreThemeScreen(
+                selectedMode = com.arduia.expense.data.ThemeMode.SYSTEM,
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_theme_dark() =
+        capture(darkTheme = true) {
+            MoreThemeScreen(
+                selectedMode = com.arduia.expense.data.ThemeMode.SYSTEM,
                 onSelect = {},
                 onBack = {},
             )
@@ -307,6 +347,17 @@ class MoreScreenshotTest {
     @Test
     fun more_budget_empty() =
         capture {
+            MoreBudgetScreen(
+                currentAmount = null,
+                homeCurrency = CurrencyCode("USD"),
+                onSave = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_budget_empty_dark() =
+        capture(darkTheme = true) {
             MoreBudgetScreen(
                 currentAmount = null,
                 homeCurrency = CurrencyCode("USD"),
