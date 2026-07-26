@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Canvas render</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#0c1220;}
+  #root{display:flex;align-items:flex-start;justify-content:flex-start;}
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="node_modules/react/umd/react.development.js"></script>
+  <script src="node_modules/react-dom/umd/react-dom.development.js"></script>
+  <script src="node_modules/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" src="proto-ui.jsx"></script>
+  <script type="text/babel" src="variant-blue-services.jsx"></script>
+  <script type="text/babel" src="variant-blue-edgecases.jsx"></script>
+  <script type="text/babel" src="variant-blue-app.jsx"></script>
+  <script type="text/babel">
+    // ?component=VBBudget&theme=light&group=base|services|edge
+    // group base -> L/D (variant-blue-app.jsx components), services -> LS/DS
+    // (variant-blue-services.jsx), edge -> LE/DE (variant-blue-edgecases.jsx).
+    const params = new URLSearchParams(location.search);
+    const component = params.get('component') || 'VBHomeSpendTrip';
+    const theme = params.get('theme') || 'light';
+    const group = params.get('group') || 'base';
+    const registries = {
+      base: theme === 'dark' ? D : L,
+      services: theme === 'dark' ? DS : LS,
+      edge: theme === 'dark' ? DE : LE,
+    };
+    const Comp = registries[group] && registries[group][component];
+    if (!Comp) {
+      document.getElementById('root').textContent =
+        'Unknown component "' + component + '" in group "' + group + '" (theme ' + theme + ')';
+    } else {
+      ReactDOM.createRoot(document.getElementById('root')).render(<Comp />);
+    }
+  </script>
+</body>
+</html>

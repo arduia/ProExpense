@@ -269,6 +269,26 @@ This script:
   note the choice in the plan; this is a general UI/UX check, not limited to any one kind of
   defect.
 
+### Step 3.1 — Visual verification against the design canvas (mandatory for canvas-fidelity work)
+
+**Gate:** When the task is to match, audit, or fix fidelity against the Blue Banking design
+canvas specifically (not general UI/UX quality — that's Step 3's `compose-product-auditor` gate
+above) — the comparison is against an actual rendered screenshot of the canvas source, not just
+literal JSX/CSS values, and not a screenshot already sitting in the canvas project's own
+`screenshots/`/`design-system-spec/` folders (those can be stale from a pre-Blue-Banking
+iteration — confirmed once; don't trust them without checking what they actually show).
+
+**Else:** Use `scripts/canvas-render/` (see its README.md) to render the real canvas component
+with React/Babel and screenshot it, then compare directly against the matching Roborazzi PNG.
+Token/CSS-value comparison alone catches spacing drift but misses layout-level differences that
+only show up rendered — e.g. a card meant to float up into the header on canvas but sitting
+flush in the implementation is invisible in a values diff, obvious in a rendered one. When
+picking which canvas component to render, use `variant-blue-app.jsx`'s own
+`VariantBlueApp`/`<DCArtboard>` tree as the source of truth for which variant is actually
+adopted — the file defines unused alternate variants alongside the wired ones (e.g.
+`VBHomeClassic`/`VBCardCasual` exist in source but only `VBHomeSpendTrip`/`VBCardSpendTrip` is
+in the artboard tree, i.e. actually shipped in the canvas).
+
 ### Step 4 — Write Tests First (TDD)
 
 **Gate:** Tests cover this change's rules 1-to-1 (or UI-only with appropriate UI test).
@@ -368,6 +388,10 @@ resolving a lint failure, add a row there if the rule/situation isn't already co
    affordance). State the audit's finding in-session (clean, or defects found + fixed) before
    moving to Step 7 — don't silently skip the pass. Treat any finding this pass surfaces as a
    required fix before push, not a follow-up task.
+5. **Canvas-fidelity work only:** re-run the Step 3.1 render-and-compare against
+   `scripts/canvas-render/` on the fixed screen and confirm visually, not just by re-reading the
+   token values that were changed — a token fix can be numerically correct and still not be the
+   layout-level thing the canvas actually shows.
 
 **Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
 
@@ -913,6 +937,7 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
 | `.agents/skills/compose-product-auditor/` | Step 3, twice — planning advisory pass + pre-push visual-verification Compose product/UX auditor |
+| `scripts/canvas-render/` | Step 3.1 / Step 6 gate 5 — renders a real canvas component (React/Babel) for direct screenshot comparison against Roborazzi output, instead of relying on token-value diffs or stale pre-rendered assets in the canvas project. See its `README.md`. |
 | `.agents/skills/kotlin-lint-style/` | ktlint formatting rules + detekt baseline regeneration workflow |
 | `.agents/skills/kotlin-lint-style/lint-retrospective.md` | Append-only lookup table of ktlint/detekt/Android-lint findings hit before, keyed by rule ID, with the fix that applied — check before diagnosing, append after resolving |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |
