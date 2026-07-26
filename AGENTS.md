@@ -195,7 +195,8 @@ Do not implement spec-backed UI from memory or general Compose knowledge alone.
 If no entry exists in `design-system-spec/screens/`, add or extend the spec before implementing.
 
 **Push is blocked** for spec-driven UI until the skill’s per-screen checklist is satisfied
-(previews, Roborazzi baselines, `verifyAll`, tokenized styling — see skill body).
+(previews, Roborazzi baselines, `verifyAll`, tokenized styling — see skill body) **and** Step 3.1's
+canvas render-and-compare has been run and passed.
 
 ### Step 2.5 — Confirm External APIs
 
@@ -269,14 +270,18 @@ This script:
   note the choice in the plan; this is a general UI/UX check, not limited to any one kind of
   defect.
 
-### Step 3.1 — Visual verification against the design canvas (mandatory for canvas-fidelity work)
+### Step 3.1 — Visual verification against the design canvas (mandatory for every canvas-sourced UI implementation)
 
-**Gate:** When the task is to match, audit, or fix fidelity against the Blue Banking design
-canvas specifically (not general UI/UX quality — that's Step 3's `compose-product-auditor` gate
-above) — the comparison is against an actual rendered screenshot of the canvas source, not just
-literal JSX/CSS values, and not a screenshot already sitting in the canvas project's own
-`screenshots/`/`design-system-spec/` folders (those can be stale from a pre-Blue-Banking
-iteration — confirmed once; don't trust them without checking what they actually show).
+**Gate:** The Blue Banking canvas (`variant-blue-*.jsx`, see Key File Locations) is the adopted
+design system for this whole app — not a reference consulted only when someone explicitly asks
+for a "fidelity audit." **Any** implementation or change of a screen/component that has a canvas
+counterpart — a new spec-driven build (Step 2.1), a restyle, a bug fix that touches layout, or an
+explicit alignment/audit task — is verified against an actual **rendered screenshot** of the
+canvas source, not literal JSX/CSS values alone, and not a screenshot already sitting in the
+canvas project's own `screenshots/`/`design-system-spec/` folders (those can be stale from a
+pre-Blue-Banking iteration — confirmed once; don't trust them without checking what they
+actually show). This applies whether or not the user names "the canvas" explicitly — if the
+screen has a `variant-blue-*.jsx` counterpart, this gate applies.
 
 **Else:** Use `scripts/canvas-render/` (see its README.md) to render the real canvas component
 with React/Babel and screenshot it, then compare directly against the matching Roborazzi PNG.
@@ -287,7 +292,9 @@ picking which canvas component to render, use `variant-blue-app.jsx`'s own
 `VariantBlueApp`/`<DCArtboard>` tree as the source of truth for which variant is actually
 adopted — the file defines unused alternate variants alongside the wired ones (e.g.
 `VBHomeClassic`/`VBCardCasual` exist in source but only `VBHomeSpendTrip`/`VBCardSpendTrip` is
-in the artboard tree, i.e. actually shipped in the canvas).
+in the artboard tree, i.e. actually shipped in the canvas). State the render-and-compare result
+explicitly (clean, or defects found + fixed) — the same standard as the `compose-product-auditor`
+pass; don't silently skip it or substitute a values-only comparison.
 
 ### Step 4 — Write Tests First (TDD)
 
@@ -388,8 +395,8 @@ resolving a lint failure, add a row there if the rule/situation isn't already co
    affordance). State the audit's finding in-session (clean, or defects found + fixed) before
    moving to Step 7 — don't silently skip the pass. Treat any finding this pass surfaces as a
    required fix before push, not a follow-up task.
-5. **Canvas-fidelity work only:** re-run the Step 3.1 render-and-compare against
-   `scripts/canvas-render/` on the fixed screen and confirm visually, not just by re-reading the
+5. **Any screen with a canvas counterpart:** re-run the Step 3.1 render-and-compare against
+   `scripts/canvas-render/` on the changed screen and confirm visually, not just by re-reading the
    token values that were changed — a token fix can be numerically correct and still not be the
    layout-level thing the canvas actually shows.
 
