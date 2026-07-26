@@ -39,7 +39,7 @@ import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -136,10 +136,12 @@ fun SharedCostsInputScreen(
                     .weight(1f)
                     .verticalScroll(rememberScrollState()),
         ) {
-            ProTopBar(
+            ProFlatHeader(
                 title = stringResource(R.string.shared_costs_title),
+                eyebrow = stringResource(R.string.shared_bill_splitter),
                 onBack = onBack,
-                backLabel = stringResource(R.string.shared_back_more),
+                backContentDescription = stringResource(R.string.shared_back_more),
+                modifier = Modifier.padding(vertical = dimens.space14),
             )
 
             val editAmountDescription = stringResource(R.string.shared_edit_amount_cd)
@@ -271,6 +273,30 @@ fun SharedCostsInputScreen(
 @Composable
 private fun SharedCostsInputEqualPreview() {
     ProExpenseTheme {
+        SharedCostsInputScreen(
+            state = previewSharedInputEqual,
+            onBack = {},
+            onKey = {},
+            onBackspace = {},
+            onNoteChange = {},
+            onDecrementPeople = {},
+            onIncrementPeople = {},
+            onModeSelected = {},
+            onContinue = {},
+            showKeypad = false,
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — input equal (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsInputEqualDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         SharedCostsInputScreen(
             state = previewSharedInputEqual,
             onBack = {},

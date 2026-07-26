@@ -83,6 +83,24 @@ class SharedCostsScreenshotTest {
     }
 
     @Test
+    fun shared_input_dark() {
+        capture(darkTheme = true) {
+            SharedCostsInputScreen(
+                state = previewSharedInputEqual,
+                onBack = {},
+                onKey = {},
+                onBackspace = {},
+                onNoteChange = {},
+                onDecrementPeople = {},
+                onIncrementPeople = {},
+                onModeSelected = {},
+                onContinue = {},
+                showKeypad = false,
+            )
+        }
+    }
+
+    @Test
     fun shared_input_confirmed() {
         capture {
             SharedCostsInputScreen(
