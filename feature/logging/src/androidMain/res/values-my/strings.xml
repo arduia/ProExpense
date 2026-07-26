@@ -4,7 +4,6 @@
     <string name="new_expense">အသုံးစရိတ်အသစ်</string>
     <string name="new_income">ဝင်ငွေအသစ်</string>
     <string name="details">အသေးစိတ်</string>
-    <string name="close_action">ပိတ်ရန်</string>
     <string name="amount_step">ပမာဏ</string>
     <string name="save_expense">အသုံးစရိတ် သိမ်းရန် · %1$s</string>
     <string name="next_with_chevron">ရှေ့သို့ ></string>

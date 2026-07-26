@@ -8,6 +8,7 @@
     <string name="shared_split_even">หารเท่ากัน</string>
     <string name="shared_split_custom">หารแบบกำหนดเอง</string>
     <string name="shared_bill_splitter">เครื่องมือหารบิล</string>
+    <string name="shared_expenses_eyebrow">ค่าใช้จ่ายร่วม</string>
     <string name="shared_costs_heading">หารค่าใช้จ่าย</string>
     <string name="shared_new_split">การหารใหม่</string>
     <string name="shared_recent_splits">การหารล่าสุด</string>

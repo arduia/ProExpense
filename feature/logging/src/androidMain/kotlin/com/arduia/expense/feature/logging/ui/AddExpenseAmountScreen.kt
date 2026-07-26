@@ -22,10 +22,11 @@ import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.CategoryPicker
 import com.arduia.expense.ui.design.NumericKeypad
-import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
+import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProTopBarAction
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
@@ -61,15 +62,12 @@ fun AddExpenseAmountScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        ProFlatHeader(
+        ProTopBar(
             title = stringResource(titleRes),
-            onBack = onClose,
-            backContentDescription = stringResource(R.string.close_action),
-            leadingGlyph = ProIconGlyph.Close,
-            modifier =
-                Modifier
-                    .padding(horizontal = dimens.screenPadding)
-                    .padding(vertical = dimens.space14),
+            onBack = null,
+            action = ProTopBarAction.Close,
+            onAction = onClose,
+            modifier = Modifier.padding(horizontal = dimens.screenPadding),
         )
 
         AmountDisplay(

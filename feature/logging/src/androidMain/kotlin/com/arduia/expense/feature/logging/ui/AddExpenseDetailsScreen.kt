@@ -44,9 +44,9 @@ import com.arduia.expense.ui.design.NOTE_INPUT_MAX_LENGTH
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
-import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.TagLinkOption
 import com.arduia.expense.ui.design.TagPickerContent
 import com.arduia.expense.ui.design.currencySymbol
@@ -108,11 +108,10 @@ fun AddExpenseDetailsScreen(
                     .padding(bottom = dimens.space18),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            ProFlatHeader(
+            ProTopBar(
                 title = stringResource(R.string.details),
                 onBack = onBackToAmount,
-                backContentDescription = stringResource(R.string.amount_step),
-                modifier = Modifier.padding(vertical = dimens.space14),
+                backLabel = stringResource(R.string.amount_step),
             )
 
             DetailAmountSummaryCard(

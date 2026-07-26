@@ -101,7 +101,7 @@ fun SharedCostsSummaryScreen(
     ) {
         ProFlatHeader(
             title = stringResource(R.string.shared_summary_title),
-            eyebrow = stringResource(R.string.shared_bill_splitter),
+            eyebrow = stringResource(R.string.shared_expenses_eyebrow),
             onBack = onBack,
             backContentDescription = backLabel,
             modifier = Modifier.padding(vertical = dimens.space14),

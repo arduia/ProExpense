@@ -138,7 +138,7 @@ fun SharedCostsInputScreen(
         ) {
             ProFlatHeader(
                 title = stringResource(R.string.shared_costs_title),
-                eyebrow = stringResource(R.string.shared_bill_splitter),
+                eyebrow = stringResource(R.string.shared_expenses_eyebrow),
                 onBack = onBack,
                 backContentDescription = stringResource(R.string.shared_back_more),
                 modifier = Modifier.padding(vertical = dimens.space14),

@@ -1,7 +1,7 @@
 <resources>
     <string name="more_back">More</string>
     <string name="more_export_title">Data Export</string>
-    <string name="more_export_eyebrow">Backup &amp; Share</string>
+    <string name="more_export_eyebrow">More</string>
     <string name="more_export_heading">Export your data</string>
     <string name="more_export_subtitle">One zip with a CSV per feature. Everything stays on your device — nothing is uploaded.</string>
     <string name="more_export_subtitle_json">A single JSON file with all your expenses. Everything stays on your device — nothing is uploaded.</string>
@@ -15,7 +15,7 @@
     <string name="more_export_password_placeholder">Password (optional)</string>
     <string name="more_export_password_hint">Add a password to encrypt the zip. You\'ll need it to import this backup later.</string>
     <string name="more_import_title">Data Import</string>
-    <string name="more_import_eyebrow">Restore Your Data</string>
+    <string name="more_import_eyebrow">More</string>
     <string name="more_import_heading">Import from a backup</string>
     <string name="more_import_subtitle">Choose a CSV, JSON, or exported ZIP file from Pro Expense. Records are read from this device only — nothing is uploaded.</string>
     <string name="more_import_choose_file">Choose file…</string>
@@ -28,7 +28,7 @@
     <string name="more_import_password_wrong">Wrong password. Try again.</string>
     <string name="more_import_unlock">Unlock</string>
     <string name="more_clear_title">Clear Data</string>
-    <string name="more_clear_eyebrow">Danger Zone</string>
+    <string name="more_clear_eyebrow">More</string>
     <string name="more_clear_subtitle">Choose what to wipe. Each clear asks for confirmation and can\'t be undone.</string>
     <string name="more_clear_action">Clear selected…</string>
     <string name="more_clear_confirm_title">Clear selected data?</string>

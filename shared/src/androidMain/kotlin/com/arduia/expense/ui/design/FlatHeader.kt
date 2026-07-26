@@ -37,9 +37,6 @@ fun ProFlatHeader(
     // context-specific destination (a deep-linked Journal/Home entry point) can override this to
     // announce that destination — see SharedCostsSummaryScreen — since the icon alone can't.
     backContentDescription: String? = null,
-    // A flow's entry screen (e.g. AddExpenseAmountScreen) dismisses rather than navigates back —
-    // swap to ProIconGlyph.Close there so the icon matches what the button actually does.
-    leadingGlyph: ProIconGlyph = ProIconGlyph.Back,
     trailing: (@Composable () -> Unit)? = null,
     content: (@Composable () -> Unit)? = null,
 ) {
@@ -71,7 +68,7 @@ fun ProFlatHeader(
                         contentAlignment = Alignment.Center,
                     ) {
                         ProIcon(
-                            glyph = leadingGlyph,
+                            glyph = ProIconGlyph.Back,
                             contentDescription = backContentDescription ?: stringResource(R.string.back),
                             tint = colors.onSurfaceVariant,
                             size = dimens.iconInline,
