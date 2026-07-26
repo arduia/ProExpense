@@ -81,7 +81,9 @@ fun EventBudgetListScreen(
                     ) {
                         Column(
                             modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(dimens.space8),
+                            // space2, not space8 — matches the canvas VBHeader's marginTop:2
+                            // between eyebrow and title (Home's HeroGreeting already got this right).
+                            verticalArrangement = Arrangement.spacedBy(dimens.space2),
                         ) {
                             Text(
                                 text = stringResource(R.string.events_eyebrow),

@@ -107,7 +107,9 @@ private fun MoreHeaderContent(
     val typography = ProExpenseTheme.typography
 
     Column(modifier = modifier) {
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+        // space2, not space8 — matches the canvas VBHeader's marginTop:2 between eyebrow and
+        // title (Home's HeroGreeting already got this right; Journal/More/Budget didn't).
+        Column(verticalArrangement = Arrangement.spacedBy(dimens.space2)) {
             Text(
                 text = stringResource(R.string.more_eyebrow),
                 style = typography.eyebrow,

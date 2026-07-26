@@ -109,7 +109,9 @@ fun JournalListScreen(
         Column(modifier = Modifier.fillMaxSize()) {
             ProGradientHeader {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
-                    Column(verticalArrangement = Arrangement.spacedBy(dimens.space8)) {
+                    // space2, not space8 — matches the canvas VBHeader's marginTop:2 between
+                    // eyebrow and title (Home's HeroGreeting already got this right).
+                    Column(verticalArrangement = Arrangement.spacedBy(dimens.space2)) {
                         if (!state.searchActive) {
                             Text(
                                 text = stringResource(R.string.journal_eyebrow),

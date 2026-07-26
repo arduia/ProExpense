@@ -299,7 +299,8 @@ private fun HomeHeader(
                     prefix = greetingPrefix,
                     prefixColor = Color.White,
                     emphasisColor = Color.White,
-                    modifier = Modifier.padding(top = dimens.space4),
+                    // space2 — matches the canvas VBHeader's marginTop:2 between eyebrow and title.
+                    modifier = Modifier.padding(top = dimens.space2),
                 )
             }
         }
