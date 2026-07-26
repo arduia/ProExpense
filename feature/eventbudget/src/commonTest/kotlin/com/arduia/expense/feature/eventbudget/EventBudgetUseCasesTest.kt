@@ -393,3 +393,60 @@ class IsEventReadOnlyTest {
         assertTrue(isEventReadOnly(EventStatus.CLOSED, closedAtEpochMillis = null, nowEpochMillis = 0L))
     }
 }
+
+private fun statusEvent(
+    id: String,
+    status: EventStatus,
+) = Event(
+    id = EventId(id),
+    name = id,
+    startEpochMillis = 100,
+    endEpochMillis = 200,
+    budget = Money(Amount(10_00), CurrencyCode("USD")),
+    status = status,
+)
+
+/** US-EVT-2 Scenario 4. */
+class VisibleBudgetListEventsTest {
+    @Test
+    fun excludesArchivedEventsButKeepsActiveAndClosed() {
+        val events =
+            listOf(
+                statusEvent("active", EventStatus.ACTIVE),
+                statusEvent("closed", EventStatus.CLOSED),
+                statusEvent("archived", EventStatus.ARCHIVED),
+            )
+
+        val visible = visibleBudgetListEvents(events)
+
+        assertEquals(listOf("active", "closed"), visible.map { it.id.value })
+    }
+
+    @Test
+    fun emptyListStaysEmpty() {
+        assertEquals(emptyList(), visibleBudgetListEvents(emptyList()))
+    }
+}
+
+/** US-EVT-2 Scenario 4. */
+class ActiveEventCountTest {
+    @Test
+    fun countsOnlyActiveEvents() {
+        val events =
+            listOf(
+                statusEvent("a1", EventStatus.ACTIVE),
+                statusEvent("a2", EventStatus.ACTIVE),
+                statusEvent("c1", EventStatus.CLOSED),
+                statusEvent("ar1", EventStatus.ARCHIVED),
+            )
+
+        assertEquals(2, activeEventCount(events))
+    }
+
+    @Test
+    fun zeroWhenNoActiveEvents() {
+        val events = listOf(statusEvent("c1", EventStatus.CLOSED), statusEvent("ar1", EventStatus.ARCHIVED))
+
+        assertEquals(0, activeEventCount(events))
+    }
+}

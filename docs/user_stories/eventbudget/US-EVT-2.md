@@ -83,6 +83,24 @@ active, Home's contextual header picks the most recently created one to avoid am
 
 * The header shows the most recently created one.
 
+### Scenario 4 — Archived events leave the list
+
+**Given**
+
+* An event has been archived.
+
+**When**
+
+* I view the Budget list.
+
+**Then**
+
+* The archived event does not appear in the list, and is not counted in the header's "active" or
+  "over budget" counts. Closed events remain visible in the list (unlike archived) but are also
+  excluded from the "active" count, since they're no longer actively tracked. Archiving does not
+  remove the event's data — its linked expenses still appear in Journal and Reports, and the event
+  stays reachable via any existing deep link into its own detail screen.
+
 ---
 
 ## Functional Requirements
@@ -90,6 +108,9 @@ active, Home's contextual header picks the most recently created one to avoid am
 * [ ] No limit on the number of concurrently active events (beyond reasonable device performance).
 * [ ] Each event card independently computes remaining = budget − linked spend.
 * [ ] Home's Active Event header selects the most recently created active event when more than one exists.
+* [ ] Archived events are excluded from the Budget list and from the header's active/over-budget counts.
+* [ ] Closed (but not archived) events remain visible in the Budget list but are excluded from the
+      "active" count.
 
 ---
 
@@ -132,3 +153,15 @@ active, Home's contextual header picks the most recently created one to avoid am
 
 Phase 2 per the PRD roadmap, but the screen exists in this build, so it's documented here for
 completeness.
+
+* **Gap fix (2026-07):** `ArchiveEventUseCase`'s own doc comment already said archiving "hides an
+  event from the active Budget list," and `event_archive_confirm_body` promised the same, but
+  nothing downstream actually filtered by `EventStatus` — `SqlDelightEventRepository.observeAll()`
+  has no status filter, and `EventBudgetFeatureEntry.EventsTab` mapped every `Event` straight into
+  a card with no exclusion. Archived events rendered as ordinary cards in the list. Fixed by
+  filtering `EventStatus.ARCHIVED` out of the list in `EventBudgetFeatureEntry` and computing the
+  header's active/over-budget counts from `EventStatus.ACTIVE` explicitly, passed down to
+  `EventBudgetListScreen`/`EventsFlow` as new `activeCount`/`overBudgetCount` parameters instead of
+  being derived from `events.size` inside the screen (which had no status information to filter
+  by). `details`/`editForms` still use the unfiltered event list, so an archived event stays
+  reachable via any existing deep link into its own detail screen.

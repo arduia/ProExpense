@@ -52,6 +52,11 @@ fun EventBudgetListScreen(
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
+    // Callers with real event status (closed events stay visible in `events` but aren't
+    // "active") must pass these explicitly rather than relying on the events.size fallback —
+    // see EventBudgetFeatureEntry, which is status-aware and excludes archived events upstream.
+    activeCount: Int = events.size,
+    overBudgetCount: Int = events.count { it.isOverBudget },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -93,8 +98,8 @@ fun EventBudgetListScreen(
                     }
                     if (!isLoading) {
                         EventStatusChipRow(
-                            activeCount = events.size,
-                            overBudgetCount = events.count { it.isOverBudget },
+                            activeCount = activeCount,
+                            overBudgetCount = overBudgetCount,
                         )
                     }
                 }
