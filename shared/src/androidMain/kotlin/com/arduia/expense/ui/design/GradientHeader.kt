@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -107,13 +106,19 @@ fun ProSheetSurface(
     // it shifts the sheet up over the header without shrinking the space this Column reports to
     // its own parent, leaving a few dp of same-colored (paper-on-paper) slack below. Acceptable
     // for a linear-flow layout; a pixel-exact overlap would need a custom Layout/Box overlay.
+    //
+    // background(color, shape) — not clip(shape).background(color) — deliberately: clip() also
+    // clips *content*, not just the background fill. Canvas's VBSheet sets border-radius without
+    // overflow:hidden, so a child floated further upward with its own negative offset (Home's
+    // spend card, marginTop:-30 on top of this -14 overlap) paints its own rounded corners over
+    // the header, unclipped. clip() here would flatten that child's top edge to a hard cut right
+    // at this Column's own top boundary — invisible floating, square instead of rounded corners.
     Column(
         modifier =
             modifier
                 .fillMaxWidth()
                 .offset(y = -overlap)
-                .clip(shapes.sheet)
-                .background(colors.paper)
+                .background(colors.paper, shapes.sheet)
                 .padding(horizontal = dimens.screenPadding, vertical = dimens.space16),
         content = content,
     )

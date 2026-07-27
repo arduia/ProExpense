@@ -290,7 +290,11 @@ private fun HomeHeader(
         }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        // Canvas gives Home's header extra bottom padding (58px vs the ~16-24px other flat/
+        // gradient headers use) specifically to reserve room for the spend card floating up into
+        // it — without this, the card's -30dp float (below) lands on top of this greeting text
+        // instead of leaving a gap beneath it.
+        modifier = modifier.fillMaxWidth().padding(bottom = dimens.space26),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
     ) {
