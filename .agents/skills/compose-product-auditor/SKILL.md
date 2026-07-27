@@ -125,6 +125,19 @@ Walk every dimension. For each, the question is "what happens to the user when�
   swipe edge-to-edge — an inset pager viewport (e.g. the pager sits inside a parent's horizontal padding)
   shows side padding mid-swipe. Keep the pager full-width and pad the page **content**, not the pager.
   Check drag, fling, and overscroll edges too.
+- **Floated/overlapping elements keep their own shape (zoom in, don't eyeball the whole screen).** Any
+  element deliberately positioned outside its normal flow via a negative `offset()` to overlap a sibling
+  or a parent's edge (a card floating up into a header, a badge overlapping a corner) must be checked for
+  whether an ancestor's `Modifier.clip(shape)` is silently cutting off the overflowing part. `clip()`
+  clips *all descendant painting*, not just the background fill — a rounded corner painted outside the
+  ancestor's own clipped bounds renders as a hard flat cut instead of a curve, even though the element's
+  own code clips it to a rounded shape. This is invisible at whole-screen zoom (three matching sides plus
+  correct color/position/shadow read as "close enough") — it only shows up cropped in tight on the exact
+  overlap edge. Check every element with a deliberate negative offset this way. Fix: if nothing else in
+  that ancestor needs clipping, swap `.clip(shape).background(color)` for `.background(color, shape)`
+  (shapes the fill without clipping children); otherwise move the floated element outside the clipped
+  container (e.g. a `Box` overlay) instead. Real example: Home's spend card floating into
+  `ProGradientHeader` lost its top corner radius to `ProSheetSurface`'s `clip()` this way.
 
 ### 10. Sensitive data & security UI (apply when the screen handles PII, credentials, or payments)
 - Secure input where required (password/PIN masking, `KeyboardType` correct, no autofill leaks of secrets).
