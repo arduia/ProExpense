@@ -394,7 +394,7 @@ private fun MonthSpendCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = tagLeadingCurrency(monthSpend, colors.tag),
+                text = tagLeadingCurrency(monthSpend, colors.tag, typography.summaryAmount.fontSize),
                 style = typography.summaryAmount,
                 color = colors.onSurface,
             )
@@ -449,17 +449,18 @@ private fun MonthSpendCard(
     }
 }
 
-// Canvas colors just the leading currency symbol (tag/gold) on Home's hero amounts, leaving the
-// digits in the default ink color — a non-digit leading character is assumed to be the symbol.
+// Canvas shrinks the leading currency symbol (tag/gold) to roughly half the digit size on Home's
+// hero amounts, leaving the digits in the default ink color — a non-digit leading character is
+// assumed to be the symbol.
 private fun tagLeadingCurrency(
     amount: String,
     tagColor: Color,
+    baseFontSize: androidx.compose.ui.unit.TextUnit,
 ): androidx.compose.ui.text.AnnotatedString =
     androidx.compose.ui.text.buildAnnotatedString {
         if (amount.isNotEmpty() && !amount[0].isDigit()) {
             withStyle(
-                androidx.compose.ui.text
-                    .SpanStyle(color = tagColor),
+                SpanStyle(color = tagColor, fontSize = baseFontSize * CURRENCY_SYMBOL_SCALE),
             ) { append(amount[0]) }
             append(amount.substring(1))
         } else {
@@ -471,6 +472,10 @@ private val HomeEventIconSize = 28.dp
 private val HomeEventIconShape = RoundedCornerShape(9.dp)
 private val HomeEventBarHeight = 6.dp
 private const val PERCENT_SCALE = 100
+
+// Canvas's own $-to-digit size ratios: MonthSpendCard 21/40≈0.53, event card 14/22≈0.64 — this
+// splits the difference as one shared token rather than two untethered one-off sp values.
+private const val CURRENCY_SYMBOL_SCALE = 0.55f
 
 private data class HomeEventAccent(
     val ink: Color,
@@ -600,7 +605,14 @@ private fun HomeEventAmountRow(
         Text(
             text =
                 buildAnnotatedString {
-                    withStyle(SpanStyle(color = accent.ink)) { append(event.spentLabel.take(1)) }
+                    withStyle(
+                        SpanStyle(
+                            color = accent.ink,
+                            fontSize = typography.cardAmount.fontSize * CURRENCY_SYMBOL_SCALE,
+                        ),
+                    ) {
+                        append(event.spentLabel.take(1))
+                    }
                     withStyle(
                         SpanStyle(
                             textDecoration = if (event.isOverBudget) TextDecoration.LineThrough else null,
@@ -619,7 +631,7 @@ private fun HomeEventAmountRow(
                         append(event.budgetLabel)
                     }
                 },
-            style = typography.detailsAmount,
+            style = typography.cardAmount,
             color = if (event.isOverBudget) colors.danger else colors.onSurface,
         )
         Text(

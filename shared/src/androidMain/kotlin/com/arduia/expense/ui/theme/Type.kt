@@ -110,6 +110,7 @@ data class ProTypography(
     val displayAmount: TextStyle,
     val summaryAmount: TextStyle,
     val detailsAmount: TextStyle,
+    val cardAmount: TextStyle,
     val listAmount: TextStyle,
     val appBarTitle: TextStyle,
     val heroGreeting: TextStyle,
@@ -167,6 +168,14 @@ val ProDefaultTypography =
             amountTextStyle(
                 fontSizeSp = 26f,
                 lineHeightSp = 28f,
+                letterSpacingEm = -0.01f,
+            ),
+        // Compact card amounts (Home's active-event card) — one step down from detailsAmount,
+        // matching canvas's VBCardSpendTrip inline amount (22sp).
+        cardAmount =
+            amountTextStyle(
+                fontSizeSp = 22f,
+                lineHeightSp = 24f,
                 letterSpacingEm = -0.01f,
             ),
         listAmount =
