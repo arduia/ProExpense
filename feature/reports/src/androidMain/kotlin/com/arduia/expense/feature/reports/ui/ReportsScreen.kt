@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -46,6 +45,7 @@ import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.proCardShadow
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -294,24 +294,13 @@ private fun ReportsDonutLegendCard(
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val cardShape = ProExpenseTheme.shapes.card
-    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
 
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
-                .then(
-                    if (cardElevation != null) {
-                        Modifier.shadow(
-                            elevation = cardElevation.blur,
-                            shape = cardShape,
-                            spotColor = cardElevation.color,
-                            ambientColor = cardElevation.color,
-                        )
-                    } else {
-                        Modifier
-                    },
-                ).clip(cardShape)
+                .proCardShadow(cardShape)
+                .clip(cardShape)
                 .border(BorderStroke(1.dp, colors.line), cardShape)
                 .background(colors.surface)
                 .padding(dimens.space18),

@@ -29,6 +29,11 @@ import com.arduia.expense.ui.theme.ProExpenseTheme
 @Composable
 fun ProGradientHeader(
     modifier: Modifier = Modifier,
+    // Canvas's VBHeader takes a per-screen `pb` (padding-bottom, default 20, e.g. More overrides
+    // to 26) rather than one fixed value — screens with more header content need more room below
+    // it before the sheet starts. Defaults to the plain top-padding value for screens that don't
+    // need extra room (matches the original fixed-padding behavior).
+    bottomPadding: Dp = ProExpenseTheme.dimensions.space16,
     content: @Composable () -> Unit,
 ) {
     val colors = ProExpenseTheme.colors
@@ -55,7 +60,8 @@ fun ProGradientHeader(
                         style = Stroke(width = 1.5.dp.toPx()),
                     )
                 }.statusBarsPadding()
-                .padding(horizontal = dimens.screenPadding, vertical = dimens.space16),
+                .padding(horizontal = dimens.screenPadding)
+                .padding(top = dimens.space16, bottom = bottomPadding),
     ) {
         content()
     }

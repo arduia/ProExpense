@@ -52,7 +52,9 @@ fun MoreHubScreen(
                 .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ProGradientHeader {
+            // canvas's VBHeader pb={26} override for More (vs the 20 default) — extra room below
+            // the profile card before the sheet starts.
+            ProGradientHeader(bottomPadding = dimens.space26) {
                 MoreHeaderContent(profile = state.profile)
             }
 

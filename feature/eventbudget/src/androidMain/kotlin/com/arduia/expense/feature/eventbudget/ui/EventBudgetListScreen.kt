@@ -72,7 +72,9 @@ fun EventBudgetListScreen(
                 .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ProGradientHeader {
+            // canvas's VBHeader default pb (20) — one step more than the header's own generic
+            // 16dp bottom padding, matching the status-chip row's extra breathing room below it.
+            ProGradientHeader(bottomPadding = dimens.space20) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
