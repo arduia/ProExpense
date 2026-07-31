@@ -42,4 +42,5 @@
     <string name="home_today_section">วันนี้</string>
     <string name="splash_footer_badge">ออฟไลน์ · ส่วนตัว · ไม่ต้องมีบัญชี</string>
     <string name="splash_version">v%1$s</string>
+    <string name="home_event_remaining_percent">%1$d%%</string>
 </resources>

@@ -152,6 +152,7 @@
     <string name="home_welcome_prefix">"Welcome, "</string>
     <string name="home_spend_this_month">Spent this month</string>
     <string name="home_spent_period">SPENT · %1$s</string>
+    <string name="home_event_remaining_percent">%1$d%%</string>
     <string name="home_date_header">WED · MAY 25</string>
     <string name="quick_access_section">QUICK ACCESS</string>
     <string name="customize">Customize</string>

@@ -12,6 +12,7 @@ data class ProShapes(
     val tile: Shape,
     val quickAccessChip: Shape,
     val card: Shape,
+    val heroCard: Shape,
     val identityCard: Shape,
     val sheet: Shape,
     val buttonSm: Shape,
@@ -33,6 +34,9 @@ val ProDefaultShapes =
         tile = RoundedCornerShape(14.dp),
         quickAccessChip = RoundedCornerShape(11.dp),
         card = RoundedCornerShape(16.dp),
+        // Home's floating hero cards (spend summary, active event) — canvas's vbCardBase uses
+        // 20dp, one size up from the generic 16dp card used everywhere else.
+        heroCard = RoundedCornerShape(20.dp),
         identityCard = RoundedCornerShape(20.dp),
         sheet = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp),
         buttonSm = RoundedCornerShape(10.dp),

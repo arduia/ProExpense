@@ -134,5 +134,6 @@
     <string name="repeat_entry">重复输入</string>
     <string name="splash_footer_badge">离线 · 隐私 · 无需账号</string>
     <string name="splash_version">v%1$s</string>
+    <string name="home_event_remaining_percent">%1$d%%</string>
 </resources>
 

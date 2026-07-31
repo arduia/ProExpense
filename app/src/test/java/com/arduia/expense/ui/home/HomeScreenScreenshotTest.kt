@@ -110,6 +110,18 @@ class HomeScreenScreenshotTest {
     }
 
     @Test
+    fun home_event_dark() {
+        captureHome(darkTheme = true) {
+            HomeShell(
+                state = previewHomeEvent,
+                selectedTab = HomeNavTab.Home,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+    }
+
+    @Test
     fun home_empty() {
         captureHome {
             HomeShell(

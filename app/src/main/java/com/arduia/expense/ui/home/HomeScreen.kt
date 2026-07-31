@@ -18,25 +18,29 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.DayGroup
 import com.arduia.expense.ui.design.EmptyStateContent
-import com.arduia.expense.ui.design.EventBudgetCard
-import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.HeroGreeting
 import com.arduia.expense.ui.design.NoticeBanner
 import com.arduia.expense.ui.design.ProGradientHeader
@@ -48,6 +52,7 @@ import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
+import com.arduia.expense.ui.preview.HomeActiveEventState
 import com.arduia.expense.ui.preview.HomeUiState
 import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
@@ -56,6 +61,7 @@ import com.arduia.expense.ui.preview.previewHomeEvent
 import com.arduia.expense.ui.preview.previewHomeLoading
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import kotlin.math.roundToInt
 
 private val HomeSpendCardFloat = 30.dp
 
@@ -238,23 +244,9 @@ private fun HomeHeaderContent(
                 )
 
                 state.activeEvent?.let { event ->
-                    val cardShape = ProExpenseTheme.shapes.card
-                    EventBudgetCard(
-                        state =
-                            EventBudgetCardState(
-                                id = event.eventId,
-                                title = event.title,
-                                dateRange = event.dateRange,
-                                spentLabel = event.spentLabel,
-                                budgetLabel = event.budgetLabel,
-                                progress = event.progress,
-                                isOverBudget = event.isOverBudget,
-                            ),
-                        modifier =
-                            Modifier.proClickable(
-                                onClick = { onActiveEventClick(event.eventId) },
-                                shape = cardShape,
-                            ),
+                    HomeActiveEventCard(
+                        event = event,
+                        onClick = { onActiveEventClick(event.eventId) },
                     )
                 }
             }
@@ -359,8 +351,8 @@ private fun MonthSpendCard(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val cardShape = ProExpenseTheme.shapes.card
-    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
+    val cardShape = ProExpenseTheme.shapes.heroCard
+    val cardElevation = ProExpenseTheme.elevation.heroCard.firstOrNull()
     val periodLabel =
         if (monthLabel.isNotBlank()) {
             stringResource(R.string.home_spent_period, monthLabel.uppercase())
@@ -402,7 +394,7 @@ private fun MonthSpendCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = monthSpend,
+                text = tagLeadingCurrency(monthSpend, colors.tag),
                 style = typography.summaryAmount,
                 color = colors.onSurface,
             )
@@ -454,6 +446,191 @@ private fun MonthSpendCard(
                 )
             }
         }
+    }
+}
+
+// Canvas colors just the leading currency symbol (tag/gold) on Home's hero amounts, leaving the
+// digits in the default ink color — a non-digit leading character is assumed to be the symbol.
+private fun tagLeadingCurrency(
+    amount: String,
+    tagColor: Color,
+): androidx.compose.ui.text.AnnotatedString =
+    androidx.compose.ui.text.buildAnnotatedString {
+        if (amount.isNotEmpty() && !amount[0].isDigit()) {
+            withStyle(
+                androidx.compose.ui.text
+                    .SpanStyle(color = tagColor),
+            ) { append(amount[0]) }
+            append(amount.substring(1))
+        } else {
+            append(amount)
+        }
+    }
+
+private val HomeEventIconSize = 28.dp
+private val HomeEventIconShape = RoundedCornerShape(9.dp)
+private val HomeEventBarHeight = 6.dp
+private const val PERCENT_SCALE = 100
+
+private data class HomeEventAccent(
+    val ink: Color,
+    val deep: Color,
+    val tint: Color,
+)
+
+// Home's floating event card is canvas's own `VBCardSpendTrip` — visually distinct from the
+// Events-list screen's `EventBudgetCard` (small @-tagged icon, tag/gold accent, inline "$X left
+// of $Y" caption, percent-remaining pill), not a reuse of that shared component.
+@Composable
+private fun HomeActiveEventCard(
+    event: HomeActiveEventState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val cardShape = ProExpenseTheme.shapes.heroCard
+    val cardElevation = ProExpenseTheme.elevation.heroCard.firstOrNull()
+    val accent =
+        if (event.isOverBudget) {
+            HomeEventAccent(colors.danger, colors.danger, colors.dangerTint)
+        } else {
+            HomeEventAccent(colors.tag, colors.tagDeep, colors.tagTint)
+        }
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (cardElevation != null) {
+                        Modifier.shadow(
+                            elevation = cardElevation.blur,
+                            shape = cardShape,
+                            spotColor = cardElevation.color,
+                            ambientColor = cardElevation.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).clip(cardShape)
+                .border(BorderStroke(1.dp, colors.line), cardShape)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = cardShape, scaleOnPress = false)
+                .padding(horizontal = dimens.space18, vertical = dimens.space16),
+        verticalArrangement = Arrangement.spacedBy(dimens.space12),
+    ) {
+        HomeEventHeaderRow(event = event, accent = accent)
+        HomeEventAmountRow(event = event, accent = accent)
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(HomeEventBarHeight)
+                    .clip(ProExpenseTheme.shapes.chip)
+                    .background(accent.tint),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(event.progress.coerceIn(0f, 1f))
+                        .height(HomeEventBarHeight)
+                        .clip(ProExpenseTheme.shapes.chip)
+                        .background(Brush.horizontalGradient(listOf(accent.ink, accent.deep)))
+                        .align(Alignment.CenterStart),
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeEventHeaderRow(
+    event: HomeActiveEventState,
+    accent: HomeEventAccent,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(HomeEventIconSize)
+                        .clip(HomeEventIconShape)
+                        .background(accent.tint),
+                contentAlignment = Alignment.Center,
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.At,
+                    contentDescription = null,
+                    tint = accent.ink,
+                    size = dimens.iconTag + dimens.space4,
+                )
+            }
+            Text(text = event.title, style = typography.bodySemiBold, color = colors.onSurface)
+        }
+        Text(text = event.dateRange.uppercase(), style = typography.eyebrow, color = colors.onSurfaceMuted)
+    }
+}
+
+@Composable
+private fun HomeEventAmountRow(
+    event: HomeActiveEventState,
+    accent: HomeEventAccent,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val remainingPercent = ((1f - event.progress.coerceIn(0f, 1f)) * PERCENT_SCALE).roundToInt()
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        Text(
+            text =
+                buildAnnotatedString {
+                    withStyle(SpanStyle(color = accent.ink)) { append(event.spentLabel.take(1)) }
+                    withStyle(
+                        SpanStyle(
+                            textDecoration = if (event.isOverBudget) TextDecoration.LineThrough else null,
+                        ),
+                    ) {
+                        append(event.spentLabel.drop(1))
+                    }
+                    append(' ')
+                    withStyle(
+                        SpanStyle(
+                            fontSize = typography.caption.fontSize,
+                            fontWeight = FontWeight.Medium,
+                            color = colors.onSurfaceMuted,
+                        ),
+                    ) {
+                        append(event.budgetLabel)
+                    }
+                },
+            style = typography.detailsAmount,
+            color = if (event.isOverBudget) colors.danger else colors.onSurface,
+        )
+        Text(
+            text = stringResource(R.string.home_event_remaining_percent, remainingPercent),
+            style = typography.eyebrow,
+            color = accent.deep,
+            modifier =
+                Modifier
+                    .background(accent.tint, ProExpenseTheme.shapes.chip)
+                    .padding(horizontal = dimens.space8, vertical = dimens.space4),
+        )
     }
 }
 
@@ -679,6 +856,25 @@ private fun HomeBudgetPreview() {
 @Composable
 private fun HomeEventPreview() {
     ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeEvent,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — event (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeEventDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         HomeScreenContent(
             state = previewHomeEvent,
             onReportsClick = {},

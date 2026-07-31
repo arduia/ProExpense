@@ -42,4 +42,5 @@
     <string name="home_today_section">ယနေ့</string>
     <string name="splash_footer_badge">အော့ဖ်လိုင်း · ကိုယ်ရေးကိုယ်တာ · အကောင့်မလို</string>
     <string name="splash_version">v%1$s</string>
+    <string name="home_event_remaining_percent">%1$d%%</string>
 </resources>

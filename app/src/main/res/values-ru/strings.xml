@@ -134,4 +134,5 @@
     <string name="repeat_entry">Повторить запись</string>
     <string name="splash_footer_badge">ОФЛАЙН · ПРИВАТНО · БЕЗ АККАУНТА</string>
     <string name="splash_version">v%1$s</string>
+    <string name="home_event_remaining_percent">%1$d%%</string>
 </resources>

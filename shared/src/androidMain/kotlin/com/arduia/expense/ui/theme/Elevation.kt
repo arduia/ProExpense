@@ -18,6 +18,7 @@ data class ProShadowLayer(
 @Immutable
 data class ProElevation(
     val card: List<ProShadowLayer>,
+    val heroCard: List<ProShadowLayer>,
     val identityCard: List<ProShadowLayer>,
     val sheet: List<ProShadowLayer>,
     val toast: List<ProShadowLayer>,
@@ -39,6 +40,12 @@ fun proElevation(colors: ProColors): ProElevation {
             listOf(
                 ProShadowLayer(0.dp, 1.dp, 0.dp, 0.dp, colors.cardShadowTint.copy(alpha = 0.03f)),
                 ProShadowLayer(0.dp, 6.dp, 16.dp, 0.dp, colors.cardShadowTint.copy(alpha = 0.06f)),
+            ),
+        // Home's floating hero cards (spend summary, active event) — canvas's vbCardBase shadow
+        // is a single soft, wide-blurred layer, notably heavier than the generic `card` shadow.
+        heroCard =
+            listOf(
+                ProShadowLayer(0.dp, 12.dp, 28.dp, 0.dp, colors.cardShadowTint.copy(alpha = 0.10f)),
             ),
         identityCard = heroShadow,
         sheet =
