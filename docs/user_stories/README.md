@@ -52,6 +52,7 @@ grounded in the screen behaviors and edge cases so they are testable.
 | [reports](reports/user-stories.md) | REP-1…4 | 12 Reports | Record History → Summary |
 | [auth](auth/user-stories.md) | AUTH-1…8 | 14 PIN Setup · 15 PIN Entry | Auth Setup (PIN) |
 | [importexport](importexport/user-stories.md) | IE-1…2 | 13 More → Data export | Secure Import & Export |
+| [sync](sync/user-stories.md) | SYNC-1…7 | 13 More → Google Drive Sync | Google Drive Cloud Sync (opt-in) |
 | [app-shell](app-shell/user-stories.md) | HOME-1…4 · MORE-1…4 | 03 Home · 13 More | Central hub / Foundation |
 
 ---
@@ -71,6 +72,7 @@ grounded in the screen behaviors and edge cases so they are testable.
 | reports | REP-1…4 | 4 | — |
 | auth | AUTH-1…8 | 7 | 1 |
 | importexport | IE-1…2 | 2 | (encryption planned) |
+| sync | SYNC-1…7 | 6 | (SYNC-7 🟡 Should) |
 | app-shell / settings | HOME-1…4, MORE-1…4 | 7 | 1 |
 
 > Stories trace to PRD use cases and the screen-spec user journey. Phase tags follow the PRD roadmap:

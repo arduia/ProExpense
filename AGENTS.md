@@ -48,13 +48,18 @@ Read **`docs/project_philosophy.md`** for beliefs, decision framework, and non-n
 
 - Quick manual logging · Multi-currency (basic, manual rates) · Record history
 - Shared costs · Secure import/export (CSV/JSON) · Auth setup (PIN)
-- Local storage only — no cloud sync in MVP
+- Local storage is the default and source of truth — Google Drive cloud sync (`feature:sync`) is
+  an opt-in addition, off until the user connects an account; see `docs/user_stories/sync/`
 
 **Product constraints (never violate for MVP):**
 
 - No bank or third-party integrations
-- No user accounts or server-side auth (PIN is local only)
-- No cloud sync or online backup in MVP
+- No server-side auth for the app itself (PIN is local only) — Google Sign-In is scoped narrowly
+  to Drive access for the opt-in sync feature below, not an app identity/login mechanism
+- Cloud sync (Google Drive, opt-in) is in scope as a manually-connected, off-by-default feature —
+  see `docs/user_stories/sync/`; nothing syncs until the user explicitly connects, so the app still
+  ships fully offline-capable and MVP's "no cloud sync" default experience is unchanged for anyone
+  who doesn't opt in
 - Data ownership — export/import supported; user owns their data
 - Max expense amount: 999,999,999.99
 
@@ -94,7 +99,8 @@ ProExpense/
 │   ├── history/                 Record History (MVP)
 │   ├── sharedcost/              Shared Costs (MVP)
 │   ├── auth/                    PIN Auth (MVP)
-│   └── importexport/            Import & Export (MVP)
+│   ├── importexport/            Import & Export (MVP)
+│   └── sync/                    Google Drive Cloud Sync (opt-in)
 └── iosApp/                      SwiftUI shell (future)
 ```
 
@@ -909,6 +915,7 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `docs/module_structure.md` | KMP module map and dependency rules |
 | `design-system-spec/` | **Authoritative screen specs** (markdown + PNGs + component specs + tokens) |
 | Claude Design project **"Pro Expense - Finance Tracker"** | Hi-Fi mockup canvas mirroring `design-system-spec/` — find it via the design-sync tool's project listing (matched by name, scoped to the maintainer's account); no link is committed here since this repo is public |
+| Claude Design project **"Pro Expense - Finance Tracker"** (canvas variant) | A second, same-named Claude Design project — regular canvas type, not the design-system project above, so it does **not** appear in the design-sync tool's project listing; only reachable via a maintainer-shared link. Holds exploratory Hi-Fi variants, including `Hi-Fi Variant - Blue Banking.html` (a blue-themed visual variant, `variant-blue-*.jsx` sources) — reference material only, not yet adopted into `design-system-spec/` or implemented in Compose; no link is committed here since this repo is public |
 | `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
 | `.agents/skills/compose-product-auditor/` | Step 3, twice — planning advisory pass + pre-push visual-verification Compose product/UX auditor |

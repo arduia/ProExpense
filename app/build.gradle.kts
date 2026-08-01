@@ -98,6 +98,7 @@ dependencies {
     implementation(project(":feature:sharedcost"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:importexport"))
+    implementation(project(":feature:sync"))
     implementation(project(":feature:debt"))
     implementation(project(":feature:eventbudget"))
     implementation(project(":feature:reports"))

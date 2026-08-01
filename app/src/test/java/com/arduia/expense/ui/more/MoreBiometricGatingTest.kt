@@ -9,6 +9,8 @@ import com.arduia.expense.data.DefaultCategoryRepository
 import com.arduia.expense.data.LocaleRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.Result
+import com.arduia.expense.data.SyncAccountRepository
+import com.arduia.expense.data.SyncAccountState
 import com.arduia.expense.data.ThemeMode
 import com.arduia.expense.data.ThemeRepository
 import com.arduia.expense.domain.CurrencyCode
@@ -63,6 +65,7 @@ class MoreBiometricGatingTest {
             single { DisablePinUseCase(get()) }
             single<BudgetRepository> { FakeBudgetRepository() }
             single<DefaultCategoryRepository> { FakeDefaultCategoryRepository() }
+            single<SyncAccountRepository> { FakeSyncAccountRepository() }
         }
 
     private fun renderMoreFlow(pinConfigured: Boolean) {
@@ -136,6 +139,19 @@ private class FakeDefaultCategoryRepository : DefaultCategoryRepository {
     override suspend fun getDefaultCategoryId(): Result<String?> = Result.Success("food")
 
     override suspend fun setDefaultCategoryId(categoryId: String?): Result<Unit> = Result.Success(Unit)
+}
+
+private class FakeSyncAccountRepository : SyncAccountRepository {
+    override suspend fun getState(): Result<SyncAccountState> =
+        Result.Success(
+            SyncAccountState(isConnected = false, connectedAccountEmail = null, lastSyncAtEpochMillis = null),
+        )
+
+    override suspend fun setConnected(accountEmail: String): Result<Unit> = Result.Success(Unit)
+
+    override suspend fun setDisconnected(): Result<Unit> = Result.Success(Unit)
+
+    override suspend fun setLastSyncAt(epochMillis: Long): Result<Unit> = Result.Success(Unit)
 }
 
 /** Only the methods MoreFlow's initial load actually calls need real behavior. */

@@ -61,6 +61,13 @@ val previewMoreHub =
                 MoreSettingRowUi("export", ProIconGlyph.Note, "Data export", kind = MoreSettingKind.Nav),
                 MoreSettingRowUi("import", ProIconGlyph.Note, "Data import", kind = MoreSettingKind.Nav),
                 MoreSettingRowUi("clear", ProIconGlyph.Close, "Clear data", kind = MoreSettingKind.Nav),
+                MoreSettingRowUi(
+                    "sync",
+                    ProIconGlyph.Note,
+                    "Google Drive Sync",
+                    value = "Not connected",
+                    kind = MoreSettingKind.Nav,
+                ),
                 MoreSettingRowUi("version", ProIconGlyph.Bell, "App version", value = "2.0.0", kind = MoreSettingKind.Value),
             ),
     )

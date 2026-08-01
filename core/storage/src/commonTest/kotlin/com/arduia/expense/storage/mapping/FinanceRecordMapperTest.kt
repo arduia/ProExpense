@@ -33,6 +33,8 @@ class FinanceRecordMapperTest {
                 integrity_hash = "abc123",
                 home_currency_code = "USD",
                 wallet_id = null,
+                dirty = 1,
+                last_synced_at = null,
             )
 
         val record = row.toDomain()
@@ -70,6 +72,8 @@ class FinanceRecordMapperTest {
                 integrity_hash = "abc123",
                 home_currency_code = null,
                 wallet_id = null,
+                dirty = 1,
+                last_synced_at = null,
             )
 
         val record = row.toDomain()
@@ -97,6 +101,8 @@ class FinanceRecordMapperTest {
                 integrity_hash = "abc123",
                 home_currency_code = null,
                 wallet_id = 3L,
+                dirty = 1,
+                last_synced_at = null,
             )
 
         assertEquals(WalletId(3), row.toDomain().walletId)

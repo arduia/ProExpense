@@ -26,4 +26,6 @@ val storageBindings =
         single { get<ProExpenseStorage>().localeRepository }
         single { get<ProExpenseStorage>().defaultCategoryRepository }
         single { get<ProExpenseStorage>().themeRepository }
+        single { get<ProExpenseStorage>().syncStateRepository }
+        single { get<ProExpenseStorage>().syncAccountRepository }
     }

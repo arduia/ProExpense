@@ -17,11 +17,14 @@ import com.arduia.expense.domain.toCode
 import com.arduia.expense.shared.currentEpochMillis
 import com.arduia.expense.storage.catchingResult
 import com.arduia.expense.storage.db.EventQueries
+import com.arduia.expense.storage.db.FinanceRecordMonthSyncQueries
 import com.arduia.expense.storage.db.FinanceRecordQueries
+import com.arduia.expense.storage.db.FinanceRecordTombstoneQueries
 import com.arduia.expense.storage.mapping.tagId
 import com.arduia.expense.storage.mapping.tagType
 import com.arduia.expense.storage.mapping.toDomain
 import com.arduia.expense.storage.mapping.toRecordLink
+import com.arduia.expense.storage.sync.yearMonthOf
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +34,8 @@ import kotlinx.coroutines.withContext
 class SqlDelightFinanceRecordRepository(
     private val queries: FinanceRecordQueries,
     private val eventQueries: EventQueries,
+    private val tombstoneQueries: FinanceRecordTombstoneQueries,
+    private val monthSyncQueries: FinanceRecordMonthSyncQueries,
     private val integrityVerifier: RecordIntegrityVerifier = RecordIntegrityVerifier(),
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : FinanceRecordRepository {
@@ -49,11 +54,8 @@ class SqlDelightFinanceRecordRepository(
             catchingResult {
                 // Always (re)stamp so the persisted checksum matches the persisted content.
                 val checksum = integrityVerifier.checksumFor(record)
-                val previousLink =
-                    queries
-                        .selectRecordById(record.id.value)
-                        .executeAsOneOrNull()
-                        ?.let { toRecordLink(it.tag_type, it.tag_id) }
+                val previousRow = queries.selectRecordById(record.id.value).executeAsOneOrNull()
+                val previousLink = previousRow?.let { toRecordLink(it.tag_type, it.tag_id) }
                 val sameCurrency = record.money.currency == record.homeCurrencyMoney.currency
                 queries.transaction {
                     queries.insertRecord(
@@ -78,6 +80,15 @@ class SqlDelightFinanceRecordRepository(
                     // can never leave a cache drifted.
                     recomputeEventCacheIfLinked(previousLink)
                     recomputeEventCacheIfLinked(record.link)
+                    // A backdated recorded_at can move a record out of its previous sync month —
+                    // that month's own dirty=1 rows no longer include this record, so explicitly
+                    // flag it for re-push (US-SYNC-3 Business Rule).
+                    val previousYearMonth = previousRow?.let { yearMonthOf(it.recorded_at) }
+                    val newYearMonth = yearMonthOf(record.recordedAtEpochMillis)
+                    if (previousYearMonth != null && previousYearMonth != newYearMonth) {
+                        monthSyncQueries.insertMonthSyncRowIfAbsent(previousYearMonth.value)
+                        monthSyncQueries.markMonthDirty(previousYearMonth.value)
+                    }
                 }
                 Unit
             }
@@ -86,14 +97,20 @@ class SqlDelightFinanceRecordRepository(
     override suspend fun delete(id: RecordId): Result<Unit> =
         withContext(dispatcher) {
             catchingResult {
-                val link =
-                    queries
-                        .selectRecordById(id.value)
-                        .executeAsOneOrNull()
-                        ?.let { toRecordLink(it.tag_type, it.tag_id) }
+                val row = queries.selectRecordById(id.value).executeAsOneOrNull()
+                val link = row?.let { toRecordLink(it.tag_type, it.tag_id) }
                 queries.transaction {
                     queries.deleteRecord(id.value)
                     recomputeEventCacheIfLinked(link)
+                    // Tombstone instead of a silent hard delete only, so a later Drive pull never
+                    // resurrects this record on another device (US-SYNC-3).
+                    if (row != null) {
+                        tombstoneQueries.insertTombstone(
+                            id = id.value,
+                            year_month = yearMonthOf(row.recorded_at).value,
+                            deleted_at = currentEpochMillis(),
+                        )
+                    }
                 }
                 Unit
             }

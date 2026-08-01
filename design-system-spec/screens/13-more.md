@@ -23,10 +23,30 @@
 
 ![Clear data](../screenshots/screens/more-clear.png)
 
+### Google Drive Sync (opt-in)
+
+> No hi-fi mockup PNG yet — built directly from existing hub components below (settings row +
+> `ProBottomSheetHost`/dialog patterns already in this spec) rather than a new mockup. Flag for a
+> follow-up design pass; do not treat this note as satisfying the mandatory-PNG gate for any
+> *future* material change to this screen.
+
+- New settings row (same "Settings list rows" component as Currency/Theme/Language): icon +
+  label "Google Drive Sync" + value text "Not connected" / "Connected as {email}".
+- Connect screen: disclosure copy (sync is optional; remote copy relies on Drive's own encryption
+  + private app-folder scope, not additional app-level encryption) + a primary "Connect" button
+  that launches the Google OAuth consent flow (system UI, not in-app).
+- Connected state: shows connected account email, last-synced-at (or "Never" pre-Phase 2), a
+  "Sync now" action (stubbed until Phase 2), and a "Disconnect" action.
+- Disconnect: confirm dialog (same `AlertDialog` pattern as Clear data) — title "Disconnect Google
+  Drive?", body clarifies local and remote data are both left untouched.
+
 ## Behavior & interactions
 
 - Feature links: Debt Tracker, Shared Costs, Reports, Category List.
-- Settings: PIN auth, Biometric (greyed until PIN on), Currency, Monthly budget (drives Budget-Planner header; resets on the 1st), Default category, Language, Theme (Light/Dark/System), Data export, Clear data, App version.
+- Settings: PIN auth, Biometric (greyed until PIN on), Currency, Monthly budget (drives Budget-Planner header; resets on the 1st), Default category, Language, Theme (Light/Dark/System), Data export, Clear data, Google Drive Sync (opt-in, off by default), App version.
+- Google Drive Sync: tapping the row opens Connect (if not connected) or the connected status
+  screen (if connected). Connecting never happens implicitly — it always requires the explicit
+  OAuth consent flow.
 - Currency: single default applied to all entries; selector for common currencies. Tapping a currency only **stages** the pick (Save button disabled until it differs from the current selection); tapping Save opens a confirm dialog — title “Change home currency?”, body “New entries will use {currency name} ({code}) going forward. Existing records keep their original currency.”, actions Save / Cancel. The change only applies on confirm.
 - Data export: separate CSVs (expenses / events / debts / shared_costs) zipped into one file — nothing uploaded.
 - Clear data: selective — user picks what to wipe; each option requires a confirmation dialog; irreversible.

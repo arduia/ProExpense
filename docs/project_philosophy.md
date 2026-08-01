@@ -58,8 +58,16 @@ These beliefs guide every product and engineering decision. When in doubt, retur
 ### 4. Personal and private by default
 
 - Feels like **your own notebook**, not a social or analytics product.
-- MVP: all data **local on device** — no cloud sync, no online backup, no server-side accounts.
+- Local storage is the default and source of truth. **Google Drive cloud sync is opt-in** — off
+  until the user deliberately connects an account, so nothing leaves the device unless they choose
+  it. This is distinct from a server-side identity: the Google Sign-In consent it uses only grants
+  access to a private, app-only Drive folder (`drive.appdata` scope, invisible in the user's normal
+  Drive UI) — it is not a login/account system for the app itself, and the app never gains a
+  server-side identity as a result.
 - PIN auth is **local only** (Keystore / Keychain); it protects the device, not a remote identity.
+- The remote Drive copy relies on Drive's own storage/transport encryption plus the private
+  `appDataFolder` scope, not a second app-level encryption layer like local SQLCipher storage has —
+  this trade-off is disclosed to the user before they connect (see `docs/user_stories/sync/`).
 
 ### 5. Accessible to everyone
 
@@ -88,7 +96,7 @@ How the beliefs show up in the product:
 | **Simplicity** | Focused flows, minimal chrome | Fewer modules per screen; no speculative features in MVP |
 | **Integrity** | No third-party financial plumbing | No network calls for core logging; no analytics on sensitive fields |
 | **Lightweight** | Fast launch, small app, responsive UI | Performance and app size are success metrics (<30MB target) |
-| **Offline first** | Works on a plane, in a market, with no signal | Local storage is the source of truth; repositories abstract Room/CoreData |
+| **Offline first** | Works on a plane, in a market, with no signal | Local storage is the source of truth; repositories abstract Room/CoreData; opt-in Drive sync is additive — every core flow works fully with sync off |
 
 ---
 
@@ -124,7 +132,6 @@ How the beliefs show up in the product:
 **Explicitly out of scope for MVP** — treating these as in-scope is a philosophy violation:
 
 - Bank or third-party integrations
-- Cloud sync or online backup
 - Social or sharing beyond shared-cost records
 - Advanced analytics dashboards
 - Push notifications
@@ -152,7 +159,8 @@ Use this when prioritizing work, reviewing PRs, or resolving ambiguity.
 
 - Features that require always-on internet for core journaling
 - Scope that expands MVP without a tracked post-MVP label
-- Bank linking, cloud backup, or user accounts "for convenience"
+- Bank linking or user accounts "for convenience"; cloud sync that is on by default or required
+  to use the app (opt-in Google Drive sync is the one sanctioned exception — see belief #4)
 - Dashboards or charts that compete with the logging path for attention
 - Hardcoded secrets, PII in logs, or bypassing PIN/storage encryption patterns
 
@@ -194,7 +202,7 @@ Business logic is **precious and portable**; frameworks are **replaceable**.
 We do not try to out-YNAB YNAB. Our edge is the intersection PRD calls out:
 
 - Offline-first **and** multi-currency **and** shared costs — done simply
-- Privacy by design — no accounts, no cloud, no tracking in MVP
+- Privacy by design — no accounts, no tracking; cloud sync is opt-in, never required
 - KMP cross-platform — one product logic, native feel on each OS
 - Global-ready — built for users outside a single banking ecosystem
 

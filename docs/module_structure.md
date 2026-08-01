@@ -19,6 +19,7 @@ feature/
 ├── sharedcost/              Shared Costs (MVP)
 ├── auth/                    PIN Auth (MVP)
 ├── importexport/            Secure Import & Export (MVP)
+├── sync/                    Google Drive Cloud Sync (opt-in, MVP)
 ├── debt/                    Debt & Lending Tracker (Phase 2 UI)
 ├── eventbudget/             Event Budget (Phase 2 UI)
 ├── reports/                 Spending reports (Phase 2 UI)
@@ -36,7 +37,7 @@ iosApp/                      SwiftUI shell (future)
 | `core:domain` | `shared` |
 | `core:data` | `core:domain`, `shared` |
 | `core:storage` | `core:domain`, `shared` |
-| `feature:*` | `core:domain`, `core:data`, `shared` (`importexport` also uses `core:storage`) |
+| `feature:*` | `core:domain`, `core:data`, `shared` (`importexport` and `sync` also use `core:storage`) |
 | `feature:*` | **must not** depend on other `feature:*` modules |
 
 ## MVP Feature Mapping (PRD)
@@ -49,6 +50,7 @@ iosApp/                      SwiftUI shell (future)
 | Shared Costs | `:feature:sharedcost` | `SharedCostRepository`, `SettlementSummary` |
 | Auth Setup (PIN) | `:feature:auth` | `PinAuthRepository` |
 | Secure Import & Export | `:feature:importexport` | `ImportExportRepository`, `ExportFormat` |
+| Google Drive Cloud Sync (opt-in) | `:feature:sync` | `SyncStateRepository`, `SyncAccountRepository`, `DriveRemoteDataSource` |
 | Local Storage / Offline | `:core:storage` | `LocalDataStore` |
 
 ## Shared Domain Models (`core:domain`)
@@ -73,6 +75,7 @@ Phase 2 UI modules already scaffolded: `feature:debt`, `feature:eventbudget`, `f
 |-------|---------|-----|
 | Database (repositories shared in `core:storage` commonMain) | SQLCipher via `AndroidSqliteDriver` + Keystore-wrapped key | SQLDelight `NativeSqliteDriver` + Keychain-stored key (compile-verified; SQLCipher-iOS linking is Phase 3) |
 | PIN | Keystore (`feature:auth` androidMain) | Keychain (`iosMain`, not started) |
+| Drive sync OAuth/transport | Credential Manager + Google Identity Services, Ktor/OkHttp (`feature:sync` androidMain) | Not started |
 | UI | Jetpack Compose (`app`) | SwiftUI (`iosApp`) |
 
 ## iOS Compatibility (mandatory)

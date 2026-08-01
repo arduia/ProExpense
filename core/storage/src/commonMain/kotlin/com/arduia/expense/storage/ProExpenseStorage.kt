@@ -14,6 +14,8 @@ import com.arduia.expense.data.LockoutRepository
 import com.arduia.expense.data.ProfileRepository
 import com.arduia.expense.data.SecurityStateReader
 import com.arduia.expense.data.SharedCostRepository
+import com.arduia.expense.data.SyncAccountRepository
+import com.arduia.expense.data.SyncStateRepository
 import com.arduia.expense.data.ThemeRepository
 import com.arduia.expense.domain.DEFAULT_CATEGORIES
 import com.arduia.expense.domain.RecordIntegrityVerifier
@@ -27,6 +29,7 @@ import com.arduia.expense.storage.repository.AppMetaLocaleRepository
 import com.arduia.expense.storage.repository.AppMetaLockoutRepository
 import com.arduia.expense.storage.repository.AppMetaProfileRepository
 import com.arduia.expense.storage.repository.AppMetaSecurityStateReader
+import com.arduia.expense.storage.repository.AppMetaSyncRepository
 import com.arduia.expense.storage.repository.AppMetaThemeRepository
 import com.arduia.expense.storage.repository.SqlDelightCategoryRepository
 import com.arduia.expense.storage.repository.SqlDelightClearDataRepository
@@ -35,6 +38,7 @@ import com.arduia.expense.storage.repository.SqlDelightEventRepository
 import com.arduia.expense.storage.repository.SqlDelightFinanceRecordRepository
 import com.arduia.expense.storage.repository.SqlDelightImportExportRepository
 import com.arduia.expense.storage.repository.SqlDelightSharedCostRepository
+import com.arduia.expense.storage.repository.SqlDelightSyncStateRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -65,6 +69,8 @@ class ProExpenseStorage internal constructor(
     val localeRepository: LocaleRepository,
     val defaultCategoryRepository: DefaultCategoryRepository,
     val themeRepository: ThemeRepository,
+    val syncStateRepository: SyncStateRepository,
+    val syncAccountRepository: SyncAccountRepository,
 ) {
     /** Idempotently inserts the built-in categories (INSERT OR IGNORE) — safe to call every launch. */
     suspend fun seedDefaultCategories() =
@@ -106,6 +112,8 @@ class ProExpenseStorage internal constructor(
                 SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
                     eventQueries = database.eventQueries,
+                    tombstoneQueries = database.financeRecordTombstoneQueries,
+                    monthSyncQueries = database.financeRecordMonthSyncQueries,
                     integrityVerifier = integrityVerifier,
                     dispatcher = dispatcher,
                 )
@@ -148,6 +156,15 @@ class ProExpenseStorage internal constructor(
                 localeRepository = AppMetaLocaleRepository(appMetaStore, keyValueStore),
                 defaultCategoryRepository = AppMetaDefaultCategoryRepository(appMetaStore),
                 themeRepository = AppMetaThemeRepository(appMetaStore),
+                syncStateRepository =
+                    SqlDelightSyncStateRepository(
+                        queries = database.financeRecordQueries,
+                        tombstoneQueries = database.financeRecordTombstoneQueries,
+                        monthSyncQueries = database.financeRecordMonthSyncQueries,
+                        integrityVerifier = integrityVerifier,
+                        dispatcher = dispatcher,
+                    ),
+                syncAccountRepository = AppMetaSyncRepository(appMetaStore),
             )
         }
     }
