@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.shared.R
@@ -55,25 +57,26 @@ fun ProFlatHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
-                    modifier = Modifier.proIconClickable(onClick = onBack),
+                    // Background/border/ripple share one node, in that paint order, so the
+                    // ripple renders on top of the tile fill instead of being hidden underneath
+                    // a separate opaque child Box (the previous nesting only let the ripple show
+                    // through the ~6dp margin outside the tile, not across its visible surface).
+                    modifier =
+                        Modifier
+                            .minimumInteractiveComponentSize()
+                            .size(dimens.buttonSmallHeight)
+                            .clip(ProExpenseTheme.shapes.tile)
+                            .background(colors.surface)
+                            .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.tile)
+                            .proRippleClickable(onClick = onBack, role = Role.Button),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .size(dimens.buttonSmallHeight)
-                                .clip(ProExpenseTheme.shapes.tile)
-                                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.tile)
-                                .background(colors.surface),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        ProIcon(
-                            glyph = ProIconGlyph.Back,
-                            contentDescription = backContentDescription ?: stringResource(R.string.back),
-                            tint = colors.onSurfaceVariant,
-                            size = dimens.iconInline,
-                        )
-                    }
+                    ProIcon(
+                        glyph = ProIconGlyph.Back,
+                        contentDescription = backContentDescription ?: stringResource(R.string.back),
+                        tint = colors.onSurfaceVariant,
+                        size = dimens.iconInline,
+                    )
                 }
                 Column {
                     if (eyebrow != null) {
