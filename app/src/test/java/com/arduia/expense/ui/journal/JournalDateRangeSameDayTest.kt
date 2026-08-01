@@ -18,6 +18,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * Verifies the open audit question from the Journal/Reports date-time UI review: does M3's
@@ -60,8 +63,11 @@ class JournalDateRangeSameDayTest {
         val applyLabel = rule.activity.getString(R.string.journal_date_range_apply)
         rule.onNodeWithText(applyLabel).assertIsNotEnabled()
 
-        rule.onNodeWithText("Wednesday, July 15, 2026").performClick()
-        rule.onNodeWithText("Wednesday, July 15, 2026").performClick()
+        // Derived from the clock, not hard-coded: the picker opens on the current month, so a
+        // pinned date silently stops being rendered once the calendar rolls past it.
+        val day = midMonthDayLabel()
+        rule.onNodeWithText(day).performClick()
+        rule.onNodeWithText(day).performClick()
 
         rule.onNodeWithText(applyLabel).assertIsEnabled()
         rule.onNodeWithText(applyLabel).performClick()
@@ -71,5 +77,21 @@ class JournalDateRangeSameDayTest {
         assert(confirmedStart == confirmedEnd) {
             "Expected a single-day range (start == end), got start=$confirmedStart end=$confirmedEnd"
         }
+    }
+
+    /**
+     * A day cell that always exists in the currently displayed month, labelled the way M3's
+     * `DateRangePicker` labels an ordinary day ("Monday, May 25, 2026"). Today itself is avoided —
+     * its cell carries a different, "today"-prefixed description.
+     */
+    private fun midMonthDayLabel(): String {
+        val calendar = Calendar.getInstance()
+        val day = if (calendar.get(Calendar.DAY_OF_MONTH) == MID_MONTH_DAY) MID_MONTH_DAY + 1 else MID_MONTH_DAY
+        calendar.set(Calendar.DAY_OF_MONTH, day)
+        return SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US).format(calendar.time)
+    }
+
+    private companion object {
+        const val MID_MONTH_DAY = 15
     }
 }

@@ -89,6 +89,7 @@ android {
 
 dependencies {
     implementation(project(":shared"))
+    implementation(project(":shell"))
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:storage"))

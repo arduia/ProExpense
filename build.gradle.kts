@@ -21,6 +21,7 @@ val verifyAll = tasks.register("verifyAll") {
         ":app:testDevDebugUnitTest",
         ":app:testDevReleaseUnitTest",
         ":shared:testDebugUnitTest",
+        ":shell:testDebugUnitTest",
         ":core:domain:testDebugUnitTest",
         ":core:storage:testDebugUnitTest",
         ":feature:logging:testDebugUnitTest",

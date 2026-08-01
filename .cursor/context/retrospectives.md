@@ -14,6 +14,29 @@
 
 <!-- Entries below this line -->
 
+## 2026-08-01 — A test pinned to a literal date rotted silently until the month rolled over
+
+**What slipped:** `JournalDateRangeSameDayTest` clicked a day cell by the literal string
+`"Wednesday, July 15, 2026"`. M3's `DateRangePicker` opens on the *current* month, so the test
+passed for as long as "now" was July 2026 and started failing — with a confusing
+"Failed to inject touch input" — the moment the calendar reached August, blocking `verifyAll` for
+an unrelated change (the iOS/KMP shell extraction).
+
+**Root cause:** a wall-clock-dependent fixture written as a constant. Nothing in the test named the
+dependency, so neither review nor CI could see that its useful lifetime was one month.
+
+**Guard:** never hard-code a date string a picker must render — derive it from the same clock the
+production code reads (`Calendar.getInstance()`), and avoid *today* itself, whose cell carries a
+different, "today"-prefixed content description. Generally: when a test asserts against a
+date/time-derived label, compute the expectation, don't transcribe it.
+
+**Second guard:** when a gate fails on code you did not touch, reproduce it on the base commit in a
+throwaway `git worktree` before attributing it to your change — one build turns a guess into
+evidence. Done here: the same failure reproduced on `6b9cdd5e` with an untouched tree.
+
+**Verified:** `./gradlew :app:testDevDebugUnitTest --tests "com.arduia.expense.ui.journal.JournalDateRangeSameDayTest"`
+→ BUILD SUCCESSFUL, 2026-08-01.
+
 ## 2026-06-20 — Float money conversion + cache-masked test failure
 
 **What slipped:** Three ViewModels (shared cost, event create, debt add) converted user

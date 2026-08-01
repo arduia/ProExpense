@@ -7,6 +7,7 @@ Authoritative map for the Finance Tracker KMP multi-module project. Aligned with
 
 ```
 app/                         Android Compose shell (UI only)
+shell/                       KMP app shell — cross-feature screen state + iOS framework binary
 shared/                      Platform utilities (expect/actual)
 core/
 ├── domain/                  Shared domain models
@@ -25,14 +26,15 @@ feature/
 ├── reports/                 Spending reports (Phase 2 UI)
 ├── categories/              Category management (Phase 2 UI)
 └── onboarding/              First-launch onboarding flow
-iosApp/                      SwiftUI shell (future)
+iosApp/                      SwiftUI shell (Splash/Home/Add Expense — authored, not yet compiled)
 ```
 
 ## Dependency Rules
 
 | Module | May depend on |
 |--------|---------------|
-| `app` | all `core:*`, all `feature:*`, `shared` |
+| `app` | `shell`, all `core:*`, all `feature:*`, `shared` |
+| `shell` | all `core:*`, all `feature:*`, `shared` — the composition root, not a feature |
 | `shared` | nothing (project modules) |
 | `core:domain` | `shared` |
 | `core:data` | `core:domain`, `shared` |

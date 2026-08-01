@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arduia.expense.shell.home.HomeUiState
 import com.arduia.expense.ui.design.HomeBottomNav
 import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProTransactionRowModel
-import com.arduia.expense.ui.preview.HomeUiState
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme

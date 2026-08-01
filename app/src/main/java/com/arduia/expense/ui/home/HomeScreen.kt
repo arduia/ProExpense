@@ -31,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
+import com.arduia.expense.shell.home.HomeBudgetSummaryState
+import com.arduia.expense.shell.home.HomeUiState
 import com.arduia.expense.ui.design.DayGroup
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.EventBudgetCard
@@ -44,7 +46,6 @@ import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
-import com.arduia.expense.ui.preview.HomeUiState
 import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
 import com.arduia.expense.ui.preview.previewHomeEmpty
@@ -329,7 +330,7 @@ private fun HomeHeader(
 private fun MonthSpendCard(
     monthLabel: String,
     monthSpend: String,
-    budgetSummary: com.arduia.expense.ui.preview.HomeBudgetSummaryState?,
+    budgetSummary: HomeBudgetSummaryState?,
     monthDelta: String?,
     showEmptyHint: Boolean,
     showSparkline: Boolean,

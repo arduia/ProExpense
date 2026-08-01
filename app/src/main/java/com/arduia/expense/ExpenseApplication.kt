@@ -15,6 +15,7 @@ import com.arduia.expense.feature.reports.di.reportsModule
 import com.arduia.expense.feature.sharedcost.di.sharedCostModule
 import com.arduia.expense.feature.sync.di.syncModule
 import com.arduia.expense.feature.sync.di.syncPlatformModule
+import com.arduia.expense.shell.di.shellModule
 import com.arduia.expense.storage.ProExpenseStorage
 import com.arduia.expense.storage.di.storageModule
 import kotlinx.coroutines.CoroutineScope
@@ -57,6 +58,8 @@ class ExpenseApplication :
                 syncModule,
                 syncPlatformModule,
                 onboardingModule,
+                // Composed on top of every feature module — the shell's cross-feature state.
+                shellModule,
                 appModule,
             )
         }

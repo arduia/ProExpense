@@ -1,0 +1,43 @@
+# XcodeGen project definition — run `xcodegen generate` in this directory to produce
+# iosApp.xcodeproj. A generated project is used instead of a committed .pbxproj because the
+# Kotlin side of this app is developed on Linux, where a hand-maintained project file cannot be
+# opened or validated. See README.md for the full build sequence.
+name: iosApp
+
+options:
+  bundleIdPrefix: com.arduia.expense
+  deploymentTarget:
+    iOS: "16.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    # ProExpenseKit.framework is produced by
+    # `./gradlew :shell:linkDebugFrameworkIosSimulatorArm64` (requires macOS/Xcode).
+    FRAMEWORK_SEARCH_PATHS:
+      - $(inherited)
+      - $(SRCROOT)/../shell/build/bin/iosSimulatorArm64/debugFramework
+      - $(SRCROOT)/../shell/build/bin/iosArm64/debugFramework
+
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: Pro Expense
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    dependencies:
+      - framework: ../shell/build/bin/iosSimulatorArm64/debugFramework/ProExpenseKit.framework
+        embed: false
+    preBuildScripts:
+      - name: Build ProExpenseKit
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :shell:linkDebugFrameworkIosSimulatorArm64
+        basedOnDependencyAnalysis: false

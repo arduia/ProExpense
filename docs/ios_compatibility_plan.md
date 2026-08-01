@@ -36,7 +36,7 @@ Replace `TODO()` stubs with working implementations, one seam at a time:
 | DB key manager | `core/storage/src/iosMain/.../IosDatabaseKeyManager.kt` | Keychain generic-password item (`SecItemAdd`/`SecItemCopyMatching`) | ✅ done (compile-only — see caveat below) |
 | Fast key-value cache | `core/storage/src/{common,ios}Main/.../PlatformKeyValueStore.kt` | `NSUserDefaults` | ✅ done |
 | Storage repository implementations | `core/storage/src/commonMain/.../repository/*` | moved from androidMain — now shared | ✅ done (15 of 22 files were already platform-free; moved as-is) |
-| Date formatting | `shared/src/iosMain/.../PlatformDateFormatter.ios.kt` | `NSDateFormatter` / `NSCalendar` | not started |
+| Date formatting | `shared/src/iosMain/.../PlatformDateFormatter.ios.kt` | `NSDateFormatter` / `NSCalendar` | ✅ done (compile-only — no simulator to run against) |
 | PIN storage | `feature/auth` (new `iosMain`) | Keychain | not started |
 
 Each actual gets a backbone unit test in `commonTest` exercised through the `expect` contract
@@ -62,14 +62,42 @@ where Kotlin/Native test running is available.
   isn't available on Kotlin/Native (use `Dispatchers.Default`), and `System.currentTimeMillis()`
   isn't portable (use `shared`'s `currentEpochMillis()` seam).
 
-## Phase 2 — iosApp shell
+## Phase 2 — iosApp shell (in progress)
 
-- SwiftUI views under `iosApp/` consuming the KMP modules via the generated framework.
-- Koin iOS initializer (`KoinIOS.kt` in `shared` or a thin `iosMain` entry point) wiring the same
-  repository graph used by `app` on Android.
-- ViewModel-equivalent state exposed to SwiftUI (either shared `StateFlow` via a Swift-friendly
-  wrapper, or platform-native state holders calling into KMP repositories directly) — decide once
-  the first real screen is ported.
+### Shipped
+
+- **New `:shell` module** — the KMP counterpart to `app`: the one module allowed to depend on every
+  `core:*` and `feature:*` (it is the composition root, not a feature). Declares
+  `binaries.framework { baseName = "ProExpenseKit" }` on both iOS targets, exporting `core:domain`,
+  `core:data`, `shared` and `feature:logging` so Swift sees those types by name.
+- **Shared screen state, both platforms** — `HomeViewModel` (`shell/commonMain`, on `shared`'s
+  `StatefulViewModel`) now owns the whole Home surface: month spend, recent day groups, budget
+  planner, active-event card, plus the cross-feature collections the Android shell hands to its
+  other tabs. `ExpenseApp.kt` was refactored to consume it rather than deriving that state inline,
+  so Compose and SwiftUI render from one computation. The Home mapping moved out of `java.util.Calendar`
+  / `SimpleDateFormat` onto `PlatformDateFormatter` + `kotlinx-datetime` to satisfy `commonMain`'s
+  no-`java.*` rule.
+- **Presentation models in `commonMain`** — `HomeUiState` & friends live in `shell`,
+  `ProRowKind`/`ProTransactionRowModel` moved from `shared/androidMain` to `shared/commonMain`.
+- **Koin iOS composition root** — `startProExpenseKoin()` (`shell/iosMain/KoinIos.kt`), the
+  counterpart to `ExpenseApplication.ensureStarted()`.
+- **Flow → Swift bridge** — `StateWatcher<T>` + `Cancellable` (`shell/iosMain/FlowBridge.kt`): a
+  closure subscription on `Dispatchers.Main`, hand-rolled rather than adding a Swift-export
+  compiler plugin, so it compiles and is verified on Linux.
+- **SwiftUI vertical slice** — `iosApp/` now holds an XcodeGen `project.yml` plus Splash → Home →
+  Add Expense. **Authored unverified**: no macOS/Xcode in the development environment, so none of
+  the Swift has ever been compiled. See `iosApp/README.md`.
+
+### Still open
+
+- **PIN gate on iOS** — `authModule` and `PinAuthRepositoryImpl` (PBKDF2 via `javax.crypto`) are
+  `androidMain`-only, so `startProExpenseKoin()` deliberately omits them and the iOS shell launches
+  straight into Home. Needs a CommonCrypto/Keychain actual before iOS can ship a lock screen.
+- **Google Drive sync on iOS** — `syncModule`/`syncPlatformModule` are Android-only for now.
+- **Remaining screens** — 02 Onboarding, 05–15. Each needs its state extracted into a `:shell`
+  ViewModel the same way Home was, before the SwiftUI view is written.
+- **First real Xcode build** — expect Swift compile fixes; the Kotlin-side API it calls is
+  compile-verified, the Swift calling it is not.
 
 ## Phase 3 — Framework linking & device/XCTest CI
 

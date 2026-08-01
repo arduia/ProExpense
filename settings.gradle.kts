@@ -22,6 +22,9 @@ include(":app")
 // KMP platform utilities
 include(":shared")
 
+// KMP app shell — cross-feature screen state + the iOS framework Swift links against
+include(":shell")
+
 // Core layers
 include(":core:domain")
 include(":core:data")

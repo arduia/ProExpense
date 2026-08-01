@@ -19,71 +19,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.arduia.expense.R
-import com.arduia.expense.data.BudgetRepository
-import com.arduia.expense.data.CategoryRepository
-import com.arduia.expense.data.DebtRepository
-import com.arduia.expense.data.DefaultCategoryRepository
-import com.arduia.expense.data.EventRepository
-import com.arduia.expense.data.FinanceRecordRepository
 import com.arduia.expense.data.Result
-import com.arduia.expense.data.SharedCostRepository
-import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.Debt
-import com.arduia.expense.domain.DebtDirection
-import com.arduia.expense.domain.EventStatus
-import com.arduia.expense.domain.FinanceRecord
-import com.arduia.expense.domain.Money
-import com.arduia.expense.domain.RecordKind
-import com.arduia.expense.domain.RecordLink
-import com.arduia.expense.domain.RecordType
-import com.arduia.expense.domain.SHOW_SPLIT_AND_DEBT_ROWS
-import com.arduia.expense.domain.SPLIT_ROW_SUBTITLE_TYPE
-import com.arduia.expense.domain.debtRowSubtitleType
-import com.arduia.expense.domain.debtRowTitle
-import com.arduia.expense.domain.isVisibleInHomeRecents
-import com.arduia.expense.domain.kind
-import com.arduia.expense.domain.linkedRowId
-import com.arduia.expense.domain.splitRowTitle
-import com.arduia.expense.domain.tagLabel
 import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.shouldRelockOnBackground
-import com.arduia.expense.feature.currency.CurrencyRepository
-import com.arduia.expense.feature.eventbudget.ComputeEventProgressUseCase
 import com.arduia.expense.feature.logging.LoggedExpenseHandoff
 import com.arduia.expense.feature.logging.ui.ExpenseDraftPrefs
 import com.arduia.expense.feature.logging.ui.preview.ExpenseEntryState
 import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
 import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
-import com.arduia.expense.ui.design.AmountInput
+import com.arduia.expense.shell.home.HomeViewModel
 import com.arduia.expense.ui.design.HomeNavTab
-import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.ProBottomSheetHost
 import com.arduia.expense.ui.design.ProRowKind
 import com.arduia.expense.ui.design.ProToastHost
-import com.arduia.expense.ui.design.currencySymbol
-import com.arduia.expense.ui.design.resolveCategoryLabel
 import com.arduia.expense.ui.home.HomeShell
 import com.arduia.expense.ui.home.QuickAccessPickerSheetContent
 import com.arduia.expense.ui.home.QuickAccessPrefs
 import com.arduia.expense.ui.more.MoreFlow
-import com.arduia.expense.ui.preview.HomeActiveEventState
-import com.arduia.expense.ui.preview.HomeBudgetSummaryState
-import com.arduia.expense.ui.preview.HomeDayGroup
-import com.arduia.expense.ui.preview.HomeTransactionItem
-import com.arduia.expense.ui.preview.previewHomeEmpty
 import com.arduia.expense.ui.splash.SplashScreen
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.compose.currentKoinScope
 import org.koin.compose.koinInject
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 private const val SPLASH_DURATION_MILLIS = 1800L
-private const val RECENT_HOME_LIMIT = 8
 
 @Composable
 fun ExpenseApp(
@@ -91,16 +53,7 @@ fun ExpenseApp(
     modifier: Modifier = Modifier,
     getOnboardingStatus: GetOnboardingStatusUseCase = koinInject(),
     completeOnboarding: CompleteOnboardingUseCase = koinInject(),
-    financeRecordRepository: FinanceRecordRepository = koinInject(),
-    categoryRepository: CategoryRepository = koinInject(),
-    eventRepository: EventRepository = koinInject(),
-    debtRepository: DebtRepository = koinInject(),
-    sharedCostRepository: SharedCostRepository = koinInject(),
     pinAuthRepository: PinAuthRepository = koinInject(),
-    currencyRepository: CurrencyRepository = koinInject(),
-    budgetRepository: BudgetRepository = koinInject(),
-    defaultCategoryRepository: DefaultCategoryRepository = koinInject(),
-    computeEventProgress: ComputeEventProgressUseCase = koinInject(),
     onThemeModeChanged: (com.arduia.expense.data.ThemeMode) -> Unit = {},
     onLanguageChanged: () -> Unit = {},
 ) {
@@ -139,108 +92,40 @@ fun ExpenseApp(
     var quickLogLinkedEventId by rememberSaveable { mutableStateOf<String?>(null) }
     var pendingDraftState by remember { mutableStateOf<ExpenseEntryState?>(null) }
     var editRecordId by rememberSaveable { mutableStateOf<String?>(null) }
-    var userName by rememberSaveable { mutableStateOf("") }
-    var userCurrency by rememberSaveable { mutableStateOf("") }
-    var homeCurrencyCode by rememberSaveable { mutableStateOf("USD") }
-    var monthlyBudget by remember { mutableStateOf<Money?>(null) }
-    var defaultCategoryId by rememberSaveable { mutableStateOf("food") }
     var showQuickAccessPicker by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     var quickAccessVisible by remember { mutableStateOf(QuickAccessPrefs.load(context)) }
     val coroutineScope = rememberCoroutineScope()
-    // Hoisted above tab switching (same reason as spentByEvent below) — Journal's loaded pages
-    // and filters live here so reselecting the tab resumes instantly instead of reloading.
+    // Hoisted above tab switching — Journal's loaded pages and filters live here so reselecting
+    // the tab resumes instantly instead of reloading (the shell ViewModel does the same for
+    // spentByEvent, which used to be hoisted alongside this).
     val journalTabState = features.history.rememberJournalTabState()
 
-    // null (not emptyList()) until the first Flow emission arrives, so the empty-state
-    // illustration doesn't flash on cold start before real data has had a chance to load.
-    val recordsOrNull by financeRecordRepository.observeAll().collectAsState(initial = null)
-    val recordsLoading = recordsOrNull == null
-    val records = recordsOrNull.orEmpty()
-    // Collected once here (not re-subscribed every time Add Expense opens) so the category
-    // chips are already resolved by the time the user taps Add — collectAsState(emptyList())
-    // in the logging flow itself re-queried on every visit and flashed empty chips each time.
-    val categoriesOrNull by categoryRepository.observeAll().collectAsState(initial = null)
-    val categories = categoriesOrNull.orEmpty()
-    // Both expense and income categories show together — direction is decided by which
-    // category the user picks, not by a separate toggle (US-LOG income).
-    val defaultCategoryChips =
-        remember(categories) {
-            categories.filter { !it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
-        }
-    val customCategoryChips =
-        remember(categories) {
-            categories.filter { it.isCustom }.sortedBy { it.sortOrder }.map { it.id.value to it.name }
-        }
-    val categoryTypeById =
-        remember(categories) {
-            categories.associate { it.id.value to it.type }
-        }
-    val eventsOrNull by eventRepository.observeAll().collectAsState(initial = null)
-    val eventsLoading = eventsOrNull == null
-    val events = eventsOrNull.orEmpty()
-    val debts by debtRepository.observeAll().collectAsState(emptyList())
-    val sharedCosts by sharedCostRepository.observeAll().collectAsState(emptyList())
-    val eventNames = remember(events) { events.associate { it.id.value to it.name } }
-    val debtNames = remember(debts) { debts.associate { it.id.value to it.personName } }
-    val sharedCostNames = remember(sharedCosts) { sharedCosts.associate { it.id.value to it.title } }
-    val categoryNames = remember(categories) { categories.associate { it.id.value to it.name } }
-    // Hoisted here (not inside EventsTab) so it survives Budget <-> other tab switches — it
-    // previously lived in a remember scoped to EventsTab itself, which was torn down and
-    // recreated (resetting to an empty map) every time the user navigated away and back.
-    // Summed from the already-observed records Flow (not a one-shot EventRepository.getSpent
-    // call) so the Budget tab and Event Detail summary react immediately to any add/edit/delete
-    // of a linked expense, not just to the event itself changing.
-    val spentByEvent =
-        remember(events, records) {
-            events.associate { event ->
-                val spentCents =
-                    records
-                        .filter { (it.link as? RecordLink.ToEvent)?.eventId == event.id }
-                        .sumOf { it.homeCurrencyMoney.amount.valueInCents }
-                event.id.value to Money(Amount(spentCents), event.budget.currency)
-            }
-        }
-
-    val homeSymbol = currencySymbol(homeCurrencyCode)
-
-    val activeEvent =
-        remember(events) {
-            events.filter { it.status == EventStatus.ACTIVE }.maxByOrNull { it.startEpochMillis }
-        }
-    val activeEventSpent =
-        remember(activeEvent, spentByEvent) {
-            activeEvent?.let { spentByEvent[it.id.value] }
-        }
-    val activeEventState =
-        activeEvent?.let { event ->
-            val progress = computeEventProgress(event, activeEventSpent)
-            HomeActiveEventState(
-                eventId = event.id.value,
-                title = event.name,
-                dateRange =
-                    if (event.startEpochMillis == event.endEpochMillis) {
-                        PlatformDateFormatter.shortDateLabel(event.startEpochMillis)
-                    } else {
-                        "${PlatformDateFormatter.shortDateLabel(event.startEpochMillis)} — " +
-                            PlatformDateFormatter.shortDateLabel(event.endEpochMillis)
-                    },
-                spentLabel = AmountInput.formatMoney(progress.spentCents, homeSymbol),
-                budgetLabel = "of " + AmountInput.formatMoney(progress.budgetCents, homeSymbol),
-                progress = progress.progress,
-                isOverBudget = progress.isOverBudget,
-            )
-        }
-
-    val todaySection = stringResource(R.string.home_today_section)
-
-    val dateLabel = remember { buildDateLabel() }
-    val monthLabel = remember { buildMonthLabel() }
+    // Every cross-feature collection the shell renders comes from one KMP ViewModel (`:shell`),
+    // so Compose and SwiftUI show the same computed state instead of each mapping records to rows.
+    val homeViewModel = rememberHomeViewModel()
+    val shell by homeViewModel.uiState.collectAsState()
+    val records = shell.records
+    val categories = shell.categories
+    val events = shell.events
+    val eventsLoading = shell.eventsLoading
+    val debts = shell.debts
+    val sharedCosts = shell.sharedCosts
+    val spentByEvent = shell.spentByEvent
+    val categoryNames = shell.linkNames.categoryNames
+    val defaultCategoryChips = shell.defaultCategoryChips
+    val customCategoryChips = shell.customCategoryChips
+    val categoryTypeById = shell.categoryTypeById
+    val homeCurrencyCode = shell.homeCurrencyCode
+    val homeSymbol = shell.homeCurrencySymbol
+    val defaultCategoryId = shell.defaultCategoryId
+    val userName = shell.userName
+    val homeState = shell.home
 
     LaunchedEffect(Unit) {
         val status = getOnboardingStatus()
         onboardingComplete = status.isComplete
-        if (userName.isBlank()) userName = status.displayName
+        if (userName.isBlank()) homeViewModel.onUserNameChanged(status.displayName)
     }
 
     LaunchedEffect(onboardingComplete) {
@@ -252,82 +137,11 @@ fun ExpenseApp(
         }
     }
 
-    LaunchedEffect(onboardingComplete, userCurrency) {
-        when (val result = currencyRepository.getSettings()) {
-            is Result.Success -> homeCurrencyCode = result.data.homeCurrency.code
-            is Result.Error -> Unit
-        }
-    }
-
+    // Re-reads budget / default category / home currency / profile name after onboarding lands —
+    // the ViewModel already did this once on construction.
     LaunchedEffect(onboardingComplete) {
-        when (val result = budgetRepository.getMonthlyBudget()) {
-            is Result.Success -> monthlyBudget = result.data
-            is Result.Error -> Unit
-        }
-        when (val result = defaultCategoryRepository.getDefaultCategoryId()) {
-            is Result.Success -> result.data?.let { defaultCategoryId = it }
-            is Result.Error -> Unit
-        }
+        if (onboardingComplete == true) homeViewModel.loadSettings()
     }
-
-    // Visible unconditionally (Debt & totals decision), but never counted toward spend/income
-    // totals below — only a toggle-on debt (already a real, linked FinanceRecord in `records`)
-    // does that.
-    val visibleDebts = remember(debts) { debts.filter { !it.recordAsTransaction } }
-
-    val homeState =
-        if (records.isEmpty() && visibleDebts.isEmpty()) {
-            previewHomeEmpty.copy(
-                greetingName = userName,
-                dateLabel = dateLabel,
-                monthLabel = monthLabel,
-                activeEvent = activeEventState,
-                isLoading = recordsLoading,
-            )
-        } else {
-            val monthStart =
-                (Calendar.getInstance() as Calendar).apply {
-                    set(Calendar.DAY_OF_MONTH, 1)
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-            val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
-            val recordsThisMonth =
-                records.filter {
-                    it.recordedAtEpochMillis >= monthStart.timeInMillis && it.recordedAtEpochMillis < monthEnd.timeInMillis
-                }
-            // "Spend this month" (US-HOME-1), not all-time — the header label promises a monthly
-            // figure, and only expenses count as spend (income must not offset it).
-            val totalCents =
-                recordsThisMonth
-                    .filter { it.type == RecordType.EXPENSE }
-                    .sumOf { it.homeCurrencyMoney.amount.valueInCents }
-            val totalLabel = AmountInput.formatMoney(totalCents, homeSymbol)
-            val budgetSummary = computeBudgetSummary(records, monthlyBudget, homeSymbol)
-            // Recent shows the last 5-10 entries (US-HOME-2), not the entire history — toggle-off
-            // debts are merged in before truncating (see buildHomeDayGroups).
-            val dayGroups =
-                buildHomeDayGroups(
-                    records = records,
-                    visibleDebts = visibleDebts,
-                    linkNames = HomeLinkNames(eventNames, debtNames, sharedCostNames, categoryNames),
-                    homeCurrencySymbol = homeSymbol,
-                    limit = RECENT_HOME_LIMIT,
-                )
-            previewHomeEmpty.copy(
-                greetingName = userName,
-                dateLabel = dateLabel,
-                monthLabel = monthLabel,
-                monthSpend = totalLabel,
-                showEmptyHint = false,
-                dayGroups = dayGroups,
-                sparklinePoints = buildSparklinePoints(records),
-                budgetSummary = budgetSummary,
-                activeEvent = activeEventState,
-            )
-        }
 
     val expenseSavedMessage = stringResource(R.string.toast_expense_saved_home)
     val pinSetupSuccessMessage = stringResource(com.arduia.expense.feature.auth.R.string.pin_setup_success)
@@ -482,9 +296,9 @@ fun ExpenseApp(
                                 onPinClick = { showPinSetup = true },
                                 pinConfigured = pinConfigured,
                                 initialDisplayName = userName.ifBlank { null },
-                                onCurrencyChanged = { homeCurrencyCode = it.code },
-                                onBudgetChanged = { monthlyBudget = it },
-                                onDefaultCategoryChanged = { defaultCategoryId = it },
+                                onCurrencyChanged = { homeViewModel.onHomeCurrencyChanged(it.code) },
+                                onBudgetChanged = { homeViewModel.onMonthlyBudgetChanged(it) },
+                                onDefaultCategoryChanged = { homeViewModel.onDefaultCategoryChanged(it) },
                                 onThemeModeChanged = onThemeModeChanged,
                                 onLanguageChanged = onLanguageChanged,
                                 onLockNowClick = { unlocked = false },
@@ -542,8 +356,8 @@ fun ExpenseApp(
             } else {
                 features.onboarding.FirstLaunchFlow(
                     onComplete = { handoff ->
-                        userName = handoff.profileName
-                        userCurrency = handoff.currencyCode
+                        homeViewModel.onUserNameChanged(handoff.profileName)
+                        homeViewModel.onHomeCurrencyChanged(handoff.currencyCode)
                         coroutineScope.launch {
                             withContext(NonCancellable) {
                                 completeOnboarding(handoff.profileName, handoff.currencyCode)
@@ -742,191 +556,16 @@ fun ExpenseApp(
 }
 
 /**
- * US-MORE-2: "spend vs. budget" always recalculates from the current calendar month, so the
- * reset on the 1st is a byproduct of the month filter rather than a separate reset mechanism —
- * a new month naturally has zero matching records. [now] defaults to real wall-clock time in
- * production; tests pass a fixed [Calendar] to control which "current month" is in effect.
+ * The shell's KMP ViewModel, scoped to this composition. Same pattern as
+ * `rememberLoggingViewModel` in feature:logging — the platform host owns the lifecycle, so the
+ * ViewModel's coroutine scope is cancelled when the shell leaves composition.
  */
-internal fun computeBudgetSummary(
-    records: List<FinanceRecord>,
-    monthlyBudget: Money?,
-    homeSymbol: String,
-    now: Calendar = Calendar.getInstance(),
-): HomeBudgetSummaryState? {
-    val budget = monthlyBudget ?: return null
-    val monthStart =
-        (now.clone() as Calendar).apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-    val monthEnd = (monthStart.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
-    val totalCents =
-        records
-            .filter {
-                it.recordedAtEpochMillis >= monthStart.timeInMillis &&
-                    it.recordedAtEpochMillis < monthEnd.timeInMillis &&
-                    it.type == RecordType.EXPENSE
-            }.sumOf { it.homeCurrencyMoney.amount.valueInCents }
-    val budgetCents = budget.amount.valueInCents
-    return HomeBudgetSummaryState(
-        spentLabel = AmountInput.formatMoney(totalCents, homeSymbol),
-        budgetLabel = "of " + AmountInput.formatMoney(budgetCents, homeSymbol),
-        progress = if (budgetCents > 0) totalCents.toFloat() / budgetCents else 0f,
-        statusLabel = if (totalCents > budgetCents) "Over budget" else "On track",
-        isOverBudget = totalCents > budgetCents,
-    )
-}
-
-private const val SPARKLINE_DAYS = 7
-
-private fun buildSparklinePoints(records: List<FinanceRecord>): List<Float> {
-    val today = Calendar.getInstance()
-    return (SPARKLINE_DAYS - 1 downTo 0).map { offset ->
-        val day = (today.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, -offset) }
-        val key = PlatformDateFormatter.dayKey(day.timeInMillis)
-        records
-            .filter { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) == key && it.type == RecordType.EXPENSE }
-            // homeCurrencyMoney, not the record's own currency (US-CUR-4) — otherwise a foreign
-            // currency amount is added into the sparkline as if it were home-currency cents.
-            .sumOf { it.homeCurrencyMoney.amount.valueInCents }
-            .toFloat()
+@Composable
+private fun rememberHomeViewModel(): HomeViewModel {
+    val scope = currentKoinScope()
+    val viewModel = remember { scope.get<HomeViewModel>() }
+    DisposableEffect(viewModel) {
+        onDispose { viewModel.onCleared() }
     }
-}
-
-/** Shared timestamp so [FinanceRecord] and toggle-off [Debt] rows can be merged and truncated together. */
-private data class HomeMergedEntry(
-    val recordedAtEpochMillis: Long,
-    val item: HomeTransactionItem,
-)
-
-private fun FinanceRecord.toHomeTransactionItem(
-    eventNames: Map<String, String>,
-    debtNames: Map<String, String>,
-    sharedCostNames: Map<String, String>,
-    categoryNames: Map<String, String>,
-): HomeTransactionItem {
-    val rowKind =
-        when (kind()) {
-            RecordKind.EXPENSE -> ProRowKind.EXPENSE
-            RecordKind.INCOME -> ProRowKind.INCOME
-            RecordKind.SPLIT -> ProRowKind.SPLIT
-            RecordKind.DEBT_LENT -> ProRowKind.DEBT_LENT
-            RecordKind.DEBT_OWED -> ProRowKind.DEBT_OWED
-        }
-    // The row's own badge/note already convey "this is a split/debt" — an "@ tag" chip repeating
-    // the same title underneath would be redundant.
-    val suppressTag = rowKind == ProRowKind.SPLIT || rowKind == ProRowKind.DEBT_LENT || rowKind == ProRowKind.DEBT_OWED
-    val linkedId = linkedRowId()
-    val timeLabel = PlatformDateFormatter.timeLabel(recordedAtEpochMillis)
-    val (rowNote, rowMeta) =
-        when (rowKind) {
-            ProRowKind.SPLIT ->
-                splitRowTitle(linkedId?.let { sharedCostNames[it] }) to "$SPLIT_ROW_SUBTITLE_TYPE · $timeLabel"
-            ProRowKind.DEBT_LENT, ProRowKind.DEBT_OWED -> {
-                val isLent = rowKind == ProRowKind.DEBT_LENT
-                val personName = linkedId?.let { debtNames[it] }.orEmpty()
-                debtRowTitle(personName, isLent) to "${debtRowSubtitleType(isLent)} · $timeLabel"
-            }
-            ProRowKind.EXPENSE, ProRowKind.INCOME ->
-                note?.trim().orEmpty().ifEmpty { resolveCategoryLabel(categoryId.value, categoryNames) } to timeLabel
-        }
-    return HomeTransactionItem(
-        id = id.value,
-        categoryId = categoryId.value,
-        note = rowNote,
-        meta = rowMeta,
-        amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
-        isIncome = type == RecordType.INCOME,
-        tag = if (suppressTag) null else link.tagLabel(eventNames, debtNames, sharedCostNames),
-        rowKind = rowKind,
-        linkedId = linkedId,
-    )
-}
-
-private fun Debt.toDebtHomeTransactionItem(): HomeTransactionItem {
-    val isLent = direction == DebtDirection.OWED_TO_ME
-    val rowKind = if (isLent) ProRowKind.DEBT_LENT else ProRowKind.DEBT_OWED
-    return HomeTransactionItem(
-        id = id.value,
-        categoryId = "",
-        note = debtRowTitle(personName, isLent),
-        meta = "${debtRowSubtitleType(isLent)} · ${PlatformDateFormatter.timeLabel(recordedAtEpochMillis)}",
-        amount = AmountInput.formatMoney(money.amount.valueInCents, currencySymbol(money.currency.code)),
-        rowKind = rowKind,
-        linkedId = id.value,
-    )
-}
-
-/** Bundles the tag-label lookup maps so they cost one parameter, not four, in call sites below. */
-private data class HomeLinkNames(
-    val eventNames: Map<String, String>,
-    val debtNames: Map<String, String>,
-    val sharedCostNames: Map<String, String>,
-    val categoryNames: Map<String, String>,
-)
-
-/**
- * Merges real records with toggle-off debts (visible everywhere, never counted toward totals —
- * see [Debt.recordAsTransaction]) before truncating to [limit], so a recent debt doesn't get
- * evicted by real expenses/income that are actually older than it, then groups by day. Day totals
- * are computed from the [records] subset only.
- */
-private fun buildHomeDayGroups(
-    records: List<FinanceRecord>,
-    visibleDebts: List<Debt>,
-    linkNames: HomeLinkNames,
-    homeCurrencySymbol: String,
-    limit: Int,
-): List<HomeDayGroup> {
-    val recordEntries =
-        records
-            .filter { it.kind().isVisibleInHomeRecents() }
-            .map { record ->
-                val item =
-                    record.toHomeTransactionItem(
-                        linkNames.eventNames,
-                        linkNames.debtNames,
-                        linkNames.sharedCostNames,
-                        linkNames.categoryNames,
-                    )
-                HomeMergedEntry(record.recordedAtEpochMillis, item)
-            }
-    // Unlike the recordEntries filter above, toggle-off debts are never a real FinanceRecord — a
-    // debt-kind entry there always means toggle-on (counted), so it keeps its own gate here.
-    val debtEntries =
-        if (SHOW_SPLIT_AND_DEBT_ROWS) {
-            visibleDebts.map { debt -> HomeMergedEntry(debt.recordedAtEpochMillis, debt.toDebtHomeTransactionItem()) }
-        } else {
-            emptyList()
-        }
-    val recent = (recordEntries + debtEntries).sortedByDescending { it.recordedAtEpochMillis }.take(limit)
-
-    return recent
-        .groupBy { PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) }
-        .toSortedMap(compareByDescending { it })
-        .map { (key, dayEntries) ->
-            val dayTotalCents =
-                records
-                    .filter {
-                        PlatformDateFormatter.dayKey(it.recordedAtEpochMillis) == key && it.type == RecordType.EXPENSE
-                    }.sumOf { it.homeCurrencyMoney.amount.valueInCents }
-            HomeDayGroup(
-                dayTitle = PlatformDateFormatter.dayLabel(dayEntries.first().recordedAtEpochMillis),
-                dayTotal = AmountInput.formatMoney(dayTotalCents, homeCurrencySymbol),
-                transactions = dayEntries.map { it.item },
-            )
-        }
-}
-
-private fun buildDateLabel(): String {
-    val calendar = Calendar.getInstance()
-    return SimpleDateFormat("EEE · MMM d", Locale.US).format(calendar.time).uppercase()
-}
-
-private fun buildMonthLabel(): String {
-    val calendar = Calendar.getInstance()
-    return SimpleDateFormat("MMM", Locale.US).format(calendar.time).uppercase()
+    return viewModel
 }

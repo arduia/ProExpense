@@ -88,6 +88,7 @@ See `docs/module_structure.md` for the full module map.
 ```
 ProExpense/
 ├── app/                         Android Compose shell
+├── shell/                       KMP app shell — cross-feature screen state + iOS framework
 ├── shared/                      KMP platform utilities
 ├── core/
 │   ├── domain/                  Shared domain models (Amount, FinanceRecord, …)
@@ -108,7 +109,8 @@ ProExpense/
 
 | Module | Can depend on |
 |--------|---------------|
-| `app` | all `core:*`, all `feature:*`, `shared` |
+| `app` | `shell`, all `core:*`, all `feature:*`, `shared` |
+| `shell` | all `core:*`, all `feature:*`, `shared` |
 | `shared` | nothing (project modules) |
 | `core:domain` | `shared` |
 | `core:data` | `core:domain`, `shared` |
