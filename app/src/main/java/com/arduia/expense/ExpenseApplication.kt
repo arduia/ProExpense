@@ -13,6 +13,8 @@ import com.arduia.expense.feature.logging.di.loggingModule
 import com.arduia.expense.feature.onboarding.di.onboardingModule
 import com.arduia.expense.feature.reports.di.reportsModule
 import com.arduia.expense.feature.sharedcost.di.sharedCostModule
+import com.arduia.expense.feature.sync.di.syncModule
+import com.arduia.expense.feature.sync.di.syncPlatformModule
 import com.arduia.expense.storage.ProExpenseStorage
 import com.arduia.expense.storage.di.storageModule
 import kotlinx.coroutines.CoroutineScope
@@ -52,6 +54,8 @@ class ExpenseApplication :
                 sharedCostModule,
                 categoriesModule,
                 importExportModule,
+                syncModule,
+                syncPlatformModule,
                 onboardingModule,
                 appModule,
             )

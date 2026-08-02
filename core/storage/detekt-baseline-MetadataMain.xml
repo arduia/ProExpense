@@ -6,7 +6,10 @@
     <ID>ClassNaming:Debt_record.kt$Debt_record</ID>
     <ID>ClassNaming:Event_record.kt$Event_record</ID>
     <ID>ClassNaming:Finance_record.kt$Finance_record</ID>
+    <ID>ClassNaming:Finance_record_month_sync.kt$Finance_record_month_sync</ID>
+    <ID>ClassNaming:Finance_record_tombstone.kt$Finance_record_tombstone</ID>
     <ID>ClassNaming:Shared_cost.kt$Shared_cost</ID>
+    <ID>ClassNaming:Sync_record.kt$Sync_record</ID>
     <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val biometric_enrolled: Long</ID>
     <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val biometric_wrapped_key: ByteArray?</ID>
     <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val default_category_id: String?</ID>
@@ -21,6 +24,9 @@
     <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val security_answer_hash: String?</ID>
     <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val security_question_id: String?</ID>
     <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val stay_unlocked_in_background: Long</ID>
+    <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val sync_account_email: String?</ID>
+    <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val sync_connected: Long</ID>
+    <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val sync_last_synced_at: Long?</ID>
     <ID>ConstructorParameterNaming:App_meta.kt$App_meta$public val theme_mode: String</ID>
     <ID>ConstructorParameterNaming:Category.kt$Category$public val color_id: String</ID>
     <ID>ConstructorParameterNaming:Category.kt$Category$public val icon_id: String</ID>
@@ -50,11 +56,18 @@
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val home_currency_code: String?</ID>
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val integrity_algo: String</ID>
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val integrity_hash: String</ID>
+    <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val last_synced_at: Long?</ID>
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val recorded_at: Long</ID>
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val tag_id: String?</ID>
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val tag_type: String?</ID>
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val updated_at: Long</ID>
     <ID>ConstructorParameterNaming:Finance_record.kt$Finance_record$public val wallet_id: Long?</ID>
+    <ID>ConstructorParameterNaming:Finance_record_month_sync.kt$Finance_record_month_sync$public val last_synced_at: Long?</ID>
+    <ID>ConstructorParameterNaming:Finance_record_month_sync.kt$Finance_record_month_sync$public val remote_file_id: String?</ID>
+    <ID>ConstructorParameterNaming:Finance_record_month_sync.kt$Finance_record_month_sync$public val remote_updated_at: Long?</ID>
+    <ID>ConstructorParameterNaming:Finance_record_month_sync.kt$Finance_record_month_sync$public val year_month: String</ID>
+    <ID>ConstructorParameterNaming:Finance_record_tombstone.kt$Finance_record_tombstone$public val deleted_at: Long</ID>
+    <ID>ConstructorParameterNaming:Finance_record_tombstone.kt$Finance_record_tombstone$public val year_month: String</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val currency_code: String</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val custom_shares_json: String?</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val is_archived: Long</ID>
@@ -62,6 +75,16 @@
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val record_as_transaction: Long</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val recorded_at: Long</ID>
     <ID>ConstructorParameterNaming:Shared_cost.kt$Shared_cost$public val total_cents: Long</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val amount_cents: Long?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val category_id: String?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val currency_code: String?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val home_amount_cents: Long?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val home_currency_code: String?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val recorded_at: Long?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val tag_id: String?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val tag_type: String?</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val updated_at: Long</ID>
+    <ID>ConstructorParameterNaming:Sync_record.kt$Sync_record$public val wallet_id: Long?</ID>
     <ID>CyclomaticComplexMethod:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$private fun parseJsonRecord(json: String): FinanceRecord?</ID>
     <ID>CyclomaticComplexMethod:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$private fun splitCsvRecords(content: String): List&lt;String&gt;</ID>
     <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$biometric_enrolled: Long</ID>
@@ -78,6 +101,9 @@
     <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$security_answer_hash: String?</ID>
     <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$security_question_id: String?</ID>
     <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$stay_unlocked_in_background: Long</ID>
+    <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$sync_account_email: String?</ID>
+    <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$sync_connected: Long</ID>
+    <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$sync_last_synced_at: Long?</ID>
     <ID>FunctionParameterNaming:AppMetaQueries.kt$AppMetaQueries$theme_mode: String</ID>
     <ID>FunctionParameterNaming:CategoryQueries.kt$CategoryQueries$color_id: String</ID>
     <ID>FunctionParameterNaming:CategoryQueries.kt$CategoryQueries$icon_id: String</ID>
@@ -98,6 +124,10 @@
     <ID>FunctionParameterNaming:EventQueries.kt$EventQueries$currency_code: String</ID>
     <ID>FunctionParameterNaming:EventQueries.kt$EventQueries$end_epoch_millis: Long</ID>
     <ID>FunctionParameterNaming:EventQueries.kt$EventQueries$start_epoch_millis: Long</ID>
+    <ID>FunctionParameterNaming:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$last_synced_at: Long?</ID>
+    <ID>FunctionParameterNaming:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$remote_file_id: String?</ID>
+    <ID>FunctionParameterNaming:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$remote_updated_at: Long?</ID>
+    <ID>FunctionParameterNaming:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$year_month: String</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$amount_cents: Long</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$category_id: String</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$currency_code: String</ID>
@@ -105,11 +135,14 @@
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$home_currency_code: String?</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$integrity_algo: String</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$integrity_hash: String</ID>
+    <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$last_synced_at: Long?</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$recorded_at: Long</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$tag_id: String?</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$tag_type: String?</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$updated_at: Long</ID>
     <ID>FunctionParameterNaming:FinanceRecordQueries.kt$FinanceRecordQueries$wallet_id: Long?</ID>
+    <ID>FunctionParameterNaming:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries$deleted_at: Long</ID>
+    <ID>FunctionParameterNaming:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries$year_month: String</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$currency_code: String</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$custom_shares_json: String?</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$is_archived: Long</ID>
@@ -117,17 +150,33 @@
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$record_as_transaction: Long</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$recorded_at: Long</ID>
     <ID>FunctionParameterNaming:SharedCostQueries.kt$SharedCostQueries$total_cents: Long</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$amount_cents: Long?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$category_id: String?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$currency_code: String?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$home_amount_cents: Long?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$home_currency_code: String?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$recorded_at: Long?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$tag_id: String?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$tag_type: String?</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$updated_at: Long</ID>
+    <ID>FunctionParameterNaming:SyncPayloadQueries.kt$SyncPayloadQueries$wallet_id: Long?</ID>
     <ID>LongMethod:ProExpenseDatabaseImpl.kt$ProExpenseDatabaseImpl.Schema$override fun create(driver: SqlDriver): QueryResult.Value&lt;Unit&gt;</ID>
     <ID>LongParameterList:AppMetaQueries.kt$AppMetaQueries$( id: Long?, monthly_budget_cents: Long?, home_currency_code: String, failed_attempt_count: Long, lockout_until: Long?, security_answer_hash: String?, security_question_id: String?, biometric_enrolled: Long, biometric_wrapped_key: ByteArray?, display_name: String, onboarding_completed: Long, pin_hash: String?, language_tag: String, default_category_id: String?, theme_mode: String, stay_unlocked_in_background: Long, )</ID>
+    <ID>LongMethod:ProExpenseStorage.kt$ProExpenseStorage.Companion$fun create( driverFactory: DatabaseDriverFactory, keyManager: DatabaseKeyManager, keyValueStore: PlatformKeyValueStore, dispatcher: CoroutineDispatcher = Dispatchers.Default, ): ProExpenseStorage</ID>
+    <ID>LongParameterList:AppMetaQueries.kt$AppMetaQueries$( id: Long?, monthly_budget_cents: Long?, home_currency_code: String, failed_attempt_count: Long, lockout_until: Long?, security_answer_hash: String?, security_question_id: String?, biometric_enrolled: Long, biometric_wrapped_key: ByteArray?, display_name: String, onboarding_completed: Long, pin_hash: String?, language_tag: String, default_category_id: String?, theme_mode: String, stay_unlocked_in_background: Long, sync_connected: Long, sync_account_email: String?, sync_last_synced_at: Long?, )</ID>
     <ID>LongParameterList:CategoryQueries.kt$CategoryQueries$( id: String, name: String, is_custom: Long, sort_order: Long, icon_id: String, type: Long, color_id: String, )</ID>
     <ID>LongParameterList:DebtQueries.kt$DebtQueries$( id: String, person_name: String, amount_cents: Long, currency_code: String, direction: Long, due_epoch_millis: Long?, is_settled: Long, note: String?, recorded_at: Long, record_as_transaction: Long, )</ID>
     <ID>LongParameterList:EventQueries.kt$EventQueries$( id: String, name: String, start_epoch_millis: Long, end_epoch_millis: Long, budget_cents: Long, currency_code: String, status: Long, created_at: Long, cached_spent_cents: Long, cache_updated_at: Long, closed_at_epoch_millis: Long?, )</ID>
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( id: String, amount_cents: Long, currency_code: String, home_amount_cents: Long?, category_id: String, type: Long, note: String?, recorded_at: Long, updated_at: Long, tag_type: String?, tag_id: String?, integrity_algo: String, integrity_hash: String, home_currency_code: String?, wallet_id: Long?, )</ID>
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( kind: String?, categoryId: String?, fromMillis: Long?, toMillis: Long?, query: String?, beforeRecordedAt: Long?, beforeId: String?, limit: Long, )</ID>
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( kind: String?, categoryId: String?, fromMillis: Long?, toMillis: Long?, query: String?, beforeRecordedAt: Long?, beforeId: String?, limit: Long, mapper: ( id: String, amount_cents: Long, currency_code: String, home_amount_cents: Long?, category_id: String, type: Long, note: String?, recorded_at: Long, updated_at: Long, tag_type: String?, tag_id: String?, integrity_algo: String, integrity_hash: String, home_currency_code: String?, wallet_id: Long?, ) -&gt; T, )</ID>
+    <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( id: String, amount_cents: Long, currency_code: String, home_amount_cents: Long?, category_id: String, type: Long, note: String?, recorded_at: Long, updated_at: Long, tag_type: String?, tag_id: String?, integrity_algo: String, integrity_hash: String, home_currency_code: String?, wallet_id: Long?, last_synced_at: Long?, )</ID>
+    <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( kind: String?, categoryId: String?, fromMillis: Long?, toMillis: Long?, query: String?, beforeRecordedAt: Long?, beforeId: String?, limit: Long, )</ID>
+    <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries$( kind: String?, categoryId: String?, fromMillis: Long?, toMillis: Long?, query: String?, beforeRecordedAt: Long?, beforeId: String?, limit: Long, mapper: ( id: String, amount_cents: Long, currency_code: String, home_amount_cents: Long?, category_id: String, type: Long, note: String?, recorded_at: Long, updated_at: Long, tag_type: String?, tag_id: String?, integrity_algo: String, integrity_hash: String, home_currency_code: String?, wallet_id: Long?, dirty: Long, last_synced_at: Long?, ) -&gt; T, )</ID>
     <ID>LongParameterList:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$( public val kind: String?, public val categoryId: String?, public val fromMillis: Long?, public val toMillis: Long?, public val query: String?, public val beforeRecordedAt: Long?, public val beforeId: String?, public val limit: Long, mapper: (SqlCursor) -&gt; T, )</ID>
-    <ID>LongParameterList:ProExpenseStorage.kt$ProExpenseStorage$( val database: ProExpenseDatabase, val appMetaStore: AppMetaLocalStore, private val dispatcher: CoroutineDispatcher, val financeRecordRepository: FinanceRecordRepository, val categoryRepository: CategoryRepository, val eventRepository: EventRepository, val debtRepository: DebtRepository, val budgetRepository: BudgetRepository, val lockoutRepository: LockoutRepository, val securityStateReader: SecurityStateReader, val currencySettingsRepository: CurrencySettingsRepository, val sharedCostRepository: SharedCostRepository, val importExportRepository: ImportExportRepository, val clearDataRepository: ClearDataRepository, val profileRepository: ProfileRepository, val localeRepository: LocaleRepository, val defaultCategoryRepository: DefaultCategoryRepository, val themeRepository: ThemeRepository, )</ID>
+    <ID>LongParameterList:ProExpenseStorage.kt$ProExpenseStorage$( val database: ProExpenseDatabase, val appMetaStore: AppMetaLocalStore, private val dispatcher: CoroutineDispatcher, val financeRecordRepository: FinanceRecordRepository, val categoryRepository: CategoryRepository, val eventRepository: EventRepository, val debtRepository: DebtRepository, val budgetRepository: BudgetRepository, val lockoutRepository: LockoutRepository, val securityStateReader: SecurityStateReader, val currencySettingsRepository: CurrencySettingsRepository, val sharedCostRepository: SharedCostRepository, val importExportRepository: ImportExportRepository, val clearDataRepository: ClearDataRepository, val profileRepository: ProfileRepository, val localeRepository: LocaleRepository, val defaultCategoryRepository: DefaultCategoryRepository, val themeRepository: ThemeRepository, val syncStateRepository: SyncStateRepository, val syncAccountRepository: SyncAccountRepository, )</ID>
     <ID>LongParameterList:SharedCostQueries.kt$SharedCostQueries$( id: String, title: String, total_cents: Long, currency_code: String, recorded_at: Long, participants_json: String, custom_shares_json: String?, is_archived: Long, record_as_transaction: Long, )</ID>
+    <ID>LongParameterList:SyncPayloadQueries.kt$SyncPayloadQueries$( id: String, updated_at: Long, deleted: Long, amount_cents: Long?, currency_code: String?, home_amount_cents: Long?, home_currency_code: String?, category_id: String?, type: Long?, note: String?, recorded_at: Long?, tag_type: String?, tag_id: String?, wallet_id: Long?, )</ID>
     <ID>LoopWithTooManyJumpStatements:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$for</ID>
     <ID>LoopWithTooManyJumpStatements:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$while</ID>
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$10</ID>
@@ -137,6 +186,9 @@
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$14</ID>
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$15</ID>
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$16</ID>
+    <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$17</ID>
+    <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$18</ID>
+    <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$19</ID>
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$1_013_509_193</ID>
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$3</ID>
     <ID>MagicNumber:AppMetaQueries.kt$AppMetaQueries$4</ID>
@@ -185,14 +237,25 @@
     <ID>MagicNumber:EventQueries.kt$EventQueries$9</ID>
     <ID>MagicNumber:EventQueries.kt$EventQueries$97_115_646</ID>
     <ID>MagicNumber:EventQueries.kt$EventQueries.SelectEventByIdQuery$764_591_476</ID>
+    <ID>MagicNumber:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$1_805_513_097</ID>
+    <ID>MagicNumber:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$1_867_097_464</ID>
+    <ID>MagicNumber:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$2_000_009_118</ID>
+    <ID>MagicNumber:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$2_007_586_466</ID>
+    <ID>MagicNumber:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$3</ID>
+    <ID>MagicNumber:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries$4</ID>
+    <ID>MagicNumber:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries.SelectMonthSyncQuery$510_647_499</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$10</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$11</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$12</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$13</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$14</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$15</ID>
+    <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$16</ID>
+    <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$1_364_024_281</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$1_365_085_908</ID>
+    <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$1_615_390_532</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$1_810_637_417</ID>
+    <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$1_978_116_093</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$210_014_678</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$2_058_031_079</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$3</ID>
@@ -206,6 +269,7 @@
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries$970_203_913</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.ExistsByCategoryQuery$1_474_034_018</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordByIdQuery$1_949_318_004</ID>
+    <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsByMonthQuery$1_283_580_912</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$10</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$11</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$12</ID>
@@ -222,6 +286,12 @@
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$7</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$8</ID>
     <ID>MagicNumber:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsPageQuery$9</ID>
+    <ID>MagicNumber:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries$1_060_261_546</ID>
+    <ID>MagicNumber:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries$1_172_610_912</ID>
+    <ID>MagicNumber:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries$1_338_767_835</ID>
+    <ID>MagicNumber:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries$2_069_239_848</ID>
+    <ID>MagicNumber:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries$3</ID>
+    <ID>MagicNumber:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries.SelectTombstonesByMonthQuery$1_945_071_509</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$1_521_565_911</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$1_877_127_064</ID>
     <ID>MagicNumber:SharedCostQueries.kt$SharedCostQueries$20_030_889</ID>
@@ -243,8 +313,23 @@
     <ID>MagicNumber:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$8</ID>
     <ID>MagicNumber:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$9</ID>
     <ID>MagicNumber:SqlDelightSharedCostRepository.kt$SqlDelightSharedCostRepository$16</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$10</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$11</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$12</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$13</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$14</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$143_705_483</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$145_659_642</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$2_022_815_284</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$3</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$4</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$5</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$6</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$7</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$8</ID>
+    <ID>MagicNumber:SyncPayloadQueries.kt$SyncPayloadQueries$9</ID>
     <ID>MatchingDeclarationName:FinanceRecordMapper.kt$RecordLinkTag</ID>
-    <ID>MaxLineLength:AppMetaQueries.kt$AppMetaQueries$"SELECT app_meta.id, app_meta.monthly_budget_cents, app_meta.home_currency_code, app_meta.failed_attempt_count, app_meta.lockout_until, app_meta.security_answer_hash, app_meta.security_question_id, app_meta.biometric_enrolled, app_meta.biometric_wrapped_key, app_meta.display_name, app_meta.onboarding_completed, app_meta.pin_hash, app_meta.language_tag, app_meta.default_category_id, app_meta.theme_mode, app_meta.stay_unlocked_in_background FROM app_meta WHERE id = 1"</ID>
+    <ID>MaxLineLength:AppMetaQueries.kt$AppMetaQueries$"SELECT app_meta.id, app_meta.monthly_budget_cents, app_meta.home_currency_code, app_meta.failed_attempt_count, app_meta.lockout_until, app_meta.security_answer_hash, app_meta.security_question_id, app_meta.biometric_enrolled, app_meta.biometric_wrapped_key, app_meta.display_name, app_meta.onboarding_completed, app_meta.pin_hash, app_meta.language_tag, app_meta.default_category_id, app_meta.theme_mode, app_meta.stay_unlocked_in_background, app_meta.sync_connected, app_meta.sync_account_email, app_meta.sync_last_synced_at FROM app_meta WHERE id = 1"</ID>
     <ID>MaxLineLength:CategoryQueries.kt$CategoryQueries$"""INSERT OR IGNORE INTO category(id, name, is_custom, sort_order, icon_id, type, color_id) VALUES (?, ?, ?, ?, ?, ?, ?)"""</ID>
     <ID>MaxLineLength:CategoryQueries.kt$CategoryQueries$"""INSERT OR REPLACE INTO category(id, name, is_custom, sort_order, icon_id, type, color_id) VALUES (?, ?, ?, ?, ?, ?, ?)"""</ID>
     <ID>MaxLineLength:CategoryQueries.kt$CategoryQueries$"SELECT category.id, category.name, category.is_custom, category.sort_order, category.icon_id, category.type, category.color_id FROM category ORDER BY sort_order, name"</ID>
@@ -253,15 +338,23 @@
     <ID>MaxLineLength:DebtQueries.kt$DebtQueries.SelectDebtsByPersonQuery$"""SELECT debt_record.id, debt_record.person_name, debt_record.amount_cents, debt_record.currency_code, debt_record.direction, debt_record.due_epoch_millis, debt_record.is_settled, debt_record.note, debt_record.recorded_at, debt_record.record_as_transaction FROM debt_record WHERE person_name = ? ORDER BY person_name"""</ID>
     <ID>MaxLineLength:EventQueries.kt$EventQueries$"SELECT event_record.id, event_record.name, event_record.start_epoch_millis, event_record.end_epoch_millis, event_record.budget_cents, event_record.currency_code, event_record.status, event_record.created_at, event_record.cached_spent_cents, event_record.cache_updated_at, event_record.closed_at_epoch_millis FROM event_record ORDER BY start_epoch_millis DESC"</ID>
     <ID>MaxLineLength:EventQueries.kt$EventQueries.SelectEventByIdQuery$"""SELECT event_record.id, event_record.name, event_record.start_epoch_millis, event_record.end_epoch_millis, event_record.budget_cents, event_record.currency_code, event_record.status, event_record.created_at, event_record.cached_spent_cents, event_record.cache_updated_at, event_record.closed_at_epoch_millis FROM event_record WHERE id = ?"""</ID>
+    <ID>MaxLineLength:FinanceRecordMonthSyncQueries.kt$FinanceRecordMonthSyncQueries.SelectMonthSyncQuery$"""SELECT finance_record_month_sync.year_month, finance_record_month_sync.remote_file_id, finance_record_month_sync.remote_updated_at, finance_record_month_sync.last_synced_at, finance_record_month_sync.dirty FROM finance_record_month_sync WHERE year_month = ?"""</ID>
+    <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries$"""UPDATE finance_record SET dirty = 0, last_synced_at = ? WHERE strftime('%Y-%m', recorded_at / 1000, 'unixepoch') = ?"""</ID>
     <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries$"""UPDATE finance_record SET tag_type = NULL, tag_id = NULL WHERE tag_type ${ if (tag_type == null) "IS" else "=" } ?"""</ID>
     <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries$"SELECT finance_record.id, finance_record.amount_cents, finance_record.currency_code, finance_record.home_amount_cents, finance_record.category_id, finance_record.type, finance_record.note, finance_record.recorded_at, finance_record.updated_at, finance_record.tag_type, finance_record.tag_id, finance_record.integrity_algo, finance_record.integrity_hash, finance_record.home_currency_code, finance_record.wallet_id FROM finance_record ORDER BY recorded_at DESC"</ID>
     <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordByIdQuery$"""SELECT finance_record.id, finance_record.amount_cents, finance_record.currency_code, finance_record.home_amount_cents, finance_record.category_id, finance_record.type, finance_record.note, finance_record.recorded_at, finance_record.updated_at, finance_record.tag_type, finance_record.tag_id, finance_record.integrity_algo, finance_record.integrity_hash, finance_record.home_currency_code, finance_record.wallet_id FROM finance_record WHERE id = ?"""</ID>
+    <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries$"SELECT DISTINCT strftime('%Y-%m', recorded_at / 1000, 'unixepoch') AS year_month FROM finance_record WHERE dirty = 1"</ID>
+    <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries$"SELECT finance_record.id, finance_record.amount_cents, finance_record.currency_code, finance_record.home_amount_cents, finance_record.category_id, finance_record.type, finance_record.note, finance_record.recorded_at, finance_record.updated_at, finance_record.tag_type, finance_record.tag_id, finance_record.integrity_algo, finance_record.integrity_hash, finance_record.home_currency_code, finance_record.wallet_id, finance_record.dirty, finance_record.last_synced_at FROM finance_record ORDER BY recorded_at DESC"</ID>
+    <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordByIdQuery$"""SELECT finance_record.id, finance_record.amount_cents, finance_record.currency_code, finance_record.home_amount_cents, finance_record.category_id, finance_record.type, finance_record.note, finance_record.recorded_at, finance_record.updated_at, finance_record.tag_type, finance_record.tag_id, finance_record.integrity_algo, finance_record.integrity_hash, finance_record.home_currency_code, finance_record.wallet_id, finance_record.dirty, finance_record.last_synced_at FROM finance_record WHERE id = ?"""</ID>
+    <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries.SelectRecordsByMonthQuery$"""SELECT finance_record.id, finance_record.amount_cents, finance_record.currency_code, finance_record.home_amount_cents, finance_record.category_id, finance_record.type, finance_record.note, finance_record.recorded_at, finance_record.updated_at, finance_record.tag_type, finance_record.tag_id, finance_record.integrity_algo, finance_record.integrity_hash, finance_record.home_currency_code, finance_record.wallet_id, finance_record.dirty, finance_record.last_synced_at FROM finance_record WHERE strftime('%Y-%m', recorded_at / 1000, 'unixepoch') = ?"""</ID>
     <ID>MaxLineLength:FinanceRecordQueries.kt$FinanceRecordQueries.SumAmountByEventLinkQuery$"""SELECT COALESCE(SUM(COALESCE(home_amount_cents, amount_cents)), 0) FROM finance_record WHERE tag_type = 'EVENT' AND tag_id ${ if (tag_id == null) "IS" else "=" } ?"""</ID>
+    <ID>MaxLineLength:FinanceRecordTombstoneQueries.kt$FinanceRecordTombstoneQueries.SelectTombstonesByMonthQuery$"""SELECT finance_record_tombstone.id, finance_record_tombstone.year_month, finance_record_tombstone.deleted_at, finance_record_tombstone.dirty FROM finance_record_tombstone WHERE year_month = ?"""</ID>
     <ID>MaxLineLength:SharedCostMapper.kt$""""${participantId.value}":{"cents":${money.amount.valueInCents},"code":"${money.currency.code}"}"""</ID>
     <ID>MaxLineLength:SharedCostQueries.kt$SharedCostQueries$"SELECT shared_cost.id, shared_cost.title, shared_cost.total_cents, shared_cost.currency_code, shared_cost.recorded_at, shared_cost.participants_json, shared_cost.custom_shares_json, shared_cost.is_archived, shared_cost.record_as_transaction FROM shared_cost WHERE is_archived = 0 ORDER BY recorded_at DESC"</ID>
     <ID>MaxLineLength:SharedCostQueries.kt$SharedCostQueries.SelectSharedCostByIdQuery$"""SELECT shared_cost.id, shared_cost.title, shared_cost.total_cents, shared_cost.currency_code, shared_cost.recorded_at, shared_cost.participants_json, shared_cost.custom_shares_json, shared_cost.is_archived, shared_cost.record_as_transaction FROM shared_cost WHERE id = ?"""</ID>
     <ID>MaxLineLength:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$"""{"id":"${record.id.value}","money":{"cents":${record.money.amount.valueInCents},"code":"${record.money.currency.code}"},"homeMoney":{"cents":${record.homeCurrencyMoney.amount.valueInCents},"code":"${record.homeCurrencyMoney.currency.code}"},"categoryId":"${record.categoryId.value}","type":"${record.type.name}","note":"$note","recordedAtEpochMillis":${record.recordedAtEpochMillis},"link":$linkJson}"""</ID>
     <ID>MaxLineLength:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$val header = "id,money_cents,money_code,category_id,type,note,recorded_at,link_type,link_id,home_money_cents,home_money_code"</ID>
+    <ID>MaxLineLength:SyncPayloadQueries.kt$SyncPayloadQueries$"SELECT sync_record.id, sync_record.updated_at, sync_record.deleted, sync_record.amount_cents, sync_record.currency_code, sync_record.home_amount_cents, sync_record.home_currency_code, sync_record.category_id, sync_record.type, sync_record.note, sync_record.recorded_at, sync_record.tag_type, sync_record.tag_id, sync_record.wallet_id FROM sync_record"</ID>
     <ID>NestedBlockDepth:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$private fun parseJson(content: String): List&lt;FinanceRecord&gt;</ID>
     <ID>ReturnCount:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$private fun parseJsonRecord(json: String): FinanceRecord?</ID>
     <ID>SwallowedException:SqlDelightImportExportRepository.kt$SqlDelightImportExportRepository$e: Exception</ID>

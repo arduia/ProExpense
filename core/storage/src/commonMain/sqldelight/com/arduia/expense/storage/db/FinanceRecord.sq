@@ -7,6 +7,10 @@
 -- wallet_id: reserved for future multi-wallet support; no wallet table/feature yet, so always null
 -- today. Integer (not TEXT/UUID like every other id here) — wallets are a small, locally-numbered
 -- set, chosen up front for this future linkage column.
+-- dirty/last_synced_at: Google Drive sync bookkeeping (opt-in, see docs/user_stories/sync/). Not
+-- exposed on the shared FinanceRecord domain model — read only through SyncStateRepository. dirty
+-- defaults to 1 so every pre-existing and newly-inserted row starts "needs syncing"; a local write
+-- (insertRecord) always re-stamps dirty=1, a remote pull merge (upsertRecordFromRemote) clears it.
 CREATE TABLE finance_record (
     id TEXT NOT NULL PRIMARY KEY,
     amount_cents INTEGER NOT NULL,
@@ -22,18 +26,37 @@ CREATE TABLE finance_record (
     integrity_algo TEXT NOT NULL,
     integrity_hash TEXT NOT NULL,
     home_currency_code TEXT,
-    wallet_id INTEGER
+    wallet_id INTEGER,
+    dirty INTEGER NOT NULL DEFAULT 1,
+    last_synced_at INTEGER
 );
 
 CREATE INDEX finance_record_recorded_at_idx ON finance_record(recorded_at DESC, id DESC);
 
 insertRecord:
 INSERT OR REPLACE INTO finance_record(
-    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, updated_at, tag_type, tag_id, integrity_algo, integrity_hash, home_currency_code, wallet_id
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, updated_at, tag_type, tag_id, integrity_algo, integrity_hash, home_currency_code, wallet_id, dirty, last_synced_at
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NULL);
 
 deleteRecord:
 DELETE FROM finance_record WHERE id = ?;
+
+-- Sync-only queries below (feature:sync / SqlDelightSyncStateRepository). Month bucket is derived
+-- from recorded_at in UTC via SQLite's strftime(..., 'unixepoch') so it's deterministic regardless
+-- of device timezone (US-SYNC business rule) without needing a stored year_month column.
+selectRecordsByMonth:
+SELECT * FROM finance_record WHERE strftime('%Y-%m', recorded_at / 1000, 'unixepoch') = :yearMonth;
+
+selectDirtyMonths:
+SELECT DISTINCT strftime('%Y-%m', recorded_at / 1000, 'unixepoch') AS year_month FROM finance_record WHERE dirty = 1;
+
+markRecordsSyncedForMonth:
+UPDATE finance_record SET dirty = 0, last_synced_at = :syncedAt WHERE strftime('%Y-%m', recorded_at / 1000, 'unixepoch') = :yearMonth;
+
+upsertRecordFromRemote:
+INSERT OR REPLACE INTO finance_record(
+    id, amount_cents, currency_code, home_amount_cents, category_id, type, note, recorded_at, updated_at, tag_type, tag_id, integrity_algo, integrity_hash, home_currency_code, wallet_id, dirty, last_synced_at
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?);
 
 selectAllRecords:
 SELECT * FROM finance_record ORDER BY recorded_at DESC;

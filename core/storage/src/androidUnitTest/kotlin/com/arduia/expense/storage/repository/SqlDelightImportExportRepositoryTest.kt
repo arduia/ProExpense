@@ -26,6 +26,8 @@ private fun importExportRepo(database: ProExpenseDatabase): SqlDelightImportExpo
         SqlDelightFinanceRecordRepository(
             queries = database.financeRecordQueries,
             eventQueries = database.eventQueries,
+            tombstoneQueries = database.financeRecordTombstoneQueries,
+            monthSyncQueries = database.financeRecordMonthSyncQueries,
             dispatcher = Dispatchers.Unconfined,
         )
     val eventRepository = SqlDelightEventRepository(database.eventQueries, Dispatchers.Unconfined)
@@ -61,6 +63,8 @@ class SqlDelightImportExportRepositoryTest {
                 SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
                     eventQueries = database.eventQueries,
+                    tombstoneQueries = database.financeRecordTombstoneQueries,
+                    monthSyncQueries = database.financeRecordMonthSyncQueries,
                     dispatcher = Dispatchers.Unconfined,
                 )
             financeRecordRepository.upsert(
@@ -139,6 +143,8 @@ class SqlDelightImportExportRepositoryTest {
                 SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
                     eventQueries = database.eventQueries,
+                    tombstoneQueries = database.financeRecordTombstoneQueries,
+                    monthSyncQueries = database.financeRecordMonthSyncQueries,
                     dispatcher = Dispatchers.Unconfined,
                 )
             val repo = importExportRepo(database)
@@ -176,6 +182,8 @@ class SqlDelightImportExportRepositoryTest {
                 SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
                     eventQueries = database.eventQueries,
+                    tombstoneQueries = database.financeRecordTombstoneQueries,
+                    monthSyncQueries = database.financeRecordMonthSyncQueries,
                     dispatcher = Dispatchers.Unconfined,
                 )
             val repo = importExportRepo(database)
@@ -200,6 +208,8 @@ class SqlDelightImportExportRepositoryTest {
                 SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
                     eventQueries = database.eventQueries,
+                    tombstoneQueries = database.financeRecordTombstoneQueries,
+                    monthSyncQueries = database.financeRecordMonthSyncQueries,
                     dispatcher = Dispatchers.Unconfined,
                 )
             val repo = importExportRepo(database)
@@ -225,6 +235,8 @@ class SqlDelightImportExportRepositoryTest {
                 SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
                     eventQueries = database.eventQueries,
+                    tombstoneQueries = database.financeRecordTombstoneQueries,
+                    monthSyncQueries = database.financeRecordMonthSyncQueries,
                     dispatcher = Dispatchers.Unconfined,
                 )
             val repo = importExportRepo(database)
@@ -268,6 +280,8 @@ class SqlDelightImportExportRepositoryTest {
                 SqlDelightFinanceRecordRepository(
                     queries = database.financeRecordQueries,
                     eventQueries = database.eventQueries,
+                    tombstoneQueries = database.financeRecordTombstoneQueries,
+                    monthSyncQueries = database.financeRecordMonthSyncQueries,
                     dispatcher = Dispatchers.Unconfined,
                 )
             val repo = importExportRepo(database)

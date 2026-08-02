@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>MaxLineLength:SyncPayloadDatabaseIO.kt$SyncPayloadDatabaseIO$private fun newTempFile(): File</ID>
     <ID>ReturnCount:AndroidDatabaseKeyManager.kt$AndroidDatabaseKeyManager$private fun readWrappedKey(): ByteArray?</ID>
     <ID>TooGenericExceptionCaught:AndroidIntegrityKeyManager.kt$AndroidIntegrityKeyManager$e: Exception</ID>
   </CurrentIssues>

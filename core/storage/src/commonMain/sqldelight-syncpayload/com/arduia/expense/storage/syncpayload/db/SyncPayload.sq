@@ -1,0 +1,37 @@
+-- On-the-wire format for one calendar month's Google Drive sync file (US-SYNC-3). Independent of
+-- ProExpenseDatabase's finance_record table — this schema exists purely so a month's push/pull
+-- payload can be built/read as a real SQLite file via SQLDelight's generated codegen instead of
+-- hand-rolled JSON parsing.
+--
+-- deleted=1 rows represent a tombstoned (deleted) record traveling inline in the same file rather
+-- than a separate remote tombstone file (keeps the bandwidth win: one file per touched month
+-- covers both edits and deletes) — their content columns are NULL since a deletion carries no
+-- record content, only the id and updated_at (reused as the deletion timestamp for that case).
+CREATE TABLE sync_record (
+    id TEXT NOT NULL PRIMARY KEY,
+    updated_at INTEGER NOT NULL,
+    deleted INTEGER NOT NULL DEFAULT 0,
+    amount_cents INTEGER,
+    currency_code TEXT,
+    home_amount_cents INTEGER,
+    home_currency_code TEXT,
+    category_id TEXT,
+    type INTEGER,
+    note TEXT,
+    recorded_at INTEGER,
+    tag_type TEXT,
+    tag_id TEXT,
+    wallet_id INTEGER
+);
+
+insertRecord:
+INSERT OR REPLACE INTO sync_record(
+    id, updated_at, deleted, amount_cents, currency_code, home_amount_cents, home_currency_code, category_id, type, note, recorded_at, tag_type, tag_id, wallet_id
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+insertTombstone:
+INSERT OR REPLACE INTO sync_record(id, updated_at, deleted)
+VALUES (?, ?, 1);
+
+selectAll:
+SELECT * FROM sync_record;

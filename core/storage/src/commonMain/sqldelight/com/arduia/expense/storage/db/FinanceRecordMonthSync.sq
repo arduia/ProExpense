@@ -1,0 +1,34 @@
+-- Per-month Drive file bookkeeping (US-SYNC-3/US-SYNC-4): whether a remote file already exists for
+-- a given month (so push knows files.update vs. files.create) and the last known remote version
+-- (so pull can skip a month that hasn't changed remotely).
+--
+-- dirty: a month can need re-pushing even when no *current* finance_record row in it is dirty —
+-- e.g. backdating a record out of this month removes its only locally-dirty trace here, but the
+-- month's remote file still needs to drop that record. markMonthDirty is the explicit signal for
+-- that case (US-SYNC-3 Business Rule: editing recorded_at marks both the old and new month dirty).
+CREATE TABLE finance_record_month_sync (
+    year_month TEXT NOT NULL PRIMARY KEY,
+    remote_file_id TEXT,
+    remote_updated_at INTEGER,
+    last_synced_at INTEGER,
+    dirty INTEGER NOT NULL DEFAULT 0
+);
+
+selectMonthSync:
+SELECT * FROM finance_record_month_sync WHERE year_month = :yearMonth;
+
+selectDirtyMonthSyncMonths:
+SELECT year_month FROM finance_record_month_sync WHERE dirty = 1;
+
+-- Two-statement upsert (not `ON CONFLICT DO UPDATE`) — the project's SQLDelight dialect predates
+-- SQLite's UPSERT clause. Callers run both in the same transaction: insertMonthSyncRowIfAbsent
+-- guarantees a row exists, then markMonthDirty flips its flag regardless of whether it pre-existed.
+insertMonthSyncRowIfAbsent:
+INSERT OR IGNORE INTO finance_record_month_sync(year_month, dirty) VALUES (:yearMonth, 0);
+
+markMonthDirty:
+UPDATE finance_record_month_sync SET dirty = 1 WHERE year_month = :yearMonth;
+
+upsertMonthSync:
+INSERT OR REPLACE INTO finance_record_month_sync(year_month, remote_file_id, remote_updated_at, last_synced_at, dirty)
+VALUES (?, ?, ?, ?, 0);

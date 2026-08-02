@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:MoreSyncScreen.kt$@Composable fun MoreSyncScreen( isConnected: Boolean, connectedEmail: String?, lastSyncedLabel: String, onConnect: () -&gt; Unit, onSyncNow: () -&gt; Unit, onDisconnect: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, isConnecting: Boolean = false, isDisconnecting: Boolean = false, )</ID>
+    <ID>FunctionNaming:MoreSyncScreen.kt$@Preview( name = "More — Google Drive Sync (connected)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreSyncScreenConnectedPreview()</ID>
+    <ID>FunctionNaming:MoreSyncScreen.kt$@Preview( name = "More — Google Drive Sync (not connected)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreSyncScreenNotConnectedPreview()</ID>
+    <ID>FunctionNaming:SyncConnectFlow.kt$@Composable fun SyncConnectFlow( onBack: () -&gt; Unit, modifier: Modifier = Modifier, syncAccountRepository: SyncAccountRepository = koinInject(), authManager: DriveAuthManager = koinInject(), connectDriveAccount: ConnectDriveAccountUseCase = koinInject(), disconnectDriveAccount: DisconnectDriveAccountUseCase = koinInject(), )</ID>
+    <ID>FunctionNaming:SyncConnectFlow.kt$@androidx.compose.ui.tooling.preview.Preview( name = "Sync connect flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun SyncConnectFlowPreview()</ID>
+    <ID>FunctionNaming:SyncFeatureEntry.kt$SyncFeatureEntry$@Composable fun ConnectFlow( onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:MoreSyncScreen.kt$@Composable fun MoreSyncScreen( isConnected: Boolean, connectedEmail: String?, lastSyncedLabel: String, onConnect: () -&gt; Unit, onSyncNow: () -&gt; Unit, onDisconnect: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, isConnecting: Boolean = false, isDisconnecting: Boolean = false, )</ID>
+    <ID>LongMethod:SyncConnectFlow.kt$@Composable fun SyncConnectFlow( onBack: () -&gt; Unit, modifier: Modifier = Modifier, syncAccountRepository: SyncAccountRepository = koinInject(), authManager: DriveAuthManager = koinInject(), connectDriveAccount: ConnectDriveAccountUseCase = koinInject(), disconnectDriveAccount: DisconnectDriveAccountUseCase = koinInject(), )</ID>
+    <ID>LongParameterList:MoreSyncScreen.kt$( isConnected: Boolean, connectedEmail: String?, lastSyncedLabel: String, onConnect: () -&gt; Unit, onSyncNow: () -&gt; Unit, onDisconnect: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, isConnecting: Boolean = false, isDisconnecting: Boolean = false, )</ID>
+    <ID>LongParameterList:SyncConnectFlow.kt$( onBack: () -&gt; Unit, modifier: Modifier = Modifier, syncAccountRepository: SyncAccountRepository = koinInject(), authManager: DriveAuthManager = koinInject(), connectDriveAccount: ConnectDriveAccountUseCase = koinInject(), disconnectDriveAccount: DisconnectDriveAccountUseCase = koinInject(), )</ID>
+    <ID>RedundantSuspendModifier:DriveAuthManagerImpl.kt$DriveAuthManagerImpl$suspend</ID>
+    <ID>TooGenericExceptionCaught:DriveAuthManagerImpl.kt$DriveAuthManagerImpl$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:KtorDriveRemoteDataSource.kt$e: Exception</ID>
+    <ID>UnusedPrivateMember:MoreSyncScreen.kt$@Preview( name = "More — Google Drive Sync (connected)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreSyncScreenConnectedPreview()</ID>
+    <ID>UnusedPrivateMember:MoreSyncScreen.kt$@Preview( name = "More — Google Drive Sync (not connected)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun MoreSyncScreenNotConnectedPreview()</ID>
+    <ID>UnusedPrivateMember:SyncConnectFlow.kt$@androidx.compose.ui.tooling.preview.Preview( name = "Sync connect flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun SyncConnectFlowPreview()</ID>
+  </CurrentIssues>
+</SmellBaseline>

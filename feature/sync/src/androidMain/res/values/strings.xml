@@ -1,0 +1,31 @@
+<resources>
+    <string name="more_back">More</string>
+    <string name="more_sync_row_label">Google Drive Sync</string>
+    <string name="more_sync_not_connected">Not connected</string>
+    <string name="more_sync_connected_as">Connected as %1$s</string>
+
+    <string name="sync_connect_title">Google Drive Sync</string>
+    <string name="sync_connect_heading">Sync across your devices</string>
+    <string name="sync_connect_subtitle">Optional and off by default. Records sync through a private folder in your Google Drive that only Pro Expense can see.</string>
+    <string name="sync_connect_disclosure">This folder is protected by Google Drive\'s own encryption, not an extra password — the same way your local records are protected by device encryption.</string>
+    <string name="sync_connect_action">Connect Google Drive</string>
+    <string name="sync_connect_error">Couldn\'t connect. Please try again.</string>
+
+    <string name="sync_status_title">Google Drive Sync</string>
+    <string name="sync_status_last_synced">Last synced: %1$s</string>
+    <string name="sync_status_never_synced">Never synced yet</string>
+    <string name="sync_status_sync_now">Sync now</string>
+    <string name="sync_status_sync_now_unavailable">Push/pull sync isn\'t available yet — coming in a future update.</string>
+    <string name="sync_status_disconnect">Disconnect</string>
+
+    <string name="sync_disconnect_confirm_title">Disconnect Google Drive?</string>
+    <string name="sync_disconnect_confirm_body">Your records stay exactly as they are — on this device and in Drive. Disconnecting only stops this device from syncing.</string>
+    <string name="sync_disconnect_confirm_action">Disconnect</string>
+    <string name="sync_disconnect_confirm_cancel">Cancel</string>
+
+    <!-- OAuth 2.0 Web client ID from Google Cloud Console (Credential Manager / GIS Authorization
+         API require the *web* client type, not Android, even for an Android app). Must be set by
+         the team before Connect can work for real — placeholder is intentionally invalid so a
+         misconfigured build fails loudly at sign-in time instead of silently. -->
+    <string name="sync_google_oauth_client_id" translatable="false">REPLACE_WITH_GOOGLE_CLOUD_OAUTH_WEB_CLIENT_ID</string>
+</resources>
