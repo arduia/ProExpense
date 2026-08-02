@@ -58,17 +58,6 @@
     <ID>LongParameterList:PinSetPinScreen.kt$( state: PinEntryUiState, headingRes: Int, onDigit: (Int) -&gt; Unit, onBackspace: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>LongParameterList:PinSetupScreen.kt$( icon: ProIconGlyph, title: String, subtitle: String?, checked: Boolean, enabled: Boolean, onCheckedChange: (Boolean) -&gt; Unit, )</ID>
     <ID>LongParameterList:PinSetupScreen.kt$( state: PinSetupUiState, onTogglePin: (Boolean) -&gt; Unit, onToggleBiometric: (Boolean) -&gt; Unit, onRevealNew: () -&gt; Unit, onRevealConfirm: () -&gt; Unit, onRecoveryClick: () -&gt; Unit, onSave: () -&gt; Unit, onBack: () -&gt; Unit, modifier: Modifier = Modifier, saveEnabled: Boolean = true, saving: Boolean = false, errorMessage: String? = null, )</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$1000</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$120_000</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$16</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$256</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$3</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$30</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$4</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$5</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$5L</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$60</ID>
-    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$6L</ID>
     <ID>MagicNumber:PinLockFlow.kt$1000</ID>
     <ID>MagicNumber:PinRecoveryScreen.kt$5</ID>
     <ID>MagicNumber:PinSetupFlow.kt$6</ID>
@@ -76,18 +65,6 @@
     <ID>MagicNumber:PinVerifyFlow.kt$1000</ID>
     <ID>MaxLineLength:PinChangeFlow.kt$.</ID>
     <ID>MaxLineLength:PinSetupFlow.kt$.</ID>
-    <ID>ReturnCount:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$private fun verifyPbkdf2( input: String, storedHash: String, ): Boolean</ID>
-    <ID>TooGenericExceptionCaught:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$e: Exception</ID>
-    <ID>TooManyFunctions:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl : PinAuthRepository</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$return computedHashHex == expectedHashHex</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val computedHashHex = key.encoded.joinToString("") { "%02x".format(it) }</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val expectedHashHex = parts[3]</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val iterations = parts[1].toIntOrNull() ?: return false</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val key = factory.generateSecret(spec)</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val salt = saltHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val saltHex = parts[2]</ID>
-    <ID>UnreachableCode:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$val spec = PBEKeySpec(input.toCharArray(), salt, iterations, 256)</ID>
     <ID>UnusedPrivateMember:PinChangeFlow.kt$@Preview( name = "PIN change flow", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinChangeFlowPreview()</ID>
     <ID>UnusedPrivateMember:PinEntryScreen.kt$@Preview( name = "PIN entry — default", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinEntryPreview()</ID>
     <ID>UnusedPrivateMember:PinEntryScreen.kt$@Preview( name = "PIN entry — locked", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable private fun PinLockPreview()</ID>

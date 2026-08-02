@@ -7,6 +7,7 @@ Authoritative map for the Finance Tracker KMP multi-module project. Aligned with
 
 ```
 app/                         Android Compose shell (UI only)
+appshell/                    Shared app-shell presentation + iOS framework umbrella (ProExpenseKit)
 shared/                      Platform utilities (expect/actual)
 core/
 ├── domain/                  Shared domain models
@@ -32,7 +33,8 @@ iosApp/                      SwiftUI shell (future)
 
 | Module | May depend on |
 |--------|---------------|
-| `app` | all `core:*`, all `feature:*`, `shared` |
+| `app` | all `core:*`, all `feature:*`, `shared`, `appshell` |
+| `appshell` | all `core:*`, all `feature:*`, `shared` |
 | `shared` | nothing (project modules) |
 | `core:domain` | `shared` |
 | `core:data` | `core:domain`, `shared` |
@@ -74,9 +76,10 @@ Phase 2 UI modules already scaffolded: `feature:debt`, `feature:eventbudget`, `f
 | Layer | Android | iOS |
 |-------|---------|-----|
 | Database (repositories shared in `core:storage` commonMain) | SQLCipher via `AndroidSqliteDriver` + Keystore-wrapped key | SQLDelight `NativeSqliteDriver` + Keychain-stored key (compile-verified; SQLCipher-iOS linking is Phase 3) |
-| PIN | Keystore (`feature:auth` androidMain) | Keychain (`iosMain`, not started) |
+| PIN | PBKDF2 hash in the shared `AppMetaStore`; KDF/CSPRNG via `shared`'s `PlatformCrypto` seam (`SecretKeyFactory` + `SecureRandom`) | Same shared repository; `PlatformCrypto` actual uses CommonCrypto `CCKeyDerivationPBKDF` + `SecRandomCopyBytes` (compile-verified) |
 | Drive sync OAuth/transport | Credential Manager + Google Identity Services, Ktor/OkHttp (`feature:sync` androidMain) | Not started |
-| UI | Jetpack Compose (`app`) | SwiftUI (`iosApp`) |
+| UI | Jetpack Compose (`app`) | SwiftUI (`iosApp`) — Splash/Home/Add Expense/Journal slice in, compile-unverified |
+| Shell presentation | `ExpenseApp.kt` (migrating to `appshell`) | `appshell` ViewModels via `ProExpenseKit` |
 
 ## iOS Compatibility (mandatory)
 

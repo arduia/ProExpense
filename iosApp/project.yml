@@ -1,0 +1,41 @@
+# XcodeGen spec — run `xcodegen generate` in this directory to produce ProExpense.xcodeproj.
+#
+# The project file itself is not committed: a hand-written .pbxproj cannot be validated without
+# macOS, and regenerating from this spec is both reviewable and merge-friendly.
+name: ProExpense
+options:
+  bundleIdPrefix: com.arduia
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+targets:
+  ProExpense:
+    type: application
+    platform: iOS
+    sources:
+      - path: ProExpense
+    info:
+      path: ProExpense/Info.plist
+      properties:
+        CFBundleDisplayName: Pro Expense
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.arduia.expense
+        SWIFT_VERSION: "5.9"
+        # Where the Gradle-produced ProExpenseKit.framework is written.
+        FRAMEWORK_SEARCH_PATHS:
+          - $(inherited)
+          - $(SRCROOT)/../appshell/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)
+    dependencies:
+      - framework: ../appshell/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)/ProExpenseKit.framework
+        embed: false
+    preBuildScripts:
+      - name: Build ProExpenseKit (Kotlin/Native)
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :appshell:embedAndSignAppleFrameworkForXcode

@@ -22,6 +22,9 @@ include(":app")
 // KMP platform utilities
 include(":shared")
 
+// Shared app-shell presentation + iOS framework umbrella (may depend on all core:* and feature:*)
+include(":appshell")
+
 // Core layers
 include(":core:domain")
 include(":core:data")

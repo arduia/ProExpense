@@ -36,8 +36,14 @@ Replace `TODO()` stubs with working implementations, one seam at a time:
 | DB key manager | `core/storage/src/iosMain/.../IosDatabaseKeyManager.kt` | Keychain generic-password item (`SecItemAdd`/`SecItemCopyMatching`) | ✅ done (compile-only — see caveat below) |
 | Fast key-value cache | `core/storage/src/{common,ios}Main/.../PlatformKeyValueStore.kt` | `NSUserDefaults` | ✅ done |
 | Storage repository implementations | `core/storage/src/commonMain/.../repository/*` | moved from androidMain — now shared | ✅ done (15 of 22 files were already platform-free; moved as-is) |
-| Date formatting | `shared/src/iosMain/.../PlatformDateFormatter.ios.kt` | `NSDateFormatter` / `NSCalendar` | not started |
-| PIN storage | `feature/auth` (new `iosMain`) | Keychain | not started |
+| Date formatting | `shared/src/iosMain/.../PlatformDateFormatter.ios.kt` | `NSDateFormatter` / `NSCalendar` | ✅ done (compile-only) |
+| PIN hashing / CSPRNG | `shared/src/{common,android,ios}Main/.../PlatformCrypto.kt` | CommonCrypto `CCKeyDerivationPBKDF` + `SecRandomCopyBytes` | ✅ done (compile-only) |
+
+**PIN storage note:** no `feature:auth` `iosMain` was needed. The PIN hash lives in `AppMetaStore`
+(already shared), so only the KDF and CSPRNG were platform-specific — those became `expect`/`actual`
+seams in `shared`, and `PinAuthRepositoryImpl` + `authModule` moved from `androidMain` to
+`commonMain`. Both platforms now run one implementation and the `v2:` hash wire format cannot drift.
+(The Keychain is used for the *database* passphrase, not the PIN — see `IosDatabaseKeyManager`.)
 
 Each actual gets a backbone unit test in `commonTest` exercised through the `expect` contract
 (fakes at the repository boundary per `AGENTS.md` testing contract), plus platform-specific checks
@@ -62,14 +68,35 @@ where Kotlin/Native test running is available.
   isn't available on Kotlin/Native (use `Dispatchers.Default`), and `System.currentTimeMillis()`
   isn't portable (use `shared`'s `currentEpochMillis()` seam).
 
-## Phase 2 — iosApp shell
+## Phase 2 — iosApp shell (in progress)
 
-- SwiftUI views under `iosApp/` consuming the KMP modules via the generated framework.
-- Koin iOS initializer (`KoinIOS.kt` in `shared` or a thin `iosMain` entry point) wiring the same
-  repository graph used by `app` on Android.
-- ViewModel-equivalent state exposed to SwiftUI (either shared `StateFlow` via a Swift-friendly
-  wrapper, or platform-native state holders calling into KMP repositories directly) — decide once
-  the first real screen is ported.
+The **Splash → Home → Add Expense → Journal** vertical slice is in. What landed:
+
+- **New `:appshell` module** — the one module allowed to depend on all `core:*` + all `feature:*`
+  (package `com.arduia.expense.shell`). It exists because app-shell orchestration needs several
+  features at once, which `feature:*` isolation forbids and `core:*`/`shared` forbid outright;
+  `app` could do it before only because it is Android-only.
+- **`ProExpenseKit` framework** — `binaries.framework` on `:appshell`, exporting `core:domain`,
+  `core:data`, `shared` and the slice's features. Configuration only; `link*` needs macOS.
+- **Koin iOS initializer** — `appshell/src/iosMain/.../KoinIos.kt`, mirroring
+  `ExpenseApplication.ensureStarted()` minus `androidContext()`. `:feature:sync` is excluded (its
+  bindings need `syncPlatformModule`, which is androidMain-only).
+- **Flow → Swift bridge** — `FlowBridge.kt` / `FlowSubscription.kt`. **Decision: hand-written, not
+  SKIE.** SKIE runs at framework-link time and so could not be compiled or exercised without macOS,
+  whereas the hand-written bridge klib-compiles and is therefore covered by `verifyIosCompat` on
+  every push. Revisit SKIE for ergonomics once a macOS runner exists.
+- **Shared ViewModels** on `StatefulViewModel` — `AppShellViewModel` (launch gate: splash,
+  onboarding, PIN, re-lock), `HomeViewModel`, `JournalViewModel`, `AddExpenseViewModel`, plus
+  `RecordRowProjection` shared by Home and Journal. `ProRowKind`/`ProTransactionRowModel` moved to
+  `shared/commonMain` (same package, so no import churn) so both UIs bind one row model.
+- **SwiftUI views** under `iosApp/ProExpense/` — see that README. Authored without a Swift
+  toolchain and therefore **compile-unverified**.
+
+**Remaining for Phase 2:** Android still renders Home and Journal from its own Compose-bound
+`*FeatureEntry.kt` state, so those screens have two derivations until `ExpenseApp.kt` and
+`HistoryFeatureEntry.kt` adopt the shared ViewModels. That migration — plus Onboarding and PIN
+Entry in SwiftUI — is the next increment. `AppShellViewModel` is the reference for how an
+entry-file's state should collapse into `commonMain`.
 
 ## Phase 3 — Framework linking & device/XCTest CI
 

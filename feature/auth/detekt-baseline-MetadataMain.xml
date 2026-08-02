@@ -2,9 +2,19 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$1000</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$3</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$30</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$4</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$5</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$5L</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$60</ID>
+    <ID>MagicNumber:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$6L</ID>
     <ID>MagicNumber:PinEntryPresentation.kt$PinEntryLogic$1000</ID>
     <ID>MagicNumber:PinEntryPresentation.kt$PinEntryLogic$60</ID>
     <ID>ReturnCount:AuthUseCases.kt$SetupPinUseCase$suspend operator fun invoke( pin: String, securityQuestionId: String, securityAnswer: String, enableBiometric: Boolean, ): Result&lt;Unit&gt;</ID>
+    <ID>TooGenericExceptionCaught:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl$e: Exception</ID>
     <ID>TooManyFunctions:PinAuthRepository.kt$PinAuthRepository</ID>
+    <ID>TooManyFunctions:PinAuthRepositoryImpl.kt$PinAuthRepositoryImpl : PinAuthRepository</ID>
   </CurrentIssues>
 </SmellBaseline>

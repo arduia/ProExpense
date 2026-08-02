@@ -88,6 +88,7 @@ See `docs/module_structure.md` for the full module map.
 ```
 ProExpense/
 ├── app/                         Android Compose shell
+├── appshell/                    Shared app-shell presentation + iOS framework umbrella
 ├── shared/                      KMP platform utilities
 ├── core/
 │   ├── domain/                  Shared domain models (Amount, FinanceRecord, …)
@@ -108,7 +109,8 @@ ProExpense/
 
 | Module | Can depend on |
 |--------|---------------|
-| `app` | all `core:*`, all `feature:*`, `shared` |
+| `app` | all `core:*`, all `feature:*`, `shared`, `appshell` |
+| `appshell` | all `core:*`, all `feature:*`, `shared` — the **only** module besides `app` allowed to span features, because app-shell state (splash → onboarding → PIN gate) needs several at once. Holds the shared ViewModels both platform shells collect, and exports the `ProExpenseKit` iOS framework. |
 | `shared` | nothing (project modules) |
 | `core:domain` | `shared` |
 | `core:data` | `core:domain`, `shared` |

@@ -333,9 +333,13 @@ Since the product targets a global audience, multi-currency support is a core re
 ### Data & Storage
 | Layer | Technology |
 |---|---|
-| Android DB | Room |
-| iOS DB | CoreData |
+| Android DB | SQLDelight (`AndroidSqliteDriver` + SQLCipher) |
+| iOS DB | SQLDelight (`NativeSqliteDriver`) |
 | Shared Logic | KMP common layer for data models and business rules |
+
+> **Implementation note:** this table originally read Room / CoreData. The codebase settled on
+> SQLDelight for both platforms so the repository implementations live in `commonMain` rather than
+> being written twice — see `docs/module_structure.md`, which is authoritative for storage.
 
 ### Multi-Currency
 | Layer | Technology |
@@ -346,8 +350,8 @@ Since the product targets a global audience, multi-currency support is a core re
 ### Security
 | Layer | Technology |
 |---|---|
-| PIN Storage | Android Keystore + iOS Keychain |
-| Data Encryption | SQLCipher (Android) + CoreData encryption (iOS) |
+| PIN Storage | PBKDF2-SHA256 hash in the local DB (shared); DB passphrase in Android Keystore / iOS Keychain |
+| Data Encryption | SQLCipher (Android); iOS links system `sqlite3` until SQLCipher-iOS is wired |
 
 ### Import & Export
 | Layer | Technology |
