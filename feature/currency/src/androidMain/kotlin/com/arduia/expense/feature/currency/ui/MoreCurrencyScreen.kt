@@ -2,7 +2,6 @@ package com.arduia.expense.feature.currency.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +25,7 @@ import com.arduia.expense.feature.currency.ui.preview.previewMoreCurrencies
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.SearchField
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -61,13 +60,16 @@ fun MoreCurrencyScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.more_currency_title),
-                onBack = onBack,
-                backLabel = stringResource(R.string.more_back),
-            )
-        }
+        ProFlatHeader(
+            title = stringResource(R.string.more_currency_title),
+            eyebrow = stringResource(R.string.more_currency_eyebrow),
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.more_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+        )
 
         Column(
             modifier =
@@ -130,6 +132,24 @@ fun MoreCurrencyScreen(
 @Composable
 private fun MoreCurrencyPreview() {
     ProExpenseTheme {
+        MoreCurrencyScreen(
+            items = previewMoreCurrencies,
+            selectedCode = "USD",
+            onSave = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — currency (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreCurrencyDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         MoreCurrencyScreen(
             items = previewMoreCurrencies,
             selectedCode = "USD",

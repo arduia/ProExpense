@@ -40,9 +40,9 @@ import com.arduia.expense.feature.auth.ui.preview.previewPinSetup
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
@@ -75,13 +75,15 @@ fun PinSetupScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.pin_setup_appbar),
-                onBack = onBack,
-                backLabel = stringResource(R.string.pin_setup_back),
-            )
-        }
+        ProFlatHeader(
+            title = stringResource(R.string.pin_setup_appbar),
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.pin_setup_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+        )
 
         Column(
             modifier =
@@ -372,6 +374,28 @@ private fun PinFieldSection(
 @Composable
 private fun PinSetupPreview() {
     ProExpenseTheme {
+        PinSetupScreen(
+            state = previewPinSetup,
+            onTogglePin = {},
+            onToggleBiometric = {},
+            onRevealNew = {},
+            onRevealConfirm = {},
+            onRecoveryClick = {},
+            onSave = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "PIN setup — enable (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun PinSetupDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         PinSetupScreen(
             state = previewPinSetup,
             onTogglePin = {},

@@ -1,6 +1,7 @@
 <resources>
     <string name="more_back">နောက်ထပ်</string>
     <string name="more_currency_title">ငွေကြေး</string>
+    <string name="more_currency_eyebrow">နောက်ထပ်</string>
     <string name="more_currency_subtitle">သင့်အခြေခံငွေကြေး။ ထည့်သွင်းမှုအားလုံးအတွက် သက်ရောက်သည်— ထည့်သွင်းမှုတစ်ခုချင်းအတွက် ငွေကြေးအမျိုးမျိုးသည် နောင်တွင်ရရှိမည်။</string>
     <string name="search_currency_placeholder">ငွေကြေး ရှာဖွေရန်...</string>
     <string name="more_currency_save_action">သိမ်းရန်</string>

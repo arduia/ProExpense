@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <string name="reports_title">Reports</string>
+<string name="reports_eyebrow">Insights</string>
 <string name="reports_back">More</string>
 <string name="reports_total_spent">TOTAL SPENT</string>
 <string name="reports_period_total">%1$s · TOTAL SPENT</string>

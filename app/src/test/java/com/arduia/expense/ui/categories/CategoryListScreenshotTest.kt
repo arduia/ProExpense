@@ -41,9 +41,12 @@ class CategoryListScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -59,6 +62,12 @@ class CategoryListScreenshotTest {
     @Test
     fun categories() =
         capture {
+            CategoryListScreen(previewCategoryList, {}, {})
+        }
+
+    @Test
+    fun categories_dark() =
+        capture(darkTheme = true) {
             CategoryListScreen(previewCategoryList, {}, {})
         }
 

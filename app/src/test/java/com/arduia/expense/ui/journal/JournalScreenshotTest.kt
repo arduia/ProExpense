@@ -47,9 +47,12 @@ class JournalScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -65,6 +68,21 @@ class JournalScreenshotTest {
     @Test
     fun journal_list() =
         capture {
+            JournalListScreen(
+                state = previewJournalList,
+                onQueryChange = {},
+                onFilterSelected = {},
+                onRowClick = {},
+                onRowLongPress = {},
+                selectedTab = HomeNavTab.Journal,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun journal_list_dark() =
+        capture(darkTheme = true) {
             JournalListScreen(
                 state = previewJournalList,
                 onQueryChange = {},
@@ -192,6 +210,19 @@ class JournalScreenshotTest {
     @Test
     fun journal_detail() =
         capture {
+            JournalDetailScreen(
+                state = previewJournalDetail,
+                onBack = {},
+                onActions = {},
+                onLinkedTagClick = {},
+                onEdit = {},
+                onDelete = {},
+            )
+        }
+
+    @Test
+    fun journal_detail_dark() =
+        capture(darkTheme = true) {
             JournalDetailScreen(
                 state = previewJournalDetail,
                 onBack = {},

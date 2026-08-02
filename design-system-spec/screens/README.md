@@ -5,7 +5,16 @@ Per-screen specifications for the Finance Tracker MVP, built for a **Jetpack Com
 - **Foundations:** [`../tokens.md`](../tokens.md) — color, type, shape, spacing, motion, M3 mapping.
 - **Components:** [`../components/`](../components/) — per-component specs.
 - **Screenshots:** [`../screenshots/screens/`](../screenshots/screens/) — one PNG per state, named by state id.
-- **Conventions:** single **light** theme · 1 px = 1 dp · amounts always **Inter** · on-filled text warm white `#FFFDF6`.
+- **Conventions:** **light + dark** themes · 1 px = 1 dp · display/amounts **Prompt SemiBold** · on-filled text white.
+
+> **Visual system: Blue Banking.** The adopted style is the *Blue Banking* Hi-Fi variant (Claude
+> Design canvas "Pro Expense - Finance Tracker", `Hi-Fi Variant - Blue Banking.html` /
+> `variant-blue-*.jsx`): gradient hero headers with overlapping 26 dp-radius content sheets,
+> gold accent family, navy-tinted dark palette, restyled bottom nav with a 64 dp center Add
+> button. The per-screen `.md` files and PNGs below still show the previous skin — layout,
+> flows, states, and behaviors remain authoritative, but where their *visual* styling conflicts
+> with [`../tokens.md`](../tokens.md) or the Blue Banking canvas, the canvas wins. Screen specs
+> and captures are re-synced screen-by-screen as the restyle lands.
 
 ---
 

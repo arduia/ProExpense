@@ -8,6 +8,7 @@
     <string name="shared_split_even">หารเท่ากัน</string>
     <string name="shared_split_custom">หารแบบกำหนดเอง</string>
     <string name="shared_bill_splitter">เครื่องมือหารบิล</string>
+    <string name="shared_expenses_eyebrow">ค่าใช้จ่ายร่วม</string>
     <string name="shared_costs_heading">หารค่าใช้จ่าย</string>
     <string name="shared_new_split">การหารใหม่</string>
     <string name="shared_recent_splits">การหารล่าสุด</string>
@@ -33,6 +34,7 @@
     <string name="shared_remove_person_cd">ลบคน</string>
     <string name="shared_people_count_state">%1$d คน</string>
     <string name="shared_delete_action">ลบ</string>
+    <string name="shared_more_action">เพิ่มเติม</string>
     <string name="shared_delete_title">ลบการหารนี้หรือไม่?</string>
     <string name="shared_delete_body">"%1$s" และรายจ่ายที่บันทึกไว้จะถูกลบ ไม่สามารถย้อนกลับได้</string>
     <string name="shared_delete_confirm">ลบ</string>

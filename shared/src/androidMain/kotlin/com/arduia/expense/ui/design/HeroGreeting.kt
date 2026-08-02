@@ -3,6 +3,7 @@ package com.arduia.expense.ui.design
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,18 +15,22 @@ fun HeroGreeting(
     name: String,
     modifier: Modifier = Modifier,
     prefix: String = "Hi, ",
+    // Both default to the paper-surface pairing (prefix ink, name primary-accented). Screens
+    // that render this over the hero gradient (Home) pass a single white for both instead —
+    // Blue Banking never recolors the name when it's already on a colored surface.
+    prefixColor: Color = ProExpenseTheme.colors.onSurface,
+    emphasisColor: Color = ProExpenseTheme.colors.primary,
 ) {
-    val colors = ProExpenseTheme.colors
     val typography = ProExpenseTheme.typography
 
     Text(
         text =
             buildAnnotatedString {
-                withStyle(typography.heroGreeting.toSpanStyle().copy(color = colors.onSurface)) {
+                withStyle(typography.heroGreeting.toSpanStyle().copy(color = prefixColor)) {
                     append(prefix)
                 }
                 withStyle(
-                    typography.heroGreetingEmphasis.toSpanStyle().copy(color = colors.primary),
+                    typography.heroGreetingEmphasis.toSpanStyle().copy(color = emphasisColor),
                 ) {
                     append(name)
                 }

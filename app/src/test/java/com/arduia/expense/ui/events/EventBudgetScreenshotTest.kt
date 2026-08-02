@@ -45,9 +45,12 @@ class EventBudgetScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -90,6 +93,19 @@ class EventBudgetScreenshotTest {
     @Test
     fun event_list() =
         capture {
+            EventBudgetListScreen(
+                events = previewEventList,
+                onCreateEvent = {},
+                onEventClick = {},
+                selectedTab = HomeNavTab.Budget,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun event_list_dark() =
+        capture(darkTheme = true) {
             EventBudgetListScreen(
                 events = previewEventList,
                 onCreateEvent = {},
@@ -161,6 +177,18 @@ class EventBudgetScreenshotTest {
     @Test
     fun event_detail() =
         capture {
+            EventDetailScreen(
+                state = previewEventDetail,
+                onBack = {},
+                onMore = {},
+                onAddTagged = {},
+                onExpenseClick = {},
+            )
+        }
+
+    @Test
+    fun event_detail_dark() =
+        capture(darkTheme = true) {
             EventDetailScreen(
                 state = previewEventDetail,
                 onBack = {},

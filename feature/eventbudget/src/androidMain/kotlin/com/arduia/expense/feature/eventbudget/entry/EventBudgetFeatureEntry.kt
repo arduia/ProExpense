@@ -16,10 +16,12 @@ import com.arduia.expense.feature.eventbudget.ComputeEventProgressUseCase
 import com.arduia.expense.feature.eventbudget.CreateEventUseCase
 import com.arduia.expense.feature.eventbudget.DeleteEventUseCase
 import com.arduia.expense.feature.eventbudget.UpdateEventUseCase
+import com.arduia.expense.feature.eventbudget.activeEventCount
 import com.arduia.expense.feature.eventbudget.ui.EventsFlow
 import com.arduia.expense.feature.eventbudget.ui.preview.EventCreateFormState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventDetailUiState
 import com.arduia.expense.feature.eventbudget.ui.preview.EventLinkedExpenseUi
+import com.arduia.expense.feature.eventbudget.visibleBudgetListEvents
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.EventBudgetSummaryState
@@ -79,7 +81,16 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
                     .groupBy { (it.link as RecordLink.ToEvent).eventId.value }
             }
 
-        val cards = events.map { it.toCardState(computeProgress(it, spentByEvent[it.id.value]), homeCurrencySymbol) }
+        // `events` (unfiltered) still backs `details`/`editForms` below so an archived event stays
+        // reachable if the user gets to it via a deep link — see US-EVT-2 Scenario 4.
+        val visibleEvents = visibleBudgetListEvents(events)
+        val cards =
+            visibleEvents.map { it.toCardState(computeProgress(it, spentByEvent[it.id.value]), homeCurrencySymbol) }
+        val activeCount = activeEventCount(visibleEvents)
+        val activeOverBudgetCount =
+            visibleEvents.zip(cards).count { (event, card) ->
+                event.status == EventStatus.ACTIVE && card.isOverBudget
+            }
         val details =
             events.associate { event ->
                 event.id.value to
@@ -97,6 +108,8 @@ internal class EventBudgetFeatureEntryImpl : EventBudgetFeatureEntry {
             onTabSelected = onTabSelected,
             onAddClick = onAddClick,
             events = cards,
+            activeCount = activeCount,
+            overBudgetCount = activeOverBudgetCount,
             eventDetails = details,
             eventEditForms = editForms,
             onCreateEvent = { name, budgetRaw, startEpochMillis, endEpochMillis, onCreated ->

@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.ui.design.CategoryPicker
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.customExpenseCategories
 import com.arduia.expense.ui.design.defaultExpenseCategories
 import com.arduia.expense.ui.theme.ProArtboard
@@ -46,9 +46,10 @@ fun MoreDefaultCategoryScreen(
                     .padding(horizontal = dimens.screenPadding)
                     .padding(bottom = dimens.space24),
         ) {
-            ProTopBar(
+            ProFlatHeader(
                 title = "Default Category",
                 onBack = onBack,
+                modifier = Modifier.padding(vertical = dimens.space14),
             )
             CategoryPicker(
                 defaultCategories = defaultExpenseCategories,
@@ -73,6 +74,23 @@ fun MoreDefaultCategoryScreen(
 @Composable
 private fun MoreDefaultCategoryPreview() {
     ProExpenseTheme {
+        MoreDefaultCategoryScreen(
+            selectedCategoryId = "food",
+            onSelect = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More default category (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreDefaultCategoryDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         MoreDefaultCategoryScreen(
             selectedCategoryId = "food",
             onSelect = {},

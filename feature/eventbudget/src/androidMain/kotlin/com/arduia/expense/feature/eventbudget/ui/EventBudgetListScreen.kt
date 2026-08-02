@@ -1,16 +1,20 @@
 package com.arduia.expense.feature.eventbudget.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -18,9 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.arduia.expense.feature.eventbudget.R
 import com.arduia.expense.feature.eventbudget.ui.preview.previewEventList
 import com.arduia.expense.ui.design.EventBudgetCard
@@ -30,6 +37,7 @@ import com.arduia.expense.ui.design.HomeNavTab
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProGradientHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.proClickable
@@ -46,6 +54,11 @@ fun EventBudgetListScreen(
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
+    // Callers with real event status (closed events stay visible in `events` but aren't
+    // "active") must pass these explicitly rather than relying on the events.size fallback —
+    // see EventBudgetFeatureEntry, which is status-aware and excludes archived events upstream.
+    activeCount: Int = events.size,
+    overBudgetCount: Int = events.count { it.isOverBudget },
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -56,87 +69,94 @@ fun EventBudgetListScreen(
             modifier
                 .fillMaxSize()
                 .background(colors.paper)
-                .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimens.screenPadding)
-                        .padding(top = dimens.space14, bottom = dimens.space16),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
-                ) {
-                    Text(
-                        text = stringResource(R.string.events_eyebrow),
-                        style = typography.eyebrow,
-                        color = colors.onSurfaceMuted,
-                    )
-                    Text(
-                        text = stringResource(R.string.events_title),
-                        style = typography.profileScreenTitle,
-                        color = colors.onSurface,
-                    )
-                }
-                if (events.isNotEmpty()) {
-                    ProButton(
-                        text = stringResource(R.string.event_new),
-                        onClick = onCreateEvent,
-                        size = ProButtonSize.Sm,
-                        leading = {
-                            ProIcon(
-                                glyph = ProIconGlyph.Plus,
-                                contentDescription = null,
-                                tint = colors.onPrimaryWarm,
-                                size = dimens.iconInline,
+            // canvas's VBHeader default pb (20) — one step more than the header's own generic
+            // 16dp bottom padding, matching the status-chip row's extra breathing room below it.
+            ProGradientHeader(bottomPadding = dimens.space20) {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.space16)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top,
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            // space2, not space8 — matches the canvas VBHeader's marginTop:2
+                            // between eyebrow and title (Home's HeroGreeting already got this right).
+                            verticalArrangement = Arrangement.spacedBy(dimens.space2),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.events_eyebrow),
+                                style = typography.eyebrow,
+                                color = Color.White.copy(alpha = 0.7f),
                             )
-                        },
-                    )
+                            Text(
+                                text = stringResource(R.string.events_title),
+                                style = typography.profileScreenTitle,
+                                color = Color.White,
+                            )
+                        }
+                        if (events.isNotEmpty()) {
+                            EventNewOnGradientButton(onClick = onCreateEvent)
+                        }
+                    }
+                    if (!isLoading) {
+                        EventStatusChipRow(
+                            activeCount = activeCount,
+                            overBudgetCount = overBudgetCount,
+                        )
+                    }
                 }
             }
 
-            if (isLoading) {
-                // Events load asynchronously after first composition — without this, "no data
-                // yet" and "genuinely no events" render identically and the empty-state
-                // illustration flashes on every visit for a user who actually has events.
-                Box(modifier = Modifier.weight(1f).fillMaxWidth())
-            } else if (events.isEmpty()) {
-                Box(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(bottom = dimens.navShellBottomInset),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    EventEmptyContent(onCreateEvent = onCreateEvent)
-                }
-            } else {
-                Column(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = dimens.screenPadding)
-                            .padding(bottom = dimens.navShellBottomInset),
-                    verticalArrangement = Arrangement.spacedBy(dimens.space12),
-                ) {
-                    events.forEach { event ->
-                        EventBudgetCard(
-                            state = event,
-                            modifier =
-                                Modifier.proClickable(
-                                    onClick = { onEventClick(event.id) },
-                                    shape = ProExpenseTheme.shapes.card,
-                                ),
-                        )
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .offset(y = -EventBudgetSheetOverlap)
+                        .clip(ProExpenseTheme.shapes.sheet)
+                        .background(colors.paper),
+            ) {
+                if (isLoading) {
+                    // Events load asynchronously after first composition — without this, "no data
+                    // yet" and "genuinely no events" render identically and the empty-state
+                    // illustration flashes on every visit for a user who actually has events.
+                    Box(modifier = Modifier.weight(1f).fillMaxWidth())
+                } else if (events.isEmpty()) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .padding(bottom = dimens.navShellBottomInset),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        EventEmptyContent(onCreateEvent = onCreateEvent)
+                    }
+                } else {
+                    Column(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState())
+                                .padding(horizontal = dimens.screenPadding)
+                                .padding(top = dimens.space16, bottom = dimens.navShellBottomInset),
+                        verticalArrangement = Arrangement.spacedBy(dimens.space12),
+                    ) {
+                        events.forEach { event ->
+                            EventBudgetCard(
+                                state = event,
+                                modifier =
+                                    Modifier.proClickable(
+                                        onClick = { onEventClick(event.id) },
+                                        shape = ProExpenseTheme.shapes.card,
+                                    ),
+                            )
+                        }
                     }
                 }
             }
@@ -147,6 +167,115 @@ fun EventBudgetListScreen(
             onTabSelected = onTabSelected,
             onAddClick = onAddClick,
             modifier = Modifier.align(Alignment.BottomCenter),
+        )
+    }
+}
+
+private val EventBudgetSheetOverlap = 14.dp
+
+/**
+ * "New" pill on the gradient header — white/card fill with primary icon+text, not a filled
+ * primary button (which would read low-contrast against the primary-blue gradient behind it).
+ */
+@Composable
+private fun EventNewOnGradientButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val shape = ProExpenseTheme.shapes.chip
+
+    Row(
+        modifier =
+            modifier
+                .clip(shape)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = shape)
+                .padding(horizontal = dimens.space12, vertical = dimens.space8),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space4),
+    ) {
+        ProIcon(
+            glyph = ProIconGlyph.Plus,
+            contentDescription = null,
+            tint = colors.primary,
+            size = dimens.iconInline,
+        )
+        Text(
+            text = stringResource(R.string.event_new),
+            style = typography.bodySemiBold,
+            color = colors.primary,
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun EventStatusChipRow(
+    activeCount: Int,
+    overBudgetCount: Int,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+
+    // FlowRow, not Row — high counts combined with longer non-English chip text (or 200% font
+    // scale) can exceed the header's width; wrapping to a second line beats clipping/overflow.
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+        verticalArrangement = Arrangement.spacedBy(dimens.space8),
+    ) {
+        EventStatusChip(
+            text = stringResource(R.string.events_active_count, activeCount),
+            containerColor = Color.White.copy(alpha = 0.14f),
+            contentColor = Color.White.copy(alpha = 0.85f),
+            borderColor = Color.White.copy(alpha = 0.18f),
+        )
+        if (overBudgetCount > 0) {
+            EventStatusChip(
+                text = stringResource(R.string.events_over_budget_count, overBudgetCount),
+                containerColor = colors.highlight,
+                contentColor = colors.navy,
+                borderColor = null,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+    }
+}
+
+@Composable
+private fun EventStatusChip(
+    text: String,
+    containerColor: Color,
+    contentColor: Color,
+    borderColor: Color?,
+    modifier: Modifier = Modifier,
+    fontWeight: FontWeight = FontWeight.Medium,
+) {
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val shape = ProExpenseTheme.shapes.chip
+
+    Box(
+        modifier =
+            modifier
+                .clip(shape)
+                .then(
+                    if (borderColor != null) {
+                        Modifier.border(BorderStroke(1.dp, borderColor), shape)
+                    } else {
+                        Modifier
+                    },
+                ).background(containerColor)
+                .padding(horizontal = dimens.space12, vertical = dimens.space4),
+    ) {
+        Text(
+            text = text,
+            style = typography.captionMedium.copy(fontWeight = fontWeight),
+            color = contentColor,
         )
     }
 }
@@ -180,7 +309,8 @@ private fun EventEmptyContent(
             ProIcon(
                 glyph = ProIconGlyph.FeatEvents,
                 contentDescription = null,
-                tint = colors.primaryDeep,
+                // primary, not primaryDeep — see EventBudgetCard's matching fix.
+                tint = colors.primary,
                 size = dimens.space32,
             )
         }
@@ -226,6 +356,26 @@ private fun EventBudgetListEmptyPreview() {
     ProExpenseTheme {
         EventBudgetListScreen(
             events = emptyList(),
+            onCreateEvent = {},
+            onEventClick = {},
+            selectedTab = HomeNavTab.Budget,
+            onTabSelected = {},
+            onAddClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Event budget — list (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun EventBudgetListDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
+        EventBudgetListScreen(
+            events = previewEventList,
             onCreateEvent = {},
             onEventClick = {},
             selectedTab = HomeNavTab.Budget,

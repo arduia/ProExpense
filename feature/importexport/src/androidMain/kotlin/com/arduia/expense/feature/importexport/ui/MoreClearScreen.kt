@@ -2,7 +2,6 @@ package com.arduia.expense.feature.importexport.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +22,7 @@ import com.arduia.expense.feature.importexport.ui.preview.previewMoreClearOption
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -48,13 +47,16 @@ fun MoreClearScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.more_clear_title),
-                onBack = onBack,
-                backLabel = stringResource(R.string.more_back),
-            )
-        }
+        ProFlatHeader(
+            title = stringResource(R.string.more_clear_title),
+            eyebrow = stringResource(R.string.more_clear_eyebrow),
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.more_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+        )
 
         Column(
             modifier =
@@ -108,6 +110,25 @@ fun MoreClearScreen(
 @Composable
 private fun MoreClearPreview() {
     ProExpenseTheme {
+        MoreClearScreen(
+            options = previewMoreClearOptions,
+            checkedIds = setOf("expenses"),
+            onToggle = {},
+            onClear = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — clear data (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreClearDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         MoreClearScreen(
             options = previewMoreClearOptions,
             checkedIds = setOf("expenses"),

@@ -4,12 +4,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -35,9 +37,11 @@ import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProFlatHeader
+import com.arduia.expense.ui.design.ProIcon
+import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -95,12 +99,37 @@ fun SharedCostsSummaryScreen(
                 .padding(horizontal = dimens.screenPadding)
                 .padding(bottom = dimens.space18),
     ) {
-        ProTopBar(
+        ProFlatHeader(
             title = stringResource(R.string.shared_summary_title),
+            eyebrow = stringResource(R.string.shared_expenses_eyebrow),
             onBack = onBack,
-            backLabel = backLabel,
-            action = if (onMore != null) ProTopBarAction.More else ProTopBarAction.None,
-            onAction = { onMore?.invoke() },
+            backContentDescription = backLabel,
+            modifier = Modifier.padding(vertical = dimens.space14),
+            trailing = {
+                if (onMore != null) {
+                    Box(
+                        modifier = Modifier.proIconClickable(onClick = onMore),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .size(dimens.buttonSmallHeight)
+                                    .clip(ProExpenseTheme.shapes.tile)
+                                    .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.tile)
+                                    .background(colors.surface),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            ProIcon(
+                                glyph = ProIconGlyph.More,
+                                contentDescription = stringResource(R.string.shared_more_action),
+                                tint = colors.onSurfaceVariant,
+                                size = dimens.iconInline,
+                            )
+                        }
+                    }
+                }
+            },
         )
 
         val noteTitle = state.note.trim()
@@ -292,6 +321,25 @@ private fun SharedCostRecordAsTransactionRow(
 @Composable
 private fun SharedCostsSummaryPreview() {
     ProExpenseTheme {
+        SharedCostsSummaryScreen(
+            state = previewSharedSummary,
+            onBack = {},
+            onSwitchToCustom = {},
+            onSave = {},
+            onRecordAsTransactionChange = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — summary (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsSummaryDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         SharedCostsSummaryScreen(
             state = previewSharedSummary,
             onBack = {},

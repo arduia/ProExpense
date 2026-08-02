@@ -159,6 +159,27 @@ private fun AddExpenseAmountTypedPreview() {
 }
 
 @Preview(
+    name = "Add expense — amount typed (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddExpenseAmountTypedDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
+        AddExpenseAmountScreen(
+            state = previewExpenseAmountTyped,
+            onClose = {},
+            onKey = {},
+            onBackspace = {},
+            onCategorySelected = {},
+            onSave = {},
+            onNext = {},
+        )
+    }
+}
+
+@Preview(
     name = "Add expense — zero validation",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,

@@ -201,7 +201,8 @@ Do not implement spec-backed UI from memory or general Compose knowledge alone.
 If no entry exists in `design-system-spec/screens/`, add or extend the spec before implementing.
 
 **Push is blocked** for spec-driven UI until the skill’s per-screen checklist is satisfied
-(previews, Roborazzi baselines, `verifyAll`, tokenized styling — see skill body).
+(previews, Roborazzi baselines, `verifyAll`, tokenized styling — see skill body) **and** Step 3.1's
+canvas render-and-compare has been run and passed.
 
 ### Step 2.5 — Confirm External APIs
 
@@ -274,6 +275,32 @@ This script:
   screen, a flow that leaves stale state visible. Pick the approach the audit lens supports and
   note the choice in the plan; this is a general UI/UX check, not limited to any one kind of
   defect.
+
+### Step 3.1 — Visual verification against the design canvas (mandatory for every canvas-sourced UI implementation)
+
+**Gate:** The Blue Banking canvas (`variant-blue-*.jsx`, see Key File Locations) is the adopted
+design system for this whole app — not a reference consulted only when someone explicitly asks
+for a "fidelity audit." **Any** implementation or change of a screen/component that has a canvas
+counterpart — a new spec-driven build (Step 2.1), a restyle, a bug fix that touches layout, or an
+explicit alignment/audit task — is verified against an actual **rendered screenshot** of the
+canvas source, not literal JSX/CSS values alone, and not a screenshot already sitting in the
+canvas project's own `screenshots/`/`design-system-spec/` folders (those can be stale from a
+pre-Blue-Banking iteration — confirmed once; don't trust them without checking what they
+actually show). This applies whether or not the user names "the canvas" explicitly — if the
+screen has a `variant-blue-*.jsx` counterpart, this gate applies.
+
+**Else:** Use `scripts/canvas-render/` (see its README.md) to render the real canvas component
+with React/Babel and screenshot it, then compare directly against the matching Roborazzi PNG.
+Token/CSS-value comparison alone catches spacing drift but misses layout-level differences that
+only show up rendered — e.g. a card meant to float up into the header on canvas but sitting
+flush in the implementation is invisible in a values diff, obvious in a rendered one. When
+picking which canvas component to render, use `variant-blue-app.jsx`'s own
+`VariantBlueApp`/`<DCArtboard>` tree as the source of truth for which variant is actually
+adopted — the file defines unused alternate variants alongside the wired ones (e.g.
+`VBHomeClassic`/`VBCardCasual` exist in source but only `VBHomeSpendTrip`/`VBCardSpendTrip` is
+in the artboard tree, i.e. actually shipped in the canvas). State the render-and-compare result
+explicitly (clean, or defects found + fixed) — the same standard as the `compose-product-auditor`
+pass; don't silently skip it or substitute a values-only comparison.
 
 ### Step 4 — Write Tests First (TDD)
 
@@ -374,6 +401,10 @@ resolving a lint failure, add a row there if the rule/situation isn't already co
    affordance). State the audit's finding in-session (clean, or defects found + fixed) before
    moving to Step 7 — don't silently skip the pass. Treat any finding this pass surfaces as a
    required fix before push, not a follow-up task.
+5. **Any screen with a canvas counterpart:** re-run the Step 3.1 render-and-compare against
+   `scripts/canvas-render/` on the changed screen and confirm visually, not just by re-reading the
+   token values that were changed — a token fix can be numerically correct and still not be the
+   layout-level thing the canvas actually shows.
 
 **Step 7 is blocked for UI work until this gate is ✅** (or G1 is declared with compensation).
 
@@ -915,10 +946,11 @@ AGENTS.md  >  docs/project_philosophy.md  >  docs/finance_tracker_product.md  > 
 | `docs/module_structure.md` | KMP module map and dependency rules |
 | `design-system-spec/` | **Authoritative screen specs** (markdown + PNGs + component specs + tokens) |
 | Claude Design project **"Pro Expense - Finance Tracker"** | Hi-Fi mockup canvas mirroring `design-system-spec/` — find it via the design-sync tool's project listing (matched by name, scoped to the maintainer's account); no link is committed here since this repo is public |
-| Claude Design project **"Pro Expense - Finance Tracker"** (canvas variant) | A second, same-named Claude Design project — regular canvas type, not the design-system project above, so it does **not** appear in the design-sync tool's project listing; only reachable via a maintainer-shared link. Holds exploratory Hi-Fi variants, including `Hi-Fi Variant - Blue Banking.html` (a blue-themed visual variant, `variant-blue-*.jsx` sources) — reference material only, not yet adopted into `design-system-spec/` or implemented in Compose; no link is committed here since this repo is public |
+| Claude Design project **"Pro Expense - Finance Tracker"** (canvas variant) | A second, same-named Claude Design project — regular canvas type, not the design-system project above, so it does **not** appear in the design-sync tool's project listing; only reachable via a maintainer-shared link. Holds `Hi-Fi Variant - Blue Banking.html` (`variant-blue-*.jsx` sources) — **the adopted visual system**: `design-system-spec/tokens.md` is derived from it, and where a screen spec's visuals conflict with this canvas, the canvas wins (see `design-system-spec/screens/README.md`); no link is committed here since this repo is public |
 | `.agents/skills/design-spec-to-compose/` | Step 1 — Design spec → Compose workflow |
 | `.agents/skills/compose-motion-polish/` | Step 2 — Motion, navigation transitions, interaction affordances |
 | `.agents/skills/compose-product-auditor/` | Step 3, twice — planning advisory pass + pre-push visual-verification Compose product/UX auditor |
+| `scripts/canvas-render/` | Step 3.1 / Step 6 gate 5 — renders a real canvas component (React/Babel) for direct screenshot comparison against Roborazzi output, instead of relying on token-value diffs or stale pre-rendered assets in the canvas project. See its `README.md`. |
 | `.agents/skills/kotlin-lint-style/` | ktlint formatting rules + detekt baseline regeneration workflow |
 | `.agents/skills/kotlin-lint-style/lint-retrospective.md` | Append-only lookup table of ktlint/detekt/Android-lint findings hit before, keyed by rule ID, with the fix that applied — check before diagnosing, append after resolving |
 | `AGENTIC_WORKFLOWS_GUIDE.md` | Reference template (OnDeviceLab origin) |

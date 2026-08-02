@@ -8,6 +8,7 @@
     <string name="journal_no_matches_title">ไม่พบรายการ</string>
     <string name="journal_no_matches_body">ไม่พบผลลัพธ์สำหรับ \"%1$s\" ลองใช้คำค้นหา จำนวนเงิน หรือบันทึกอื่น</string>
     <string name="journal_detail_back">บันทึก</string>
+    <string name="journal_more_action">เพิ่มเติม</string>
     <string name="journal_note_label">บันทึกย่อ</string>
     <string name="journal_linked_to_label">เชื่อมโยงกับ</string>
     <string name="journal_edit_action">แก้ไข</string>

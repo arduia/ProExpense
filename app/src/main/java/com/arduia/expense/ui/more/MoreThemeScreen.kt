@@ -19,9 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.arduia.expense.R
 import com.arduia.expense.data.ThemeMode
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -63,7 +63,11 @@ fun MoreThemeScreen(
                     .padding(horizontal = dimens.screenPadding)
                     .padding(bottom = dimens.space24),
         ) {
-            ProTopBar(title = stringResource(R.string.more_theme_title), onBack = onBack)
+            ProFlatHeader(
+                title = stringResource(R.string.more_theme_title),
+                onBack = onBack,
+                modifier = Modifier.padding(vertical = dimens.space14),
+            )
 
             Column(
                 modifier =
@@ -111,6 +115,23 @@ fun MoreThemeScreen(
 @Composable
 private fun MoreThemeScreenPreview() {
     ProExpenseTheme {
+        MoreThemeScreen(
+            selectedMode = ThemeMode.SYSTEM,
+            onSelect = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More — theme (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreThemeScreenDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         MoreThemeScreen(
             selectedMode = ThemeMode.SYSTEM,
             onSelect = {},

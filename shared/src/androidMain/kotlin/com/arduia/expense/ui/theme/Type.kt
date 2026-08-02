@@ -37,19 +37,20 @@ private val ManropeFamily =
         variableFont(R.font.manrope_variable, FontWeight.ExtraBold),
     )
 
+// Prompt ships static weights only (not a variable font) — plain Font entries.
+private val PromptFamily =
+    FontFamily(
+        Font(R.font.prompt_medium, FontWeight.Normal),
+        Font(R.font.prompt_medium, FontWeight.Medium),
+        Font(R.font.prompt_semibold, FontWeight.SemiBold),
+        Font(R.font.prompt_semibold, FontWeight.Bold),
+    )
+
 private val GeistMonoFamily =
     FontFamily(
         variableFont(R.font.geist_mono_variable, FontWeight.Normal),
         variableFont(R.font.geist_mono_variable, FontWeight.Medium),
         variableFont(R.font.geist_mono_variable, FontWeight.SemiBold),
-    )
-
-private val InterFamily =
-    FontFamily(
-        variableFont(R.font.inter_variable, FontWeight.Normal),
-        variableFont(R.font.inter_variable, FontWeight.Medium),
-        variableFont(R.font.inter_variable, FontWeight.SemiBold),
-        Font(R.font.inter_variable_italic, FontWeight.Normal, FontStyle.Italic),
     )
 
 private val FigmaAlignedPlatform = PlatformTextStyle(includeFontPadding = false)
@@ -97,11 +98,11 @@ private fun amountTextStyle(
     letterSpacingEm: Float,
 ): TextStyle =
     titleTextStyle(
-        fontFamily = InterFamily,
+        fontFamily = PromptFamily,
         fontSizeSp = fontSizeSp,
         lineHeightSp = lineHeightSp,
         letterSpacingEm = letterSpacingEm,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.SemiBold,
     )
 
 @Immutable
@@ -109,6 +110,7 @@ data class ProTypography(
     val displayAmount: TextStyle,
     val summaryAmount: TextStyle,
     val detailsAmount: TextStyle,
+    val cardAmount: TextStyle,
     val listAmount: TextStyle,
     val appBarTitle: TextStyle,
     val heroGreeting: TextStyle,
@@ -152,9 +154,9 @@ val ProDefaultTypography =
     ProTypography(
         displayAmount =
             amountTextStyle(
-                fontSizeSp = 64f,
-                lineHeightSp = 64f,
-                letterSpacingEm = -0.025f,
+                fontSizeSp = 58f,
+                lineHeightSp = 58f,
+                letterSpacingEm = -0.02f,
             ),
         summaryAmount =
             amountTextStyle(
@@ -168,61 +170,74 @@ val ProDefaultTypography =
                 lineHeightSp = 28f,
                 letterSpacingEm = -0.01f,
             ),
-        listAmount =
+        // Compact card amounts (Home's active-event card) — one step down from detailsAmount,
+        // matching canvas's VBCardSpendTrip inline amount (22sp).
+        cardAmount =
             amountTextStyle(
-                fontSizeSp = 18f,
-                lineHeightSp = 18f,
-                letterSpacingEm = 0f,
-            ),
-        appBarTitle =
-            titleTextStyle(
-                fontFamily = ManropeFamily,
-                fontSizeSp = 17f,
-                lineHeightSp = 20.4f,
-                fontWeight = FontWeight.Medium,
-            ),
-        heroGreeting =
-            titleTextStyle(
-                fontFamily = ManropeFamily,
-                fontSizeSp = 30f,
-                lineHeightSp = 32f,
-                letterSpacingEm = -0.015f,
-            ),
-        heroGreetingEmphasis =
-            titleTextStyle(
-                fontFamily = InterFamily,
-                fontSizeSp = 30f,
-                lineHeightSp = 32f,
-                letterSpacingEm = -0.015f,
-                fontStyle = FontStyle.Italic,
-            ),
-        sheetTitle =
-            titleTextStyle(
-                fontFamily = InterFamily,
                 fontSizeSp = 22f,
                 lineHeightSp = 24f,
                 letterSpacingEm = -0.01f,
             ),
+        listAmount =
+            amountTextStyle(
+                fontSizeSp = 15f,
+                lineHeightSp = 15f,
+                letterSpacingEm = 0f,
+            ),
+        appBarTitle =
+            titleTextStyle(
+                fontFamily = PromptFamily,
+                fontSizeSp = 16f,
+                lineHeightSp = 19.2f,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        heroGreeting =
+            titleTextStyle(
+                fontFamily = PromptFamily,
+                fontSizeSp = 24f,
+                lineHeightSp = 26.4f,
+                letterSpacingEm = -0.01f,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        heroGreetingEmphasis =
+            titleTextStyle(
+                fontFamily = PromptFamily,
+                fontSizeSp = 24f,
+                lineHeightSp = 26.4f,
+                letterSpacingEm = -0.01f,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        sheetTitle =
+            titleTextStyle(
+                fontFamily = PromptFamily,
+                fontSizeSp = 22f,
+                lineHeightSp = 24f,
+                letterSpacingEm = -0.01f,
+                fontWeight = FontWeight.SemiBold,
+            ),
         sectionHead =
             titleTextStyle(
-                fontFamily = InterFamily,
-                fontSizeSp = 18f,
-                lineHeightSp = 20f,
-                letterSpacingEm = -0.01f,
+                fontFamily = PromptFamily,
+                fontSizeSp = 15.5f,
+                lineHeightSp = 18f,
+                letterSpacingEm = 0f,
+                fontWeight = FontWeight.SemiBold,
             ),
         screenHeaderTitle =
             titleTextStyle(
-                fontFamily = InterFamily,
-                fontSizeSp = 17f,
-                lineHeightSp = 20f,
+                fontFamily = PromptFamily,
+                fontSizeSp = 16f,
+                lineHeightSp = 19.2f,
                 letterSpacingEm = 0f,
+                fontWeight = FontWeight.SemiBold,
             ),
         onboardingSlideTitle =
             titleTextStyle(
-                fontFamily = InterFamily,
+                fontFamily = PromptFamily,
                 fontSizeSp = 38f,
                 lineHeightSp = 40f,
                 letterSpacingEm = -0.02f,
+                fontWeight = FontWeight.SemiBold,
             ),
         onboardingBody =
             TextStyle(
@@ -233,10 +248,11 @@ val ProDefaultTypography =
             ),
         profileScreenTitle =
             titleTextStyle(
-                fontFamily = InterFamily,
+                fontFamily = PromptFamily,
                 fontSizeSp = 28f,
                 lineHeightSp = 30f,
                 letterSpacingEm = -0.01f,
+                fontWeight = FontWeight.SemiBold,
             ),
         navAction =
             TextStyle(
@@ -289,16 +305,16 @@ val ProDefaultTypography =
             ),
         chipLabel =
             TextStyle(
-                fontFamily = ManropeFamily,
-                fontSize = 12.sp,
-                lineHeight = proLineHeight(12f, 1.4f),
+                fontFamily = PromptFamily,
+                fontSize = 12.5.sp,
+                lineHeight = proLineHeight(12.5f, 1.3f),
                 fontWeight = FontWeight.Medium,
             ),
         chipLabelSelected =
             TextStyle(
-                fontFamily = ManropeFamily,
-                fontSize = 12.sp,
-                lineHeight = proLineHeight(12f, 1.4f),
+                fontFamily = PromptFamily,
+                fontSize = 12.5.sp,
+                lineHeight = proLineHeight(12.5f, 1.3f),
                 fontWeight = FontWeight.SemiBold,
             ),
         eyebrow =
@@ -337,16 +353,16 @@ val ProDefaultTypography =
             ),
         keypadKey =
             amountTextStyle(
-                fontSizeSp = 24f,
-                lineHeightSp = 24f,
+                fontSizeSp = 21f,
+                lineHeightSp = 21f,
                 letterSpacingEm = 0f,
             ),
         navLabel =
             TextStyle(
-                fontFamily = GeistMonoFamily,
-                fontSize = 10.sp,
-                lineHeight = proLineHeight(10f, 1.2f),
-                letterSpacing = 0.08.em,
+                fontFamily = PromptFamily,
+                fontSize = 10.5.sp,
+                lineHeight = proLineHeight(10.5f, 1.2f),
+                letterSpacing = 0.01.em,
                 fontWeight = FontWeight.Medium,
             ),
         searchField =
@@ -357,7 +373,7 @@ val ProDefaultTypography =
                 fontWeight = FontWeight.Normal,
             ),
         sansFamily = ManropeFamily,
-        amountFamily = InterFamily,
+        amountFamily = PromptFamily,
         monoFamily = GeistMonoFamily,
     )
 

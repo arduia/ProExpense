@@ -50,9 +50,9 @@ import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -80,12 +80,19 @@ fun CategoryListScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        ProTopBar(
+        ProFlatHeader(
             title = stringResource(R.string.categories_title),
+            eyebrow = stringResource(R.string.categories_eyebrow),
             onBack = onBack,
-            backLabel = stringResource(R.string.categories_back),
-            modifier = Modifier.padding(horizontal = dimens.screenPadding),
+            backContentDescription = stringResource(R.string.categories_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
         )
+
+        val defaults = state.categories.filter { !it.isCustom }
+        val customs = state.categories.filter { it.isCustom }
 
         Column(
             modifier =
@@ -96,20 +103,34 @@ fun CategoryListScreen(
                     .padding(top = dimens.space8, bottom = dimens.space24),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            CategorySectionHeader(
-                label = stringResource(R.string.categories_label),
-                trailing =
-                    pluralStringResource(
-                        R.plurals.categories_count,
-                        state.categories.size,
-                        state.categories.size,
-                    ),
-            )
-            ReorderableCategoryGroup(
-                rows = state.categories,
-                onRowClick = onCustomRowClick,
-                onReorder = onReorder,
-            )
+            if (defaults.isNotEmpty()) {
+                CategorySectionHeader(
+                    label = stringResource(R.string.categories_default_section),
+                    trailing = pluralStringResource(R.plurals.categories_count, defaults.size, defaults.size),
+                )
+                StaticCategoryGroup(rows = defaults)
+            }
+
+            if (customs.isNotEmpty()) {
+                CategorySectionHeader(
+                    label = stringResource(R.string.categories_custom_section),
+                    trailing = pluralStringResource(R.plurals.categories_count, customs.size, customs.size),
+                )
+                ReorderableCategoryGroup(
+                    rows = customs,
+                    onRowClick = onCustomRowClick,
+                    onReorder = { from, to ->
+                        // `customs` is filtered fresh from `state.categories` each recomposition, so
+                        // its own indices aren't stable to persist — resolve via categoryId instead of
+                        // assuming customs sit at a fixed offset within the full list.
+                        val fullFrom = state.categories.indexOfFirst { it.categoryId == customs[from].categoryId }
+                        val fullTo = state.categories.indexOfFirst { it.categoryId == customs[to].categoryId }
+                        if (fullFrom >= 0 && fullTo >= 0) {
+                            onReorder(fullFrom, fullTo)
+                        }
+                    },
+                )
+            }
 
             ProButton(
                 text = stringResource(R.string.categories_create),
@@ -153,6 +174,29 @@ private fun CategorySectionHeader(
     ) {
         Text(text = label, style = typography.eyebrow, color = colors.onSurfaceVariant)
         Text(text = trailing, style = typography.caption, color = colors.onSurfaceMuted)
+    }
+}
+
+@Composable
+private fun StaticCategoryGroup(rows: List<CategoryRowUi>) {
+    val colors = ProExpenseTheme.colors
+
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(ProExpenseTheme.shapes.card)
+                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.card)
+                .background(colors.surface),
+    ) {
+        rows.forEachIndexed { index, item ->
+            key(item.categoryId) {
+                if (index > 0) {
+                    Box(Modifier.fillMaxWidth().height(1.dp).background(colors.lineSoft))
+                }
+                CategoryRow(row = item, onClick = null, dragHandleModifier = null)
+            }
+        }
     }
 }
 
@@ -240,7 +284,7 @@ private fun ReorderableCategoryGroup(
 private fun CategoryRow(
     row: CategoryRowUi,
     onClick: (() -> Unit)?,
-    dragHandleModifier: Modifier,
+    dragHandleModifier: Modifier?,
 ) {
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
@@ -283,14 +327,16 @@ private fun CategoryRow(
                         .padding(horizontal = dimens.space10, vertical = dimens.space4),
             )
         }
-        Box(
-            modifier =
-                dragHandleModifier
-                    .testTag(dragHandleTestTag(row.categoryId))
-                    .padding(start = dimens.space8, top = dimens.space4, bottom = dimens.space4),
-            contentAlignment = Alignment.Center,
-        ) {
-            DragHandle()
+        if (dragHandleModifier != null) {
+            Box(
+                modifier =
+                    dragHandleModifier
+                        .testTag(dragHandleTestTag(row.categoryId))
+                        .padding(start = dimens.space8, top = dimens.space4, bottom = dimens.space4),
+                contentAlignment = Alignment.Center,
+            ) {
+                DragHandle()
+            }
         }
     }
 }
@@ -327,6 +373,19 @@ private fun DragHandle() {
 @Composable
 private fun CategoryListPreview() {
     ProExpenseTheme {
+        CategoryListScreen(previewCategoryList, {}, {})
+    }
+}
+
+@Preview(
+    name = "Categories — default + custom (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun CategoryListDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         CategoryListScreen(previewCategoryList, {}, {})
     }
 }

@@ -49,9 +49,12 @@ class MoreScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -67,6 +70,20 @@ class MoreScreenshotTest {
     @Test
     fun more_hub() =
         capture {
+            MoreHubScreen(
+                state = previewMoreHub,
+                onFeatureClick = {},
+                onSettingClick = {},
+                onSettingToggle = { _, _ -> },
+                selectedTab = HomeNavTab.More,
+                onTabSelected = {},
+                onAddClick = {},
+            )
+        }
+
+    @Test
+    fun more_hub_dark() =
+        capture(darkTheme = true) {
             MoreHubScreen(
                 state = previewMoreHub,
                 onFeatureClick = {},
@@ -136,8 +153,29 @@ class MoreScreenshotTest {
         }
 
     @Test
+    fun more_default_category_dark() =
+        capture(darkTheme = true) {
+            MoreDefaultCategoryScreen(
+                selectedCategoryId = "food",
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
     fun more_currency() =
         capture {
+            MoreCurrencyScreen(
+                items = previewMoreCurrencies,
+                selectedCode = "USD",
+                onSave = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_currency_dark() =
+        capture(darkTheme = true) {
             MoreCurrencyScreen(
                 items = previewMoreCurrencies,
                 selectedCode = "USD",
@@ -157,8 +195,48 @@ class MoreScreenshotTest {
         }
 
     @Test
+    fun more_language_dark() =
+        capture(darkTheme = true) {
+            MoreLanguageScreen(
+                selectedLanguage = com.arduia.expense.ui.design.AppLanguage.ENGLISH,
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_theme() =
+        capture {
+            MoreThemeScreen(
+                selectedMode = com.arduia.expense.data.ThemeMode.SYSTEM,
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_theme_dark() =
+        capture(darkTheme = true) {
+            MoreThemeScreen(
+                selectedMode = com.arduia.expense.data.ThemeMode.SYSTEM,
+                onSelect = {},
+                onBack = {},
+            )
+        }
+
+    @Test
     fun more_export() =
         capture {
+            MoreExportScreen(
+                files = previewMoreExportFiles,
+                onExport = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_export_dark() =
+        capture(darkTheme = true) {
             MoreExportScreen(
                 files = previewMoreExportFiles,
                 onExport = {},
@@ -191,6 +269,17 @@ class MoreScreenshotTest {
     @Test
     fun more_import_empty() =
         capture {
+            MoreImportScreen(
+                state = previewMoreImportEmpty,
+                onChooseFile = {},
+                onImport = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_import_empty_dark() =
+        capture(darkTheme = true) {
             MoreImportScreen(
                 state = previewMoreImportEmpty,
                 onChooseFile = {},
@@ -245,6 +334,18 @@ class MoreScreenshotTest {
         }
 
     @Test
+    fun more_clear_dark() =
+        capture(darkTheme = true) {
+            MoreClearScreen(
+                options = previewMoreClearOptions,
+                checkedIds = setOf("expenses"),
+                onToggle = {},
+                onClear = {},
+                onBack = {},
+            )
+        }
+
+    @Test
     fun more_sync_not_connected() =
         capture {
             MoreSyncScreen(
@@ -275,6 +376,17 @@ class MoreScreenshotTest {
     @Test
     fun more_budget_empty() =
         capture {
+            MoreBudgetScreen(
+                currentAmount = null,
+                homeCurrency = CurrencyCode("USD"),
+                onSave = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun more_budget_empty_dark() =
+        capture(darkTheme = true) {
             MoreBudgetScreen(
                 currentAmount = null,
                 homeCurrency = CurrencyCode("USD"),

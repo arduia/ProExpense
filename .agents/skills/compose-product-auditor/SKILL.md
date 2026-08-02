@@ -125,6 +125,48 @@ Walk every dimension. For each, the question is "what happens to the user when�
   swipe edge-to-edge — an inset pager viewport (e.g. the pager sits inside a parent's horizontal padding)
   shows side padding mid-swipe. Keep the pager full-width and pad the page **content**, not the pager.
   Check drag, fling, and overscroll edges too.
+- **Floated/overlapping elements keep their own shape (zoom in, don't eyeball the whole screen).** Any
+  element deliberately positioned outside its normal flow via a negative `offset()` to overlap a sibling
+  or a parent's edge (a card floating up into a header, a badge overlapping a corner) must be checked for
+  whether an ancestor's `Modifier.clip(shape)` is silently cutting off the overflowing part. `clip()`
+  clips *all descendant painting*, not just the background fill — a rounded corner painted outside the
+  ancestor's own clipped bounds renders as a hard flat cut instead of a curve, even though the element's
+  own code clips it to a rounded shape. This is invisible at whole-screen zoom (three matching sides plus
+  correct color/position/shadow read as "close enough") — it only shows up cropped in tight on the exact
+  overlap edge. Check every element with a deliberate negative offset this way. Fix: if nothing else in
+  that ancestor needs clipping, swap `.clip(shape).background(color)` for `.background(color, shape)`
+  (shapes the fill without clipping children); otherwise move the floated element outside the clipped
+  container (e.g. a `Box` overlay) instead. Real example: Home's spend card floating into
+  `ProGradientHeader` lost its top corner radius to `ProSheetSurface`'s `clip()` this way.
+- **Text sizes against the canvas source, not just color/position (check the actual `fontSize`
+  numbers, don't eyeball "looks about right").** Two recurring, easy-to-miss patterns:
+  - **Currency-symbol scaling.** Canvas consistently renders a leading `$`/currency symbol smaller
+    than the digits it prefixes (roughly 45-65% of the digit size, e.g. `fontSize: 21` symbol on a
+    `fontSize: 40` amount) — check every prominent amount display (hero totals, card amounts,
+    amount-entry screens) for this ratio, not just its color. A same-size, color-only "$" is a
+    partial fix that still reads as visually off; verify by cropping in tight on the symbol, since
+    a 12-18sp size difference is easy to miss at whole-screen zoom. Real example: `AmountDisplay.kt`
+    (Add Expense, Shared Costs input/summary, Monthly budget — one shared component, four screens)
+    colored the `$` but never shrank it.
+  - **Amount-scale token gaps.** This codebase has a named amount-size ladder
+    (`displayAmount`/`summaryAmount`/`detailsAmount`/`cardAmount`/`listAmount`). When a canvas
+    amount's literal `fontSize` doesn't match any existing rung (e.g. canvas says 22sp, the nearest
+    tokens are 26sp and 15sp), snapping to the nearest existing token silently overshoots/undershoots
+    by double-digit percentages. Compare the canvas number directly — if the gap is >10-15%, that's
+    a missing rung to add (`Type.kt`), not a "close enough" reuse of a neighboring token.
+- **Multi-layer elevation must apply every layer, not just the first.** Several `ProElevation`
+  profiles (e.g. `card`) are defined as a `List<ProShadowLayer>` with more than one layer — a
+  faint 1dp hairline *and* a soft, larger-blur spread that's the one actually visible. Composables
+  that hand-roll `Modifier.shadow(...)` from `elevation.<profile>.firstOrNull()` silently render
+  only that first (often near-invisible, 0dp-blur) layer and never the one that gives the card real
+  depth — the card then looks flat against its canvas counterpart's clearly-visible shadow, and
+  nothing in a color/position diff catches it. Check: does this composable reimplement shadow
+  application inline, or use the module's existing multi-layer helper (e.g.
+  `Modifier.proCardShadow(shape)` in `CardSurfaces.kt`, which folds *all* layers)? If it hand-rolls
+  `.firstOrNull()` against a profile with >1 layer, that's the bug — switch to the existing helper
+  (or a single-layer profile like `heroCard` if the design genuinely calls for one strong shadow)
+  rather than re-deriving shadow math per screen. Real example: `ReportsDonutLegendCard` and Home's
+  original `MonthSpendCard` both had this exact bug independently.
 
 ### 10. Sensitive data & security UI (apply when the screen handles PII, credentials, or payments)
 - Secure input where required (password/PIN masking, `KeyboardType` correct, no autofill leaks of secrets).

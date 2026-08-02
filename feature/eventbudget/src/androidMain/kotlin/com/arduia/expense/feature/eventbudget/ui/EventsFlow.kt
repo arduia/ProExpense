@@ -37,6 +37,10 @@ fun EventsFlow(
     onTabSelected: (HomeNavTab) -> Unit,
     onAddClick: () -> Unit,
     events: List<EventBudgetCardState> = previewEventList,
+    // See EventBudgetListScreen's matching params — status-aware callers (closed events stay in
+    // `events` but aren't "active") must pass these explicitly rather than relying on the default.
+    activeCount: Int = events.size,
+    overBudgetCount: Int = events.count { it.isOverBudget },
     eventDetails: Map<String, EventDetailUiState> = emptyMap(),
     eventEditForms: Map<String, EventCreateFormState> = emptyMap(),
     // `onCreated` fires once the event is actually persisted (id resolved async) — the caller
@@ -111,6 +115,8 @@ fun EventsFlow(
                     onTabSelected = onTabSelected,
                     onAddClick = onAddClick,
                     isLoading = isLoading,
+                    activeCount = activeCount,
+                    overBudgetCount = overBudgetCount,
                 )
             } else {
                 val detail = detailStateFor(targetId, events, eventDetails)

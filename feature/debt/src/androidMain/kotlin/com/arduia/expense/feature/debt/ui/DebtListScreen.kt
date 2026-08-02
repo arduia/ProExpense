@@ -37,13 +37,12 @@ import com.arduia.expense.feature.debt.ui.preview.previewDebtLent
 import com.arduia.expense.feature.debt.ui.preview.previewDebtLoading
 import com.arduia.expense.feature.debt.ui.preview.previewDebtOwe
 import com.arduia.expense.feature.debt.ui.preview.previewDebtSettled
-import com.arduia.expense.ui.design.ProButton
-import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.design.proClickable
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 import com.arduia.expense.ui.theme.centeredGlyph
@@ -68,29 +67,45 @@ fun DebtListScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.debt_title),
-                onBack = onBack,
-                backLabel = stringResource(R.string.debt_back_more),
-            )
-            // A small labeled pill, matching Budget's "+ New event" — the plain icon-only
-            // ProTopBarAction.Add tile read as oversized and unlabeled next to it.
-            ProButton(
-                text = stringResource(R.string.debt_new_record),
-                onClick = onAddRecord,
-                size = ProButtonSize.Sm,
-                modifier = Modifier.align(Alignment.CenterEnd),
-                leading = {
+        ProFlatHeader(
+            title = stringResource(R.string.debt_title),
+            eyebrow = stringResource(R.string.debt_eyebrow),
+            onBack = onBack,
+            modifier = Modifier.padding(horizontal = dimens.screenPadding, vertical = dimens.space14),
+            trailing = {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(dimens.buttonSmallHeight)
+                            .clip(CircleShape)
+                            .background(colors.primary)
+                            .proIconClickable(onClick = onAddRecord),
+                    contentAlignment = Alignment.Center,
+                ) {
                     ProIcon(
                         glyph = ProIconGlyph.Plus,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.debt_new_record),
                         tint = colors.onPrimaryWarm,
                         size = dimens.iconInline,
                     )
-                },
-            )
-        }
+                }
+            },
+            content = {
+                SegmentedToggle(
+                    options =
+                        listOf(
+                            stringResource(R.string.debt_tab_lent),
+                            stringResource(R.string.debt_tab_owe),
+                        ),
+                    selectedIndex = if (state.side == DebtSide.Lent) 0 else 1,
+                    onSelected = { index ->
+                        onSideSelected(if (index == 0) DebtSide.Lent else DebtSide.Owe)
+                    },
+                    usePrimarySelection = true,
+                    modifier = Modifier.padding(top = dimens.space16),
+                )
+            },
+        )
 
         Column(
             modifier =
@@ -98,22 +113,9 @@ fun DebtListScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = dimens.screenPadding)
-                    .padding(top = dimens.space8, bottom = dimens.space24),
+                    .padding(top = dimens.space16, bottom = dimens.space24),
             verticalArrangement = Arrangement.spacedBy(dimens.space16),
         ) {
-            SegmentedToggle(
-                options =
-                    listOf(
-                        stringResource(R.string.debt_tab_lent),
-                        stringResource(R.string.debt_tab_owe),
-                    ),
-                selectedIndex = if (state.side == DebtSide.Lent) 0 else 1,
-                onSelected = { index ->
-                    onSideSelected(if (index == 0) DebtSide.Lent else DebtSide.Owe)
-                },
-                usePrimarySelection = true,
-            )
-
             // Debts load asynchronously after first composition — without this check, the summary
             // card would briefly show "$0 · 0 active" before real data has had a chance to load.
             if (!state.isLoading) {
@@ -364,6 +366,25 @@ internal fun DebtAvatar(
 @Composable
 private fun DebtListLentPreview() {
     ProExpenseTheme {
+        DebtListScreen(
+            state = previewDebtLent,
+            onSideSelected = {},
+            onAddRecord = {},
+            onRecordClick = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Debt — I Lent (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun DebtListLentDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         DebtListScreen(
             state = previewDebtLent,
             onSideSelected = {},

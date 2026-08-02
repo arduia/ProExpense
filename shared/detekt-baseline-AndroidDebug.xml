@@ -102,6 +102,8 @@
     <ID>FunctionNaming:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateContentPreview()</ID>
     <ID>FunctionNaming:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateIllustrationPreview()</ID>
     <ID>FunctionNaming:EventBudgetCard.kt$@Composable fun EventBudgetCard( state: EventBudgetCardState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:EventBudgetCard.kt$@Composable private fun EventBudgetHeaderTrailing( state: EventBudgetCardState, isWarning: Boolean, isDanger: Boolean, spentColor: Color, )</ID>
+    <ID>FunctionNaming:EventBudgetCard.kt$@Composable private fun EventBudgetMetaTrailing( state: EventBudgetCardState, isWarning: Boolean, isDanger: Boolean, spentColor: Color, )</ID>
     <ID>FunctionNaming:EventBudgetCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetCardPreview()</ID>
     <ID>FunctionNaming:EventBudgetSummaryCard.kt$@Composable fun EventBudgetSummaryCard( state: EventBudgetSummaryState, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:EventBudgetSummaryCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetSummaryCardPreview()</ID>
@@ -111,8 +113,17 @@
     <ID>FunctionNaming:Fields.kt$@Composable fun ProfileNameField( value: String, onValueChange: (String) -&gt; Unit, placeholder: String, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:Fields.kt$@Composable fun SearchField( value: String, onValueChange: (String) -&gt; Unit, placeholder: String, modifier: Modifier = Modifier, active: Boolean = false, )</ID>
     <ID>FunctionNaming:Fields.kt$@Composable fun SearchFieldShell( query: String, onClear: () -&gt; Unit, modifier: Modifier = Modifier, placeholder: String = "Search notes, amount, category…", onClick: () -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:FlatHeader.kt$@Composable fun ProFlatHeader( title: String, onBack: () -&gt; Unit, modifier: Modifier = Modifier, eyebrow: String? = null, // Screen-reader-only by default (icon-only per the canvas). Callers that route "back" to a // context-specific destination (a deep-linked Journal/Home entry point) can override this to // announce that destination — see SharedCostsSummaryScreen — since the icon alone can't. backContentDescription: String? = null, trailing: (@Composable () -&gt; Unit)? = null, content: (@Composable () -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:FlatHeader.kt$@Preview( name = "ProFlatHeader — dark", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProFlatHeaderDarkPreview()</ID>
+    <ID>FunctionNaming:FlatHeader.kt$@Preview( name = "ProFlatHeader", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProFlatHeaderPreview()</ID>
     <ID>FunctionNaming:GlitchText.kt$@Composable fun GlitchText( text: String, style: TextStyle, color: Color, modifier: Modifier = Modifier, playbackKey: Any? = Unit, )</ID>
-    <ID>FunctionNaming:HeroGreeting.kt$@Composable fun HeroGreeting( name: String, modifier: Modifier = Modifier, prefix: String = "Hi, ", )</ID>
+    <ID>FunctionNaming:GradientHeader.kt$@Composable fun ProGradientHeader( modifier: Modifier = Modifier, // Canvas's VBHeader takes a per-screen `pb` (padding-bottom, default 20, e.g. More overrides // to 26) rather than one fixed value — screens with more header content need more room below // it before the sheet starts. Defaults to the plain top-padding value for screens that don't // need extra room (matches the original fixed-padding behavior). bottomPadding: Dp = ProExpenseTheme.dimensions.space16, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:GradientHeader.kt$@Composable fun ProGradientHeaderTitle( title: String, modifier: Modifier = Modifier, eyebrow: String? = null, )</ID>
+    <ID>FunctionNaming:GradientHeader.kt$@Composable fun ProSheetSurface( modifier: Modifier = Modifier, overlap: Dp = 14.dp, content: @Composable ColumnScope.() -&gt; Unit, )</ID>
+    <ID>FunctionNaming:GradientHeader.kt$@Preview( name = "ProGradientHeader — dark", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 220, showBackground = true, ) @Composable private fun ProGradientHeaderDarkPreview()</ID>
+    <ID>FunctionNaming:GradientHeader.kt$@Preview( name = "ProGradientHeader", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 220, showBackground = true, ) @Composable private fun ProGradientHeaderPreview()</ID>
+    <ID>FunctionNaming:GradientHeader.kt$@Preview( name = "ProSheetSurface", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 300, showBackground = true, ) @Composable private fun ProSheetSurfacePreview()</ID>
+    <ID>FunctionNaming:HeroGreeting.kt$@Composable fun HeroGreeting( name: String, modifier: Modifier = Modifier, prefix: String = "Hi, ", // Both default to the paper-surface pairing (prefix ink, name primary-accented). Screens // that render this over the hero gradient (Home) pass a single white for both instead — // Blue Banking never recolors the name when it's already on a colored surface. prefixColor: Color = ProExpenseTheme.colors.onSurface, emphasisColor: Color = ProExpenseTheme.colors.primary, )</ID>
     <ID>FunctionNaming:HeroGreeting.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun HeroGreetingPreview()</ID>
     <ID>FunctionNaming:HomeBottomNav.kt$@Composable fun HomeBottomNav( selectedTab: HomeNavTab, onTabSelected: (HomeNavTab) -&gt; Unit, onAddClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:HomeBottomNav.kt$@Composable private fun HomeAddFab( onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
@@ -174,7 +185,7 @@
     <ID>FunctionNaming:TagPickerContent.kt$@Composable private fun TagPickerSection( title: String, unavailableHint: String?, disabled: Boolean, content: @Composable () -&gt; Unit, )</ID>
     <ID>FunctionNaming:TagPickerContent.kt$@Preview(name = "No debts", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun TagPickerContentNoDebtsPreview()</ID>
     <ID>FunctionNaming:TagPickerContent.kt$@Preview(widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true) @Composable private fun TagPickerContentPreview()</ID>
-    <ID>FunctionNaming:Theme.kt$@Composable fun ProExpenseTheme( darkTheme: Boolean = isSystemInDarkTheme(), colors: ProColors = if (darkTheme) ProDarkColors else ProLightColors, typography: ProTypography = ProDefaultTypography, dimensions: ProDimens = ProDefaultDimens, shapes: ProShapes = ProDefaultShapes, motion: ProMotion = ProDefaultMotion, elevation: ProElevation = ProDefaultElevation, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable fun ProExpenseTheme( darkTheme: Boolean = isSystemInDarkTheme(), colors: ProColors = if (darkTheme) ProDarkColors else ProLightColors, typography: ProTypography = ProDefaultTypography, dimensions: ProDimens = ProDefaultDimens, shapes: ProShapes = ProDefaultShapes, motion: ProMotion = ProDefaultMotion, elevation: ProElevation = proElevation(colors), content: @Composable () -&gt; Unit, )</ID>
     <ID>FunctionNaming:ThemePreview.kt$@Composable fun ProExpenseThemeFoundation()</ID>
     <ID>FunctionNaming:ThemePreview.kt$@Composable private fun ProColorSwatch( color: androidx.compose.ui.graphics.Color, label: String, )</ID>
     <ID>FunctionNaming:ThemePreview.kt$@Preview( name = "Design system foundation (Pixel 9 Pro)", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP, showBackground = true, ) @Composable fun ProExpenseThemeFoundationPreview()</ID>
@@ -202,7 +213,6 @@
     <ID>LongMethod:TopBar.kt$@Composable fun ProTopBar( title: String, onBack: (() -&gt; Unit)?, modifier: Modifier = Modifier, backLabel: String? = null, action: ProTopBarAction = ProTopBarAction.None, onAction: () -&gt; Unit = {}, )</ID>
     <ID>LongParameterList:AlertDialog.kt$( visible: Boolean, icon: ProIconGlyph, iconTint: Color, iconBackground: Color, title: String, body: AnnotatedString, confirmLabel: String, onConfirm: () -&gt; Unit, dismissLabel: String, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, confirmVariant: ProButtonVariant = ProButtonVariant.Primary, )</ID>
     <ID>LongParameterList:AmountDisplay.kt$( amountText: String, modifier: Modifier = Modifier, currencySymbol: String = "$", currencyCode: String = "USD", isZero: Boolean = amountText.toDoubleOrNull()?.let { it &lt;= 0.0 } ?: true, showZeroValidation: Boolean = false, zeroHelperMessage: String = "Amount must be greater than $0", eyebrowText: String? = null, // Renders next to the eyebrow label, right-aligned on the same row — e.g. a "USD ▾" currency // selector — instead of a separate row above/below, saving a full row of vertical space. eyebrowTrailing: (@Composable () -&gt; Unit)? = null, usePrimaryAmount: Boolean = false, // When present, the amount text no longer force-fills the available width — the row hugs // the digits instead, so this sits immediately after the amount rather than pinned to the // far edge of a full-width row. The auto-shrink-to-fit safety net still holds: the loose // incoming max-width constraint from ancestors still bounds/clips very long totals. trailing: (@Composable () -&gt; Unit)? = null, // When present, tapping the amount itself acts exactly like tapping [trailing]'s edit // affordance — lets callers make the whole confirmed total re-editable, not just its icon. onAmountClick: (() -&gt; Unit)? = null, )</ID>
-    <ID>LongParameterList:AmountDisplay.kt$( currencySymbol: String, amountText: String, isZero: Boolean, primaryColor: Color, amountColor: Color, decimalColor: Color, amountFamily: androidx.compose.ui.text.font.FontFamily, )</ID>
     <ID>LongParameterList:BottomSheet.kt$( title: String?, onClose: () -&gt; Unit, modifier: Modifier = Modifier, fullHeight: Boolean = false, // Real available height of the window this sheet is hosted in. Defaults to the design-artboard // constant only for standalone/preview usage (ProDesignSystemSheetContent) — ProBottomSheetHost // always overrides this with a BoxWithConstraints-measured value, since the artboard constant // is a fixed reference size (Pixel 9 Pro) that doesn't match real device screens: on a shorter // device the fraction-of-artboard cap can exceed what's actually on screen, and combined with // an open keyboard's imePadding() shift, the sheet's top edge (and its header/content) can end // up pushed above the visible screen instead of shrinking to fit. maxHeight: Dp = ProExpenseTheme.dimensions.artboardHeight, content: @Composable () -&gt; Unit, )</ID>
     <ID>LongParameterList:BottomSheet.kt$( visible: Boolean, title: String?, onClose: () -&gt; Unit, modifier: Modifier = Modifier, fullHeight: Boolean = false, sheetContent: @Composable () -&gt; Unit, )</ID>
     <ID>LongParameterList:Buttons.kt$( text: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier, variant: ProButtonVariant = ProButtonVariant.Primary, size: ProButtonSize = ProButtonSize.Md, enabled: Boolean = true, fillMaxWidth: Boolean = false, // Shows a spinner in place of the label and blocks clicks — for actions with a suspend call // (PIN setup hashing, saves) where an unchanged button otherwise reads as a frozen screen. loading: Boolean = false, leading: (@Composable () -&gt; Unit)? = null, trailing: (@Composable () -&gt; Unit)? = null, )</ID>
@@ -214,6 +224,7 @@
     <ID>LongParameterList:DetailFieldCard.kt$( modifier: Modifier = Modifier, leading: @Composable () -&gt; Unit, trailing: @Composable (() -&gt; Unit)? = null, onClick: (() -&gt; Unit)? = null, borderColor: Color? = null, content: @Composable () -&gt; Unit, )</ID>
     <ID>LongParameterList:DetailFieldCard.kt$( value: String, onValueChange: (String) -&gt; Unit, maxLength: Int, modifier: Modifier = Modifier, placeholder: String = "", atLimit: Boolean = false, errorMessage: String? = null, )</ID>
     <ID>LongParameterList:EmptyState.kt$( title: String, subtitle: String, actionLabel: String, onActionClick: () -&gt; Unit, modifier: Modifier = Modifier, addHintPrefix: String? = null, addHintSuffix: String? = null, )</ID>
+    <ID>LongParameterList:FlatHeader.kt$( title: String, onBack: () -&gt; Unit, modifier: Modifier = Modifier, eyebrow: String? = null, // Screen-reader-only by default (icon-only per the canvas). Callers that route "back" to a // context-specific destination (a deep-linked Journal/Home entry point) can override this to // announce that destination — see SharedCostsSummaryScreen — since the icon alone can't. backContentDescription: String? = null, trailing: (@Composable () -&gt; Unit)? = null, content: (@Composable () -&gt; Unit)? = null, )</ID>
     <ID>LongParameterList:Interaction.kt$( onClick: () -&gt; Unit, shape: Shape, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, enabled: Boolean = true, role: Role? = null, scaleOnPress: Boolean = true, )</ID>
     <ID>LongParameterList:Interaction.kt$( selected: Boolean, onClick: () -&gt; Unit, shape: Shape, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, enabled: Boolean = true, role: Role = Role.Tab, scaleOnPress: Boolean = true, )</ID>
     <ID>LongParameterList:Interaction.kt$( selected: Boolean, onClick: () -&gt; Unit, shape: Shape, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, enabled: Boolean = true, role: Role = Role.Tab, scaleOnPress: Boolean = true, showRipple: Boolean = true, )</ID>
@@ -229,7 +240,7 @@
     <ID>LongParameterList:ProfileStepHeader.kt$( step: Int, totalSteps: Int, eyebrow: String, title: String, subtitle: String, modifier: Modifier = Modifier, onSkip: (() -&gt; Unit)? = null, skipLabel: String = "Skip", )</ID>
     <ID>LongParameterList:QuickAccessTile.kt$( label: String, icon: ProIconGlyph, onClick: () -&gt; Unit, modifier: Modifier = Modifier, iconTint: Color? = null, iconBackground: Color? = null, )</ID>
     <ID>LongParameterList:TagPickerContent.kt$( events: List&lt;TagLinkOption&gt;, debts: List&lt;TagLinkOption&gt;, selectedId: String?, selectedKind: TagLinkKind?, onSelected: (TagLinkOption) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
-    <ID>LongParameterList:Theme.kt$( darkTheme: Boolean = isSystemInDarkTheme(), colors: ProColors = if (darkTheme) ProDarkColors else ProLightColors, typography: ProTypography = ProDefaultTypography, dimensions: ProDimens = ProDefaultDimens, shapes: ProShapes = ProDefaultShapes, motion: ProMotion = ProDefaultMotion, elevation: ProElevation = ProDefaultElevation, content: @Composable () -&gt; Unit, )</ID>
+    <ID>LongParameterList:Theme.kt$( darkTheme: Boolean = isSystemInDarkTheme(), colors: ProColors = if (darkTheme) ProDarkColors else ProLightColors, typography: ProTypography = ProDefaultTypography, dimensions: ProDimens = ProDefaultDimens, shapes: ProShapes = ProDefaultShapes, motion: ProMotion = ProDefaultMotion, elevation: ProElevation = proElevation(colors), content: @Composable () -&gt; Unit, )</ID>
     <ID>LongParameterList:TopBar.kt$( title: String, onBack: (() -&gt; Unit)?, modifier: Modifier = Modifier, backLabel: String? = null, action: ProTopBarAction = ProTopBarAction.None, onAction: () -&gt; Unit = {}, )</ID>
     <ID>LongParameterList:Type.kt$( fontFamily: FontFamily, fontSizeSp: Float, lineHeightSp: Float, letterSpacingEm: Float = 0f, fontWeight: FontWeight = FontWeight.Normal, fontStyle: FontStyle = FontStyle.Normal, )</ID>
     <ID>MagicNumber:AmountDisplay.kt$0.2f</ID>
@@ -254,71 +265,83 @@
     <ID>MagicNumber:CardSurfaces.kt$0.86f</ID>
     <ID>MagicNumber:CardSurfaces.kt$0.98f</ID>
     <ID>MagicNumber:Category.kt$0.52f</ID>
+    <ID>MagicNumber:Color.kt$0x0EFFFFFF</ID>
     <ID>MagicNumber:Color.kt$0x0F212121</ID>
-    <ID>MagicNumber:Color.kt$0x0FFFFFFF</ID>
+    <ID>MagicNumber:Color.kt$0x142BA9E8</ID>
     <ID>MagicNumber:Color.kt$0x19212121</ID>
     <ID>MagicNumber:Color.kt$0x19FFFFFF</ID>
+    <ID>MagicNumber:Color.kt$0x262BA9E8</ID>
+    <ID>MagicNumber:Color.kt$0x295CC86A</ID>
+    <ID>MagicNumber:Color.kt$0x29F2B33D</ID>
+    <ID>MagicNumber:Color.kt$0x29FF9A3D</ID>
+    <ID>MagicNumber:Color.kt$0x2EFF6F6B</ID>
     <ID>MagicNumber:Color.kt$0x6B2B1F17</ID>
     <ID>MagicNumber:Color.kt$0xCC000000</ID>
+    <ID>MagicNumber:Color.kt$0xFF000000</ID>
     <ID>MagicNumber:Color.kt$0xFF01579B</ID>
-    <ID>MagicNumber:Color.kt$0xFF0277BD</ID>
+    <ID>MagicNumber:Color.kt$0xFF015D9F</ID>
     <ID>MagicNumber:Color.kt$0xFF0288D1</ID>
+    <ID>MagicNumber:Color.kt$0xFF0293DC</ID>
     <ID>MagicNumber:Color.kt$0xFF039BE5</ID>
-    <ID>MagicNumber:Color.kt$0xFF0D3348</ID>
-    <ID>MagicNumber:Color.kt$0xFF0D3B52</ID>
-    <ID>MagicNumber:Color.kt$0xFF121212</ID>
-    <ID>MagicNumber:Color.kt$0xFF1A1A1A</ID>
-    <ID>MagicNumber:Color.kt$0xFF1B3D1F</ID>
-    <ID>MagicNumber:Color.kt$0xFF1E1E1E</ID>
+    <ID>MagicNumber:Color.kt$0xFF0472B3</ID>
+    <ID>MagicNumber:Color.kt$0xFF062339</ID>
+    <ID>MagicNumber:Color.kt$0xFF072D49</ID>
+    <ID>MagicNumber:Color.kt$0xFF081726</ID>
+    <ID>MagicNumber:Color.kt$0xFF083550</ID>
+    <ID>MagicNumber:Color.kt$0xFF0A3A5C</ID>
+    <ID>MagicNumber:Color.kt$0xFF0B4568</ID>
+    <ID>MagicNumber:Color.kt$0xFF0D1622</ID>
+    <ID>MagicNumber:Color.kt$0xFF0D4368</ID>
+    <ID>MagicNumber:Color.kt$0xFF0D4F79</ID>
+    <ID>MagicNumber:Color.kt$0xFF18232F</ID>
     <ID>MagicNumber:Color.kt$0xFF212121</ID>
-    <ID>MagicNumber:Color.kt$0xFF29B6F6</ID>
-    <ID>MagicNumber:Color.kt$0xFF2C2C2C</ID>
+    <ID>MagicNumber:Color.kt$0xFF223140</ID>
+    <ID>MagicNumber:Color.kt$0xFF2BA9E8</ID>
+    <ID>MagicNumber:Color.kt$0xFF2E3A47</ID>
     <ID>MagicNumber:Color.kt$0xFF3D341B</ID>
-    <ID>MagicNumber:Color.kt$0xFF3E1F1F</ID>
-    <ID>MagicNumber:Color.kt$0xFF3E2723</ID>
     <ID>MagicNumber:Color.kt$0xFF424242</ID>
     <ID>MagicNumber:Color.kt$0xFF4CAF50</ID>
     <ID>MagicNumber:Color.kt$0xFF4FC3F7</ID>
-    <ID>MagicNumber:Color.kt$0xFF5D4037</ID>
-    <ID>MagicNumber:Color.kt$0xFF616161</ID>
+    <ID>MagicNumber:Color.kt$0xFF5CC86A</ID>
     <ID>MagicNumber:Color.kt$0xFF66BB6A</ID>
+    <ID>MagicNumber:Color.kt$0xFF69768A</ID>
     <ID>MagicNumber:Color.kt$0xFF757575</ID>
     <ID>MagicNumber:Color.kt$0xFF81C784</ID>
-    <ID>MagicNumber:Color.kt$0xFF81D4FA</ID>
-    <ID>MagicNumber:Color.kt$0xFF8E8E93</ID>
+    <ID>MagicNumber:Color.kt$0xFF8A97A7</ID>
     <ID>MagicNumber:Color.kt$0xFF9E9E9E</ID>
-    <ID>MagicNumber:Color.kt$0xFFA5D6A7</ID>
-    <ID>MagicNumber:Color.kt$0xFFB3E5FC</ID>
+    <ID>MagicNumber:Color.kt$0xFFB97D13</ID>
     <ID>MagicNumber:Color.kt$0xFFBDBDBD</ID>
+    <ID>MagicNumber:Color.kt$0xFFC2CEDB</ID>
     <ID>MagicNumber:Color.kt$0xFFC77F00</ID>
-    <ID>MagicNumber:Color.kt$0xFFC8E6C9</ID>
     <ID>MagicNumber:Color.kt$0xFFDCEDC8</ID>
     <ID>MagicNumber:Color.kt$0xFFE0A030</ID>
     <ID>MagicNumber:Color.kt$0xFFE0E0E0</ID>
     <ID>MagicNumber:Color.kt$0xFFE1F5FE</ID>
     <ID>MagicNumber:Color.kt$0xFFE57373</ID>
-    <ID>MagicNumber:Color.kt$0xFFE8E8E8</ID>
+    <ID>MagicNumber:Color.kt$0xFFE6F4E7</ID>
     <ID>MagicNumber:Color.kt$0xFFEEEEEE</ID>
     <ID>MagicNumber:Color.kt$0xFFEF5350</ID>
     <ID>MagicNumber:Color.kt$0xFFEF6C00</ID>
+    <ID>MagicNumber:Color.kt$0xFFF0B84A</ID>
+    <ID>MagicNumber:Color.kt$0xFFF0FAFF</ID>
+    <ID>MagicNumber:Color.kt$0xFFF2B33D</ID>
+    <ID>MagicNumber:Color.kt$0xFFF2F6FB</ID>
     <ID>MagicNumber:Color.kt$0xFFF5E6A3</ID>
     <ID>MagicNumber:Color.kt$0xFFF5F5F5</ID>
-    <ID>MagicNumber:Color.kt$0xFFF9A825</ID>
+    <ID>MagicNumber:Color.kt$0xFFF7CE7A</ID>
     <ID>MagicNumber:Color.kt$0xFFFB8C00</ID>
-    <ID>MagicNumber:Color.kt$0xFFFF9800</ID>
+    <ID>MagicNumber:Color.kt$0xFFFDEAEA</ID>
+    <ID>MagicNumber:Color.kt$0xFFFDF3DF</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF6F6B</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF9A3D</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFB15E</ID>
     <ID>MagicNumber:Color.kt$0xFFFFB74D</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFCDD2</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFE0B2</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFEB3B</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFF176</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFF1E0</ID>
     <ID>MagicNumber:Color.kt$0xFFFFFDF6</ID>
     <ID>MagicNumber:Color.kt$0xFFFFFFFF</ID>
-    <ID>MagicNumber:Elevation.kt$0x08212121</ID>
-    <ID>MagicNumber:Elevation.kt$0x0A212121</ID>
     <ID>MagicNumber:Elevation.kt$0x1A000000</ID>
     <ID>MagicNumber:Elevation.kt$0x26000000</ID>
     <ID>MagicNumber:Elevation.kt$0x2E000000</ID>
-    <ID>MagicNumber:Elevation.kt$0x47039BE5</ID>
     <ID>MagicNumber:Elevation.kt$6</ID>
     <ID>MagicNumber:Elevation.kt$8</ID>
     <ID>MagicNumber:EmptyState.kt$108f</ID>
@@ -345,6 +368,7 @@
     <ID>MagicNumber:EventBudgetCard.kt$10</ID>
     <ID>MagicNumber:GlitchText.kt$0xFF00E5FF</ID>
     <ID>MagicNumber:GlitchText.kt$0xFFFF3B5C</ID>
+    <ID>MagicNumber:GradientHeader.kt$0.55f</ID>
     <ID>MagicNumber:ListRows.kt$0.05f</ID>
     <ID>MagicNumber:Motion.kt$0.22f</ID>
     <ID>MagicNumber:Motion.kt$0.36f</ID>
@@ -495,9 +519,10 @@
     <ID>MagicNumber:Type.kt$1.3f</ID>
     <ID>MagicNumber:Type.kt$1.45f</ID>
     <ID>MagicNumber:Type.kt$1.4f</ID>
-    <ID>MagicNumber:Type.kt$10f</ID>
+    <ID>MagicNumber:Type.kt$10.5f</ID>
     <ID>MagicNumber:Type.kt$11.5f</ID>
     <ID>MagicNumber:Type.kt$11f</ID>
+    <ID>MagicNumber:Type.kt$12.5f</ID>
     <ID>MagicNumber:Type.kt$12f</ID>
     <ID>MagicNumber:Type.kt$13f</ID>
     <ID>MagicNumber:Type.kt$14f</ID>
@@ -514,6 +539,7 @@
     <ID>MaxLineLength:Buttons.kt$ProButtonLabel(text = text, textStyle = textStyle, leading = leading, trailing = trailing, loading = loading)</ID>
     <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_LENT -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.success, tint = colors.successTint)</ID>
     <ID>MaxLineLength:Category.kt$ProRowKind.DEBT_OWED -&gt; ProIconGlyph.FeatDebt to CategoryColorPair(accent = colors.danger, tint = colors.dangerTint)</ID>
+    <ID>MaxLineLength:Color.kt$ProColors$/** Base hue for card/floating-surface drop shadows — blue-tinted (navy) in light, neutral black in dark. Alpha applied at the call site (see [proElevation]). */</ID>
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — auth", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 640, showBackground = true)</ID>
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — buttons", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 480, showBackground = true)</ID>
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — categories", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)</ID>
@@ -525,6 +551,7 @@
     <ID>MaxLineLength:DesignSystemPreview.kt$@Preview(name = "Design system — sheets", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 360, showBackground = true)</ID>
     <ID>MaxLineLength:DesignSystemSpecCaptures.kt$QuickAccessTile(label = "Events", icon = ProIconGlyph.FeatEvents, onClick = {}, modifier = Modifier.width(78.dp))</ID>
     <ID>MaxLineLength:DesignSystemSpecCaptures.kt$QuickAccessTile(label = "Reports", icon = ProIconGlyph.FeatReports, onClick = {}, modifier = Modifier.width(78.dp))</ID>
+    <ID>MaxLineLength:EventBudgetCard.kt$EventBudgetHeaderTrailing(state = state, isWarning = isWarning, isDanger = isDanger, spentColor = spentColor)</ID>
     <ID>MaxLineLength:EventBudgetCard.kt$style = if (isDanger) typography.bodySemiBold.copy(fontSize = typography.caption.fontSize) else typography.caption</ID>
     <ID>MaxLineLength:NavMotion.kt$fun ProMotion.reducedEnter(): EnterTransition</ID>
     <ID>MaxLineLength:NavMotion.kt$fun ProMotion.reducedExit(): ExitTransition</ID>
@@ -553,6 +580,11 @@
     <ID>UnusedPrivateMember:EmptyState.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun EmptyStateIllustrationPreview()</ID>
     <ID>UnusedPrivateMember:EventBudgetCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetCardPreview()</ID>
     <ID>UnusedPrivateMember:EventBudgetSummaryCard.kt$@Preview(showBackground = true, widthDp = 380) @Composable private fun EventBudgetSummaryCardPreview()</ID>
+    <ID>UnusedPrivateMember:FlatHeader.kt$@Preview( name = "ProFlatHeader — dark", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProFlatHeaderDarkPreview()</ID>
+    <ID>UnusedPrivateMember:FlatHeader.kt$@Preview( name = "ProFlatHeader", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, showBackground = true, ) @Composable private fun ProFlatHeaderPreview()</ID>
+    <ID>UnusedPrivateMember:GradientHeader.kt$@Preview( name = "ProGradientHeader — dark", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 220, showBackground = true, ) @Composable private fun ProGradientHeaderDarkPreview()</ID>
+    <ID>UnusedPrivateMember:GradientHeader.kt$@Preview( name = "ProGradientHeader", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 220, showBackground = true, ) @Composable private fun ProGradientHeaderPreview()</ID>
+    <ID>UnusedPrivateMember:GradientHeader.kt$@Preview( name = "ProSheetSurface", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 300, showBackground = true, ) @Composable private fun ProSheetSurfacePreview()</ID>
     <ID>UnusedPrivateMember:HeroGreeting.kt$@Preview(showBackground = true, widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP) @Composable private fun HeroGreetingPreview()</ID>
     <ID>UnusedPrivateMember:HomeBottomNav.kt$@Preview( name = "HomeBottomNav — Home active", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 160, showBackground = true, ) @Composable private fun HomeBottomNavHomeActivePreview()</ID>
     <ID>UnusedPrivateMember:HomeBottomNav.kt$@Preview( name = "HomeBottomNav — Journal active", widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP, heightDp = 160, showBackground = true, ) @Composable private fun HomeBottomNavJournalActivePreview()</ID>

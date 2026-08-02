@@ -3,6 +3,7 @@ package com.arduia.expense.ui.sharedcost
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.arduia.expense.feature.sharedcost.ui.SharedCostsFlow
@@ -80,8 +81,8 @@ class SharedCostsDeepLinkAndNewSplitTest {
             }
         }
 
-        rule.onNodeWithText("Journals").assertIsDisplayed()
-        rule.onNodeWithText("Journals").performClick()
+        rule.onNodeWithContentDescription("Journals").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Journals").performClick()
 
         assert(deepLinkBackCalls == 1) { "Expected onDeepLinkBack to fire once, got $deepLinkBackCalls" }
     }
@@ -100,8 +101,8 @@ class SharedCostsDeepLinkAndNewSplitTest {
         }
 
         // Default label unchanged when no deep-link back is wired (e.g. More-tab open).
-        rule.onNodeWithText("History").assertIsDisplayed()
-        rule.onNodeWithText("History").performClick()
+        rule.onNodeWithContentDescription("History").assertIsDisplayed()
+        rule.onNodeWithContentDescription("History").performClick()
 
         // Back landed on SharedCostsHistoryScreen — its own title is now visible.
         rule.onNodeWithText("Shared Costs").assertIsDisplayed()

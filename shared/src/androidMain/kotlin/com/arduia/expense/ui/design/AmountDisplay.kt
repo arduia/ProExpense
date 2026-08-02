@@ -110,15 +110,12 @@ fun AmountDisplay(
                         currencySymbol = currencySymbol,
                         amountText = amountText,
                         isZero = isZero,
-                        primaryColor = colors.primary,
                         amountColor =
                             when {
                                 isZero -> colors.muted2
                                 usePrimaryAmount -> colors.primary
                                 else -> colors.onSurface
                             },
-                        decimalColor = colors.onSurfaceMuted,
-                        amountFamily = typography.amountFamily,
                     ),
                 style = typography.displayAmount,
                 autoSize = amountAutoSize,
@@ -161,16 +158,27 @@ fun AmountDisplay(
     }
 }
 
+// Canvas's Add Expense amount (VBAddAmount) renders the currency symbol at roughly 45% of the
+// digit size (26sp symbol on a 58sp amount) — matched here rather than left same-size-as-digits.
+private const val AMOUNT_SYMBOL_SCALE = 0.45f
+
+@Composable
 private fun buildAmountLine(
     currencySymbol: String,
     amountText: String,
     isZero: Boolean,
-    primaryColor: Color,
     amountColor: Color,
-    decimalColor: Color,
-    amountFamily: androidx.compose.ui.text.font.FontFamily,
 ) = buildAnnotatedString {
-    withStyle(SpanStyle(color = primaryColor, fontFamily = amountFamily)) {
+    val colors = ProExpenseTheme.colors
+    val typography = ProExpenseTheme.typography
+    val amountFamily = typography.amountFamily
+    withStyle(
+        SpanStyle(
+            color = colors.primary,
+            fontFamily = amountFamily,
+            fontSize = typography.displayAmount.fontSize * AMOUNT_SYMBOL_SCALE,
+        ),
+    ) {
         append(currencySymbol)
     }
     if (isZero) {
@@ -188,7 +196,7 @@ private fun buildAmountLine(
         withStyle(SpanStyle(color = amountColor, fontFamily = amountFamily)) {
             append(amountText.substring(0, decimalIndex))
         }
-        withStyle(SpanStyle(color = decimalColor, fontFamily = amountFamily)) {
+        withStyle(SpanStyle(color = colors.onSurfaceMuted, fontFamily = amountFamily)) {
             append(amountText.substring(decimalIndex))
         }
     }

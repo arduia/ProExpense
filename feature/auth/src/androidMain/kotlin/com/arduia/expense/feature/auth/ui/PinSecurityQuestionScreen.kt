@@ -32,7 +32,7 @@ import com.arduia.expense.feature.auth.ui.preview.pinSecurityQuestions
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -61,13 +61,14 @@ fun PinSecurityQuestionScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.pin_recovery_appbar),
-                onBack = onBack,
-                backLabel = null,
-            )
-        }
+        ProFlatHeader(
+            title = stringResource(R.string.pin_recovery_appbar),
+            onBack = onBack,
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+        )
 
         Column(
             modifier =
@@ -218,6 +219,27 @@ internal fun PinAnswerField(
 @Composable
 private fun PinSecurityQuestionPreview() {
     ProExpenseTheme {
+        PinSecurityQuestionScreen(
+            questions = pinSecurityQuestions,
+            selectedId = "pet",
+            answer = "Biscuit",
+            onSelect = {},
+            onAnswerChange = {},
+            onEnable = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "PIN — security question (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun PinSecurityQuestionDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         PinSecurityQuestionScreen(
             questions = pinSecurityQuestions,
             selectedId = "pet",

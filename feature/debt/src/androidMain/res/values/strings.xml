@@ -17,6 +17,7 @@
 <string name="debt_due_preview">Due in 30 days</string>
 <string name="debt_save_anyway">Save anyway</string>
 <string name="debt_title">Debt</string>
+<string name="debt_eyebrow">Loans &amp; IOUs</string>
 <string name="debt_back_more">More</string>
 <string name="debt_detail_back">Debt</string>
 <string name="debt_back_journal">Journals</string>
@@ -37,6 +38,7 @@
 <string name="debt_no_due">No due date</string>
 <string name="debt_linked_expense">LINKED EXPENSE</string>
 <string name="debt_reference_only">Reference only</string>
+<string name="debt_more_action">More</string>
 <string name="debt_edit">Edit</string>
 <string name="debt_mark_as_settled">Mark as settled</string>
 <string name="debt_close">Close</string>

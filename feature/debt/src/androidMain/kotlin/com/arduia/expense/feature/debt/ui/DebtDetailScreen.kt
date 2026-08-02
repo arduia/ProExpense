@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,10 +35,10 @@ import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -63,15 +64,38 @@ fun DebtDetailScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = "",
-                onBack = onBack,
-                backLabel = backLabel,
-                action = ProTopBarAction.More,
-                onAction = onMore,
-            )
-        }
+        ProFlatHeader(
+            title = "",
+            onBack = onBack,
+            backContentDescription = backLabel,
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+            trailing = {
+                Box(
+                    modifier = Modifier.proIconClickable(onClick = onMore),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(dimens.buttonSmallHeight)
+                                .clip(ProExpenseTheme.shapes.tile)
+                                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.tile)
+                                .background(colors.surface),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ProIcon(
+                            glyph = ProIconGlyph.More,
+                            contentDescription = stringResource(R.string.debt_more_action),
+                            tint = colors.onSurfaceVariant,
+                            size = dimens.iconInline,
+                        )
+                    }
+                }
+            },
+        )
 
         Column(
             modifier =

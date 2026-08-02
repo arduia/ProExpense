@@ -158,3 +158,19 @@ fun isEventReadOnly(
     val closedAt = closedAtEpochMillis ?: return true
     return nowEpochMillis - closedAt > CLOSED_EVENT_GRACE_PERIOD_MILLIS
 }
+
+/**
+ * US-EVT-2 Scenario 4: archiving hides an event from the Budget list entirely (unlike closing,
+ * which keeps it visible but read-only). Nothing upstream of this filters by [EventStatus] —
+ * the repository query and the card mapping both pass every event through unconditionally — so
+ * this is the single place that enforces the "hides from Budget list" rule the archive action
+ * already promises the user (see [ArchiveEventUseCase]).
+ */
+fun visibleBudgetListEvents(events: List<Event>): List<Event> = events.filterNot { it.status == EventStatus.ARCHIVED }
+
+/**
+ * US-EVT-2 Scenario 4: only [EventStatus.ACTIVE] events count as "active" for the Budget list
+ * header's chip — a closed event stays visible in the list (see [visibleBudgetListEvents]) but
+ * isn't actively tracked, so it's excluded here even though it isn't excluded from the list.
+ */
+fun activeEventCount(events: List<Event>): Int = events.count { it.status == EventStatus.ACTIVE }

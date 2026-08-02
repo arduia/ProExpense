@@ -30,7 +30,7 @@ import com.arduia.expense.domain.Money
 import com.arduia.expense.ui.design.AmountDisplay
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.NumericKeypad
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.currencySymbol
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -62,9 +62,10 @@ fun MoreBudgetScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = dimens.screenPadding),
     ) {
-        ProTopBar(
+        ProFlatHeader(
             title = "Monthly Budget",
             onBack = onBack,
+            modifier = Modifier.padding(vertical = dimens.space14),
         )
 
         MoreBudgetToggleRow(
@@ -168,6 +169,24 @@ private fun MoreBudgetToggleRow(
 @Composable
 private fun MoreBudgetEmptyPreview() {
     ProExpenseTheme {
+        MoreBudgetScreen(
+            currentAmount = null,
+            homeCurrency = CurrencyCode("USD"),
+            onSave = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "More budget — empty (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun MoreBudgetEmptyDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         MoreBudgetScreen(
             currentAmount = null,
             homeCurrency = CurrencyCode("USD"),

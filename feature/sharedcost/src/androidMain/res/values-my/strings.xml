@@ -8,6 +8,7 @@
     <string name="shared_split_even">တညီတညာခွဲရန်</string>
     <string name="shared_split_custom">စိတ်ကြိုက်ခွဲရန်</string>
     <string name="shared_bill_splitter">ဘေလ်ခွဲစက်</string>
+    <string name="shared_expenses_eyebrow">ဝေမျှသုံးစွဲမှုများ</string>
     <string name="shared_costs_heading">ဝေမျှသောကုန်ကျစရိတ်</string>
     <string name="shared_new_split">ခွဲဝေမှုအသစ်</string>
     <string name="shared_recent_splits">လတ်တလောခွဲဝေမှုများ</string>
@@ -33,6 +34,7 @@
     <string name="shared_remove_person_cd">လူဖယ်ရှားရန်</string>
     <string name="shared_people_count_state">လူ %1$d ဦး</string>
     <string name="shared_delete_action">ဖျက်ရန်</string>
+    <string name="shared_more_action">နောက်ထပ်</string>
     <string name="shared_delete_title">ဒီခွဲဝေမှုကို ဖျက်မလား?</string>
     <string name="shared_delete_body">\"%1$s\" နှင့် ၎င်း၏ သိမ်းဆည်းထားသော အသုံးစရိတ်ကို ဖယ်ရှားပါမည်။ ပြန်လည်ရုပ်သိမ်း၍ မရပါ။</string>
     <string name="shared_delete_confirm">ဖျက်ရန်</string>

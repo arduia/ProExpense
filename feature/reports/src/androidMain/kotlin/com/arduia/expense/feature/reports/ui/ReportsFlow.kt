@@ -24,7 +24,7 @@ import com.arduia.expense.feature.reports.ui.preview.previewReportsPeriodEmpty
 import com.arduia.expense.feature.reports.ui.preview.previewReportsUncategorized
 import com.arduia.expense.feature.reports.ui.preview.previewReportsWeekly
 import com.arduia.expense.ui.design.EmptyStateContent
-import com.arduia.expense.ui.design.ProTopBar
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.SegmentedToggle
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -84,13 +84,16 @@ fun ReportsFlow(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.reports_title),
-                onBack = onBack,
-                backLabel = stringResource(R.string.reports_back),
-            )
-        }
+        ProFlatHeader(
+            title = stringResource(R.string.reports_title),
+            eyebrow = stringResource(R.string.reports_eyebrow),
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.reports_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(vertical = dimens.space14),
+        )
 
         if (isLoading) {
             return@Column
@@ -121,6 +124,7 @@ fun ReportsFlow(
                     stringResource(R.string.reports_granularity_week),
                 ),
             selectedIndex = granularityIndex,
+            usePrimarySelection = true,
             onSelected = { newIndex ->
                 // Anchor the switch to whatever period is currently on screen, so the caller can
                 // land the new granularity on the period that overlaps it.
@@ -187,6 +191,19 @@ fun ReportsFlow(
 @Composable
 private fun ReportsFlowPreview() {
     ProExpenseTheme {
+        ReportsFlow(onBack = {})
+    }
+}
+
+@Preview(
+    name = "Reports flow — data (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun ReportsFlowDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         ReportsFlow(onBack = {})
     }
 }

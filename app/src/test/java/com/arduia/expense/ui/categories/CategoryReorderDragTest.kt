@@ -11,7 +11,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
 import com.arduia.expense.feature.categories.ui.CategoryListScreen
 import com.arduia.expense.feature.categories.ui.dragHandleTestTag
-import com.arduia.expense.feature.categories.ui.preview.previewCategoryList
+import com.arduia.expense.feature.categories.ui.preview.CategoryListUiState
+import com.arduia.expense.feature.categories.ui.preview.CategoryRowUi
 import com.arduia.expense.testing.ComposeUiTests
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -46,14 +47,22 @@ class CategoryReorderDragTest {
 
     @Test
     fun regrabbingAMovedRow_dragsItFromItsCurrentPosition_notItsOriginalOne() {
+        // Default categories are locked (no drag handle) since the Blue Banking restructure, so
+        // this drag-mechanics regression guard needs custom rows to exercise the handle at all.
+        val initialRows =
+            listOf(
+                CategoryRowUi("custom1", "Custom 1", isCustom = true),
+                CategoryRowUi("custom2", "Custom 2", isCustom = true),
+                CategoryRowUi("custom3", "Custom 3", isCustom = true),
+            )
         val reorderCalls = mutableListOf<Pair<Int, Int>>()
-        val firstRowId = previewCategoryList.categories.first().categoryId
+        val firstRowId = initialRows.first().categoryId
 
         composeTestRule.setContent {
             ProExpenseTheme {
-                var rows by remember { mutableStateOf(previewCategoryList.categories) }
+                var rows by remember { mutableStateOf(initialRows) }
                 CategoryListScreen(
-                    state = previewCategoryList.copy(categories = rows),
+                    state = CategoryListUiState(categories = rows),
                     onBack = {},
                     onCreate = {},
                     onReorder = { from, to ->
@@ -78,7 +87,9 @@ class CategoryReorderDragTest {
     }
 
     private fun dragHandleDownOneRow(categoryId: String) {
-        composeTestRule.onNodeWithTag(dragHandleTestTag(categoryId)).performTouchInput {
+        // Custom rows are clickable (proClickable), which merges the drag handle's testTag into
+        // the row's semantics node — only the unmerged tree exposes it separately.
+        composeTestRule.onNodeWithTag(dragHandleTestTag(categoryId), useUnmergedTree = true).performTouchInput {
             down(center)
             advanceEventTime(700)
             moveBy(Offset(0f, 500f))

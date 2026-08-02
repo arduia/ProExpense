@@ -8,6 +8,7 @@
     <string name="journal_no_matches_title">No matches</string>
     <string name="journal_no_matches_body">Nothing found for \"%1$s.\" Try a different keyword, amount, or note.</string>
     <string name="journal_detail_back">Journal</string>
+    <string name="journal_more_action">More</string>
     <string name="journal_note_label">NOTE</string>
     <string name="journal_linked_to_label">LINKED TO</string>
     <string name="journal_edit_action">Edit</string>

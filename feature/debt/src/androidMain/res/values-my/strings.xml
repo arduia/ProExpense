@@ -1,5 +1,6 @@
 <resources>
 <string name="debt_title">အကြွေး</string>
+<string name="debt_eyebrow">ချေးငွေများ</string>
 <string name="debt_back_more">နောက်ထပ်</string>
 <string name="debt_detail_back">အကြွေး</string>
 <string name="debt_back_journal">မှတ်တမ်း</string>
@@ -19,6 +20,7 @@
 <string name="debt_status">အခြေအနေ</string>
 <string name="debt_linked_expense">ချိတ်ဆက်ထားသော အသုံးစရိတ်</string>
 <string name="debt_reference_only">ကိုးကားရန်သာ</string>
+<string name="debt_more_action">နောက်ထပ်</string>
 <string name="debt_edit">ပြင်ဆင်ရန်</string>
 <string name="debt_mark_as_settled">ရှင်းလင်းပြီးဟု သတ်မှတ်ရန်</string>
 <string name="debt_close">ပိတ်ရန်</string>

@@ -11,39 +11,48 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arduia.expense.R
 import com.arduia.expense.ui.design.DayGroup
 import com.arduia.expense.ui.design.EmptyStateContent
-import com.arduia.expense.ui.design.EventBudgetCard
-import com.arduia.expense.ui.design.EventBudgetCardState
 import com.arduia.expense.ui.design.HeroGreeting
 import com.arduia.expense.ui.design.NoticeBanner
+import com.arduia.expense.ui.design.ProGradientHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
+import com.arduia.expense.ui.design.ProSheetSurface
 import com.arduia.expense.ui.design.ProTextAction
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.QuickAccessTile
 import com.arduia.expense.ui.design.proClickable
 import com.arduia.expense.ui.design.proIconClickable
+import com.arduia.expense.ui.preview.HomeActiveEventState
 import com.arduia.expense.ui.preview.HomeUiState
 import com.arduia.expense.ui.preview.previewHomeBudget
 import com.arduia.expense.ui.preview.previewHomeCasual
@@ -52,6 +61,9 @@ import com.arduia.expense.ui.preview.previewHomeEvent
 import com.arduia.expense.ui.preview.previewHomeLoading
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
+import kotlin.math.roundToInt
+
+private val HomeSpendCardFloat = 30.dp
 
 @Composable
 fun HomeScreenContent(
@@ -79,13 +91,7 @@ fun HomeScreenContent(
     // together with the list instead of pinning it below a fixed header — the list gets the
     // screen's full height rather than being squeezed into whatever space is left over.
     if (state.isLoading || state.isEmpty) {
-        Column(
-            modifier =
-                modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimens.screenPadding)
-                    .padding(top = dimens.space14),
-        ) {
+        Column(modifier = modifier.fillMaxSize()) {
             HomeHeaderContent(
                 state = state,
                 showPinSetupBanner = showPinSetupBanner,
@@ -113,17 +119,15 @@ fun HomeScreenContent(
                         Modifier
                             .weight(1f)
                             .fillMaxWidth()
+                            .padding(horizontal = dimens.screenPadding)
                             .padding(bottom = dimens.navShellBottomInset),
                 )
             }
         }
     } else {
         LazyColumn(
-            modifier =
-                modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimens.screenPadding),
-            contentPadding = PaddingValues(top = dimens.space14, bottom = dimens.navShellBottomInset),
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = dimens.navShellBottomInset),
         ) {
             item {
                 HomeHeaderContent(
@@ -142,7 +146,13 @@ fun HomeScreenContent(
                 )
             }
             item {
-                HomeRecentHeader(onSeeAll = onSeeAll, modifier = Modifier.padding(top = dimens.space26))
+                HomeRecentHeader(
+                    onSeeAll = onSeeAll,
+                    modifier =
+                        Modifier
+                            .padding(horizontal = dimens.screenPadding)
+                            .padding(top = dimens.space20),
+                )
             }
             itemsIndexed(state.dayGroups, key = { _, group -> group.dayTitle }) { index, group ->
                 DayGroup(
@@ -167,7 +177,10 @@ fun HomeScreenContent(
                     onRowClick = onRowClick,
                     // The header row below HomeRecentHeader already carries a bottom(space10)
                     // gap before the first group; only later groups need the between-groups gap.
-                    modifier = if (index == 0) Modifier else Modifier.padding(top = dimens.space12),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = dimens.screenPadding)
+                            .then(if (index == 0) Modifier else Modifier.padding(top = dimens.space12)),
                 )
             }
         }
@@ -193,69 +206,62 @@ private fun HomeHeaderContent(
     val dimens = ProExpenseTheme.dimensions
 
     Column(modifier = modifier.fillMaxWidth()) {
-        HomeHeader(
-            dateLabel = state.dateLabel,
-            greetingName = state.greetingName,
-            greetingPrefixRes = state.greetingPrefixRes,
-            onNotificationsClick = onNotificationsClick,
-        )
-
-        Column(
-            modifier = Modifier.padding(top = dimens.space18),
-            verticalArrangement = Arrangement.spacedBy(dimens.space16),
-        ) {
-            if (showPinSetupBanner) {
-                NoticeBanner(
-                    title = stringResource(R.string.home_pin_banner_title),
-                    body = stringResource(R.string.home_pin_banner_body),
-                    onClick = onPinBannerTap,
-                    onDismiss = onPinBannerDismiss,
-                    dismissContentDescription = stringResource(R.string.dismiss),
-                )
-            }
-
-            MonthSpendCard(
-                monthLabel = state.monthLabel,
-                monthSpend = state.monthSpend,
-                budgetSummary = state.budgetSummary,
-                monthDelta = state.monthDelta,
-                showEmptyHint = state.showEmptyHint && !state.isLoading,
-                showSparkline = !state.isEmpty && state.sparklinePoints.size >= 2,
-                sparklinePoints = state.sparklinePoints,
+        ProGradientHeader {
+            HomeHeader(
+                dateLabel = state.dateLabel,
+                greetingName = state.greetingName,
+                greetingPrefixRes = state.greetingPrefixRes,
+                onNotificationsClick = onNotificationsClick,
             )
-
-            state.activeEvent?.let { event ->
-                val cardShape = ProExpenseTheme.shapes.card
-                EventBudgetCard(
-                    state =
-                        EventBudgetCardState(
-                            id = event.eventId,
-                            title = event.title,
-                            dateRange = event.dateRange,
-                            spentLabel = event.spentLabel,
-                            budgetLabel = event.budgetLabel,
-                            progress = event.progress,
-                            isOverBudget = event.isOverBudget,
-                        ),
-                    modifier =
-                        Modifier.proClickable(
-                            onClick = { onActiveEventClick(event.eventId) },
-                            shape = cardShape,
-                        ),
-                )
-            }
         }
 
-        HomeQuickAccessSection(
-            showCustomize = !state.isEmpty,
-            onCustomize = onCustomizeQuickAccess,
-            onReportsClick = onReportsClick,
-            onDebtClick = onDebtClick,
-            onSplitClick = onSplitClick,
-            onEventsClick = onEventsClick,
-            visibleTiles = visibleTiles,
-            modifier = Modifier.padding(top = dimens.space24),
-        )
+        ProSheetSurface {
+            // Canvas floats the spend card up into the gradient header (VBHomeClassicShell's
+            // `marginTop: -30` card wrapper, on top of the sheet's own -14dp overlap) rather than
+            // sitting it flush below the sheet's rounded edge — this offset reproduces that.
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimens.space16),
+                modifier = Modifier.offset(y = -HomeSpendCardFloat),
+            ) {
+                if (showPinSetupBanner) {
+                    NoticeBanner(
+                        title = stringResource(R.string.home_pin_banner_title),
+                        body = stringResource(R.string.home_pin_banner_body),
+                        onClick = onPinBannerTap,
+                        onDismiss = onPinBannerDismiss,
+                        dismissContentDescription = stringResource(R.string.dismiss),
+                    )
+                }
+
+                MonthSpendCard(
+                    monthLabel = state.monthLabel,
+                    monthSpend = state.monthSpend,
+                    budgetSummary = state.budgetSummary,
+                    monthDelta = state.monthDelta,
+                    showEmptyHint = state.showEmptyHint && !state.isLoading,
+                    showSparkline = !state.isEmpty && state.sparklinePoints.size >= 2,
+                    sparklinePoints = state.sparklinePoints,
+                )
+
+                state.activeEvent?.let { event ->
+                    HomeActiveEventCard(
+                        event = event,
+                        onClick = { onActiveEventClick(event.eventId) },
+                    )
+                }
+            }
+
+            HomeQuickAccessSection(
+                showCustomize = !state.isEmpty,
+                onCustomize = onCustomizeQuickAccess,
+                onReportsClick = onReportsClick,
+                onDebtClick = onDebtClick,
+                onSplitClick = onSplitClick,
+                onEventsClick = onEventsClick,
+                visibleTiles = visibleTiles,
+                modifier = Modifier.padding(top = dimens.space24),
+            )
+        }
     }
 }
 
@@ -267,7 +273,6 @@ private fun HomeHeader(
     onNotificationsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
     val greetingPrefix =
@@ -277,7 +282,11 @@ private fun HomeHeader(
         }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        // Canvas gives Home's header extra bottom padding (58px vs the ~16-24px other flat/
+        // gradient headers use) specifically to reserve room for the spend card floating up into
+        // it — without this, the card's -30dp float (below) lands on top of this greeting text
+        // instead of leaving a gap beneath it.
+        modifier = modifier.fillMaxWidth().padding(bottom = dimens.space26),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
     ) {
@@ -286,14 +295,17 @@ private fun HomeHeader(
                 Text(
                     text = dateLabel.uppercase(),
                     style = typography.eyebrow,
-                    color = colors.onSurfaceVariant,
+                    color = Color.White.copy(alpha = 0.7f),
                 )
             }
             if (greetingName.isNotBlank()) {
                 HeroGreeting(
                     name = greetingName,
                     prefix = greetingPrefix,
-                    modifier = Modifier.padding(top = dimens.space4),
+                    prefixColor = Color.White,
+                    emphasisColor = Color.White,
+                    // space2 — matches the canvas VBHeader's marginTop:2 between eyebrow and title.
+                    modifier = Modifier.padding(top = dimens.space2),
                 )
             }
         }
@@ -310,14 +322,14 @@ private fun HomeHeader(
                     Modifier
                         .size(dimens.buttonSmallHeight)
                         .clip(CircleShape)
-                        .border(BorderStroke(1.dp, colors.lineStrong), CircleShape)
-                        .background(colors.surface),
+                        .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.22f)), CircleShape)
+                        .background(Color.White.copy(alpha = 0.14f)),
                 contentAlignment = Alignment.Center,
             ) {
                 ProIcon(
                     glyph = ProIconGlyph.Bell,
                     contentDescription = stringResource(R.string.notifications),
-                    tint = colors.onSurfaceVariant,
+                    tint = Color.White,
                     size = dimens.iconInline,
                 )
             }
@@ -339,8 +351,8 @@ private fun MonthSpendCard(
     val colors = ProExpenseTheme.colors
     val dimens = ProExpenseTheme.dimensions
     val typography = ProExpenseTheme.typography
-    val cardShape = ProExpenseTheme.shapes.card
-    val cardElevation = ProExpenseTheme.elevation.card.firstOrNull()
+    val cardShape = ProExpenseTheme.shapes.heroCard
+    val cardElevation = ProExpenseTheme.elevation.heroCard.firstOrNull()
     val periodLabel =
         if (monthLabel.isNotBlank()) {
             stringResource(R.string.home_spent_period, monthLabel.uppercase())
@@ -382,7 +394,7 @@ private fun MonthSpendCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = monthSpend,
+                text = tagLeadingCurrency(monthSpend, colors.tag, typography.summaryAmount.fontSize),
                 style = typography.summaryAmount,
                 color = colors.onSurface,
             )
@@ -434,6 +446,203 @@ private fun MonthSpendCard(
                 )
             }
         }
+    }
+}
+
+// Canvas shrinks the leading currency symbol (tag/gold) to roughly half the digit size on Home's
+// hero amounts, leaving the digits in the default ink color — a non-digit leading character is
+// assumed to be the symbol.
+private fun tagLeadingCurrency(
+    amount: String,
+    tagColor: Color,
+    baseFontSize: androidx.compose.ui.unit.TextUnit,
+): androidx.compose.ui.text.AnnotatedString =
+    androidx.compose.ui.text.buildAnnotatedString {
+        if (amount.isNotEmpty() && !amount[0].isDigit()) {
+            withStyle(
+                SpanStyle(color = tagColor, fontSize = baseFontSize * CURRENCY_SYMBOL_SCALE),
+            ) { append(amount[0]) }
+            append(amount.substring(1))
+        } else {
+            append(amount)
+        }
+    }
+
+private val HomeEventIconSize = 28.dp
+private val HomeEventIconShape = RoundedCornerShape(9.dp)
+private val HomeEventBarHeight = 6.dp
+private const val PERCENT_SCALE = 100
+
+// Canvas's own $-to-digit size ratios: MonthSpendCard 21/40≈0.53, event card 14/22≈0.64 — this
+// splits the difference as one shared token rather than two untethered one-off sp values.
+private const val CURRENCY_SYMBOL_SCALE = 0.55f
+
+private data class HomeEventAccent(
+    val ink: Color,
+    val deep: Color,
+    val tint: Color,
+)
+
+// Home's floating event card is canvas's own `VBCardSpendTrip` — visually distinct from the
+// Events-list screen's `EventBudgetCard` (small @-tagged icon, tag/gold accent, inline "$X left
+// of $Y" caption, percent-remaining pill), not a reuse of that shared component.
+@Composable
+private fun HomeActiveEventCard(
+    event: HomeActiveEventState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val cardShape = ProExpenseTheme.shapes.heroCard
+    val cardElevation = ProExpenseTheme.elevation.heroCard.firstOrNull()
+    val accent =
+        if (event.isOverBudget) {
+            HomeEventAccent(colors.danger, colors.danger, colors.dangerTint)
+        } else {
+            HomeEventAccent(colors.tag, colors.tagDeep, colors.tagTint)
+        }
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (cardElevation != null) {
+                        Modifier.shadow(
+                            elevation = cardElevation.blur,
+                            shape = cardShape,
+                            spotColor = cardElevation.color,
+                            ambientColor = cardElevation.color,
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).clip(cardShape)
+                .border(BorderStroke(1.dp, colors.line), cardShape)
+                .background(colors.surface)
+                .proClickable(onClick = onClick, shape = cardShape, scaleOnPress = false)
+                .padding(horizontal = dimens.space18, vertical = dimens.space16),
+        verticalArrangement = Arrangement.spacedBy(dimens.space12),
+    ) {
+        HomeEventHeaderRow(event = event, accent = accent)
+        HomeEventAmountRow(event = event, accent = accent)
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(HomeEventBarHeight)
+                    .clip(ProExpenseTheme.shapes.chip)
+                    .background(accent.tint),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(event.progress.coerceIn(0f, 1f))
+                        .height(HomeEventBarHeight)
+                        .clip(ProExpenseTheme.shapes.chip)
+                        .background(Brush.horizontalGradient(listOf(accent.ink, accent.deep)))
+                        .align(Alignment.CenterStart),
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeEventHeaderRow(
+    event: HomeActiveEventState,
+    accent: HomeEventAccent,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimens.space8),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(HomeEventIconSize)
+                        .clip(HomeEventIconShape)
+                        .background(accent.tint),
+                contentAlignment = Alignment.Center,
+            ) {
+                ProIcon(
+                    glyph = ProIconGlyph.At,
+                    contentDescription = null,
+                    tint = accent.ink,
+                    size = dimens.iconTag + dimens.space4,
+                )
+            }
+            Text(text = event.title, style = typography.bodySemiBold, color = colors.onSurface)
+        }
+        Text(text = event.dateRange.uppercase(), style = typography.eyebrow, color = colors.onSurfaceMuted)
+    }
+}
+
+@Composable
+private fun HomeEventAmountRow(
+    event: HomeActiveEventState,
+    accent: HomeEventAccent,
+) {
+    val colors = ProExpenseTheme.colors
+    val dimens = ProExpenseTheme.dimensions
+    val typography = ProExpenseTheme.typography
+    val remainingPercent = ((1f - event.progress.coerceIn(0f, 1f)) * PERCENT_SCALE).roundToInt()
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        Text(
+            text =
+                buildAnnotatedString {
+                    withStyle(
+                        SpanStyle(
+                            color = accent.ink,
+                            fontSize = typography.cardAmount.fontSize * CURRENCY_SYMBOL_SCALE,
+                        ),
+                    ) {
+                        append(event.spentLabel.take(1))
+                    }
+                    withStyle(
+                        SpanStyle(
+                            textDecoration = if (event.isOverBudget) TextDecoration.LineThrough else null,
+                        ),
+                    ) {
+                        append(event.spentLabel.drop(1))
+                    }
+                    append(' ')
+                    withStyle(
+                        SpanStyle(
+                            fontSize = typography.caption.fontSize,
+                            fontWeight = FontWeight.Medium,
+                            color = colors.onSurfaceMuted,
+                        ),
+                    ) {
+                        append(event.budgetLabel)
+                    }
+                },
+            style = typography.cardAmount,
+            color = if (event.isOverBudget) colors.danger else colors.onSurface,
+        )
+        Text(
+            text = stringResource(R.string.home_event_remaining_percent, remainingPercent),
+            style = typography.eyebrow,
+            color = accent.deep,
+            modifier =
+                Modifier
+                    .background(accent.tint, ProExpenseTheme.shapes.chip)
+                    .padding(horizontal = dimens.space8, vertical = dimens.space4),
+        )
     }
 }
 
@@ -530,11 +739,16 @@ private fun HomeQuickAccessSection(
                         QuickAccessTileType.Events ->
                             Triple(ProIconGlyph.FeatEvents, R.string.quick_access_events, onEventsClick)
                     }
+                // Goals (Events) is the one tile canvas gives a gold accent — the other three
+                // share the default blue tint.
+                val isGoalsTile = tile == QuickAccessTileType.Events
                 QuickAccessTile(
                     label = stringResource(labelRes),
                     icon = icon,
                     onClick = onClick,
                     modifier = Modifier.weight(1f),
+                    iconTint = if (isGoalsTile) colors.highlightDeep else null,
+                    iconBackground = if (isGoalsTile) colors.highlightTint else null,
                 )
             }
         }
@@ -608,6 +822,25 @@ private fun HomeCasualPreview() {
 }
 
 @Preview(
+    name = "Home — casual (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeCasualDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
+        HomeScreenContent(
+            state = previewHomeCasual,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
     name = "Home — budget",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
@@ -635,6 +868,25 @@ private fun HomeBudgetPreview() {
 @Composable
 private fun HomeEventPreview() {
     ProExpenseTheme {
+        HomeScreenContent(
+            state = previewHomeEvent,
+            onReportsClick = {},
+            onDebtClick = {},
+            onSplitClick = {},
+            onEventsClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Home — event (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun HomeEventDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         HomeScreenContent(
             state = previewHomeEvent,
             onReportsClick = {},

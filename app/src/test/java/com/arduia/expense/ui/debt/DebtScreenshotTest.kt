@@ -48,9 +48,12 @@ class DebtScreenshotTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        darkTheme: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         composeTestRule.setContent {
-            ProExpenseTheme {
+            ProExpenseTheme(darkTheme = darkTheme) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -66,6 +69,18 @@ class DebtScreenshotTest {
     @Test
     fun debt_lent() =
         capture {
+            DebtListScreen(
+                state = previewDebtLent,
+                onSideSelected = {},
+                onAddRecord = {},
+                onRecordClick = {},
+                onBack = {},
+            )
+        }
+
+    @Test
+    fun debt_lent_dark() =
+        capture(darkTheme = true) {
             DebtListScreen(
                 state = previewDebtLent,
                 onSideSelected = {},

@@ -27,9 +27,9 @@ import com.arduia.expense.feature.auth.ui.preview.previewPinSetConfirmMismatch
 import com.arduia.expense.ui.design.PinDots
 import com.arduia.expense.ui.design.PinKeypadGrid
 import com.arduia.expense.ui.design.PinKeypadState
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
@@ -59,13 +59,12 @@ fun PinSetPinScreen(
                 .padding(horizontal = dimens.screenPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            ProTopBar(
-                title = stringResource(R.string.pin_set_appbar),
-                onBack = onBack,
-                backLabel = stringResource(R.string.pin_setup_back),
-            )
-        }
+        ProFlatHeader(
+            title = stringResource(R.string.pin_set_appbar),
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.pin_setup_back),
+            modifier = Modifier.padding(vertical = dimens.space14),
+        )
 
         Text(
             text = stringResource(headingRes),
@@ -123,6 +122,25 @@ fun PinSetPinScreen(
 @Composable
 private fun PinSetMismatchPreview() {
     ProExpenseTheme {
+        PinSetPinScreen(
+            state = previewPinSetConfirmMismatch,
+            headingRes = R.string.pin_confirm_heading,
+            onDigit = {},
+            onBackspace = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "PIN set — mismatch (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun PinSetMismatchDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         PinSetPinScreen(
             state = previewPinSetConfirmMismatch,
             headingRes = R.string.pin_confirm_heading,

@@ -231,3 +231,45 @@ considered to represent intended behavior rather than a documented known defect.
 - Fixed dp constants reserving space for an overlaid system-chrome element (nav bars, bottom
   sheets) are a recurring risk category — prefer deriving reserved space from the actual
   element's measured size/insets where the API allows it.
+
+## 2026-07-27 — Home's floating spend card lost its rounded top corners to a parent `clip()`, missed by both Step 3.1 and the product auditor
+
+**What slipped:** `ProSheetSurface` used `Modifier.clip(shapes.sheet).background(colors.paper)`.
+`clip()` clips *all descendant painting*, not just the background fill — so `HomeScreen.kt`'s
+spend card, floated up into the gradient header via `Modifier.offset(y = -HomeSpendCardFloat)`,
+had the portion of its own rounded top corner that overflowed the sheet's bounds silently cut off.
+The card rendered with a hard flat top edge instead of its declared `shapes.card` rounding. The
+canvas source sets `border-radius` on the equivalent sheet `<div>` **without** `overflow: hidden`,
+which in CSS shapes the fill but never clips children — the Compose port didn't have an equivalent
+distinction and used the clipping variant by default. Once fixed, the same clip had also been
+masking that the card's float distance was too large (overlapping the greeting text) — a second,
+previously-invisible bug that only became visible after the first was corrected.
+
+**Root cause:** Two independent factors let this ship and then survive a full "review all screens
+for canvas alignment" pass this same session: (1) the defect is invisible at whole-screen zoom —
+three sides of the card, its color, shadow, border, and position all matched, so a normal
+side-by-side canvas comparison read as "confirmed matching"; it only became visible cropped in
+tight on the exact overlap corner, which nothing in the workflow prompted. (2) the
+`compose-product-auditor` skill's audit dimensions target usability/confusion defects (cropped
+text, dead controls, misaligned siblings, stale state) — none of its Consistency-dimension checks
+covered a floated element's own shape surviving an ancestor's `clip()`; the closest existing bullet
+(pager clipping) only covers the transient-swipe case, not a static overlap.
+
+**Fixed:** `ProSheetSurface` now uses `.background(colors.paper, shapes.sheet)` (shapes the fill
+without clipping children); `HomeHeader` reserves extra bottom space (`dimens.space26`) so the
+float lands with a clean gap below the greeting instead of overlapping it, matching canvas's
+larger header bottom-padding on Home specifically.
+
+**Guards:**
+- Added a new Consistency-dimension bullet to
+  `.agents/skills/compose-product-auditor/SKILL.md` — "Floated/overlapping elements keep their own
+  shape" — instructing the auditor to check every element with a deliberate negative `offset()`
+  for ancestor-`clip()` corner loss, by cropping into the exact overlap edge rather than judging
+  at whole-screen zoom, with the `.background(color, shape)` fix pattern spelled out.
+- General principle for future canvas ports: a source `border-radius`-without-`overflow:hidden`
+  container has no single Compose equivalent — the port must consciously choose `clip(shape)` (if
+  children should never overflow) vs `background(color, shape)` (if a specific child is meant to
+  float past the bounds), not default to `clip()` reflexively.
+
+**Verified:** `./gradlew verifyAll` green; visually re-confirmed against `VBHomeSpendTrip-light/
+dark.png` canvas renders and the compact/tablet/RTL/empty Home screenshot variants — 2026-07-27.

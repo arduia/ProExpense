@@ -37,11 +37,11 @@ import com.arduia.expense.ui.design.LogCategoryBadge
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
 import com.arduia.expense.ui.design.ProButtonVariant
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
 import com.arduia.expense.ui.design.ProTextAction
-import com.arduia.expense.ui.design.ProTopBar
-import com.arduia.expense.ui.design.ProTopBarAction
+import com.arduia.expense.ui.design.proIconClickable
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -66,15 +66,38 @@ fun EventDetailScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.space12)) {
-            ProTopBar(
-                title = "",
-                onBack = onBack,
-                backLabel = stringResource(R.string.events_back),
-                action = ProTopBarAction.More,
-                onAction = onMore,
-            )
-        }
+        ProFlatHeader(
+            title = "",
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.events_back),
+            modifier =
+                Modifier
+                    .padding(horizontal = dimens.space12)
+                    .padding(vertical = dimens.space14),
+            trailing = {
+                Box(
+                    modifier = Modifier.proIconClickable(onClick = onMore),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(dimens.buttonSmallHeight)
+                                .clip(ProExpenseTheme.shapes.tile)
+                                .border(BorderStroke(1.dp, colors.line), ProExpenseTheme.shapes.tile)
+                                .background(colors.surface),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ProIcon(
+                            glyph = ProIconGlyph.More,
+                            contentDescription = stringResource(R.string.event_more),
+                            tint = colors.onSurfaceVariant,
+                            size = dimens.iconInline,
+                        )
+                    }
+                }
+            },
+        )
 
         Column(
             modifier =
@@ -301,6 +324,25 @@ private fun EventLinkedExpenseRow(
 @Composable
 private fun EventDetailPreview() {
     ProExpenseTheme {
+        EventDetailScreen(
+            state = previewEventDetail,
+            onBack = {},
+            onMore = {},
+            onAddTagged = {},
+            onExpenseClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Event detail — on track (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun EventDetailDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         EventDetailScreen(
             state = previewEventDetail,
             onBack = {},

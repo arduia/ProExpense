@@ -2,7 +2,6 @@ package com.arduia.expense.feature.sharedcost.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,9 +29,9 @@ import com.arduia.expense.feature.sharedcost.ui.preview.previewSharedHistoryItem
 import com.arduia.expense.ui.design.EmptyStateContent
 import com.arduia.expense.ui.design.ProButton
 import com.arduia.expense.ui.design.ProButtonSize
+import com.arduia.expense.ui.design.ProFlatHeader
 import com.arduia.expense.ui.design.ProIcon
 import com.arduia.expense.ui.design.ProIconGlyph
-import com.arduia.expense.ui.design.ProTopBar
 import com.arduia.expense.ui.theme.ProArtboard
 import com.arduia.expense.ui.theme.ProExpenseTheme
 
@@ -59,39 +58,16 @@ fun SharedCostsHistoryScreen(
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState()),
     ) {
-        Box(modifier = Modifier.padding(horizontal = dimens.screenPadding)) {
-            ProTopBar(
-                title = stringResource(R.string.shared_costs_heading),
-                onBack = onBack,
-                backLabel = stringResource(R.string.shared_back_more),
-            )
-        }
-
-        Column(
+        ProFlatHeader(
+            title = stringResource(R.string.shared_costs_heading),
+            eyebrow = stringResource(R.string.shared_bill_splitter),
+            onBack = onBack,
+            backContentDescription = stringResource(R.string.shared_back_more),
             modifier =
                 Modifier
-                    .fillMaxWidth()
                     .padding(horizontal = dimens.screenPadding)
-                    .padding(bottom = dimens.space18),
-        ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = dimens.space8, bottom = dimens.space16),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(dimens.space8),
-                ) {
-                    Text(
-                        text = stringResource(R.string.shared_bill_splitter),
-                        style = typography.eyebrow,
-                        color = colors.onSurfaceMuted,
-                    )
-                }
+                    .padding(vertical = dimens.space14),
+            trailing = {
                 ProButton(
                     text = stringResource(R.string.shared_new_split),
                     onClick = onNewSplit,
@@ -105,8 +81,16 @@ fun SharedCostsHistoryScreen(
                         )
                     },
                 )
-            }
+            },
+        )
 
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screenPadding)
+                    .padding(bottom = dimens.space18),
+        ) {
             // Splits load asynchronously after first composition — without this check, the
             // history would briefly show "No splits yet" before real data has had a chance to
             // load.
@@ -213,6 +197,24 @@ private fun SwipeToDeleteRow(
 @Composable
 private fun SharedCostsHistoryPreview() {
     ProExpenseTheme {
+        SharedCostsHistoryScreen(
+            items = previewSharedHistoryItems,
+            onNewSplit = {},
+            onItemClick = {},
+            onBack = {},
+        )
+    }
+}
+
+@Preview(
+    name = "Shared costs — history (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun SharedCostsHistoryDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
         SharedCostsHistoryScreen(
             items = previewSharedHistoryItems,
             onNewSplit = {},

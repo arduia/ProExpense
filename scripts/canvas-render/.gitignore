@@ -1,0 +1,10 @@
+node_modules/
+package-lock.json
+*.png
+
+# Fetched fresh from the design canvas each time — see README.md. Not checked in: this is
+# the maintainer's design-source export, not app code, and goes stale fast.
+proto-ui.jsx
+variant-blue-app.jsx
+variant-blue-services.jsx
+variant-blue-edgecases.jsx

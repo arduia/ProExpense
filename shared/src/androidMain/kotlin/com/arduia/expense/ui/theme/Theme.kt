@@ -16,7 +16,7 @@ fun ProExpenseTheme(
     dimensions: ProDimens = ProDefaultDimens,
     shapes: ProShapes = ProDefaultShapes,
     motion: ProMotion = ProDefaultMotion,
-    elevation: ProElevation = ProDefaultElevation,
+    elevation: ProElevation = proElevation(colors),
     content: @Composable () -> Unit,
 ) {
     val materialColors = colors.toMaterialColorScheme(darkTheme)

@@ -286,6 +286,30 @@ private fun AddExpenseDetailsPreview() {
 }
 
 @Preview(
+    name = "Add expense — details with tag (dark)",
+    widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
+    heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,
+    showBackground = true,
+)
+@Composable
+private fun AddExpenseDetailsDarkPreview() {
+    ProExpenseTheme(darkTheme = true) {
+        AddExpenseDetailsScreen(
+            state = previewExpenseDetails,
+            onBackToAmount = {},
+            onCategorySelected = {},
+            onNoteChange = {},
+            onDateClick = {},
+            onOpenTagSheet = {},
+            onCloseTagSheet = {},
+            onTagSelected = {},
+            onClearTag = {},
+            onSave = {},
+        )
+    }
+}
+
+@Preview(
     name = "Add expense — note at limit",
     widthDp = ProArtboard.PIXEL_9_PRO_WIDTH_DP,
     heightDp = ProArtboard.PIXEL_9_PRO_HEIGHT_DP,

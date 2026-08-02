@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,12 +39,13 @@ fun HomeShell(
 ) {
     val colors = ProExpenseTheme.colors
 
+    // No statusBarsPadding here — the gradient header handles its own top inset so the hero
+    // gradient can paint edge-to-edge behind the status bar (Blue Banking canvas).
     Box(
         modifier =
             modifier
                 .fillMaxSize()
                 .background(colors.paper)
-                .statusBarsPadding()
                 .navigationBarsPadding(),
     ) {
         HomeScreenContent(
