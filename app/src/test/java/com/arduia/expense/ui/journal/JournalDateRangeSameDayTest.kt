@@ -18,6 +18,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * Verifies the open audit question from the Journal/Reports date-time UI review: does M3's
@@ -60,8 +63,12 @@ class JournalDateRangeSameDayTest {
         val applyLabel = rule.activity.getString(R.string.journal_date_range_apply)
         rule.onNodeWithText(applyLabel).assertIsNotEnabled()
 
-        rule.onNodeWithText("Wednesday, July 15, 2026").performClick()
-        rule.onNodeWithText("Wednesday, July 15, 2026").performClick()
+        // The picker opens on the current month by default, so "today" is always a visible day
+        // cell — a fixed calendar date would break the moment the wall clock crosses months.
+        // Today's cell label is prefixed ("Today, Sunday, August 2, 2026"), so match by substring.
+        val todayLabel = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US).format(Calendar.getInstance().time)
+        rule.onNodeWithText(todayLabel, substring = true).performClick()
+        rule.onNodeWithText(todayLabel, substring = true).performClick()
 
         rule.onNodeWithText(applyLabel).assertIsEnabled()
         rule.onNodeWithText(applyLabel).performClick()
