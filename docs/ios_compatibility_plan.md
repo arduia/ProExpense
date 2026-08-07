@@ -92,11 +92,27 @@ The **Splash → Home → Add Expense → Journal** vertical slice is in. What l
 - **SwiftUI views** under `iosApp/ProExpense/` — see that README. Authored without a Swift
   toolchain and therefore **compile-unverified**.
 
-**Remaining for Phase 2:** Android still renders Home and Journal from its own Compose-bound
-`*FeatureEntry.kt` state, so those screens have two derivations until `ExpenseApp.kt` and
-`HistoryFeatureEntry.kt` adopt the shared ViewModels. That migration — plus Onboarding and PIN
-Entry in SwiftUI — is the next increment. `AppShellViewModel` is the reference for how an
-entry-file's state should collapse into `commonMain`.
+**All 16 spec'd screens now have a SwiftUI implementation.** Beyond the original slice:
+
+- **Shared ViewModels** — `OnboardingViewModel` (02/02P), `PinEntryViewModel` (15),
+  `PinSetupViewModel` (14), `JournalDetailViewModel` (06), `MoreViewModel` (13),
+  `CategoriesViewModel` (11), `ReportsViewModel` (12), `EventBudgetViewModel` (07/08),
+  `DebtViewModel` (09), `SharedCostViewModel` (10). Each wraps the feature module's existing
+  `commonMain` use cases rather than reimplementing rules — `PinEntryLogic`,
+  `SharedCostSplitLogic`, `GenerateReportPeriodUseCase`, `AggregateDebtsUseCase`,
+  `ComputeEventProgressUseCase` and the rest were already shared.
+- **`SecurityQuestionCatalog`** moved into `feature:auth/commonMain`; Android's
+  `pinSecurityQuestions` now maps its ids to string resources, so the persisted id cannot drift
+  between platforms.
+- `:appshell` gained `kotlinx-datetime` for Reports' month boundaries — the same library
+  `DefaultHistoryRepository` already uses for period math.
+
+**Remaining for Phase 2:** Android still renders every screen from its own Compose-bound
+`*FeatureEntry.kt` state, so each screen has two derivations until `ExpenseApp.kt`,
+`HistoryFeatureEntry.kt` and the other entry files adopt these shared ViewModels. That migration
+is the next increment; `AppShellViewModel` is the reference for how an entry-file's state should
+collapse into `commonMain`. Out of scope on iOS: `feature:sync` (no Drive OAuth/transport) and
+Import/Export (needs `UIDocumentPicker`, with no Android counterpart to lift).
 
 ## Phase 3 — Framework linking & device/XCTest CI
 

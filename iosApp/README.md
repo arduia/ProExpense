@@ -11,18 +11,27 @@ framework produced by `:appshell`.
 
 ## What's implemented
 
-The **Splash → Home → Add Expense → Journal** vertical slice.
+All 16 screens in `design-system-spec/screens/`.
 
 | Screen | View | Shared state source |
 |---|---|---|
 | Launch gate | `Screens/RootView.swift` | `AppShellViewModel.uiState.gate` |
 | 01 Splash | `Screens/SplashView.swift` | — |
+| 02 Onboarding · 02P Profile Setup | `Screens/OnboardingView.swift` | `OnboardingViewModel` |
 | 03 Home | `Screens/HomeView.swift` | `HomeViewModel` |
 | 04 Add Expense | `Screens/AddExpenseView.swift` | `AddExpenseViewModel` → `LogExpenseUseCase` |
 | 05 Journal | `Screens/JournalView.swift` | `JournalViewModel` |
+| 06 Journal Detail | `Screens/JournalDetailView.swift` | `JournalDetailViewModel` |
+| 07 Event Budget · 08 Event Detail | `Screens/EventBudgetView.swift` | `EventBudgetViewModel` |
+| 09 Debt Tracker | `Screens/DebtTrackerView.swift` | `DebtViewModel` |
+| 10 Shared Costs | `Screens/SharedCostsView.swift` | `SharedCostViewModel` |
+| 11 Category List | `Screens/CategoryListView.swift` | `CategoriesViewModel` |
+| 12 Reports | `Screens/ReportsView.swift` | `ReportsViewModel` |
+| 13 More | `Screens/MoreView.swift` | `MoreViewModel` |
+| 14 PIN Setup · 15 PIN Entry | `Screens/PinViews.swift` | `PinSetupViewModel` · `PinEntryViewModel` |
 
-Onboarding and PIN Entry are routed by the shared gate but still render placeholders — porting
-them does not require touching gate logic.
+**Navigation:** four tabs (Home, Journal, Budgets, More) plus a floating Add button. Reports,
+Categories, Debts and Splits hang off More; Journal Detail pushes from Home and Journal rows.
 
 ## Architecture
 
@@ -69,7 +78,13 @@ Compile-only verification, which works without macOS and is what CI runs:
   `encryptionConfig` PRAGMA is inert until a SQLCipher-iOS binary is linked in its place (Phase 3).
   The Kotlin code needs no further change for that switch.
 - **`:feature:sync` is excluded** from the iOS Koin graph — Drive OAuth/transport exists only in
-  `androidMain`.
+  `androidMain`. Import/Export is likewise absent: it needs a `UIDocumentPicker` layer with no
+  Android counterpart to lift.
 - **No `Info.plist` committed** — XcodeGen generates one from `project.yml`.
 - **Journal filters in memory**, not through `getRecordsPage`'s SQL pushdown. See
   `JournalViewModel`'s KDoc.
+- **Localized strings are inline English.** The security-question text in `PinViews.swift` and the
+  onboarding carousel copy should move to `Localizable.strings` before shipping; the Android side
+  already has these in `strings.xml` with `values-th`/`values-my` translations.
+- **Biometric unlock is not wired on iOS** — `PinAuthRepository.isBiometricEnrolled()` is read but
+  no `LAContext` prompt exists yet.

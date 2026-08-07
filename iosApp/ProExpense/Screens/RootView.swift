@@ -5,7 +5,7 @@ import ProExpenseKit
 /// comes from `AppShellUiState.gate`, computed in shared Kotlin, so both platforms cannot disagree
 /// about splash/onboarding/PIN precedence.
 struct RootView: View {
-    @StateObject private var shell = KotlinViewModel<AppShellUiState, AppShellViewModel>.appShell()
+    @StateObject private var shell = Shell.appShell()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -14,11 +14,11 @@ struct RootView: View {
             case .splash:
                 SplashView()
             case .onboarding:
-                // Onboarding is not part of this vertical slice — the shared gate already routes
-                // here, so the SwiftUI flow drops in without touching gate logic.
-                PlaceholderView(title: "Onboarding", detail: "Not yet ported to SwiftUI.")
+                OnboardingView { name in
+                    shell.viewModel.onOnboardingCompleted(displayName: name)
+                }
             case .pinLock:
-                PlaceholderView(title: "Enter PIN", detail: "PIN entry is not yet ported to SwiftUI.")
+                PinEntryView { shell.viewModel.onUnlocked() }
             case .ready:
                 MainTabView()
             default:
@@ -46,6 +46,10 @@ struct MainTabView: View {
                     .tabItem { Label("Home", systemImage: "house.fill") }
                 JournalView()
                     .tabItem { Label("Journal", systemImage: "list.bullet") }
+                EventBudgetView()
+                    .tabItem { Label("Budgets", systemImage: "calendar") }
+                MoreView()
+                    .tabItem { Label("More", systemImage: "ellipsis") }
             }
             .tint(ProColor.primary)
 
@@ -73,19 +77,5 @@ private struct AddExpenseButton: View {
                 .shadow(color: ProColor.primary.opacity(0.4), radius: 10, y: 4)
         }
         .accessibilityLabel("Add expense")
-    }
-}
-
-struct PlaceholderView: View {
-    let title: String
-    let detail: String
-
-    var body: some View {
-        VStack(spacing: ProSpacing.sm) {
-            Text(title).font(ProFont.title).foregroundStyle(ProColor.ink)
-            Text(detail).font(ProFont.caption).foregroundStyle(ProColor.ink3)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ProColor.paper)
     }
 }

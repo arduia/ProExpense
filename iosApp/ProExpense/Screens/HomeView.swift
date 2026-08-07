@@ -9,6 +9,12 @@ struct HomeView: View {
     private var state: HomeUiState { home.state }
 
     var body: some View {
+        NavigationStack {
+            content
+        }
+    }
+
+    private var content: some View {
         ScrollView {
             VStack(spacing: ProSpacing.lg) {
                 header
@@ -100,8 +106,10 @@ struct HomeView: View {
                 .padding(.horizontal, ProSpacing.screenHorizontal)
 
             ForEach(state.dayGroups, id: \.dayTitle) { group in
-                DayGroupCard(group: group)
-                    .padding(.horizontal, ProSpacing.screenHorizontal)
+                DayGroupCard(group: group) { row in
+                    JournalDetailView(recordId: row.id)
+                }
+                .padding(.horizontal, ProSpacing.screenHorizontal)
             }
         }
     }
@@ -122,8 +130,21 @@ struct HomeView: View {
     }
 }
 
-struct DayGroupCard: View {
+/// A day's header plus its rows. Rows become tappable only when a `destination` is supplied, so
+/// the same card renders inside a `NavigationStack` (Home, Journal) and outside one (Event Detail).
+struct DayGroupCard<Destination: View>: View {
     let group: HomeDayGroup
+    private let destination: ((ProTransactionRowModel) -> Destination)?
+
+    init(group: HomeDayGroup, @ViewBuilder destination: @escaping (ProTransactionRowModel) -> Destination) {
+        self.group = group
+        self.destination = destination
+    }
+
+    fileprivate init(group: HomeDayGroup, destination: ((ProTransactionRowModel) -> Destination)?) {
+        self.group = group
+        self.destination = destination
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -140,13 +161,24 @@ struct DayGroupCard: View {
             .padding(.vertical, ProSpacing.md)
 
             ForEach(group.rows, id: \.id) { row in
-                TransactionRowView(row: row)
+                if let destination {
+                    NavigationLink { destination(row) } label: { TransactionRowView(row: row) }
+                        .buttonStyle(.plain)
+                } else {
+                    TransactionRowView(row: row)
+                }
                 if row.id != group.rows.last?.id {
                     Divider().background(ProColor.lineSoft).padding(.leading, 60)
                 }
             }
         }
         .proCard()
+    }
+}
+
+extension DayGroupCard where Destination == EmptyView {
+    init(group: HomeDayGroup) {
+        self.init(group: group, destination: nil)
     }
 }
 

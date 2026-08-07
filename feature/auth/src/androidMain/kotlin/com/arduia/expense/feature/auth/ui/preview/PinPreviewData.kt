@@ -3,6 +3,7 @@ package com.arduia.expense.feature.auth.ui.preview
 import com.arduia.expense.feature.auth.PinEntryMode
 import com.arduia.expense.feature.auth.PinEntryUiState
 import com.arduia.expense.feature.auth.R
+import com.arduia.expense.feature.auth.SecurityQuestionCatalog
 
 data class PinSetupUiState(
     val pinAuthOn: Boolean = true,
@@ -17,13 +18,14 @@ data class PinSecurityQuestionUi(
     val textRes: Int,
 )
 
+/** Ids and order come from the shared catalog; only the localized text is Android's. */
 val pinSecurityQuestions =
     listOf(
-        PinSecurityQuestionUi("pet", R.string.security_question_pet),
-        PinSecurityQuestionUi("city", R.string.security_question_city),
-        PinSecurityQuestionUi("school", R.string.security_question_school),
-        PinSecurityQuestionUi("maiden", R.string.security_question_maiden),
-        PinSecurityQuestionUi("nickname", R.string.security_question_nickname),
+        PinSecurityQuestionUi(SecurityQuestionCatalog.PET, R.string.security_question_pet),
+        PinSecurityQuestionUi(SecurityQuestionCatalog.CITY, R.string.security_question_city),
+        PinSecurityQuestionUi(SecurityQuestionCatalog.SCHOOL, R.string.security_question_school),
+        PinSecurityQuestionUi(SecurityQuestionCatalog.MAIDEN, R.string.security_question_maiden),
+        PinSecurityQuestionUi(SecurityQuestionCatalog.NICKNAME, R.string.security_question_nickname),
     )
 
 val previewPinEntry = PinEntryUiState(filledDots = 4, mode = PinEntryMode.Default)

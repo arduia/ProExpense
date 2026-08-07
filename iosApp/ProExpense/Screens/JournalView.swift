@@ -10,6 +10,12 @@ struct JournalView: View {
     private var state: JournalUiState { journal.state }
 
     var body: some View {
+        NavigationStack {
+            content
+        }
+    }
+
+    private var content: some View {
         VStack(spacing: 0) {
             header
 
@@ -27,8 +33,10 @@ struct JournalView: View {
                 ScrollView {
                     LazyVStack(spacing: ProSpacing.md) {
                         ForEach(state.dayGroups, id: \.dayTitle) { group in
-                            DayGroupCard(group: group)
-                                .padding(.horizontal, ProSpacing.screenHorizontal)
+                            DayGroupCard(group: group) { row in
+                                JournalDetailView(recordId: row.id)
+                            }
+                            .padding(.horizontal, ProSpacing.screenHorizontal)
                         }
                     }
                     .padding(.vertical, ProSpacing.lg)

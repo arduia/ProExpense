@@ -49,6 +49,7 @@ kotlin {
             implementation(project(":feature:sharedcost"))
             implementation(project(":feature:importexport"))
             implementation(libs.coroutines.core)
+            implementation(libs.kotlinx.datetime)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
         }
