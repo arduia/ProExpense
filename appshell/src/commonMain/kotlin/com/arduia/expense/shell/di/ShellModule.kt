@@ -89,6 +89,7 @@ val shellModule =
             EventBudgetViewModel(
                 eventRepository = get(),
                 financeRecordRepository = get(),
+                categoryRepository = get(),
                 currencySettingsRepository = get(),
                 actions =
                     EventBudgetActions(

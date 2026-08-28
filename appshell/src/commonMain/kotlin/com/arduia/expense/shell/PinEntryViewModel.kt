@@ -77,7 +77,7 @@ class PinEntryViewModel(
             }
             is VerifyPinResult.Incorrect -> {
                 lockoutUntilMs = result.lockoutUntilMs
-                applyLockoutState(clearDigits = true)
+                applyLockoutState(clearDigits = true, error = true)
                 startCountdownIfLocked()
             }
             is VerifyPinResult.Error ->
@@ -89,17 +89,21 @@ class PinEntryViewModel(
 
     private suspend fun refreshLockout() {
         lockoutUntilMs = (pinAuthRepository.getLockoutUntilMs() as? Result.Success)?.data
-        applyLockoutState(clearDigits = false)
+        // Not an error: this is the initial read, before the user has attempted anything.
+        applyLockoutState(clearDigits = false, error = false)
         startCountdownIfLocked()
     }
 
-    private fun applyLockoutState(clearDigits: Boolean) {
+    private fun applyLockoutState(
+        clearDigits: Boolean,
+        error: Boolean,
+    ) {
         val remaining = remainingLockoutMs()
         val locked = remaining > 0
         setState {
             it.copy(
                 digits = if (clearDigits) "" else it.digits,
-                mode = PinEntryLogic.entryMode(lockedOut = locked, error = !locked),
+                mode = PinEntryLogic.entryMode(lockedOut = locked, error = error),
                 countdownLabel = if (locked) PinEntryLogic.countdownLabel(remaining) else null,
             )
         }

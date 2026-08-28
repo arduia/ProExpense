@@ -43,6 +43,17 @@ class PinEntryViewModelTest {
     }
 
     @Test
+    fun `opens in the default state rather than pre-showing an error`() =
+        runTest {
+            val vm = viewModel(FakePinRepository(correctPin = "123456"))
+
+            advanceUntilIdle()
+
+            assertEquals(PinEntryMode.Default, vm.uiState.value.mode)
+            assertNull(vm.uiState.value.countdownLabel)
+        }
+
+    @Test
     fun `entering the correct pin unlocks`() =
         runTest {
             val vm = viewModel(FakePinRepository(correctPin = "123456"))

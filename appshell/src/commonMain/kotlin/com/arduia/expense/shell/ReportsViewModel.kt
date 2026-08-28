@@ -70,6 +70,9 @@ class ReportsViewModel(
     private val categoryRepository: CategoryRepository,
     private val currencySettingsRepository: CurrencySettingsRepository,
     private val generateReportPeriod: GenerateReportPeriodUseCase,
+    /** Injected so the trailing-month window is pinnable in tests — reading the wall clock here
+     *  makes month-boundary behaviour a dated time bomb. */
+    private val nowEpochMillis: () -> Long = ::currentEpochMillis,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : StatefulViewModel<ReportsUiState>(ReportsUiState(), dispatcher) {
     private var records: List<FinanceRecord> = emptyList()
@@ -82,7 +85,7 @@ class ReportsViewModel(
         viewModelScope.launch {
             val code = (currencySettingsRepository.getHomeCurrency() as? Result.Success)?.data?.code
             symbol = currencySymbol(code ?: "USD")
-            bounds = trailingMonthBounds(currentEpochMillis())
+            bounds = trailingMonthBounds(nowEpochMillis())
             financeRecordRepository
                 .observeAll()
                 .combine(categoryRepository.observeAll()) { all, categories ->

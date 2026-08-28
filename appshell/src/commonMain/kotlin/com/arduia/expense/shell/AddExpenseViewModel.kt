@@ -30,7 +30,8 @@ data class AddExpenseUiState(
     /** Formatted for display via the same grouping/decimal rules Android's amount field uses. */
     val amountDisplay: String get() = AmountInput.formatDisplay(rawAmount)
 
-    val canSave: Boolean get() = (rawAmount.toDoubleOrNull() ?: 0.0) > 0.0 && selectedCategoryId.isNotEmpty()
+    /** Uses the shared amount validator rather than a local parse, so iOS and Android agree. */
+    val canSave: Boolean get() = AmountInput.canProceed(rawAmount) && selectedCategoryId.isNotEmpty()
 }
 
 /**

@@ -1,5 +1,6 @@
 package com.arduia.expense.shell
 
+import com.arduia.expense.data.CategoryRepository
 import com.arduia.expense.data.CurrencySettingsRepository
 import com.arduia.expense.data.EventRepository
 import com.arduia.expense.data.FinanceRecordRepository
@@ -77,27 +78,32 @@ data class EventBudgetActions(
 class EventBudgetViewModel(
     private val eventRepository: EventRepository,
     private val financeRecordRepository: FinanceRecordRepository,
+    private val categoryRepository: CategoryRepository,
     private val currencySettingsRepository: CurrencySettingsRepository,
     private val actions: EventBudgetActions,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : StatefulViewModel<EventBudgetUiState>(EventBudgetUiState(), dispatcher) {
     private var events: List<Event> = emptyList()
     private var records: List<FinanceRecord> = emptyList()
+    private var categoryNames: Map<String, String> = emptyMap()
     private var symbol: String = "$"
 
     init {
         viewModelScope.launch {
             val code = (currencySettingsRepository.getHomeCurrency() as? Result.Success)?.data?.code
             symbol = currencySymbol(code ?: "USD")
-            eventRepository
-                .observeAll()
-                .combine(financeRecordRepository.observeAll()) { allEvents, allRecords ->
-                    allEvents to allRecords
-                }.collect { (allEvents, allRecords) ->
-                    events = allEvents
-                    records = allRecords
-                    project()
-                }
+            combine(
+                eventRepository.observeAll(),
+                financeRecordRepository.observeAll(),
+                categoryRepository.observeAll(),
+            ) { allEvents, allRecords, allCategories ->
+                Triple(allEvents, allRecords, allCategories.associate { it.id.value to it.name })
+            }.collect { (allEvents, allRecords, names) ->
+                events = allEvents
+                records = allRecords
+                categoryNames = names
+                project()
+            }
         }
     }
 
@@ -184,5 +190,5 @@ class EventBudgetViewModel(
         records
             .filter { (it.link as? RecordLink.ToEvent)?.eventId?.value == eventId }
             .sortedByDescending { it.recordedAtEpochMillis }
-            .map { RecordRowProjection.toRow(it, emptyMap(), symbol) }
+            .map { RecordRowProjection.toRow(it, categoryNames, symbol) }
 }

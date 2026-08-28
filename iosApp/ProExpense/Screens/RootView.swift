@@ -20,7 +20,7 @@ struct RootView: View {
             case .pinLock:
                 PinEntryView { shell.viewModel.onUnlocked() }
             case .ready:
-                MainTabView()
+                MainTabView(onPinConfigured: { shell.viewModel.onPinConfigured(configured: $0) })
             default:
                 SplashView()
             }
@@ -37,6 +37,8 @@ struct RootView: View {
 }
 
 struct MainTabView: View {
+    let onPinConfigured: (Bool) -> Void
+
     @State private var showAddExpense = false
 
     var body: some View {
@@ -48,7 +50,7 @@ struct MainTabView: View {
                     .tabItem { Label("Journal", systemImage: "list.bullet") }
                 EventBudgetView()
                     .tabItem { Label("Budgets", systemImage: "calendar") }
-                MoreView()
+                MoreView(onPinConfigured: onPinConfigured)
                     .tabItem { Label("More", systemImage: "ellipsis") }
             }
             .tint(ProColor.primary)

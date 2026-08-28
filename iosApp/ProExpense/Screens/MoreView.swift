@@ -5,6 +5,10 @@ import ProExpenseKit
 /// and the destructive data actions. Every toggle writes through and re-reads via the shared
 /// ViewModel, so a switch never shows a state that failed to persist.
 struct MoreView: View {
+    /// Reported up to `AppShellViewModel` so the launch gate learns about a PIN enabled here —
+    /// without it the session would not re-lock on background until the next cold start.
+    let onPinConfigured: (Bool) -> Void
+
     @StateObject private var more = Shell.more()
     @State private var showPinSetup = false
     @State private var confirmClear = false
@@ -97,7 +101,10 @@ struct MoreView: View {
         }
         .sheet(isPresented: $showPinSetup) {
             NavigationStack {
-                PinSetupView { Task { await more.viewModel.reload() } }
+                PinSetupView {
+                    onPinConfigured(true)
+                    Task { await more.viewModel.reload() }
+                }
                     .navigationTitle("PIN lock")
                     .navigationBarTitleDisplayMode(.inline)
             }
