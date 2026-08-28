@@ -1,7 +1,5 @@
 package com.arduia.expense.shell
 
-import com.arduia.expense.data.Result
-import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.auth.PinEntryLogic
 import com.arduia.expense.feature.auth.PinEntryMode
 import com.arduia.expense.feature.auth.VerifyPinUseCase
@@ -30,7 +28,7 @@ class PinEntryViewModelTest {
      * The clock is driven by the scheduler's virtual time, so the countdown's `delay` actually
      * advances it — against a real clock the tick loop would spin for the whole lockout.
      */
-    private fun TestScope.viewModel(repository: FakePinRepository): PinEntryViewModel =
+    private fun TestScope.viewModel(repository: FakePinAuth): PinEntryViewModel =
         PinEntryViewModel(
             verifyPin = VerifyPinUseCase(repository),
             pinAuthRepository = repository,
@@ -45,7 +43,7 @@ class PinEntryViewModelTest {
     @Test
     fun `opens in the default state rather than pre-showing an error`() =
         runTest {
-            val vm = viewModel(FakePinRepository(correctPin = "123456"))
+            val vm = viewModel(FakePinAuth(correctPin = "123456"))
 
             advanceUntilIdle()
 
@@ -56,7 +54,7 @@ class PinEntryViewModelTest {
     @Test
     fun `entering the correct pin unlocks`() =
         runTest {
-            val vm = viewModel(FakePinRepository(correctPin = "123456"))
+            val vm = viewModel(FakePinAuth(correctPin = "123456"))
             advanceUntilIdle()
 
             vm.enter("123456")
@@ -68,7 +66,7 @@ class PinEntryViewModelTest {
     @Test
     fun `an incorrect pin clears the dots and shows the error state`() =
         runTest {
-            val vm = viewModel(FakePinRepository(correctPin = "123456"))
+            val vm = viewModel(FakePinAuth(correctPin = "123456"))
             advanceUntilIdle()
 
             vm.enter("000000")
@@ -82,7 +80,7 @@ class PinEntryViewModelTest {
     @Test
     fun `typing after an error starts a fresh buffer rather than appending`() =
         runTest {
-            val vm = viewModel(FakePinRepository(correctPin = "123456"))
+            val vm = viewModel(FakePinAuth(correctPin = "123456"))
             advanceUntilIdle()
             vm.enter("000000")
             advanceUntilIdle()
@@ -97,7 +95,7 @@ class PinEntryViewModelTest {
     fun `a lockout disables entry and surfaces a countdown`() =
         runTest {
             // Relative to the scheduler's virtual clock, which starts at 0.
-            val vm = viewModel(FakePinRepository(correctPin = "123456", lockoutUntilMs = 30_000L))
+            val vm = viewModel(FakePinAuth(correctPin = "123456", lockoutUntilMs = 30_000L))
 
             runCurrent()
 
@@ -108,7 +106,7 @@ class PinEntryViewModelTest {
     @Test
     fun `entry becomes usable again once the lockout expires`() =
         runTest {
-            val vm = viewModel(FakePinRepository(correctPin = "123456", lockoutUntilMs = 30_000L))
+            val vm = viewModel(FakePinAuth(correctPin = "123456", lockoutUntilMs = 30_000L))
             runCurrent()
 
             advanceTimeBy(30_001)
@@ -121,7 +119,7 @@ class PinEntryViewModelTest {
     @Test
     fun `backspace removes the last digit`() =
         runTest {
-            val vm = viewModel(FakePinRepository(correctPin = "123456"))
+            val vm = viewModel(FakePinAuth(correctPin = "123456"))
             advanceUntilIdle()
 
             vm.enter("123")
@@ -133,61 +131,8 @@ class PinEntryViewModelTest {
     @Test
     fun `pin length matches the shared keypad contract`() =
         runTest {
-            val vm = viewModel(FakePinRepository(correctPin = "123456"))
+            val vm = viewModel(FakePinAuth(correctPin = "123456"))
 
             assertEquals(PinEntryLogic.PIN_LENGTH, vm.uiState.value.pinLength)
         }
-}
-
-private class FakePinRepository(
-    private val correctPin: String,
-    private var lockoutUntilMs: Long? = null,
-) : PinAuthRepository {
-    private var failedAttempts = 0L
-
-    override suspend fun isPinConfigured(): Result<Boolean> = Result.Success(true)
-
-    override suspend fun setPin(pin: String): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun verifyPin(pin: String): Result<Boolean> = Result.Success(pin == correctPin)
-
-    override suspend fun clearPin(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun setSecurityQuestion(
-        questionId: String,
-        answer: String,
-    ): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getSecurityQuestionId(): Result<String?> = Result.Success(null)
-
-    override suspend fun verifySecurityAnswer(answer: String): Result<Boolean> = Result.Success(true)
-
-    override suspend fun isBiometricEnrolled(): Result<Boolean> = Result.Success(false)
-
-    override suspend fun enrollBiometric(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun clearBiometric(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun isStayUnlockedInBackgroundEnabled(): Result<Boolean> = Result.Success(false)
-
-    override suspend fun setStayUnlockedInBackgroundEnabled(enabled: Boolean): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getFailedAttemptCount(): Result<Long> = Result.Success(failedAttempts)
-
-    override suspend fun incrementFailedAttempts(): Result<Unit> {
-        failedAttempts++
-        return Result.Success(Unit)
-    }
-
-    override suspend fun resetFailedAttempts(): Result<Unit> {
-        failedAttempts = 0
-        return Result.Success(Unit)
-    }
-
-    override suspend fun getLockoutUntilMs(): Result<Long?> = Result.Success(lockoutUntilMs)
-
-    override suspend fun setLockoutUntilMs(lockedUntilMs: Long): Result<Unit> {
-        lockoutUntilMs = lockedUntilMs
-        return Result.Success(Unit)
-    }
 }

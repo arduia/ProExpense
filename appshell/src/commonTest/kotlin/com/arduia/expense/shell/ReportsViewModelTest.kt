@@ -1,14 +1,6 @@
 package com.arduia.expense.shell
 
-import com.arduia.expense.data.CategoryRepository
-import com.arduia.expense.data.CurrencySettingsRepository
-import com.arduia.expense.data.FinanceRecordRepository
-import com.arduia.expense.data.RecordChangeSignal
-import com.arduia.expense.data.RecordPageCursor
-import com.arduia.expense.data.RecordPageFilter
-import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
@@ -17,9 +9,6 @@ import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.feature.reports.GenerateReportPeriodUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -76,9 +65,9 @@ class ReportsViewModelTest {
 
     private fun TestScope.viewModel(records: List<FinanceRecord>): ReportsViewModel =
         ReportsViewModel(
-            financeRecordRepository = FakeReportsRecordRepository(records),
-            categoryRepository = FakeReportsCategoryRepository(),
-            currencySettingsRepository = FakeReportsCurrencySettings(),
+            financeRecordRepository = FakeRecords(records),
+            categoryRepository = FakeCategories(),
+            currencySettingsRepository = FakeCurrencySettings(),
             generateReportPeriod = GenerateReportPeriodUseCase(),
             nowEpochMillis = { pinnedNow },
             dispatcher = StandardTestDispatcher(testScheduler),
@@ -174,56 +163,4 @@ class ReportsViewModelTest {
             assertEquals(setOf("Food", "Travel"), rows.map { it.label }.toSet())
             assertEquals(1f, rows.sumOf { it.fraction.toDouble() }.toFloat())
         }
-}
-
-private class FakeReportsRecordRepository(
-    records: List<FinanceRecord>,
-) : FinanceRecordRepository {
-    private val flow = MutableStateFlow(records)
-
-    override fun observeAll(): Flow<List<FinanceRecord>> = flow
-
-    override suspend fun getAll(): Result<List<FinanceRecord>> = Result.Success(flow.value)
-
-    override suspend fun getById(id: RecordId): Result<FinanceRecord?> = Result.Success(flow.value.firstOrNull { it.id == id })
-
-    override suspend fun upsert(record: FinanceRecord): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun delete(id: RecordId): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
-
-    override suspend fun getRecordsPage(
-        filter: RecordPageFilter,
-        cursor: RecordPageCursor?,
-        limit: Int,
-    ): Result<List<FinanceRecord>> = Result.Success(flow.value.take(limit))
-
-    override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> = Result.Success(false)
-
-    override fun observeChangeSignal(): Flow<RecordChangeSignal> = flowOf(RecordChangeSignal(0L, 0L))
-}
-
-private class FakeReportsCategoryRepository : CategoryRepository {
-    private val categories =
-        listOf(
-            Category(id = CategoryId("food"), name = "Food", iconId = "food", sortOrder = 0),
-            Category(id = CategoryId("travel"), name = "Travel", iconId = "travel", sortOrder = 1),
-        )
-
-    override suspend fun getAll(): Result<List<Category>> = Result.Success(categories)
-
-    override suspend fun upsert(category: Category): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun delete(id: CategoryId): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun reorder(orderedIds: List<CategoryId>): Result<Unit> = Result.Success(Unit)
-
-    override fun observeAll(): Flow<List<Category>> = flowOf(categories)
-}
-
-private class FakeReportsCurrencySettings : CurrencySettingsRepository {
-    override suspend fun getHomeCurrency(): Result<CurrencyCode?> = Result.Success(CurrencyCode("USD"))
-
-    override suspend fun setHomeCurrency(currency: CurrencyCode): Result<Unit> = Result.Success(Unit)
 }

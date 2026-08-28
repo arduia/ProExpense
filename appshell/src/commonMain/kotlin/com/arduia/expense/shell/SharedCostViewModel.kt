@@ -50,7 +50,12 @@ data class SharedCostUiState(
 ) {
     val isEmpty: Boolean get() = !isLoading && rows.isEmpty()
 
-    val canSave: Boolean get() = SharedCostSplitLogic.canSave(rawTotal) && peopleCount > 0
+    /**
+     * A blank title is rejected here because [SharedCost] itself requires one — without this the
+     * save path throws from the domain constructor instead of showing a validation message.
+     */
+    val canSave: Boolean
+        get() = title.isNotBlank() && SharedCostSplitLogic.canSave(rawTotal) && peopleCount > 0
 
     val totalLabel: String get() = SharedCostSplitLogic.formatRawTotal(rawTotal, currencySymbol)
 

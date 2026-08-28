@@ -1,16 +1,6 @@
 package com.arduia.expense.shell
 
-import com.arduia.expense.data.BudgetRepository
-import com.arduia.expense.data.CategoryRepository
-import com.arduia.expense.data.CurrencySettingsRepository
-import com.arduia.expense.data.FinanceRecordRepository
-import com.arduia.expense.data.ProfileRepository
-import com.arduia.expense.data.RecordChangeSignal
-import com.arduia.expense.data.RecordPageCursor
-import com.arduia.expense.data.RecordPageFilter
-import com.arduia.expense.data.Result
 import com.arduia.expense.domain.Amount
-import com.arduia.expense.domain.Category
 import com.arduia.expense.domain.CategoryId
 import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.domain.FinanceRecord
@@ -19,9 +9,6 @@ import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordType
 import com.arduia.expense.shared.currentEpochMillis
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -65,10 +52,10 @@ class HomeViewModelTest {
         budgetCents: Long? = null,
     ): HomeViewModel =
         HomeViewModel(
-            financeRecordRepository = FakeRecordRepository(records),
-            categoryRepository = FakeCategoryRepository(),
+            financeRecordRepository = FakeRecords(records),
+            categoryRepository = FakeCategories(),
             profileRepository = FakeProfile(),
-            budgetRepository = FakeBudgetRepository(budgetCents),
+            budgetRepository = FakeBudget(budgetCents),
             currencySettingsRepository = FakeCurrencySettings(),
             dispatcher = StandardTestDispatcher(testScheduler),
         )
@@ -135,78 +122,4 @@ class HomeViewModelTest {
 
             assertTrue(vm.uiState.value.isEmpty)
         }
-}
-
-private class FakeRecordRepository(
-    records: List<FinanceRecord>,
-) : FinanceRecordRepository {
-    private val flow = MutableStateFlow(records)
-
-    override fun observeAll(): Flow<List<FinanceRecord>> = flow
-
-    override suspend fun getAll(): Result<List<FinanceRecord>> = Result.Success(flow.value)
-
-    override suspend fun getById(id: RecordId): Result<FinanceRecord?> = Result.Success(flow.value.firstOrNull { it.id == id })
-
-    override suspend fun upsert(record: FinanceRecord): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun delete(id: RecordId): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun verifyIntegrity(id: RecordId): Result<Boolean> = Result.Success(true)
-
-    override suspend fun getRecordsPage(
-        filter: RecordPageFilter,
-        cursor: RecordPageCursor?,
-        limit: Int,
-    ): Result<List<FinanceRecord>> = Result.Success(flow.value.take(limit))
-
-    override suspend fun existsByCategory(categoryId: CategoryId): Result<Boolean> = Result.Success(false)
-
-    override fun observeChangeSignal(): Flow<RecordChangeSignal> = flowOf(RecordChangeSignal(flow.value.size.toLong(), 0L))
-}
-
-private class FakeCategoryRepository : CategoryRepository {
-    private val categories =
-        listOf(
-            Category(
-                id = CategoryId("food"),
-                name = "Food",
-                iconId = "food",
-                sortOrder = 0,
-            ),
-        )
-
-    override suspend fun getAll(): Result<List<Category>> = Result.Success(categories)
-
-    override suspend fun upsert(category: Category): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun delete(id: CategoryId): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun reorder(orderedIds: List<CategoryId>): Result<Unit> = Result.Success(Unit)
-
-    override fun observeAll(): Flow<List<Category>> = flowOf(categories)
-}
-
-private class FakeProfile : ProfileRepository {
-    override suspend fun setDisplayName(name: String): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getDisplayName(): Result<String> = Result.Success("Maya")
-
-    override suspend fun isOnboardingComplete(): Result<Boolean> = Result.Success(true)
-
-    override suspend fun setOnboardingComplete(): Result<Unit> = Result.Success(Unit)
-}
-
-private class FakeBudgetRepository(
-    private val budgetCents: Long?,
-) : BudgetRepository {
-    override suspend fun getMonthlyBudget(): Result<Money?> = Result.Success(budgetCents?.let { Money(Amount(it), CurrencyCode("USD")) })
-
-    override suspend fun setMonthlyBudget(money: Money?): Result<Unit> = Result.Success(Unit)
-}
-
-private class FakeCurrencySettings : CurrencySettingsRepository {
-    override suspend fun getHomeCurrency(): Result<CurrencyCode?> = Result.Success(CurrencyCode("USD"))
-
-    override suspend fun setHomeCurrency(currency: CurrencyCode): Result<Unit> = Result.Success(Unit)
 }

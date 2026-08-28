@@ -85,10 +85,14 @@ class PinSetupViewModel(
 
     fun onBackspace() {
         setState {
-            when (it.stage) {
-                PinSetupStage.Enter -> it.copy(newPin = PinEntryLogic.backspace(it.newPin))
-                PinSetupStage.Confirm -> it.copy(confirmPin = PinEntryLogic.backspace(it.confirmPin))
-                PinSetupStage.SecurityQuestion -> it
+            when {
+                it.stage == PinSetupStage.SecurityQuestion -> it
+                it.stage == PinSetupStage.Enter -> it.copy(newPin = PinEntryLogic.backspace(it.newPin))
+                // Backspacing an already-empty confirmation steps back to the first PIN rather than
+                // stranding the user on a step whose only other exit is a full re-entry.
+                it.confirmPin.isEmpty() ->
+                    it.copy(stage = PinSetupStage.Enter, newPin = PinEntryLogic.backspace(it.newPin))
+                else -> it.copy(confirmPin = PinEntryLogic.backspace(it.confirmPin))
             }
         }
     }

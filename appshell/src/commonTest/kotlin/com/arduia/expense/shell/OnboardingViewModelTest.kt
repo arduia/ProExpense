@@ -1,9 +1,5 @@
 package com.arduia.expense.shell
 
-import com.arduia.expense.data.CurrencySettingsRepository
-import com.arduia.expense.data.ProfileRepository
-import com.arduia.expense.data.Result
-import com.arduia.expense.domain.CurrencyCode
 import com.arduia.expense.feature.onboarding.CompleteOnboardingUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -27,8 +23,8 @@ class OnboardingViewModelTest {
         OnboardingViewModel(
             completeOnboarding =
                 CompleteOnboardingUseCase(
-                    FakeOnboardingProfile(failOnComplete = onboardingFails),
-                    FakeOnboardingCurrencySettings(),
+                    FakeProfile(complete = false, failOnComplete = onboardingFails),
+                    FakeCurrencySettings(),
                 ),
             dispatcher = StandardTestDispatcher(testScheduler),
         )
@@ -111,22 +107,4 @@ class OnboardingViewModelTest {
             assertTrue(options.isNotEmpty())
             assertTrue(options.any { it.code == "EUR" })
         }
-}
-
-private class FakeOnboardingProfile(
-    private val failOnComplete: Boolean = false,
-) : ProfileRepository {
-    override suspend fun setDisplayName(name: String): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getDisplayName(): Result<String> = Result.Success("")
-
-    override suspend fun isOnboardingComplete(): Result<Boolean> = Result.Success(false)
-
-    override suspend fun setOnboardingComplete(): Result<Unit> = if (failOnComplete) Result.Error("disk full") else Result.Success(Unit)
-}
-
-private class FakeOnboardingCurrencySettings : CurrencySettingsRepository {
-    override suspend fun getHomeCurrency(): Result<CurrencyCode?> = Result.Success(CurrencyCode("USD"))
-
-    override suspend fun setHomeCurrency(currency: CurrencyCode): Result<Unit> = Result.Success(Unit)
 }

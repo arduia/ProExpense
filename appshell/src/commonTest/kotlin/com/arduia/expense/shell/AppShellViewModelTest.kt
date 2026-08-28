@@ -1,8 +1,5 @@
 package com.arduia.expense.shell
 
-import com.arduia.expense.data.ProfileRepository
-import com.arduia.expense.data.Result
-import com.arduia.expense.feature.auth.PinAuthRepository
 import com.arduia.expense.feature.onboarding.GetOnboardingStatusUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -34,13 +31,13 @@ class AppShellViewModelTest {
         AppShellViewModel(
             getOnboardingStatus =
                 GetOnboardingStatusUseCase(
-                    FakeProfileRepository(isComplete = onboardingComplete, name = displayName),
+                    FakeProfile(name = displayName, complete = onboardingComplete),
                 ),
             pinAuthRepository =
-                FakePinAuthRepository(
-                    pinConfigured = pinConfigured,
+                FakePinAuth(
+                    correctPin = if (pinConfigured) "123456" else null,
                     stayUnlocked = stayUnlocked,
-                    pinConfiguredFails = pinConfiguredFails,
+                    failPinLookup = pinConfiguredFails,
                 ),
             // Shares runTest's scheduler so the splash delay runs on the virtual clock.
             dispatcher = StandardTestDispatcher(testScheduler),
@@ -126,61 +123,4 @@ class AppShellViewModelTest {
 
             assertEquals(AppGate.Ready, vm.uiState.value.gate)
         }
-}
-
-private class FakeProfileRepository(
-    private val isComplete: Boolean,
-    private val name: String,
-) : ProfileRepository {
-    override suspend fun isOnboardingComplete(): Result<Boolean> = Result.Success(isComplete)
-
-    override suspend fun setOnboardingComplete(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getDisplayName(): Result<String> = Result.Success(name)
-
-    override suspend fun setDisplayName(name: String): Result<Unit> = Result.Success(Unit)
-}
-
-private class FakePinAuthRepository(
-    private val pinConfigured: Boolean,
-    private val stayUnlocked: Boolean,
-    private val pinConfiguredFails: Boolean,
-) : PinAuthRepository {
-    override suspend fun isPinConfigured(): Result<Boolean> =
-        if (pinConfiguredFails) Result.Error("boom") else Result.Success(pinConfigured)
-
-    override suspend fun setPin(pin: String): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun verifyPin(pin: String): Result<Boolean> = Result.Success(true)
-
-    override suspend fun clearPin(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun setSecurityQuestion(
-        questionId: String,
-        answer: String,
-    ): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getSecurityQuestionId(): Result<String?> = Result.Success(null)
-
-    override suspend fun verifySecurityAnswer(answer: String): Result<Boolean> = Result.Success(true)
-
-    override suspend fun isBiometricEnrolled(): Result<Boolean> = Result.Success(false)
-
-    override suspend fun enrollBiometric(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun clearBiometric(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun isStayUnlockedInBackgroundEnabled(): Result<Boolean> = Result.Success(stayUnlocked)
-
-    override suspend fun setStayUnlockedInBackgroundEnabled(enabled: Boolean): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getFailedAttemptCount(): Result<Long> = Result.Success(0)
-
-    override suspend fun incrementFailedAttempts(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun resetFailedAttempts(): Result<Unit> = Result.Success(Unit)
-
-    override suspend fun getLockoutUntilMs(): Result<Long?> = Result.Success(null)
-
-    override suspend fun setLockoutUntilMs(lockedUntilMs: Long): Result<Unit> = Result.Success(Unit)
 }

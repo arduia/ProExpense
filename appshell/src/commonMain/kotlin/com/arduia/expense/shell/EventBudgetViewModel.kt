@@ -24,6 +24,7 @@ import com.arduia.expense.shared.StatefulViewModel
 import com.arduia.expense.shared.currentEpochMillis
 import com.arduia.expense.ui.design.AmountInput
 import com.arduia.expense.ui.design.PlatformDateFormatter
+import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.currencySymbol
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +51,7 @@ data class EventBudgetUiState(
     val cards: List<EventCard> = emptyList(),
     val activeCount: Int = 0,
     val selectedEventId: String? = null,
-    val linkedRows: List<com.arduia.expense.ui.design.ProTransactionRowModel> = emptyList(),
+    val linkedRows: List<ProTransactionRowModel> = emptyList(),
     val isLoading: Boolean = true,
 ) {
     val isEmpty: Boolean get() = !isLoading && cards.isEmpty()
@@ -186,7 +187,7 @@ class EventBudgetViewModel(
         return Money(Amount(cents), event.budget.currency)
     }
 
-    private fun linkedRowsFor(eventId: String): List<com.arduia.expense.ui.design.ProTransactionRowModel> =
+    private fun linkedRowsFor(eventId: String): List<ProTransactionRowModel> =
         records
             .filter { (it.link as? RecordLink.ToEvent)?.eventId?.value == eventId }
             .sortedByDescending { it.recordedAtEpochMillis }
