@@ -12,14 +12,18 @@ import com.arduia.expense.domain.RecordType
 import com.arduia.expense.shared.StatefulViewModel
 import com.arduia.expense.shared.currentEpochMillis
 import com.arduia.expense.ui.design.AmountInput
-import com.arduia.expense.ui.design.DateZone
-import com.arduia.expense.ui.design.PlatformDateFormatter
 import com.arduia.expense.ui.design.ProTransactionRowModel
 import com.arduia.expense.ui.design.currencySymbol
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.number
+import kotlinx.datetime.toLocalDateTime
 
 /** Home shows the last handful of entries, not the whole history (US-HOME-2). */
 const val RECENT_HOME_LIMIT = 8
@@ -48,30 +52,37 @@ data class HomeUiState(
     val isEmpty: Boolean get() = !isLoading && dayGroups.isEmpty()
 }
 
+/** Everything Home reads from, bundled so the constructor stays readable. */
+data class HomeSources(
+    val records: FinanceRecordRepository,
+    val categories: CategoryRepository,
+    val profile: ProfileRepository,
+    val budget: BudgetRepository,
+    val currencySettings: CurrencySettingsRepository,
+)
+
 /**
  * Home's data projection — greeting, month-to-date spend, budget progress and the recent-rows list.
  *
  * Lives in `commonMain` so the SwiftUI Home renders from exactly the same derivation the Compose
- * Home does. Every label is built through [PlatformDateFormatter] / [AmountInput], both of which
- * already have iOS actuals, so no formatting logic is duplicated per platform.
+ * Home does. Every label is built through [AmountInput] and [RecordRowProjection], both of which
+ * already work on iOS, so no formatting logic is duplicated per platform.
  */
 class HomeViewModel(
-    private val financeRecordRepository: FinanceRecordRepository,
-    private val categoryRepository: CategoryRepository,
-    private val profileRepository: ProfileRepository,
-    private val budgetRepository: BudgetRepository,
-    private val currencySettingsRepository: CurrencySettingsRepository,
+    private val sources: HomeSources,
+    /** Injected so month-boundary behaviour is pinnable, like the other date-sensitive ViewModels. */
+    private val nowEpochMillis: () -> Long = ::currentEpochMillis,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : StatefulViewModel<HomeUiState>(HomeUiState(), dispatcher) {
     init {
         viewModelScope.launch {
             val symbol = loadHomeCurrencySymbol()
-            val budget = (budgetRepository.getMonthlyBudget() as? Result.Success)?.data
-            val displayName = (profileRepository.getDisplayName() as? Result.Success)?.data.orEmpty()
+            val budget = (sources.budget.getMonthlyBudget() as? Result.Success)?.data
+            val displayName = (sources.profile.getDisplayName() as? Result.Success)?.data.orEmpty()
             setState { it.copy(greetingName = displayName, homeCurrencySymbol = symbol) }
-            financeRecordRepository
+            sources.records
                 .observeAll()
-                .combine(categoryRepository.observeAll()) { records, categories ->
+                .combine(sources.categories.observeAll()) { records, categories ->
                     records to categories.associate { category -> category.id.value to category.name }
                 }.collect { (records, categoryNames) ->
                     project(records, categoryNames, symbol, budget)
@@ -80,7 +91,7 @@ class HomeViewModel(
     }
 
     private suspend fun loadHomeCurrencySymbol(): String {
-        val code = (currencySettingsRepository.getHomeCurrency() as? Result.Success)?.data?.code
+        val code = (sources.currencySettings.getHomeCurrency() as? Result.Success)?.data?.code
         return currencySymbol(code ?: "USD")
     }
 
@@ -90,7 +101,7 @@ class HomeViewModel(
         symbol: String,
         budget: Money?,
     ) {
-        val now = currentEpochMillis()
+        val now = nowEpochMillis()
         val monthSpendCents = monthToDateSpendCents(records, now)
         setState {
             it.copy(
@@ -111,25 +122,36 @@ class HomeViewModel(
     /**
      * "Spend this month" (US-HOME-1) — month-to-date, and expenses only: income must not offset the
      * figure the header promises.
+     *
+     * The month's bounds are computed once and compared numerically. Deriving a month key per record
+     * instead meant two platform date-formatter calls for every row in the history, which is the
+     * expensive part of this projection and scales with the whole record list, not the visible page.
      */
     private fun monthToDateSpendCents(
         records: List<FinanceRecord>,
         nowEpochMillis: Long,
     ): Long {
-        val currentMonthKey = monthKey(nowEpochMillis)
+        val (monthStart, monthEnd) = currentMonthBounds(nowEpochMillis)
         return records
-            .filter { it.type == RecordType.EXPENSE && monthKey(it.recordedAtEpochMillis) == currentMonthKey }
-            .sumOf { it.homeCurrencyMoney.amount.valueInCents }
+            .filter {
+                it.type == RecordType.EXPENSE &&
+                    it.recordedAtEpochMillis >= monthStart &&
+                    it.recordedAtEpochMillis < monthEnd
+            }.sumOf { it.homeCurrencyMoney.amount.valueInCents }
     }
 
-    /**
-     * "Jun/2026" style bucket. Derived from [PlatformDateFormatter] rather than a calendar API so it
-     * stays portable — `shortDateLabel` renders "Jun 3, 2026", whose first token is the month.
-     */
-    private fun monthKey(epochMillis: Long): String {
-        val month = PlatformDateFormatter.shortDateLabel(epochMillis, withYear = true).substringBefore(' ')
-        val year = PlatformDateFormatter.yearOf(epochMillis, DateZone.DeviceLocal)
-        return "$month/$year"
+    /** Half-open `[start, end)` bounds of the calendar month containing [epochMillis], device-local. */
+    private fun currentMonthBounds(epochMillis: Long): Pair<Long, Long> {
+        val zone = TimeZone.currentSystemDefault()
+        val date = Instant.fromEpochMilliseconds(epochMillis).toLocalDateTime(zone).date
+        val start = LocalDate(date.year, date.month, 1).atStartOfDayIn(zone).toEpochMilliseconds()
+        val nextMonth =
+            if (date.month.number == MONTHS_PER_YEAR) {
+                LocalDate(date.year + 1, 1, 1)
+            } else {
+                LocalDate(date.year, date.month.number + 1, 1)
+            }
+        return start to nextMonth.atStartOfDayIn(zone).toEpochMilliseconds()
     }
 
     private fun buildBudgetSummary(
@@ -148,5 +170,9 @@ class HomeViewModel(
                 isOverBudget = spentCents > budgetCents,
             )
         }
+    }
+
+    private companion object {
+        const val MONTHS_PER_YEAR = 12
     }
 }

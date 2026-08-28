@@ -7,12 +7,16 @@ import com.arduia.expense.domain.FinanceRecord
 import com.arduia.expense.domain.Money
 import com.arduia.expense.domain.RecordId
 import com.arduia.expense.domain.RecordType
-import com.arduia.expense.shared.currentEpochMillis
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -27,7 +31,16 @@ import kotlin.test.assertTrue
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
-    private val now = currentEpochMillis()
+    private val zone = TimeZone.currentSystemDefault()
+
+    /** 15 Jan 2026, midday — pinned so month-boundary behaviour doesn't depend on the run date. */
+    private val now = LocalDateTime(2026, 1, 15, 12, 0).toInstant(zone).toEpochMilliseconds()
+
+    private fun millisOn(
+        year: Int,
+        month: Int,
+        day: Int,
+    ): Long = LocalDate(year, month, day).atStartOfDayIn(zone).toEpochMilliseconds()
 
     private fun record(
         id: String,
@@ -52,11 +65,15 @@ class HomeViewModelTest {
         budgetCents: Long? = null,
     ): HomeViewModel =
         HomeViewModel(
-            financeRecordRepository = FakeRecords(records),
-            categoryRepository = FakeCategories(),
-            profileRepository = FakeProfile(),
-            budgetRepository = FakeBudget(budgetCents),
-            currencySettingsRepository = FakeCurrencySettings(),
+            sources =
+                HomeSources(
+                    records = FakeRecords(records),
+                    categories = FakeCategories(),
+                    profile = FakeProfile(),
+                    budget = FakeBudget(budgetCents),
+                    currencySettings = FakeCurrencySettings(),
+                ),
+            nowEpochMillis = { now },
             dispatcher = StandardTestDispatcher(testScheduler),
         )
 
@@ -75,6 +92,34 @@ class HomeViewModelTest {
             advanceUntilIdle()
 
             assertEquals("$40", vm.uiState.value.monthSpend)
+        }
+
+    @Test
+    fun `month spend counts only the current calendar month`() =
+        runTest {
+            val vm =
+                viewModel(
+                    listOf(
+                        record("thisMonth", cents = 1_000, atEpochMillis = millisOn(2026, 1, 2)),
+                        record("lastMonth", cents = 5_000, atEpochMillis = millisOn(2025, 12, 31)),
+                        record("nextMonth", cents = 7_000, atEpochMillis = millisOn(2026, 2, 1)),
+                    ),
+                )
+
+            advanceUntilIdle()
+
+            assertEquals("$10", vm.uiState.value.monthSpend)
+        }
+
+    @Test
+    fun `a record on the first instant of the month is included`() =
+        runTest {
+            val vm =
+                viewModel(listOf(record("boundary", cents = 2_500, atEpochMillis = millisOn(2026, 1, 1))))
+
+            advanceUntilIdle()
+
+            assertEquals("$25", vm.uiState.value.monthSpend)
         }
 
     @Test

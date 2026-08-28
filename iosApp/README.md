@@ -6,8 +6,27 @@ framework produced by `:appshell`.
 > **Status: compile-unverified.** Every `.swift` file here was authored in a Linux CI container
 > with no Swift toolchain (`swiftc`/`xcodebuild` absent), so none of it has been compiled. The
 > Kotlin side it binds to *is* verified — `./gradlew verifyAll` cross-compiles the iOS klibs for
-> every module on every push. Expect to fix Swift-side compile errors on first build; the Kotlin
-> API surface it calls is real.
+> every module on every push, and 93 tests cover the shared ViewModels. Expect to fix Swift-side
+> compile errors on first build; the Kotlin API surface it calls is real.
+>
+> `linkDebugFrameworkIosSimulatorArm64` is **SKIPPED** on a Linux host — Kotlin/Native will not
+> produce a Mach-O framework off macOS — so the generated Objective-C header, which is the only
+> authoritative source for the exported Swift names, cannot be inspected here. The Swift was
+> therefore written to minimise reliance on names that are hard to predict:
+>
+> - State reaches Swift via `FlowBridgeKt.observeState(viewModel:onEach:)`, which takes the
+>   ViewModel rather than its `StateFlow`. A `StateFlow` parameter would force the call site to
+>   spell out the name Kotlin/Native generates for a kotlinx-coroutines class, derived from that
+>   dependency's module name and the least predictable part of the exported surface.
+> - `PinEntryScreenState` exposes `isError` / `isIdle` / `isLockedOut` booleans instead of leaving
+>   the view to compare `PinEntryMode` — `Default` is a Swift keyword, so its exported entry name
+>   is mangled.
+>
+> What remains genuinely unverified: enum entry names elsewhere (`AppGate`, `ThemeMode`,
+> `DebtDirection`, `SharedSplitMode`, `PinSetupStage`, `OnboardingStep`), `KoinHelper.shared`,
+> `KotlinLong` boxing for nullable `Long` parameters, and `KoinIosKt.doInitKoinIos()`'s `do`
+> prefix. All follow documented Kotlin/Native rules, but none has been checked against a real
+> header.
 
 ## What's implemented
 

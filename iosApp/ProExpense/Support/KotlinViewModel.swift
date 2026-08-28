@@ -4,9 +4,11 @@ import ProExpenseKit
 
 /// Bridges a Kotlin `StatefulViewModel<S>` into a SwiftUI `ObservableObject`.
 ///
-/// Kotlin/Native cannot expose `Flow` or `suspend` functions to Swift, so collection goes through
-/// `FlowBridgeKt.subscribe`, which the shared module publishes for exactly this purpose. `uiState`
-/// crosses the boundary type-erased (`Any`), hence the cast — the generic parameter restores it.
+/// Kotlin/Native cannot expose `Flow` or `suspend` functions to Swift, so state arrives through
+/// `FlowBridgeKt.observeState`, which the shared module publishes for exactly this purpose. Generics
+/// erase to `Any` across the Objective-C boundary, hence the casts — the type parameters restore
+/// them, and every type named here is one `:appshell` owns rather than a kotlinx-coroutines class
+/// whose exported name is generated from its module.
 ///
 /// Ownership: the view holds this via `@StateObject`, so `deinit` fires when the view goes away and
 /// both the flow subscription and the Kotlin ViewModel's coroutine scope are torn down.
@@ -17,10 +19,11 @@ final class KotlinViewModel<State: AnyObject, VM: ProViewModel>: ObservableObjec
     let viewModel: VM
     private var subscription: FlowSubscription?
 
-    init(viewModel: VM, initialState: State, flow: @escaping (VM) -> Kotlinx_coroutines_coreStateFlow) {
+    init(_ viewModel: VM) {
         self.viewModel = viewModel
-        self.state = initialState
-        self.subscription = FlowBridgeKt.subscribe(flow: flow(viewModel)) { [weak self] value in
+        // Rendered on the first frame, before the flow's first emission lands.
+        self.state = FlowBridgeKt.currentState(viewModel: viewModel) as! State
+        self.subscription = FlowBridgeKt.observeState(viewModel: viewModel) { [weak self] value in
             guard let typed = value as? State else { return }
             self?.state = typed
         }
@@ -29,22 +32,6 @@ final class KotlinViewModel<State: AnyObject, VM: ProViewModel>: ObservableObjec
     deinit {
         subscription?.cancel()
         viewModel.onCleared()
-    }
-}
-
-/// One factory per screen. Each resolves through `KoinHelper.shared` because Koin's reified
-/// `get<T>()` cannot be exported to Objective-C, and reads `uiState.value` for the first frame so
-/// the view never flashes a placeholder before the flow's first emission arrives.
-extension KotlinViewModel {
-    static func make<S: AnyObject, V: ProViewModel>(
-        _ viewModel: V,
-        _ flow: @escaping (V) -> Kotlinx_coroutines_coreStateFlow
-    ) -> KotlinViewModel<S, V> {
-        KotlinViewModel<S, V>(
-            viewModel: viewModel,
-            initialState: flow(viewModel).value as! S,
-            flow: flow
-        )
     }
 }
 
@@ -63,21 +50,23 @@ typealias EventBudgetVM = KotlinViewModel<EventBudgetUiState, EventBudgetViewMod
 typealias DebtVM = KotlinViewModel<DebtUiState, DebtViewModel>
 typealias SharedCostVM = KotlinViewModel<SharedCostUiState, SharedCostViewModel>
 
+/// One factory per screen. Each resolves through `KoinHelper.shared` because Koin's reified
+/// `get<T>()` cannot be exported to Objective-C.
 enum Shell {
     private static var koin: KoinHelper { KoinHelper.shared }
 
-    static func appShell() -> AppShellVM { .make(koin.resolveAppShell(), { $0.uiState }) }
-    static func home() -> HomeVM { .make(koin.resolveHome(), { $0.uiState }) }
-    static func journal() -> JournalVM { .make(koin.resolveJournal(), { $0.uiState }) }
-    static func journalDetail() -> JournalDetailVM { .make(koin.resolveJournalDetail(), { $0.uiState }) }
-    static func addExpense() -> AddExpenseVM { .make(koin.resolveAddExpense(), { $0.uiState }) }
-    static func onboarding() -> OnboardingVM { .make(koin.resolveOnboarding(), { $0.uiState }) }
-    static func pinEntry() -> PinEntryVM { .make(koin.resolvePinEntry(), { $0.uiState }) }
-    static func pinSetup() -> PinSetupVM { .make(koin.resolvePinSetup(), { $0.uiState }) }
-    static func more() -> MoreVM { .make(koin.resolveMore(), { $0.uiState }) }
-    static func categories() -> CategoriesVM { .make(koin.resolveCategories(), { $0.uiState }) }
-    static func reports() -> ReportsVM { .make(koin.resolveReports(), { $0.uiState }) }
-    static func eventBudget() -> EventBudgetVM { .make(koin.resolveEventBudget(), { $0.uiState }) }
-    static func debt() -> DebtVM { .make(koin.resolveDebt(), { $0.uiState }) }
-    static func sharedCost() -> SharedCostVM { .make(koin.resolveSharedCost(), { $0.uiState }) }
+    static func appShell() -> AppShellVM { .init(koin.resolveAppShell()) }
+    static func home() -> HomeVM { .init(koin.resolveHome()) }
+    static func journal() -> JournalVM { .init(koin.resolveJournal()) }
+    static func journalDetail() -> JournalDetailVM { .init(koin.resolveJournalDetail()) }
+    static func addExpense() -> AddExpenseVM { .init(koin.resolveAddExpense()) }
+    static func onboarding() -> OnboardingVM { .init(koin.resolveOnboarding()) }
+    static func pinEntry() -> PinEntryVM { .init(koin.resolvePinEntry()) }
+    static func pinSetup() -> PinSetupVM { .init(koin.resolvePinSetup()) }
+    static func more() -> MoreVM { .init(koin.resolveMore()) }
+    static func categories() -> CategoriesVM { .init(koin.resolveCategories()) }
+    static func reports() -> ReportsVM { .init(koin.resolveReports()) }
+    static func eventBudget() -> EventBudgetVM { .init(koin.resolveEventBudget()) }
+    static func debt() -> DebtVM { .init(koin.resolveDebt()) }
+    static func sharedCost() -> SharedCostVM { .init(koin.resolveSharedCost()) }
 }

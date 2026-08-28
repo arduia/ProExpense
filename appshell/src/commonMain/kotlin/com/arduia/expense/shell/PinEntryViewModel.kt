@@ -27,6 +27,14 @@ data class PinEntryScreenState(
     val pinLength: Int get() = PinEntryLogic.PIN_LENGTH
 
     val isLockedOut: Boolean get() = mode == PinEntryMode.Locked
+
+    /**
+     * Exposed as booleans rather than leaving the view to compare [mode] directly: `Default` is a
+     * Swift keyword, so the entry's exported name is mangled and easy to get wrong at the call site.
+     */
+    val isError: Boolean get() = mode == PinEntryMode.Error
+
+    val isIdle: Boolean get() = mode == PinEntryMode.Default
 }
 
 /**

@@ -100,13 +100,13 @@ struct PinEntryView: View {
             PinDots(
                 filled: Int(state.filledDots),
                 total: Int(state.pinLength),
-                isError: state.mode == .error
+                isError: state.isError
             )
-            .animation(.default, value: state.mode)
+            .animation(.default, value: state.isError)
 
             Text(statusText)
                 .font(ProFont.caption)
-                .foregroundStyle(state.mode == .default_ ? .clear : ProColor.danger)
+                .foregroundStyle(state.isIdle ? .clear : ProColor.danger)
                 .frame(height: 18)
 
             Spacer()
@@ -130,7 +130,7 @@ struct PinEntryView: View {
             return "Too many attempts — try again in \(countdown)"
         }
         if let error = state.errorMessage { return error }
-        return state.mode == .error ? "Incorrect PIN, try again" : " "
+        return state.isError ? "Incorrect PIN, try again" : " "
     }
 }
 

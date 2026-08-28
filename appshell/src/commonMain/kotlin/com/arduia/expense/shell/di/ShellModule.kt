@@ -7,6 +7,7 @@ import com.arduia.expense.shell.DebtActions
 import com.arduia.expense.shell.DebtViewModel
 import com.arduia.expense.shell.EventBudgetActions
 import com.arduia.expense.shell.EventBudgetViewModel
+import com.arduia.expense.shell.HomeSources
 import com.arduia.expense.shell.HomeViewModel
 import com.arduia.expense.shell.JournalDetailViewModel
 import com.arduia.expense.shell.JournalViewModel
@@ -27,11 +28,13 @@ val shellModule =
         factory { AppShellViewModel(getOnboardingStatus = get(), pinAuthRepository = get()) }
         factory {
             HomeViewModel(
-                financeRecordRepository = get(),
-                categoryRepository = get(),
-                profileRepository = get(),
-                budgetRepository = get(),
-                currencySettingsRepository = get(),
+                HomeSources(
+                    records = get(),
+                    categories = get(),
+                    profile = get(),
+                    budget = get(),
+                    currencySettings = get(),
+                ),
             )
         }
         factory {
